@@ -1,0 +1,5 @@
+.*.swp
+*~
+*.py[co]
+.coverage
+elasticsearch.egg-info
