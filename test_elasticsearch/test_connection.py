@@ -2,6 +2,7 @@ from unittest import TestCase
 
 from mock import Mock, patch
 
+from elasticsearch.exceptions import TransportError
 from elasticsearch.connection import RequestsHttpConnection
 
 class TestRequestsConnection(TestCase):
@@ -28,6 +29,22 @@ class TestRequestsConnection(TestCase):
         self.assertEquals(1, len(args))
         return args[0]
 
+    @patch('elasticsearch.connection.tracer')
+    @patch('elasticsearch.connection.logger')
+    def test_failed_request_logs_and_traces(self, logger, tracer):
+        con = self._get_mock_connection(response_body='{"answer": 42}', status_code=500)
+        self.assertRaises(TransportError, con.perform_request, 'GET', '/', {'param': 42}, '{}')
+
+        # no trace request
+        self.assertEquals(0, tracer.info.call_count)
+        # no trace response
+        self.assertEquals(0, tracer.debug.call_count)
+        # log url and duration
+        self.assertEquals(1, logger.warning.call_count)
+        self.assertEquals(
+            'GET http://localhost:9200/?param=42 [status:500 request:0.000s]',
+            logger.warning.call_args[0][0] % logger.warning.call_args[0][1:]
+        )
 
     @patch('elasticsearch.connection.tracer')
     @patch('elasticsearch.connection.logger')

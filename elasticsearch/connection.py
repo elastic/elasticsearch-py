@@ -39,6 +39,12 @@ class Connection(object):
         if tracer.isEnabledFor(logging.DEBUG):
             tracer.debug('# [%s] (%.3fs)\n#%s', status_code, duration, _pretty_json(response).replace('\n', '\n#'))
 
+    def log_request_fail(self, method, full_url, duration, status_code=None, exception=None):
+        logger.warning(
+            '%s %s [status:%s request:%.3fs]', method, full_url,
+            status_code or 'N/A', duration, exc_info=exception is not None
+        )
+
 
 class RequestsHttpConnection(Connection):
     def __init__(self, **kwargs):
@@ -56,10 +62,14 @@ class RequestsHttpConnection(Connection):
             duration = time.time() - start
             raw_data = response.text
         except requests.ConnectionError as e:
+            self.log_request_fail(method, request.url, time.time() - start, exception=e)
             raise TransportError(e)
 
         # raise errors based on http status codes, let the client handle those if needed
         if not (200 <= response.status_code < 300):
+
+            self.log_request_fail(method, request.url, duration, response.status_code)
+
             if response.status_code in HTTP_EXCEPTIONS:
                 raise HTTP_EXCEPTIONS[response.status_code]()
 
