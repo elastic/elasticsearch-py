@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from mock import Mock
+from mock import Mock, patch
 
 from elasticsearch.connection import RequestsHttpConnection
 
@@ -27,6 +27,44 @@ class TestRequestsConnection(TestCase):
         self.assertEquals({}, kwargs)
         self.assertEquals(1, len(args))
         return args[0]
+
+
+    @patch('elasticsearch.connection.tracer')
+    @patch('elasticsearch.connection.logger')
+    def test_success_logs_and_traces(self, logger, tracer):
+        con = self._get_mock_connection(response_body='{"answer": 42}')
+        status, data = con.perform_request('GET', '/', {'param': 42}, '{}')
+
+        # trace request
+        self.assertEquals(1, tracer.info.call_count)
+        self.assertEquals(
+            "curl -XGET 'http://localhost:9200/?pretty&param=42' -d '{}'",
+            tracer.info.call_args[0][0] % tracer.info.call_args[0][1:]
+        )
+        # trace response
+        self.assertEquals(1, tracer.debug.call_count)
+        self.assertEquals(
+            '# [200] (0.000s)\n#{\n#  "answer": 42\n#}',
+            tracer.debug.call_args[0][0] % tracer.debug.call_args[0][1:]
+        )
+
+        # log url and duration
+        self.assertEquals(1, logger.info.call_count)
+        self.assertEquals(
+            'GET http://localhost:9200/?param=42 [status:200 request:0.000s]',
+            logger.info.call_args[0][0] % logger.info.call_args[0][1:]
+        )
+        # log request body and response
+        self.assertEquals(2, logger.debug.call_count)
+        req, resp = logger.debug.call_args_list
+        self.assertEquals(
+            '> {}',
+            req[0][0] % req[0][1:]
+        )
+        self.assertEquals(
+            '< {"answer": 42}',
+            resp[0][0] % resp[0][1:]
+        )
 
     def test_defaults(self):
         con = self._get_mock_connection()
