@@ -16,6 +16,7 @@ install_requires = [
 test_requires = [
     'nose',
     'coverage',
+    'mock',
 ]
 
 setup(
