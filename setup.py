@@ -12,6 +12,7 @@ long_description = f.read().strip()
 f.close()
 
 install_requires = [
+    'requests',
 ]
 test_requires = [
     'nose',
