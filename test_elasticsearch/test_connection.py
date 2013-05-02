@@ -30,6 +30,10 @@ class TestRequestsConnection(TestCase):
         self.assertEquals(1, len(args))
         return args[0]
 
+    def test_repr(self):
+        con = self._get_mock_connection({"host": "elasticsearch.com", "port": 443})
+        self.assertEquals('<RequestsHttpConnection: http://elasticsearch.com:443>', repr(con))
+
     @patch('elasticsearch.connection.tracer')
     @patch('elasticsearch.connection.logger')
     def test_failed_request_logs_and_traces(self, logger, tracer):
