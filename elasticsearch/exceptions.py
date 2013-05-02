@@ -2,6 +2,10 @@ class ElastiSearchException(Exception):
     pass
 
 
+class SerializationError(ElastiSearchException):
+    pass
+
+
 class TransportError(ElastiSearchException):
     pass
 
