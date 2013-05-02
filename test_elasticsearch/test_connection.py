@@ -1,3 +1,4 @@
+import re
 from unittest import TestCase
 
 from mock import Mock, patch
@@ -41,10 +42,10 @@ class TestRequestsConnection(TestCase):
         self.assertEquals(0, tracer.debug.call_count)
         # log url and duration
         self.assertEquals(1, logger.warning.call_count)
-        self.assertEquals(
-            'GET http://localhost:9200/?param=42 [status:500 request:0.000s]',
+        self.assertTrue(re.match(
+            '^GET http://localhost:9200/\?param=42 \[status:500 request:0.[0-9]{3}s\]',
             logger.warning.call_args[0][0] % logger.warning.call_args[0][1:]
-        )
+        ))
 
     @patch('elasticsearch.connection.tracer')
     @patch('elasticsearch.connection.logger')
@@ -60,17 +61,17 @@ class TestRequestsConnection(TestCase):
         )
         # trace response
         self.assertEquals(1, tracer.debug.call_count)
-        self.assertEquals(
-            '# [200] (0.000s)\n#{\n#  "answer": 42\n#}',
+        self.assertTrue(re.match(
+            '# \[200\] \(0.[0-9]{3}s\)\n#\{\n#  "answer": 42\n#\}',
             tracer.debug.call_args[0][0] % tracer.debug.call_args[0][1:]
-        )
+        ))
 
         # log url and duration
         self.assertEquals(1, logger.info.call_count)
-        self.assertEquals(
-            'GET http://localhost:9200/?param=42 [status:200 request:0.000s]',
+        self.assertTrue(re.match(
+            'GET http://localhost:9200/\?param=42 \[status:200 request:0.[0-9]{3}s\]',
             logger.info.call_args[0][0] % logger.info.call_args[0][1:]
-        )
+        ))
         # log request body and response
         self.assertEquals(2, logger.debug.call_count)
         req, resp = logger.debug.call_args_list
