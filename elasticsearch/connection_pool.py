@@ -58,16 +58,13 @@ class ConnectionPool(object):
         # either we were forced or the node is elligible to be retried
         connection = self.dead.pop(0)[1]
         self.connections.append(connection)
-        return connection
 
     def get_connection(self):
-        connection = self.resurrect()
-        if connection:
-            return connection
+        self.resurrect()
 
         # no live nodes, resurrect one by force
         if not self.connections:
-            return self.resurrect(True)
+            self.resurrect(True)
 
         return self.selector.select(self.connections)
 

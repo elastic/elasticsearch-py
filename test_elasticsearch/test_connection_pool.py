@@ -59,6 +59,7 @@ class TestConnectionPool(TestCase):
 
         now = time.time()
         pool.mark_dead(42, now=now-61)
-        self.assertEquals(42, pool.get_connection())
+        pool.get_connection()
+        self.assertEquals(42, pool.connections[-1])
         self.assertEquals(100, len(pool.connections))
 
