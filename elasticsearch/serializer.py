@@ -12,13 +12,13 @@ class JSONSerializer(object):
     def loads(self, s):
         try:
             return json.loads(s)
-        except ValueError as e:
+        except (ValueError, TypeError) as e:
             raise SerializationError(e)
 
     def dumps(self, data):
         try:
             return json.dumps(data, default=self.default)
-        except ValueError as e:
+        except (ValueError, TypeError) as e:
             raise SerializationError(e)
 
 
