@@ -101,7 +101,6 @@ class Transport(object):
     def perform_request(self, method, url, params=None, body=None, sniffing=False):
         for attempt in range(self.max_retries):
             connection = self.get_connection(sniffing)
-            print connection, attempt, method, url
 
             if body:
                 body = self.serializer.dumps(body)
