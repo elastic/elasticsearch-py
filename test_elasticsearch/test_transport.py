@@ -61,7 +61,7 @@ class TestTransport(TestCase):
         t = Transport([{'exception': TransportError('abandon ship')}], connection_class=DummyConnection)
 
         self.assertRaises(TransportError, t.perform_request, 'GET', '/')
-        self.assertEquals(3, len(t.get_connection().calls))
+        self.assertEquals(3, len(t.get_connection()[0].calls))
 
     def test_failed_connection_will_be_marked_as_dead(self):
         t = Transport([{'exception': TransportError('abandon ship')}], connection_class=DummyConnection)
@@ -69,10 +69,19 @@ class TestTransport(TestCase):
         self.assertRaises(TransportError, t.perform_request, 'GET', '/')
         self.assertEquals(0, len(t.connection_pool.connections))
 
+    def test_resurrected_connection_will_be_marked_as_live_on_success(self):
+        t = Transport([{}], connection_class=DummyConnection)
+        con, failed_count = t.connection_pool.get_connection()
+        t.connection_pool.mark_dead(con, 2)
+
+        t.perform_request('GET', '/')
+        self.assertEquals(1, len(t.connection_pool.connections))
+        self.assertEquals(0, len(t.connection_pool.dead_count))
+
     def test_sniff_on_start_fetches_and_uses_nodes_list(self):
         t = Transport([{'data': CLUSTER_NODES}], connection_class=DummyConnection, sniff_on_start=True)
         self.assertEquals(1, len(t.connection_pool.connections))
-        self.assertEquals('http://1.1.1.1:123', t.get_connection().host)
+        self.assertEquals('http://1.1.1.1:123', t.get_connection()[0].host)
 
     def test_sniff_on_fail_triggers_sniffing_on_fail(self):
         t = Transport([{'exception': TransportError('abandon ship')}, {"data": CLUSTER_NODES}],
@@ -80,7 +89,7 @@ class TestTransport(TestCase):
 
         self.assertRaises(TransportError, t.perform_request, 'GET', '/')
         self.assertEquals(1, len(t.connection_pool.connections))
-        self.assertEquals('http://1.1.1.1:123', t.get_connection().host)
+        self.assertEquals('http://1.1.1.1:123', t.get_connection()[0].host)
 
     def test_sniff_after_n_requests(self):
         t = Transport([{"data": CLUSTER_NODES}],
@@ -89,11 +98,11 @@ class TestTransport(TestCase):
         for _ in range(4):
             t.perform_request('GET', '/')
         self.assertEquals(1, len(t.connection_pool.connections))
-        self.assertIsInstance(t.get_connection(), DummyConnection)
+        self.assertIsInstance(t.get_connection()[0], DummyConnection)
 
         t.perform_request('GET', '/')
         self.assertEquals(1, len(t.connection_pool.connections))
-        self.assertEquals('http://1.1.1.1:123', t.get_connection().host)
+        self.assertEquals('http://1.1.1.1:123', t.get_connection()[0].host)
 
     def test_sniff_on_failure_shortens_sniff_after_n_requests(self):
         t = Transport([{'exception': TransportError('abandon ship')}, {"data": CLUSTER_NODES}],
@@ -102,6 +111,6 @@ class TestTransport(TestCase):
 
         self.assertRaises(TransportError, t.perform_request, 'GET', '/')
         self.assertEquals(1, len(t.connection_pool.connections))
-        self.assertEquals('http://1.1.1.1:123', t.get_connection().host)
+        self.assertEquals('http://1.1.1.1:123', t.get_connection()[0].host)
         self.assertEquals(3, t.sniff_after_requests)
 

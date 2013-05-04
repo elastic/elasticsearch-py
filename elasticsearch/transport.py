@@ -92,26 +92,29 @@ class Transport(object):
             self.sniffs_due_to_failure = 0
             self.sniff_after_requests = self.sniff_after_requests_original
 
-    def mark_dead(self, connection, sniffing=False):
+    def mark_dead(self, connection, dead_count, sniffing=False):
         if not sniffing and self.sniff_on_connection_fail:
             self.sniff_hosts(True)
         else:
-            self.connection_pool.mark_dead(connection)
+            self.connection_pool.mark_dead(connection, dead_count)
 
     def perform_request(self, method, url, params=None, body=None, sniffing=False):
         for attempt in range(self.max_retries):
-            connection = self.get_connection(sniffing)
+            connection, dead_count = self.get_connection(sniffing)
 
             if body:
                 body = self.serializer.dumps(body)
             try:
                 status, raw_data = connection.perform_request(method, url, params, body)
             except TransportError:
-                self.mark_dead(connection, sniffing)
+                self.mark_dead(connection, dead_count + 1, sniffing)
 
                 # raise exception on last retry
                 if attempt + 1 == self.max_retries:
                     raise
             else:
+                # resurrected connection didn't fail, confirm it's live status
+                if dead_count:
+                    self.connection_pool.mark_live(connection)
                 return status, self.serializer.loads(raw_data)
 
