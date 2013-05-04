@@ -37,7 +37,8 @@ class TestConnectionPool(TestCase):
         now = time.time()
         pool.mark_dead(42, now=now)
         self.assertEquals(99, len(pool.connections))
-        self.assertEquals([(now + 60, 42)], pool.dead)
+        self.assertEquals(1, pool.dead.qsize())
+        self.assertEquals((now + 60, 42), pool.dead.get())
 
     def test_connection_is_skipped_when_dead(self):
         pool = ConnectionPool([(x, {}) for x in range(2)])

@@ -1,6 +1,11 @@
 import time
 import random
 
+try:
+    from Queue import PriorityQueue
+except ImportError:
+    from queue import PriorityQueue
+
 class ConnectionSelector(object):
     " Base class for Selectors. "
     def __init__(self, opts):
@@ -22,7 +27,7 @@ class RoundRobinSelector(ConnectionSelector):
 class ConnectionPool(object):
     def __init__(self, connections, dead_timeout=60, selector_class=RoundRobinSelector, randomize_hosts=True, **kwargs):
         self.connections = [c for (c, opts) in connections]
-        self.dead = []
+        self.dead = PriorityQueue(len(self.connections))
 
         if randomize_hosts:
             # randomize the connection list to avoid all clients hitting same node
@@ -40,23 +45,26 @@ class ConnectionPool(object):
         try:
             self.connections.remove(connection)
         except ValueError:
-            # connection not alive, ignore
+            # connection not alive or another thread marked it already, ignore
             return
-
-        # TODO: detect repeated failure and extend the timeout
-        self.dead.append((now + self.dead_timeout, connection))
+        else:
+            # TODO: detect repeated failure and extend the timeout
+            self.dead.put((now + self.dead_timeout, connection))
 
     def resurrect(self, force=False):
         # no dead connections
-        if not self.dead:
+        if self.dead.empty():
             return
 
-        # no elligible connections to retry
-        if not force and self.dead[0][0] > time.time():
+        # retrieve a connection to check
+        timeout, connection = self.dead.get()
+
+        if not force and timeout > time.time():
+            # return it back if not eligible and not forced
+            self.dead.put((timeout, connection))
             return
 
-        # either we were forced or the node is elligible to be retried
-        connection = self.dead.pop(0)[1]
+        # either we were forced or the connection is elligible to be retried
         self.connections.append(connection)
 
     def get_connection(self):
