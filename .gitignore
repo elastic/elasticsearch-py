@@ -2,4 +2,5 @@
 *~
 *.py[co]
 .coverage
+test_elasticsearch/cover
 elasticsearch.egg-info
