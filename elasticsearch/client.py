@@ -21,6 +21,6 @@ def _normalize_hosts(hosts):
             out.append(host)
     return out
 
-class ElasticSearch(object):
+class Elasticsearch(object):
     def __init__(self, hosts=None, **kwargs):
         self.transport = Transport(_normalize_hosts(hosts), **kwargs)
