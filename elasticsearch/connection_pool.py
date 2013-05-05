@@ -49,7 +49,6 @@ class ConnectionPool(object):
             # connection not alive or another thread marked it already, ignore
             return
         else:
-            # TODO: detect repeated failure and extend the timeout
             self.dead_count[connection] = dead_count
             self.dead.put((now + self.dead_timeout * 2 ** (dead_count - 1), connection))
 
