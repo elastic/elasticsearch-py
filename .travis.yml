@@ -6,5 +6,7 @@ python:
   - "pypy"
 install:
   - pip install -r dev_requirements.txt --use-mirrors
+  - python setup.py develop
 script:
   - python setup.py test
+  - make -C docs doctest

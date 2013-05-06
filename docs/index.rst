@@ -6,6 +6,11 @@
 Welcome to Elasticsearch's documentation!
 =========================================
 
+.. doctest::
+
+  >>> from elasticsearch import Elasticsearch
+  >>> es = Elasticsearch()
+
 Contents:
 
 .. toctree::
