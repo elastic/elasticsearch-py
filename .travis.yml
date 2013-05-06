@@ -9,4 +9,4 @@ install:
   - python setup.py develop
 script:
   - python setup.py test
-  - make -C docs doctest
+  - python setup.py build_sphinx -b doctest

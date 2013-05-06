@@ -14,7 +14,7 @@ f.close()
 install_requires = [
     'requests',
 ]
-test_requires = [
+tests_require = [
     'nose',
     'coverage',
     'mock',
@@ -23,7 +23,8 @@ test_requires = [
 setup(
     name = 'elasticsearch',
     description = "Python client for Elasticsearch",
-    url = "https://github.com/elasticsearch/elasticsearch/",
+    license="Apache License, Version 2.0",
+    url = "https://github.com/elasticsearch/elasticsearch-py",
     long_description = long_description,
     version = __versionstr__,
     author = "Honza Král",
@@ -31,11 +32,17 @@ setup(
     packages = ['elasticsearch'],
     classifiers = [
         "Development Status :: 4 - Beta",
-        "Programming Language :: Python",
+        "License :: OSI Approved :: Apache Software License",
+        "Intended Audience :: Developers",
         "Operating System :: OS Independent",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: Implementation :: CPython",
+        "Programming Language :: Python :: Implementation :: PyPy",
     ],
     install_requires=install_requires,
 
     test_suite='test_elasticsearch.run_tests.run_all',
-    test_requires=test_requires,
+    tests_require=tests_require,
 )
