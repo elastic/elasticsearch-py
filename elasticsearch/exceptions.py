@@ -1,3 +1,5 @@
+__all__ = ['ElastiSearchException', 'SerializationError', 'TransportError', 'NotFoundError']
+
 class ElastiSearchException(Exception):
     pass
 
