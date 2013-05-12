@@ -47,6 +47,21 @@ def query_params(*es_query_params):
 
 class Elasticsearch(object):
     def __init__(self, hosts=None, **kwargs):
+        """
+        Elasticsearch low-level client. Provides a straightforward mapping from
+        Python to ES REST endpoints.
+
+        :arg hosts: list of nodes we should connect to. Node should be a
+            dictionary ({"host": "localhost", "port": 9200}), the entire dictionary
+            will be passed to the :class:`~elasticsearch.Connection` class as
+            kwargs, or a string in the format ot ``host[:port]`` which will be
+            translated to a dictionary automatically.  If no value is given the
+            :class:`~elasticsearch.Connection` class defaults will be used.
+
+        :arg kwargs: any additional arguments will be passed on to the
+            :class:`~elasticsearch.Transport` class and, subsequently, to the
+            :class:`~elasticsearch.Connection` instances.
+        """
         self.transport = Transport(_normalize_hosts(hosts), **kwargs)
 
     @query_params('timeout')

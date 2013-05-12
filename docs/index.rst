@@ -1,6 +1,11 @@
 Python Elasticsearch Client
 ===========================
 
+Official low-level client for Elasticsearch. It's goal is to provide common
+ground for all Elasticsearch-related code in Python; because of this it tries
+to be opinion-free and very extendable.
+
+
 Example Usage
 -------------
 
@@ -45,11 +50,13 @@ Example Usage
     Got 1 Hits:
     2010-10-10T10:10:10 kimchy: Elasticsearch: cool. bonsai cool.
     
-Contents:
+Contents
+--------
 
 .. toctree::
    :maxdepth: 2
 
+   api
 
 License
 -------
