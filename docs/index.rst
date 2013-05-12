@@ -1,25 +1,76 @@
-.. Elasticsearch documentation master file, created by
-   sphinx-quickstart on Mon May  6 15:38:41 2013.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+Python Elasticsearch Client
+===========================
 
-Welcome to Elasticsearch's documentation!
-=========================================
+Example Usage
+-------------
 
-.. doctest::
 
-  >>> from elasticsearch import Elasticsearch
-  >>> es = Elasticsearch()
+.. testsetup::
 
+    import os
+    from datetime import datetime
+    index_name = os.environ.get('ES_TEST_INDEX', 'test-index')
+    from elasticsearch import Elasticsearch
+    es = Elasticsearch()
+    es.delete_index(index_name, ignore_missing=True)
+
+.. testcode::
+
+    from elasticsearch import Elasticsearch
+    es = Elasticsearch()
+
+    doc = {
+        'author': 'kimchy', 
+        'text': 'Elasticsearch: cool. bonsai cool.', 
+        'timestamp': datetime(2010, 10, 10, 10, 10, 10)
+    }
+    res = es.index(index_name, 'tweet', doc, id=1)
+    print(res['ok'])
+
+    res = es.get(index_name, 1, doc_type='tweet')
+    print(res['_source'])
+
+    es.refresh(index_name)
+
+    res = es.search('cool', index=index_name)
+    print("Got %d Hits:" % res['hits']['total'])
+    for hit in res['hits']['hits']:
+        print("%(timestamp)s %(author)s: %(text)s" % hit["_source"])
+
+.. testoutput::
+    :hide:
+
+    True
+    {u'text': u'Elasticsearch: cool. bonsai cool.', u'author': u'kimchy', u'timestamp': u'2010-10-10T10:10:10'}
+    Got 1 Hits:
+    2010-10-10T10:10:10 kimchy: Elasticsearch: cool. bonsai cool.
+    
 Contents:
 
 .. toctree::
    :maxdepth: 2
 
 
+License
+-------
+
+Copyright 2013 Elasticsearch
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
