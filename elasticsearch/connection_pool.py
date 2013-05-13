@@ -2,9 +2,9 @@ import time
 import random
 
 try:
-    from Queue import PriorityQueue
+    from Queue import PriorityQueue, Empty
 except ImportError:
-    from queue import PriorityQueue
+    from queue import PriorityQueue, Empty
 
 class ConnectionSelector(object):
     " Base class for Selectors. "
@@ -64,8 +64,12 @@ class ConnectionPool(object):
         if self.dead.empty():
             return
 
-        # retrieve a connection to check
-        timeout, connection = self.dead.get()
+        try:
+            # retrieve a connection to check
+            timeout, connection = self.dead.get(block=False)
+        except Empty:
+            # other thread has been faster and the queue is now empty
+            return
 
         if not force and timeout > time.time():
             # return it back if not eligible and not forced
