@@ -3,7 +3,7 @@ import time
 import requests
 import json
 
-from .exceptions import TransportError, HTTP_EXCEPTIONS
+from .exceptions import TransportError, HTTP_EXCEPTIONS, ConnectionError
 
 logger = logging.getLogger('elasticsearch')
 tracer = logging.getLogger('elasticsearch.trace')
@@ -61,9 +61,9 @@ class RequestsHttpConnection(Connection):
             response = self.session.send(request)
             duration = time.time() - start
             raw_data = response.text
-        except requests.ConnectionError as e:
+        except (requests.ConnectionError, requests.Timeout) as e:
             self.log_request_fail(method, request.url, time.time() - start, exception=e)
-            raise TransportError(e)
+            raise ConnectionError(e)
 
         # raise errors based on http status codes, let the client handle those if needed
         if not (200 <= response.status_code < 300):

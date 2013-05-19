@@ -12,6 +12,10 @@ class TransportError(ElastiSearchException):
     pass
 
 
+class ConnectionError(TransportError):
+    pass
+
+
 class NotFoundError(TransportError):
     " 404 "
 

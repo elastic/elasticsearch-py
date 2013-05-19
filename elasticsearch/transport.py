@@ -3,7 +3,7 @@ import re
 from .connection import RequestsHttpConnection
 from .connection_pool import ConnectionPool
 from .serializer import JSONSerializer
-from .exceptions import TransportError
+from .exceptions import ConnectionError
 
 # get ip/port from "inet[wind/127.0.0.1:9200]"
 ADDRESS_RE = re.compile(r'/(?P<host>[^:]*):(?P<port>[0-9]+)\]')
@@ -196,8 +196,7 @@ class Transport(object):
 
             try:
                 status, raw_data = connection.perform_request(method, url, params, body)
-            except TransportError:
-                # TODO: don't retry on client errors etc
+            except ConnectionError:
                 self.mark_dead(connection, dead_count + 1, sniffing)
 
                 # raise exception on last retry
