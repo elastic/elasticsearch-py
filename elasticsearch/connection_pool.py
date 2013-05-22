@@ -12,6 +12,14 @@ class ConnectionSelector(object):
         self.connection_opts = opts
 
 
+class RandomSelector(ConnectionSelector):
+    """
+    Select a connection at random
+    """
+    def select(self, connections):
+        return random.choice(connections)
+
+
 class RoundRobinSelector(ConnectionSelector):
     " Default selector using round-robin. "
     def __init__(self, opts):
