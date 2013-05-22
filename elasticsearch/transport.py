@@ -6,7 +6,7 @@ from .serializer import JSONSerializer
 from .exceptions import ConnectionError
 
 # get ip/port from "inet[wind/127.0.0.1:9200]"
-ADDRESS_RE = re.compile(r'/(?P<host>[^:]*):(?P<port>[0-9]+)\]')
+ADDRESS_RE = re.compile(r'/(?P<host>[\.:0-9a-f]*):(?P<port>[0-9]+)\]')
 
 
 def get_host_info(node_info, host):
