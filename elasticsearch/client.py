@@ -4,6 +4,10 @@ from .transport import Transport
 from .exceptions import NotFoundError
 
 def _normalize_hosts(hosts):
+    """
+    Helper function to transform hosts argument to
+    :class:`~elasticsearch.Elasticsearch` to a list of dicts.
+    """
     # if hosts are empty, just defer to defaults down the line
     if hosts is None:
         return [{}]
@@ -25,14 +29,23 @@ def _normalize_hosts(hosts):
     return out
 
 def _normalize_list(list_or_string):
+    """
+    for index and type arguments in url, identify if it's a string or a
+    sequence and produce a working representation (comma separated string).
+    """
     if isinstance(list_or_string, (type(''), type(u''))):
         return list_or_string
     return ','.join(list_or_string)
 
 
+# parameters that apply to all methods
 GLOBAL_PARAMS = ('pretty', )
 
 def query_params(*es_query_params):
+    """
+    Decorator that pops all accepted parameters from method's kwargs and puts
+    them in the params argument.
+    """
     def _wrapper(func):
         @wraps(func)
         def _wrapped(*args, **kwargs):
