@@ -12,11 +12,12 @@ tracer.propagate = False
 class Connection(object):
     transport_schema = 'http'
 
-    def __init__(self, host='localhost', port=9200, url_prefix='', **kwargs):
+    def __init__(self, host='localhost', port=9200, url_prefix='', timeout=10, **kwargs):
         self.host = '%s://%s:%s' % (self.transport_schema, host, port)
         if url_prefix:
             url_prefix = '/' + url_prefix.strip('/')
         self.url_prefix = url_prefix
+        self.timeout = 10
 
     def __repr__(self):
         return '<%s: %s>' % (self.__class__.__name__, self.host)
@@ -56,14 +57,14 @@ class RequestsHttpConnection(Connection):
         super(RequestsHttpConnection, self).__init__(**kwargs)
         self.session = requests.session()
 
-    def perform_request(self, method, url, params=None, body=None):
+    def perform_request(self, method, url, params=None, body=None, timeout=None):
         url = self.host + self.url_prefix + url
 
         # use prepared requests so that requests formats url and params for us to log
         request = requests.Request(method, url, params=params or {}, data=body).prepare()
         start = time.time()
         try:
-            response = self.session.send(request)
+            response = self.session.send(request, timeout=timeout or self.timeout)
             duration = time.time() - start
             raw_data = response.text
         except (requests.ConnectionError, requests.Timeout) as e:

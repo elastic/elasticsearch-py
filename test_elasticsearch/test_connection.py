@@ -25,8 +25,9 @@ class TestRequestsConnection(TestCase):
 
         self.assertEquals(1, connection.session.send.call_count)
 
+        timeout = kwargs.pop('timeout', connection.timeout)
         args, kwargs = connection.session.send.call_args
-        self.assertEquals({}, kwargs)
+        self.assertEquals({'timeout': timeout}, kwargs)
         self.assertEquals(1, len(args))
         return args[0]
 
@@ -115,7 +116,7 @@ class TestRequestsConnection(TestCase):
     @patch('elasticsearch.connection.tracer')
     def test_url_prefix(self, tracer):
         con = self._get_mock_connection({"url_prefix": "/some-prefix/"})
-        request = self._get_request(con, 'GET', '/_search', body='{"answer": 42}')
+        request = self._get_request(con, 'GET', '/_search', body='{"answer": 42}', timeout=0.1)
 
         self.assertEquals('http://localhost:9200/some-prefix/_search', request.url)
         self.assertEquals('GET', request.method)
