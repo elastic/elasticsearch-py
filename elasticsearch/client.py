@@ -1,4 +1,10 @@
 from functools import wraps
+try:
+    # PY2
+    from urllib import quote_plus
+except ImportError:
+    # PY3
+    from urllib.parse import quote_plus
 
 from .transport import Transport
 from .exceptions import NotFoundError
@@ -34,8 +40,8 @@ def _normalize_list(list_or_string):
     sequence and produce a working representation (comma separated string).
     """
     if isinstance(list_or_string, (type(''), type(u''))):
-        return list_or_string
-    return ','.join(list_or_string)
+        return quote_plus(list_or_string)
+    return quote_plus(','.join(list_or_string))
 
 
 # parameters that apply to all methods
@@ -80,14 +86,14 @@ class Elasticsearch(object):
 
     @query_params('timeout')
     def create_index(self, index, body=None, params=None):
-        status, data = self.transport.perform_request('PUT', '/%s' % index, params=params, body=body)
+        status, data = self.transport.perform_request('PUT', '/%s' % quote_plus(index), params=params, body=body)
         return data
 
     @query_params()
     def delete_index(self, index='', ignore_missing=False, params=None):
         index = _normalize_list(index)
         try:
-            status, data = self.transport.perform_request('DELETE', '/%s' % index, params=params)
+            status, data = self.transport.perform_request('DELETE', '/%s' % quote_plus(index), params=params)
         except NotFoundError:
             if ignore_missing:
                 return
@@ -104,12 +110,12 @@ class Elasticsearch(object):
 
     @query_params('consistency', 'op_type', 'parent', 'percolate', 'refresh', 'replication', 'routing', 'timeout', 'timestamp', 'ttl', 'version', 'version_type')
     def index(self, index, doc_type, body, id=None, params=None):
-        status, data = self.transport.perform_request('PUT', '/%s/%s/%s' % (index, doc_type, id), params=params, body=body)
+        status, data = self.transport.perform_request('PUT', '/%s/%s/%s' % map(quote_plus, (index, doc_type, str(id))), params=params, body=body)
         return data
 
     @query_params('fields', 'parent', 'preference', 'realtime', 'refresh', 'routing', 'timeout')
     def get(self, index, id, doc_type=u'_all', params=None):
-        status, data = self.transport.perform_request('GET', '/%s/%s/%s' % (index, doc_type, id), params=params)
+        status, data = self.transport.perform_request('GET', '/%s/%s/%s' % map(quote_plus, (index, doc_type, str(id))), params=params)
         return data
 
     @query_params('explain', 'fields', 'from', 'ignore_indices', 'indices_boost', 'preference', 'routing', 'search_type', 'size', 'sort', 'source', 'stats', 'timeout', 'version')
