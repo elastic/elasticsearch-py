@@ -84,6 +84,14 @@ class TestTransport(TestCase):
         self.assertEquals(1, len(t.connection_pool.connections))
         self.assertEquals('http://1.1.1.1:123', t.get_connection()[0].host)
 
+    def test_sniff_reuses_connection_instances_if_possible(self):
+        t = Transport([{'data': CLUSTER_NODES}, {"host": "1.1.1.1", "port": 123}], connection_class=DummyConnection, randomize_hosts=False)
+        connection = t.connection_pool.connections[1]
+
+        t.sniff_hosts()
+        self.assertEquals(1, len(t.connection_pool.connections))
+        self.assertIs(connection, t.get_connection()[0])
+
     def test_sniff_on_fail_triggers_sniffing_on_fail(self):
         t = Transport([{'exception': ConnectionError('abandon ship')}, {"data": CLUSTER_NODES}],
             connection_class=DummyConnection, sniff_on_connection_fail=True, max_retries=1, randomize_hosts=False)

@@ -95,19 +95,30 @@ class Transport(object):
 
     def set_connections(self, hosts):
         """
-        Instantiate all the connections and crate new connection pool to hold them.
+        Instantiate all the connections and crate new connection pool to hold
+        them. Tries to identify unchanged hosts and re-use existing
+        :class:`~elasticsearch.Connection` instances.
 
         :arg hosts: same as `__init__`
         """
         # construct the connections
         def _create_connection(host):
+            # if this is not the initial setup look at the existing connection
+            # options and identify connections that haven't changed and can be
+            # kept around.
+            if hasattr(self, 'connection_pool'):
+                for (connection, old_host) in self.connection_pool.connection_opts:
+                    if old_host == host:
+                        return connection
+
+            # previously unseen params, create new connection
             kwargs = self.kwargs.copy()
             kwargs.update(host)
             return self.connection_class(**kwargs)
-        connections = list(map(_create_connection, hosts))
+        connections = map(_create_connection, hosts)
 
         # pass the hosts dicts to the connection pool to optionally extract parameters from
-        self.connection_pool = self.connection_pool_class(zip(connections, hosts), **self.kwargs)
+        self.connection_pool = self.connection_pool_class(list(zip(connections, hosts)), **self.kwargs)
 
     def get_connection(self, sniffing=False):
         """

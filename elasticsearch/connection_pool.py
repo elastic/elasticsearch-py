@@ -94,6 +94,7 @@ class ConnectionPool(object):
         :arg randomize_hosts: shuffle the list of connections upon arrival to
             avoid dog piling effect across processes
         """
+        self.connection_opts = connections
         self.connections = [c for (c, opts) in connections]
         # PriorityQueue for thread safety and ease of timeout management
         self.dead = PriorityQueue(len(self.connections))
