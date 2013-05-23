@@ -1,3 +1,4 @@
+import time
 from unittest import TestCase
 
 from elasticsearch.transport import Transport
@@ -91,16 +92,18 @@ class TestTransport(TestCase):
         self.assertEquals(1, len(t.connection_pool.connections))
         self.assertEquals('http://1.1.1.1:123', t.get_connection()[0].host)
 
-    def test_sniff_after_n_requests(self):
+    def test_sniff_after_n_seconds(self):
         t = Transport([{"data": CLUSTER_NODES}],
-            connection_class=DummyConnection, sniff_after_requests=5)
+            connection_class=DummyConnection, sniffer_timeout=5)
 
         for _ in range(4):
             t.perform_request('GET', '/')
         self.assertEquals(1, len(t.connection_pool.connections))
         self.assertIsInstance(t.get_connection()[0], DummyConnection)
+        t.last_sniff = time.time() - 5.1
 
         t.perform_request('GET', '/')
         self.assertEquals(1, len(t.connection_pool.connections))
         self.assertEquals('http://1.1.1.1:123', t.get_connection()[0].host)
+        self.assertTrue(time.time() - 1 < t.last_sniff < time.time() + 0.01 )
 
