@@ -12,8 +12,11 @@ tracer.propagate = False
 class Connection(object):
     transport_schema = 'http'
 
-    def __init__(self, host='localhost', port=9200, **kwargs):
+    def __init__(self, host='localhost', port=9200, url_prefix='', **kwargs):
         self.host = '%s://%s:%s' % (self.transport_schema, host, port)
+        if url_prefix:
+            url_prefix = '/' + url_prefix.strip('/')
+        self.url_prefix = url_prefix
 
     def __repr__(self):
         return '<%s: %s>' % (self.__class__.__name__, self.host)
@@ -34,6 +37,8 @@ class Connection(object):
         if tracer.isEnabledFor(logging.INFO):
             # include pretty in trace curls
             path = path.replace('?', '?pretty&', 1) if '?' in path else path + '?pretty'
+            if self.url_prefix:
+                path = path.replace(self.url_prefix, '', 1)
             tracer.info("curl -X%s 'http://localhost:9200%s' -d '%s'", method, path, _pretty_json(body) if body else '')
 
         if tracer.isEnabledFor(logging.DEBUG):
@@ -52,7 +57,7 @@ class RequestsHttpConnection(Connection):
         self.session = requests.session()
 
     def perform_request(self, method, url, params=None, body=None):
-        url = self.host + url
+        url = self.host + self.url_prefix + url
 
         # use prepared requests so that requests formats url and params for us to log
         request = requests.Request(method, url, params=params or {}, data=body).prepare()

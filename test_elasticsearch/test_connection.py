@@ -111,3 +111,19 @@ class TestRequestsConnection(TestCase):
         self.assertEquals('http://localhost:9200/', request.url)
         self.assertEquals('GET', request.method)
         self.assertEquals('{"answer": 42}', request.body)
+
+    @patch('elasticsearch.connection.tracer')
+    def test_url_prefix(self, tracer):
+        con = self._get_mock_connection({"url_prefix": "/some-prefix/"})
+        request = self._get_request(con, 'GET', '/_search', body='{"answer": 42}')
+
+        self.assertEquals('http://localhost:9200/some-prefix/_search', request.url)
+        self.assertEquals('GET', request.method)
+        self.assertEquals('{"answer": 42}', request.body)
+
+        # trace request
+        self.assertEquals(1, tracer.info.call_count)
+        self.assertEquals(
+            "curl -XGET 'http://localhost:9200/_search?pretty' -d '{\n  \"answer\": 42\n}'",
+            tracer.info.call_args[0][0] % tracer.info.call_args[0][1:]
+        )
