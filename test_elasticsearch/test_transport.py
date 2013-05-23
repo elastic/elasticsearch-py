@@ -79,6 +79,14 @@ class TestTransport(TestCase):
         self.assertEquals(1, len(t.connection_pool.connections))
         self.assertEquals(0, len(t.connection_pool.dead_count))
 
+    def test_sniff_will_use_seed_connections(self):
+        t = Transport([{'data': CLUSTER_NODES}], connection_class=DummyConnection)
+        t.set_connections([{'data': 'invalid'}])
+
+        t.sniff_hosts()
+        self.assertEquals(1, len(t.connection_pool.connections))
+        self.assertEquals('http://1.1.1.1:123', t.get_connection()[0].host)
+
     def test_sniff_on_start_fetches_and_uses_nodes_list(self):
         t = Transport([{'data': CLUSTER_NODES}], connection_class=DummyConnection, sniff_on_start=True)
         self.assertEquals(1, len(t.connection_pool.connections))

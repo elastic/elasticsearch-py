@@ -4,7 +4,7 @@ import time
 from .connection import RequestsHttpConnection
 from .connection_pool import ConnectionPool
 from .serializer import JSONSerializer
-from .exceptions import ConnectionError
+from .exceptions import ConnectionError, TransportError, SerializationError
 
 # get ip/port from "inet[wind/127.0.0.1:9200]"
 ADDRESS_RE = re.compile(r'/(?P<host>[\.:0-9a-f]*):(?P<port>[0-9]+)\]')
@@ -72,6 +72,8 @@ class Transport(object):
 
         # ...and instantiate them
         self.set_connections(hosts)
+        # retain the original connection instances for sniffing
+        self.seed_connections = self.connection_pool.connections[:]
 
         # sniffing data
         self.sniffer_timeout = sniffer_timeout
@@ -120,34 +122,39 @@ class Transport(object):
         # pass the hosts dicts to the connection pool to optionally extract parameters from
         self.connection_pool = self.connection_pool_class(list(zip(connections, hosts)), **self.kwargs)
 
-    def get_connection(self, sniffing=False):
+    def get_connection(self):
         """
         Retreive a :class:`~elasticsearch.Connection` instance from the
         :class:`~elasticsearch.ConnectionPool` instance.
-
-        :arg sniffing: flag indicating that the connection will be used for
-            sniffing for nodes
         """
-        if not sniffing and self.sniffer_timeout:
+        if self.sniffer_timeout:
             if time.time() >= self.last_sniff + self.sniffer_timeout:
                 self.sniff_hosts()
         return self.connection_pool.get_connection()
 
-    def sniff_hosts(self, failure=False):
+    def sniff_hosts(self):
         """
         Obtain a list of nodes from the cluster and create a new connection
         pool using the information retrieved.
 
         To extract the node connection parameters use the `nodes_to_host_callback`.
-
-        :arg failure: indicates whether this sniffing was initiated because of
-            a connection failure
         """
         previous_sniff = self.last_sniff
         try:
             # reset last_sniff timestamp
             self.last_sniff = time.time()
-            _, node_info = self.perform_request('GET', '/_cluster/nodes', sniffing=True)
+            # go through all current connections as well as the
+            # seed_connections for good measure
+            for c in self.connection_pool.connections + self.seed_connections:
+                try:
+                    # use small timeout for the sniffing request, should be a fast api call
+                    _, node_info = c.perform_request('GET', '/_cluster/nodes', timeout=.1)
+                    node_info = self.serializer.loads(node_info)
+                    break
+                except (ConnectionError, SerializationError):
+                    pass
+            else:
+                raise TransportError("Enable to sniff hosts.")
         except:
             # keep the previous value on error
             self.last_sniff = previous_sniff
@@ -169,23 +176,20 @@ class Transport(object):
 
         self.set_connections(hosts)
 
-    def mark_dead(self, connection, dead_count, sniffing=False):
+    def mark_dead(self, connection, dead_count):
         """
         Mark a connection as dead (failed) in the connection pool. If sniffing
-        on failure is enabled this will initiate the sniffing process (unless
-        the failure occured during that process itself).
+        on failure is enabled this will initiate the sniffing process.
 
         :arg connection: instance of :class:`~elasticsearch.Connection` that failed
         :arg dead_count: number of successive failures for this connection
-        :arg sniffing: flag indicating that the failure occured during sniffing
-            for nodes
         """
-        if not sniffing and self.sniff_on_connection_fail:
-            self.sniff_hosts(True)
+        if self.sniff_on_connection_fail:
+            self.sniff_hosts()
         else:
             self.connection_pool.mark_dead(connection, dead_count)
 
-    def perform_request(self, method, url, params=None, body=None, sniffing=False):
+    def perform_request(self, method, url, params=None, body=None):
         """
         Perform the actual request. Retrieve a connection from the connection
         pool, pass all the information to it's perform_request method and
@@ -203,19 +207,17 @@ class Transport(object):
             underlying :class:`~elasticsearch.Connection` class for serialization
         :arg body: body of the request, will be serializes using serializer and
             passed to the connection
-        :arg sniffing: flag indicating whether the request is done as part of
-            the sniffing process
         """
         if body:
             body = self.serializer.dumps(body)
 
         for attempt in range(self.max_retries):
-            connection, dead_count = self.get_connection(sniffing)
+            connection, dead_count = self.get_connection()
 
             try:
                 status, raw_data = connection.perform_request(method, url, params, body)
             except ConnectionError:
-                self.mark_dead(connection, dead_count + 1, sniffing)
+                self.mark_dead(connection, dead_count + 1)
 
                 # raise exception on last retry
                 if attempt + 1 == self.max_retries:
