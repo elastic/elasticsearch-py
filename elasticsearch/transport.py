@@ -74,9 +74,6 @@ class Transport(object):
 
         # sniffing data
         self.req_counter = 0
-        # TODO: minimal sniff interval
-        self.sniffs_due_to_failure = 0
-        self.sniff_after_requests_original = sniff_after_requests
         self.sniff_after_requests = sniff_after_requests
         self.sniff_on_connection_fail = sniff_on_connection_fail
 
@@ -154,15 +151,6 @@ class Transport(object):
                 hosts.append(host)
 
         self.set_connections(hosts)
-
-        # when sniffing due to failure, shorten the period between sniffs progressively
-        if failure:
-            self.sniffs_due_to_failure += 1
-            if self.sniff_after_requests:
-                self.sniff_after_requests = 1 + self.sniff_after_requests_original // 2**self.sniffs_due_to_failure
-        else:
-            self.sniffs_due_to_failure = 0
-            self.sniff_after_requests = self.sniff_after_requests_original
 
     def mark_dead(self, connection, dead_count, sniffing=False):
         """

@@ -104,13 +104,3 @@ class TestTransport(TestCase):
         self.assertEquals(1, len(t.connection_pool.connections))
         self.assertEquals('http://1.1.1.1:123', t.get_connection()[0].host)
 
-    def test_sniff_on_failure_shortens_sniff_after_n_requests(self):
-        t = Transport([{'exception': ConnectionError('abandon ship')}, {"data": CLUSTER_NODES}],
-            connection_class=DummyConnection, sniff_on_connection_fail=True, max_retries=1,
-            randomize_hosts=False, sniff_after_requests=4)
-
-        self.assertRaises(ConnectionError, t.perform_request, 'GET', '/')
-        self.assertEquals(1, len(t.connection_pool.connections))
-        self.assertEquals('http://1.1.1.1:123', t.get_connection()[0].host)
-        self.assertEquals(3, t.sniff_after_requests)
-
