@@ -62,7 +62,7 @@ class TestTransport(TestCase):
         t = Transport([{'exception': ConnectionError('abandon ship')}], connection_class=DummyConnection)
 
         self.assertRaises(ConnectionError, t.perform_request, 'GET', '/')
-        self.assertEquals(3, len(t.get_connection()[0].calls))
+        self.assertEquals(4, len(t.get_connection()[0].calls))
 
     def test_failed_connection_will_be_marked_as_dead(self):
         t = Transport([{'exception': ConnectionError('abandon ship')}], connection_class=DummyConnection)
@@ -102,7 +102,7 @@ class TestTransport(TestCase):
 
     def test_sniff_on_fail_triggers_sniffing_on_fail(self):
         t = Transport([{'exception': ConnectionError('abandon ship')}, {"data": CLUSTER_NODES}],
-            connection_class=DummyConnection, sniff_on_connection_fail=True, max_retries=1, randomize_hosts=False)
+            connection_class=DummyConnection, sniff_on_connection_fail=True, max_retries=0, randomize_hosts=False)
 
         self.assertRaises(ConnectionError, t.perform_request, 'GET', '/')
         self.assertEquals(1, len(t.connection_pool.connections))

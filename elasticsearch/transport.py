@@ -211,7 +211,7 @@ class Transport(object):
         if body:
             body = self.serializer.dumps(body)
 
-        for attempt in range(self.max_retries):
+        for attempt in range(self.max_retries + 1):
             connection, dead_count = self.get_connection()
 
             try:
@@ -220,7 +220,7 @@ class Transport(object):
                 self.mark_dead(connection, dead_count + 1)
 
                 # raise exception on last retry
-                if attempt + 1 == self.max_retries:
+                if attempt == self.max_retries:
                     raise
             else:
                 # resurrected connection didn't fail, confirm it's live status
