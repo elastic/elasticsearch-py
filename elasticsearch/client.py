@@ -64,6 +64,20 @@ def query_params(*es_query_params):
     return _wrapper
 
 
+class NamespacedClient(object):
+    def __init__(self, client):
+        self.client = client
+
+    @property
+    def transport(self):
+        return self.client.transport
+
+class ClusterClient(NamespacedClient):
+    pass
+
+class InidicesClient(NamespacedClient):
+    pass
+
 class Elasticsearch(object):
     """
     Elasticsearch low-level client. Provides a straightforward mapping from
@@ -84,4 +98,7 @@ class Elasticsearch(object):
         """
         self.transport = Transport(_normalize_hosts(hosts), **kwargs)
 
+        # namespaced clients for compatibility with API names
+        self.indices = InidicesClient(self)
+        self.cluster = ClusterClient(self)
 
