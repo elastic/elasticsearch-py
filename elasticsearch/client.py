@@ -9,6 +9,9 @@ except ImportError:
 from .transport import Transport
 from .exceptions import NotFoundError
 
+# parts of URL to be omitted
+SKIP_IN_PATH = (None, '', [], ())
+
 def _normalize_hosts(hosts):
     """
     Helper function to transform hosts argument to
@@ -34,14 +37,23 @@ def _normalize_hosts(hosts):
             out.append(host)
     return out
 
-def _normalize_list(list_or_string):
+def _escape(part):
     """
-    for index and type arguments in url, identify if it's a string or a
-    sequence and produce a working representation (comma separated string).
+    Escape a single part of a URL string. If it is a list or tuple, turn it
+    into a comma-separated string first.
     """
-    if isinstance(list_or_string, (type(''), type(u''))):
-        return quote_plus(list_or_string)
-    return quote_plus(','.join(list_or_string))
+    if isinstance(part, (list, tuple)):
+        part = ','.join(part)
+    # mark ',' as safe for nicer url in logs
+    return quote_plus(part, ',')
+
+def _make_path(*parts):
+    """
+    Create a URL string from parts, omit all `None` values and empty strings.
+    Convert lists nad tuples to comma separated values.
+    """
+    #TODO: maybe only allow some parts to be lists/tuples ?
+    return '/' + '/'.join(_escape(p) for p in parts if p not in SKIP_IN_PATH)
 
 
 # parameters that apply to all methods
@@ -85,7 +97,7 @@ class InidicesClient(NamespacedClient):
         :arg index: The name of the index
         :arg timeout: Explicit operation timeout
         """
-        status, data = self.transport.perform_request('PUT', '/%s' % quote_plus(index), params=params, body=body)
+        status, data = self.transport.perform_request('PUT', _make_path(index), params=params, body=body)
         return data
 
     @query_params('timeout')
@@ -97,8 +109,7 @@ class InidicesClient(NamespacedClient):
         :arg index: A list of indices to delete, `None` if all indices should be removed.
         :arg timeout: Explicit operation timeout
         """
-        url = '/' if not index else '/' + _normalize_list(index)
-        status, data = self.transport.perform_request('DELETE', url, params=params)
+        status, data = self.transport.perform_request('DELETE', _make_path(index), params=params)
         return data
 
     @query_params()
@@ -109,7 +120,7 @@ class InidicesClient(NamespacedClient):
         :arg index: A list of indices to check
         """
         try:
-            self.transport.perform_request('HEAD', '/' + _normalize_list(index), params=params)
+            self.transport.perform_request('HEAD', _make_path(index), params=params)
         except NotFoundError:
             return False
         return True

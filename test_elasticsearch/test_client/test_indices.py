@@ -7,8 +7,8 @@ class TestIndices(ElasticsearchTestCase):
 
     def test_delete_multiple_indices(self):
         self.client.indices.delete(['test-index', 'second.index', 'third/index'])
-        self.assert_url_called('DELETE', '/test-index%2Csecond.index%2Cthird%2Findex')
+        self.assert_url_called('DELETE', '/test-index,second.index,third%2Findex')
 
     def test_exists_index(self):
         self.client.indices.exists('second.index,third/index')
-        self.assert_url_called('HEAD', '/second.index%2Cthird%2Findex')
+        self.assert_url_called('HEAD', '/second.index,third%2Findex')
