@@ -76,7 +76,40 @@ class ClusterClient(NamespacedClient):
     pass
 
 class InidicesClient(NamespacedClient):
-    pass
+    @query_params('timeout')
+    def create(self, index, body=None, params=None):
+        """
+        Create index in Elasticsearch.
+        http://www.elasticsearch.org/guide/reference/api/admin-indices-create-index/
+
+        :arg index: The name of the index
+        :arg timeout: Explicit operation timeout
+        """
+        status, data = self.transport.perform_request('PUT', '/%s' % quote_plus(index), params=params, body=body)
+        return data
+
+    @query_params('timeout')
+    def delete(self, index=None, params=None):
+        """
+        Delete index in Elasticsearch
+        http://www.elasticsearch.org/guide/reference/api/admin-indices-delete-index/
+
+        :arg timeout: Explicit operation timeout
+        """
+        url = '/' if not index else '/' + _normalize_list(index)
+        status, data = self.transport.perform_request('DELETE', url, params=params)
+        return data
+
+    @query_params()
+    def exists(self, index, params=None):
+        """
+        http://www.elasticsearch.org/guide/reference/api/admin-indices-indices-exists/
+
+        :arg index: A comma-separated list of indices to check
+        """
+        status, data = self.transport.perform_request('HEAD', '/' + _normalize_list(index), params=params)
+        return data
+
 
 class Elasticsearch(object):
     """
