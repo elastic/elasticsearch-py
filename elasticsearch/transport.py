@@ -226,5 +226,8 @@ class Transport(object):
                 # resurrected connection didn't fail, confirm it's live status
                 if dead_count:
                     self.connection_pool.mark_live(connection)
-                return status, self.serializer.loads(raw_data)
+                data = None
+                if raw_data:
+                    data = self.serializer.loads(raw_data)
+                return status, data
 

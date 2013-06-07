@@ -107,8 +107,11 @@ class InidicesClient(NamespacedClient):
 
         :arg index: A comma-separated list of indices to check
         """
-        status, data = self.transport.perform_request('HEAD', '/' + _normalize_list(index), params=params)
-        return data
+        try:
+            self.transport.perform_request('HEAD', '/' + _normalize_list(index), params=params)
+        except NotFoundError:
+            return False
+        return True
 
 
 class Elasticsearch(object):
