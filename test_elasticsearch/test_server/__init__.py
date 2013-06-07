@@ -58,11 +58,11 @@ def setup():
         response = None
         time.sleep(.1)
         try:
-            response = requests.get('http://localhost:%(port)s/_cluster/health' % args)
+            response = requests.get('http://localhost:%(port)s/_cluster/health?wait_for_status=green' % args)
         except requests.ConnectionError:
-            pass
+            continue
 
-        if response and response.json()['status'] == 'green':
+        if response.status_code == 200:
             break
 
     else:
