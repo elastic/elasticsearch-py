@@ -94,6 +94,7 @@ class InidicesClient(NamespacedClient):
         Delete index in Elasticsearch
         http://www.elasticsearch.org/guide/reference/api/admin-indices-delete-index/
 
+        :arg index: A list of indices to delete, `None` if all indices should be removed.
         :arg timeout: Explicit operation timeout
         """
         url = '/' if not index else '/' + _normalize_list(index)
@@ -105,7 +106,7 @@ class InidicesClient(NamespacedClient):
         """
         http://www.elasticsearch.org/guide/reference/api/admin-indices-indices-exists/
 
-        :arg index: A comma-separated list of indices to check
+        :arg index: A list of indices to check
         """
         try:
             self.transport.perform_request('HEAD', '/' + _normalize_list(index), params=params)
