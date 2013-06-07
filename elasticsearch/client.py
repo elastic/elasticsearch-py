@@ -83,7 +83,7 @@ class Elasticsearch(object):
     Elasticsearch low-level client. Provides a straightforward mapping from
     Python to ES REST endpoints.
     """
-    def __init__(self, hosts=None, **kwargs):
+    def __init__(self, hosts=None, transport_class=Transport, **kwargs):
         """
         :arg hosts: list of nodes we should connect to. Node should be a
             dictionary ({"host": "localhost", "port": 9200}), the entire dictionary
@@ -92,11 +92,13 @@ class Elasticsearch(object):
             translated to a dictionary automatically.  If no value is given the
             :class:`~elasticsearch.Connection` class defaults will be used.
 
+        :arg transport_class: :class:`~elasticsearch.Transport` subclass to use.
+
         :arg kwargs: any additional arguments will be passed on to the
             :class:`~elasticsearch.Transport` class and, subsequently, to the
             :class:`~elasticsearch.Connection` instances.
         """
-        self.transport = Transport(_normalize_hosts(hosts), **kwargs)
+        self.transport = transport_class(_normalize_hosts(hosts), **kwargs)
 
         # namespaced clients for compatibility with API names
         self.indices = InidicesClient(self)
