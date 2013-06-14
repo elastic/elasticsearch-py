@@ -176,16 +176,15 @@ class Transport(object):
 
         self.set_connections(hosts)
 
-    def mark_dead(self, connection, dead_count):
+    def mark_dead(self, connection):
         """
         Mark a connection as dead (failed) in the connection pool. If sniffing
         on failure is enabled this will initiate the sniffing process.
 
         :arg connection: instance of :class:`~elasticsearch.Connection` that failed
-        :arg dead_count: number of successive failures for this connection
         """
         # mark as dead even when sniffing to avoid hitting this host during the sniff process
-        self.connection_pool.mark_dead(connection, dead_count)
+        self.connection_pool.mark_dead(connection)
         if self.sniff_on_connection_fail:
             self.sniff_hosts()
 
@@ -212,20 +211,19 @@ class Transport(object):
             body = self.serializer.dumps(body)
 
         for attempt in range(self.max_retries + 1):
-            connection, dead_count = self.get_connection()
+            connection = self.get_connection()
 
             try:
                 status, raw_data = connection.perform_request(method, url, params, body)
             except ConnectionError:
-                self.mark_dead(connection, dead_count + 1)
+                self.mark_dead(connection)
 
                 # raise exception on last retry
                 if attempt == self.max_retries:
                     raise
             else:
                 # resurrected connection didn't fail, confirm it's live status
-                if dead_count:
-                    self.connection_pool.mark_live(connection)
+                self.connection_pool.mark_live(connection)
                 data = None
                 if raw_data:
                     data = self.serializer.loads(raw_data)

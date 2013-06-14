@@ -110,13 +110,12 @@ class ConnectionPool(object):
 
         self.selector = selector_class(dict(connections))
 
-    def mark_dead(self, connection, dead_count, now=None):
+    def mark_dead(self, connection, now=None):
         """
         Mark the connection as dead (failed). Remove it from the live pool and
         put it on a timeout.
 
         :arg connection: the failed instance
-        :arg dead_count: number of consecutive failures
         """
         # allow inject for testing purposes
         now = now if now else time.time()
@@ -126,6 +125,7 @@ class ConnectionPool(object):
             # connection not alive or another thread marked it already, ignore
             return
         else:
+            dead_count = self.dead_count.get(connection, 0) + 1
             self.dead_count[connection] = dead_count
             self.dead.put((now + self.dead_timeout * 2 ** (dead_count - 1), connection))
 
@@ -190,6 +190,6 @@ class ConnectionPool(object):
 
         connection = self.selector.select(self.connections)
 
-        return connection, self.dead_count.get(connection, 0)
+        return connection
 
 
