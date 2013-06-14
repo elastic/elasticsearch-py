@@ -222,7 +222,7 @@ class Transport(object):
                 if attempt == self.max_retries:
                     raise
             else:
-                # resurrected connection didn't fail, confirm it's live status
+                # connection didn't fail, confirm it's live status
                 self.connection_pool.mark_live(connection)
                 data = None
                 if raw_data:
