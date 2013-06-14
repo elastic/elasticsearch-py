@@ -83,12 +83,15 @@ class ConnectionPool(object):
     live pool. A connection that has been peviously marked as dead and
     succeedes will be marked as live (it's fail count will be deleted).
     """
-    def __init__(self, connections, dead_timeout=60, selector_class=RoundRobinSelector, randomize_hosts=True, **kwargs):
+    def __init__(self, connections, dead_timeout=60, timeout_cutoff=5,
+        selector_class=RoundRobinSelector, randomize_hosts=True, **kwargs):
         """
         :arg connections: list of tuples containing the
             :class:`~elasticsearch.Connection` instance and it's options
         :arg dead_timeout: number of seconds a connection should be retired for
-            after a failure
+            after a failure, increases on consecutive failures
+        :arg timeout_cutoff: number of consecutive failures after which the
+            timeout doesn't increase
         :arg selector_class: :class:`~elasticsearch.ConnectionSelector`
             subclass to use
         :arg randomize_hosts: shuffle the list of connections upon arrival to
@@ -107,6 +110,7 @@ class ConnectionPool(object):
 
         # default timeout after which to try resurrecting a connection
         self.dead_timeout = dead_timeout
+        self.timeout_cutoff = timeout_cutoff
 
         self.selector = selector_class(dict(connections))
 
@@ -127,7 +131,8 @@ class ConnectionPool(object):
         else:
             dead_count = self.dead_count.get(connection, 0) + 1
             self.dead_count[connection] = dead_count
-            self.dead.put((now + self.dead_timeout * 2 ** (dead_count - 1), connection))
+            timeout = self.dead_timeout * 2 ** min(dead_count - 1, self.timeout_cutoff)
+            self.dead.put((now + timeout, connection))
 
     def mark_live(self, connection):
         """
