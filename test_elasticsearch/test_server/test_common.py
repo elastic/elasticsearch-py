@@ -20,7 +20,7 @@ class YamlTestCase(TestCase):
         """ Execute an instruction based on it's type. """
         for action in test:
             self.assertEquals(1, len(action))
-            action_type, action = action.items()[0]
+            action_type, action = list(action.items())[0]
 
             if hasattr(self, 'run_' + action_type):
                 getattr(self, 'run_' + action_type)(action)
@@ -31,7 +31,7 @@ class YamlTestCase(TestCase):
         """ Perform an api call with given parameters. """
         self.assertEquals(1, len(action))
 
-        method, args = action.items()[0]
+        method, args = list(action.items())[0]
 
         # locate api endpoint
         api = self.client
@@ -47,7 +47,7 @@ class YamlTestCase(TestCase):
     def run_is(self, action, transform=None):
         """ Match part of last response to test data. """
         self.assertEquals(1, len(action))
-        path, expected = action.items()[0]
+        path, expected = list(action.items())[0]
 
         # fetch the possibly nested value from last_response
         value = self.last_response
@@ -106,12 +106,12 @@ def construct_case(filename, name):
 
 
     # take the first test as setUp method
-    attrs = {'setUp' : get_setUp(*tests.pop(0).items()[0])}
+    attrs = {'setUp' : get_setUp(*list(tests.pop(0).items())[0])}
     # create test methods for the rest
     for i, test in enumerate(tests):
         if not test:
             continue
-        attrs['test_%d' % i] = get_test_method(*test.items()[0])
+        attrs['test_%d' % i] = get_test_method(*list(test.items())[0])
 
     return type(name,  (YamlTestCase, ), attrs)
 
