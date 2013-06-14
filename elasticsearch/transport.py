@@ -184,10 +184,10 @@ class Transport(object):
         :arg connection: instance of :class:`~elasticsearch.Connection` that failed
         :arg dead_count: number of successive failures for this connection
         """
+        # mark as dead even when sniffing to avoid hitting this host during the sniff process
+        self.connection_pool.mark_dead(connection, dead_count)
         if self.sniff_on_connection_fail:
             self.sniff_hosts()
-        else:
-            self.connection_pool.mark_dead(connection, dead_count)
 
     def perform_request(self, method, url, params=None, body=None):
         """
