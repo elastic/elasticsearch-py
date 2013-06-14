@@ -5,7 +5,7 @@ import os
 
 import requests
 
-from nose import SkipTest
+from unittest import SkipTest
 
 data_dir = None
 
