@@ -85,9 +85,56 @@ class NamespacedClient(object):
         return self.client.transport
 
 class ClusterClient(NamespacedClient):
-    pass
+    @query_params('level', 'local', 'master_timeout', 'timeout', 'wait_for_active_shards', 'wait_for_nodes', 'wait_for_relocating_shards', 'wait_for_status')
+    def health(self, index=None, params=None):
+        """
+        The cluster health API allows to get a very simple status on the health of the cluster.
+        http://elasticsearch.org/guide/reference/api/admin-cluster-health/
+
+        :arg index: Limit the information returned to a specific index
+        :arg level: Specify the level of detail for returned information, default u'cluster'
+        :arg local: Return local information, do not retrieve the state from master node (default: false)
+        :arg master_timeout: Explicit operation timeout for connection to master node
+        :arg timeout: Explicit operation timeout
+        :arg wait_for_active_shards: Wait until the specified number of shards is active
+        :arg wait_for_nodes: Wait until the specified number of nodes is available
+        :arg wait_for_relocating_shards: Wait until the specified number of relocating shards is finished
+        :arg wait_for_status: Wait until cluster is in a specific state, default None
+        """
+        status, data = self.transport.perform_request('GET', _make_path('_cluster', 'health', index), params=params)
+        return data
 
 class InidicesClient(NamespacedClient):
+    @query_params('analyzer', 'field', 'filters', 'format', 'index', 'prefer_local', 'text', 'tokenizer')
+    def analyze(self, index=None, body=None, params=None):
+        """
+        Performs the analysis process on a text and return the tokens breakdown of the text.
+        http://www.elasticsearch.org/guide/reference/api/admin-indices-analyze/
+
+        :arg index: The name of the index to scope the operation
+        :arg analyzer: The name of the analyzer to use
+        :arg field: The name of the field to
+        :arg filters: A comma-separated list of filters to use for the analysis
+        :arg index: The name of the index to scope the operation
+        :arg prefer_local: With `true`, specify that a local shard should be used if available, with `false`, use a random shard (default: true)
+        :arg text: The text on which the analysis should be performed (when request body is not used)
+        :arg tokenizer: The name of the tokenizer to use for the analysis
+        """
+        status, data = self.transport.perform_request('GET', _make_path(index, '_analyze'), params=params, body=body)
+        return data
+
+    @query_params('ignore_indices')
+    def refresh(self, index=None, params=None):
+        """
+        The refresh API allows to explicitly refresh one or more index, making all operations performed since the last refresh available for search.
+        http://www.elasticsearch.org/guide/reference/api/admin-indices-refresh/
+
+        :arg index: A comma-separated list of index names; use `_all` or empty string to perform the operation on all indices
+        :arg ignore_indices: When performed on multiple indices, allows to ignore `missing` ones, default u'none'
+        """
+        status, data = self.transport.perform_request('POST', _make_path(index, '_refresh'), params=params)
+        return data
+
     @query_params('timeout')
     def create(self, index, body=None, params=None):
         """
