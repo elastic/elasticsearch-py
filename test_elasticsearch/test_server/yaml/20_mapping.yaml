@@ -29,3 +29,17 @@
         indices.get_mapping:
             index: test
     - length: { test: 0 }
+---
+"Test type exists":
+    - do:
+        indices.exists_type:
+            index: test
+            type: test-type
+    - is: true
+---
+"Test type doesn't exists":
+    - do:
+        indices.exists_type:
+            index: test
+            type: not-test-type
+    - is: false

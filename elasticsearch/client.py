@@ -175,6 +175,22 @@ class InidicesClient(NamespacedClient):
             return False
         return True
 
+    @query_params('ignore_indices')
+    def exists_type(self, index, doc_type, params=None):
+        """
+        Used to check if a type/types exists in an index/indices (available since 0.
+        http://www.elasticsearch.org/guide/reference/api/admin-indices-types-exists/
+
+        :arg index: A comma-separated list of index names; use `_all` to check the types across all indices
+        :arg doc_type: A comma-separated list of document types to check
+        :arg ignore_indices: When performed on multiple indices, allows to ignore `missing` ones, default u'none'
+        """
+        try:
+            self.transport.perform_request('HEAD', _make_path(index, doc_type), params=params)
+        except NotFoundError:
+            return False
+        return True
+
     @query_params('ignore_conflicts', 'timeout')
     def put_mapping(self, index, body, doc_type=None, params=None):
         """

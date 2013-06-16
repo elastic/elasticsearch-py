@@ -59,19 +59,27 @@ class YamlTestCase(TestCase):
 
     def run_is(self, action, transform=None):
         """ Match part of last response to test data. """
-        self.assertEquals(1, len(action))
-        path, expected = list(action.items())[0]
 
-        # fetch the possibly nested value from last_response
-        value = self.last_response
-        for step in path.split('.'):
-            if step.isdigit():
-                step = int(step)
-                self.assertIsInstance(value, list)
-                self.assertGreater(len(value), step)
-            else:
-                self.assertIn(step, value)
-            value = value[step]
+        # matching part of the reponse dict
+        if isinstance(action, dict):
+            self.assertEquals(1, len(action))
+            path, expected = list(action.items())[0]
+
+            # fetch the possibly nested value from last_response
+            value = self.last_response
+            for step in path.split('.'):
+                if step.isdigit():
+                    step = int(step)
+                    self.assertIsInstance(value, list)
+                    self.assertGreater(len(value), step)
+                else:
+                    self.assertIn(step, value)
+                value = value[step]
+
+        # matching the entire response
+        else:
+            value = self.last_response
+            expected = action
 
         # sometimes we need to transform the json value before comparing
         if transform:
