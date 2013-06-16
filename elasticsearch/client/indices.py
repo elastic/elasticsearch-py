@@ -1,7 +1,7 @@
 from .utils import NamespacedClient, query_params, _make_path
 from ..exceptions import NotFoundError
 
-class InidicesClient(NamespacedClient):
+class IndicesClient(NamespacedClient):
     @query_params('analyzer', 'field', 'filters', 'format', 'index', 'prefer_local', 'text', 'tokenizer')
     def analyze(self, index=None, body=None, params=None):
         """

@@ -1,5 +1,5 @@
 from ..transport import Transport
-from .indices import InidicesClient
+from .indices import IndicesClient
 from .cluster import ClusterClient
 
 def _normalize_hosts(hosts):
@@ -51,5 +51,5 @@ class Elasticsearch(object):
         self.transport = transport_class(_normalize_hosts(hosts), **kwargs)
 
         # namespaced clients for compatibility with API names
-        self.indices = InidicesClient(self)
+        self.indices = IndicesClient(self)
         self.cluster = ClusterClient(self)
