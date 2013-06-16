@@ -175,6 +175,45 @@ class InidicesClient(NamespacedClient):
             return False
         return True
 
+    @query_params('ignore_conflicts', 'timeout')
+    def put_mapping(self, index, body, doc_type=None, params=None):
+        """
+        The put mapping API allows to register specific mapping definition for a specific type.
+        http://www.elasticsearch.org/guide/reference/api/admin-indices-put-mapping/
+
+        :arg index: A comma-separated list of index names; use `_all` to perform the operation on all indices
+        :arg doc_type: The name of the document type
+        :arg body: The mapping definition
+        :arg ignore_conflicts: Specify whether to ignore conflicts while updating the mapping (default: false)
+        :arg timeout: Explicit operation timeout
+        """
+        status, data = self.transport.perform_request('PUT', _make_path(index, doc_type, '_mapping'), params=params, body=body)
+        return data
+
+    @query_params()
+    def get_mapping(self, index=None, doc_type=None, params=None):
+        """
+        The get mapping API allows to retrieve mapping definition of index or index/type.
+        http://www.elasticsearch.org/guide/reference/api/admin-indices-get-mapping/
+
+        :arg index: A comma-separated list of index names; use `_all` or empty string for all indices
+        :arg doc_type: A comma-separated list of document types
+        """
+        status, data = self.transport.perform_request('GET', _make_path(index, doc_type, '_mapping'), params=params)
+        return data
+
+    @query_params()
+    def delete_mapping(self, index, doc_type, params=None):
+        """
+        Allow to delete a mapping (type) along with its data.
+        http://www.elasticsearch.org/guide/reference/api/admin-indices-delete-mapping/
+
+        :arg index: A comma-separated list of index names; use `_all` for all indices
+        :arg doc_type: The name of the document type to delete
+        """
+        status, data = self.transport.perform_request('DELETE', _make_path(index, doc_type, '_mapping'), params=params)
+        return data
+
 
 class Elasticsearch(object):
     """

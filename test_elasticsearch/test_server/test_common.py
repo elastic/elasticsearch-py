@@ -10,6 +10,13 @@ from unittest import TestCase, SkipTest
 
 from elasticsearch import Elasticsearch
 
+# some params had to be changed in python, keep track of them so we can rename
+# those in the tests accordingly
+PARAMS_RENAMES = {
+    'type': 'doc_type',
+    'from': 'offset',
+}
+
 
 class InvalidActionType(SkipTest):
     pass
@@ -38,6 +45,12 @@ class YamlTestCase(TestCase):
         for m in method.split('.'):
             self.assertTrue(hasattr(api, m))
             api = getattr(api, m)
+
+        # some parameters had to be renamed to not clash with python builtins,
+        # compensate
+        for k in PARAMS_RENAMES:
+            if k in args:
+                args[PARAMS_RENAMES[k]] = args.pop(k)
 
         self.last_response = api(**args)
 
