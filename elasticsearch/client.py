@@ -112,9 +112,11 @@ class InidicesClient(NamespacedClient):
         http://www.elasticsearch.org/guide/reference/api/admin-indices-analyze/
 
         :arg index: The name of the index to scope the operation
+        :arg body: The text on which the analysis should be performed
         :arg analyzer: The name of the analyzer to use
         :arg field: The name of the field to
         :arg filters: A comma-separated list of filters to use for the analysis
+        :arg format: Format of the output, default u'detailed'
         :arg index: The name of the index to scope the operation
         :arg prefer_local: With `true`, specify that a local shard should be used if available, with `false`, use a random shard (default: true)
         :arg text: The text on which the analysis should be performed (when request body is not used)
@@ -142,6 +144,7 @@ class InidicesClient(NamespacedClient):
         http://www.elasticsearch.org/guide/reference/api/admin-indices-create-index/
 
         :arg index: The name of the index
+        :arg body: The configuration for the index (`settings` and `mappings`)
         :arg timeout: Explicit operation timeout
         """
         status, data = self.transport.perform_request('PUT', _make_path(index), params=params, body=body)
