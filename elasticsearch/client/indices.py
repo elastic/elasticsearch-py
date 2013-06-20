@@ -11,7 +11,7 @@ class IndicesClient(NamespacedClient):
         :arg index: The name of the index to scope the operation
         :arg body: The text on which the analysis should be performed
         :arg analyzer: The name of the analyzer to use
-        :arg field: The name of the field to
+        :arg field: Use the analyzer configured for this field (instead of passing the analyzer name)
         :arg filters: A comma-separated list of filters to use for the analysis
         :arg format: Format of the output, default u'detailed'
         :arg index: The name of the index to scope the operation
@@ -53,7 +53,7 @@ class IndicesClient(NamespacedClient):
         Delete index in Elasticsearch
         http://www.elasticsearch.org/guide/reference/api/admin-indices-delete-index/
 
-        :arg index: A list of indices to delete, `None` if all indices should be removed.
+        :arg index: A comma-separated list of indices to delete; use `_all` or empty string to delete all indices
         :arg timeout: Explicit operation timeout
         """
         status, data = self.transport.perform_request('DELETE', _make_path(index), params=params)
@@ -89,7 +89,7 @@ class IndicesClient(NamespacedClient):
         return True
 
     @query_params('ignore_conflicts', 'timeout')
-    def put_mapping(self, index, body, doc_type=None, params=None):
+    def put_mapping(self, index, doc_type, body, params=None):
         """
         The put mapping API allows to register specific mapping definition for a specific type.
         http://www.elasticsearch.org/guide/reference/api/admin-indices-put-mapping/
