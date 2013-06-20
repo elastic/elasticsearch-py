@@ -15,3 +15,6 @@ class TestJSONSerializer(TestCase):
         self.assertRaises(SerializationError, JSONSerializer().loads, object())
         self.assertRaises(SerializationError, JSONSerializer().loads, '')
         self.assertRaises(SerializationError, JSONSerializer().loads, '{{')
+
+    def test_strings_are_left_untouched(self):
+        self.assertEquals('Hello World!', JSONSerializer().dumps('Hello World!'))

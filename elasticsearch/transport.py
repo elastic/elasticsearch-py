@@ -207,7 +207,7 @@ class Transport(object):
         :arg body: body of the request, will be serializes using serializer and
             passed to the connection
         """
-        if body:
+        if body is not None:
             body = self.serializer.dumps(body)
 
         for attempt in range(self.max_retries + 1):

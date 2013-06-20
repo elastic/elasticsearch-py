@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from elasticsearch.transport import Transport
 from elasticsearch.connection import Connection
-from elasticsearch.exceptions import TransportError, ConnectionError
+from elasticsearch.exceptions import ConnectionError
 
 class DummyConnection(Connection):
     def __init__(self, **kwargs):

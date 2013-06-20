@@ -16,6 +16,10 @@ class JSONSerializer(object):
             raise SerializationError(e)
 
     def dumps(self, data):
+        # don't serialize strings
+        if isinstance(data, (type(''), type(u''))):
+            return data
+
         try:
             return json.dumps(data, default=self.default)
         except (ValueError, TypeError) as e:
