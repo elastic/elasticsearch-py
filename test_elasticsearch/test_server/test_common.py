@@ -3,7 +3,7 @@ Dynamically generated set of TestCases based on set of yaml files decribing
 some integration tests. These files are shared among all official Elasticsearch
 clients.
 """
-from os import listdir
+from os import walk
 from os.path import dirname, abspath, join
 import yaml
 from unittest import TestCase, SkipTest
@@ -139,12 +139,12 @@ def construct_case(filename, name):
 
 yaml_dir = join(abspath(dirname(__file__)), 'yaml')
 # find all the test definitions in yaml files ...
-for filename in listdir(yaml_dir):
-    if not filename.endswith('.yaml'):
-        continue
-
-    # ... parse them
-    name = 'Test' + filename.rsplit('.', 1)[0][3:].title()
-    # and insert them into locals for test runner to find them
-    locals()[name] = construct_case(join(yaml_dir, filename), name)
+for (path, dirs, files) in walk(yaml_dir):
+    for filename in files:
+        if not filename.endswith('.yaml'):
+            continue
+        # ... parse them
+        name = 'Test' + ''.join(s.title() for s in path.split('/')) + filename.rsplit('.', 1)[0][3:].title()
+        # and insert them into locals for test runner to find them
+        locals()[name] = construct_case(join(path, filename), name)
 
