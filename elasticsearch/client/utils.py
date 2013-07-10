@@ -16,8 +16,10 @@ def _escape(part):
     """
     if isinstance(part, (list, tuple)):
         part = ','.join(part)
-    # mark ',' as safe for nicer url in logs
-    return quote_plus(part, ',')
+    if isinstance(part, (type(''), type(u''))):
+        # mark ',' as safe for nicer url in logs
+        return quote_plus(part, ',')
+    return str(part)
 
 def _make_path(*parts):
     """
