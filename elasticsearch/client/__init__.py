@@ -101,4 +101,43 @@ class Elasticsearch(object):
         status, data = self.transport.perform_request('GET', _make_path(index, doc_type, id), params=params)
         return data
 
+    @query_params('analyze_wildcard', 'analyzer', 'default_operator', 'df', 'explain', 'fields', 'ignore_indices', 'indices_boost', 'lenient', 'lowercase_expanded_terms', 'offset', 'preference', 'q', 'routing', 'scroll', 'search_type', 'size', 'sort', 'source', 'stats', 'suggest_field', 'suggest_mode', 'suggest_size', 'suggest_text', 'timeout', 'version')
+    def search(self, index=None, doc_type=None, body=None, params=None):
+        """
+        The search API allows to execute a search query and get back search hits that match the query.
+        http://www.elasticsearch.org/guide/reference/api/search/
 
+        :arg index: A comma-separated list of index names to search; use `_all` or empty string to perform the operation on all indices
+        :arg doc_type: A comma-separated list of document types to search; leave empty to perform the operation on all types
+        :arg body: The search definition using the Query DSL
+        :arg analyze_wildcard: Specify whether wildcard and prefix queries should be analyzed (default: false)
+        :arg analyzer: The analyzer to use for the query string
+        :arg default_operator: The default operator for query string query (AND or OR), default u'OR'
+        :arg df: The field to use as default where no field prefix is given in the query string
+        :arg explain: Specify whether to return detailed information about score computation as part of a hit
+        :arg fields: A comma-separated list of fields to return as part of a hit
+        :arg ignore_indices: When performed on multiple indices, allows to ignore `missing` ones, default u'none'
+        :arg indices_boost: Comma-separated list of index boosts
+        :arg lenient: Specify whether format-based query failures (such as providing text to a numeric field) should be ignored
+        :arg lowercase_expanded_terms: Specify whether query terms should be lowercased
+        :arg offset: Starting offset (default: 0)
+        :arg preference: Specify the node or shard the operation should be performed on (default: random)
+        :arg q: Query in the Lucene query string syntax
+        :arg routing: A comma-separated list of specific routing values
+        :arg scroll: Specify how long a consistent view of the index should be maintained for scrolled search
+        :arg search_type: Search operation type
+        :arg size: Number of hits to return (default: 10)
+        :arg sort: A comma-separated list of <field>:<direction> pairs
+        :arg source: The URL-encoded request definition using the Query DSL (instead of using request body)
+        :arg stats: Specific 'tag' of the request for logging and statistical purposes
+        :arg suggest_field: Specify which field to use for suggestions
+        :arg suggest_mode: Specify suggest mode, default u'missing'
+        :arg suggest_size: How many suggestions to return in response
+        :arg suggest_text: The source text for which the suggestions should be returned
+        :arg timeout: Explicit operation timeout
+        :arg version: Specify whether to return document version as part of a hit
+        """
+        if doc_type and not index:
+            index = '_all'
+        status, data = self.transport.perform_request('GET', _make_path(index, doc_type, '_search'), params=params, body=body)
+        return data
