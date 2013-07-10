@@ -43,7 +43,10 @@ def query_params(*es_query_params):
             params = kwargs.pop('params', {})
             for p in es_query_params + GLOBAL_PARAMS:
                 if p in kwargs:
-                    params[p] = kwargs.pop(p)
+                    val = kwargs.pop(p)
+                    if isinstance(val, (list, tuple)):
+                        val = ','.join(val)
+                    params[p] = val
             return func(*args, params=params, **kwargs)
         return _wrapped
     return _wrapper
