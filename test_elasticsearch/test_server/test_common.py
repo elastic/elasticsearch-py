@@ -4,7 +4,7 @@ some integration tests. These files are shared among all official Elasticsearch
 clients.
 """
 from os import walk, environ
-from os.path import dirname, abspath, join
+from os.path import join
 import yaml
 from unittest import TestCase, SkipTest
 
