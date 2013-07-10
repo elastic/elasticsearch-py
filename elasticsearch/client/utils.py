@@ -1,3 +1,4 @@
+from datetime import date, datetime
 from functools import wraps
 try:
     # PY2
@@ -21,6 +22,13 @@ def _escape(part):
         return quote_plus(part, ',')
     return str(part)
 
+def _escape_param(value):
+    if isinstance(value, (list, tuple)):
+        value = ','.join(value)
+    elif isinstance(value, (date, datetime)):
+        value = value.isoformat()
+    return value
+
 def _make_path(*parts):
     """
     Create a URL string from parts, omit all `None` values and empty strings.
@@ -43,10 +51,7 @@ def query_params(*es_query_params):
             params = kwargs.pop('params', {})
             for p in es_query_params + GLOBAL_PARAMS:
                 if p in kwargs:
-                    val = kwargs.pop(p)
-                    if isinstance(val, (list, tuple)):
-                        val = ','.join(val)
-                    params[p] = val
+                    params[p] = _escape_param(kwargs.pop(p))
             return func(*args, params=params, **kwargs)
         return _wrapped
     return _wrapper
