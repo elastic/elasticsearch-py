@@ -3,7 +3,7 @@ Dynamically generated set of TestCases based on set of yaml files decribing
 some integration tests. These files are shared among all official Elasticsearch
 clients.
 """
-from os import walk
+from os import walk, environ
 from os.path import dirname, abspath, join
 import yaml
 from unittest import TestCase, SkipTest
@@ -23,6 +23,10 @@ class InvalidActionType(SkipTest):
 
 
 class YamlTestCase(TestCase):
+    def setUp(self):
+        self.client = Elasticsearch(['localhost:9900'])
+        self.last_response = None
+
     def run_code(self, test):
         """ Execute an instruction based on it's type. """
         for action in test:
@@ -92,59 +96,41 @@ class YamlTestCase(TestCase):
         # clean up everything
         self.client.indices.delete()
 
+    def test_from_yaml(self):
+        for test in self._definition:
+            for name, definition in test.items():
+                print name
+                self.run_code(definition)
+
 
 
 def construct_case(filename, name):
     """
     Parse a definition of a test case from a yaml file and construct the
-    TestCase subclass dynamically transforming the individual tests into test
-    methods. Always use the first one as `setUp`.
+    TestCase subclass dynamically.
     """
-    def get_test_method(name, test):
-        def test_(self):
-            self.run_code(test)
-
-        # remember the name as docstring so it will show up
-        test_.__doc__ = name
-        return test_
-
-
-    def get_setUp(name, definition):
-        def setUp(self):
-            self.client = Elasticsearch(['localhost:9900'])
-            self.last_response = None
-            self.run_code(definition)
-
-            # make sure the cluster is ready
-            self.client.cluster.health(wait_for_status='yellow')
-            self.client.indices.refresh()
-
-        setUp.__doc__ = name
-        return setUp
-
     with open(filename) as f:
         tests = list(yaml.load_all(f))
 
-
-    # take the first test as setUp method
-    attrs = {'setUp' : get_setUp(*list(tests.pop(0).items())[0])}
-    # create test methods for the rest
-    for i, test in enumerate(tests):
-        if not test:
-            continue
-        attrs['test_%d' % i] = get_test_method(*list(test.items())[0])
+    # dump all tests into one test method
+    attrs = {
+        '_definition': tests,
+        '_yaml_file': filename
+    }
 
     return type(name,  (YamlTestCase, ), attrs)
 
 
-yaml_dir = join(abspath(dirname(__file__)), 'yaml')
+yaml_dir = environ.get('YAML_TEST_DIR', None)
+
+if yaml_dir:
 # find all the test definitions in yaml files ...
-for (path, dirs, files) in walk(yaml_dir):
-    for filename in files:
-        if not filename.endswith('.yaml'):
-            continue
-        # ... parse them
-        name = 'Test' + ''.join(s.title() for s in path.split('/')) + filename.rsplit('.', 1)[0][3:].title()
-        # and insert them into locals for test runner to find them
-        locals()[name] = construct_case(join(path, filename), name)
+    for (path, dirs, files) in walk(yaml_dir):
+        for filename in files:
+            if not filename.endswith('.yaml'):
+                continue
+            # ... parse them
+            name = 'Test' + ''.join(s.title() for s in path[len(yaml_dir) + 1:].split('/')) + filename.rsplit('.', 1)[0][3:].title()
+            # and insert them into locals for test runner to find them
+            locals()[name] = construct_case(join(path, filename), name)
 

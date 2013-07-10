@@ -27,6 +27,8 @@ server = None
 pidfile = tempfile.mktemp()
 
 def setup():
+    if 'YAML_TEST_DIR' not in os.environ:
+        raise SkipTest('')
     global server
 
     # check installed
