@@ -141,3 +141,25 @@ class Elasticsearch(object):
             index = '_all'
         status, data = self.transport.perform_request('GET', _make_path(index, doc_type, '_search'), params=params, body=body)
         return data
+
+    @query_params('consistency', 'parent', 'refresh', 'replication', 'routing', 'timeout', 'version', 'version_type')
+    def delete(self, index, doc_type, id, params=None):
+        """
+        The delete API allows to delete a typed JSON document from a specific index based on its id.
+        http://elasticsearch.org/guide/reference/api/delete/
+
+        :arg index: The name of the index
+        :arg doc_type: The type of the document
+        :arg id: The document ID
+        :arg consistency: Specific write consistency setting for the operation
+        :arg parent: ID of parent document
+        :arg refresh: Refresh the index after performing the operation
+        :arg replication: Specific replication type, default u'sync'
+        :arg routing: Specific routing value
+        :arg timeout: Explicit operation timeout
+        :arg version: Explicit version number for concurrency control
+        :arg version_type: Specific version type
+        """
+        status, data = self.transport.perform_request('DELETE', _make_path(index, doc_type, id), params=params)
+        return data
+
