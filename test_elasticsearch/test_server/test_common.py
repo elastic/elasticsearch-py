@@ -40,6 +40,8 @@ class YamlTestCase(TestCase):
 
     def run_do(self, action):
         """ Perform an api call with given parameters. """
+
+        catch = action.pop('catch', None)
         self.assertEquals(1, len(action))
 
         method, args = list(action.items())[0]
@@ -56,12 +58,23 @@ class YamlTestCase(TestCase):
             if k in args:
                 args[PARAMS_RENAMES[k]] = args.pop(k)
 
-        self.last_response = api(**args)
+        try:
+            self.last_response = api(**args)
+        except:
+            if not catch:
+                raise
+            self.run_catch(catch)
+        else:
+            if catch:
+                raise AssertionError('Failed to catch %r in %r.' % (catch, self.last_response))
+
+    def run_catch(self, catch):
+        pass
 
     def run_length(self, action):
         self.run_is(action, len)
 
-    def run_is(self, action, transform=None):
+    def run_match(self, action, transform=None):
         """ Match part of last response to test data. """
 
         # matching part of the reponse dict
