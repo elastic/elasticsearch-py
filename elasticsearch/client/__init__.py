@@ -1,4 +1,5 @@
 from ..transport import Transport
+from ..exceptions import NotFoundError
 from .indices import IndicesClient
 from .cluster import ClusterClient
 from .utils import query_params, _make_path
@@ -143,7 +144,7 @@ class Elasticsearch(object):
         return data
 
     @query_params('consistency', 'parent', 'refresh', 'replication', 'routing', 'timeout', 'version', 'version_type')
-    def delete(self, index, doc_type, id, params=None):
+    def delete(self, index, doc_type, id, ignore_missing=False, params=None):
         """
         The delete API allows to delete a typed JSON document from a specific index based on its id.
         http://elasticsearch.org/guide/reference/api/delete/
@@ -151,6 +152,7 @@ class Elasticsearch(object):
         :arg index: The name of the index
         :arg doc_type: The type of the document
         :arg id: The document ID
+        :arg ignore_missing: if True will not raise an exception on 404
         :arg consistency: Specific write consistency setting for the operation
         :arg parent: ID of parent document
         :arg refresh: Refresh the index after performing the operation
@@ -160,6 +162,11 @@ class Elasticsearch(object):
         :arg version: Explicit version number for concurrency control
         :arg version_type: Specific version type
         """
-        status, data = self.transport.perform_request('DELETE', _make_path(index, doc_type, id), params=params)
+        try:
+            status, data = self.transport.perform_request('DELETE', _make_path(index, doc_type, id), params=params)
+        except NotFoundError:
+            if ignore_missing:
+                return
+            raise
         return data
 
