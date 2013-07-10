@@ -79,9 +79,34 @@ class Elasticsearch(object):
         :arg version: Explicit version number for concurrency control
         :arg version_type: Specific version type
         """
-        params['op_type'] = 'create'
+        return self.index(index, doc_type, body, id=id, params=params, op_type='create')
+
+    @query_params('consistency', 'op_type', 'parent', 'percolate', 'refresh', 'replication', 'routing', 'timeout', 'timestamp', 'ttl', 'version', 'version_type')
+    def index(self, index, doc_type, body, id=None, params=None):
+        """
+        The index API adds or updates a typed JSON document in a specific index, making it searchable.
+        http://elasticsearch.org/guide/reference/api/index_/
+
+        :arg index: The name of the index
+        :arg doc_type: The type of the document
+        :arg id: Document ID
+        :arg body: The document
+        :arg consistency: Explicit write consistency setting for the operation
+        :arg op_type: Explicit operation type, default u'index'
+        :arg parent: ID of the parent document
+        :arg percolate: Percolator queries to execute while indexing the document
+        :arg refresh: Refresh the index after performing the operation
+        :arg replication: Specific replication type, default u'sync'
+        :arg routing: Specific routing value
+        :arg timeout: Explicit operation timeout
+        :arg timestamp: Explicit timestamp for the document
+        :arg ttl: Expiration time for the document
+        :arg version: Explicit version number for concurrency control
+        :arg version_type: Specific version type
+        """
         status, data = self.transport.perform_request('PUT' if id else 'POST', _make_path(index, doc_type, id), params=params, body=body)
         return data
+
 
     @query_params('fields', 'parent', 'preference', 'realtime', 'refresh', 'routing')
     def get(self, index, doc_type, id, params=None):
