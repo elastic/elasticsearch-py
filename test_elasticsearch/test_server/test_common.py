@@ -6,7 +6,7 @@ clients.
 from os import walk, environ
 from os.path import join
 import yaml
-from unittest import TestCase, SkipTest
+from unittest import TestCase
 
 from elasticsearch import Elasticsearch
 
@@ -18,7 +18,7 @@ PARAMS_RENAMES = {
 }
 
 
-class InvalidActionType(SkipTest):
+class InvalidActionType(Exception):
     pass
 
 
@@ -27,6 +27,36 @@ class YamlTestCase(TestCase):
         self.client = Elasticsearch(['localhost:9900'])
         self.last_response = None
         self._state = {}
+
+    def tearDown(self):
+        # clean up everything
+        self.client.indices.delete()
+
+    def test_from_yaml(self):
+        for test in self._definition:
+            for name, definition in test.items():
+                self.run_code(definition)
+
+    def _resolve(self, value):
+        # resolve variables
+        if isinstance(value, (type(u''), type(''))) and value.startswith('$'):
+            value = value[1:]
+            self.assertIn(value, self._state)
+            value = self._state[value]
+        return value
+
+    def _lookup(self, path):
+        # fetch the possibly nested value from last_response
+        value = self.last_response
+        for step in path.split('.'):
+            if step.isdigit():
+                step = int(step)
+                self.assertIsInstance(value, list)
+                self.assertGreater(len(value), step)
+            else:
+                self.assertIn(step, value)
+            value = value[step]
+        return value
 
     def run_code(self, test):
         """ Execute an instruction based on it's type. """
@@ -76,61 +106,33 @@ class YamlTestCase(TestCase):
     def run_catch(self, catch):
         pass
 
-    def set_state(self, key, value):
-        self._state[key] = value
+    def run_gt(self, action):
+        for key, value in action.items():
+            self.assertGreater(self._lookup(key), value)
+
+    def run_lt(self, action):
+        for key, value in action.items():
+            self.assertLess(self._lookup(key), value)
 
     def run_set(self, action):
         for key, value in action.items():
-            self.run_match({key: None}, lambda x: self.set_state(value, x))
+            self._state[value] = self._lookup(key)
 
     def run_is_true(self, action):
-        self.run_match({action: True}, bool)
+        value = self._lookup(action)
+        self.assertTrue(value)
 
     def run_length(self, action):
-        self.run_match(action, len)
+        for path, expected in action.items():
+            value = self._lookup(path)
+            expected = self._resolve(expected)
+            self.assertEquals(expected, len(value))
 
-    def _resolve(self, value):
-        # resolve variables
-        if isinstance(value, (type(u''), type(''))) and value.startswith('$'):
-            value = value[1:]
-            self.assertIn(value, self._state)
-            value = self._state[value]
-        return value
-
-    def run_match(self, action, transform=None):
-        """ Match part of last response to test data. """
-
-        self.assertEquals(1, len(action))
-        path, expected = list(action.items())[0]
-
-        # fetch the possibly nested value from last_response
-        value = self.last_response
-        for step in path.split('.'):
-            if step.isdigit():
-                step = int(step)
-                self.assertIsInstance(value, list)
-                self.assertGreater(len(value), step)
-            else:
-                self.assertIn(step, value)
-            value = value[step]
-
-        # sometimes we need to transform the json value before comparing
-        if transform:
-            value = transform(value)
-
-        expected = self._resolve(expected)
-        # compare target value
-        self.assertEquals(expected, value)
-
-    def tearDown(self):
-        # clean up everything
-        self.client.indices.delete()
-
-    def test_from_yaml(self):
-        for test in self._definition:
-            for name, definition in test.items():
-                self.run_code(definition)
-
+    def run_match(self, action):
+        for path, expected in action.items():
+            value = self._lookup(path)
+            expected = self._resolve(expected)
+            self.assertEquals(expected, value)
 
 
 def construct_case(filename, name):
