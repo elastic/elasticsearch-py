@@ -6,7 +6,7 @@ clients.
 from os import walk, environ
 from os.path import join
 import yaml
-from unittest import TestCase
+from unittest import TestCase, SkipTest
 
 from elasticsearch import Elasticsearch
 
@@ -17,12 +17,22 @@ PARAMS_RENAMES = {
     'from': 'offset',
 }
 
+ES_VERSION = None
+
 
 class InvalidActionType(Exception):
     pass
 
 
 class YamlTestCase(TestCase):
+    @property
+    def es_version(self):
+        global ES_VERSION
+        if ES_VERSION is None:
+            version_string = self.client.info()['version']['number']
+            ES_VERSION = tuple(map(int, version_string.split('.')))
+        return ES_VERSION
+
     def setUp(self):
         self.client = Elasticsearch(['localhost:9900'])
         self.last_response = None
@@ -102,6 +112,15 @@ class YamlTestCase(TestCase):
         else:
             if catch:
                 raise AssertionError('Failed to catch %r in %r.' % (catch, self.last_response))
+
+    def run_skip(self, skip):
+        version, reason = skip['version'], skip['reason']
+        min_version, max_version = version.split(' - ')
+        min_version = tuple(map(int, min_version.split('.')))
+        max_version = tuple(map(int, max_version.split('.')))
+        if  min_version <= self.es_version <= max_version:
+            raise SkipTest(reason)
+
 
     def run_catch(self, catch):
         pass
