@@ -59,6 +59,8 @@ class YamlTestCase(TestCase):
         # fetch the possibly nested value from last_response
         value = self.last_response
         for step in path.split('.'):
+            if not step:
+                continue
             if step.isdigit():
                 step = int(step)
                 self.assertIsInstance(value, list)
@@ -136,6 +138,14 @@ class YamlTestCase(TestCase):
     def run_set(self, action):
         for key, value in action.items():
             self._state[value] = self._lookup(key)
+
+    def run_is_false(self, action):
+        try:
+            value = self._lookup(action)
+        except AssertionError:
+            pass
+        else:
+            self.assertFalse(value)
 
     def run_is_true(self, action):
         value = self._lookup(action)
