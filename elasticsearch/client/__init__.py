@@ -56,6 +56,17 @@ class Elasticsearch(object):
         self.indices = IndicesClient(self)
         self.cluster = ClusterClient(self)
 
+    @query_params()
+    def info(self, params=None):
+        """
+        Want to learn from the creators and advance your data-driven superpowers.
+        http://elasticsearch.org/guide/
+
+
+        """
+        status, data = self.transport.perform_request('GET', '/', params=params)
+        return data
+
     @query_params('consistency', 'id', 'parent', 'percolate', 'refresh', 'replication', 'routing', 'timeout', 'timestamp', 'ttl', 'version', 'version_type')
     def create(self, index, doc_type, body, id=None, params=None):
         """
