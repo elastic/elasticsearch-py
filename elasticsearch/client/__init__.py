@@ -118,16 +118,39 @@ class Elasticsearch(object):
         status, data = self.transport.perform_request('PUT' if id else 'POST', _make_path(index, doc_type, id), params=params, body=body)
         return data
 
-
-    @query_params('fields', 'parent', 'preference', 'realtime', 'refresh', 'routing')
-    def get(self, index, doc_type, id, params=None):
+    @query_params('parent', 'preference', 'realtime', 'refresh', 'routing')
+    def exists(self, index, id, doc_type='_all', params=None):
         """
         The get API allows to get a typed JSON document from the index based on its id.
         http://elasticsearch.org/guide/reference/api/get/
 
         :arg index: The name of the index
-        :arg doc_type: The type of the document (use `_all` to fetch the first document matching the ID across all types)
         :arg id: The document ID
+        :arg doc_type: The type of the document (uses `_all` by default to
+            fetch the first document matching the ID across all types)
+        :arg parent: The ID of the parent document
+        :arg preference: Specify the node or shard the operation should be performed on (default: random)
+        :arg realtime: Specify whether to perform the operation in realtime or search mode
+        :arg refresh: Refresh the shard containing the document before performing the operation
+        :arg routing: Specific routing value
+        """
+        try:
+            self.transport.perform_request('HEAD', _make_path(index, doc_type, id), params=params)
+        except NotFoundError:
+            return False
+        return True
+
+    @query_params('fields', 'parent', 'preference', 'realtime', 'refresh', 'routing')
+    def get(self, index, id, doc_type='_all', ignore_missing=False, params=None):
+        """
+        The get API allows to get a typed JSON document from the index based on its id.
+        http://elasticsearch.org/guide/reference/api/get/
+
+        :arg index: The name of the index
+        :arg id: The document ID
+        :arg doc_type: The type of the document (uses `_all` by default to
+            fetch the first document matching the ID across all types)
+        :arg ignore_missing: if True will not raise an exception on 404
         :arg fields: A comma-separated list of fields to return in the response
         :arg parent: The ID of the parent document
         :arg preference: Specify the node or shard the operation should be performed on (default: random)
@@ -135,7 +158,12 @@ class Elasticsearch(object):
         :arg refresh: Refresh the shard containing the document before performing the operation
         :arg routing: Specific routing value
         """
-        status, data = self.transport.perform_request('GET', _make_path(index, doc_type, id), params=params)
+        try:
+            status, data = self.transport.perform_request('GET', _make_path(index, doc_type, id), params=params)
+        except NotFoundError:
+            if ignore_missing:
+                return
+            raise
         return data
 
     @query_params('analyze_wildcard', 'analyzer', 'default_operator', 'df', 'explain', 'fields', 'ignore_indices', 'indices_boost', 'lenient', 'lowercase_expanded_terms', 'offset', 'preference', 'q', 'routing', 'scroll', 'search_type', 'size', 'sort', 'source', 'stats', 'suggest_field', 'suggest_mode', 'suggest_size', 'suggest_text', 'timeout', 'version')
