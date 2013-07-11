@@ -166,6 +166,25 @@ class Elasticsearch(object):
             raise
         return data
 
+    @query_params('parent', 'preference', 'realtime', 'refresh', 'routing')
+    def get_source(self, index, doc_type, id, params=None):
+        """
+        The get API allows to get the document source from the index based on its id.
+        http://elasticsearch.org/guide/reference/api/get/
+
+        :arg index: The name of the index
+        :arg doc_type: The type of the document; use `_all` to fetch the first document matching the ID across all types
+        :arg id: The document ID
+        :arg parent: The ID of the parent document
+        :arg preference: Specify the node or shard the operation should be performed on (default: random)
+        :arg realtime: Specify whether to perform the operation in realtime or search mode
+        :arg refresh: Refresh the shard containing the document before performing the operation
+        :arg routing: Specific routing value
+        """
+        status, data = self.transport.perform_request('GET', _make_path(index, doc_type, id, '_source'), params=params)
+        return data
+
+
     @query_params('analyze_wildcard', 'analyzer', 'default_operator', 'df', 'explain', 'fields', 'ignore_indices', 'indices_boost', 'lenient', 'lowercase_expanded_terms', 'offset', 'preference', 'q', 'routing', 'scroll', 'search_type', 'size', 'sort', 'source', 'stats', 'suggest_field', 'suggest_mode', 'suggest_size', 'suggest_text', 'timeout', 'version')
     def search(self, index=None, doc_type=None, body=None, params=None):
         """
