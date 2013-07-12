@@ -25,6 +25,7 @@ class InvalidActionType(Exception):
 
 
 class YamlTestCase(TestCase):
+    _definition = None
     @property
     def es_version(self):
         global ES_VERSION
@@ -43,6 +44,8 @@ class YamlTestCase(TestCase):
         self.client.indices.delete()
 
     def test_from_yaml(self):
+        if not self._definition:
+            raise SkipTest('Empty test.')
         for test in self._definition:
             for name, definition in test.items():
                 self.run_code(definition)
@@ -117,9 +120,9 @@ class YamlTestCase(TestCase):
 
     def run_skip(self, skip):
         version, reason = skip['version'], skip['reason']
-        min_version, max_version = version.split(' - ')
-        min_version = tuple(map(int, min_version.split('.')))
-        max_version = tuple(map(int, max_version.split('.')))
+        min_version, max_version = version.split('-')
+        min_version = tuple(map(int, min_version.strip().split('.')))
+        max_version = tuple(map(int, max_version.strip().split('.')))
         if  min_version <= self.es_version <= max_version:
             raise SkipTest(reason)
 
@@ -178,7 +181,7 @@ def construct_case(filename, name):
         '_yaml_file': filename
     }
 
-    return type(name,  (YamlTestCase, ), attrs)
+    return type(name, (YamlTestCase, ), attrs)
 
 
 yaml_dir = environ.get('YAML_TEST_DIR', None)
