@@ -171,7 +171,7 @@ class Elasticsearch(object):
         return data
 
     @query_params('parent', 'preference', 'realtime', 'refresh', 'routing')
-    def get_source(self, index, doc_type, id, params=None):
+    def get_source(self, index, doc_type, id, ignore_missing=False, params=None):
         """
         The get API allows to get the document source from the index based on its id.
         http://elasticsearch.org/guide/reference/api/get/
@@ -179,13 +179,19 @@ class Elasticsearch(object):
         :arg index: The name of the index
         :arg doc_type: The type of the document; use `_all` to fetch the first document matching the ID across all types
         :arg id: The document ID
+        :arg ignore_missing: if True will not raise an exception on 404
         :arg parent: The ID of the parent document
         :arg preference: Specify the node or shard the operation should be performed on (default: random)
         :arg realtime: Specify whether to perform the operation in realtime or search mode
         :arg refresh: Refresh the shard containing the document before performing the operation
         :arg routing: Specific routing value
         """
-        status, data = self.transport.perform_request('GET', _make_path(index, doc_type, id, '_source'), params=params)
+        try:
+            status, data = self.transport.perform_request('GET', _make_path(index, doc_type, id, '_source'), params=params)
+        except NotFoundError:
+            if ignore_missing:
+                return
+            raise
         return data
 
     @query_params('fields', 'parent', 'preference', 'realtime', 'refresh', 'routing')
@@ -217,6 +223,7 @@ class Elasticsearch(object):
         :arg doc_type: The type of the document
         :arg id: Document ID
         :arg body: The request definition using either `script` or partial `doc`
+        :arg ignore_missing: if True will not raise an exception on 404
         :arg consistency: Explicit write consistency setting for the operation
         :arg fields: A comma-separated list of fields to return in the response
         :arg lang: The script language (default: mvel)
