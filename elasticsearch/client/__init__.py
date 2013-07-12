@@ -171,13 +171,14 @@ class Elasticsearch(object):
         return data
 
     @query_params('parent', 'preference', 'realtime', 'refresh', 'routing')
-    def get_source(self, index, doc_type, id, ignore_missing=False, params=None):
+    def get_source(self, index, id, doc_type='_all', ignore_missing=False, params=None):
         """
         The get API allows to get the document source from the index based on its id.
         http://elasticsearch.org/guide/reference/api/get/
 
         :arg index: The name of the index
-        :arg doc_type: The type of the document; use `_all` to fetch the first document matching the ID across all types
+        :arg doc_type: The type of the document (uses `_all` by default to
+            fetch the first document matching the ID across all types)
         :arg id: The document ID
         :arg ignore_missing: if True will not raise an exception on 404
         :arg parent: The ID of the parent document
