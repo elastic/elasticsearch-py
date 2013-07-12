@@ -207,6 +207,41 @@ class Elasticsearch(object):
         status, data = self.transport.perform_request('GET', _make_path(index, doc_type, '_mget'), params=params, body=body)
         return data
 
+    @query_params('consistency', 'fields', 'lang', 'parent', 'percolate', 'refresh', 'replication', 'retry_on_conflict', 'routing', 'script', 'timeout', 'timestamp', 'ttl', 'version', 'version_type')
+    def update(self, index, doc_type, id, body=None, ignore_missing=False, params=None):
+        """
+        The update API allows to update a document based on a script or partial data provided.
+        http://elasticsearch.org/guide/reference/api/update/
+
+        :arg index: The name of the index
+        :arg doc_type: The type of the document
+        :arg id: Document ID
+        :arg body: The request definition using either `script` or partial `doc`
+        :arg consistency: Explicit write consistency setting for the operation
+        :arg fields: A comma-separated list of fields to return in the response
+        :arg lang: The script language (default: mvel)
+        :arg parent: ID of the parent document
+        :arg percolate: Perform percolation during the operation; use specific registered query name, attribute, or wildcard
+        :arg refresh: Refresh the index after performing the operation
+        :arg replication: Specific replication type, default u'sync'
+        :arg retry_on_conflict: Specify how many times should the operation be retried when a conflict occurs (default: 0)
+        :arg routing: Specific routing value
+        :arg script: The URL-encoded script definition (instead of using request body)
+        :arg timeout: Explicit operation timeout
+        :arg timestamp: Explicit timestamp for the document
+        :arg ttl: Expiration time for the document
+        :arg version: Explicit version number for concurrency control
+        :arg version_type: Explicit version number for concurrency control
+        """
+        try:
+            status, data = self.transport.perform_request('POST', _make_path(index, doc_type, id, '_update'), params=params, body=body)
+        except NotFoundError:
+            if ignore_missing:
+                return
+            raise
+        return data
+
+
     @query_params('analyze_wildcard', 'analyzer', 'default_operator', 'df', 'explain', 'fields', 'ignore_indices', 'indices_boost', 'lenient', 'lowercase_expanded_terms', 'offset', 'preference', 'q', 'routing', 'scroll', 'search_type', 'size', 'sort', 'source', 'stats', 'suggest_field', 'suggest_mode', 'suggest_size', 'suggest_text', 'timeout', 'version')
     def search(self, index=None, doc_type=None, body=None, params=None):
         """
