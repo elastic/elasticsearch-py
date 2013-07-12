@@ -1,5 +1,5 @@
 from ..transport import Transport
-from ..exceptions import NotFoundError
+from ..exceptions import NotFoundError, TransportError
 from .indices import IndicesClient
 from .cluster import ClusterClient
 from .utils import query_params, _make_path
@@ -55,6 +55,15 @@ class Elasticsearch(object):
         # namespaced clients for compatibility with API names
         self.indices = IndicesClient(self)
         self.cluster = ClusterClient(self)
+
+    @query_params()
+    def ping(self, params=None):
+        """ Returns True if the cluster is up, False otherwise. """
+        try:
+            self.transport.perform_request('HEAD', _make_path(), params=params)
+        except TransportError:
+            return False
+        return True
 
     @query_params()
     def info(self, params=None):
