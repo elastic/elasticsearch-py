@@ -58,13 +58,8 @@ class Elasticsearch(object):
 
     @query_params()
     def info(self, params=None):
-        """
-        Want to learn from the creators and advance your data-driven superpowers.
-        http://elasticsearch.org/guide/
-
-
-        """
-        status, data = self.transport.perform_request('GET', '/', params=params)
+        """ Get the basic info from the current cluster. """
+        status, data = self.transport.perform_request('GET', _make_path(), params=params)
         return data
 
     @query_params('consistency', 'id', 'parent', 'percolate', 'refresh', 'replication', 'routing', 'timeout', 'timestamp', 'ttl', 'version', 'version_type')
