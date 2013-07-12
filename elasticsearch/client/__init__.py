@@ -184,6 +184,24 @@ class Elasticsearch(object):
         status, data = self.transport.perform_request('GET', _make_path(index, doc_type, id, '_source'), params=params)
         return data
 
+    @query_params('fields', 'parent', 'preference', 'realtime', 'refresh', 'routing')
+    def mget(self, body, index=None, doc_type=None, params=None):
+        """
+        Multi GET API allows to get multiple documents based on an index, type (optional) and id (and possibly routing).
+        http://elasticsearch.org/guide/reference/api/multi-get/
+
+        :arg body: Document identifiers; can be either `docs` (containing full document information) or `ids` (when index and type is provided in the URL.
+        :arg index: The name of the index
+        :arg doc_type: The type of the document
+        :arg fields: A comma-separated list of fields to return in the response
+        :arg parent: The ID of the parent document
+        :arg preference: Specify the node or shard the operation should be performed on (default: random)
+        :arg realtime: Specify whether to perform the operation in realtime or search mode
+        :arg refresh: Refresh the shard containing the document before performing the operation
+        :arg routing: Specific routing value
+        """
+        status, data = self.transport.perform_request('GET', _make_path(index, doc_type, '_mget'), params=params, body=body)
+        return data
 
     @query_params('analyze_wildcard', 'analyzer', 'default_operator', 'df', 'explain', 'fields', 'ignore_indices', 'indices_boost', 'lenient', 'lowercase_expanded_terms', 'offset', 'preference', 'q', 'routing', 'scroll', 'search_type', 'size', 'sort', 'source', 'stats', 'suggest_field', 'suggest_mode', 'suggest_size', 'suggest_text', 'timeout', 'version')
     def search(self, index=None, doc_type=None, body=None, params=None):
