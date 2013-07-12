@@ -5,6 +5,9 @@ import os
 
 import requests
 
+from elasticsearch import Elasticsearch
+from elasticsearch.exceptions import ConnectionError
+
 from unittest import SkipTest
 
 data_dir = None
@@ -27,9 +30,14 @@ server = None
 pidfile = tempfile.mktemp()
 
 def setup():
+    # no integration tests, skip starting the server
     if 'YAML_TEST_DIR' not in os.environ:
         raise SkipTest('')
     global server
+
+    # use running ES instance, don't attempt to start our own
+    if 'TEST_ES_SERVER' in os.environ:
+        return
 
     # check installed
     if subprocess.call('which vim >/dev/null 2>&1', shell=True) != 0:
@@ -54,18 +62,17 @@ def setup():
     cmd = CMD % args
 
     server = subprocess.Popen(cmd, shell=True)
+    os.environ['TEST_ES_SERVER'] = 'localhost:%(port)s' % args
+    client = Elasticsearch([os.environ['TEST_ES_SERVER']])
 
     # wait for green status
     for _ in range(100):
-        response = None
         time.sleep(.1)
         try:
-            response = requests.get('http://localhost:%(port)s/_cluster/health?wait_for_status=green' % args)
-        except requests.ConnectionError:
-            continue
-
-        if response.status_code == 200:
+            client.cluster.health(wait_for_status='yellow')
             break
+        except ConnectionError:
+            continue
 
     else:
         # timeout

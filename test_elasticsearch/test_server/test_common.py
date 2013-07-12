@@ -34,7 +34,7 @@ class YamlTestCase(TestCase):
         return ES_VERSION
 
     def setUp(self):
-        self.client = Elasticsearch(['localhost:9900'])
+        self.client = Elasticsearch([environ['TEST_ES_SERVER']])
         self.last_response = None
         self._state = {}
 
