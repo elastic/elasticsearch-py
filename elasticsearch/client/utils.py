@@ -19,7 +19,7 @@ def _escape(part):
         part = ','.join(part)
     if isinstance(part, (type(''), type(u''))):
         # mark ',' as safe for nicer url in logs
-        return quote_plus(part, ',')
+        return quote_plus(part.encode('utf-8'), ',')
     return str(part)
 
 def _escape_param(value):
