@@ -19,7 +19,12 @@ def _escape(part):
         part = ','.join(part)
     if isinstance(part, (type(''), type(u''))):
         # mark ',' as safe for nicer url in logs
-        return quote_plus(part.encode('utf-8'), ',')
+        try:
+            part = part.encode('utf-8')
+        except UnicodeDecodeError:
+            # Python 2 and str, no need to re-encode
+            pass
+        return quote_plus(part, ',')
     return str(part)
 
 def _escape_param(value):
