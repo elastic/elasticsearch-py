@@ -193,7 +193,7 @@ if yaml_dir:
             if not filename.endswith('.yaml'):
                 continue
             # ... parse them
-            name = 'Test' + ''.join(s.title() for s in path[len(yaml_dir) + 1:].split('/')) + filename.rsplit('.', 1)[0].title().replace('_', '')
+            name = ('Test' + ''.join(s.title() for s in path[len(yaml_dir) + 1:].split('/')) + filename.rsplit('.', 1)[0].title()).replace('_', '').replace('.', '')
             # and insert them into locals for test runner to find them
             locals()[name] = construct_case(join(path, filename), name)
 
