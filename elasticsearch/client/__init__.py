@@ -249,7 +249,6 @@ class Elasticsearch(object):
             raise
         return data
 
-
     @query_params('analyze_wildcard', 'analyzer', 'default_operator', 'df', 'explain', 'fields', 'ignore_indices', 'indices_boost', 'lenient', 'lowercase_expanded_terms', 'offset', 'preference', 'q', 'routing', 'scroll', 'search_type', 'size', 'sort', 'source', 'stats', 'suggest_field', 'suggest_mode', 'suggest_size', 'suggest_text', 'timeout', 'version')
     def search(self, index=None, doc_type=None, body=None, params=None):
         """
@@ -289,6 +288,18 @@ class Elasticsearch(object):
         if doc_type and not index:
             index = '_all'
         status, data = self.transport.perform_request('GET', _make_path(index, doc_type, '_search'), params=params, body=body)
+        return data
+
+    @query_params('scroll')
+    def scroll(self, scroll_id, params=None):
+        """
+        A search request can be scrolled by specifying the scroll parameter.
+        http://www.elasticsearch.org/guide/reference/api/search/scroll/
+
+        :arg scroll_id: The scroll ID
+        :arg scroll: Specify how long a consistent view of the index should be maintained for scrolled search
+        """
+        status, data = self.transport.perform_request('GET', _make_path('_search', 'scroll', scroll_id), params=params)
         return data
 
     @query_params('consistency', 'parent', 'refresh', 'replication', 'routing', 'timeout', 'version', 'version_type')
