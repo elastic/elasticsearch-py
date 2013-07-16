@@ -73,13 +73,12 @@ class RequestsHttpConnection(Connection):
 
         # raise errors based on http status codes, let the client handle those if needed
         if not (200 <= response.status_code < 300):
-
             self.log_request_fail(method, request.url, duration, response.status_code)
 
             if response.status_code in HTTP_EXCEPTIONS:
-                raise HTTP_EXCEPTIONS[response.status_code]()
+                raise HTTP_EXCEPTIONS[response.status_code](response.text)
 
-            raise TransportError()
+            raise TransportError(response.text)
 
         self.log_request_success(method, request.url, request.path_url, body, response.status_code, raw_data, duration)
 
