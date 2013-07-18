@@ -33,3 +33,23 @@ class ClusterClient(NamespacedClient):
         status, data = self.transport.perform_request('POST', _make_path('_cluster', 'reroute'), params=params, body=body)
         return data
 
+    @query_params()
+    def get_settings(self, params=None):
+        """
+        Allows to update cluster wide specific settings.
+        http://elasticsearch.org/guide/reference/api/admin-cluster-update-settings/
+        """
+        status, data = self.transport.perform_request('GET', _make_path('_cluster', 'settings'), params=params)
+        return data
+
+    @query_params()
+    def put_settings(self, body, params=None):
+        """
+        Allows to update cluster wide specific settings.
+        http://elasticsearch.org/guide/reference/api/admin-cluster-update-settings/
+
+        :arg body: The settings to be updated. Can be either `transient` or `persistent` (survives cluster restart).
+        """
+        status, data = self.transport.perform_request('PUT', _make_path('_cluster', 'settings'), params=params, body=body)
+        return data
+
