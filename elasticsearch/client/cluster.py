@@ -19,3 +19,17 @@ class ClusterClient(NamespacedClient):
         """
         status, data = self.transport.perform_request('GET', _make_path('_cluster', 'health', index), params=params)
         return data
+
+    @query_params('dry_run', 'filter_metadata')
+    def reroute(self, body=None, params=None):
+        """
+        The reroute command allows to explicitly execute a cluster reroute allocation command including specific commands.
+        http://elasticsearch.org/guide/reference/api/admin-cluster-reroute/
+
+        :arg body: The definition of `commands` to perform (`move`, `cancel`, `allocate`)
+        :arg dry_run: Simulate the operation only and return the resulting state
+        :arg filter_metadata: Don't return cluster state metadata (default: false)
+        """
+        status, data = self.transport.perform_request('POST', _make_path('_cluster', 'reroute'), params=params, body=body)
+        return data
+
