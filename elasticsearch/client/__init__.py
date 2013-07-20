@@ -329,3 +329,46 @@ class Elasticsearch(object):
             raise
         return data
 
+    @query_params('ignore_indices', 'min_score', 'preference', 'routing', 'source')
+    def count(self, index=None, doc_type=None, body=None, params=None):
+        """
+        The count API allows to easily execute a query and get the number of matches for that query.
+        http://elasticsearch.org/guide/reference/api/count/
+
+        :arg index: A comma-separated list of indices to restrict the results
+        :arg doc_type: A comma-separated list of types to restrict the results
+        :arg body: A query to restrict the results (optional)
+        :arg ignore_indices: When performed on multiple indices, allows to ignore `missing` ones, default u'none'
+        :arg min_score: Include only documents with a specific `_score` value in the result
+        :arg preference: Specify the node or shard the operation should be performed on (default: random)
+        :arg routing: Specific routing value
+        :arg source: The URL-encoded query definition (instead of using the request body)
+        """
+        status, data = self.transport.perform_request('POST', _make_path(index, doc_type, '_count'), params=params, body=body)
+        return data
+
+    @query_params('consistency', 'doc_type', 'refresh', 'replication')
+    def bulk(self, body, index=None, doc_type=None, params=None):
+        """
+        The bulk API makes it possible to perform many index/delete operations in a single API call.
+        http://elasticsearch.org/guide/reference/api/bulk/
+
+        :arg body: The operation definition and data (action-data pairs)
+        :arg index: Default index for items which don't provide one
+        :arg doc_type: Default document type for items which don't provide one
+        :arg consistency: Explicit write consistency setting for the operation
+        :arg doc_type: Default document type for items which don't provide one
+        :arg refresh: Refresh the index after performing the operation
+        :arg replication: Explicitely set the replication type, default u'sync'
+        """
+        # if not passed in a string, serialize items and join by newline
+        if not isinstance(body, (type(''), type(u''))):
+            body = '\n'.join(map(self.transport.serializer.dumps, body))
+
+        # bulk body must end with a newline
+        if not body.endswith('\n'):
+            body += '\n'
+
+        status, data = self.transport.perform_request('POST', _make_path(index, doc_type, '_bulk'), params=params, body=body)
+        return data
+

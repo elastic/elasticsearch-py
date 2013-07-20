@@ -25,7 +25,11 @@ class Connection(object):
     def log_request_success(self, method, full_url, path, body, status_code, response, duration):
         def _pretty_json(data):
             # pretty JSON in tracer curl logs
-            data = json.dumps(json.loads(data), sort_keys=True, indent=2, separators=(',', ': '))
+            try:
+                data = json.dumps(json.loads(data), sort_keys=True, indent=2, separators=(',', ': '))
+            except ValueError:
+                # non-json data or a bulk request
+                pass
             return data
 
         logger.info(
