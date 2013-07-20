@@ -126,3 +126,60 @@ class IndicesClient(NamespacedClient):
         """
         status, data = self.transport.perform_request('DELETE', _make_path(index, doc_type, '_mapping'), params=params)
         return data
+
+    @query_params('timeout')
+    def put_alias(self, index, name, body=None, params=None):
+        """
+        APIs in elasticsearch accept an index name when working against a specific index, and several indices when applicable.
+        http://www.elasticsearch.org/guide/reference/api/admin-indices-aliases/
+
+        :arg index: The name of the index with an alias
+        :arg name: The name of the alias to be created or updated
+        :arg body: The settings for the alias, such as `routing` or `filter`
+        :arg timeout: Explicit timestamp for the document
+        """
+        status, data = self.transport.perform_request('PUT', _make_path(index, '_alias', name), params=params, body=body)
+        return data
+
+    @query_params('ignore_indices')
+    def exists_alias(self, name, index=None, params=None):
+        """
+        APIs in elasticsearch accept an index name when working against a specific index, and several indices when applicable.
+        http://www.elasticsearch.org/guide/reference/api/admin-indices-aliases/
+
+        :arg name: A comma-separated list of alias names to return
+        :arg index: A comma-separated list of index names to filter aliases
+        :arg ignore_indices: When performed on multiple indices, allows to ignore `missing` ones, default u'none'
+        """
+        try:
+            self.transport.perform_request('HEAD', _make_path(index, '_alias', name), params=params)
+        except NotFoundError:
+            return False
+        return True
+
+    @query_params('ignore_indices')
+    def get_alias(self, name, index=None, params=None):
+        """
+        APIs in elasticsearch accept an index name when working against a specific index, and several indices when applicable.
+        http://www.elasticsearch.org/guide/reference/api/admin-indices-aliases/
+
+        :arg name: A comma-separated list of alias names to return
+        :arg index: A comma-separated list of index names to filter aliases
+        :arg ignore_indices: When performed on multiple indices, allows to ignore `missing` ones, default u'none'
+        """
+        status, data = self.transport.perform_request('GET', _make_path(index, '_alias', name), params=params)
+        return data
+
+    @query_params('timeout')
+    def delete_alias(self, index, name, params=None):
+        """
+        APIs in elasticsearch accept an index name when working against a specific index, and several indices when applicable.
+        http://www.elasticsearch.org/guide/reference/api/admin-indices-aliases/
+
+        :arg index: The name of the index with an alias
+        :arg name: The name of the alias to be deleted
+        :arg timeout: Explicit timestamp for the document
+        """
+        status, data = self.transport.perform_request('DELETE', _make_path(index, '_alias', name), params=params)
+        return data
+
