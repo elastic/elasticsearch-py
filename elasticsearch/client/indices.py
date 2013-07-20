@@ -183,3 +183,40 @@ class IndicesClient(NamespacedClient):
         status, data = self.transport.perform_request('DELETE', _make_path(index, '_alias', name), params=params)
         return data
 
+    @query_params('timeout')
+    def delete_template(self, name, params=None):
+        """
+        Index templates allow to define templates that will automatically be applied to new indices created.
+        http://www.elasticsearch.org/guide/reference/api/admin-indices-templates/
+
+        :arg name: The name of the template
+        :arg timeout: Explicit operation timeout
+        """
+        status, data = self.transport.perform_request('DELETE', _make_path('_template', name), params=params)
+        return data
+
+    @query_params('order', 'timeout')
+    def put_template(self, name, body, params=None):
+        """
+        Index templates allow to define templates that will automatically be applied to new indices created.
+        http://www.elasticsearch.org/guide/reference/api/admin-indices-templates/
+
+        :arg name: The name of the template
+        :arg body: The template definition
+        :arg order: The order for this template when merging multiple matching ones (higher numbers are merged later, overriding the lower numbers)
+        :arg timeout: Explicit operation timeout
+        """
+        status, data = self.transport.perform_request('PUT', _make_path('_template', name), params=params, body=body)
+        return data
+
+    @query_params()
+    def get_template(self, name, params=None):
+        """
+        Index templates allow to define templates that will automatically be applied to new indices created.
+        http://www.elasticsearch.org/guide/reference/api/admin-indices-templates/
+
+        :arg name: The name of the template
+        """
+        status, data = self.transport.perform_request('GET', _make_path('_template', name), params=params)
+        return data
+
