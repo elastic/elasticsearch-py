@@ -389,3 +389,22 @@ class Elasticsearch(object):
         status, data = self.transport.perform_request('GET', _make_path(index, doc_type, '_msearch'), params=params, body=self._bulk_body(body))
         return data
 
+    @query_params('consistency', 'ignore_indices', 'replication', 'routing', 'source', 'timeout')
+    def delete_by_query(self, index, doc_type=None, body=None, params=None):
+        """
+        The delete by query API allows to delete documents from one or more indices and one or more types based on a query.
+        http://www.elasticsearch.org/guide/reference/api/delete-by-query/
+
+        :arg index: A comma-separated list of indices to restrict the operation
+        :arg doc_type: A comma-separated list of types to restrict the operation
+        :arg body: A query to restrict the operation
+        :arg consistency: Specific write consistency setting for the operation
+        :arg ignore_indices: When performed on multiple indices, allows to ignore `missing` ones, default u'none'
+        :arg replication: Specific replication type, default u'sync'
+        :arg routing: Specific routing value
+        :arg source: The URL-encoded query definition (instead of using the request body)
+        :arg timeout: Explicit operation timeout
+        """
+        status, data = self.transport.perform_request('DELETE', _make_path(index, doc_type, '_query'), params=params, body=body)
+        return data
+
