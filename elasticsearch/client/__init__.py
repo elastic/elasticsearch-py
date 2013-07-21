@@ -372,3 +372,25 @@ class Elasticsearch(object):
         status, data = self.transport.perform_request('POST', _make_path(index, doc_type, '_bulk'), params=params, body=body)
         return data
 
+    @query_params('search_type')
+    def msearch(self, body, index=None, doc_type=None, params=None):
+        """
+        The multi search API allows to execute several search requests within the same API.
+        http://www.elasticsearch.org/guide/reference/api/multi-search/
+
+        :arg body: The request definitions (metadata-search request definition pairs), separated by newlines
+        :arg index: A comma-separated list of index names to use as default
+        :arg doc_type: A comma-separated list of document types to use as default
+        :arg search_type: Search operation type
+        """
+        # if not passed in a string, serialize items and join by newline
+        if not isinstance(body, (type(''), type(u''))):
+            body = '\n'.join(map(self.transport.serializer.dumps, body))
+
+        # bulk body must end with a newline
+        if not body.endswith('\n'):
+            body += '\n'
+
+        status, data = self.transport.perform_request('GET', _make_path(index, doc_type, '_msearch'), params=params, body=body)
+        return data
+
