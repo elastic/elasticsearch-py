@@ -61,9 +61,11 @@ class YamlTestCase(TestCase):
     def _lookup(self, path):
         # fetch the possibly nested value from last_response
         value = self.last_response
+        path = path.replace(r'\.', '\1')
         for step in path.split('.'):
             if not step:
                 continue
+            step = step.replace('\1', '.')
             if step.isdigit():
                 step = int(step)
                 self.assertIsInstance(value, list)
