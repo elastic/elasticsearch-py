@@ -56,6 +56,17 @@ class Elasticsearch(object):
         self.indices = IndicesClient(self)
         self.cluster = ClusterClient(self)
 
+    def _bulk_body(self, body):
+        # if not passed in a string, serialize items and join by newline
+        if not isinstance(body, (type(''), type(u''))):
+            body = '\n'.join(map(self.transport.serializer.dumps, body))
+
+        # bulk body must end with a newline
+        if not body.endswith('\n'):
+            body += '\n'
+
+        return body
+
     @query_params()
     def ping(self, params=None):
         """ Returns True if the cluster is up, False otherwise. """
@@ -361,15 +372,7 @@ class Elasticsearch(object):
         :arg refresh: Refresh the index after performing the operation
         :arg replication: Explicitely set the replication type, default u'sync'
         """
-        # if not passed in a string, serialize items and join by newline
-        if not isinstance(body, (type(''), type(u''))):
-            body = '\n'.join(map(self.transport.serializer.dumps, body))
-
-        # bulk body must end with a newline
-        if not body.endswith('\n'):
-            body += '\n'
-
-        status, data = self.transport.perform_request('POST', _make_path(index, doc_type, '_bulk'), params=params, body=body)
+        status, data = self.transport.perform_request('POST', _make_path(index, doc_type, '_bulk'), params=params, body=self._bulk_body(body))
         return data
 
     @query_params('search_type')
@@ -383,14 +386,6 @@ class Elasticsearch(object):
         :arg doc_type: A comma-separated list of document types to use as default
         :arg search_type: Search operation type
         """
-        # if not passed in a string, serialize items and join by newline
-        if not isinstance(body, (type(''), type(u''))):
-            body = '\n'.join(map(self.transport.serializer.dumps, body))
-
-        # bulk body must end with a newline
-        if not body.endswith('\n'):
-            body += '\n'
-
-        status, data = self.transport.perform_request('GET', _make_path(index, doc_type, '_msearch'), params=params, body=body)
+        status, data = self.transport.perform_request('GET', _make_path(index, doc_type, '_msearch'), params=params, body=self._bulk_body(body))
         return data
 
