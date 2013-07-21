@@ -220,3 +220,26 @@ class IndicesClient(NamespacedClient):
         status, data = self.transport.perform_request('GET', _make_path('_template', name), params=params)
         return data
 
+    @query_params()
+    def get_settings(self, index=None, params=None):
+        """
+        The get settings API allows to retrieve settings of index/indices.
+        http://www.elasticsearch.org/guide/reference/api/admin-indices-get-settings/
+
+        :arg index: A comma-separated list of index names; use `_all` or empty string to perform the operation on all indices
+        """
+        status, data = self.transport.perform_request('GET', _make_path(index, '_settings'), params=params)
+        return data
+
+    @query_params()
+    def put_settings(self, body, index=None, params=None):
+        """
+        Change specific index level settings in real time.
+        http://www.elasticsearch.org/guide/reference/api/admin-indices-update-settings/
+
+        :arg index: A comma-separated list of index names; use `_all` or empty string to perform the operation on all indices
+        :arg body: The index settings to be updated
+        """
+        status, data = self.transport.perform_request('PUT', _make_path(index, '_settings'), params=params, body=body)
+        return data
+
