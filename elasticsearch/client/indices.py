@@ -34,7 +34,7 @@ class IndicesClient(NamespacedClient):
         status, data = self.transport.perform_request('POST', _make_path(index, '_refresh'), params=params)
         return data
 
-    @query_params('timeout')
+    @query_params('timeout', 'master_timeout')
     def create(self, index, body=None, params=None):
         """
         Create index in Elasticsearch.
@@ -42,18 +42,20 @@ class IndicesClient(NamespacedClient):
 
         :arg index: The name of the index
         :arg body: The configuration for the index (`settings` and `mappings`)
+        :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         """
         status, data = self.transport.perform_request('PUT', _make_path(index), params=params, body=body)
         return data
 
-    @query_params('timeout')
+    @query_params('timeout', 'master_timeout')
     def delete(self, index=None, params=None):
         """
         Delete index in Elasticsearch
         http://www.elasticsearch.org/guide/reference/api/admin-indices-delete-index/
 
         :arg index: A comma-separated list of indices to delete; use `_all` or empty string to delete all indices
+        :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         """
         status, data = self.transport.perform_request('DELETE', _make_path(index), params=params)
@@ -88,7 +90,7 @@ class IndicesClient(NamespacedClient):
             return False
         return True
 
-    @query_params('ignore_conflicts', 'timeout')
+    @query_params('ignore_conflicts', 'timeout', 'master_timeout')
     def put_mapping(self, index, doc_type, body, params=None):
         """
         The put mapping API allows to register specific mapping definition for a specific type.
@@ -98,6 +100,7 @@ class IndicesClient(NamespacedClient):
         :arg doc_type: The name of the document type
         :arg body: The mapping definition
         :arg ignore_conflicts: Specify whether to ignore conflicts while updating the mapping (default: false)
+        :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         """
         status, data = self.transport.perform_request('PUT', _make_path(index, doc_type, '_mapping'), params=params, body=body)
@@ -115,7 +118,7 @@ class IndicesClient(NamespacedClient):
         status, data = self.transport.perform_request('GET', _make_path(index, doc_type, '_mapping'), params=params)
         return data
 
-    @query_params()
+    @query_params('master_timeout')
     def delete_mapping(self, index, doc_type, params=None):
         """
         Allow to delete a mapping (type) along with its data.
@@ -123,11 +126,12 @@ class IndicesClient(NamespacedClient):
 
         :arg index: A comma-separated list of index names; use `_all` for all indices
         :arg doc_type: The name of the document type to delete
+        :arg master_timeout: Specify timeout for connection to master
         """
         status, data = self.transport.perform_request('DELETE', _make_path(index, doc_type, '_mapping'), params=params)
         return data
 
-    @query_params('timeout')
+    @query_params('timeout', 'master_timeout')
     def put_alias(self, index, name, body=None, params=None):
         """
         APIs in elasticsearch accept an index name when working against a specific index, and several indices when applicable.
@@ -136,6 +140,7 @@ class IndicesClient(NamespacedClient):
         :arg index: The name of the index with an alias
         :arg name: The name of the alias to be created or updated
         :arg body: The settings for the alias, such as `routing` or `filter`
+        :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit timestamp for the document
         """
         status, data = self.transport.perform_request('PUT', _make_path(index, '_alias', name), params=params, body=body)
@@ -170,7 +175,7 @@ class IndicesClient(NamespacedClient):
         status, data = self.transport.perform_request('GET', _make_path(index, '_alias', name), params=params)
         return data
 
-    @query_params('timeout')
+    @query_params('timeout', 'master_timeout')
     def delete_alias(self, index, name, params=None):
         """
         APIs in elasticsearch accept an index name when working against a specific index, and several indices when applicable.
@@ -178,24 +183,26 @@ class IndicesClient(NamespacedClient):
 
         :arg index: The name of the index with an alias
         :arg name: The name of the alias to be deleted
+        :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit timestamp for the document
         """
         status, data = self.transport.perform_request('DELETE', _make_path(index, '_alias', name), params=params)
         return data
 
-    @query_params('timeout')
+    @query_params('timeout', 'master_timeout')
     def delete_template(self, name, params=None):
         """
         Index templates allow to define templates that will automatically be applied to new indices created.
         http://www.elasticsearch.org/guide/reference/api/admin-indices-templates/
 
         :arg name: The name of the template
+        :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         """
         status, data = self.transport.perform_request('DELETE', _make_path('_template', name), params=params)
         return data
 
-    @query_params('order', 'timeout')
+    @query_params('order', 'timeout', 'master_timeout')
     def put_template(self, name, body, params=None):
         """
         Index templates allow to define templates that will automatically be applied to new indices created.
@@ -204,6 +211,7 @@ class IndicesClient(NamespacedClient):
         :arg name: The name of the template
         :arg body: The template definition
         :arg order: The order for this template when merging multiple matching ones (higher numbers are merged later, overriding the lower numbers)
+        :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         """
         status, data = self.transport.perform_request('PUT', _make_path('_template', name), params=params, body=body)
@@ -231,13 +239,14 @@ class IndicesClient(NamespacedClient):
         status, data = self.transport.perform_request('GET', _make_path(index, '_settings'), params=params)
         return data
 
-    @query_params()
+    @query_params('master_timeout')
     def put_settings(self, body, index=None, params=None):
         """
         Change specific index level settings in real time.
         http://www.elasticsearch.org/guide/reference/api/admin-indices-update-settings/
 
         :arg index: A comma-separated list of index names; use `_all` or empty string to perform the operation on all indices
+        :arg master_timeout: Specify timeout for connection to master
         :arg body: The index settings to be updated
         """
         status, data = self.transport.perform_request('PUT', _make_path(index, '_settings'), params=params, body=body)
