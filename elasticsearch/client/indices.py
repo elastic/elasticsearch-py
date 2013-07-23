@@ -277,3 +277,45 @@ class IndicesClient(NamespacedClient):
         status, data = self.transport.perform_request('PUT', _make_path(index, '_settings'), params=params, body=body)
         return data
 
+    @query_params('master_timeout')
+    def put_warmer(self, index, name, body, doc_type=None, params=None):
+        """
+        Index warming allows to run registered search requests to warm up the index before it is available for search.
+        http://www.elasticsearch.org/guide/reference/api/admin-indices-warmers/
+
+        :arg index: A comma-separated list of index names to register the warmer for; use `_all` or empty string to perform the operation on all indices
+        :arg name: The name of the warmer
+        :arg doc_type: A comma-separated list of document types to register the warmer for; leave empty to perform the operation on all types
+        :arg body: The search request definition for the warmer (query, filters, facets, sorting, etc)
+        :arg master_timeout: Specify timeout for connection to master
+        """
+        status, data = self.transport.perform_request('PUT', _make_path(index, doc_type, '_warmer', name), params=params, body=body)
+        return data
+
+    @query_params('master_timeout')
+    def delete_warmer(self, index, doc_type=None, name=None, params=None):
+        """
+        Index warming allows to run registered search requests to warm up the index before it is available for search.
+        http://www.elasticsearch.org/guide/reference/api/admin-indices-warmers/
+
+        :arg index: A comma-separated list of index names to register warmer for; use `_all` or empty string to perform the operation on all indices
+        :arg doc_type: A comma-separated list of document types to register warmer for; use `_all` or empty string to perform the operation on all types
+        :arg name: The name of the warmer (supports wildcards); leave empty to delete all warmers
+        :arg master_timeout: Specify timeout for connection to master
+        """
+        status, data = self.transport.perform_request('DELETE', _make_path(index, doc_type, '_warmer', name), params=params)
+        return data
+
+    @query_params()
+    def get_warmer(self, index, doc_type=None, name=None, params=None):
+        """
+        Index warming allows to run registered search requests to warm up the index before it is available for search.
+        http://www.elasticsearch.org/guide/reference/api/admin-indices-warmers/
+
+        :arg index: A comma-separated list of index names to restrict the operation; use `_all` to perform the operation on all indices
+        :arg doc_type: A comma-separated list of document types to restrict the operation; leave empty to perform the operation on all types
+        :arg name: The name of the warmer (supports wildcards); leave empty to get all warmers
+        """
+        status, data = self.transport.perform_request('GET', _make_path(index, doc_type, '_warmer', name), params=params)
+        return data
+
