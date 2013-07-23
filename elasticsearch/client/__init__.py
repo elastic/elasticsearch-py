@@ -424,3 +424,17 @@ class Elasticsearch(object):
         status, data = self.transport.perform_request('POST', _make_path(index, '_suggest'), params=params, body=body)
         return data
 
+    @query_params('prefer_local')
+    def percolate(self, index, doc_type, body, params=None):
+        """
+        The percolator allows to register queries against an index, and then send percolate requests which include a doc, and getting back the queries that match on that doc out of the set of registered queries.
+        http://elasticsearch.org/guide/reference/api/percolate/
+
+        :arg index: The name of the index with a registered percolator query
+        :arg doc_type: The document type
+        :arg body: The document (`doc`) to percolate against registered queries; optionally also a `query` to limit the percolation to specific registered queries
+        :arg prefer_local: With `true`, specify that a local shard should be used if available, with `false`, use a random shard (default: true)
+        """
+        status, data = self.transport.perform_request('GET', _make_path(index, doc_type, '_percolate'), params=params, body=body)
+        return data
+
