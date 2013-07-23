@@ -408,3 +408,19 @@ class Elasticsearch(object):
         status, data = self.transport.perform_request('DELETE', _make_path(index, doc_type, '_query'), params=params, body=body)
         return data
 
+    @query_params('ignore_indices', 'preference', 'routing', 'source')
+    def suggest(self, index=None, body=None, params=None):
+        """
+        The suggest feature suggests similar looking terms based on a provided text by using a suggester.
+        http://elasticsearch.org/guide/reference/api/search/suggest/
+
+        :arg index: A comma-separated list of index names to restrict the operation; use `_all` or empty string to perform the operation on all indices
+        :arg body: The request definition
+        :arg ignore_indices: When performed on multiple indices, allows to ignore `missing` ones, default u'none'
+        :arg preference: Specify the node or shard the operation should be performed on (default: random)
+        :arg routing: Specific routing value
+        :arg source: The URL-encoded request definition (instead of using request body)
+        """
+        status, data = self.transport.perform_request('POST', _make_path(index, '_suggest'), params=params, body=body)
+        return data
+
