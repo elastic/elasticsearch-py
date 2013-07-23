@@ -175,6 +175,31 @@ class IndicesClient(NamespacedClient):
         status, data = self.transport.perform_request('GET', _make_path(index, '_alias', name), params=params)
         return data
 
+    @query_params('timeout')
+    def get_aliases(self, index=None, params=None):
+        """
+        APIs in elasticsearch accept an index name when working against a specific index, and several indices when applicable.
+        http://www.elasticsearch.org/guide/reference/api/admin-indices-aliases/
+
+        :arg index: A comma-separated list of index names to filter aliases
+        :arg timeout: Explicit operation timeout
+        """
+        status, data = self.transport.perform_request('GET', _make_path(index, '_aliases'), params=params)
+        return data
+
+    @query_params('timeout', 'master_timeout')
+    def update_aliases(self, body, params=None):
+        """
+        APIs in elasticsearch accept an index name when working against a specific index, and several indices when applicable.
+        http://www.elasticsearch.org/guide/reference/api/admin-indices-aliases/
+
+        :arg body: The definition of `actions` to perform
+        :arg master_timeout: Specify timeout for connection to master
+        :arg timeout: Request timeout
+        """
+        status, data = self.transport.perform_request('POST', _make_path('_aliases'), params=params, body=body)
+        return data
+
     @query_params('timeout', 'master_timeout')
     def delete_alias(self, index, name, params=None):
         """
