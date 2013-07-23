@@ -438,3 +438,36 @@ class Elasticsearch(object):
         status, data = self.transport.perform_request('GET', _make_path(index, doc_type, '_percolate'), params=params, body=body)
         return data
 
+    @query_params('boost_terms', 'max_doc_freq', 'max_query_terms', 'max_word_len', 'min_doc_freq', 'min_term_freq', 'min_word_len', 'mlt_fields', 'percent_terms_to_match', 'routing', 'search_from', 'search_indices', 'search_query_hint', 'search_scroll', 'search_size', 'search_source', 'search_type', 'search_types', 'stop_words')
+    def mlt(self, index, doc_type, id, body=None, params=None):
+        """
+        The more like this (mlt) API allows to get documents that are "like" a specified document.
+        http://elasticsearch.org/guide/reference/api/more-like-this/
+
+        :arg index: The name of the index
+        :arg doc_type: The type of the document (use `_all` to fetch the first document matching the ID across all types)
+        :arg id: The document ID
+        :arg body: A specific search request definition
+        :arg boost_terms: The boost factor
+        :arg max_doc_freq: The word occurrence frequency as count: words with higher occurrence in the corpus will be ignored
+        :arg max_query_terms: The maximum query terms to be included in the generated query
+        :arg max_word_len: The minimum length of the word: longer words will be ignored
+        :arg min_doc_freq: The word occurrence frequency as count: words with lower occurrence in the corpus will be ignored
+        :arg min_term_freq: The term frequency as percent: terms with lower occurence in the source document will be ignored
+        :arg min_word_len: The minimum length of the word: shorter words will be ignored
+        :arg mlt_fields: Specific fields to perform the query against
+        :arg percent_terms_to_match: How many terms have to match in order to consider the document a match (default: 0.3)
+        :arg routing: Specific routing value
+        :arg search_from: The offset from which to return results
+        :arg search_indices: A comma-separated list of indices to perform the query against (default: the index containing the document)
+        :arg search_query_hint: The search query hint
+        :arg search_scroll: A scroll search request definition
+        :arg search_size: The number of documents to return (default: 10)
+        :arg search_source: A specific search request definition (instead of using the request body)
+        :arg search_type: Specific search type (eg. `dfs_then_fetch`, `count`, etc)
+        :arg search_types: A comma-separated list of types to perform the query against (default: the same type as the document)
+        :arg stop_words: A list of stop words to be ignored
+        """
+        status, data = self.transport.perform_request('GET', _make_path(index, doc_type, id, '_mlt'), params=params, body=body)
+        return data
+
