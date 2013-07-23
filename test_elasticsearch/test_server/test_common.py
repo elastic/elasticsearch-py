@@ -23,6 +23,9 @@ ES_VERSION = None
 class InvalidActionType(Exception):
     pass
 
+def _get_version(version_string):
+    version = version_string.strip().split('.')
+    return tuple(int(v) if v.isdigit() else 999 for v in version)
 
 class YamlTestCase(TestCase):
     _definition = None
@@ -31,7 +34,7 @@ class YamlTestCase(TestCase):
         global ES_VERSION
         if ES_VERSION is None:
             version_string = self.client.info()['version']['number']
-            ES_VERSION = tuple(map(int, version_string.split('.')))
+            ES_VERSION = _get_version(version_string)
         return ES_VERSION
 
     def setUp(self):
@@ -123,8 +126,8 @@ class YamlTestCase(TestCase):
     def run_skip(self, skip):
         version, reason = skip['version'], skip['reason']
         min_version, max_version = version.split('-')
-        min_version = tuple(map(int, min_version.strip().split('.')))
-        max_version = tuple(map(int, max_version.strip().split('.')))
+        min_version = _get_version(min_version)
+        max_version = _get_version(max_version)
         if  min_version <= self.es_version <= max_version:
             raise SkipTest(reason)
 
