@@ -404,6 +404,19 @@ class IndicesClient(NamespacedClient):
         status, data = self.transport.perform_request('GET', _make_path(index, '_stats', metric_family), params=params)
         return data
 
+    @query_params('ignore_indices', 'operation_threading')
+    def segments(self, index=None, params=None):
+        """
+        Provide low level segments information that a Lucene index (shard level) is built with.
+        http://elasticsearch.org/guide/reference/api/admin-indices-segments/
+
+        :arg index: A comma-separated list of index names; use `_all` or empty string to perform the operation on all indices
+        :arg ignore_indices: When performed on multiple indices, allows to ignore `missing` ones, default u'none'
+        :arg operation_threading: TODO: ?
+        """
+        status, data = self.transport.perform_request('GET', _make_path(index, '_segments'), params=params)
+        return data
+
     @query_params('flush', 'ignore_indices', 'max_num_segments', 'only_expunge_deletes', 'operation_threading', 'refresh', 'wait_for_merge')
     def optimize(self, index=None, params=None):
         """
