@@ -20,6 +20,25 @@ class ClusterClient(NamespacedClient):
         status, data = self.transport.perform_request('GET', _make_path('_cluster', 'health', index), params=params)
         return data
 
+    @query_params('filter_blocks', 'filter_index_templates', 'filter_indices', 'filter_metadata', 'filter_nodes', 'filter_routing_table', 'local', 'master_timeout')
+    def state(self, params=None):
+        """
+        The cluster state API allows to get a comprehensive state information of the whole cluster.
+        http://elasticsearch.org/guide/reference/api/admin-cluster-state/
+
+        :arg filter_blocks: Do not return information about blocks
+        :arg filter_index_templates: Do not return information about index templates
+        :arg filter_indices: Limit returned metadata information to specific indices
+        :arg filter_metadata: Do not return information about indices metadata
+        :arg filter_nodes: Do not return information about nodes
+        :arg filter_routing_table: Do not return information about shard allocation (`routing_table` and `routing_nodes`)
+        :arg local: Return local information, do not retrieve the state from master node (default: false)
+        :arg master_timeout: Specify timeout for connection to master
+        """
+        status, data = self.transport.perform_request('GET', _make_path('_cluster', 'state'), params=params)
+        return data
+
+
     @query_params('dry_run', 'filter_metadata')
     def reroute(self, body=None, params=None):
         """
