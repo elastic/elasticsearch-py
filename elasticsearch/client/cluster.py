@@ -97,3 +97,26 @@ class ClusterClient(NamespacedClient):
         status, data = self.transport.perform_request('GET', _make_path('_nodes', node_id, 'stats', metric, fields), params=params)
         return data
 
+    @query_params('all', 'clear', 'http', 'jvm', 'network', 'os', 'plugin', 'process', 'settings', 'thread_pool', 'timeout', 'transport')
+    def node_info(self, node_id=None, params=None):
+        """
+        The cluster nodes info API allows to retrieve one or more (or all) of the cluster nodes information.
+        http://elasticsearch.org/guide/reference/api/admin-cluster-nodes-info/
+
+        :arg node_id: A comma-separated list of node IDs or names to limit the returned information; use `_local` to return information from the node you're connecting to, leave empty to get information from all nodes
+        :arg all: Return all available information
+        :arg clear: Reset the default settings
+        :arg http: Return information about HTTP
+        :arg jvm: Return information about the JVM
+        :arg network: Return information about network
+        :arg os: Return information about the operating system
+        :arg plugin: Return information about plugins
+        :arg process: Return information about the Elasticsearch process
+        :arg settings: Return information about node settings
+        :arg thread_pool: Return information about the thread pool
+        :arg timeout: Explicit operation timeout
+        :arg transport: Return information about transport
+        """
+        status, data = self.transport.perform_request('GET', _make_path('_cluster', 'nodes', node_id), params=params)
+        return data
+
