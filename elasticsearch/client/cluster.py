@@ -72,3 +72,28 @@ class ClusterClient(NamespacedClient):
         status, data = self.transport.perform_request('PUT', _make_path('_cluster', 'settings'), params=params, body=body)
         return data
 
+    @query_params('all', 'clear', 'fields', 'fs', 'http', 'indices', 'jvm', 'network', 'os', 'process', 'thread_pool', 'transport')
+    def node_stats(self, node_id=None, metric=None, fields=None, params=None):
+        """
+        The cluster nodes stats API allows to retrieve one or more (or all) of the cluster nodes statistics.
+        http://elasticsearch.org/guide/reference/api/admin-cluster-nodes-stats/
+
+        :arg node_id: A comma-separated list of node IDs or names to limit the returned information; use `_local` to return information from the node you're connecting to, leave empty to get information from all nodes
+        :arg metric: Limit the information returned for `indices` family to a specific metric
+        :arg fields: A comma-separated list of fields to return detailed information for, when returning the `indices` metric family (supports wildcards)
+        :arg all: Return all available information
+        :arg clear: Reset the default level of detail
+        :arg fields: A comma-separated list of fields for `fielddata` metric (supports wildcards)
+        :arg fs: Return information about the filesystem
+        :arg http: Return information about HTTP
+        :arg indices: Return information about indices
+        :arg jvm: Return information about the JVM
+        :arg network: Return information about network
+        :arg os: Return information about the operating system
+        :arg process: Return information about the Elasticsearch process
+        :arg thread_pool: Return information about the thread pool
+        :arg transport: Return information about transport
+        """
+        status, data = self.transport.perform_request('GET', _make_path('_nodes', node_id, 'stats', metric, fields), params=params)
+        return data
+
