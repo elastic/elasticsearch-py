@@ -360,3 +360,18 @@ class IndicesClient(NamespacedClient):
         status, data = self.transport.perform_request('GET', _make_path(index, doc_type, '_warmer', name), params=params)
         return data
 
+    @query_params('ignore_indices', 'operation_threading', 'recovery', 'snapshot')
+    def status(self, index=None, params=None):
+        """
+        The indices status API allows to get a comprehensive status information of one or more indices.
+        http://elasticsearch.org/guide/reference/api/admin-indices-status/
+
+        :arg index: A comma-separated list of index names; use `_all` or empty string to perform the operation on all indices
+        :arg ignore_indices: When performed on multiple indices, allows to ignore `missing` ones, default u'none'
+        :arg operation_threading: TODO: ?
+        :arg recovery: Return information about shard recovery
+        :arg snapshot: TODO: ?
+        """
+        status, data = self.transport.perform_request('GET', _make_path(index, '_status'), params=params)
+        return data
+
