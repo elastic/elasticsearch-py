@@ -34,6 +34,21 @@ class IndicesClient(NamespacedClient):
         status, data = self.transport.perform_request('POST', _make_path(index, '_refresh'), params=params)
         return data
 
+    @query_params('force', 'full', 'ignore_indices', 'refresh')
+    def flush(self, index=None, params=None):
+        """
+        The flush API allows to flush one or more indices through an API.
+        http://www.elasticsearch.org/guide/reference/api/admin-indices-flush/
+
+        :arg index: A comma-separated list of index names; use `_all` or empty string for all indices
+        :arg force: TODO: ?
+        :arg full: TODO: ?
+        :arg ignore_indices: When performed on multiple indices, allows to ignore `missing` ones, default u'none'
+        :arg refresh: Refresh the index after performing the operation
+        """
+        status, data = self.transport.perform_request('POST', _make_path(index, '_flush'), params=params)
+        return data
+
     @query_params('timeout', 'master_timeout')
     def create(self, index, body=None, params=None):
         """
