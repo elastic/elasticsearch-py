@@ -375,3 +375,21 @@ class IndicesClient(NamespacedClient):
         status, data = self.transport.perform_request('GET', _make_path(index, '_status'), params=params)
         return data
 
+    @query_params('flush', 'ignore_indices', 'max_num_segments', 'only_expunge_deletes', 'operation_threading', 'refresh', 'wait_for_merge')
+    def optimize(self, index=None, params=None):
+        """
+        The optimize API allows to optimize one or more indices through an API.
+        http://www.elasticsearch.org/guide/reference/api/admin-indices-optimize/
+
+        :arg index: A comma-separated list of index names; use `_all` or empty string to perform the operation on all indices
+        :arg flush: Specify whether the index should be flushed after performing the operation (default: true)
+        :arg ignore_indices: When performed on multiple indices, allows to ignore `missing` ones, default u'none'
+        :arg max_num_segments: The number of segments the index should be merged into (default: dynamic)
+        :arg only_expunge_deletes: Specify whether the operation should only expunge deleted documents
+        :arg operation_threading: TODO: ?
+        :arg refresh: Specify whether the index should be refreshed after performing the operation (default: true)
+        :arg wait_for_merge: Specify whether the request should block until the merge process is finished (default: true)
+        """
+        status, data = self.transport.perform_request('POST', _make_path(index, '_optimize'), params=params)
+        return data
+
