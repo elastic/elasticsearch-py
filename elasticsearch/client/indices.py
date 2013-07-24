@@ -393,3 +393,21 @@ class IndicesClient(NamespacedClient):
         status, data = self.transport.perform_request('POST', _make_path(index, '_optimize'), params=params)
         return data
 
+    @query_params('explain', 'ignore_indices', 'operation_threading', 'q', 'source')
+    def validate_query(self, index=None, doc_type=None, body=None, params=None):
+        """
+        The validate API allows a user to validate a potentially expensive query without executing it.
+        http://www.elasticsearch.org/guide/reference/api/validate/
+
+        :arg index: A comma-separated list of index names to restrict the operation; use `_all` or empty string to perform the operation on all indices
+        :arg doc_type: A comma-separated list of document types to restrict the operation; leave empty to perform the operation on all types
+        :arg body: The query definition
+        :arg explain: Return detailed information about the error
+        :arg ignore_indices: When performed on multiple indices, allows to ignore `missing` ones, default u'none'
+        :arg operation_threading: TODO: ?
+        :arg q: Query in the Lucene query string syntax
+        :arg source: The URL-encoded query definition (instead of using the request body)
+        """
+        status, data = self.transport.perform_request('GET', _make_path(index, doc_type, '_validate', 'query'), params=params, body=body)
+        return data
+
