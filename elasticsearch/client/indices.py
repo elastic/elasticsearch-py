@@ -375,6 +375,35 @@ class IndicesClient(NamespacedClient):
         status, data = self.transport.perform_request('GET', _make_path(index, '_status'), params=params)
         return data
 
+    @query_params('all', 'clear', 'docs', 'fielddata', 'fields', 'filter_cache', 'flush', 'get', 'groups', 'id_cache', 'ignore_indices', 'indexing', 'merge', 'refresh', 'search', 'store', 'warmer')
+    def stats(self, index=None, metric_family=None, params=None):
+        """
+        Indices level stats provide statistics on different operations happening on an index.
+        http://elasticsearch.org/guide/reference/api/admin-indices-stats/
+
+        :arg index: A comma-separated list of index names; use `_all` or empty string to perform the operation on all indices
+        :arg metric_family: Limit the information returned to a specific metric
+        :arg all: Return all available information
+        :arg clear: Reset the default level of detail
+        :arg docs: Return information about indexed and deleted documents
+        :arg fielddata: Return information about field data
+        :arg fields: A comma-separated list of fields for `fielddata` metric (supports wildcards)
+        :arg filter_cache: Return information about filter cache
+        :arg flush: Return information about flush operations
+        :arg get: Return information about get operations
+        :arg groups: A comma-separated list of search groups for `search` statistics
+        :arg id_cache: Return information about ID cache
+        :arg ignore_indices: When performed on multiple indices, allows to ignore `missing` ones, default u'none'
+        :arg indexing: Return information about indexing operations
+        :arg merge: Return information about merge operations
+        :arg refresh: Return information about refresh operations
+        :arg search: Return information about search operations; use the `groups` parameter to include information for specific search groups
+        :arg store: Return information about the size of the index
+        :arg warmer: Return information about warmers
+        """
+        status, data = self.transport.perform_request('GET', _make_path(index, '_stats', metric_family), params=params)
+        return data
+
     @query_params('flush', 'ignore_indices', 'max_num_segments', 'only_expunge_deletes', 'operation_threading', 'refresh', 'wait_for_merge')
     def optimize(self, index=None, params=None):
         """
