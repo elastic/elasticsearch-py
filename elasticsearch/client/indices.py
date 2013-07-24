@@ -131,6 +131,18 @@ class IndicesClient(NamespacedClient):
             return False
         return True
 
+    @query_params('ignore_indices')
+    def snapshot_index(self, index=None, params=None):
+        """
+        The gateway snapshot API allows to explicitly perform a snapshot through the gateway of one or more indices (backup them).
+        http://www.elasticsearch.org/guide/reference/api/admin-indices-gateway-snapshot/
+
+        :arg index: A comma-separated list of index names; use `_all` or empty string for all indices
+        :arg ignore_indices: When performed on multiple indices, allows to ignore `missing` ones, default u'none'
+        """
+        status, data = self.transport.perform_request('POST', _make_path(index, '_gateway', 'snapshot'), params=params)
+        return data
+
     @query_params('ignore_conflicts', 'timeout', 'master_timeout')
     def put_mapping(self, index, doc_type, body, params=None):
         """
