@@ -465,3 +465,25 @@ class IndicesClient(NamespacedClient):
         status, data = self.transport.perform_request('GET', _make_path(index, doc_type, '_validate', 'query'), params=params, body=body)
         return data
 
+    @query_params('field_data', 'fielddata', 'fields', 'filter', 'filter_cache', 'filter_keys', 'id', 'id_cache', 'ignore_indices', 'index', 'recycler')
+    def clear_cache(self, index=None, params=None):
+        """
+        The clear cache API allows to clear either all caches or specific cached associated with one ore more indices.
+        http://www.elasticsearch.org/guide/reference/api/admin-indices-clearcache/
+
+        :arg index: A comma-separated list of index name to limit the operation
+        :arg field_data: Clear field data
+        :arg fielddata: Clear field data
+        :arg fields: A comma-separated list of fields to clear when using the `field_data` parameter (default: all)
+        :arg filter: Clear filter caches
+        :arg filter_cache: Clear filter caches
+        :arg filter_keys: A comma-separated list of keys to clear when using the `filter_cache` parameter (default: all)
+        :arg id: Clear ID caches for parent/child
+        :arg id_cache: Clear ID caches for parent/child
+        :arg ignore_indices: When performed on multiple indices, allows to ignore `missing` ones, default u'none'
+        :arg index: A comma-separated list of index name to limit the operation
+        :arg recycler: Clear the recycler cache
+        """
+        status, data = self.transport.perform_request('POST', _make_path(index, '_cache', 'clear'), params=params)
+        return data
+
