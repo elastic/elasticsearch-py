@@ -64,6 +64,32 @@ class IndicesClient(NamespacedClient):
         return data
 
     @query_params('timeout', 'master_timeout')
+    def open(self, index, params=None):
+        """
+        The open and close index APIs allow to close an index, and later on opening it.
+        http://www.elasticsearch.org/guide/reference/api/admin-indices-open-close/
+
+        :arg index: The name of the index
+        :arg master_timeout: Specify timeout for connection to master
+        :arg timeout: Explicit operation timeout
+        """
+        status, data = self.transport.perform_request('POST', _make_path(index, '_open'), params=params)
+        return data
+
+    @query_params('timeout', 'master_timeout')
+    def close(self, index, params=None):
+        """
+        The open and close index APIs allow to close an index, and later on opening it.
+        http://www.elasticsearch.org/guide/reference/api/admin-indices-open-close/
+
+        :arg index: The name of the index
+        :arg master_timeout: Specify timeout for connection to master
+        :arg timeout: Explicit operation timeout
+        """
+        status, data = self.transport.perform_request('POST', _make_path(index, '_close'), params=params)
+        return data
+
+    @query_params('timeout', 'master_timeout')
     def delete(self, index=None, params=None):
         """
         Delete index in Elasticsearch
