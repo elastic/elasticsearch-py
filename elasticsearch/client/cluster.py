@@ -120,3 +120,16 @@ class ClusterClient(NamespacedClient):
         status, data = self.transport.perform_request('GET', _make_path('_cluster', 'nodes', node_id), params=params)
         return data
 
+    @query_params('delay', 'exit')
+    def node_shutdown(self, node_id=None, params=None):
+        """
+        The nodes shutdown API allows to shutdown one or more (or all) nodes in the cluster.
+        http://elasticsearch.org/guide/reference/api/admin-cluster-nodes-shutdown/
+
+        :arg node_id: A comma-separated list of node IDs or names to perform the operation on; use `_local` to perform the operation on the node you're connected to, leave empty to perform the operation on all nodes
+        :arg delay: Set the delay for the operation (default: 1s)
+        :arg exit: Exit the JVM as well (default: true)
+        """
+        status, data = self.transport.perform_request('POST', _make_path('_cluster', 'nodes', node_id, '_shutdown'), params=params)
+        return data
+
