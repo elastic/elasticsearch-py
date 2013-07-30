@@ -31,6 +31,9 @@ class TransportError(ElastiSearchException):
 
 class ConnectionError(TransportError):
     """ Error raised when there was an exception while talking to ES. """
+    def __str__(self):
+        return 'ConnectionError(%s) caused by: %s(%s)' % (
+            self.error, self.info.__class__.__name__, self.info)
 
 
 class NotFoundError(TransportError):
