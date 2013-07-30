@@ -13,7 +13,7 @@ class JSONSerializer(object):
         try:
             return json.loads(s)
         except (ValueError, TypeError) as e:
-            raise SerializationError(e)
+            raise SerializationError(s, e)
 
     def dumps(self, data):
         # don't serialize strings
@@ -23,6 +23,6 @@ class JSONSerializer(object):
         try:
             return json.dumps(data, default=self.default)
         except (ValueError, TypeError) as e:
-            raise SerializationError(e)
+            raise SerializationError(data, e)
 
 

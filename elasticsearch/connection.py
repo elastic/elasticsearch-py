@@ -85,7 +85,7 @@ class RequestsHttpConnection(Connection):
             raw_data = response.text
         except (requests.ConnectionError, requests.Timeout) as e:
             self.log_request_fail(method, request.url, time.time() - start, exception=e)
-            raise ConnectionError(e)
+            raise ConnectionError('N/A', str(e), e)
 
         # raise errors based on http status codes, let the client handle those if needed
         if not (200 <= response.status_code < 300):
