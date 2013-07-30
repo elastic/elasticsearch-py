@@ -55,6 +55,18 @@ class Connection(object):
             status_code or 'N/A', duration, exc_info=exception is not None
         )
 
+    def _raise_error(self, status_code, raw_data):
+        error_message = raw_data
+        additional_info = None
+        try:
+            additional_info = json.loads(raw_data)
+            error_message = additional_info.get('error', error_message)
+        except:
+            # we don't care what went wrong
+            pass
+
+        raise HTTP_EXCEPTIONS.get(status_code, TransportError)(status_code, error_message, additional_info)
+
 
 class RequestsHttpConnection(Connection):
     def __init__(self, **kwargs):
@@ -78,11 +90,7 @@ class RequestsHttpConnection(Connection):
         # raise errors based on http status codes, let the client handle those if needed
         if not (200 <= response.status_code < 300):
             self.log_request_fail(method, request.url, duration, response.status_code)
-
-            if response.status_code in HTTP_EXCEPTIONS:
-                raise HTTP_EXCEPTIONS[response.status_code](response.text)
-
-            raise TransportError(response.text)
+            self._raise_error(response.status_code, raw_data)
 
         self.log_request_success(method, request.url, request.path_url, body, response.status_code, raw_data, duration)
 
