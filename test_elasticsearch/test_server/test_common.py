@@ -4,11 +4,13 @@ some integration tests. These files are shared among all official Elasticsearch
 clients.
 """
 from os import walk, environ
-from os.path import join
+from os.path import exists, join
 import yaml
 from unittest import TestCase, SkipTest
 
 from elasticsearch import Elasticsearch
+
+from test_elasticsearch.test_server import YAML_DIR
 
 # some params had to be changed in python, keep track of them so we can rename
 # those in the tests accordingly
@@ -189,16 +191,15 @@ def construct_case(filename, name):
     return type(name, (YamlTestCase, ), attrs)
 
 
-yaml_dir = environ.get('YAML_TEST_DIR', None)
 
-if yaml_dir:
+if exists(YAML_DIR):
 # find all the test definitions in yaml files ...
-    for (path, dirs, files) in walk(yaml_dir):
+    for (path, dirs, files) in walk(YAML_DIR):
         for filename in files:
             if not filename.endswith('.yaml'):
                 continue
             # ... parse them
-            name = ('Test' + ''.join(s.title() for s in path[len(yaml_dir) + 1:].split('/')) + filename.rsplit('.', 1)[0].title()).replace('_', '').replace('.', '')
+            name = ('Test' + ''.join(s.title() for s in path[len(YAML_DIR) + 1:].split('/')) + filename.rsplit('.', 1)[0].title()).replace('_', '').replace('.', '')
             # and insert them into locals for test runner to find them
             locals()[name] = construct_case(join(path, filename), name)
 

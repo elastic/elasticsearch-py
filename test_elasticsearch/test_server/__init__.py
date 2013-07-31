@@ -29,9 +29,21 @@ CMD = """
 server = None
 pidfile = tempfile.mktemp()
 
+from os import environ
+from os.path import join, dirname, pardir, exists
+
+YAML_DIR = environ.get(
+    'YAML_TEST_DIR',
+    join(
+        dirname(__file__),
+        pardir, pardir, pardir,
+        'elasticsearch-rest-api-spec', 'test'
+    )
+)
+
 def setup():
     # no integration tests, skip starting the server
-    if 'YAML_TEST_DIR' not in os.environ:
+    if not exists(YAML_DIR):
         raise SkipTest('')
     global server
 
