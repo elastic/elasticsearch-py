@@ -7,9 +7,9 @@ class TestBulkIndex(ElasticTestCase):
         docs = [{"answer": x} for x in range(100)]
         success, failed = helpers.bulk_index(self.client, docs, index='test-index', doc_type='answers', refresh=True)
 
-        self.assertEquals(len(success), len(docs))
+        self.assertEquals(100, len(success))
         self.assertFalse(failed)
-        self.assertEquals(len(docs), self.client.count(index='test-index', doc_type='answers')['count'])
+        self.assertEquals(100, self.client.count(index='test-index', doc_type='answers')['count'])
 
 class TestScan(ElasticTestCase):
     def test_all_documents_are_read(self):
