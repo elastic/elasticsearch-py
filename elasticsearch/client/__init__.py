@@ -358,7 +358,7 @@ class Elasticsearch(object):
         status, data = self.transport.perform_request('POST', _make_path(index, doc_type, '_count'), params=params, body=body)
         return data
 
-    @query_params('consistency', 'doc_type', 'refresh', 'replication')
+    @query_params('consistency', 'refresh', 'replication')
     def bulk(self, body, index=None, doc_type=None, params=None):
         """
         The bulk API makes it possible to perform many index/delete operations in a single API call.
