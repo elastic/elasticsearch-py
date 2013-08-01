@@ -41,3 +41,13 @@ def scan(client, query=None, scroll='5m', **kwargs):
             yield hit
         scroll_id = resp['_scroll_id']
 
+def reindex(client, source_index, target_index, target_client=None, chunk_size=500, scroll='5m'):
+    target_client = client if target_client is None else target_index
+
+    docs = scan(client, index=source_index, scroll=scroll)
+    def _change_doc_index(hits, index):
+        for h in hits:
+            h['_index'] = index
+            yield h
+
+    return bulk_index(target_client, _change_doc_index(docs, target_index), chunk_size=chunk_size)
