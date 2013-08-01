@@ -8,7 +8,7 @@ import requests
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import ConnectionError
 
-from unittest import SkipTest
+from unittest import SkipTest, TestCase
 
 data_dir = None
 
@@ -29,22 +29,7 @@ CMD = """
 server = None
 pidfile = tempfile.mktemp()
 
-from os import environ
-from os.path import join, dirname, pardir, exists
-
-YAML_DIR = environ.get(
-    'YAML_TEST_DIR',
-    join(
-        dirname(__file__),
-        pardir, pardir, pardir,
-        'elasticsearch-rest-api-spec', 'test'
-    )
-)
-
 def setup():
-    # no integration tests, skip starting the server
-    if not exists(YAML_DIR):
-        raise SkipTest('')
     global server
 
     # use running ES instance, don't attempt to start our own
@@ -97,3 +82,11 @@ def teardown():
             pid = pidf.read()
             os.kill(int(pid), 15)
         server.wait()
+
+class ElasticTestCase(TestCase):
+    def setUp(self):
+        self.client = Elasticsearch([os.environ['TEST_ES_SERVER']])
+
+    def tearDown(self):
+        self.client.indices.delete()
+

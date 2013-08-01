@@ -4,13 +4,11 @@ some integration tests. These files are shared among all official Elasticsearch
 clients.
 """
 from os import walk, environ
-from os.path import exists, join
+from os.path import exists, join, dirname, pardir
 import yaml
-from unittest import TestCase, SkipTest
+from unittest import SkipTest
 
-from elasticsearch import Elasticsearch
-
-from test_elasticsearch.test_server import YAML_DIR
+from . import ElasticTestCase
 
 # some params had to be changed in python, keep track of them so we can rename
 # those in the tests accordingly
@@ -29,7 +27,7 @@ def _get_version(version_string):
     version = version_string.strip().split('.')
     return tuple(int(v) if v.isdigit() else 999 for v in version)
 
-class YamlTestCase(TestCase):
+class YamlTestCase(ElasticTestCase):
     _definition = None
     @property
     def es_version(self):
@@ -40,13 +38,9 @@ class YamlTestCase(TestCase):
         return ES_VERSION
 
     def setUp(self):
-        self.client = Elasticsearch([environ['TEST_ES_SERVER']])
+        super(YamlTestCase, self).setUp()
         self.last_response = None
         self._state = {}
-
-    def tearDown(self):
-        # clean up everything
-        self.client.indices.delete()
 
     def test_from_yaml(self):
         if not self._definition:
@@ -190,7 +184,14 @@ def construct_case(filename, name):
 
     return type(name, (YamlTestCase, ), attrs)
 
-
+YAML_DIR = environ.get(
+    'YAML_TEST_DIR',
+    join(
+        dirname(__file__),
+        pardir, pardir, pardir,
+        'elasticsearch-rest-api-spec', 'test'
+    )
+)
 
 if exists(YAML_DIR):
 # find all the test definitions in yaml files ...
