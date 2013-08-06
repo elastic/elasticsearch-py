@@ -32,6 +32,8 @@ def _escape_param(value):
         value = ','.join(value)
     elif isinstance(value, (date, datetime)):
         value = value.isoformat()
+    elif isinstance(value, bool):
+        value = str(value).lower()
     return value
 
 def _make_path(*parts):
