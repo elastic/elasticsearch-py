@@ -71,7 +71,7 @@ class Elasticsearch(object):
     def ping(self, params=None):
         """ Returns True if the cluster is up, False otherwise. """
         try:
-            self.transport.perform_request('HEAD', _make_path(), params=params)
+            self.transport.perform_request('HEAD', '/', params=params)
         except TransportError:
             return False
         return True
@@ -79,7 +79,7 @@ class Elasticsearch(object):
     @query_params()
     def info(self, params=None):
         """ Get the basic info from the current cluster. """
-        _, data = self.transport.perform_request('GET', _make_path(), params=params)
+        _, data = self.transport.perform_request('GET', '/', params=params)
         return data
 
     @query_params('consistency', 'id', 'parent', 'percolate', 'refresh',
