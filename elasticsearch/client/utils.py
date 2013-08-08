@@ -10,31 +10,33 @@ except ImportError:
 # parts of URL to be omitted
 SKIP_IN_PATH = (None, '', [], ())
 
-def _escape(part):
+def _escape(value):
     """
-    Escape a single part of a URL string. If it is a list or tuple, turn it
-    into a comma-separated string first.
+    Escape a single value of a URL string or a query parameter. If it is a list
+    or tuple, turn it into a comma-separated string first.
     """
-    if isinstance(part, (list, tuple)):
-        part = ','.join(part)
-    if isinstance(part, (type(''), type(u''))):
+
+    # make sequences into comma-separated stings
+    if isinstance(value, (list, tuple)):
+        value = u','.join(value)
+
+    # dates and datetimes into isoformat
+    elif isinstance(value, (date, datetime)):
+        value = value.isoformat()
+
+    # make bools into true/false strings
+    elif isinstance(value, bool):
+        value = str(value).lower()
+
+    # encode strings to utf-8
+    if isinstance(value, (type(''), type(u''))):
         try:
-            part = part.encode('utf-8')
+            return value.encode('utf-8')
         except UnicodeDecodeError:
             # Python 2 and str, no need to re-encode
             pass
-        # mark ',' as safe for nicer url in logs
-        return quote_plus(part, ',')
-    return str(part)
-
-def _escape_param(value):
-    if isinstance(value, (list, tuple)):
-        value = ','.join(value)
-    elif isinstance(value, (date, datetime)):
-        value = value.isoformat()
-    elif isinstance(value, bool):
-        value = str(value).lower()
-    return value
+    
+    return str(value)
 
 def _make_path(*parts):
     """
@@ -42,7 +44,8 @@ def _make_path(*parts):
     Convert lists nad tuples to comma separated values.
     """
     #TODO: maybe only allow some parts to be lists/tuples ?
-    return '/' + '/'.join(_escape(p) for p in parts if p not in SKIP_IN_PATH)
+    return '/' + '/'.join(
+        quote_plus(_escape(p), ',') for p in parts if p not in SKIP_IN_PATH)
 
 # parameters that apply to all methods
 GLOBAL_PARAMS = ('pretty', )
@@ -58,7 +61,7 @@ def query_params(*es_query_params):
             params = kwargs.pop('params', {})
             for p in es_query_params + GLOBAL_PARAMS:
                 if p in kwargs:
-                    params[p] = _escape_param(kwargs.pop(p))
+                    params[p] = _escape(kwargs.pop(p))
             return func(*args, params=params, **kwargs)
         return _wrapped
     return _wrapper
