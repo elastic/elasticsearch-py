@@ -10,9 +10,22 @@ tracer = logging.getLogger('elasticsearch.trace')
 tracer.propagate = False
 
 class Connection(object):
+    """
+    Class responsible for maintaining a connection to an Elasticsearch node. It
+    holds persistent connection pool to it and it's main interface
+    (`perform_request`) is thread-safe.
+
+    Also responsible for logging.
+    """
     transport_schema = 'http'
 
     def __init__(self, host='localhost', port=9200, url_prefix='', timeout=10, **kwargs):
+        """
+        :arg host: hostname of the node (default: localhost)
+        :arg port: port to use (default: 9200)
+        :arg url_prefix: optional url prefix for elasticsearch
+        :arg timeout: default timeout in seconds (default: 10)
+        """
         self.host = '%s://%s:%s' % (self.transport_schema, host, port)
         if url_prefix:
             url_prefix = '/' + url_prefix.strip('/')
@@ -23,6 +36,7 @@ class Connection(object):
         return '<%s: %s>' % (self.__class__.__name__, self.host)
 
     def log_request_success(self, method, full_url, path, body, status_code, response, duration):
+        """ Log a successful API call.  """
         def _pretty_json(data):
             # pretty JSON in tracer curl logs
             try:
@@ -50,12 +64,14 @@ class Connection(object):
             tracer.debug('# [%s] (%.3fs)\n#%s', status_code, duration, _pretty_json(response).replace('\n', '\n#') if response else '')
 
     def log_request_fail(self, method, full_url, duration, status_code=None, exception=None):
+        """ Log an unsuccessful API call.  """
         logger.warning(
             '%s %s [status:%s request:%.3fs]', method, full_url,
             status_code or 'N/A', duration, exc_info=exception is not None
         )
 
     def _raise_error(self, status_code, raw_data):
+        """ Locate appropriate exception and raise it. """
         error_message = raw_data
         additional_info = None
         try:
@@ -69,6 +85,7 @@ class Connection(object):
 
 
 class RequestsHttpConnection(Connection):
+    """ Connection using the `requests` library. """
     def __init__(self, **kwargs):
         super(RequestsHttpConnection, self).__init__(**kwargs)
         self.session = requests.session()
