@@ -37,7 +37,7 @@ def setup():
         return
 
     # check installed
-    if subprocess.call('which vim >/dev/null 2>&1', shell=True) != 0:
+    if subprocess.call('which elasticsearch >/dev/null 2>&1', shell=True) != 0:
         raise SkipTest("No Elasticsearch server, skipping integration tests.")
 
     args = {
