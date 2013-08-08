@@ -13,6 +13,7 @@ f.close()
 
 install_requires = [
     'requests',
+    'urllib3',
 ]
 tests_require = [
     'nose',

@@ -1,7 +1,7 @@
 import re
 import time
 
-from .connection import RequestsHttpConnection
+from .connection import Urllib3HttpConnection
 from .connection_pool import ConnectionPool
 from .serializer import JSONSerializer
 from .exceptions import ConnectionError, TransportError, SerializationError
@@ -32,7 +32,7 @@ class Transport(object):
 
     Main interface is the `perform_request` method.
     """
-    def __init__(self, hosts, connection_class=RequestsHttpConnection,
+    def __init__(self, hosts, connection_class=Urllib3HttpConnection,
         connection_pool_class=ConnectionPool, host_info_callback=get_host_info,
         sniff_on_start=False, sniffer_timeout=None,
         sniff_on_connection_fail=False, serializer=JSONSerializer(),

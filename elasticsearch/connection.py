@@ -2,6 +2,11 @@ import logging
 import time
 import requests
 import json
+import urllib3
+try:
+    from urllib import urlencode
+except ImportError:
+    from urllib.parse import urlencode
 
 from .exceptions import TransportError, HTTP_EXCEPTIONS, ConnectionError
 
@@ -112,4 +117,34 @@ class RequestsHttpConnection(Connection):
         self.log_request_success(method, request.url, request.path_url, body, response.status_code, raw_data, duration)
 
         return response.status_code, raw_data
+
+class Urllib3HttpConnection(Connection):
+    def __init__(self, host='localhost', port=9200, **kwargs):
+        super(Urllib3HttpConnection, self).__init__(host=host, port=port, **kwargs)
+        self.pool = urllib3.HTTPConnectionPool(host, port=port)
+
+    def perform_request(self, method, url, params=None, body=None):
+        url = self.url_prefix + url
+        if params:
+            url = '%s?%s' % (url, urlencode(params or {}))
+        full_url = self.host + url
+
+        start = time.time()
+        try:
+            response = self.pool.urlopen(method, url, body)
+            duration = time.time() - start
+            raw_data = response.data.decode('utf-8')
+        except Exception as e:
+            self.log_request_fail(method, full_url, time.time() - start, exception=e)
+            raise ConnectionError('N/A', str(e), e)
+
+        if not (200 <= response.status < 300):
+            self.log_request_fail(method, url, duration, response.status)
+            self._raise_error(response.status, raw_data)
+
+        self.log_request_success(method, full_url, url, body, response.status,
+            raw_data, duration)
+
+        return response.status, raw_data
+
 
