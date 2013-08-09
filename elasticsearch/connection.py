@@ -121,9 +121,9 @@ class RequestsHttpConnection(Connection):
 class Urllib3HttpConnection(Connection):
     def __init__(self, host='localhost', port=9200, **kwargs):
         super(Urllib3HttpConnection, self).__init__(host=host, port=port, **kwargs)
-        self.pool = urllib3.HTTPConnectionPool(host, port=port)
+        self.pool = urllib3.HTTPConnectionPool(host, port=port, timeout=kwargs.get('timeout', None))
 
-    def perform_request(self, method, url, params=None, body=None):
+    def perform_request(self, method, url, params=None, body=None, timeout=None):
         url = self.url_prefix + url
         if params:
             url = '%s?%s' % (url, urlencode(params or {}))
@@ -131,7 +131,10 @@ class Urllib3HttpConnection(Connection):
 
         start = time.time()
         try:
-            response = self.pool.urlopen(method, url, body)
+            kw = {}
+            if timeout:
+                kw['timeout'] = timeout
+            response = self.pool.urlopen(method, url, body, **kw)
             duration = time.time() - start
             raw_data = response.data.decode('utf-8')
         except Exception as e:
@@ -146,5 +149,3 @@ class Urllib3HttpConnection(Connection):
             raw_data, duration)
 
         return response.status, raw_data
-
-
