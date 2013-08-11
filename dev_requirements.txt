@@ -4,3 +4,4 @@ nose
 coverage
 mock
 pyaml
+pylibmc
