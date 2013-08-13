@@ -1,3 +1,5 @@
+import weakref
+
 from ..transport import Transport
 from ..exceptions import NotFoundError, TransportError
 from .indices import IndicesClient
@@ -53,8 +55,9 @@ class Elasticsearch(object):
         self.transport = transport_class(_normalize_hosts(hosts), **kwargs)
 
         # namespaced clients for compatibility with API names
-        self.indices = IndicesClient(self)
-        self.cluster = ClusterClient(self)
+        # use weakref to make GC's work a little easier
+        self.indices = IndicesClient(weakref.proxy(self))
+        self.cluster = ClusterClient(weakref.proxy(self))
 
     def _bulk_body(self, body):
         # if not passed in a string, serialize items and join by newline
