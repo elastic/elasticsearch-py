@@ -42,6 +42,7 @@ class Connection(object):
 
     def log_request_success(self, method, full_url, path, body, status_code, response, duration):
         """ Log a successful API call.  """
+        #  TODO: optionally pass in params instead of full_url and do urlencode only when needed
         def _pretty_json(data):
             # pretty JSON in tracer curl logs
             try:
@@ -210,3 +211,51 @@ class MemcachedConnection(Connection):
             response, duration)
 
         return status, response
+
+from .esthrift.ttypes import Method, RestRequest
+from .esthrift import Rest
+from thrift.Thrift import TException
+from thrift.transport import TTransport, TSocket
+from thrift.protocol import TBinaryProtocol
+
+
+class ThriftConnection(Connection):
+    transport_schema = 'thrift'
+
+    def __init__(self, host='localhost', port=9500, framed_transport=False, **kwargs):
+        super(ThriftConnection, self).__init__(host=host, port=port, **kwargs)
+        socket = TSocket.TSocket(host, port)
+        socket.setTimeout(self.timeout * 1000.0)
+        if framed_transport:
+            transport = TTransport.TFramedTransport(socket)
+        else:
+            transport = TTransport.TBufferedTransport(socket)
+
+        protocol = TBinaryProtocol.TBinaryProtocolAccelerated(transport)
+        client = Rest.Client(protocol)
+        transport.open()
+        self.tclient = client
+        self.ttransport = transport
+
+    def perform_request(self, method, url, params=None, body=None, timeout=None):
+        request = RestRequest(method=Method._NAMES_TO_VALUES[method.upper()], uri=url,
+                    parameters=params, body=body)
+
+        start = time.time()
+        try:
+            response = self.tclient.execute(request)
+            duration = time.time() - start
+        except TException as e:
+            self.log_request_fail(method, url, time.time() - start, exception=e)
+            raise ConnectionError('N/A', str(e), e)
+
+        if not (200 <= response.status < 300):
+            self.log_request_fail(method, url, duration, response.status)
+            self._raise_error(response.status, response.body)
+
+        self.log_request_success(method, url, url, body, response.status,
+            response.body, duration)
+
+        return response.status, response.body
+
+
