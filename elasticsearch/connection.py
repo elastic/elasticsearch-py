@@ -8,6 +8,17 @@ try:
 except ImportError:
     from urllib.parse import urlencode
 
+try:
+    from .esthrift import Rest
+    from .esthrift.ttypes import Method, RestRequest
+
+    from thrift.transport import TTransport, TSocket
+    from thrift.protocol import TBinaryProtocol
+    from thrift.Thrift import TException
+    THRIFT_AVAILABLE = True
+except ImportError:
+    THRIFT_AVAILABLE = False
+
 from .exceptions import TransportError, HTTP_EXCEPTIONS, ConnectionError
 
 logger = logging.getLogger('elasticsearch')
@@ -212,17 +223,14 @@ class MemcachedConnection(Connection):
 
         return status, response
 
-from .esthrift.ttypes import Method, RestRequest
-from .esthrift import Rest
-from thrift.Thrift import TException
-from thrift.transport import TTransport, TSocket
-from thrift.protocol import TBinaryProtocol
-
 
 class ThriftConnection(Connection):
     transport_schema = 'thrift'
 
     def __init__(self, host='localhost', port=9500, framed_transport=False, **kwargs):
+        if not THRIFT_AVAILABLE:
+            raise ImproperlyConfigured("Thrift is not available.")
+
         super(ThriftConnection, self).__init__(host=host, port=port, **kwargs)
         socket = TSocket.TSocket(host, port)
         socket.setTimeout(self.timeout * 1000.0)
