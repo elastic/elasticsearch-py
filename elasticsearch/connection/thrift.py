@@ -12,9 +12,9 @@ except ImportError:
     THRIFT_AVAILABLE = False
 
 from ..exceptions import ConnectionError
-from .base import Connection
+from .pooling import PoolingConnection
 
-class ThriftConnection(Connection):
+class ThriftConnection(PoolingConnection):
     transport_schema = 'thrift'
 
     def __init__(self, host='localhost', port=9500, framed_transport=False, **kwargs):
@@ -22,9 +22,13 @@ class ThriftConnection(Connection):
             raise ImproperlyConfigured("Thrift is not available.")
 
         super(ThriftConnection, self).__init__(host=host, port=port, **kwargs)
-        socket = TSocket.TSocket(host, port)
+        self._framed_transport = framed_transport
+        self._tsocket_args = (host, port)
+
+    def _make_connection(self):
+        socket = TSocket.TSocket(*self._tsocket_args)
         socket.setTimeout(self.timeout * 1000.0)
-        if framed_transport:
+        if self._framed_transport:
             transport = TTransport.TFramedTransport(socket)
         else:
             transport = TTransport.TBufferedTransport(socket)
@@ -32,20 +36,22 @@ class ThriftConnection(Connection):
         protocol = TBinaryProtocol.TBinaryProtocolAccelerated(transport)
         client = Rest.Client(protocol)
         transport.open()
-        self.tclient = client
-        self.ttransport = transport
+        return client
 
     def perform_request(self, method, url, params=None, body=None, timeout=None):
         request = RestRequest(method=Method._NAMES_TO_VALUES[method.upper()], uri=url,
                     parameters=params, body=body)
 
         start = time.time()
+        tclient = self._get_connection()
         try:
-            response = self.tclient.execute(request)
+            response = tclient.execute(request)
             duration = time.time() - start
         except TException as e:
             self.log_request_fail(method, url, time.time() - start, exception=e)
             raise ConnectionError('N/A', str(e), e)
+        finally:
+            self._release_connection(tclient)
 
         if not (200 <= response.status < 300):
             self.log_request_fail(method, url, duration, response.status)
