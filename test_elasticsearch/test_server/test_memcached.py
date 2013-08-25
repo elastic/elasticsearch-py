@@ -9,6 +9,10 @@ from unittest import SkipTest
 
 class TestMemcachedConnection(ElasticTestCase):
     def setUp(self):
+        try:
+            import pylibmc
+        except ImportError:
+            raise SkipTest("No pylibmc.")
         super(TestMemcachedConnection, self).setUp()
         nodes = self.client.cluster.node_info()
         for node_id, node_info in nodes["nodes"].items():

@@ -12,7 +12,7 @@ try:
 except ImportError:
     THRIFT_AVAILABLE = False
 
-from ..exceptions import ConnectionError
+from ..exceptions import ConnectionError, ImproperlyConfigured
 from .pooling import PoolingConnection
 
 class ThriftConnection(PoolingConnection):

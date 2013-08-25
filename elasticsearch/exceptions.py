@@ -1,4 +1,7 @@
-__all__ = ['ElastiSearchException', 'SerializationError', 'TransportError', 'NotFoundError']
+__all__ = ['ImproperlyConfigured', 'ElastiSearchException', 'SerializationError', 'TransportError', 'NotFoundError']
+
+class ImproperlyConfigured(Exception):
+    pass
 
 class ElastiSearchException(Exception):
     pass

@@ -5,7 +5,7 @@ try:
 except ImportError:
     from urllib.parse import urlencode
 
-from ..exceptions import TransportError, ConnectionError
+from ..exceptions import TransportError, ConnectionError, ImproperlyConfigured
 from .pooling import PoolingConnection
 
 class MemcachedConnection(PoolingConnection):
