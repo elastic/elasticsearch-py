@@ -19,7 +19,7 @@ try:
 except ImportError:
     THRIFT_AVAILABLE = False
 
-from .exceptions import TransportError, HTTP_EXCEPTIONS, ConnectionError
+from ..exceptions import TransportError, HTTP_EXCEPTIONS, ConnectionError
 
 logger = logging.getLogger('elasticsearch')
 tracer = logging.getLogger('elasticsearch.trace')
