@@ -1,0 +1,60 @@
+import time
+
+try:
+    from .esthrift import Rest
+    from .esthrift.ttypes import Method, RestRequest
+
+    from thrift.transport import TTransport, TSocket
+    from thrift.protocol import TBinaryProtocol
+    from thrift.Thrift import TException
+    THRIFT_AVAILABLE = True
+except ImportError:
+    THRIFT_AVAILABLE = False
+
+from ..exceptions import ConnectionError
+from .base import Connection
+
+class ThriftConnection(Connection):
+    transport_schema = 'thrift'
+
+    def __init__(self, host='localhost', port=9500, framed_transport=False, **kwargs):
+        if not THRIFT_AVAILABLE:
+            raise ImproperlyConfigured("Thrift is not available.")
+
+        super(ThriftConnection, self).__init__(host=host, port=port, **kwargs)
+        socket = TSocket.TSocket(host, port)
+        socket.setTimeout(self.timeout * 1000.0)
+        if framed_transport:
+            transport = TTransport.TFramedTransport(socket)
+        else:
+            transport = TTransport.TBufferedTransport(socket)
+
+        protocol = TBinaryProtocol.TBinaryProtocolAccelerated(transport)
+        client = Rest.Client(protocol)
+        transport.open()
+        self.tclient = client
+        self.ttransport = transport
+
+    def perform_request(self, method, url, params=None, body=None, timeout=None):
+        request = RestRequest(method=Method._NAMES_TO_VALUES[method.upper()], uri=url,
+                    parameters=params, body=body)
+
+        start = time.time()
+        try:
+            response = self.tclient.execute(request)
+            duration = time.time() - start
+        except TException as e:
+            self.log_request_fail(method, url, time.time() - start, exception=e)
+            raise ConnectionError('N/A', str(e), e)
+
+        if not (200 <= response.status < 300):
+            self.log_request_fail(method, url, duration, response.status)
+            self._raise_error(response.status, response.body)
+
+        self.log_request_success(method, url, url, body, response.status,
+            response.body, duration)
+
+        return response.status, response.body
+
+
+

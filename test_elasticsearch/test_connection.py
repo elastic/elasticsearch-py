@@ -35,8 +35,8 @@ class TestRequestsConnection(TestCase):
         con = self._get_mock_connection({"host": "elasticsearch.com", "port": 443})
         self.assertEquals('<RequestsHttpConnection: http://elasticsearch.com:443>', repr(con))
 
-    @patch('elasticsearch.connection.tracer')
-    @patch('elasticsearch.connection.logger')
+    @patch('elasticsearch.connection.base.tracer')
+    @patch('elasticsearch.connection.base.logger')
     def test_failed_request_logs_and_traces(self, logger, tracer):
         con = self._get_mock_connection(response_body='{"answer": 42}', status_code=500)
         self.assertRaises(TransportError, con.perform_request, 'GET', '/', {'param': 42}, '{}')
@@ -52,8 +52,8 @@ class TestRequestsConnection(TestCase):
             logger.warning.call_args[0][0] % logger.warning.call_args[0][1:]
         ))
 
-    @patch('elasticsearch.connection.tracer')
-    @patch('elasticsearch.connection.logger')
+    @patch('elasticsearch.connection.base.tracer')
+    @patch('elasticsearch.connection.base.logger')
     def test_success_logs_and_traces(self, logger, tracer):
         con = self._get_mock_connection(response_body='{"answer": 42}')
         status, data = con.perform_request('GET', '/', {'param': 42}, '{}')
@@ -113,7 +113,7 @@ class TestRequestsConnection(TestCase):
         self.assertEquals('GET', request.method)
         self.assertEquals('{"answer": 42}', request.body)
 
-    @patch('elasticsearch.connection.tracer')
+    @patch('elasticsearch.connection.base.tracer')
     def test_url_prefix(self, tracer):
         con = self._get_mock_connection({"url_prefix": "/some-prefix/"})
         request = self._get_request(con, 'GET', '/_search', body='{"answer": 42}', timeout=0.1)
