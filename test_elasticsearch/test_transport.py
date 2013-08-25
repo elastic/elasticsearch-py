@@ -36,7 +36,7 @@ class TestTransport(TestCase):
     def test_kwargs_passed_on_to_connections(self):
         t = Transport([{'host': 'google.com'}], port=123)
         self.assertEquals(1, len(t.connection_pool.connections))
-        self.assertEquals('http://google.com:123', t.connection_pool.connections[0].host)
+        self.assertEquals('%s://google.com:123' % t.connection_pool.connections[0].transport_schema, t.connection_pool.connections[0].host)
 
     def test_kwargs_passed_on_to_connection_pool(self):
         dt = object()
@@ -53,10 +53,10 @@ class TestTransport(TestCase):
 
     def test_add_connection(self):
         t = Transport([{}], randomize_hosts=False)
-        t.add_connection({"host": "google.com"})
+        t.add_connection({"host": "google.com", "port": 1234})
 
         self.assertEquals(2, len(t.connection_pool.connections))
-        self.assertEquals('http://google.com:9200', t.connection_pool.connections[1].host)
+        self.assertEquals('%s://google.com:1234' % t.connection_pool.connections[1].transport_schema, t.connection_pool.connections[1].host)
 
     def test_request_will_fail_after_X_retries(self):
         t = Transport([{'exception': ConnectionError('abandon ship')}], connection_class=DummyConnection)
