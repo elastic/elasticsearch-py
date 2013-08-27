@@ -12,7 +12,7 @@ def run_all(argv=None):
             'nosetests',
             '--with-coverage', '--cover-package=elasticsearch', '--cover-erase',
             '--nocapture', '--nologcapture',
-            '--verbose', '--no-skip'
+            '--verbose',
         ]
     else:
         for p in ('--with-coverage', '--cover-package=elasticsearch', '--cover-erase'):
