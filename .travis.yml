@@ -4,9 +4,23 @@ python:
   - "2.7"
   - "3.3"
   - "pypy"
+env:
+  # different connection classes to test
+  - TEST_ES_CONNECTION=Urllib3HttpConnection
+  - TEST_ES_CONNECTION=ThriftConnection
+  - TEST_ES_CONNECTION=RequestsHttpConnection
+matrix:
+  exclude:
+    # skip testing thrift on py3
+    - python: "3.3"
+      env: TEST_ES_CONNECTION=ThriftConnection
 install:
+  # install thrift when using it
+  - "if [[ $TEST_ES_CONNECTION == 'ThriftConnection' ]]; then pip install thrift; fi"
+  # install pylibmc on python2
+  - "if [[ $TRAVIS_PYTHON_VERSION != '3.3' ]]; then pip install pylibmc; fi"
+  - git clone https://github.com/elasticsearch/elasticsearch-rest-api-spec ../elasticsearch-rest-api-spec
   - pip install -r dev_requirements.txt --use-mirrors
-  - python setup.py develop
+  - pip install .
 script:
   - python setup.py test
-  - python setup.py build_sphinx -b doctest

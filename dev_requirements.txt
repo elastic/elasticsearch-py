@@ -4,5 +4,3 @@ nose
 coverage
 mock
 pyaml
-pylibmc
-thrift
