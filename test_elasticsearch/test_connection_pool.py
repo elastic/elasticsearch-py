@@ -91,5 +91,5 @@ class TestConnectionPool(TestCase):
 
         self.assertEquals(3, pool.dead_count[42])
         pool.mark_live(42)
-        self.assertNotIn(42, pool.dead_count)
+        self.assertFalse(42 in pool.dead_count)
 

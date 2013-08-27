@@ -27,7 +27,7 @@ class ElasticsearchTestCase(TestCase):
         self.assertEquals(count, self.client.transport.call_count)
 
     def assert_url_called(self, method, url, count=1):
-        self.assertIn((method, url), self.client.transport.calls)
+        self.assertTrue((method, url) in self.client.transport.calls)
         calls = self.client.transport.calls[(method, url)]
         self.assertEquals(count, len(calls))
         return calls
@@ -35,7 +35,7 @@ class ElasticsearchTestCase(TestCase):
 
 class TestElasticsearchTestCase(ElasticsearchTestCase):
     def test_our_transport_used(self):
-        self.assertIsInstance(self.client.transport, DummyTransport)
+        self.assertTrue(isinstance(self.client.transport, DummyTransport))
 
     def test_start_with_0_call(self):
         self.assert_call_count_equals(0)

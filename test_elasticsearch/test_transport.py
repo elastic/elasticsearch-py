@@ -41,7 +41,7 @@ class TestTransport(TestCase):
     def test_kwargs_passed_on_to_connection_pool(self):
         dt = object()
         t = Transport([{}], dead_timeout=dt)
-        self.assertIs(dt, t.connection_pool.dead_timeout)
+        self.assertTrue(dt is t.connection_pool.dead_timeout)
 
     def test_custom_connection_class(self):
         class MyConnection(object):
@@ -49,7 +49,7 @@ class TestTransport(TestCase):
                 self.kwargs = kwargs
         t = Transport([{}], connection_class=MyConnection)
         self.assertEquals(1, len(t.connection_pool.connections))
-        self.assertIsInstance(t.connection_pool.connections[0], MyConnection)
+        self.assertTrue(isinstance(t.connection_pool.connections[0], MyConnection))
 
     def test_add_connection(self):
         t = Transport([{}], randomize_hosts=False)
@@ -98,7 +98,7 @@ class TestTransport(TestCase):
 
         t.sniff_hosts()
         self.assertEquals(1, len(t.connection_pool.connections))
-        self.assertIs(connection, t.get_connection())
+        self.assertTrue(connection is t.get_connection())
 
     def test_sniff_on_fail_triggers_sniffing_on_fail(self):
         t = Transport([{'exception': ConnectionError('abandon ship')}, {"data": CLUSTER_NODES}],
@@ -115,7 +115,7 @@ class TestTransport(TestCase):
         for _ in range(4):
             t.perform_request('GET', '/')
         self.assertEquals(1, len(t.connection_pool.connections))
-        self.assertIsInstance(t.get_connection(), DummyConnection)
+        self.assertTrue(isinstance(t.get_connection(), DummyConnection))
         t.last_sniff = time.time() - 5.1
 
         t.perform_request('GET', '/')
