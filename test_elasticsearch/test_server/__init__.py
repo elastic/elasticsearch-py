@@ -84,12 +84,15 @@ def teardown():
         server.wait()
 
 class ElasticTestCase(TestCase):
+    client = None
     def setUp(self):
-        kw = {}
-        if 'TEST_ES_CONNECTION' in os.environ:
-            from elasticsearch import connection
-            kw['connection_class'] = getattr(connection, os.environ['TEST_ES_CONNECTION'])
-        self.client = Elasticsearch([os.environ['TEST_ES_SERVER']], **kw)
+        if ElasticTestCase.client is None:
+            kw = {}
+            if 'TEST_ES_CONNECTION' in os.environ:
+                from elasticsearch import connection
+                kw['connection_class'] = getattr(connection, os.environ['TEST_ES_CONNECTION'])
+            ElasticTestCase.client = Elasticsearch([os.environ['TEST_ES_SERVER']], **kw)
+        self.client = ElasticTestCase.client
 
     def tearDown(self):
         self.client.indices.delete()
