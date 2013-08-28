@@ -1,10 +1,10 @@
 import re
-from unittest import TestCase
-
 from mock import Mock, patch
 
 from elasticsearch.exceptions import TransportError
 from elasticsearch.connection import RequestsHttpConnection
+
+from .test_cases import TestCase
 
 class TestRequestsConnection(TestCase):
     def _get_mock_connection(self, connection_params={}, status_code=200, response_body=u'{}'):

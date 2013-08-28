@@ -1,8 +1,9 @@
 from datetime import datetime
-from unittest import TestCase
 
 from elasticsearch.serializer import JSONSerializer
 from elasticsearch.exceptions import SerializationError
+
+from .test_cases import TestCase
 
 class TestJSONSerializer(TestCase):
     def test_datetime_serialization(self):

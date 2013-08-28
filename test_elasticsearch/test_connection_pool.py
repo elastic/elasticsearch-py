@@ -1,7 +1,8 @@
 import time
-from unittest import TestCase
 
 from elasticsearch.connection_pool import ConnectionPool, RoundRobinSelector
+
+from .test_cases import TestCase
 
 class TestConnectionPool(TestCase):
     def test_default_round_robin(self):

@@ -1,9 +1,10 @@
 import time
-from unittest import TestCase
 
 from elasticsearch.transport import Transport
 from elasticsearch.connection import Connection
 from elasticsearch.exceptions import ConnectionError
+
+from .test_cases import TestCase
 
 class DummyConnection(Connection):
     def __init__(self, **kwargs):

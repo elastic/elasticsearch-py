@@ -1,6 +1,6 @@
-from unittest import TestCase
-
 from elasticsearch.client import _normalize_hosts
+
+from ..test_cases import TestCase
 
 class TestNormalizeHosts(TestCase):
     def test_none_uses_defaults(self):

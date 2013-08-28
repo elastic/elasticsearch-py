@@ -6,8 +6,8 @@ clients.
 from os import walk, environ
 from os.path import exists, join, dirname, pardir
 import yaml
-from unittest import SkipTest
 
+from ..test_cases import SkipTest
 from . import ElasticTestCase
 
 # some params had to be changed in python, keep track of them so we can rename

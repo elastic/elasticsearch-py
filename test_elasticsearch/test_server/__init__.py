@@ -8,7 +8,7 @@ import requests
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import ConnectionError
 
-from unittest import SkipTest, TestCase
+from ..test_cases import TestCase, SkipTest
 
 data_dir = None
 

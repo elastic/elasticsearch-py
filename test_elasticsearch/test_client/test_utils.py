@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-from unittest import TestCase, SkipTest
-
 from elasticsearch.client.utils import _make_path
+
+from ..test_cases import TestCase, SkipTest
 
 class TestMakePath(TestCase):
     def test_handles_unicode(self):

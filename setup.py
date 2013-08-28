@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from os.path import join, dirname
 from setuptools import setup
+import sys
+
 
 
 VERSION = (0, 0, 1)
@@ -20,6 +22,10 @@ tests_require = [
     'coverage',
     'mock',
 ]
+
+# use external unittest for 2.6
+if sys.version_info[:2] == (2, 6):
+    tests_require.append('unittest2')
 
 setup(
     name = 'elasticsearch',
