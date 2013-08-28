@@ -6,7 +6,7 @@ clients.
 from os import walk, environ
 from os.path import exists, join, dirname, pardir
 import yaml
-from nose import SkipTest
+from unittest import SkipTest
 
 from . import ElasticTestCase
 
@@ -53,7 +53,7 @@ class YamlTestCase(ElasticTestCase):
         # resolve variables
         if isinstance(value, (type(u''), type(''))) and value.startswith('$'):
             value = value[1:]
-            self.assertTrue(value in self._state)
+            self.assertIn(value, self._state)
             value = self._state[value]
         return value
 
@@ -67,10 +67,10 @@ class YamlTestCase(ElasticTestCase):
             step = step.replace('\1', '.')
             if step.isdigit():
                 step = int(step)
-                self.assertTrue(isinstance(value, list))
-                self.assertTrue(len(value) > step)
+                self.assertIsInstance(value, list)
+                self.assertGreater(len(value), step)
             else:
-                self.assertTrue(step in value)
+                self.assertIn(step, value)
             value = value[step]
         return value
 
@@ -133,11 +133,11 @@ class YamlTestCase(ElasticTestCase):
 
     def run_gt(self, action):
         for key, value in action.items():
-            self.assertTrue(self._lookup(key) > value)
+            self.assertGreater(self._lookup(key), value)
 
     def run_lt(self, action):
         for key, value in action.items():
-            self.assertTrue(self._lookup(key) < value)
+            self.assertLess(self._lookup(key), value)
 
     def run_set(self, action):
         for key, value in action.items():

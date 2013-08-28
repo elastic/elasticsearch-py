@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-from unittest import TestCase
-from nose import SkipTest
+from unittest import TestCase, SkipTest
 
 from elasticsearch.client.utils import _make_path
 

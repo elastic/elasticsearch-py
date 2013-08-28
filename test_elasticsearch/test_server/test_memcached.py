@@ -5,7 +5,7 @@ from elasticsearch.transport import ADDRESS_RE
 
 from . import ElasticTestCase
 
-from nose import SkipTest
+from unittest import SkipTest
 
 class TestMemcachedConnection(ElasticTestCase):
     def setUp(self):
