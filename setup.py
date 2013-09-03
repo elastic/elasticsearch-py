@@ -29,6 +29,10 @@ tests_require = [
 if sys.version_info[:2] == (2, 6):
     tests_require.append('unittest2')
 
+if sys.version_info[0] == 2:
+    tests_require.append('thrift')
+    tests_require.append('pylibmc')
+
 setup(
     name = 'elasticsearch',
     description = "Python client for Elasticsearch",
