@@ -9,3 +9,4 @@ elasticsearch.egg-info
 *.egg
 coverage.xml
 nosetests.xml
+junit-*.xml
