@@ -21,6 +21,8 @@ tests_require = [
     'nose',
     'coverage',
     'mock',
+    'pyaml',
+    'nosexcover'
 ]
 
 # use external unittest for 2.6

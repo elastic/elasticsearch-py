@@ -9,8 +9,8 @@ def run_all(argv=None):
     # always insert coverage when running tests
     if argv is None:
         argv = [
-            'nosetests',
-            '--with-coverage', '--cover-package=elasticsearch', '--cover-erase',
+            'nosetests', '--with-xunit',
+            '--with-xcoverage', '--cover-package=elasticsearch', '--cover-erase',
             '--nocapture', '--nologcapture',
             '--verbose',
         ]
