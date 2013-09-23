@@ -57,6 +57,7 @@ Contents
    :maxdepth: 2
 
    api
+   connection
 
 License
 -------
