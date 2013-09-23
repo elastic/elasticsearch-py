@@ -3,9 +3,14 @@ include LICENSE
 include MANIFEST.in
 include README.rst
 include README
-include dev_requirements.txt
-include requirements.txt
+include tox.ini
+include setup.py
 recursive-include docs *
 recursive-include test_elasticsearch *
+
+recursive-exclude docs/_build *
+recursive-exclude test_elasticsearch/rest-api-spec *
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
 
 global-exclude .coverage

@@ -6,6 +6,7 @@ test_elasticsearch/cover
 docs/_build
 elasticsearch.egg-info
 .tox
+dist
 *.egg
 coverage.xml
 nosetests.xml
