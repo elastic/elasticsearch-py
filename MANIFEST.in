@@ -5,11 +5,13 @@ include README.rst
 include README
 include tox.ini
 include setup.py
+include elasticsearch/connection/esthrift/Rest-remote
 recursive-include docs *
 recursive-include test_elasticsearch *
 
-recursive-exclude docs/_build *
-recursive-exclude test_elasticsearch/rest-api-spec *
+prune docs/_build
+prune test_elasticsearch/rest-api-spec
+prune test_elasticsearch/cover
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
 
