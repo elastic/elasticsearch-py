@@ -1,6 +1,0 @@
--r requirements.txt
-
-nose
-coverage
-mock
-pyaml
