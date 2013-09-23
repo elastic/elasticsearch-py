@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from os.path import join, dirname
-from setuptools import setup
+from setuptools import setup, find_packages
 import sys
 
 
@@ -42,7 +42,10 @@ setup(
     version = __versionstr__,
     author = "Honza Král",
     author_email = "honza.kral@gmail.com",
-    packages = ['elasticsearch'],
+    packages=find_packages(
+        where='.',
+        exclude=('test_elasticsearch', )
+    ),
     classifiers = [
         "Development Status :: 4 - Beta",
         "License :: OSI Approved :: Apache Software License",
