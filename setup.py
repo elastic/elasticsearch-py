@@ -44,7 +44,7 @@ setup(
     author_email = "honza.kral@gmail.com",
     packages=find_packages(
         where='.',
-        exclude=('test_elasticsearch', )
+        exclude=('test_elasticsearch*', )
     ),
     classifiers = [
         "Development Status :: 4 - Beta",

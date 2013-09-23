@@ -7,12 +7,8 @@ include tox.ini
 include setup.py
 include elasticsearch/connection/esthrift/Rest-remote
 recursive-include docs *
-recursive-include test_elasticsearch *
 
 prune docs/_build
-prune test_elasticsearch/rest-api-spec
-prune test_elasticsearch/cover
+prune test_elasticsearch
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
-
-global-exclude .coverage
