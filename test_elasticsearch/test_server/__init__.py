@@ -6,7 +6,7 @@ import os
 import requests
 
 from elasticsearch import Elasticsearch
-from elasticsearch.exceptions import ConnectionError
+from elasticsearch.exceptions import ConnectionError, NotFoundError
 
 from ..test_cases import TestCase, SkipTest
 
@@ -96,4 +96,8 @@ class ElasticTestCase(TestCase):
 
     def tearDown(self):
         self.client.indices.delete()
+        try:
+            self.client.indices.delete_template('*')
+        except NotFoundError:
+            pass
 
