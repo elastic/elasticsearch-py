@@ -27,7 +27,7 @@ Example Usage
         'text': 'Elasticsearch: cool. bonsai cool.', 
         'timestamp': datetime(2010, 10, 10, 10, 10, 10)
     }
-    res = es.index(index="test-index", doc_type='tweet', doc, id=1)
+    res = es.index(index="test-index", doc_type='tweet', id=1, body=doc)
     print(res['ok'])
 
     res = es.get(index="test-index", doc_type='tweet', id=1)
