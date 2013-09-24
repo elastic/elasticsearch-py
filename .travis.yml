@@ -15,12 +15,7 @@ matrix:
     - python: "3.3"
       env: TEST_ES_CONNECTION=ThriftConnection
 install:
-  # install thrift when using it
-  - "if [[ $TEST_ES_CONNECTION == 'ThriftConnection' ]]; then pip install thrift; fi"
-  # install pylibmc on python2
-  - "if [[ $TRAVIS_PYTHON_VERSION != '3.3' ]]; then pip install pylibmc; fi"
-  - git clone https://github.com/elasticsearch/elasticsearch-rest-api-spec ../elasticsearch-rest-api-spec
-  - pip install -r dev_requirements.txt --use-mirrors
+  - git submodule init
   - pip install .
 script:
   - python setup.py test
