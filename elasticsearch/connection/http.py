@@ -11,8 +11,8 @@ from ..exceptions import ConnectionError
 
 class RequestsHttpConnection(Connection):
     """ Connection using the `requests` library. """
-    def __init__(self, host='localhost', port=9200, url_prefix='', timeout=10, **kwargs):
-        super(RequestsHttpConnection, self).__init__(**kwargs)
+    def __init__(self, host='localhost', port=9200, **kwargs):
+        super(RequestsHttpConnection, self).__init__(host=host, port=port, **kwargs)
         self.session = requests.session()
 
     def perform_request(self, method, url, params=None, body=None, timeout=None):
@@ -42,7 +42,7 @@ class Urllib3HttpConnection(Connection):
     """
     Default connection class using the `urllib3` library and the http protocol.
     """
-    def __init__(self, host='localhost', port=9200, url_prefix='', timeout=10, **kwargs):
+    def __init__(self, host='localhost', port=9200, **kwargs):
         super(Urllib3HttpConnection, self).__init__(host=host, port=port, **kwargs)
         self.pool = urllib3.HTTPConnectionPool(host, port=port, timeout=kwargs.get('timeout', None))
 
