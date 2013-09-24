@@ -33,7 +33,7 @@ Example Usage
     res = es.get(index="test-index", doc_type='tweet', id=1)
     print(res['_source'])
 
-    es.refresh(index="test-index")
+    es.indices.refresh(index="test-index")
 
     res = es.search(index="test-index", body={"query": {"match_all": {}}})
     print("Got %d Hits:" % res['hits']['total'])
