@@ -1,5 +1,6 @@
 import re
 from mock import Mock, patch
+import urllib3
 
 from elasticsearch.exceptions import TransportError
 from elasticsearch.connection import RequestsHttpConnection, Urllib3HttpConnection
@@ -15,6 +16,13 @@ class TestUrllib3Connection(TestCase):
         con = Urllib3HttpConnection(http_auth=('username', 'secret'))
         self.assertEquals({'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0'}, con.pool.headers)
 
+    def test_uses_https_if_specified(self):
+        con = Urllib3HttpConnection(use_https=True)
+        self.assertIsInstance(con.pool, urllib3.HTTPSConnectionPool)
+
+    def test_doesnt_use_https_if_not_specified(self):
+        con = Urllib3HttpConnection()
+        self.assertIsInstance(con.pool, urllib3.HTTPConnectionPool)
 
 class TestRequestsConnection(TestCase):
     def _get_mock_connection(self, connection_params={}, status_code=200, response_body=u'{}'):
@@ -40,6 +48,14 @@ class TestRequestsConnection(TestCase):
         self.assertEquals({'timeout': timeout}, kwargs)
         self.assertEquals(1, len(args))
         return args[0]
+
+    def test_use_https_if_specified(self):
+        con = self._get_mock_connection({'use_https': True, 'url_prefix': 'url'})
+        request = self._get_request(con, 'GET', '/')
+
+        self.assertEquals('https://localhost:9200/url/', request.url)
+        self.assertEquals('GET', request.method)
+        self.assertEquals(None, request.body)
 
     def test_http_auth(self):
         con = RequestsHttpConnection(http_auth='username:secret')
