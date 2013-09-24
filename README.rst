@@ -58,3 +58,12 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
+
+Build status
+------------
+
+.. image:: https://secure.travis-ci.org/elasticsearch/elasticsearch-py.png
+   :target: http://travis-ci.org/#!/elasticsearch/elasticsearch-py
+
+.. image:: https://coveralls.io/repos/elasticsearch/elasticsearch-py/badge.png?branch=master
+   :target: https://coveralls.io/r/elasticsearch/elasticsearch-py

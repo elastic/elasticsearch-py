@@ -17,6 +17,9 @@ matrix:
       env: TEST_ES_CONNECTION=ThriftConnection
 install:
   - git submodule init
+  - pip install coveralls
   - pip install .
 script:
   - TEST_ES_SERVER=localhost python setup.py test
+after_success:
+  - coveralls
