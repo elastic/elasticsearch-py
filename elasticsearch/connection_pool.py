@@ -26,7 +26,7 @@ class ConnectionSelector(object):
     """
     def __init__(self, opts):
         """
-        :arg opts: dictionary of connection instances and theit options
+        :arg opts: dictionary of connection instances and their options
         """
         self.connection_opts = opts
 
