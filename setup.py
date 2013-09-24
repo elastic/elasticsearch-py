@@ -5,7 +5,7 @@ import sys
 
 
 
-VERSION = (0, 0, 1)
+VERSION = (0, 4)
 __version__ = VERSION
 __versionstr__ = '.'.join(map(str, VERSION))
 
