@@ -1,3 +1,5 @@
+services:
+  - elasticsearch
 language: python
 python:
   - "2.6"
@@ -15,7 +17,9 @@ matrix:
     - python: "3.3"
       env: TEST_ES_CONNECTION=ThriftConnection
 install:
+  - plugin -install elasticsearch/elasticsearch-transport-thrift/1.5.0
+  - plugin  -install elasticsearch/elasticsearch-transport-memcached/1.6.0
   - git submodule init
   - pip install .
 script:
-  - python setup.py test
+  - TEST_ES_SERVER=localhost python setup.py test
