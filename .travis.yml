@@ -9,7 +9,6 @@ python:
 env:
   # different connection classes to test
   - TEST_ES_CONNECTION=Urllib3HttpConnection
-  - TEST_ES_CONNECTION=ThriftConnection
   - TEST_ES_CONNECTION=RequestsHttpConnection
 matrix:
   exclude:
@@ -17,8 +16,6 @@ matrix:
     - python: "3.3"
       env: TEST_ES_CONNECTION=ThriftConnection
 install:
-  - plugin -install elasticsearch/elasticsearch-transport-thrift/1.5.0
-  - plugin  -install elasticsearch/elasticsearch-transport-memcached/1.6.0
   - git submodule init
   - pip install .
 script:
