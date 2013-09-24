@@ -4,5 +4,6 @@ omit =
     */lib-python/?.?/*.py
     */lib_pypy/_*.py
     */site-packages/*
+    *.egg/*
     test_elasticsearch/*
     elasticsearch/connection/esthrift/*
