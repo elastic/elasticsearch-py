@@ -14,8 +14,8 @@ long_description = f.read().strip()
 f.close()
 
 install_requires = [
-    'requests',
-    'urllib3',
+    'requests==1.2.0',
+    'urllib3==1.5',
 ]
 tests_require = [
     'nose',
@@ -30,8 +30,8 @@ if sys.version_info[:2] == (2, 6):
     tests_require.append('unittest2')
 
 if sys.version_info[0] == 2:
-    tests_require.append('thrift')
-    tests_require.append('pylibmc')
+    tests_require.append('thrift==0.9.1')
+    tests_require.append('pylibmc==1.2.3')
 
 setup(
     name = 'elasticsearch',
