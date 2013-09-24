@@ -10,10 +10,20 @@ from .base import Connection
 from ..exceptions import ConnectionError
 
 class RequestsHttpConnection(Connection):
-    """ Connection using the `requests` library. """
-    def __init__(self, host='localhost', port=9200, **kwargs):
+    """
+    Connection using the `requests` library.
+
+    :arg http_auth: optional http auth information as either ':' separated
+        string or a tuple
+    """
+    def __init__(self, host='localhost', port=9200, http_auth=None, **kwargs):
         super(RequestsHttpConnection, self).__init__(host=host, port=port, **kwargs)
         self.session = requests.session()
+        if http_auth is not None: 
+            if not isinstance(http_auth, tuple):
+                http_auth = tuple(http_auth.split(':', 1))
+            self.session.auth = http_auth
+
 
     def perform_request(self, method, url, params=None, body=None, timeout=None):
         url = self.host + self.url_prefix + url
@@ -41,10 +51,19 @@ class RequestsHttpConnection(Connection):
 class Urllib3HttpConnection(Connection):
     """
     Default connection class using the `urllib3` library and the http protocol.
+
+    :arg http_auth: optional http auth information as either ':' separated
+        string or a tuple
     """
-    def __init__(self, host='localhost', port=9200, **kwargs):
+    def __init__(self, host='localhost', port=9200, http_auth=None, **kwargs):
         super(Urllib3HttpConnection, self).__init__(host=host, port=port, **kwargs)
-        self.pool = urllib3.HTTPConnectionPool(host, port=port, timeout=kwargs.get('timeout', None))
+        headers = {}
+        if http_auth is not None:
+            if isinstance(http_auth, (tuple, list)):
+                http_auth = ':'.join(http_auth)
+            headers = urllib3.make_headers(basic_auth=http_auth)
+
+        self.pool = urllib3.HTTPConnectionPool(host, port=port, timeout=kwargs.get('timeout', None), headers=headers)
 
     def perform_request(self, method, url, params=None, body=None, timeout=None):
         url = self.url_prefix + url

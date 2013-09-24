@@ -2,9 +2,19 @@ import re
 from mock import Mock, patch
 
 from elasticsearch.exceptions import TransportError
-from elasticsearch.connection import RequestsHttpConnection
+from elasticsearch.connection import RequestsHttpConnection, Urllib3HttpConnection
 
 from .test_cases import TestCase
+
+class TestUrllib3Connection(TestCase):
+    def test_http_auth(self):
+        con = Urllib3HttpConnection(http_auth='username:secret')
+        self.assertEquals({'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0'}, con.pool.headers)
+
+    def test_http_auth_tuple(self):
+        con = Urllib3HttpConnection(http_auth=('username', 'secret'))
+        self.assertEquals({'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0'}, con.pool.headers)
+
 
 class TestRequestsConnection(TestCase):
     def _get_mock_connection(self, connection_params={}, status_code=200, response_body=u'{}'):
@@ -30,6 +40,14 @@ class TestRequestsConnection(TestCase):
         self.assertEquals({'timeout': timeout}, kwargs)
         self.assertEquals(1, len(args))
         return args[0]
+
+    def test_http_auth(self):
+        con = RequestsHttpConnection(http_auth='username:secret')
+        self.assertEquals(('username', 'secret'), con.session.auth)
+
+    def test_http_auth_tuple(self):
+        con = RequestsHttpConnection(http_auth=('username', 'secret'))
+        self.assertEquals(('username', 'secret'), con.session.auth)
 
     def test_repr(self):
         con = self._get_mock_connection({"host": "elasticsearch.com", "port": 443})
