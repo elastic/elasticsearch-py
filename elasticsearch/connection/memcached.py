@@ -9,6 +9,12 @@ from ..exceptions import TransportError, ConnectionError, ImproperlyConfigured
 from .pooling import PoolingConnection
 
 class MemcachedConnection(PoolingConnection):
+    """
+    Client using the `pylibmc` python library to communicate with elasticsearch
+    using the memcached protocol. Requires plugin in the cluster.
+
+    See https://github.com/elasticsearch/elasticsearch-transport-memcached for more details.
+    """
     transport_schema = 'memcached'
 
     method_map = {

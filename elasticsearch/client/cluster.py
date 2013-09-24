@@ -7,7 +7,7 @@ class ClusterClient(NamespacedClient):
     def health(self, index=None, params=None):
         """
         Get a very simple status on the health of the cluster.
-        http://elasticsearch.org/guide/reference/api/admin-cluster-health/
+        `<http://elasticsearch.org/guide/reference/api/admin-cluster-health/>`_
 
         :arg index: Limit the information returned to a specific index
         :arg level: Specify the level of detail for returned information, default u'cluster'
@@ -29,7 +29,7 @@ class ClusterClient(NamespacedClient):
     def state(self, params=None):
         """
         Get a comprehensive state information of the whole cluster.
-        http://elasticsearch.org/guide/reference/api/admin-cluster-state/
+        `<http://elasticsearch.org/guide/reference/api/admin-cluster-state/>`_
 
         :arg filter_blocks: Do not return information about blocks
         :arg filter_index_templates: Do not return information about index templates
@@ -48,7 +48,7 @@ class ClusterClient(NamespacedClient):
     def reroute(self, body=None, params=None):
         """
         Explicitly execute a cluster reroute allocation command including specific commands.
-        http://elasticsearch.org/guide/reference/api/admin-cluster-reroute/
+        `<http://elasticsearch.org/guide/reference/api/admin-cluster-reroute/>`_
 
         :arg body: The definition of `commands` to perform (`move`, `cancel`, `allocate`)
         :arg dry_run: Simulate the operation only and return the resulting state
@@ -61,7 +61,7 @@ class ClusterClient(NamespacedClient):
     def get_settings(self, params=None):
         """
         Get cluster settings.
-        http://elasticsearch.org/guide/reference/api/admin-cluster-update-settings/
+        `<http://elasticsearch.org/guide/reference/api/admin-cluster-update-settings/>`_
         """
         _, data = self.transport.perform_request('GET', '/_cluster/settings', params=params)
         return data
@@ -70,7 +70,7 @@ class ClusterClient(NamespacedClient):
     def put_settings(self, body, params=None):
         """
         Update cluster wide specific settings.
-        http://elasticsearch.org/guide/reference/api/admin-cluster-update-settings/
+        `<http://elasticsearch.org/guide/reference/api/admin-cluster-update-settings/>`_
 
         :arg body: The settings to be updated. Can be either `transient` or
             `persistent` (survives cluster restart).
@@ -83,7 +83,7 @@ class ClusterClient(NamespacedClient):
     def node_stats(self, node_id=None, metric=None, fields=None, params=None):
         """
         Retrieve one or more (or all) of the cluster nodes statistics.
-        http://elasticsearch.org/guide/reference/api/admin-cluster-nodes-stats/
+        `<http://elasticsearch.org/guide/reference/api/admin-cluster-nodes-stats/>`_
 
         :arg node_id: A comma-separated list of node IDs or names to limit the
             returned information; use `_local` to return information from the node
@@ -113,7 +113,7 @@ class ClusterClient(NamespacedClient):
     def node_info(self, node_id=None, params=None):
         """
         Retrieve one or more (or all) of the cluster nodes' information.
-        http://elasticsearch.org/guide/reference/api/admin-cluster-nodes-info/
+        `<http://elasticsearch.org/guide/reference/api/admin-cluster-nodes-info/>`_
 
         :arg node_id: A comma-separated list of node IDs or names to limit the
             returned information; use `_local` to return information from the node
@@ -139,7 +139,7 @@ class ClusterClient(NamespacedClient):
     def node_shutdown(self, node_id=None, params=None):
         """
         Shutdown one or more (or all) nodes in the cluster.
-        http://elasticsearch.org/guide/reference/api/admin-cluster-nodes-shutdown/
+        `<http://elasticsearch.org/guide/reference/api/admin-cluster-nodes-shutdown/>`_
 
         :arg node_id: A comma-separated list of node IDs or names to perform
             the operation on; use `_local` to perform the operation on the node

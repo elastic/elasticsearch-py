@@ -49,6 +49,26 @@ Example Usage
     {u'text': u'Elasticsearch: cool. bonsai cool.', u'author': u'kimchy', u'timestamp': u'2010-10-10T10:10:10'}
     Got 1 Hits:
     2010-10-10T10:10:10 kimchy: Elasticsearch: cool. bonsai cool.
+
+Features
+--------
+
+Extendability
+~~~~~~~~~~~~~
+
+Configurable connections and load balancing (see :ref:`connection_api`)::
+ * persistent connections
+ * configurable load balancing strategy
+ * different protocols and connection classes
+ * ...
+
+
+Sniffing
+~~~~~~~~
+
+The client can be configured to inspect the cluster state to get a list of
+nodes upon startup, periodically and/or on failure. See
+:class:`~elasticsearch.Transport` parameters for details.
     
 Contents
 --------
@@ -58,6 +78,7 @@ Contents
 
    api
    connection
+   transports
 
 License
 -------

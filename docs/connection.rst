@@ -1,3 +1,5 @@
+.. _connection_api:
+
 Connection Layer API
 ====================
 

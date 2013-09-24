@@ -16,9 +16,18 @@ from ..exceptions import ConnectionError, ImproperlyConfigured
 from .pooling import PoolingConnection
 
 class ThriftConnection(PoolingConnection):
+    """
+    Connection using the `thrift` protocol to communicate with elasticsearch.
+
+    See https://github.com/elasticsearch/elasticsearch-transport-thrift for additional info.
+    """
     transport_schema = 'thrift'
 
     def __init__(self, host='localhost', port=9500, framed_transport=False, **kwargs):
+        """
+        :arg framed_transport: use `TTransport.TFramedTransport` instead of
+            `TTransport.TBufferedTransport`
+        """
         if not THRIFT_AVAILABLE:
             raise ImproperlyConfigured("Thrift is not available.")
 

@@ -7,7 +7,7 @@ class IndicesClient(NamespacedClient):
     def analyze(self, index=None, body=None, params=None):
         """
         Perform the analysis process on a text and return the tokens breakdown of the text.
-        http://www.elasticsearch.org/guide/reference/api/admin-indices-analyze/
+        `<http://www.elasticsearch.org/guide/reference/api/admin-indices-analyze/>`_
 
         :arg index: The name of the index to scope the operation
         :arg body: The text on which the analysis should be performed
@@ -32,7 +32,7 @@ class IndicesClient(NamespacedClient):
         """
         Explicitly refresh one or more index, making all operations performed
         since the last refresh available for search.
-        http://www.elasticsearch.org/guide/reference/api/admin-indices-refresh/
+        `<http://www.elasticsearch.org/guide/reference/api/admin-indices-refresh/>`_
 
         :arg index: A comma-separated list of index names; use `_all` or empty
             string to perform the operation on all indices
@@ -47,7 +47,7 @@ class IndicesClient(NamespacedClient):
     def flush(self, index=None, params=None):
         """
         Explicitly flush one or more indices.
-        http://www.elasticsearch.org/guide/reference/api/admin-indices-flush/
+        `<http://www.elasticsearch.org/guide/reference/api/admin-indices-flush/>`_
 
         :arg index: A comma-separated list of index names; use `_all` or empty
             string for all indices
@@ -65,7 +65,7 @@ class IndicesClient(NamespacedClient):
     def create(self, index, body=None, params=None):
         """
         Create an index in Elasticsearch.
-        http://www.elasticsearch.org/guide/reference/api/admin-indices-create-index/
+        `<http://www.elasticsearch.org/guide/reference/api/admin-indices-create-index/>`_
 
         :arg index: The name of the index
         :arg body: The configuration for the index (`settings` and `mappings`)
@@ -80,7 +80,7 @@ class IndicesClient(NamespacedClient):
     def open(self, index, params=None):
         """
         Open a closed index to make it available for search.
-        http://www.elasticsearch.org/guide/reference/api/admin-indices-open-close/
+        `<http://www.elasticsearch.org/guide/reference/api/admin-indices-open-close/>`_
 
         :arg index: The name of the index
         :arg master_timeout: Specify timeout for connection to master
@@ -95,7 +95,7 @@ class IndicesClient(NamespacedClient):
         """
         Close an index to remove it's overhead from the cluster. Closed index
         is blocked for read/write operations.
-        http://www.elasticsearch.org/guide/reference/api/admin-indices-open-close/
+        `<http://www.elasticsearch.org/guide/reference/api/admin-indices-open-close/>`_
 
         :arg index: The name of the index
         :arg master_timeout: Specify timeout for connection to master
@@ -109,7 +109,7 @@ class IndicesClient(NamespacedClient):
     def delete(self, index=None, params=None):
         """
         Delete an index in Elasticsearch
-        http://www.elasticsearch.org/guide/reference/api/admin-indices-delete-index/
+        `<http://www.elasticsearch.org/guide/reference/api/admin-indices-delete-index/>`_
 
         :arg index: A comma-separated list of indices to delete; use `_all` or
             empty string to delete all indices
@@ -124,7 +124,7 @@ class IndicesClient(NamespacedClient):
     def exists(self, index, params=None):
         """
         Return a boolean indicating whether given index exists.
-        http://www.elasticsearch.org/guide/reference/api/admin-indices-indices-exists/
+        `<http://www.elasticsearch.org/guide/reference/api/admin-indices-indices-exists/>`_
 
         :arg index: A list of indices to check
         """
@@ -138,7 +138,7 @@ class IndicesClient(NamespacedClient):
     def exists_type(self, index, doc_type, params=None):
         """
         Check if a type/types exists in an index/indices.
-        http://www.elasticsearch.org/guide/reference/api/admin-indices-types-exists/
+        `<http://www.elasticsearch.org/guide/reference/api/admin-indices-types-exists/>`_
 
         :arg index: A comma-separated list of index names; use `_all` to check
             the types across all indices
@@ -156,7 +156,7 @@ class IndicesClient(NamespacedClient):
     def snapshot_index(self, index=None, params=None):
         """
         Explicitly perform a snapshot through the gateway of one or more indices (backup them).
-        http://www.elasticsearch.org/guide/reference/api/admin-indices-gateway-snapshot/
+        `<http://www.elasticsearch.org/guide/reference/api/admin-indices-gateway-snapshot/>`_
 
         :arg index: A comma-separated list of index names; use `_all` or empty
             string for all indices
@@ -171,7 +171,7 @@ class IndicesClient(NamespacedClient):
     def put_mapping(self, index, doc_type, body, params=None):
         """
         Register specific mapping definition for a specific type.
-        http://www.elasticsearch.org/guide/reference/api/admin-indices-put-mapping/
+        `<http://www.elasticsearch.org/guide/reference/api/admin-indices-put-mapping/>`_
 
         :arg index: A comma-separated list of index names; use `_all` to
             perform the operation on all indices
@@ -190,7 +190,7 @@ class IndicesClient(NamespacedClient):
     def get_mapping(self, index=None, doc_type=None, params=None):
         """
         Retrieve mapping definition of index or index/type.
-        http://www.elasticsearch.org/guide/reference/api/admin-indices-get-mapping/
+        `<http://www.elasticsearch.org/guide/reference/api/admin-indices-get-mapping/>`_
 
         :arg index: A comma-separated list of index names; use `_all` or empty
             string for all indices
@@ -204,7 +204,7 @@ class IndicesClient(NamespacedClient):
     def delete_mapping(self, index, doc_type, params=None):
         """
         Delete a mapping (type) along with its data.
-        http://www.elasticsearch.org/guide/reference/api/admin-indices-delete-mapping/
+        `<http://www.elasticsearch.org/guide/reference/api/admin-indices-delete-mapping/>`_
 
         :arg index: A comma-separated list of index names; use `_all` for all indices
         :arg doc_type: The name of the document type to delete
@@ -218,7 +218,7 @@ class IndicesClient(NamespacedClient):
     def put_alias(self, index, name, body=None, params=None):
         """
         Create an alias for a specific index/indices.
-        http://www.elasticsearch.org/guide/reference/api/admin-indices-aliases/
+        `<http://www.elasticsearch.org/guide/reference/api/admin-indices-aliases/>`_
 
         :arg index: The name of the index with an alias
         :arg name: The name of the alias to be created or updated
@@ -234,7 +234,7 @@ class IndicesClient(NamespacedClient):
     def exists_alias(self, name, index=None, params=None):
         """
         Return a boolean indicating whether given alias exists.
-        http://www.elasticsearch.org/guide/reference/api/admin-indices-aliases/
+        `<http://www.elasticsearch.org/guide/reference/api/admin-indices-aliases/>`_
 
         :arg name: A comma-separated list of alias names to return
         :arg index: A comma-separated list of index names to filter aliases
@@ -252,7 +252,7 @@ class IndicesClient(NamespacedClient):
     def get_alias(self, name, index=None, params=None):
         """
         Retrieve a specified alias.
-        http://www.elasticsearch.org/guide/reference/api/admin-indices-aliases/
+        `<http://www.elasticsearch.org/guide/reference/api/admin-indices-aliases/>`_
 
         :arg name: A comma-separated list of alias names to return
         :arg index: A comma-separated list of index names to filter aliases
@@ -267,7 +267,7 @@ class IndicesClient(NamespacedClient):
     def get_aliases(self, index=None, params=None):
         """
         Retrieve specified aliases
-        http://www.elasticsearch.org/guide/reference/api/admin-indices-aliases/
+        `<http://www.elasticsearch.org/guide/reference/api/admin-indices-aliases/>`_
 
         :arg index: A comma-separated list of index names to filter aliases
         :arg timeout: Explicit operation timeout
@@ -280,7 +280,7 @@ class IndicesClient(NamespacedClient):
     def update_aliases(self, body, params=None):
         """
         Update specified aliases.
-        http://www.elasticsearch.org/guide/reference/api/admin-indices-aliases/
+        `<http://www.elasticsearch.org/guide/reference/api/admin-indices-aliases/>`_
 
         :arg body: The definition of `actions` to perform
         :arg master_timeout: Specify timeout for connection to master
@@ -294,7 +294,7 @@ class IndicesClient(NamespacedClient):
     def delete_alias(self, index, name, params=None):
         """
         Delete specific alias.
-        http://www.elasticsearch.org/guide/reference/api/admin-indices-aliases/
+        `<http://www.elasticsearch.org/guide/reference/api/admin-indices-aliases/>`_
 
         :arg index: The name of the index with an alias
         :arg name: The name of the alias to be deleted
@@ -310,7 +310,7 @@ class IndicesClient(NamespacedClient):
         """
         Create an index template that will automatically be applied to new
         indices created.
-        http://www.elasticsearch.org/guide/reference/api/admin-indices-templates/
+        `<http://www.elasticsearch.org/guide/reference/api/admin-indices-templates/>`_
 
         :arg name: The name of the template
         :arg body: The template definition
@@ -327,7 +327,7 @@ class IndicesClient(NamespacedClient):
     def get_template(self, name, params=None):
         """
         Retrieve an index template by its name.
-        http://www.elasticsearch.org/guide/reference/api/admin-indices-templates/
+        `<http://www.elasticsearch.org/guide/reference/api/admin-indices-templates/>`_
 
         :arg name: The name of the template
         """
@@ -339,7 +339,7 @@ class IndicesClient(NamespacedClient):
     def delete_template(self, name, params=None):
         """
         Delete an index template by its name.
-        http://www.elasticsearch.org/guide/reference/api/admin-indices-templates/
+        `<http://www.elasticsearch.org/guide/reference/api/admin-indices-templates/>`_
 
         :arg name: The name of the template
         :arg master_timeout: Specify timeout for connection to master
@@ -353,7 +353,7 @@ class IndicesClient(NamespacedClient):
     def get_settings(self, index=None, params=None):
         """
         Retrieve settings for one or more (or all) indices.
-        http://www.elasticsearch.org/guide/reference/api/admin-indices-get-settings/
+        `<http://www.elasticsearch.org/guide/reference/api/admin-indices-get-settings/>`_
 
         :arg index: A comma-separated list of index names; use `_all` or empty
             string to perform the operation on all indices
@@ -366,7 +366,7 @@ class IndicesClient(NamespacedClient):
     def put_settings(self, body, index=None, params=None):
         """
         Change specific index level settings in real time.
-        http://www.elasticsearch.org/guide/reference/api/admin-indices-update-settings/
+        `<http://www.elasticsearch.org/guide/reference/api/admin-indices-update-settings/>`_
 
         :arg index: A comma-separated list of index names; use `_all` or empty
             string to perform the operation on all indices
@@ -382,7 +382,7 @@ class IndicesClient(NamespacedClient):
         """
         Create an index warmer to run registered search requests to warm up the
         index before it is available for search.
-        http://www.elasticsearch.org/guide/reference/api/admin-indices-warmers/
+        `<http://www.elasticsearch.org/guide/reference/api/admin-indices-warmers/>`_
 
         :arg index: A comma-separated list of index names to register the warmer for;
             use `_all` or empty string to perform the operation on all indices
@@ -400,7 +400,7 @@ class IndicesClient(NamespacedClient):
     def get_warmer(self, index, doc_type=None, name=None, params=None):
         """
         Retreieve an index warmer.
-        http://www.elasticsearch.org/guide/reference/api/admin-indices-warmers/
+        `<http://www.elasticsearch.org/guide/reference/api/admin-indices-warmers/>`_
 
         :arg index: A comma-separated list of index names to restrict the
             operation; use `_all` to perform the operation on all indices
@@ -415,7 +415,7 @@ class IndicesClient(NamespacedClient):
     def delete_warmer(self, index, doc_type=None, name=None, params=None):
         """
         Delete an index warmer.
-        http://www.elasticsearch.org/guide/reference/api/admin-indices-warmers/
+        `<http://www.elasticsearch.org/guide/reference/api/admin-indices-warmers/>`_
 
         :arg index: A comma-separated list of index names to register warmer
             for; use `_all` or empty string to perform the operation on all indices
@@ -432,7 +432,7 @@ class IndicesClient(NamespacedClient):
     def status(self, index=None, params=None):
         """
         Get a comprehensive status information of one or more indices.
-        http://elasticsearch.org/guide/reference/api/admin-indices-_/
+        `<http://elasticsearch.org/guide/reference/api/admin-indices-_/>`_
 
         :arg index: A comma-separated list of index names; use `_all` or empty
             string to perform the operation on all indices
@@ -452,7 +452,7 @@ class IndicesClient(NamespacedClient):
     def stats(self, index=None, metric_family=None, params=None):
         """
         Retrieve statistics on different operations happening on an index.
-        http://elasticsearch.org/guide/reference/api/admin-indices-stats/
+        `<http://elasticsearch.org/guide/reference/api/admin-indices-stats/>`_
 
         :arg index: A comma-separated list of index names; use `_all` or empty
             string to perform the operation on all indices
@@ -486,7 +486,7 @@ class IndicesClient(NamespacedClient):
     def segments(self, index=None, params=None):
         """
         Provide low level segments information that a Lucene index (shard level) is built with.
-        http://elasticsearch.org/guide/reference/api/admin-indices-segments/
+        `<http://elasticsearch.org/guide/reference/api/admin-indices-segments/>`_
 
         :arg index: A comma-separated list of index names; use `_all` or empty
             string to perform the operation on all indices
@@ -502,7 +502,7 @@ class IndicesClient(NamespacedClient):
     def optimize(self, index=None, params=None):
         """
         Explicitly optimize one or more indices through an API.
-        http://www.elasticsearch.org/guide/reference/api/admin-indices-optimize/
+        `<http://www.elasticsearch.org/guide/reference/api/admin-indices-optimize/>`_
 
         :arg index: A comma-separated list of index names; use `_all` or empty
             string to perform the operation on all indices
@@ -527,7 +527,7 @@ class IndicesClient(NamespacedClient):
     def validate_query(self, index=None, doc_type=None, body=None, params=None):
         """
         Validate a potentially expensive query without executing it.
-        http://www.elasticsearch.org/guide/reference/api/validate/
+        `<http://www.elasticsearch.org/guide/reference/api/validate/>`_
 
         :arg index: A comma-separated list of index names to restrict the operation;
             use `_all` or empty string to perform the operation on all indices
@@ -552,7 +552,7 @@ class IndicesClient(NamespacedClient):
     def clear_cache(self, index=None, params=None):
         """
         Clear either all caches or specific cached associated with one ore more indices.
-        http://www.elasticsearch.org/guide/reference/api/admin-indices-clearcache/
+        `<http://www.elasticsearch.org/guide/reference/api/admin-indices-clearcache/>`_
 
         :arg index: A comma-separated list of index name to limit the operation
         :arg field_data: Clear field data
