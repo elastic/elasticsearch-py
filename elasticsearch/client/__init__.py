@@ -171,7 +171,7 @@ class Elasticsearch(object):
 
     @query_params('_source', '_source_exclude', '_source_include', 'fields',
         'parent', 'preference', 'realtime', 'refresh', 'routing')
-    def get(self, index, id, doc_type='_all', ignore=(), params=None):
+    def get(self, index, id, doc_type='_all', params=None):
         """
         Get a typed JSON document from the index based on its id.
         `<http://elasticsearch.org/guide/reference/api/get/>`_
@@ -180,8 +180,6 @@ class Elasticsearch(object):
         :arg id: The document ID
         :arg doc_type: The type of the document (uses `_all` by default to
             fetch the first document matching the ID across all types)
-        :arg ignore: a list of http status number that should be ignored
-            instead of raised as exceptions
         :arg _source: True or false to return the _source field or not, or a
             list of fields to return
         :arg _source_exclude: A list of fields to exclude from the returned
@@ -198,18 +196,13 @@ class Elasticsearch(object):
             performing the operation
         :arg routing: Specific routing value
         """
-        try:
-            _, data = self.transport.perform_request('GET', _make_path(index, doc_type, id),
-                params=params)
-        except TransportError as e:
-            if e.status_code == ignore:
-                return
-            raise
+        _, data = self.transport.perform_request('GET', _make_path(index, doc_type, id),
+            params=params)
         return data
 
     @query_params('_source_exclude', '_source_include', 'parent', 'preference',
         'realtime', 'refresh', 'routing')
-    def get_source(self, index, id, doc_type='_all', ignore=(), params=None):
+    def get_source(self, index, id, doc_type='_all', params=None):
         """
         Get the source of a document by it's index, type and id.
         `<http://elasticsearch.org/guide/reference/api/get/>`_
@@ -218,8 +211,6 @@ class Elasticsearch(object):
         :arg doc_type: The type of the document (uses `_all` by default to
             fetch the first document matching the ID across all types)
         :arg id: The document ID
-        :arg ignore: a list of http status number that should be ignored
-            instead of raised as exceptions
         :arg _source_exclude: A list of fields to exclude from the returned
             _source field
         :arg _source_include: A list of fields to extract and return from the
@@ -232,13 +223,8 @@ class Elasticsearch(object):
             performing the operation
         :arg routing: Specific routing value
         """
-        try:
-            _, data = self.transport.perform_request('GET', _make_path(index, doc_type, id, '_source'),
-                params=params)
-        except TransportError as e:
-            if e.status_code == ignore:
-                return
-            raise
+        _, data = self.transport.perform_request('GET', _make_path(index, doc_type, id, '_source'),
+            params=params)
         return data
 
     @query_params('_source', '_source_exclude', '_source_include', 'fields',
@@ -274,7 +260,7 @@ class Elasticsearch(object):
     @query_params('consistency', 'fields', 'lang', 'parent', 'percolate',
         'refresh', 'replication', 'retry_on_conflict', 'routing', 'script',
         'timeout', 'timestamp', 'ttl', 'version', 'version_type')
-    def update(self, index, doc_type, id, body=None, ignore=(), params=None):
+    def update(self, index, doc_type, id, body=None, params=None):
         """
         Update a document based on a script or partial data provided.
         `<http://elasticsearch.org/guide/reference/api/update/>`_
@@ -283,8 +269,6 @@ class Elasticsearch(object):
         :arg doc_type: The type of the document
         :arg id: Document ID
         :arg body: The request definition using either `script` or partial `doc`
-        :arg ignore: a list of http status number that should be ignored
-            instead of raised as exceptions
         :arg consistency: Explicit write consistency setting for the operation
         :arg fields: A comma-separated list of fields to return in the response
         :arg lang: The script language (default: mvel)
@@ -303,13 +287,8 @@ class Elasticsearch(object):
         :arg version: Explicit version number for concurrency control
         :arg version_type: Explicit version number for concurrency control
         """
-        try:
-            _, data = self.transport.perform_request('POST', _make_path(index, doc_type, id, '_update'),
-                params=params, body=body)
-        except TransportError as e:
-            if e.status_code == ignore:
-                return
-            raise
+        _, data = self.transport.perform_request('POST', _make_path(index, doc_type, id, '_update'),
+            params=params, body=body)
         return data
 
     @query_params('_source', '_source_exclude', '_source_include',
@@ -450,7 +429,7 @@ class Elasticsearch(object):
 
     @query_params('consistency', 'parent', 'refresh', 'replication', 'routing',
         'timeout', 'version', 'version_type')
-    def delete(self, index, doc_type, id, ignore=(), params=None):
+    def delete(self, index, doc_type, id, params=None):
         """
         Delete a typed JSON document from a specific index based on its id.
         `<http://elasticsearch.org/guide/reference/api/delete/>`_
@@ -458,8 +437,6 @@ class Elasticsearch(object):
         :arg index: The name of the index
         :arg doc_type: The type of the document
         :arg id: The document ID
-        :arg ignore: a list of http status number that should be ignored
-            instead of raised as exceptions
         :arg consistency: Specific write consistency setting for the operation
         :arg parent: ID of parent document
         :arg refresh: Refresh the index after performing the operation
@@ -469,12 +446,7 @@ class Elasticsearch(object):
         :arg version: Explicit version number for concurrency control
         :arg version_type: Specific version type
         """
-        try:
-            _, data = self.transport.perform_request('DELETE', _make_path(index, doc_type, id), params=params)
-        except TransportError as e:
-            if e.status_code == ignore:
-                return
-            raise
+        _, data = self.transport.perform_request('DELETE', _make_path(index, doc_type, id), params=params)
         return data
 
     @query_params('ignore_indices', 'min_score', 'preference', 'routing', 'source')

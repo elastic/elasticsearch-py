@@ -30,7 +30,7 @@ class RequestsHttpConnection(Connection):
         )
 
 
-    def perform_request(self, method, url, params=None, body=None, timeout=None):
+    def perform_request(self, method, url, params=None, body=None, timeout=None, ignore=()):
         url = self.base_url + url
 
         # use prepared requests so that requests formats url and params for us to log
@@ -45,7 +45,7 @@ class RequestsHttpConnection(Connection):
             raise ConnectionError('N/A', str(e), e)
 
         # raise errors based on http status codes, let the client handle those if needed
-        if not (200 <= response.status_code < 300):
+        if not (200 <= response.status_code < 300) and response.status_code not in ignore:
             self.log_request_fail(method, request.url, duration, response.status_code)
             self._raise_error(response.status_code, raw_data)
 
@@ -75,7 +75,7 @@ class Urllib3HttpConnection(Connection):
 
         self.pool = pool_class(host, port=port, timeout=kwargs.get('timeout', None), headers=headers)
 
-    def perform_request(self, method, url, params=None, body=None, timeout=None):
+    def perform_request(self, method, url, params=None, body=None, timeout=None, ignore=()):
         url = self.url_prefix + url
         if params:
             url = '%s?%s' % (url, urlencode(params or {}))
@@ -93,7 +93,7 @@ class Urllib3HttpConnection(Connection):
             self.log_request_fail(method, full_url, time.time() - start, exception=e)
             raise ConnectionError('N/A', str(e), e)
 
-        if not (200 <= response.status < 300):
+        if not (200 <= response.status < 300) and response.status not in ignore:
             self.log_request_fail(method, url, duration, response.status)
             self._raise_error(response.status, raw_data)
 

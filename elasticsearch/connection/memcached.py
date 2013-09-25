@@ -33,7 +33,7 @@ class MemcachedConnection(PoolingConnection):
         super(MemcachedConnection, self).__init__(host=host, port=port, **kwargs)
         self._make_connection = lambda: pylibmc.Client(['%s:%s' % (host, port)], behaviors={"tcp_nodelay": True})
 
-    def perform_request(self, method, url, params=None, body=None, timeout=None):
+    def perform_request(self, method, url, params=None, body=None, timeout=None, ignore=()):
         mc = self._get_connection()
         url = self.url_prefix + url
         if params:
@@ -70,7 +70,7 @@ class MemcachedConnection(PoolingConnection):
             elif 'error' in data:
                 raise TransportError('N/A', data['error'])
 
-        if not (200 <= status < 300):
+        if not (200 <= status < 300) and status not in ignore:
             self.log_request_fail(method, url, duration, status)
             self._raise_error(status, response)
 

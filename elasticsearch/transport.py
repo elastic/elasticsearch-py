@@ -210,11 +210,17 @@ class Transport(object):
         if body is not None:
             body = self.serializer.dumps(body)
 
+        ignore = ()
+        if params and 'ignore' in params:
+            ignore = params.pop('ignore')
+            if isinstance(ignore, int):
+                ignore = (ignore, )
+
         for attempt in range(self.max_retries + 1):
             connection = self.get_connection()
 
             try:
-                status, raw_data = connection.perform_request(method, url, params, body)
+                status, raw_data = connection.perform_request(method, url, params, body, ignore=ignore)
             except ConnectionError:
                 self.mark_dead(connection)
 

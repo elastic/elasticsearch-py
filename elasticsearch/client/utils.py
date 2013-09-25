@@ -62,6 +62,10 @@ def query_params(*es_query_params):
             for p in es_query_params + GLOBAL_PARAMS:
                 if p in kwargs:
                     params[p] = _escape(kwargs.pop(p))
+
+            # don't treat ignore as other params to avoid escaping
+            if 'ignore' in kwargs:
+                params['ignore'] = kwargs.pop('ignore')
             return func(*args, params=params, **kwargs)
         return _wrapped
     return _wrapper

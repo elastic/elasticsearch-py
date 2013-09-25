@@ -51,7 +51,7 @@ class ThriftConnection(PoolingConnection):
         transport.open()
         return client
 
-    def perform_request(self, method, url, params=None, body=None, timeout=None):
+    def perform_request(self, method, url, params=None, body=None, timeout=None, ignore=()):
         request = RestRequest(method=Method._NAMES_TO_VALUES[method.upper()], uri=url,
                     parameters=params, body=body)
 
@@ -66,7 +66,7 @@ class ThriftConnection(PoolingConnection):
         finally:
             self._release_connection(tclient)
 
-        if not (200 <= response.status < 300):
+        if not (200 <= response.status < 300) and response.status not in ignore:
             self.log_request_fail(method, url, duration, response.status)
             self._raise_error(response.status, response.body)
 
