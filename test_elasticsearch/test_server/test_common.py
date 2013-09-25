@@ -28,7 +28,6 @@ def _get_version(version_string):
     return tuple(int(v) if v.isdigit() else 999 for v in version)
 
 class YamlTestCase(ElasticTestCase):
-    _definition = None
     @property
     def es_version(self):
         global ES_VERSION
@@ -39,15 +38,10 @@ class YamlTestCase(ElasticTestCase):
 
     def setUp(self):
         super(YamlTestCase, self).setUp()
+        if hasattr(self, '_setup_code'):
+            self.run_code(self._setup_code)
         self.last_response = None
         self._state = {}
-
-    def test_from_yaml(self):
-        if not self._definition:
-            raise SkipTest('Empty test.')
-        for test in self._definition:
-            for name, definition in test.items():
-                self.run_code(definition)
 
     def _resolve(self, value):
         # resolve variables
@@ -173,14 +167,28 @@ def construct_case(filename, name):
     Parse a definition of a test case from a yaml file and construct the
     TestCase subclass dynamically.
     """
+    def make_test(test_name, definition, i):
+        def m(self):
+            self.run_code(definition)
+        m.__doc__ = '%s: %s' % ('/'.join(filename.split('/')[-2:]), test_name)
+        m.__name__ = 'test_from_yaml_%d' % i
+        return m
+
     with open(filename) as f:
         tests = list(yaml.load_all(f))
 
-    # dump all tests into one test method
     attrs = {
-        '_definition': tests,
         '_yaml_file': filename
     }
+    i = 0
+    for test in tests:
+        for test_name, definition in test.items():
+            if test_name == 'setup':
+                attrs['_setup_code'] = definition
+                continue
+
+            attrs['test_from_yaml_%d' % i] = make_test(test_name, definition, i)
+            i += 1
 
     return type(name, (YamlTestCase, ), attrs)
 
