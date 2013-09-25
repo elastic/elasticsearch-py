@@ -351,6 +351,49 @@ class Elasticsearch(object):
             params=params, body=body)
         return data
 
+    @query_params('_source', '_source_exclude', '_source_include',
+        'analyze_wildcard', 'analyzer', 'default_operator', 'df', 'fields',
+        'lenient', 'lowercase_expanded_terms', 'parent', 'preference', 'q',
+        'routing', 'source')
+    def explain(self, index, doc_type, id, body=None, params=None):
+        """
+        The explain api computes a score explanation for a query and a specific
+        document. This can give useful feedback whether a document matches or
+        didn’t match a specific query.
+        `<http://elasticsearch.org/guide/reference/api/explain/>`_
+
+        :arg index: The name of the index
+        :arg doc_type: The type of the document
+        :arg id: The document ID
+        :arg body: The query definition using the Query DSL
+        :arg _source: True or false to return the _source field or not, or a
+            list of fields to return
+        :arg _source_exclude: A list of fields to exclude from the returned
+            _source field
+        :arg _source_include: A list of fields to extract and return from the
+            _source field
+        :arg analyze_wildcard: Specify whether wildcards and prefix queries in
+            the query string query should be analyzed (default: false)
+        :arg analyzer: The analyzer for the query string query
+        :arg default_operator: The default operator for query string query (AND
+            or OR), (default: OR)
+        :arg df: The default field for query string query (default: _all)
+        :arg fields: A comma-separated list of fields to return in the response
+        :arg lenient: Specify whether format-based query failures (such as
+            providing text to a numeric field) should be ignored
+        :arg lowercase_expanded_terms: Specify whether query terms should be lowercased
+        :arg parent: The ID of the parent document
+        :arg preference: Specify the node or shard the operation should be
+            performed on (default: random)
+        :arg q: Query in the Lucene query string syntax
+        :arg routing: Specific routing value
+        :arg source: The URL-encoded query definition (instead of using the
+            request body)
+        """
+        _, data = self.transport.perform_request('GET', _make_path(index, doc_type, id, '_explain'),
+            params=params, body=body)
+        return data
+
     @query_params('scroll')
     def scroll(self, scroll_id, params=None):
         """
