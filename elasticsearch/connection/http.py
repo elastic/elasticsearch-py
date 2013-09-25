@@ -15,9 +15,9 @@ class RequestsHttpConnection(Connection):
 
     :arg http_auth: optional http auth information as either ':' separated
         string or a tuple
-    :arg use_https: use https for the connection if `True`
+    :arg use_ssl: use ssl for the connection if `True`
     """
-    def __init__(self, host='localhost', port=9200, http_auth=None, use_https=False, **kwargs):
+    def __init__(self, host='localhost', port=9200, http_auth=None, use_ssl=False, **kwargs):
         super(RequestsHttpConnection, self).__init__(host=host, port=port, **kwargs)
         self.session = requests.session()
         if http_auth is not None:
@@ -25,7 +25,7 @@ class RequestsHttpConnection(Connection):
                 http_auth = tuple(http_auth.split(':', 1))
             self.session.auth = http_auth
         self.base_url = 'http%s://%s:%d%s' % (
-            's' if use_https else '',
+            's' if use_ssl else '',
             host, port, self.url_prefix
         )
 
@@ -59,9 +59,9 @@ class Urllib3HttpConnection(Connection):
 
     :arg http_auth: optional http auth information as either ':' separated
         string or a tuple
-    :arg use_https: use https for the connection if `True`
+    :arg use_ssl: use ssl for the connection if `True`
     """
-    def __init__(self, host='localhost', port=9200, http_auth=None, use_https=False, **kwargs):
+    def __init__(self, host='localhost', port=9200, http_auth=None, use_ssl=False, **kwargs):
         super(Urllib3HttpConnection, self).__init__(host=host, port=port, **kwargs)
         headers = {}
         if http_auth is not None:
@@ -70,7 +70,7 @@ class Urllib3HttpConnection(Connection):
             headers = urllib3.make_headers(basic_auth=http_auth)
 
         pool_class = urllib3.HTTPConnectionPool
-        if use_https:
+        if use_ssl:
             pool_class = urllib3.HTTPSConnectionPool
 
         self.pool = pool_class(host, port=port, timeout=kwargs.get('timeout', None), headers=headers)

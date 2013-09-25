@@ -17,7 +17,7 @@ class TestUrllib3Connection(TestCase):
         self.assertEquals({'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0'}, con.pool.headers)
 
     def test_uses_https_if_specified(self):
-        con = Urllib3HttpConnection(use_https=True)
+        con = Urllib3HttpConnection(use_ssl=True)
         self.assertIsInstance(con.pool, urllib3.HTTPSConnectionPool)
 
     def test_doesnt_use_https_if_not_specified(self):
@@ -50,7 +50,7 @@ class TestRequestsConnection(TestCase):
         return args[0]
 
     def test_use_https_if_specified(self):
-        con = self._get_mock_connection({'use_https': True, 'url_prefix': 'url'})
+        con = self._get_mock_connection({'use_ssl': True, 'url_prefix': 'url'})
         request = self._get_request(con, 'GET', '/')
 
         self.assertEquals('https://localhost:9200/url/', request.url)
