@@ -1,25 +1,38 @@
-services:
-  - elasticsearch
 language: python
+
 python:
   - "2.6"
   - "2.7"
   - "3.3"
   - "pypy"
+
 env:
   # different connection classes to test
   - TEST_ES_CONNECTION=Urllib3HttpConnection
   - TEST_ES_CONNECTION=RequestsHttpConnection
+  - TEST_ES_CONNECTION=ThriftConnection
+
 matrix:
   exclude:
-    # skip testing thrift on py3
+    # skip testing thrift on py3 and pypy
+    - python: "pypy"
+      env: TEST_ES_CONNECTION=ThriftConnection
     - python: "3.3"
       env: TEST_ES_CONNECTION=ThriftConnection
+
 install:
+  - wget -O - https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.90.5.tar.gz | tar xz -C /tmp
+  - /tmp/elasticsearch-0.90.5/bin/plugin -install elasticsearch/elasticsearch-transport-memcached/1.6.0
+  - /tmp/elasticsearch-0.90.5/bin/plugin -install elasticsearch/elasticsearch-transport-thrift/1.6.0
   - git submodule init
   - pip install coveralls
   - pip install .
+
+before_script:
+  - /tmp/elasticsearch-0.90.5/bin/elasticsearch -D es.path.data=/tmp -D es.gateway.type=none -D es.index.store.type=memory -D es.discovery.zen.ping.multicast.enabled=false
+
 script:
   - TEST_ES_SERVER=localhost python setup.py test
+
 after_success:
   - coveralls
