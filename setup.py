@@ -14,8 +14,8 @@ long_description = f.read().strip()
 f.close()
 
 install_requires = [
-    'requests==1.2.0',
-    'urllib3==1.5',
+    'requests>=1.0.0, <3.0.0',
+    'urllib3>=1.5, <2.0',
 ]
 tests_require = [
     'nose',
