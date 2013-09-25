@@ -5,7 +5,7 @@ try:
     from .esthrift import Rest
     from .esthrift.ttypes import Method, RestRequest
 
-    from thrift.transport import TTransport, TSocket
+    from thrift.transport import TTransport, TSocket, TSSLSocket
     from thrift.protocol import TBinaryProtocol
     from thrift.Thrift import TException
     THRIFT_AVAILABLE = True
@@ -23,7 +23,7 @@ class ThriftConnection(PoolingConnection):
     """
     transport_schema = 'thrift'
 
-    def __init__(self, host='localhost', port=9500, framed_transport=False, **kwargs):
+    def __init__(self, host='localhost', port=9500, framed_transport=False, use_ssl=False, **kwargs):
         """
         :arg framed_transport: use `TTransport.TFramedTransport` instead of
             `TTransport.TBufferedTransport`
@@ -33,10 +33,13 @@ class ThriftConnection(PoolingConnection):
 
         super(ThriftConnection, self).__init__(host=host, port=port, **kwargs)
         self._framed_transport = framed_transport
+        self._tsocket_class = TSocket.TSocket
+        if use_ssl:
+            self._tsocket_class = TSSLSocket.TSSLSocket 
         self._tsocket_args = (host, port)
 
     def _make_connection(self):
-        socket = TSocket.TSocket(*self._tsocket_args)
+        socket = self._tsocket_class(*self._tsocket_args)
         socket.setTimeout(self.timeout * 1000.0)
         if self._framed_transport:
             transport = TTransport.TFramedTransport(socket)

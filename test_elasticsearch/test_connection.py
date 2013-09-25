@@ -3,9 +3,27 @@ from mock import Mock, patch
 import urllib3
 
 from elasticsearch.exceptions import TransportError
-from elasticsearch.connection import RequestsHttpConnection, Urllib3HttpConnection
+from elasticsearch.connection import RequestsHttpConnection, \
+    Urllib3HttpConnection, THRIFT_AVAILABLE, ThriftConnection
 
-from .test_cases import TestCase
+from .test_cases import TestCase, SkipTest
+
+class TestThriftConnection(TestCase):
+    def setUp(self):
+        if not THRIFT_AVAILABLE:
+            raise SkipTest('Thrift is not available.')
+        super(TestThriftConnection, self).setUp()
+
+    def test_use_ssl_uses_ssl_socket(self):
+        from thrift.transport import TSSLSocket
+        con = ThriftConnection(use_ssl=True)
+        self.assertIs(con._tsocket_class, TSSLSocket.TSSLSocket)
+
+    def test_use_normal_tsocket_by_default(self):
+        from thrift.transport import TSocket
+        con = ThriftConnection()
+        self.assertIs(con._tsocket_class, TSocket.TSocket)
+
 
 class TestUrllib3Connection(TestCase):
     def test_http_auth(self):
