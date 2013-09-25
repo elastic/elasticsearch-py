@@ -365,6 +365,20 @@ class Elasticsearch(object):
             params=params)
         return data
 
+    @query_params()
+    def clear_scroll(self, scroll_id, params=None):
+        """
+        Clear the scroll request created by specifying the scroll parameter to
+        search.
+        `<http://www.elasticsearch.org/guide/reference/api/search/scroll/>`_
+
+        :arg scroll_id: The scroll ID or a list of scroll IDs
+        """
+        _, data = self.transport.perform_request('DELETE', _make_path('_search', 'scroll', scroll_id),
+            params=params)
+        return data
+
+
     @query_params('consistency', 'parent', 'refresh', 'replication', 'routing',
         'timeout', 'version', 'version_type')
     def delete(self, index, doc_type, id, ignore=(), params=None):
