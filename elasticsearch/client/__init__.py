@@ -169,7 +169,8 @@ class Elasticsearch(object):
             return False
         return True
 
-    @query_params('fields', 'parent', 'preference', 'realtime', 'refresh', 'routing')
+    @query_params('_source', '_source_exclude', '_source_include', 'fields',
+        'parent', 'preference', 'realtime', 'refresh', 'routing')
     def get(self, index, id, doc_type='_all', ignore=(), params=None):
         """
         Get a typed JSON document from the index based on its id.
@@ -181,6 +182,12 @@ class Elasticsearch(object):
             fetch the first document matching the ID across all types)
         :arg ignore: a list of http status number that should be ignored
             instead of raised as exceptions
+        :arg _source: True or false to return the _source field or not, or a
+            list of fields to return
+        :arg _source_exclude: A list of fields to exclude from the returned
+            _source field
+        :arg _source_include: A list of fields to extract and return from the
+            _source field
         :arg fields: A comma-separated list of fields to return in the response
         :arg parent: The ID of the parent document
         :arg preference: Specify the node or shard the operation should be
@@ -200,7 +207,8 @@ class Elasticsearch(object):
             raise
         return data
 
-    @query_params('parent', 'preference', 'realtime', 'refresh', 'routing')
+    @query_params('_source_exclude', '_source_include', 'parent', 'preference',
+        'realtime', 'refresh', 'routing')
     def get_source(self, index, id, doc_type='_all', ignore=(), params=None):
         """
         Get the source of a document by it's index, type and id.
@@ -212,6 +220,10 @@ class Elasticsearch(object):
         :arg id: The document ID
         :arg ignore: a list of http status number that should be ignored
             instead of raised as exceptions
+        :arg _source_exclude: A list of fields to exclude from the returned
+            _source field
+        :arg _source_include: A list of fields to extract and return from the
+            _source field
         :arg parent: The ID of the parent document
         :arg preference: Specify the node or shard the operation should be
             performed on (default: random)
@@ -229,7 +241,8 @@ class Elasticsearch(object):
             raise
         return data
 
-    @query_params('fields', 'parent', 'preference', 'realtime', 'refresh', 'routing')
+    @query_params('_source', '_source_exclude', '_source_include', 'fields',
+        'parent', 'preference', 'realtime', 'refresh', 'routing')
     def mget(self, body, index=None, doc_type=None, params=None):
         """
         Get multiple documents based on an index, type (optional) and ids.
@@ -239,6 +252,12 @@ class Elasticsearch(object):
             document information) or `ids` (when index and type is provided in the URL.
         :arg index: The name of the index
         :arg doc_type: The type of the document
+        :arg _source: True or false to return the _source field or not, or a
+            list of fields to return
+        :arg _source_exclude: A list of fields to exclude from the returned
+            _source field
+        :arg _source_include: A list of fields to extract and return from the
+            _source field
         :arg fields: A comma-separated list of fields to return in the response
         :arg parent: The ID of the parent document
         :arg preference: Specify the node or shard the operation should be
@@ -293,7 +312,8 @@ class Elasticsearch(object):
             raise
         return data
 
-    @query_params('analyze_wildcard', 'analyzer', 'default_operator', 'df',
+    @query_params('_source', '_source_exclude', '_source_include',
+        'analyze_wildcard', 'analyzer', 'default_operator', 'df',
         'explain', 'fields', 'ignore_indices', 'indices_boost', 'lenient',
         'lowercase_expanded_terms', 'offset', 'preference', 'q', 'routing',
         'scroll', 'search_type', 'size', 'sort', 'source', 'stats',
@@ -309,6 +329,12 @@ class Elasticsearch(object):
         :arg doc_type: A comma-separated list of document types to search;
             leave empty to perform the operation on all types
         :arg body: The search definition using the Query DSL
+        :arg _source: True or false to return the _source field or not, or a
+            list of fields to return
+        :arg _source_exclude: A list of fields to exclude from the returned
+            _source field
+        :arg _source_include: A list of fields to extract and return from the
+            _source field
         :arg analyze_wildcard: Specify whether wildcard and prefix queries
             should be analyzed (default: false)
         :arg analyzer: The analyzer to use for the query string
