@@ -385,7 +385,7 @@ class Elasticsearch(object):
         """
         The explain api computes a score explanation for a query and a specific
         document. This can give useful feedback whether a document matches or
-        didn’t match a specific query.
+        didn't match a specific query.
         `<http://elasticsearch.org/guide/reference/api/explain/>`_
 
         :arg index: The name of the index
