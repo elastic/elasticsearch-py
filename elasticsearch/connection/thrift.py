@@ -23,7 +23,7 @@ class ThriftConnection(PoolingConnection):
     """
     transport_schema = 'thrift'
 
-    def __init__(self, host='localhost', port=9500, framed_transport=False, **kwargs):
+    def __init__(self, host='localhost', port=9500, framed_transport=False, thrift_headers=None, **kwargs):
         """
         :arg framed_transport: use `TTransport.TFramedTransport` instead of
             `TTransport.TBufferedTransport`
@@ -34,6 +34,7 @@ class ThriftConnection(PoolingConnection):
         super(ThriftConnection, self).__init__(host=host, port=port, **kwargs)
         self._framed_transport = framed_transport
         self._tsocket_args = (host, port)
+        self._thrift_headers = thrift_headers or dict()
 
     def _make_connection(self):
         socket = TSocket.TSocket(*self._tsocket_args)
@@ -50,7 +51,7 @@ class ThriftConnection(PoolingConnection):
 
     def perform_request(self, method, url, params=None, body=None, timeout=None):
         request = RestRequest(method=Method._NAMES_TO_VALUES[method.upper()], uri=url,
-                    parameters=params, body=body)
+                    parameters=params, headers=self._thrift_headers, body=body)
 
         start = time.time()
         tclient = self._get_connection()
