@@ -446,9 +446,10 @@ class IndicesClient(NamespacedClient):
             params=params)
         return data
 
-    @query_params('all', 'clear', 'docs', 'fielddata', 'fields',
-        'filter_cache', 'flush', 'get', 'groups', 'id_cache', 'ignore_indices',
-        'indexing', 'merge', 'refresh', 'search', 'store', 'warmer')
+    @query_params('all', 'clear', 'completion', 'completion_fields', 'docs',
+        'fielddata', 'fielddata_fields', 'fields', 'filter_cache', 'flush', 'get', 'groups',
+        'id_cache', 'ignore_indices', 'indexing', 'merge', 'refresh', 'search',
+        'store', 'warmer')
     def stats(self, index=None, metric_family=None, params=None):
         """
         Retrieve statistics on different operations happening on an index.
@@ -459,10 +460,15 @@ class IndicesClient(NamespacedClient):
         :arg metric_family: Limit the information returned to a specific metric
         :arg all: Return all available information
         :arg clear: Reset the default level of detail
+        :arg completion: Return information about completion suggester stats
+        :arg completion_fields: A comma-separated list of fields for
+            `completion` metric (supports wildcards)
         :arg docs: Return information about indexed and deleted documents
         :arg fielddata: Return information about field data
-        :arg fields: A comma-separated list of fields for `fielddata` metric
-            (supports wildcards)
+        :arg fielddata_fields: A comma-separated list of fields for `fielddata`
+            metric (supports wildcards)
+        :arg fields: A comma-separated list of fields for `fielddata` and
+            `completion` metric (supports wildcards)
         :arg filter_cache: Return information about filter cache
         :arg flush: Return information about flush operations
         :arg get: Return information about get operations
