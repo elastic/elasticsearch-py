@@ -480,7 +480,6 @@ class Elasticsearch(object):
         :arg index: Default index for items which don't provide one
         :arg doc_type: Default document type for items which don't provide one
         :arg consistency: Explicit write consistency setting for the operation
-        :arg doc_type: Default document type for items which don't provide one
         :arg refresh: Refresh the index after performing the operation
         :arg replication: Explicitly set the replication type (efault: sync)
         """
