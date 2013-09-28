@@ -1,17 +1,17 @@
-__all__ = ['ImproperlyConfigured', 'ElastiSearchException', 'SerializationError', 'TransportError', 'NotFoundError']
+__all__ = ['ImproperlyConfigured', 'ElasticsearchException', 'SerializationError', 'TransportError', 'NotFoundError']
 
 class ImproperlyConfigured(Exception):
     pass
 
-class ElastiSearchException(Exception):
+class ElasticsearchException(Exception):
     pass
 
 
-class SerializationError(ElastiSearchException):
+class SerializationError(ElasticsearchException):
     pass
 
 
-class TransportError(ElastiSearchException):
+class TransportError(ElasticsearchException):
     """ Exception raised when ES returns a non-OK (>=400) HTTP status code. """
     @property
     def status_code(self):
