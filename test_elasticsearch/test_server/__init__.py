@@ -29,40 +29,48 @@ CMD = """
 server = None
 pidfile = tempfile.mktemp()
 
+def get_client(**kwargs):
+    kw = {}
+    if 'TEST_ES_CONNECTION' in os.environ:
+        from elasticsearch import connection
+        kw['connection_class'] = getattr(connection, os.environ['TEST_ES_CONNECTION'])
+    kw.update(kwargs)
+    return Elasticsearch([os.environ['TEST_ES_SERVER']], **kw)
+
+
 def setup():
     global server
 
-    # use running ES instance, don't attempt to start our own
-    if 'TEST_ES_SERVER' in os.environ:
-        return
+    # if use running ES instance, don't attempt to start our own
+    if 'TEST_ES_SERVER' not in os.environ:
+        # check installed
+        if subprocess.call('which elasticsearch >/dev/null 2>&1', shell=True) != 0:
+            raise SkipTest("No Elasticsearch server, skipping integration tests.")
 
-    # check installed
-    if subprocess.call('which elasticsearch >/dev/null 2>&1', shell=True) != 0:
-        raise SkipTest("No Elasticsearch server, skipping integration tests.")
+        args = {
+            'cluster_name': 'es_client_test',
+            'port': 9900,
+            'data_dir': tempfile.tempdir,
+            'pidfile': pidfile
+        }
 
-    args = {
-        'cluster_name': 'es_client_test',
-        'port': 9900,
-        'data_dir': tempfile.tempdir,
-        'pidfile': pidfile
-    }
-
-    # check running
-    try:
-        requests.get('http://localhost:%(port)s' % args)
-    except requests.ConnectionError:
-        pass
-    else:
-        raise SkipTest('Elasticsearch already running!')
+        # check running
+        try:
+            requests.get('http://localhost:%(port)s' % args)
+        except requests.ConnectionError:
+            pass
+        else:
+            raise SkipTest('Elasticsearch already running!')
 
 
-    cmd = CMD % args
+        cmd = CMD % args
 
-    server = subprocess.Popen(cmd, shell=True)
-    os.environ['TEST_ES_SERVER'] = 'localhost:%(port)s' % args
-    client = Elasticsearch([os.environ['TEST_ES_SERVER']])
+        server = subprocess.Popen(cmd, shell=True)
+        os.environ['TEST_ES_SERVER'] = 'localhost:%(port)s' % args
 
-    # wait for green status
+    client = get_client()
+
+    # wait for yellow status
     for _ in range(100):
         time.sleep(.1)
         try:
@@ -87,11 +95,7 @@ class ElasticTestCase(TestCase):
     client = None
     def setUp(self):
         if ElasticTestCase.client is None:
-            kw = {}
-            if 'TEST_ES_CONNECTION' in os.environ:
-                from elasticsearch import connection
-                kw['connection_class'] = getattr(connection, os.environ['TEST_ES_CONNECTION'])
-            ElasticTestCase.client = Elasticsearch([os.environ['TEST_ES_SERVER']], **kw)
+            ElasticTestCase.client = get_client()
         self.client = ElasticTestCase.client
 
     def tearDown(self):
