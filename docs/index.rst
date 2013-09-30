@@ -77,6 +77,7 @@ Contents
    api
    connection
    transports
+   helpers
 
 License
 -------
