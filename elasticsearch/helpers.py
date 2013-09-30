@@ -1,6 +1,6 @@
 from itertools import islice
 
-def bulk_index(client, docs, chunk_size=500, **kwargs):
+def bulk_index(client, docs, chunk_size=500, stats_only=False, **kwargs):
     """
     Helper for the :meth:`~elasticsearch.Elasticsearch.bulk` api that provides
     a more human friendly interface - it consumes an iterator of documents and
@@ -25,10 +25,15 @@ def bulk_index(client, docs, chunk_size=500, **kwargs):
     :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use
     :arg docs: iterator containing the docs
     :arg chunk_size: number of docs in one chunk sent to es (default: 500)
+    :arg stats_only: if `True` only report number of successful/failed
+        operations
 
     Any additional keyword arguments will be passed to the bulk API itself.
     """
-    success, failed = [], []
+    if stats_only:
+        success, failed = 0, 0
+    else:
+        success, failed = [], []
     docs = iter(docs)
     while True:
         chunk = islice(docs, chunk_size)
@@ -49,10 +54,16 @@ def bulk_index(client, docs, chunk_size=500, **kwargs):
         resp = client.bulk(bulk_actions, **kwargs)
 
         for item in resp['items']:
-            if item['create']['ok']:
-                success.append(item)
+            if stats_only:
+                if item['create']['ok']:
+                    success += 1
+                else:
+                    failed += 1
             else:
-                failed.append(item)
+                if item['create']['ok']:
+                    success.append(item)
+                else:
+                    failed.append(item)
 
 def scan(client, query=None, scroll='5m', **kwargs):
     """
@@ -108,4 +119,5 @@ def reindex(client, source_index, target_index, target_client=None, chunk_size=5
             h['_index'] = index
             yield h
 
-    return bulk_index(target_client, _change_doc_index(docs, target_index), chunk_size=chunk_size)
+    return bulk_index(target_client, _change_doc_index(docs, target_index),
+        chunk_size=chunk_size, stats_only=True)

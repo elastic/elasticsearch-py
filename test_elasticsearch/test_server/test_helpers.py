@@ -11,6 +11,14 @@ class TestBulkIndex(ElasticTestCase):
         self.assertFalse(failed)
         self.assertEquals(100, self.client.count(index='test-index', doc_type='answers')['count'])
 
+    def test_stats_only_reports_numbers(self):
+        docs = [{"answer": x} for x in range(100)]
+        success, failed = helpers.bulk_index(self.client, docs, index='test-index', doc_type='answers', refresh=True, stats_only=True)
+
+        self.assertEquals(100, success)
+        self.assertEquals(0, failed)
+        self.assertEquals(100, self.client.count(index='test-index', doc_type='answers')['count'])
+
 class TestScan(ElasticTestCase):
     def test_all_documents_are_read(self):
         bulk = []
