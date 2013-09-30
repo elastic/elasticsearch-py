@@ -18,7 +18,7 @@ def _escape(value):
 
     # make sequences into comma-separated stings
     if isinstance(value, (list, tuple)):
-        value = u','.join(value)
+        value = ','.join(map(_escape, value))
 
     # dates and datetimes into isoformat
     elif isinstance(value, (date, datetime)):
