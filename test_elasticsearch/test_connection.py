@@ -45,13 +45,15 @@ class TestUrllib3Connection(TestCase):
 class TestRequestsConnection(TestCase):
     def _get_mock_connection(self, connection_params={}, status_code=200, response_body=u'{}'):
         con = RequestsHttpConnection(**connection_params)
-
-        con.session.send = Mock()
-
-        dummy_response = Mock()
-        con.session.send.return_value = dummy_response
-        dummy_response.status_code = status_code
-        dummy_response.text = response_body
+        def _dummy_send(*args, **kwargs):
+            dummy_response = Mock()
+            dummy_response.headers = {}
+            dummy_response.status_code = status_code
+            dummy_response.text = response_body
+            dummy_response.request = args[0]
+            _dummy_send.call_args = (args, kwargs)
+            return dummy_response
+        con.session.send = _dummy_send
         return con
 
     def _get_request(self, connection, *args, **kwargs):
@@ -59,11 +61,9 @@ class TestRequestsConnection(TestCase):
         self.assertEquals(200, status)
         self.assertEquals(u'{}', data)
 
-        self.assertEquals(1, connection.session.send.call_count)
-
         timeout = kwargs.pop('timeout', connection.timeout)
         args, kwargs = connection.session.send.call_args
-        self.assertEquals({'timeout': timeout}, kwargs)
+        self.assertEquals(timeout, kwargs['timeout'])
         self.assertEquals(1, len(args))
         return args[0]
 

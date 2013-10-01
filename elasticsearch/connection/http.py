@@ -18,7 +18,7 @@ class RequestsHttpConnection(Connection):
     :arg use_ssl: use ssl for the connection if `True`
     """
     def __init__(self, host='localhost', port=9200, http_auth=None, use_ssl=False, **kwargs):
-        super(RequestsHttpConnection, self).__init__(host=host, port=port, **kwargs)
+        super(RequestsHttpConnection, self).__init__(host= host, port=port, **kwargs)
         self.session = requests.session()
         if http_auth is not None:
             if not isinstance(http_auth, tuple):
@@ -32,16 +32,18 @@ class RequestsHttpConnection(Connection):
 
     def perform_request(self, method, url, params=None, body=None, timeout=None, ignore=()):
         url = self.base_url + url
+        if params:
+            url = '%s?%s' % (url, urlencode(params or {}))
 
-        # use prepared requests so that requests formats url and params for us to log
-        request = requests.Request(method, url, params=params or {}, data=body).prepare()
         start = time.time()
         try:
-            response = self.session.send(request, timeout=timeout or self.timeout)
+            response = self.session.request(method, url, data=body, timeout=timeout or self.timeout)
+            # retrieve request so that we can use .path_url in logging
+            request = response.request
             duration = time.time() - start
             raw_data = response.text
         except (requests.ConnectionError, requests.Timeout) as e:
-            self.log_request_fail(method, request.url, time.time() - start, exception=e)
+            self.log_request_fail(method, url, time.time() - start, exception=e)
             raise ConnectionError('N/A', str(e), e)
 
         # raise errors based on http status codes, let the client handle those if needed
