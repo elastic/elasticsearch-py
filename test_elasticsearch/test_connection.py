@@ -87,6 +87,10 @@ class TestRequestsConnection(TestCase):
         con = RequestsHttpConnection(http_auth=('username', 'secret'))
         self.assertEquals(('username', 'secret'), con.session.auth)
 
+    def test_http_auth_list(self):
+        con = RequestsHttpConnection(http_auth=['username', 'secret'])
+        self.assertEquals(('username', 'secret'), con.session.auth)
+
     def test_repr(self):
         con = self._get_mock_connection({"host": "elasticsearch.com", "port": 443})
         self.assertEquals('<RequestsHttpConnection: http://elasticsearch.com:443>', repr(con))
@@ -168,6 +172,12 @@ class TestRequestsConnection(TestCase):
         self.assertEquals('http://localhost:9200/', request.url)
         self.assertEquals('GET', request.method)
         self.assertEquals('{"answer": 42}', request.body)
+
+    def test_http_auth_attached(self):
+        con = self._get_mock_connection(dict(http_auth='username:secret'))
+        request = self._get_request(con, 'GET', '/')
+
+        self.assertEquals(request.headers['authorization'], 'Basic dXNlcm5hbWU6c2VjcmV0')
 
     @patch('elasticsearch.connection.base.tracer')
     def test_url_prefix(self, tracer):
