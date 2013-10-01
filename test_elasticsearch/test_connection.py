@@ -79,6 +79,10 @@ class TestRequestsConnection(TestCase):
         con = RequestsHttpConnection(http_auth='username:secret')
         self.assertEquals(('username', 'secret'), con.session.auth)
 
+    def test_http_auth_list(self):
+        con = RequestsHttpConnection(http_auth=['username', 'secret'])
+        self.assertEquals(('username', 'secret'), con.session.auth)
+
     def test_http_auth_tuple(self):
         con = RequestsHttpConnection(http_auth=('username', 'secret'))
         self.assertEquals(('username', 'secret'), con.session.auth)
