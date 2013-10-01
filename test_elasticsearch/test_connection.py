@@ -34,6 +34,10 @@ class TestUrllib3Connection(TestCase):
         con = Urllib3HttpConnection(http_auth=('username', 'secret'))
         self.assertEquals({'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0'}, con.pool.headers)
 
+    def test_http_auth_list(self):
+        con = Urllib3HttpConnection(http_auth=['username', 'secret'])
+        self.assertEquals({'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0'}, con.pool.headers)
+
     def test_uses_https_if_specified(self):
         con = Urllib3HttpConnection(use_ssl=True)
         self.assertIsInstance(con.pool, urllib3.HTTPSConnectionPool)
