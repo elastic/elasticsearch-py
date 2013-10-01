@@ -2,8 +2,7 @@
 from os.path import join, dirname
 from setuptools import setup, find_packages
 import sys
-
-
+import os
 
 VERSION = (0, 4, 1)
 __version__ = VERSION
@@ -30,7 +29,9 @@ if sys.version_info[:2] == (2, 6):
     tests_require.append('unittest2')
 
 if sys.version_info[0] == 2:
-    tests_require.append('thrift==0.9.1')
+    # only require thrift if we are going to use it
+    if os.environ.get('TEST_ES_CONNECTION', None) == 'ThriftConnection':
+        tests_require.append('thrift==0.9.1')
     tests_require.append('pylibmc==1.2.3')
 
 setup(
