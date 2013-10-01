@@ -34,6 +34,10 @@ class TestUrllib3Connection(TestCase):
         con = Urllib3HttpConnection(http_auth=('username', 'secret'))
         self.assertEquals({'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0'}, con.pool.headers)
 
+    def test_http_auth_list(self):
+        con = Urllib3HttpConnection(http_auth=['username', 'secret'])
+        self.assertEquals({'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0'}, con.pool.headers)
+
     def test_uses_https_if_specified(self):
         con = Urllib3HttpConnection(use_ssl=True)
         self.assertIsInstance(con.pool, urllib3.HTTPSConnectionPool)
@@ -81,6 +85,10 @@ class TestRequestsConnection(TestCase):
 
     def test_http_auth_tuple(self):
         con = RequestsHttpConnection(http_auth=('username', 'secret'))
+        self.assertEquals(('username', 'secret'), con.session.auth)
+
+    def test_http_auth_list(self):
+        con = RequestsHttpConnection(http_auth=['username', 'secret'])
         self.assertEquals(('username', 'secret'), con.session.auth)
 
     def test_repr(self):
@@ -164,6 +172,12 @@ class TestRequestsConnection(TestCase):
         self.assertEquals('http://localhost:9200/', request.url)
         self.assertEquals('GET', request.method)
         self.assertEquals('{"answer": 42}', request.body)
+
+    def test_http_auth_attached(self):
+        con = self._get_mock_connection(dict(http_auth='username:secret'))
+        request = self._get_request(con, 'GET', '/')
+
+        self.assertEquals(request.headers['authorization'], 'Basic dXNlcm5hbWU6c2VjcmV0')
 
     @patch('elasticsearch.connection.base.tracer')
     def test_url_prefix(self, tracer):

@@ -21,20 +21,33 @@ class RequestsHttpConnection(Connection):
         super(RequestsHttpConnection, self).__init__(host=host, port=port, **kwargs)
         self.session = requests.session()
         if http_auth is not None:
-            if not isinstance(http_auth, tuple):
-                http_auth = tuple(http_auth.split(':', 1))
-            self.session.auth = http_auth
+            if not isinstance(http_auth, (list, tuple)):
+                http_auth = http_auth.split(':', 1)
+            self.session.auth = tuple(http_auth)
         self.base_url = 'http%s://%s:%d%s' % (
             's' if use_ssl else '',
             host, port, self.url_prefix
         )
 
+        # session did not get the prepare_request()-method until after 1.2.3, and we would like
+        # to support earlier versions as well, so we provide a fallback method
+        if hasattr(self.session, 'prepare_request'):
+            self._prepare_request = self._prepare_request_using_session
+
+    def _prepare_request(self, request):
+        # we have to add the auth manually because session.send does not add the auth headers.
+        request.auth = self.session.auth
+        return request.prepare()
+
+    def _prepare_request_using_session(self, request):
+        return self.session.prepare_request(request)
 
     def perform_request(self, method, url, params=None, body=None, timeout=None, ignore=()):
         url = self.base_url + url
 
         # use prepared requests so that requests formats url and params for us to log
-        request = requests.Request(method, url, params=params or {}, data=body).prepare()
+        request = self._prepare_request(requests.Request(method, url, params=params or {}, data=body))
+
         start = time.time()
         try:
             response = self.session.send(request, timeout=timeout or self.timeout)
@@ -101,5 +114,3 @@ class Urllib3HttpConnection(Connection):
             raw_data, duration)
 
         return response.status, raw_data
-
-
