@@ -22,7 +22,7 @@ class RequestsHttpConnection(Connection):
         self.session = requests.session()
         if http_auth is not None:
             if not isinstance(http_auth, (tuple, list)):
-                http_auth = tuple(http_auth.split(':', 1))
+                http_auth = http_auth.split(':', 1)
             http_auth = tuple(http_auth)
             self.session.auth = http_auth
         self.base_url = 'http%s://%s:%d%s' % (

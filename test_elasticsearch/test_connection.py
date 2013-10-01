@@ -174,7 +174,7 @@ class TestRequestsConnection(TestCase):
         self.assertEquals('{"answer": 42}', request.body)
 
     def test_http_auth_attached(self):
-        con = self._get_mock_connection(dict(http_auth='username:secret'))
+        con = self._get_mock_connection({'http_auth': 'username:secret'})
         request = self._get_request(con, 'GET', '/')
 
         self.assertEquals(request.headers['authorization'], 'Basic dXNlcm5hbWU6c2VjcmV0')
