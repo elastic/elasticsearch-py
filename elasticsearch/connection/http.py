@@ -39,8 +39,6 @@ class RequestsHttpConnection(Connection):
         start = time.time()
         try:
             response = self.session.request(method, url, data=body, timeout=timeout or self.timeout)
-            # retrieve request so that we can use .path_url in logging
-            request = response.request
             duration = time.time() - start
             raw_data = response.text
         except (requests.ConnectionError, requests.Timeout) as e:
@@ -49,10 +47,10 @@ class RequestsHttpConnection(Connection):
 
         # raise errors based on http status codes, let the client handle those if needed
         if not (200 <= response.status_code < 300) and response.status_code not in ignore:
-            self.log_request_fail(method, request.url, duration, response.status_code)
+            self.log_request_fail(method, url, duration, response.status_code)
             self._raise_error(response.status_code, raw_data)
 
-        self.log_request_success(method, request.url, request.path_url, body, response.status_code, raw_data, duration)
+        self.log_request_success(method, url, response.request.path_url, body, response.status_code, raw_data, duration)
 
         return response.status_code, raw_data
 
