@@ -21,9 +21,9 @@ class RequestsHttpConnection(Connection):
         super(RequestsHttpConnection, self).__init__(host=host, port=port, **kwargs)
         self.session = requests.session()
         if http_auth is not None:
-            if not isinstance(http_auth, tuple):
-                http_auth = tuple(http_auth.split(':', 1))
-            self.session.auth = http_auth
+            if not isinstance(http_auth, (list, tuple)):
+                http_auth = http_auth.split(':', 1)
+            self.session.auth = tuple(http_auth)
         self.base_url = 'http%s://%s:%d%s' % (
             's' if use_ssl else '',
             host, port, self.url_prefix
@@ -114,5 +114,3 @@ class Urllib3HttpConnection(Connection):
             raw_data, duration)
 
         return response.status, raw_data
-
-
