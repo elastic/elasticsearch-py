@@ -29,12 +29,25 @@ class RequestsHttpConnection(Connection):
             host, port, self.url_prefix
         )
 
+        # session did not get the prepare_request()-method until after 1.2.3, and we would like
+        # to support earlier versions as well, so we provide a fallback method
+        if hasattr(self.session, 'prepare_request'):
+            self._prepare_request = self._prepare_request_using_session
+
+    def _prepare_request(self, request):
+        # we have to add the auth manually because session.send does not add the auth headers.
+        request.auth = self.session.auth
+        return request.prepare()
+
+    def _prepare_request_using_session(self, request):
+        return self.session.prepare_request(request)
 
     def perform_request(self, method, url, params=None, body=None, timeout=None, ignore=()):
         url = self.base_url + url
 
         # use prepared requests so that requests formats url and params for us to log
-        request = requests.Request(method, url, params=params or {}, data=body).prepare()
+        request = self._prepare_request(requests.Request(method, url, params=params or {}, data=body))
+
         start = time.time()
         try:
             response = self.session.send(request, timeout=timeout or self.timeout)
