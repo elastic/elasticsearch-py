@@ -41,7 +41,7 @@ def bulk_index(client, docs, chunk_size=500, stats_only=False, **kwargs):
         for d in chunk:
             action = {'index': {}}
             for key in ('_index', '_parent', '_percolate', '_routing',
-                        '_timestamp', '_ttl', '_type', '_version',):
+                        '_timestamp', '_ttl', '_type', '_version', '_id'):
                 if key in d:
                     action['index'][key] = d.pop(key)
 
@@ -53,14 +53,16 @@ def bulk_index(client, docs, chunk_size=500, stats_only=False, **kwargs):
 
         resp = client.bulk(bulk_actions, **kwargs)
 
-        for item in resp['items']:
+        for req, item in zip(bulk_actions[::2], resp['items']):
+            # TODO: better reporting
+            act = 'index' if '_id' in req['index'] else 'create'
             if stats_only:
-                if item['create']['ok']:
+                if item[act]['ok']:
                     success += 1
                 else:
                     failed += 1
             else:
-                if item['create']['ok']:
+                if item[act]['ok']:
                     success.append(item)
                 else:
                     failed.append(item)
