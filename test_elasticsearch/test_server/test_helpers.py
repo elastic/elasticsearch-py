@@ -4,12 +4,13 @@ from . import ElasticTestCase
 
 class TestBulkIndex(ElasticTestCase):
     def test_all_documents_get_inserted(self):
-        docs = [{"answer": x} for x in range(100)]
+        docs = [{"answer": x, '_id': x} for x in range(100)]
         success, failed = helpers.bulk_index(self.client, docs, index='test-index', doc_type='answers', refresh=True)
 
         self.assertEquals(100, len(success))
         self.assertFalse(failed)
         self.assertEquals(100, self.client.count(index='test-index', doc_type='answers')['count'])
+        self.assertEquals({"answer": 42}, self.client.get(index='test-index', doc_type='answers', id=42)['_source'])
 
     def test_stats_only_reports_numbers(self):
         docs = [{"answer": x} for x in range(100)]
@@ -49,3 +50,4 @@ class TestReindex(ElasticTestCase):
         self.assertTrue(self.client.indices.exists_type("prod_index", "questions"))
         self.assertEquals(100, self.client.count(index='prod_index')['count'])
 
+        self.assertEquals({"answer": 42, "correct": True}, self.client.get(index="prod_index", doc_type="answers", id=42)['_source'])
