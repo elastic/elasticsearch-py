@@ -55,6 +55,7 @@ class TestRequestsConnection(TestCase):
             dummy_response.status_code = status_code
             dummy_response.text = response_body
             dummy_response.request = args[0]
+            dummy_response.cookies = {}
             _dummy_send.call_args = (args, kwargs)
             return dummy_response
         con.session.send = _dummy_send
