@@ -324,7 +324,7 @@ class IndicesClient(NamespacedClient):
         return data
 
     @query_params()
-    def get_template(self, name, params=None):
+    def get_template(self, name=None, params=None):
         """
         Retrieve an index template by its name.
         `<http://www.elasticsearch.org/guide/reference/api/admin-indices-templates/>`_
