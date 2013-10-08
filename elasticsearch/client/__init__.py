@@ -200,7 +200,7 @@ class Elasticsearch(object):
             params=params)
         return data
 
-    @query_params('_source_exclude', '_source_include', 'parent', 'preference',
+    @query_params('exclude', 'include', 'parent', 'preference',
         'realtime', 'refresh', 'routing')
     def get_source(self, index, id, doc_type='_all', params=None):
         """
