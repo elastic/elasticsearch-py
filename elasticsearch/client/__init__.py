@@ -211,9 +211,9 @@ class Elasticsearch(object):
         :arg doc_type: The type of the document (uses `_all` by default to
             fetch the first document matching the ID across all types)
         :arg id: The document ID
-        :arg _source_exclude: A list of fields to exclude from the returned
+        :arg exclude: A list of fields to exclude from the returned
             _source field
-        :arg _source_include: A list of fields to extract and return from the
+        :arg include: A list of fields to extract and return from the
             _source field
         :arg parent: The ID of the parent document
         :arg preference: Specify the node or shard the operation should be
