@@ -12,7 +12,8 @@ def bulk_index(client, docs, chunk_size=500, stats_only=False, **kwargs):
         {
             '_index': 'index-name',
             '_type': 'document',
-            '_parent': '5',
+            '_id': 42,
+            '_parent': 5,
             '_ttl': '1d',
             '_source': {
                 ...
