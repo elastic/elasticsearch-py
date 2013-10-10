@@ -65,7 +65,7 @@ class MemcachedConnection(PoolingConnection):
         # try not to load the json every time
         if response and response[0] == '{' and ('"status"' in response or '"error"' in response):
             data = json.loads(response)
-            if 'status' in data:
+            if 'status' in data and data['status'].isdigit():
                 status = data['status']
             elif 'error' in data:
                 raise TransportError('N/A', data['error'])
