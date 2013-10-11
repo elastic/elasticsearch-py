@@ -1,12 +1,16 @@
 import time
-import requests
+try:
+    import requests
+    REQUESTS_AVAILABLE = True
+except ImportError:
+    REQUESTS_AVAILABLE = False
 try:
     from urllib import urlencode
 except ImportError:
     from urllib.parse import urlencode
 
 from .base import Connection
-from ..exceptions import ConnectionError
+from ..exceptions import ConnectionError, ImproperlyConfigured
 
 class RequestsHttpConnection(Connection):
     """
@@ -17,6 +21,9 @@ class RequestsHttpConnection(Connection):
     :arg use_ssl: use ssl for the connection if `True`
     """
     def __init__(self, host='localhost', port=9200, http_auth=None, use_ssl=False, **kwargs):
+        if not REQUESTS_AVAILABLE:
+            raise ImproperlyConfigured("Please install requests to use RequestsHttpConnection.")
+
         super(RequestsHttpConnection, self).__init__(host= host, port=port, **kwargs)
         self.session = requests.session()
         if http_auth is not None:
