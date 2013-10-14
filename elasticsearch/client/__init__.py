@@ -476,6 +476,9 @@ class Elasticsearch(object):
         Perform many index/delete operations in a single API call.
         `<http://elasticsearch.org/guide/reference/api/bulk/>`_
 
+        See the :func:`~elasticsearch.helpers.bulk_index` for a more friendly
+        API.
+
         :arg body: The operation definition and data (action-data pairs)
         :arg index: Default index for items which don't provide one
         :arg doc_type: Default document type for items which don't provide one
