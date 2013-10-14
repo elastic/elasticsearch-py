@@ -46,7 +46,6 @@ def bulk_index(client, docs, chunk_size=500, stats_only=False, raise_on_error=Fa
     while True:
         chunk = islice(docs, chunk_size)
         bulk_actions = []
-        ndocs = 0
         for d in chunk:
             action = {'index': {}}
             for key in ('_index', '_parent', '_percolate', '_routing',
@@ -56,25 +55,25 @@ def bulk_index(client, docs, chunk_size=500, stats_only=False, raise_on_error=Fa
 
             bulk_actions.append(action)
             bulk_actions.append(d.get('_source', d))
-            ndocs += 1
 
         if not bulk_actions:
             return success, failed if stats_only else errors
 
+        # send the actual request
         resp = client.bulk(bulk_actions, **kwargs)
 
+        # go through request-reponse pairs and detect failures
         for req, item in zip(bulk_actions[::2], resp['items']):
             ok = item['index' if '_id' in req['index'] else 'create'].get('ok')
             if not ok:
-                if stats_only:
-                    failed += 1
-                else:
+                if not stats_only:
                     errors.append(item)
+                failed += 1
             else:
                 success += 1
 
-        if (failed or errors) and raise_on_error:
-            raise BulkIndexError(failed, errors)
+        if failed and raise_on_error:
+            raise BulkIndexError('%i document(s) failed to index.' % failed, errors)
 
 def scan(client, query=None, scroll='5m', **kwargs):
     """
