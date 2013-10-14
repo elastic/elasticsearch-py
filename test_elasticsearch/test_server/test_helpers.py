@@ -42,6 +42,22 @@ class TestBulkIndex(ElasticTestCase):
         self.assertEquals('i', error['index']['_index'])
         self.assertIn('MapperParsingException', error['index']['error'])
 
+    def test_error_is_raised_if_requested(self):
+        self.client.indices.create("i",
+            {
+                "mappings": {"t": {"properties": {"a": {"type": "integer"}}}},
+                "settings": {"number_of_shards": 1, "number_of_replicas": 0}
+            })
+        self.client.cluster.health(wait_for_status="yellow")
+
+        self.assertRaises(helpers.BulkIndexError, helpers.bulk_index,
+            self.client,
+            [{"a": 42}, {"a": "c"}],
+            index="i",
+            doc_type="t",
+            raise_on_error=True
+        )
+
     def test_errors_are_collected_properly(self):
         self.client.indices.create("i",
             {

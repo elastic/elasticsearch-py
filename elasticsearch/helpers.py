@@ -1,6 +1,10 @@
 from itertools import islice
 
-def bulk_index(client, docs, chunk_size=500, stats_only=False, **kwargs):
+from elasticsearch.exceptions import ElasticsearchException
+
+class BulkIndexError(ElasticsearchException): pass
+
+def bulk_index(client, docs, chunk_size=500, stats_only=False, raise_on_error=False, **kwargs):
     """
     Helper for the :meth:`~elasticsearch.Elasticsearch.bulk` api that provides
     a more human friendly interface - it consumes an iterator of documents and
@@ -27,8 +31,9 @@ def bulk_index(client, docs, chunk_size=500, stats_only=False, **kwargs):
     :arg docs: iterator containing the docs
     :arg chunk_size: number of docs in one chunk sent to es (default: 500)
     :arg stats_only: if `True` only report number of successful/failed
-        operations instead of just number of successful and a list of error
-        responses
+        operations instead of just number of successful and a list of error responses
+    :arg raise_on_error: raise `BulkIndexError` if some documents failed to
+        index (and stop sending chunks to the server)
 
     Any additional keyword arguments will be passed to the bulk API itself.
     """
@@ -59,7 +64,6 @@ def bulk_index(client, docs, chunk_size=500, stats_only=False, **kwargs):
         resp = client.bulk(bulk_actions, **kwargs)
 
         for req, item in zip(bulk_actions[::2], resp['items']):
-            # TODO: better reporting
             ok = item['index' if '_id' in req['index'] else 'create'].get('ok')
             if not ok:
                 if stats_only:
@@ -68,6 +72,9 @@ def bulk_index(client, docs, chunk_size=500, stats_only=False, **kwargs):
                     errors.append(item)
             else:
                 success += 1
+
+        if (failed or errors) and raise_on_error:
+            raise BulkIndexError(failed, errors)
 
 def scan(client, query=None, scroll='5m', **kwargs):
     """
