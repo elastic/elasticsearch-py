@@ -7,7 +7,7 @@ class TestBulkIndex(ElasticTestCase):
         docs = [{"answer": x, '_id': x} for x in range(100)]
         success, failed = helpers.bulk_index(self.client, docs, index='test-index', doc_type='answers', refresh=True)
 
-        self.assertEquals(100, len(success))
+        self.assertEquals(100, success)
         self.assertFalse(failed)
         self.assertEquals(100, self.client.count(index='test-index', doc_type='answers')['count'])
         self.assertEquals({"answer": 42}, self.client.get(index='test-index', doc_type='answers', id=42)['_source'])
@@ -19,6 +19,28 @@ class TestBulkIndex(ElasticTestCase):
         self.assertEquals(100, success)
         self.assertEquals(0, failed)
         self.assertEquals(100, self.client.count(index='test-index', doc_type='answers')['count'])
+
+    def test_errors_are_reported_correctly(self):
+        self.client.indices.create("i",
+            {
+                "mappings": {"t": {"properties": {"a": {"type": "integer"}}}},
+                "settings": {"number_of_shards": 1, "number_of_replicas": 0}
+            })
+        self.client.cluster.health(wait_for_status="yellow")
+
+        success, failed = helpers.bulk_index(
+            self.client,
+            [{"a": 42}, {"a": "c", '_id': 42}],
+            index="i",
+            doc_type="t"
+        )
+        self.assertEquals(1, success)
+        self.assertEquals(1, len(failed))
+        error = failed[0]
+        self.assertEquals('42', error['index']['_id'])
+        self.assertEquals('t', error['index']['_type'])
+        self.assertEquals('i', error['index']['_index'])
+        self.assertIn('MapperParsingException', error['index']['error'])
 
     def test_errors_are_collected_properly(self):
         self.client.indices.create("i",

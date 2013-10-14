@@ -27,18 +27,21 @@ def bulk_index(client, docs, chunk_size=500, stats_only=False, **kwargs):
     :arg docs: iterator containing the docs
     :arg chunk_size: number of docs in one chunk sent to es (default: 500)
     :arg stats_only: if `True` only report number of successful/failed
-        operations
+        operations instead of just number of successful and a list of error
+        responses
 
     Any additional keyword arguments will be passed to the bulk API itself.
     """
-    if stats_only:
-        success, failed = 0, 0
-    else:
-        success, failed = [], []
+    success, failed = 0, 0
+
+    # list of errors to be collected when 
+    errors = []
+
     docs = iter(docs)
     while True:
         chunk = islice(docs, chunk_size)
         bulk_actions = []
+        ndocs = 0
         for d in chunk:
             action = {'index': {}}
             for key in ('_index', '_parent', '_percolate', '_routing',
@@ -48,25 +51,23 @@ def bulk_index(client, docs, chunk_size=500, stats_only=False, **kwargs):
 
             bulk_actions.append(action)
             bulk_actions.append(d.get('_source', d))
+            ndocs += 1
 
         if not bulk_actions:
-            return success, failed
+            return success, failed if stats_only else errors
 
         resp = client.bulk(bulk_actions, **kwargs)
 
         for req, item in zip(bulk_actions[::2], resp['items']):
             # TODO: better reporting
             ok = item['index' if '_id' in req['index'] else 'create'].get('ok')
-            if stats_only:
-                if ok:
-                    success += 1
-                else:
+            if not ok:
+                if stats_only:
                     failed += 1
-            else:
-                if ok:
-                    success.append(item)
                 else:
-                    failed.append(item)
+                    errors.append(item)
+            else:
+                success += 1
 
 def scan(client, query=None, scroll='5m', **kwargs):
     """
