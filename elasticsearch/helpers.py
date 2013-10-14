@@ -1,5 +1,7 @@
 from itertools import islice
 
+from .exceptions import ElasticsearchException
+
 def bulk_index(client, docs, chunk_size=500, stats_only=False, **kwargs):
     """
     Helper for the :meth:`~elasticsearch.Elasticsearch.bulk` api that provides
@@ -57,6 +59,8 @@ def bulk_index(client, docs, chunk_size=500, stats_only=False, **kwargs):
         for req, item in zip(bulk_actions[::2], resp['items']):
             # TODO: better reporting
             act = 'index' if '_id' in req['index'] else 'create'
+            if 'error' in item[act]:
+                raise ElasticsearchException(item[act]['error'])
             if stats_only:
                 if item[act]['ok']:
                     success += 1
