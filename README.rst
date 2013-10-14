@@ -25,7 +25,9 @@ Simple use-case::
     >>> es.get(index="my-index", doc_type="test-type", id=42)['_source']
     {u'any': u'data', u'timestamp': u'2013-05-12T19:45:31.804229'}
 
-`Full documentation.<http://elasticsearch-py.rtfd.org/>`_
+`Full documentation`_.
+
+.. _Full documentation: http://elasticsearch-py.rtfd.org/
 
 
 Features
