@@ -56,14 +56,14 @@ def bulk_index(client, docs, chunk_size=500, stats_only=False, **kwargs):
 
         for req, item in zip(bulk_actions[::2], resp['items']):
             # TODO: better reporting
-            act = 'index' if '_id' in req['index'] else 'create'
+            ok = item['index' if '_id' in req['index'] else 'create'].get('ok')
             if stats_only:
-                if item[act]['ok']:
+                if ok:
                     success += 1
                 else:
                     failed += 1
             else:
-                if item[act]['ok']:
+                if ok:
                     success.append(item)
                 else:
                     failed.append(item)

@@ -20,6 +20,25 @@ class TestBulkIndex(ElasticTestCase):
         self.assertEquals(0, failed)
         self.assertEquals(100, self.client.count(index='test-index', doc_type='answers')['count'])
 
+    def test_errors_are_collected_properly(self):
+        self.client.indices.create("i",
+            {
+                "mappings": {"t": {"properties": {"a": {"type": "integer"}}}},
+                "settings": {"number_of_shards": 1, "number_of_replicas": 0}
+            })
+        self.client.cluster.health(wait_for_status="yellow")
+
+        success, failed = helpers.bulk_index(
+            self.client,
+            [{"a": 42}, {"a": "c"}],
+            index="i",
+            doc_type="t",
+            stats_only=True
+        )
+        self.assertEquals(1, success)
+        self.assertEquals(1, failed)
+
+
 class TestScan(ElasticTestCase):
     def test_all_documents_are_read(self):
         bulk = []
