@@ -4,7 +4,8 @@ from elasticsearch.exceptions import ElasticsearchException
 
 class BulkIndexError(ElasticsearchException): pass
 
-def bulk_index(client, docs, chunk_size=500, stats_only=False, raise_on_error=False, **kwargs):
+def bulk_index(client, docs, chunk_size=500, stats_only=False,
+               raise_on_error=False, callback=None, **kwargs):
     """
     Helper for the :meth:`~elasticsearch.Elasticsearch.bulk` api that provides
     a more human friendly interface - it consumes an iterator of documents and
@@ -34,6 +35,8 @@ def bulk_index(client, docs, chunk_size=500, stats_only=False, raise_on_error=Fa
         operations instead of just number of successful and a list of error responses
     :arg raise_on_error: raise `BulkIndexError` if some documents failed to
         index (and stop sending chunks to the server)
+    :arg callback: a callable, that is called after each bulk operation
+        the callable must take three arguments: `success`, `failed` and `errors`
 
     Any additional keyword arguments will be passed to the bulk API itself.
     """
@@ -74,6 +77,9 @@ def bulk_index(client, docs, chunk_size=500, stats_only=False, raise_on_error=Fa
 
         if failed and raise_on_error:
             raise BulkIndexError('%i document(s) failed to index.' % failed, errors)
+
+        if callable(callback):
+            callback(success, failed, errors)
 
 def scan(client, query=None, scroll='5m', **kwargs):
     """

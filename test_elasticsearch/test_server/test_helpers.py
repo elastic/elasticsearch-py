@@ -77,6 +77,35 @@ class TestBulkIndex(ElasticTestCase):
         self.assertEquals(1, failed)
 
 
+    def test_callback(self):
+        self.client.indices.create("i",
+            {
+                "settings": {"number_of_shards": 1, "number_of_replicas": 0},
+            })
+        self.client.cluster.health(wait_for_status="yellow")
+
+        bag = []
+        def callback(success, failed, errors):
+            bag.append(dict(success=success, failed=failed, errors=errors))
+
+        success, failed = helpers.bulk_index(
+            self.client,
+            [{"a": 42}, {"b": "Hello"}, {"c": "World"}],
+            index="i",
+            doc_type="t",
+            chunk_size=2,
+            callback=callback,
+        )
+
+        self.assertEquals(2, len(bag))
+        self.assertEquals(2, bag[0].get('success'))
+        self.assertEquals(3, bag[1].get('success'))
+        self.assertEquals(0, bag[0].get('failed'))
+        self.assertEquals(0, bag[1].get('failed'))
+        self.assertEquals([], bag[0].get('errors'))
+        self.assertEquals([], bag[1].get('errors'))
+
+
 class TestScan(ElasticTestCase):
     def test_all_documents_are_read(self):
         bulk = []
