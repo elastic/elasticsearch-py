@@ -1,6 +1,6 @@
 from elasticsearch.client import _normalize_hosts
 
-from ..test_cases import TestCase
+from ..test_cases import TestCase, ElasticsearchTestCase
 
 class TestNormalizeHosts(TestCase):
     def test_none_uses_defaults(self):
@@ -17,3 +17,9 @@ class TestNormalizeHosts(TestCase):
 
     def test_dicts_are_left_unchanged(self):
         self.assertEquals([{"host": "local", "extra": 123}], _normalize_hosts([{"host": "local", "extra": 123}]))
+
+class TestClient(ElasticsearchTestCase):
+    def test_from_in_search(self):
+        self.client.search(index='i', doc_type='t', from_=10)
+        calls = self.assert_url_called('GET', '/i/t/_search')
+        self.assertEquals([({'from': '10'}, None)], calls)

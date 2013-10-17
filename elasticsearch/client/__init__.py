@@ -294,7 +294,7 @@ class Elasticsearch(object):
     @query_params('_source', '_source_exclude', '_source_include',
         'analyze_wildcard', 'analyzer', 'default_operator', 'df',
         'explain', 'fields', 'ignore_indices', 'indices_boost', 'lenient',
-        'lowercase_expanded_terms', 'offset', 'preference', 'q', 'routing',
+        'lowercase_expanded_terms', 'from_', 'preference', 'q', 'routing',
         'scroll', 'search_type', 'size', 'sort', 'source', 'stats',
         'suggest_field', 'suggest_mode', 'suggest_size', 'suggest_text', 'timeout',
         'version')
@@ -330,7 +330,7 @@ class Elasticsearch(object):
         :arg lenient: Specify whether format-based query failures (such as
             providing text to a numeric field) should be ignored
         :arg lowercase_expanded_terms: Specify whether query terms should be lowercased
-        :arg offset: Starting offset (default: 0)
+        :arg from_: Starting offset (default: 0)
         :arg preference: Specify the node or shard the operation should be
             performed on (default: random)
         :arg q: Query in the Lucene query string syntax
@@ -350,6 +350,10 @@ class Elasticsearch(object):
         :arg timeout: Explicit operation timeout
         :arg version: Specify whether to return document version as part of a hit
         """
+        # from is a reserved word so it cannot be used, use from_ instead
+        if 'from_' in params:
+            params['from'] = params.pop('from_')
+
         if doc_type and not index:
             index = '_all'
         _, data = self.transport.perform_request('GET', _make_path(index, doc_type, '_search'),
