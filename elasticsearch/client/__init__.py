@@ -1,10 +1,13 @@
 import weakref
+import logging
 
 from ..transport import Transport
 from ..exceptions import NotFoundError, TransportError
 from .indices import IndicesClient
 from .cluster import ClusterClient
 from .utils import query_params, _make_path
+
+logger = logging.getLogger('elasticsearch')
 
 def _normalize_hosts(hosts):
     """
@@ -15,10 +18,23 @@ def _normalize_hosts(hosts):
     if hosts is None:
         return [{}]
 
+    # passed in just one string
+    if isinstance(hosts, (type(''), type(u''))):
+        hosts = [hosts]
+
     out = []
     # normalize hosts to dicts
     for i, host in enumerate(hosts):
         if isinstance(host, (type(''), type(u''))):
+            host = host.strip('/')
+            # remove schema information
+            if '://' in host:
+                logger.warn(
+                    "List of nodes should not include schema information (http://): %r.",
+                    host
+                )
+                host = host[host.index('://') + 3:]
+
             h = {"host": host}
             if ':' in host:
                 # TODO: detect auth urls
