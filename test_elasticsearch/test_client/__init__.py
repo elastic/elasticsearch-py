@@ -1,6 +1,6 @@
 from mock import patch
 
-from elasticsearch.client import _normalize_hosts
+from elasticsearch.client import _normalize_hosts, Elasticsearch
 
 from ..test_cases import TestCase, ElasticsearchTestCase
 
@@ -41,3 +41,19 @@ class TestClient(ElasticsearchTestCase):
         self.client.search(index='i', doc_type='t', from_=10)
         calls = self.assert_url_called('GET', '/i/t/_search')
         self.assertEquals([({'from': '10'}, None)], calls)
+
+    def test_repr_contains_hosts(self):
+        self.assertEquals('<Elasticsearch([{}])>', repr(self.client))
+
+    def test_repr_contains_hosts_passed_in(self):
+        self.assertEquals(
+            '<Elasticsearch([%r])>' % {"host": "es.org", "port": 123},
+            repr(Elasticsearch(['es.org:123']))
+        )
+
+    def test_repr_truncates_host_to_10(self):
+        hosts = [{"host": "es" + str(i)} for i in range(20)]
+        self.assertEquals(
+            '<Elasticsearch(%r)>' % [{'host': 'es0'}, {'host': 'es1'}, {'host': 'es2'}, {'host': 'es3'}, {'host': 'es4'}, '...'],
+            repr(Elasticsearch(hosts))
+        )

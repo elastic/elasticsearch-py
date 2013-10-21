@@ -9,6 +9,7 @@ from elasticsearch import Elasticsearch
 
 class DummyTransport(object):
     def __init__(self, hosts, responses=None, **kwargs):
+        self.hosts = hosts
         self.responses = responses
         self.call_count = 0
         self.calls = defaultdict(list)

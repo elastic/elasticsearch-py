@@ -79,6 +79,18 @@ class Elasticsearch(object):
         self.indices = IndicesClient(weakref.proxy(self))
         self.cluster = ClusterClient(weakref.proxy(self))
 
+    def __repr__(self):
+        try:
+            # get a lost of all connections
+            cons = self.transport.hosts
+            # truncate to 10 if there are too many
+            if len(cons) > 5:
+                cons = cons[:5] + ['...']
+            return '<Elasticsearch(%r)>' % cons
+        except:
+            # probably operating on custom transport and connection_pool, ignore
+            return super(Elasticsearch, self).__repr__()
+
     def _bulk_body(self, body):
         # if not passed in a string, serialize items and join by newline
         if not isinstance(body, (type(''), type(u''))):
