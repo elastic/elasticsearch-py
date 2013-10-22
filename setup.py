@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 import sys
 import os
 
-VERSION = (0, 4, 2)
+VERSION = (0, 4, 3)
 __version__ = VERSION
 __versionstr__ = '.'.join(map(str, VERSION))
 
