@@ -83,6 +83,7 @@ Contents
    connection
    transports
    helpers
+   Changelog
 
 License
 -------
