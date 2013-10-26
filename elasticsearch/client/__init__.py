@@ -153,8 +153,8 @@ class Elasticsearch(object):
 
         :arg index: The name of the index
         :arg doc_type: The type of the document
-        :arg id: Document ID
         :arg body: The document
+        :arg id: Document ID
         :arg consistency: Explicit write consistency setting for the operation
         :arg op_type: Explicit operation type (default: index)
         :arg parent: ID of the parent document
