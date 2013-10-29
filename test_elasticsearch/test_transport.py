@@ -28,7 +28,8 @@ CLUSTER_NODES = '''{
             "transport_address" : "inet[/127.0.0.1:9300]",
             "hostname" : "wind",
             "version" : "0.20.4",
-            "http_address" : "inet[/1.1.1.1:123]"
+            "http_address" : "inet[/1.1.1.1:123]",
+            "thrift_address" : "/1.1.1.1:9500]"
         }
     }
 }'''
@@ -87,6 +88,13 @@ class TestTransport(TestCase):
         t.sniff_hosts()
         self.assertEquals(1, len(t.connection_pool.connections))
         self.assertEquals('http://1.1.1.1:123', t.get_connection().host)
+
+    def test_sniff_on_start_fetches_and_uses_nodes_list_for_its_schema(self):
+        class DummyThriftConnection(DummyConnection):
+            transport_schema = 'thrift'
+        t = Transport([{'data': CLUSTER_NODES}], connection_class=DummyThriftConnection, sniff_on_start=True)
+        self.assertEquals(1, len(t.connection_pool.connections))
+        self.assertEquals('thrift://1.1.1.1:9500', t.get_connection().host)
 
     def test_sniff_on_start_fetches_and_uses_nodes_list(self):
         t = Transport([{'data': CLUSTER_NODES}], connection_class=DummyConnection, sniff_on_start=True)
