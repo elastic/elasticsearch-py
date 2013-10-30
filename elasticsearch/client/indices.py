@@ -200,6 +200,22 @@ class IndicesClient(NamespacedClient):
             params=params)
         return data
 
+    @query_params("include_defaults")
+    def get_field_mapping(self, index=None, doc_type=None, field=None, params=None):
+        """
+        Retrieve mapping definition of a specific field.
+        `<http://www.elasticsearch.org/guide/reference/api/admin-indices-get-mapping/>`_
+
+        :arg index: A comma-separated list of index names; use `_all` or empty
+            string for all indices
+        :arg doc_type: A comma-separated list of document types
+        :arg field: A comma-separated list of fields to retrieve the mapping for
+        :arg include_defaults: A boolean indicating whether to return default values
+        """
+        _, data = self.transport.perform_request('GET', _make_path(index, doc_type, '_mapping', 'field', field),
+            params=params)
+        return data
+
     @query_params('master_timeout')
     def delete_mapping(self, index, doc_type, params=None):
         """
