@@ -128,7 +128,7 @@ class TestRequestsConnection(TestCase):
         # trace response
         self.assertEquals(1, tracer.debug.call_count)
         self.assertTrue(re.match(
-            '# \[200\] \(0.[0-9]{3}s\)\n#\{\n#  "answer": 42\n#\}',
+            '#\[200\] \(0.[0-9]{3}s\)\n#\{\n#  "answer": 42\n#\}',
             tracer.debug.call_args[0][0] % tracer.debug.call_args[0][1:]
         ))
 
