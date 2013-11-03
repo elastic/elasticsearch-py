@@ -174,6 +174,11 @@ class Transport(object):
             if host is not None:
                 hosts.append(host)
 
+        # we weren't able to get any nodes, maybe using an incompatible
+        # transport_schema or host_info_callback blocked all - raise error.
+        if not hosts:
+            raise TransportError("Enable to sniff hosts - no viable hosts found.")
+
         self.set_connections(hosts)
 
     def mark_dead(self, connection):
