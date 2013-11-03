@@ -1,10 +1,13 @@
 import time
 import random
+import logging
 
 try:
     from Queue import PriorityQueue, Empty
 except ImportError:
     from queue import PriorityQueue, Empty
+
+logger = logging.getLogger('elasticsearch')
 
 class ConnectionSelector(object):
     """
@@ -133,6 +136,10 @@ class ConnectionPool(object):
             self.dead_count[connection] = dead_count
             timeout = self.dead_timeout * 2 ** min(dead_count - 1, self.timeout_cutoff)
             self.dead.put((now + timeout, connection))
+            logger.warning(
+                'Connection %r has failed for %i times in a row, putting on %i second timeout.',
+                connection, dead_count, timeout
+            )
 
     def mark_live(self, connection):
         """
@@ -175,6 +182,7 @@ class ConnectionPool(object):
 
         # either we were forced or the connection is elligible to be retried
         self.connections.append(connection)
+        logger.info('Resurrecting connection %r (force=%s).', connection, force)
 
     def get_connection(self):
         """

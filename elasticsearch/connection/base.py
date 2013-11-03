@@ -59,7 +59,7 @@ class Connection(object):
             tracer.info("curl -X%s 'http://localhost:9200%s' -d '%s'", method, path, _pretty_json(body) if body else '')
 
         if tracer.isEnabledFor(logging.DEBUG):
-            tracer.debug('# [%s] (%.3fs)\n#%s', status_code, duration, _pretty_json(response).replace('\n', '\n#') if response else '')
+            tracer.debug('#[%s] (%.3fs)\n#%s', status_code, duration, _pretty_json(response).replace('\n', '\n#') if response else '')
 
     def log_request_fail(self, method, full_url, duration, status_code=None, exception=None):
         """ Log an unsuccessful API call.  """
