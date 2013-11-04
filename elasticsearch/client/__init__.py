@@ -538,7 +538,7 @@ class Elasticsearch(object):
             params=params, body=self._bulk_body(body))
         return data
 
-    @query_params('consistency', 'ignore_indices', 'replication', 'routing', 'source', 'timeout')
+    @query_params('consistency', 'ignore_indices', 'replication', 'routing', 'source', 'timeout', 'q')
     def delete_by_query(self, index, doc_type=None, body=None, params=None):
         """
         Delete documents from one or more indices and one or more types based on a query.
@@ -553,6 +553,7 @@ class Elasticsearch(object):
         :arg replication: Specific replication type (default: sync)
         :arg routing: Specific routing value
         :arg source: The URL-encoded query definition (instead of using the request body)
+        :arg q: Query in the Lucene query string syntax
         :arg timeout: Explicit operation timeout
         """
         _, data = self.transport.perform_request('DELETE', _make_path(index, doc_type, '_query'),
