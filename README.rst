@@ -5,6 +5,14 @@ Official low-level client for Elasticsearch. It's goal is to provide common
 ground for all Elasticsearch-related code in Python; because of this it tries
 to be opinion-free and very extendable.
 
+Installation
+------------
+
+Install the `elasticsearch` package with `pip
+<https://pypi.python.org/pypi/elasticsearch/0.4.3>`_::
+
+    pip install elasticsearch
+
 
 Example use
 -----------
