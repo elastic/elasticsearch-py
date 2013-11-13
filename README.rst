@@ -9,7 +9,7 @@ Installation
 ------------
 
 Install the `elasticsearch` package with `pip
-<https://pypi.python.org/pypi/elasticsearch/0.4.3>`_::
+<https://pypi.python.org/pypi/elasticsearch>`_::
 
     pip install elasticsearch
 
