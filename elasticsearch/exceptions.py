@@ -1,4 +1,7 @@
-__all__ = ['ImproperlyConfigured', 'ElasticsearchException', 'SerializationError', 'TransportError', 'NotFoundError']
+__all__ = [
+    'ImproperlyConfigured', 'ElasticsearchException', 'SerializationError',
+    'TransportError', 'NotFoundError', 'ConflictError', 'RequestError'
+]
 
 class ImproperlyConfigured(Exception):
     pass
@@ -43,7 +46,16 @@ class NotFoundError(TransportError):
     pass
 
 
+class ConflictError(TransportError):
+    pass
+
+
+class RequestError(TransportError):
+    pass
+
 # more generic mappings from status_code to python exceptions
 HTTP_EXCEPTIONS = {
+    400: RequestError,
     404: NotFoundError,
+    409: ConflictError,
 }

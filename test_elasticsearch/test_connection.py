@@ -2,7 +2,7 @@ import re
 from mock import Mock, patch
 import urllib3
 
-from elasticsearch.exceptions import TransportError
+from elasticsearch.exceptions import TransportError, ConflictError, RequestError, NotFoundError
 from elasticsearch.connection import RequestsHttpConnection, \
     Urllib3HttpConnection, THRIFT_AVAILABLE, ThriftConnection
 
@@ -95,6 +95,18 @@ class TestRequestsConnection(TestCase):
     def test_repr(self):
         con = self._get_mock_connection({"host": "elasticsearch.com", "port": 443})
         self.assertEquals('<RequestsHttpConnection: http://elasticsearch.com:443>', repr(con))
+
+    def test_conflict_error_is_returned_on_409(self):
+        con = self._get_mock_connection(status_code=409)
+        self.assertRaises(ConflictError, con.perform_request, 'GET', '/', {}, '')
+
+    def test_not_found_error_is_returned_on_404(self):
+        con = self._get_mock_connection(status_code=404)
+        self.assertRaises(NotFoundError, con.perform_request, 'GET', '/', {}, '')
+
+    def test_request_error_is_returned_on_400(self):
+        con = self._get_mock_connection(status_code=400)
+        self.assertRaises(RequestError, con.perform_request, 'GET', '/', {}, '')
 
     @patch('elasticsearch.connection.base.tracer')
     @patch('elasticsearch.connection.base.logger')

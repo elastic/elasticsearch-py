@@ -7,6 +7,8 @@ from os import walk, environ
 from os.path import exists, join, dirname, pardir
 import yaml
 
+from elasticsearch import TransportError
+
 from ..test_cases import SkipTest
 from . import ElasticTestCase
 
@@ -14,11 +16,16 @@ from . import ElasticTestCase
 # those in the tests accordingly
 PARAMS_RENAMES = {
     'type': 'doc_type',
-    'from': 'offset',
+    'from': 'from_',
 }
 
 ES_VERSION = None
 
+# mapping from catch values to http status codes
+CATCH_CODES = {
+    'missing': 404,
+    'conflict': 409,
+}
 
 class InvalidActionType(Exception):
     pass
@@ -105,10 +112,10 @@ class YamlTestCase(ElasticTestCase):
 
         try:
             self.last_response = api(**args)
-        except:
+        except Exception as e:
             if not catch:
                 raise
-            self.run_catch(catch)
+            self.run_catch(catch, e)
         else:
             if catch:
                 raise AssertionError('Failed to catch %r in %r.' % (catch, self.last_response))
@@ -122,8 +129,10 @@ class YamlTestCase(ElasticTestCase):
             raise SkipTest(reason)
 
 
-    def run_catch(self, catch):
-        pass
+    def run_catch(self, catch, exception):
+        self.assertIsInstance(exception, TransportError)
+        if catch in CATCH_CODES:
+            self.assertEquals(CATCH_CODES[catch], exception.status_code)
 
     def run_gt(self, action):
         for key, value in action.items():
