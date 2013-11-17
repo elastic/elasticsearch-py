@@ -48,7 +48,7 @@ class Transport(object):
         :arg sniff_on_start: flag indicating whether to obtain a list of nodes
             from the cluser at startup time
         :arg sniffer_timeout: number of seconds between automatic sniffs
-        :arg sniff_on_connection_fail: flasg controlling if connection failure triggers a sniff
+        :arg sniff_on_connection_fail: flag controlling if connection failure triggers a sniff
         :arg serializer: serializer instance
         :arg max_retries: maximum number of retries before an exception is propagated
 
