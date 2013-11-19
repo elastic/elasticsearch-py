@@ -103,8 +103,7 @@ class TestReindex(ElasticTestCase):
         self.client.indices.refresh()
 
         self.assertTrue(self.client.indices.exists("prod_index"))
-        self.assertTrue(self.client.indices.exists_type("prod_index", "answers"))
-        self.assertTrue(self.client.indices.exists_type("prod_index", "questions"))
-        self.assertEquals(100, self.client.count(index='prod_index')['count'])
+        self.assertEquals(50, self.client.count(index='prod_index', doc_type='questions')['count'])
+        self.assertEquals(50, self.client.count(index='prod_index', doc_type='answers')['count'])
 
         self.assertEquals({"answer": 42, "correct": True}, self.client.get(index="prod_index", doc_type="answers", id=42)['_source'])
