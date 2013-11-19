@@ -511,12 +511,14 @@ class Elasticsearch(object):
         See the :func:`~elasticsearch.helpers.bulk_index` for a more friendly
         API.
 
-        :arg body: The operation definition and data (action-data pairs)
+        :arg body: The operation definition and data (action-data pairs), as
+            either a newline separated string, or a sequence of dicts to
+            serialize (one per row).
         :arg index: Default index for items which don't provide one
         :arg doc_type: Default document type for items which don't provide one
         :arg consistency: Explicit write consistency setting for the operation
         :arg refresh: Refresh the index after performing the operation
-        :arg replication: Explicitly set the replication type (efault: sync)
+        :arg replication: Explicitly set the replication type (default: sync)
         """
         _, data = self.transport.perform_request('POST', _make_path(index, doc_type, '_bulk'),
             params=params, body=self._bulk_body(body))
@@ -529,7 +531,8 @@ class Elasticsearch(object):
         `<http://www.elasticsearch.org/guide/reference/api/multi-search/>`_
 
         :arg body: The request definitions (metadata-search request definition
-            pairs), separated by newlines
+            pairs), as either a newline separated string, or a sequence of
+            dicts to serialize (one per row).
         :arg index: A comma-separated list of index names to use as default
         :arg doc_type: A comma-separated list of document types to use as default
         :arg search_type: Search operation type
