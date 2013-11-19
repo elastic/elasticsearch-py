@@ -11,7 +11,7 @@ def run_all(argv=None):
         argv = [
             'nosetests', '--with-xunit',
             '--with-xcoverage', '--cover-package=elasticsearch', '--cover-erase',
-            '--nocapture', '--nologcapture',
+            '--logging-filter=elasticsearch', '--logging-level=DEBUG',
             '--verbose',
         ]
     else:
