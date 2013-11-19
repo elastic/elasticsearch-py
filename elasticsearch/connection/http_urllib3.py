@@ -15,8 +15,10 @@ class Urllib3HttpConnection(Connection):
     :arg http_auth: optional http auth information as either ':' separated
         string or a tuple
     :arg use_ssl: use ssl for the connection if `True`
+    :arg maxsize: the maximum number of connections which will be kept open to
+        this host.  Useful to set this higher than 1 for multithreaded situations.
     """
-    def __init__(self, host='localhost', port=9200, http_auth=None, use_ssl=False, **kwargs):
+    def __init__(self, host='localhost', port=9200, http_auth=None, use_ssl=False, maxsize=1, **kwargs):
         super(Urllib3HttpConnection, self).__init__(host=host, port=port, **kwargs)
         headers = {}
         if http_auth is not None:
@@ -28,7 +30,7 @@ class Urllib3HttpConnection(Connection):
         if use_ssl:
             pool_class = urllib3.HTTPSConnectionPool
 
-        self.pool = pool_class(host, port=port, timeout=kwargs.get('timeout', None), headers=headers)
+        self.pool = pool_class(host, port=port, timeout=kwargs.get('timeout', None), headers=headers, maxsize=maxsize)
 
     def perform_request(self, method, url, params=None, body=None, timeout=None, ignore=()):
         url = self.url_prefix + url
