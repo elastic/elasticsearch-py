@@ -16,9 +16,9 @@ class Urllib3HttpConnection(Connection):
         string or a tuple
     :arg use_ssl: use ssl for the connection if `True`
     :arg maxsize: the maximum number of connections which will be kept open to
-        this host.  Useful to set this higher than 1 for multithreaded situations.
+        this host.
     """
-    def __init__(self, host='localhost', port=9200, http_auth=None, use_ssl=False, maxsize=1, **kwargs):
+    def __init__(self, host='localhost', port=9200, http_auth=None, use_ssl=False, maxsize=10, **kwargs):
         super(Urllib3HttpConnection, self).__init__(host=host, port=port, **kwargs)
         headers = {}
         if http_auth is not None:
