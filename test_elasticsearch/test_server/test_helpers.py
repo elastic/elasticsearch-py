@@ -116,7 +116,7 @@ class TestStreamingBulkIndex(ElasticTestCase):
             self.client, commands, index="i", doc_type="t"
         ))
         self.assertEqual(len(results), 2)
-        autoid = results[0][2].values()[0].get('_id')
+        autoid = tuple(results[0][2].values())[0].get('_id')
         self.assertEqual(results[0], (
             True,
             commands[0],
@@ -127,7 +127,7 @@ class TestStreamingBulkIndex(ElasticTestCase):
                          u'ok': True}}
         ))
 
-        autoerrmsg = results[1][2].values()[0].get('error')
+        autoerrmsg = tuple(results[1][2].values())[0].get('error')
         self.assertTrue('MapperParsingException' in autoerrmsg)
         self.assertEqual(results[1], (
             False,
@@ -154,7 +154,7 @@ class TestStreamingBulkIndex(ElasticTestCase):
             self.client, commands, index="i", doc_type="t"
         ))
         self.assertEqual(len(results), 3)
-        autoid = results[0][2].values()[0].get('_id')
+        autoid = tuple(results[0][2].values())[0].get('_id')
         self.assertEqual(results[0], (
             True,
             commands[0],
@@ -166,7 +166,7 @@ class TestStreamingBulkIndex(ElasticTestCase):
         ))
         self.assertEqual(results[0][1].ext, 'hi')
 
-        autoerrmsg = results[1][2].values()[0].get('error')
+        autoerrmsg = tuple(results[1][2].values())[0].get('error')
         self.assertTrue('MapperParsingException' in autoerrmsg)
         self.assertEqual(results[1], (
             False,
