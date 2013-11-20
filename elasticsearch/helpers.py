@@ -171,7 +171,7 @@ def streaming_bulk_index(client, bulk_commands, chunk_size=500, **kwargs):
         assert len(result['items']) == len(chunk)
         for cmd, cmd_result in zip(chunk, result['items']):
             assert len(cmd_result) == 1
-            ok = bool(cmd_result.values()[0].get('ok'))
+            ok = bool(tuple(cmd_result.values())[0].get('ok'))
             yield ok, cmd, cmd_result
 
 
