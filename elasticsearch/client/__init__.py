@@ -29,7 +29,7 @@ def _normalize_hosts(hosts):
             host = host.strip('/')
             # remove schema information
             if '://' in host:
-                logger.warn(
+                logger.warning(
                     "List of nodes should not include schema information (http://): %r.",
                     host
                 )
