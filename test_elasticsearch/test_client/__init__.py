@@ -27,7 +27,7 @@ class TestNormalizeHosts(TestCase):
             _normalize_hosts(["http://elasticsearch.org:9200/"])
         )
         # schema triggers a warning
-        self.assertEquals(1, logger.warn.call_count)
+        self.assertEquals(1, logger.warning.call_count)
 
     def test_single_string_is_wrapped_in_list(self):
         self.assertEquals(
