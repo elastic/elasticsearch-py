@@ -152,6 +152,106 @@ def bulk(client, actions, stats_only=False, **kwargs):
 # preserve the name for backwards compatibility
 bulk_index = bulk
 
+
+class BulkCommand(object):
+    """A command to be supplied to the :meth:`~elasticsearch.helpers.streaming_bulk_index` interface.
+
+    This is a convenience class which allows external data to be associated
+    with bulk commands; the external data isn't sent to elasticsearch but will
+    be available when processing the results of
+    :meth:`~elasticsearch.helpers.streaming_bulk_index`.  For example, if you
+    were reading data to send to elasticsearch from a persistent queue, you
+    could use this external data to hold a message ID, and wait for
+    elasticsearches response to ack or nack the message appropriately.
+
+    """
+    def __init__(self, action, source=None, ext=None):
+        """
+        :arg action: A dict containing the action part of the command to send.
+        :arg source: A dict containing the source part of the command; use this
+            for commands which require a source.
+        :arg ext: Arbitrary external data; this will not be sent to
+            elasticsearch.
+
+        """
+        self.cmds = [action]
+        if source is not None:
+            self.cmds.append(source)
+        self.ext = ext
+
+    def __getitem__(self, index):
+        return self.cmds[index]
+
+
+def streaming_bulk_index(client, bulk_commands, chunk_size=500, **kwargs):
+    """Perform a bulk update in a streaming manner.
+
+    This accepts a stream of commands and yields a stream of results of sending
+    the commands to elasticsearch.  The commands are performed in chunks, sized
+    according to the `chunk_size` parameter.  Unlike the bulk_index method,
+    this isn't limited to the `index` action, and doesn't require all the
+    updates to be performed before the results of the updates are reported.
+
+    The commands should be exactly the structures to be sent to elasticsearch,
+    as 1-or-2 length sequence objects (ie, sequences of [action_and_meta_data]
+    or [action_and_meta_data, optional_source]), for example bulk_commands
+    could be a list containing::
+
+        [
+            [
+                {"index": {"_index": "test", "_type": "type1", "_id": "1"}},
+                {"field1": "value1"},
+            ],
+            [
+                {"delete": {"_index": "test", "_type": "type1", "_id": "2"}},
+            ],
+        ]
+
+    The :class:`~elasticsearch.helpers.BulkCommand` class can also be used to
+    represent commands in `bulk_commands`.  This is particularly useful if you
+    want to associate some external data with the commands to assist with
+    handling failures.
+
+    :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use.
+
+    :arg bulk_commands: a sequence or iterable of commands.  Each command
+        is a 1-or-2 length list containing the command, and the
+        document data associated with the command (if the command expects such
+        data).
+
+    :arg chunk_size: the number of commands to send to elasticsearch at
+        once.
+
+    Any additional keyword arguments will be passed to the bulk API itself.
+
+    This yields a sequence of (`ok`, `cmd`, `cmd_result`) items, one for each
+    command in `bulk_commands`, where `ok` is `True` if the command was
+    processed without error, and `False` otherwise, `cmd` is the original
+    command read from `bulk_commands`, and `cmd_result` is the response for
+    that command received from the server.
+
+    """
+    bulk_commands = iter(bulk_commands)
+    while True:
+        chunk = tuple(islice(bulk_commands, chunk_size))
+        if len(chunk) == 0:
+            break
+
+        # Flatten the commands into a single list to send to the server
+        cmds = []
+        for cmd in chunk:
+            cmds.extend(cmd)
+
+        # Send the commands, and then iterate through the response to yield the
+        # results
+        result = client.bulk(body=cmds, **kwargs)
+        assert len(result['items']) == len(chunk)
+        for cmd, cmd_result in zip(chunk, result['items']):
+            assert len(cmd_result) == 1
+            ok = bool(tuple(cmd_result.values())[0].get('ok'))
+            yield ok, cmd, cmd_result
+
+
 def scan(client, query=None, scroll='5m', **kwargs):
     """
     Simple abstraction on top of the
