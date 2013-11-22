@@ -9,7 +9,9 @@ API.
 
 .. py:module:: elasticsearch.helpers
 
-.. autofunction:: bulk_index
+.. autofunction:: streaming_bulk
+
+.. autofunction:: bulk
 
 .. autofunction:: scan
 

@@ -36,6 +36,12 @@ def expand_action(data):
 
 def streaming_bulk(client, actions, chunk_size=500, raise_on_error=False, expand_action_callback=expand_action, **kwargs):
     """
+    Streaming bulk consumes actions from the iterable passed in and yields
+    results per action. For non-streaming usecases use
+    :func:`~elasticsearch.helpers.bulk` which is a wrapper around streaming
+    bulk that returns summary information about the bulk operation once the
+    entire input is consumed and sent.
+
     This function expects the action to be in the format as returned by
     :meth:`~elasticsearch.Elasticsearch.search`, for example::
 
@@ -121,7 +127,7 @@ def bulk(client, actions, stats_only=False, **kwargs):
     information - number of successfully executed actions and either list of
     errors or number of errors if `stats_only` is set to `True`.
 
-    See :function:`~elasticsearch.helpers.streaming_bulk` for more information
+    See :func:`~elasticsearch.helpers.streaming_bulk` for more information
     and accepted formats.
 
     :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use
@@ -130,7 +136,7 @@ def bulk(client, actions, stats_only=False, **kwargs):
         operations instead of just number of successful and a list of error responses
 
     Any additional keyword arguments will be passed to
-    :function:`~elasticsearch.helpers.streaming_bulk` which is used to execute
+    :func:`~elasticsearch.helpers.streaming_bulk` which is used to execute
     the operation.
     """
     success, failed = 0, 0
