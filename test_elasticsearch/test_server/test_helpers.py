@@ -40,8 +40,8 @@ class TestStreamingBulk(ElasticTestCase):
             self.assertTrue(ok)
 
         self.assertFalse(self.client.exists(index='i', id=45))
-        self.assertEquals({'answer': 42}, self.client.get_source(index='i', id=42))
-        self.assertEquals({'f': 'v'}, self.client.get_source(index='i', id=47))
+        self.assertEquals({'answer': 42}, self.client.get(index='i', id=42)['_source'])
+        self.assertEquals({'f': 'v'}, self.client.get(index='i', id=47)['_source'])
 
 
 class TestBulk(ElasticTestCase):
