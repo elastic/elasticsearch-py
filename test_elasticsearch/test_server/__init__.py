@@ -91,6 +91,12 @@ def teardown():
             os.kill(int(pid), 15)
         server.wait()
 
+ES_VERSION = None
+
+def _get_version(version_string):
+    version = version_string.strip().split('.')
+    return tuple(int(v) if v.isdigit() else 999 for v in version)
+
 class ElasticTestCase(TestCase):
     client = None
     def setUp(self):
@@ -104,4 +110,12 @@ class ElasticTestCase(TestCase):
             self.client.indices.delete_template('*')
         except NotFoundError:
             pass
+
+    @property
+    def es_version(self):
+        global ES_VERSION
+        if ES_VERSION is None:
+            version_string = self.client.info()['version']['number']
+            ES_VERSION = _get_version(version_string)
+        return ES_VERSION
 

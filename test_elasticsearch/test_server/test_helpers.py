@@ -1,6 +1,7 @@
 from elasticsearch import helpers
 
 from . import ElasticTestCase
+from ..test_cases import SkipTest
 
 class TestStreamingBulk(ElasticTestCase):
     def test_all_documents_get_inserted(self):
@@ -29,6 +30,8 @@ class TestStreamingBulk(ElasticTestCase):
             assert False, "exception should have been raised"
 
     def test_different_op_types(self):
+        if self.es_version < (0, 90, 1):
+            raise SkipTest('update supported since 0.90.1')
         self.client.index(index='i', doc_type='t', id=45, body={})
         self.client.index(index='i', doc_type='t', id=42, body={})
         docs = [

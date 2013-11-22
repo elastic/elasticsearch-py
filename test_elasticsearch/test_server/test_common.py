@@ -10,7 +10,7 @@ import yaml
 from elasticsearch import TransportError
 
 from ..test_cases import SkipTest
-from . import ElasticTestCase
+from . import ElasticTestCase, _get_version
 
 # some params had to be changed in python, keep track of them so we can rename
 # those in the tests accordingly
@@ -18,8 +18,6 @@ PARAMS_RENAMES = {
     'type': 'doc_type',
     'from': 'from_',
 }
-
-ES_VERSION = None
 
 # mapping from catch values to http status codes
 CATCH_CODES = {
@@ -30,19 +28,7 @@ CATCH_CODES = {
 class InvalidActionType(Exception):
     pass
 
-def _get_version(version_string):
-    version = version_string.strip().split('.')
-    return tuple(int(v) if v.isdigit() else 999 for v in version)
-
 class YamlTestCase(ElasticTestCase):
-    @property
-    def es_version(self):
-        global ES_VERSION
-        if ES_VERSION is None:
-            version_string = self.client.info()['version']['number']
-            ES_VERSION = _get_version(version_string)
-        return ES_VERSION
-
     def setUp(self):
         super(YamlTestCase, self).setUp()
         if hasattr(self, '_setup_code'):
