@@ -3,6 +3,16 @@
 Changelog
 =========
 
+0.4.4
+-----
+
+ * `helpers.bulk_index` renamed to `helpers.bulk` (alias put in place for
+   backwards compatibility, to be removed in future versions)
+ * Added `helpers.streaming_bulk` to consume an iterator and yield results per
+   operation
+ * `helpers.bulk` and `helpers.streaming_bulk` are no longer limitted to just
+   index operations.
+
 0.4.3
 -----
 

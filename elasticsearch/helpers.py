@@ -1,16 +1,42 @@
-from itertools import islice
+from itertools import islice, chain
+from operator import methodcaller
+try:
+    from itertools import imap as map
+except ImportError:
+    pass # python 3, use builtin map
 
 from elasticsearch.exceptions import ElasticsearchException
 
-class BulkIndexError(ElasticsearchException): pass
+class BulkIndexError(ElasticsearchException):
+    @property
+    def errors(self):
+        """ List of errors from execution of the last chunk. """
+        return self.args[1]
 
-def bulk_index(client, docs, chunk_size=500, stats_only=False, raise_on_error=False, **kwargs):
+
+def expand_action(data):
     """
-    Helper for the :meth:`~elasticsearch.Elasticsearch.bulk` api that provides
-    a more human friendly interface - it consumes an iterator of documents and
-    sends them to elasticsearch in chunks.
+    From one document or action definition passed in by the user extract the
+    action/data lines needed for elasticsearch's
+    :meth:`~elasticsearch.Elasticsearch.bulk` api.
+    """
+    op_type = data.pop('_op_type', 'index')
+    action = {op_type: {}}
+    for key in ('_index', '_parent', '_percolate', '_routing', '_timestamp',
+            '_ttl', '_type', '_version', '_id', '_retry_on_conflict'):
+        if key in data:
+            action[op_type][key] = data.pop(key)
 
-    This function expects the doc to be in the format as returned by
+    # no data payload for delete
+    if op_type == 'delete':
+        return action, None
+
+    return action, data.get('_source', data)
+
+
+def streaming_bulk(client, actions, chunk_size=500, raise_on_error=False, expand_action_callback=expand_action, **kwargs):
+    """
+    This function expects the action to be in the format as returned by
     :meth:`~elasticsearch.Elasticsearch.search`, for example::
 
         {
@@ -24,56 +50,107 @@ def bulk_index(client, docs, chunk_size=500, stats_only=False, raise_on_error=Fa
             }
         }
 
-    alternatively, if `_source` is not present, it will pop all metadata fields
-    from the doc and use the rest as the document data.
+    Alternatively, if `_source` is not present, it will pop all metadata fields
+    from the doc and use the rest as the document data. The dict passed in will
+    be modified - metadata fields will be popped out.
+
+    Alternative actions (`_op_type` field defaults to `index`) can be sent as
+    well::
+
+        {
+            '_op_type': 'delete',
+            '_index': 'index-name',
+            '_type': 'document',
+            '_id': 42,
+        }
+        {
+            '_op_type': 'update',
+            '_index': 'index-name',
+            '_type': 'document',
+            '_id': 42,
+            'doc': {'question': 'The life, universe and everything.'}
+        }
 
     :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use
-    :arg docs: iterator containing the docs
+    :arg actions: iterable containing the actions to be executed
     :arg chunk_size: number of docs in one chunk sent to es (default: 500)
-    :arg stats_only: if `True` only report number of successful/failed
-        operations instead of just number of successful and a list of error responses
-    :arg raise_on_error: raise `BulkIndexError` if some documents failed to
-        index (and stop sending chunks to the server)
-
-    Any additional keyword arguments will be passed to the bulk API itself.
+    :arg raise_on_error: raise `BulkIndexError` containing errors (as `.errors`
+        from the execution of the last chunk)
+    :arg expand_action_callback: callback executed on each action passed in,
+        should return a tuple containing the action line and the data line
+        (`None` if data line should be omitted).
     """
-    success, failed = 0, 0
+    actions = map(expand_action_callback, actions)
 
-    # list of errors to be collected when 
+    # if raise on error is set, we need to collect errors per chunk before raising them
     errors = []
 
-    docs = iter(docs)
     while True:
-        chunk = islice(docs, chunk_size)
+        chunk = islice(actions, chunk_size)
         bulk_actions = []
-        for d in chunk:
-            action = {'index': {}}
-            for key in ('_index', '_parent', '_percolate', '_routing',
-                        '_timestamp', '_ttl', '_type', '_version', '_id'):
-                if key in d:
-                    action['index'][key] = d.pop(key)
-
+        for action, data in chunk:
             bulk_actions.append(action)
-            bulk_actions.append(d.get('_source', d))
+            if data is not None:
+                bulk_actions.append(data)
 
         if not bulk_actions:
-            return success, failed if stats_only else errors
+            return
 
         # send the actual request
         resp = client.bulk(bulk_actions, **kwargs)
 
         # go through request-reponse pairs and detect failures
-        for req, item in zip(bulk_actions[::2], resp['items']):
-            ok = item['index' if '_id' in req['index'] else 'create'].get('ok')
-            if not ok:
-                if not stats_only:
-                    errors.append(item)
-                failed += 1
-            else:
-                success += 1
+        for op_type, item in chain.from_iterable(map(methodcaller('items'), resp['items'])):
+            ok = item.get('ok')
+            if not ok and raise_on_error:
+                errors.append({op_type: item})
 
-        if failed and raise_on_error:
-            raise BulkIndexError('%i document(s) failed to index.' % failed, errors)
+            if not errors:
+                # if we are not just recording all errors to be able to raise
+                # them all at once, yield items individually
+                yield ok, {op_type: item}
+
+        if errors:
+            raise BulkIndexError('%i document(s) failed to index.' % len(errors), errors)
+
+def bulk(client, actions, stats_only=False, **kwargs):
+    """
+    Helper for the :meth:`~elasticsearch.Elasticsearch.bulk` api that provides
+    a more human friendly interface - it consumes an iterator of actions and
+    sends them to elasticsearch in chunks. It returns a tuple with summary
+    information - number of successfully executed actions and either list of
+    errors or number of errors if `stats_only` is set to `True`.
+
+    See :function:`~elasticsearch.helpers.streaming_bulk` for more information
+    and accepted formats.
+
+    :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use
+    :arg actions: iterator containing the actions
+    :arg stats_only: if `True` only report number of successful/failed
+        operations instead of just number of successful and a list of error responses
+
+    Any additional keyword arguments will be passed to
+    :function:`~elasticsearch.helpers.streaming_bulk` which is used to execute
+    the operation.
+    """
+    success, failed = 0, 0
+
+    # list of errors to be collected is not stats_only
+    errors = []
+
+    for ok, item in streaming_bulk(client, actions, **kwargs):
+        # go through request-reponse pairs and detect failures
+        if not ok:
+            if not stats_only:
+                errors.append(item)
+            failed += 1
+        else:
+            success += 1
+
+    return success, failed if stats_only else errors
+
+# preserve the name for backwards compatibility
+bulk_index = bulk
 
 def scan(client, query=None, scroll='5m', **kwargs):
     """
@@ -89,7 +166,7 @@ def scan(client, query=None, scroll='5m', **kwargs):
     Any additional keyword arguments will be passed to the initial
     :meth:`~elasticsearch.Elasticsearch.search` call.
     """
-    # initial search to 
+    # initial search to
     resp = client.search(body=query, search_type='scan', scroll=scroll, **kwargs)
 
     scroll_id = resp['_scroll_id']
@@ -129,5 +206,5 @@ def reindex(client, source_index, target_index, target_client=None, chunk_size=5
             h['_index'] = index
             yield h
 
-    return bulk_index(target_client, _change_doc_index(docs, target_index),
+    return bulk(target_client, _change_doc_index(docs, target_index),
         chunk_size=chunk_size, stats_only=True)
