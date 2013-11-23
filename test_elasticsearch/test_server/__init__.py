@@ -30,12 +30,21 @@ server = None
 pidfile = tempfile.mktemp()
 
 def get_client(**kwargs):
+    # construct kwargs from the environment
     kw = {}
     if 'TEST_ES_CONNECTION' in os.environ:
         from elasticsearch import connection
         kw['connection_class'] = getattr(connection, os.environ['TEST_ES_CONNECTION'])
+    # update them with params
     kw.update(kwargs)
-    return Elasticsearch([os.environ['TEST_ES_SERVER']], **kw)
+
+    # try and locate manual override in the local environment
+    try:
+        from test_elasticsearch.local import get_client as local_get_client
+        return local_get_client([os.environ['TEST_ES_SERVER']], **kw)
+    except ImportError:
+        # fallback to using vanilla client
+        return Elasticsearch([os.environ['TEST_ES_SERVER']], **kw)
 
 
 def setup():
