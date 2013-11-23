@@ -1,4 +1,5 @@
 import time
+import json
 import subprocess
 import tempfile
 import os
@@ -34,6 +35,8 @@ def get_client(**kwargs):
     if 'TEST_ES_CONNECTION' in os.environ:
         from elasticsearch import connection
         kw['connection_class'] = getattr(connection, os.environ['TEST_ES_CONNECTION'])
+    if 'TEST_ES_KWARGS' in os.environ:
+        kw.update(json.loads(os.environ['TEST_ES_KWARGS']))
     kw.update(kwargs)
     return Elasticsearch([os.environ['TEST_ES_SERVER']], **kw)
 
