@@ -502,7 +502,7 @@ class Elasticsearch(object):
             params=params, body=body)
         return data
 
-    @query_params('consistency', 'refresh', 'replication')
+    @query_params('consistency', 'refresh', 'replication', 'timeout')
     def bulk(self, body, index=None, doc_type=None, params=None):
         """
         Perform many index/delete operations in a single API call.
@@ -519,6 +519,7 @@ class Elasticsearch(object):
         :arg consistency: Explicit write consistency setting for the operation
         :arg refresh: Refresh the index after performing the operation
         :arg replication: Explicitly set the replication type (default: sync)
+        :arg timeout: Explicit operation timeout
         """
         _, data = self.transport.perform_request('POST', _make_path(index, doc_type, '_bulk'),
             params=params, body=self._bulk_body(body))
