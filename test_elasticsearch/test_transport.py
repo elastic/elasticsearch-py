@@ -35,6 +35,20 @@ CLUSTER_NODES = '''{
 }'''
 
 class TestTransport(TestCase):
+    def test_send_get_body_as_source(self):
+        t = Transport([{}], send_get_body_as='source', connection_class=DummyConnection)
+
+        t.perform_request('GET', '/', body={})
+        self.assertEquals(1, len(t.get_connection().calls))
+        self.assertEquals(('GET', '/', {'source': '{}'}, None), t.get_connection().calls[0][0])
+
+    def test_send_get_body_as_post(self):
+        t = Transport([{}], send_get_body_as='POST', connection_class=DummyConnection)
+
+        t.perform_request('GET', '/', body={})
+        self.assertEquals(1, len(t.get_connection().calls))
+        self.assertEquals(('POST', '/', None, '{}'), t.get_connection().calls[0][0])
+
     def test_kwargs_passed_on_to_connections(self):
         t = Transport([{'host': 'google.com'}], port=123)
         self.assertEquals(1, len(t.connection_pool.connections))

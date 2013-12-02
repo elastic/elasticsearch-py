@@ -36,7 +36,7 @@ class Transport(object):
         connection_pool_class=ConnectionPool, host_info_callback=get_host_info,
         sniff_on_start=False, sniffer_timeout=None,
         sniff_on_connection_fail=False, serializer=JSONSerializer(),
-        max_retries=3, **kwargs):
+        max_retries=3, send_get_body_as='GET', **kwargs):
         """
         :arg hosts: list of dictionaries, each containing keyword arguments to
             create a `connection_class` instance
@@ -51,6 +51,11 @@ class Transport(object):
         :arg sniff_on_connection_fail: flag controlling if connection failure triggers a sniff
         :arg serializer: serializer instance
         :arg max_retries: maximum number of retries before an exception is propagated
+        :arg send_get_body_as: for GET requests with body this option allows
+            you to specify an alternate way of execution for environments that
+            don't support passing bodies with GET requests. If you set this to
+            'POST' a POST method will be used instead, if to 'source' then the body
+            will be serialized and passed as a query parameter `source`.
 
         Any extra keyword arguments will be passed to the `connection_class`
         when creating and instance unless overriden by that connection's
@@ -58,6 +63,7 @@ class Transport(object):
         """
 
         self.max_retries = max_retries
+        self.send_get_body_as = send_get_body_as
 
         # data serializer
         self.serializer = serializer
@@ -214,6 +220,19 @@ class Transport(object):
         """
         if body is not None:
             body = self.serializer.dumps(body)
+
+            # some clients or environments don't support sending GET with body
+            if method == 'GET' and self.send_get_body_as != 'GET':
+                # send it as post instead
+                if self.send_get_body_as == 'POST':
+                    method = 'POST'
+
+                # or as source parameter
+                elif self.send_get_body_as == 'source':
+                    if params is None:
+                        params = {}
+                    params['source'] = body
+                    body = None
 
         ignore = ()
         if params and 'ignore' in params:
