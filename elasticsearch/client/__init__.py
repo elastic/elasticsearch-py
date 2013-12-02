@@ -508,8 +508,8 @@ class Elasticsearch(object):
         Perform many index/delete operations in a single API call.
         `<http://elasticsearch.org/guide/reference/api/bulk/>`_
 
-        See the :func:`~elasticsearch.helpers.bulk_index` for a more friendly
-        API.
+        See the :func:`~elasticsearch.helpers.bulk` helper function for a more
+        friendly API.
 
         :arg body: The operation definition and data (action-data pairs), as
             either a newline separated string, or a sequence of dicts to
