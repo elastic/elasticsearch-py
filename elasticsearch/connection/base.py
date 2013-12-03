@@ -42,7 +42,7 @@ class Connection(object):
                 return json.dumps(json.loads(data), sort_keys=True, indent=2, separators=(',', ': '))
             except (ValueError, TypeError):
                 # non-json data or a bulk request
-                return repr(data)
+                return data
 
         logger.info(
             '%s %s [status:%s request:%.3fs]', method, full_url,
