@@ -47,11 +47,11 @@ class Urllib3HttpConnection(Connection):
             duration = time.time() - start
             raw_data = response.data.decode('utf-8')
         except Exception as e:
-            self.log_request_fail(method, full_url, time.time() - start, exception=e)
+            self.log_request_fail(method, full_url, body, time.time() - start, exception=e)
             raise ConnectionError('N/A', str(e), e)
 
         if not (200 <= response.status < 300) and response.status not in ignore:
-            self.log_request_fail(method, url, duration, response.status)
+            self.log_request_fail(method, url, body, duration, response.status)
             self._raise_error(response.status, raw_data)
 
         self.log_request_success(method, full_url, url, body, response.status,

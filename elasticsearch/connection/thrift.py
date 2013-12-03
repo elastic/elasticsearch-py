@@ -61,13 +61,13 @@ class ThriftConnection(PoolingConnection):
             response = tclient.execute(request)
             duration = time.time() - start
         except TException as e:
-            self.log_request_fail(method, url, time.time() - start, exception=e)
+            self.log_request_fail(method, url, body, time.time() - start, exception=e)
             raise ConnectionError('N/A', str(e), e)
         finally:
             self._release_connection(tclient)
 
         if not (200 <= response.status < 300) and response.status not in ignore:
-            self.log_request_fail(method, url, duration, response.status)
+            self.log_request_fail(method, url, body, duration, response.status)
             self._raise_error(response.status, response.body)
 
         self.log_request_success(method, url, url, body, response.status,
