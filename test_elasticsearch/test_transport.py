@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import time
 
 from elasticsearch.transport import Transport
@@ -47,7 +48,15 @@ class TestTransport(TestCase):
 
         t.perform_request('GET', '/', body={})
         self.assertEquals(1, len(t.get_connection().calls))
-        self.assertEquals(('POST', '/', None, '{}'), t.get_connection().calls[0][0])
+        self.assertEquals(('POST', '/', None, b'{}'), t.get_connection().calls[0][0])
+
+    def test_body_gets_encoded_into_bytes(self):
+        t = Transport([{}], connection_class=DummyConnection)
+
+        t.perform_request('GET', '/', body=u'你好')
+        self.assertEquals(1, len(t.get_connection().calls))
+        self.assertEquals(('GET', '/', None, b'\xe4\xbd\xa0\xe5\xa5\xbd'), t.get_connection().calls[0][0])
+
 
     def test_kwargs_passed_on_to_connections(self):
         t = Transport([{'host': 'google.com'}], port=123)

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import sys
 
 from datetime import datetime
@@ -26,4 +27,4 @@ class TestJSONSerializer(TestCase):
         self.assertRaises(SerializationError, JSONSerializer().loads, '{{')
 
     def test_strings_are_left_untouched(self):
-        self.assertEquals('Hello World!', JSONSerializer().dumps('Hello World!'))
+        self.assertEquals(u"你好", JSONSerializer().dumps(u"你好"))

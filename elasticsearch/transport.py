@@ -234,6 +234,13 @@ class Transport(object):
                     params['source'] = body
                     body = None
 
+        if body is not None:
+            try:
+                body = body.encode('utf-8')
+            except UnicodeDecodeError:
+                # Python 2 and str, no need to re-encode
+                pass
+
         ignore = ()
         if params and 'ignore' in params:
             ignore = params.pop('ignore')

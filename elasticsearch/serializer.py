@@ -21,11 +21,7 @@ class JSONSerializer(object):
     def dumps(self, data):
         # don't serialize strings
         if isinstance(data, (type(''), type(u''))):
-            try:
-                return data.encode('utf-8')
-            except UnicodeDecodeError:
-                # Python 2 and str, no need to re-encode
-                return data
+            return data
 
         try:
             return json.dumps(data, default=self.default)
