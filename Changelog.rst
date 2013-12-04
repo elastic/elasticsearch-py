@@ -12,6 +12,7 @@ Changelog
    operation
  * `helpers.bulk` and `helpers.streaming_bulk` are no longer limitted to just
    index operations.
+ * unicode body (for `incices.analyze` for example) is now handled correctly
 
 0.4.3
 -----
