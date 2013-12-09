@@ -117,7 +117,7 @@ class Elasticsearch(object):
         _, data = self.transport.perform_request('GET', '/', params=params)
         return data
 
-    @query_params('consistency', 'id', 'parent', 'percolate', 'refresh',
+    @query_params('consistency', 'parent', 'percolate', 'refresh',
         'replication', 'routing', 'timeout', 'timestamp', 'ttl', 'version', 'version_type')
     def create(self, index, doc_type, body, id=None, params=None):
         """
