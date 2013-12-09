@@ -165,7 +165,7 @@ def construct_case(filename, name):
     def make_test(test_name, definition, i):
         def m(self):
             self.run_code(definition)
-        m.__doc__ = '%s: %s' % ('/'.join(filename.split('/')[-2:]), test_name)
+        m.__doc__ = '%s (%s): %s' % (name, '/'.join(filename.split('/')[-2:]), test_name)
         m.__name__ = 'test_from_yaml_%d' % i
         return m
 
