@@ -37,6 +37,27 @@ es = Elasticsearch()
 print('Empty search:')
 print_hits(es.search(index='git'))
 
+print('Find commits that says "fix" without touching tests:')
+result = es.search(
+    index='git',
+    doc_type='commits',
+    body={
+      'query': {
+        'filtered': {
+          'query': {
+            'match': {'description': 'fix'}
+          },
+          'filter': {
+            'not': {
+              'term': {'files': 'test_elasticsearch'}
+            }
+          }
+        }
+      }
+    }
+)
+print_hits(result)
+
 print('Last 8 Commits for elasticsearch-py:')
 result = es.search(
     index='git',
