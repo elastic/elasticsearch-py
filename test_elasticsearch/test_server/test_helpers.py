@@ -4,6 +4,12 @@ from . import ElasticTestCase
 from ..test_cases import SkipTest
 
 class TestStreamingBulk(ElasticTestCase):
+    def test_actions_remain_unchanged(self):
+        actions = [{'_id': 1}, {'_id': 2}]
+        for ok, item in helpers.streaming_bulk(self.client, actions, index='test-index', doc_type='answers'):
+            self.assertTrue(ok)
+        self.assertEquals([{'_id': 1}, {'_id': 2}], actions)
+
     def test_all_documents_get_inserted(self):
         docs = [{"answer": x, '_id': x} for x in range(100)]
         for ok, item in helpers.streaming_bulk(self.client, docs, index='test-index', doc_type='answers', refresh=True):

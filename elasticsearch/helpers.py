@@ -20,6 +20,8 @@ def expand_action(data):
     action/data lines needed for elasticsearch's
     :meth:`~elasticsearch.Elasticsearch.bulk` api.
     """
+    # make sure we don't alter the action
+    data = data.copy()
     op_type = data.pop('_op_type', 'index')
     action = {op_type: {}}
     for key in ('_index', '_parent', '_percolate', '_routing', '_timestamp',
@@ -57,8 +59,7 @@ def streaming_bulk(client, actions, chunk_size=500, raise_on_error=False, expand
         }
 
     Alternatively, if `_source` is not present, it will pop all metadata fields
-    from the doc and use the rest as the document data. The dict passed in will
-    be modified - metadata fields will be popped out.
+    from the doc and use the rest as the document data.
 
     Alternative actions (`_op_type` field defaults to `index`) can be sent as
     well::
