@@ -128,19 +128,19 @@ class TestRequestsConnection(TestCase):
     @patch('elasticsearch.connection.base.tracer')
     @patch('elasticsearch.connection.base.logger')
     def test_success_logs_and_traces(self, logger, tracer):
-        con = self._get_mock_connection(response_body='{"answer": 42}')
-        status, data = con.perform_request('GET', '/', {'param': 42}, '{}')
+        con = self._get_mock_connection(response_body='''{"answer": "that's it!"}''')
+        status, data = con.perform_request('GET', '/', {'param': 42}, '''{"question": "what's that?"}''')
 
         # trace request
         self.assertEquals(1, tracer.info.call_count)
         self.assertEquals(
-            "curl -XGET 'http://localhost:9200/?pretty&param=42' -d '{}'",
+            """curl -XGET 'http://localhost:9200/?pretty&param=42' -d '{\n  "question": "what\\u0027s that?"\n}'""",
             tracer.info.call_args[0][0] % tracer.info.call_args[0][1:]
         )
         # trace response
         self.assertEquals(1, tracer.debug.call_count)
         self.assertTrue(re.match(
-            '#\[200\] \(0.[0-9]{3}s\)\n#\{\n#  "answer": 42\n#\}',
+            '#\[200\] \(0.[0-9]{3}s\)\n#\{\n#  "answer": "that\\\\u0027s it!"\n#\}',
             tracer.debug.call_args[0][0] % tracer.debug.call_args[0][1:]
         ))
 
@@ -154,11 +154,11 @@ class TestRequestsConnection(TestCase):
         self.assertEquals(2, logger.debug.call_count)
         req, resp = logger.debug.call_args_list
         self.assertEquals(
-            '> {}',
+            '> {"question": "what\'s that?"}',
             req[0][0] % req[0][1:]
         )
         self.assertEquals(
-            '< {"answer": 42}',
+            '< {"answer": "that\'s it!"}',
             resp[0][0] % resp[0][1:]
         )
 
