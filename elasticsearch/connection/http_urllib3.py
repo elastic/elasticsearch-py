@@ -57,7 +57,5 @@ class Urllib3HttpConnection(Connection):
         self.log_request_success(method, full_url, url, body, response.status,
             raw_data, duration)
 
-        return response.status, raw_data
-
-
+        return response.status, response.getheaders(), raw_data
 

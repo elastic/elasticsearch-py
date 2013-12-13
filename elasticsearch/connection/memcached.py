@@ -77,7 +77,7 @@ class MemcachedConnection(PoolingConnection):
         self.log_request_success(method, full_url, url, body, status,
             response, duration)
 
-        return status, response
+        return status, {}, response
 
 
 

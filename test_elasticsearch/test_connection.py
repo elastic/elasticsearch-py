@@ -62,7 +62,7 @@ class TestRequestsConnection(TestCase):
         return con
 
     def _get_request(self, connection, *args, **kwargs):
-        status, data = connection.perform_request(*args, **kwargs)
+        status, headers, data = connection.perform_request(*args, **kwargs)
         self.assertEquals(200, status)
         self.assertEquals(u'{}', data)
 
@@ -129,7 +129,7 @@ class TestRequestsConnection(TestCase):
     @patch('elasticsearch.connection.base.logger')
     def test_success_logs_and_traces(self, logger, tracer):
         con = self._get_mock_connection(response_body='''{"answer": "that's it!"}''')
-        status, data = con.perform_request('GET', '/', {'param': 42}, '''{"question": "what's that?"}''')
+        status, headers, data = con.perform_request('GET', '/', {'param': 42}, '''{"question": "what's that?"}''')
 
         # trace request
         self.assertEquals(1, tracer.info.call_count)

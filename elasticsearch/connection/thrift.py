@@ -73,7 +73,5 @@ class ThriftConnection(PoolingConnection):
         self.log_request_success(method, url, url, body, response.status,
             response.body, duration)
 
-        return response.status, response.body
-
-
+        return response.status, response.headers or {}, response.body
 

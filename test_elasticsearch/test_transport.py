@@ -11,6 +11,7 @@ class DummyConnection(Connection):
     def __init__(self, **kwargs):
         self.exception = kwargs.pop('exception', None)
         self.status, self.data = kwargs.pop('status', 200), kwargs.pop('data', '{}')
+        self.headers = kwargs.pop('headers', {})
         self.calls = []
         super(DummyConnection, self).__init__(**kwargs)
 
@@ -18,7 +19,7 @@ class DummyConnection(Connection):
         self.calls.append((args, kwargs))
         if self.exception:
             raise self.exception
-        return self.status, self.data
+        return self.status, self.headers, self.data
 
 CLUSTER_NODES = '''{
     "ok" : true,
