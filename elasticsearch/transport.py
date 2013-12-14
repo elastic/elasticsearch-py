@@ -3,7 +3,7 @@ import time
 
 from .connection import Urllib3HttpConnection
 from .connection_pool import ConnectionPool
-from .serializer import JSONSerializer
+from .serializer import JSONSerializer, Deserializer, DEFAULT_SERIALIZERS
 from .exceptions import ConnectionError, TransportError, SerializationError
 
 # get ip/port from "inet[wind/127.0.0.1:9200]"
@@ -35,8 +35,9 @@ class Transport(object):
     def __init__(self, hosts, connection_class=Urllib3HttpConnection,
         connection_pool_class=ConnectionPool, host_info_callback=get_host_info,
         sniff_on_start=False, sniffer_timeout=None,
-        sniff_on_connection_fail=False, serializer=JSONSerializer(),
-        max_retries=3, send_get_body_as='GET', **kwargs):
+        sniff_on_connection_fail=False, serializer=JSONSerializer(), serializers=None,
+        default_mimetype='application/json', max_retries=3,
+        send_get_body_as='GET', **kwargs):
         """
         :arg hosts: list of dictionaries, each containing keyword arguments to
             create a `connection_class` instance
@@ -50,6 +51,10 @@ class Transport(object):
         :arg sniffer_timeout: number of seconds between automatic sniffs
         :arg sniff_on_connection_fail: flag controlling if connection failure triggers a sniff
         :arg serializer: serializer instance
+        :arg serializers: optional dict of serializer instances that will be
+            used for deserializing data coming from the server. (key is the mimetype)
+        :arg default_mimetype: when no mimetype is specified by the server
+            response assume this mimetype, defaults to `'application/json'`
         :arg max_retries: maximum number of retries before an exception is propagated
         :arg send_get_body_as: for GET requests with body this option allows
             you to specify an alternate way of execution for environments that
@@ -61,6 +66,16 @@ class Transport(object):
         when creating and instance unless overriden by that connection's
         options provided as part of the hosts parameter.
         """
+
+        # serialization config
+        _serializers = DEFAULT_SERIALIZERS.copy()
+        # if a serializer has been specified, use it for deserialization as well
+        _serializers[serializer.mimetype] = serializer
+        # if custom serializers map has been supplied, override the defaults with it
+        if serializers:
+            _serializers.update(serializers)
+        # create a deserializer with our config
+        self.deserializer = Deserializer(_serializers, default_mimetype)
 
         self.max_retries = max_retries
         self.send_get_body_as = send_get_body_as
@@ -155,7 +170,7 @@ class Transport(object):
                 try:
                     # use small timeout for the sniffing request, should be a fast api call
                     _, headers, node_info = c.perform_request('GET', '/_cluster/nodes', timeout=.1)
-                    node_info = self.serializer.loads(node_info)
+                    node_info = self.deserializer.loads(node_info, headers.get('content-type'))
                     break
                 except (ConnectionError, SerializationError):
                     pass
@@ -263,6 +278,6 @@ class Transport(object):
                 self.connection_pool.mark_live(connection)
                 data = None
                 if raw_data:
-                    data = self.serializer.loads(raw_data)
+                    data = self.deserializer.loads(raw_data, headers.get('content-type'))
                 return status, data
 

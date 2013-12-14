@@ -16,6 +16,9 @@ Changelog
  * changed `perform_request` on `Connection` classes to return headers as well.
    This is a backwards incompatible change for people who have developed their own
    connection class.
+ * changed deserialization mechanics. Users who provided their own serializer
+   that didn't extend `JSONSerializer` need to specify a `mimetype` class
+   attribute.
 
 0.4.3
 -----

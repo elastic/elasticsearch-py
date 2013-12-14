@@ -2,9 +2,23 @@ import json
 from datetime import date, datetime
 from decimal import Decimal
 
-from .exceptions import SerializationError
+from .exceptions import SerializationError, ImproperlyConfigured
+
+class TextSerializer(object):
+    mimetype = 'text/plain'
+
+    def loads(self, s):
+        return s
+
+    def dumps(self, data):
+        if isinstance(data, (type(''), type(u''))):
+            return data
+
+        raise SerializationError('Cannot serialize %r into text.' % data)
 
 class JSONSerializer(object):
+    mimetype = 'application/json'
+
     def default(self, data):
         if isinstance(data, (date, datetime)):
             return data.isoformat()
@@ -28,4 +42,29 @@ class JSONSerializer(object):
         except (ValueError, TypeError) as e:
             raise SerializationError(data, e)
 
+DEFAULT_SERIALIZERS = {
+    JSONSerializer.mimetype: JSONSerializer(),
+    TextSerializer.mimetype: TextSerializer(),
+}
+
+class Deserializer(object):
+    def __init__(self, serializers, default_mimetype='application/json'):
+        try:
+            self.default = serializers[default_mimetype]
+        except KeyError:
+            raise ImproperlyConfigured('Cannot find default serializer (%s)' % default_mimetype)
+        self.serializers = serializers
+
+    def loads(self, s, mimetype=None):
+        if not mimetype:
+            deserializer = self.default
+        else:
+            # split out charset
+            mimetype = mimetype.split(';', 1)[0]
+            try:
+                deserializer = self.serializers[mimetype]
+            except KeyError:
+                raise SerializationError('Unknown mimetype, unable to deserialize: %s' % mimetype)
+
+        return deserializer.loads(s)
 
