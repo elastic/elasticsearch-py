@@ -205,7 +205,7 @@ def reindex(client, source_index, target_index, target_client=None, chunk_size=5
     :arg scroll: Specify how long a consistent view of the index should be
         maintained for scrolled search
     """
-    target_client = client if target_client is None else target_index
+    target_client = client if target_client is None else target_client
 
     docs = scan(client, index=source_index, scroll=scroll)
     def _change_doc_index(hits, index):
