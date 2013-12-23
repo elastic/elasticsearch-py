@@ -3,8 +3,8 @@
 Changelog
 =========
 
-0.4.4 (dev)
------------
+0.4.4 (2013-12-23)
+------------------
 
  * `helpers.bulk_index` renamed to `helpers.bulk` (alias put in place for
    backwards compatibility, to be removed in future versions)
