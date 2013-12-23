@@ -19,21 +19,22 @@ Changelog
  * changed deserialization mechanics. Users who provided their own serializer
    that didn't extend `JSONSerializer` need to specify a `mimetype` class
    attribute.
+ * minor bug fixes
 
-0.4.3
------
+0.4.3 (2013-10-22)
+------------------
 
  * Fixes to `helpers.bulk_index`, better error handling
  * More benevolent `hosts` argument parsing for `Elasticsearch`
  * `requests` no longer required (nor recommended) for install
 
-0.4.2
------
+0.4.2 (2013-10-08)
+------------------
  
  * `ignore` param acceted by all APIs
  * Fixes to `helpers.bulk_index`
 
-0.4.1
------
+0.4.1 (2013-09-24)
+------------------
 
 Initial release.
