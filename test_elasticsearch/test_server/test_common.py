@@ -191,9 +191,8 @@ def construct_case(filename, name):
 YAML_DIR = environ.get(
     'YAML_TEST_DIR',
     join(
-        dirname(__file__),
-        pardir, 
-        'rest-api-spec', 'test'
+        dirname(__file__), pardir, pardir,
+        'rest-api-spec', 'rest-api-spec', 'test'
     )
 )
 

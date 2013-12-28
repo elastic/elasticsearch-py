@@ -1,3 +1,3 @@
-[submodule "test_elasticsearch/rest-api-spec"]
-	path = test_elasticsearch/rest-api-spec
-	url = https://github.com/elasticsearch/elasticsearch-rest-api-spec.git
+[submodule "rest-api-spec"]
+	path = rest-api-spec
+	url = https://github.com/elasticsearch/elasticsearch.git
