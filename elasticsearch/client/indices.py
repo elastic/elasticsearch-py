@@ -27,7 +27,7 @@ class IndicesClient(NamespacedClient):
             params=params, body=body)
         return data
 
-    @query_params('ignore_indices')
+    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_indices', 'ignore_unavailable')
     def refresh(self, index=None, params=None):
         """
         Explicitly refresh one or more index, making all operations performed
@@ -36,14 +36,22 @@ class IndicesClient(NamespacedClient):
 
         :arg index: A comma-separated list of index names; use `_all` or empty
             string to perform the operation on all indices
-        :arg ignore_indices: When performed on multiple indices, allows to
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+			expression resolves into no concrete indices. (This includes `_all` string or
+			when no indices have been specified)
+		:arg expand_wildcards: Whether to expand wildcard expression to concrete indices
+			that are open, closed or both.
+		:arg ignore_indices: When performed on multiple indices, allows to
             ignore `missing` ones, default u'none'
+		:arg ignore_unavailable: Whether specified concrete indices should be ignored
+			when unavailable (missing or closed)
         """
         _, data = self.transport.perform_request('POST', _make_path(index, '_refresh'),
             params=params)
         return data
 
-    @query_params('force', 'full', 'ignore_indices', 'refresh')
+    @query_params('force', 'full', 'allow_no_indices', 'expand_wildcards',
+        'ignore_indices', 'ignore_unavailable', 'refresh')
     def flush(self, index=None, params=None):
         """
         Explicitly flush one or more indices.
@@ -53,8 +61,15 @@ class IndicesClient(NamespacedClient):
             string for all indices
         :arg force: TODO: ?
         :arg full: TODO: ?
-        :arg ignore_indices: When performed on multiple indices, allows to
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+			expression resolves into no concrete indices. (This includes `_all` string or
+			when no indices have been specified)
+		:arg expand_wildcards: Whether to expand wildcard expression to concrete indices
+			that are open, closed or both.
+		:arg ignore_indices: When performed on multiple indices, allows to
             ignore `missing` ones (default: none)
+		:arg ignore_unavailable: Whether specified concrete indices should be ignored
+			when unavailable (missing or closed)
         :arg refresh: Refresh the index after performing the operation
         """
         _, data = self.transport.perform_request('POST', _make_path(index, '_flush'),
@@ -134,7 +149,7 @@ class IndicesClient(NamespacedClient):
             return False
         return True
 
-    @query_params('ignore_indices')
+    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_indices', 'ignore_unavailable')
     def exists_type(self, index, doc_type, params=None):
         """
         Check if a type/types exists in an index/indices.
@@ -143,8 +158,15 @@ class IndicesClient(NamespacedClient):
         :arg index: A comma-separated list of index names; use `_all` to check
             the types across all indices
         :arg doc_type: A comma-separated list of document types to check
-        :arg ignore_indices: When performed on multiple indices, allows to
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+			expression resolves into no concrete indices. (This includes `_all` string or
+			when no indices have been specified)
+		:arg expand_wildcards: Whether to expand wildcard expression to concrete indices
+			that are open, closed or both.
+		:arg ignore_indices: When performed on multiple indices, allows to
             ignore `missing` ones (default: none)
+		:arg ignore_unavailable: Whether specified concrete indices should be ignored
+			when unavailable (missing or closed)
         """
         try:
             self.transport.perform_request('HEAD', _make_path(index, doc_type), params=params)
@@ -152,7 +174,7 @@ class IndicesClient(NamespacedClient):
             return False
         return True
 
-    @query_params('ignore_indices')
+    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_indices', 'ignore_unavailable')
     def snapshot_index(self, index=None, params=None):
         """
         Explicitly perform a snapshot through the gateway of one or more indices (backup them).
@@ -160,8 +182,15 @@ class IndicesClient(NamespacedClient):
 
         :arg index: A comma-separated list of index names; use `_all` or empty
             string for all indices
-        :arg ignore_indices: When performed on multiple indices, allows to
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+			expression resolves into no concrete indices. (This includes `_all` string or
+			when no indices have been specified)
+		:arg expand_wildcards: Whether to expand wildcard expression to concrete indices
+			that are open, closed or both.
+		:arg ignore_indices: When performed on multiple indices, allows to
             ignore `missing` ones (default: none)
+		:arg ignore_unavailable: Whether specified concrete indices should be ignored
+			when unavailable (missing or closed)
         """
         _, data = self.transport.perform_request('POST',
             _make_path(index, '_gateway', 'snapshot'), params=params)
@@ -246,7 +275,7 @@ class IndicesClient(NamespacedClient):
             params=params, body=body)
         return data
 
-    @query_params('ignore_indices')
+    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_indices', 'ignore_unavailable')
     def exists_alias(self, name, index=None, params=None):
         """
         Return a boolean indicating whether given alias exists.
@@ -254,8 +283,15 @@ class IndicesClient(NamespacedClient):
 
         :arg name: A comma-separated list of alias names to return
         :arg index: A comma-separated list of index names to filter aliases
-        :arg ignore_indices: When performed on multiple indices, allows to
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+			expression resolves into no concrete indices. (This includes `_all` string or
+			when no indices have been specified)
+		:arg expand_wildcards: Whether to expand wildcard expression to concrete indices
+			that are open, closed or both.
+		:arg ignore_indices: When performed on multiple indices, allows to
             ignore `missing` ones (default: none)
+		:arg ignore_unavailable: Whether specified concrete indices should be ignored
+			when unavailable (missing or closed)
         """
         try:
             self.transport.perform_request('HEAD', _make_path(index, '_alias', name),
@@ -264,7 +300,7 @@ class IndicesClient(NamespacedClient):
             return False
         return True
 
-    @query_params('ignore_indices')
+    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_indices', 'ignore_unavailable')
     def get_alias(self, name, index=None, params=None):
         """
         Retrieve a specified alias.
@@ -272,8 +308,15 @@ class IndicesClient(NamespacedClient):
 
         :arg name: A comma-separated list of alias names to return
         :arg index: A comma-separated list of index names to filter aliases
-        :arg ignore_indices: When performed on multiple indices, allows to
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+			expression resolves into no concrete indices. (This includes `_all` string or
+			when no indices have been specified)
+		:arg expand_wildcards: Whether to expand wildcard expression to concrete indices
+			that are open, closed or both.
+		:arg ignore_indices: When performed on multiple indices, allows to
             ignore `missing` ones, default u'none'
+		:arg ignore_unavailable: Whether specified concrete indices should be ignored
+			when unavailable (missing or closed)
         """
         _, data = self.transport.perform_request('GET', _make_path(index, '_alias', name),
             params=params)
@@ -444,7 +487,8 @@ class IndicesClient(NamespacedClient):
             params=params)
         return data
 
-    @query_params('ignore_indices', 'operation_threading', 'recovery', 'snapshot')
+    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_indices',
+        'ignore_unavailable', 'operation_threading', 'recovery', 'snapshot')
     def status(self, index=None, params=None):
         """
         Get a comprehensive status information of one or more indices.
@@ -452,8 +496,15 @@ class IndicesClient(NamespacedClient):
 
         :arg index: A comma-separated list of index names; use `_all` or empty
             string to perform the operation on all indices
-        :arg ignore_indices: When performed on multiple indices, allows to
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+			expression resolves into no concrete indices. (This includes `_all` string or
+			when no indices have been specified)
+		:arg expand_wildcards: Whether to expand wildcard expression to concrete indices
+			that are open, closed or both.
+		:arg ignore_indices: When performed on multiple indices, allows to
             ignore `missing` ones, default u'none'
+		:arg ignore_unavailable: Whether specified concrete indices should be ignored
+			when unavailable (missing or closed)
         :arg operation_threading: TODO: ?
         :arg recovery: Return information about shard recovery
         :arg snapshot: TODO: ?
@@ -464,8 +515,8 @@ class IndicesClient(NamespacedClient):
 
     @query_params('all', 'clear', 'completion', 'completion_fields', 'docs',
         'fielddata', 'fielddata_fields', 'fields', 'filter_cache', 'flush', 'get', 'groups',
-        'id_cache', 'ignore_indices', 'indexing', 'merge', 'refresh', 'search',
-        'store', 'warmer')
+        'id_cache', 'allow_no_indices', 'expand_wildcards', 'ignore_indices',
+        'ignore_unavailable', 'indexing', 'merge', 'refresh', 'search', 'store', 'warmer')
     def stats(self, index=None, metric_family=None, params=None):
         """
         Retrieve statistics on different operations happening on an index.
@@ -490,8 +541,15 @@ class IndicesClient(NamespacedClient):
         :arg get: Return information about get operations
         :arg groups: A comma-separated list of search groups for `search` statistics
         :arg id_cache: Return information about ID cache
-        :arg ignore_indices: When performed on multiple indices, allows to
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+			expression resolves into no concrete indices. (This includes `_all` string or
+			when no indices have been specified)
+		:arg expand_wildcards: Whether to expand wildcard expression to concrete indices
+			that are open, closed or both.
+		:arg ignore_indices: When performed on multiple indices, allows to
             ignore `missing` ones (default: none)
+		:arg ignore_unavailable: Whether specified concrete indices should be ignored
+			when unavailable (missing or closed)
         :arg indexing: Return information about indexing operations
         :arg merge: Return information about merge operations
         :arg refresh: Return information about refresh operations
@@ -504,7 +562,8 @@ class IndicesClient(NamespacedClient):
             params=params)
         return data
 
-    @query_params('ignore_indices', 'operation_threading')
+    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_indices',
+        'ignore_unavailable', 'operation_threading')
     def segments(self, index=None, params=None):
         """
         Provide low level segments information that a Lucene index (shard level) is built with.
@@ -512,15 +571,24 @@ class IndicesClient(NamespacedClient):
 
         :arg index: A comma-separated list of index names; use `_all` or empty
             string to perform the operation on all indices
-        :arg ignore_indices: When performed on multiple indices, allows to
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+			expression resolves into no concrete indices. (This includes `_all` string or
+			when no indices have been specified)
+		:arg expand_wildcards: Whether to expand wildcard expression to concrete indices
+			that are open, closed or both.
+		:arg ignore_indices: When performed on multiple indices, allows to
             ignore `missing` ones, default u'none'
+		:arg ignore_unavailable: Whether specified concrete indices should be ignored
+			when unavailable (missing or closed)
         :arg operation_threading: TODO: ?
         """
         _, data = self.transport.perform_request('GET', _make_path(index, '_segments'), params=params)
         return data
 
-    @query_params('flush', 'ignore_indices', 'max_num_segments',
-        'only_expunge_deletes', 'operation_threading', 'refresh', 'wait_for_merge')
+    @query_params('flush', 'allow_no_indices', 'expand_wildcards',
+        'ignore_indices', 'ignore_unavailable', 'max_num_segments',
+        'only_expunge_deletes', 'operation_threading', 'refresh',
+        'wait_for_merge')
     def optimize(self, index=None, params=None):
         """
         Explicitly optimize one or more indices through an API.
@@ -530,8 +598,15 @@ class IndicesClient(NamespacedClient):
             string to perform the operation on all indices
         :arg flush: Specify whether the index should be flushed after
             performing the operation (default: true)
-        :arg ignore_indices: When performed on multiple indices, allows to
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+			expression resolves into no concrete indices. (This includes `_all` string or
+			when no indices have been specified)
+		:arg expand_wildcards: Whether to expand wildcard expression to concrete indices
+			that are open, closed or both.
+		:arg ignore_indices: When performed on multiple indices, allows to
             ignore `missing` ones, default u'none'
+		:arg ignore_unavailable: Whether specified concrete indices should be ignored
+			when unavailable (missing or closed)
         :arg max_num_segments: The number of segments the index should be
             merged into (default: dynamic)
         :arg only_expunge_deletes: Specify whether the operation should only
@@ -545,7 +620,9 @@ class IndicesClient(NamespacedClient):
         _, data = self.transport.perform_request('POST', _make_path(index, '_optimize'), params=params)
         return data
 
-    @query_params('explain', 'ignore_indices', 'operation_threading', 'q', 'source')
+    @query_params('explain', 'allow_no_indices', 'expand_wildcards',
+        'ignore_indices', 'ignore_unavailable', 'operation_threading', 'q',
+        'source')
     def validate_query(self, index=None, doc_type=None, body=None, params=None):
         """
         Validate a potentially expensive query without executing it.
@@ -557,8 +634,15 @@ class IndicesClient(NamespacedClient):
             operation; leave empty to perform the operation on all types
         :arg body: The query definition
         :arg explain: Return detailed information about the error
-        :arg ignore_indices: When performed on multiple indices, allows to
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+			expression resolves into no concrete indices. (This includes `_all` string or
+			when no indices have been specified)
+		:arg expand_wildcards: Whether to expand wildcard expression to concrete indices
+			that are open, closed or both.
+		:arg ignore_indices: When performed on multiple indices, allows to
             ignore `missing` ones (default: none)
+		:arg ignore_unavailable: Whether specified concrete indices should be ignored
+			when unavailable (missing or closed)
         :arg operation_threading: TODO: ?
         :arg q: Query in the Lucene query string syntax
         :arg source: The URL-encoded query definition (instead of using the
@@ -568,9 +652,9 @@ class IndicesClient(NamespacedClient):
             params=params, body=body)
         return data
 
-    @query_params('field_data', 'fielddata', 'fields', 'filter',
-        'filter_cache', 'filter_keys', 'id', 'id_cache', 'ignore_indices', 'index',
-        'recycler')
+    @query_params('field_data', 'fielddata', 'fields', 'filter', 'filter_cache',
+        'filter_keys', 'id', 'id_cache', 'allow_no_indices', 'expand_wildcards',
+        'ignore_indices', 'ignore_unavailable', 'index', 'recycler')
     def clear_cache(self, index=None, params=None):
         """
         Clear either all caches or specific cached associated with one ore more indices.
@@ -587,8 +671,15 @@ class IndicesClient(NamespacedClient):
             the `filter_cache` parameter (default: all)
         :arg id: Clear ID caches for parent/child
         :arg id_cache: Clear ID caches for parent/child
-        :arg ignore_indices: When performed on multiple indices, allows to
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+			expression resolves into no concrete indices. (This includes `_all` string or
+			when no indices have been specified)
+		:arg expand_wildcards: Whether to expand wildcard expression to concrete indices
+			that are open, closed or both.
+		:arg ignore_indices: When performed on multiple indices, allows to
             ignore `missing` ones (default: none)
+		:arg ignore_unavailable: Whether specified concrete indices should be ignored
+			when unavailable (missing or closed)
         :arg index: A comma-separated list of index name to limit the operation
         :arg recycler: Clear the recycler cache
         """
