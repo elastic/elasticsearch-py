@@ -3,6 +3,13 @@
 Changelog
 =========
 
+0.4.5 (dev)
+-----------
+
+ * `get_alias` now has `name` as another optional parameter due to issue #4539
+   in es repo. Note that the order of params have changed so if you are not
+   using keyword arguments this is a breaking change.
+
 0.4.4 (2013-12-23)
 ------------------
 

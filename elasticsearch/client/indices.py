@@ -301,7 +301,7 @@ class IndicesClient(NamespacedClient):
         return True
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_indices', 'ignore_unavailable')
-    def get_alias(self, name, index=None, params=None):
+    def get_alias(self, index=None, name=None, params=None):
         """
         Retrieve a specified alias.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-aliases.html>`_
