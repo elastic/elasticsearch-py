@@ -3,6 +3,7 @@ Dynamically generated set of TestCases based on set of yaml files decribing
 some integration tests. These files are shared among all official Elasticsearch
 clients.
 """
+import re
 from os import walk, environ
 from os.path import exists, join, dirname, pardir
 import yaml
@@ -114,11 +115,12 @@ class YamlTestCase(ElasticTestCase):
         if  min_version <= self.es_version <= max_version:
             raise SkipTest(reason)
 
-
     def run_catch(self, catch, exception):
         self.assertIsInstance(exception, TransportError)
         if catch in CATCH_CODES:
             self.assertEquals(CATCH_CODES[catch], exception.status_code)
+        elif catch[0] == '/' and catch[-1] == '/':
+            self.assertTrue(re.search(catch[1:-1], exception.error))
 
     def run_gt(self, action):
         for key, value in action.items():
