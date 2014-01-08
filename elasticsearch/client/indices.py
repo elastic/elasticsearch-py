@@ -366,7 +366,7 @@ class IndicesClient(NamespacedClient):
             params=params)
         return data
 
-    @query_params('order', 'timeout', 'master_timeout')
+    @query_params('order', 'timeout', 'master_timeout', 'flat_settings')
     def put_template(self, name, body, params=None):
         """
         Create an index template that will automatically be applied to new
@@ -379,18 +379,20 @@ class IndicesClient(NamespacedClient):
             ones (higher numbers are merged later, overriding the lower numbers)
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
+        :arg flat_settings: Return settings in flat format (default: false)
         """
         _, data = self.transport.perform_request('PUT', _make_path('_template', name),
             params=params, body=body)
         return data
 
-    @query_params()
+    @query_params('flat_settings')
     def get_template(self, name=None, params=None):
         """
         Retrieve an index template by its name.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-templates.html>`_
 
         :arg name: The name of the template
+        :arg flat_settings: Return settings in flat format (default: false)
         """
         _, data = self.transport.perform_request('GET', _make_path('_template', name),
             params=params)
@@ -410,7 +412,7 @@ class IndicesClient(NamespacedClient):
             params=params)
         return data
 
-    @query_params()
+    @query_params('flat_settings')
     def get_settings(self, index=None, params=None):
         """
         Retrieve settings for one or more (or all) indices.
@@ -418,12 +420,13 @@ class IndicesClient(NamespacedClient):
 
         :arg index: A comma-separated list of index names; use `_all` or empty
             string to perform the operation on all indices
+        :arg flat_settings: Return settings in flat format (default: false)
         """
         _, data = self.transport.perform_request('GET', _make_path(index, '_settings'),
             params=params)
         return data
 
-    @query_params('master_timeout')
+    @query_params('master_timeout', 'flat_settings')
     def put_settings(self, body, index=None, params=None):
         """
         Change specific index level settings in real time.
@@ -433,6 +436,7 @@ class IndicesClient(NamespacedClient):
             string to perform the operation on all indices
         :arg master_timeout: Specify timeout for connection to master
         :arg body: The index settings to be updated
+        :arg flat_settings: Return settings in flat format (default: false)
         """
         _, data = self.transport.perform_request('PUT', _make_path(index, '_settings'),
             params=params, body=body)

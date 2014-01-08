@@ -25,7 +25,7 @@ class ClusterClient(NamespacedClient):
 
     @query_params('filter_blocks', 'filter_index_templates', 'filter_indices',
         'filter_metadata', 'filter_nodes', 'filter_routing_table', 'local',
-        'master_timeout')
+        'master_timeout', 'flat_settings')
     def state(self, params=None):
         """
         Get a comprehensive state information of the whole cluster.
@@ -39,6 +39,7 @@ class ClusterClient(NamespacedClient):
         :arg filter_routing_table: Do not return information about shard allocation (`routing_table` and `routing_nodes`)
         :arg local: Return local information, do not retrieve the state from master node (default: false)
         :arg master_timeout: Specify timeout for connection to master
+        :arg flat_settings: Return settings in flat format (default: false)
         """
         _, data = self.transport.perform_request('GET', '/_cluster/state', params=params)
         return data
@@ -57,16 +58,18 @@ class ClusterClient(NamespacedClient):
         _, data = self.transport.perform_request('POST', '/_cluster/reroute', params=params, body=body)
         return data
 
-    @query_params()
+    @query_params('flat_settings')
     def get_settings(self, params=None):
         """
         Get cluster settings.
         `<http://elasticsearch.org/guide/reference/api/admin-cluster-update-settings/>`_
+
+        :arg flat_settings: Return settings in flat format (default: false)
         """
         _, data = self.transport.perform_request('GET', '/_cluster/settings', params=params)
         return data
 
-    @query_params()
+    @query_params('flat_settings')
     def put_settings(self, body, params=None):
         """
         Update cluster wide specific settings.
@@ -74,6 +77,7 @@ class ClusterClient(NamespacedClient):
 
         :arg body: The settings to be updated. Can be either `transient` or
             `persistent` (survives cluster restart).
+        :arg flat_settings: Return settings in flat format (default: false)
         """
         _, data = self.transport.perform_request('PUT', '/_cluster/settings', params=params, body=body)
         return data
