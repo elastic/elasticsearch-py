@@ -21,15 +21,15 @@ matrix:
       env: TEST_ES_CONNECTION=ThriftConnection
 
 install:
-  - wget -O - https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-0.90.5.tar.gz | tar xz -C /tmp
-  - /tmp/elasticsearch-0.90.5/bin/plugin -install elasticsearch/elasticsearch-transport-memcached/1.6.0
-  - /tmp/elasticsearch-0.90.5/bin/plugin -install elasticsearch/elasticsearch-transport-thrift/1.6.0
+  - wget -O - http://s3-us-west-2.amazonaws.com/build.elasticsearch.org/origin/master/nightly/JDK6/elasticsearch-latest-SNAPSHOT.tar.gz | tar xz -C /tmp
+  - /tmp/elasticsearch-1.0.0.RC1-SNAPSHOT/bin/plugin -install elasticsearch/elasticsearch-transport-memcached/1.6.0
+  - /tmp/elasticsearch-1.0.0.RC1-SNAPSHOT/bin/plugin -install elasticsearch/elasticsearch-transport-thrift/1.6.0
   - git submodule init
   - pip install coveralls
   - pip install .
 
 before_script:
-  - /tmp/elasticsearch-0.90.5/bin/elasticsearch -D es.path.data=/tmp -D es.gateway.type=none -D es.index.store.type=memory -D es.discovery.zen.ping.multicast.enabled=false
+  - /tmp/elasticsearch-1.0.0.RC1-SNAPSHOT/bin/elasticsearch -d -D es.path.data=/tmp -D es.gateway.type=none -D es.index.store.type=memory -D es.discovery.zen.ping.multicast.enabled=false
 
 script:
   - TEST_ES_SERVER=localhost python setup.py test
