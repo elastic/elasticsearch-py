@@ -82,9 +82,8 @@ class ClusterClient(NamespacedClient):
         _, data = self.transport.perform_request('PUT', '/_cluster/settings', params=params, body=body)
         return data
 
-    @query_params('all', 'clear', 'fields', 'fs', 'http', 'indices', 'jvm',
-        'network', 'os', 'process', 'thread_pool', 'transport')
-    def node_stats(self, node_id=None, metric=None, fields=None, params=None):
+    @query_params('fields')
+    def node_stats(self, node_id=None, metric_family=None, metric=None, params=None):
         """
         Retrieve one or more (or all) of the cluster nodes statistics.
         `<http://elasticsearch.org/guide/reference/api/admin-cluster-nodes-stats/>`_
@@ -92,24 +91,22 @@ class ClusterClient(NamespacedClient):
         :arg node_id: A comma-separated list of node IDs or names to limit the
             returned information; use `_local` to return information from the node
             you're connecting to, leave empty to get information from all nodes
-        :arg metric: Limit the information returned for `indices` family to a specific metric
+        :arg metric_family: Limit the information returned to a certain metric
+            family. A comma-separated list, metric families:
+            "all","fs","http","indices","jvm","network","os","process","thread_pool"
+            or "transport".
+        :arg metric: Limit the information returned for `indices` family to a
+            specific metric. Isn't used if `indices` (or `all`) metric family isn't
+            specified. Possible values: "completion","docs", "fielddata",
+            "filter_cache", "flush", "get", "id_cache", "indexing", "merges",
+            "refresh", "search", "store", "warmer"
         :arg fields: A comma-separated list of fields to return detailed information
             for, when returning the `indices` metric family (supports wildcards)
-        :arg all: Return all available information
-        :arg clear: Reset the default level of detail
-        :arg fields: A comma-separated list of fields for `fielddata` metric (supports wildcards)
-        :arg fs: Return information about the filesystem
-        :arg http: Return information about HTTP
-        :arg indices: Return information about indices
-        :arg jvm: Return information about the JVM
-        :arg network: Return information about network
-        :arg os: Return information about the operating system
-        :arg process: Return information about the Elasticsearch process
-        :arg thread_pool: Return information about the thread pool
-        :arg transport: Return information about transport
         """
+        if metric and not metric_family:
+            metric_family = 'all'
         _, data = self.transport.perform_request('GET',
-            _make_path('_nodes', node_id, 'stats', metric, fields), params=params)
+            _make_path('_nodes', node_id, 'stats', metric_family, metric), params=params)
         return data
 
     @query_params('flat_settings')
