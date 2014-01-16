@@ -481,7 +481,7 @@ class Elasticsearch(object):
         _, data = self.transport.perform_request('DELETE', _make_path(index, doc_type, id), params=params)
         return data
 
-    @query_params('ignore_indices', 'min_score', 'preference', 'routing', 'source')
+    @query_params('ignore_indices', 'min_score', 'preference', 'q', 'routing', 'source')
     def count(self, index=None, doc_type=None, body=None, params=None):
         """
         Execute a query and get the number of matches for that query.
@@ -495,6 +495,7 @@ class Elasticsearch(object):
         :arg min_score: Include only documents with a specific `_score` value in the result
         :arg preference: Specify the node or shard the operation should be
             performed on (default: random)
+        :arg q: Query in the Lucene query string syntax
         :arg routing: Specific routing value
         :arg source: The URL-encoded query definition (instead of using the request body)
         """
