@@ -31,6 +31,8 @@ class RequestsHttpConnection(Connection):
                 http_auth = http_auth.split(':', 1)
             http_auth = tuple(http_auth)
             self.session.auth = http_auth
+        if kwargs.get("proxies", {}):
+            self.session.proxies = kwargs["proxies"]
         self.base_url = 'http%s://%s:%d%s' % (
             's' if use_ssl else '',
             host, port, self.url_prefix
