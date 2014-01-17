@@ -292,12 +292,14 @@ class IndicesClient(NamespacedClient):
         return data
 
     @query_params('timeout', 'master_timeout')
-    def put_alias(self, index, name, body=None, params=None):
+    def put_alias(self, index=None, name=None, body=None, params=None):
         """
         Create an alias for a specific index/indices.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-aliases.html>`_
 
-        :arg index: The name of the index with an alias
+        :arg index: A comma-separated list of index names the alias should
+            point to (supports wildcards); use `_all` or omit to perform the
+            operation on all indices.
         :arg name: The name of the alias to be created or updated
         :arg body: The settings for the alias, such as `routing` or `filter`
         :arg master_timeout: Specify timeout for connection to master
