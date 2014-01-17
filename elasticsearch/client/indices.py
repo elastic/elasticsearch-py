@@ -624,7 +624,7 @@ class IndicesClient(NamespacedClient):
         return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_indices',
-        'ignore_unavailable', 'operation_threading')
+        'ignore_unavailable', 'human')
     def segments(self, index=None, params=None):
         """
         Provide low level segments information that a Lucene index (shard level) is built with.
@@ -641,7 +641,8 @@ class IndicesClient(NamespacedClient):
             ignore `missing` ones, default u'none'
 		:arg ignore_unavailable: Whether specified concrete indices should be ignored
 			when unavailable (missing or closed)
-        :arg operation_threading: TODO: ?
+        :arg human: Whether to return time and byte values in human-readable
+            format (default: false)
         """
         _, data = self.transport.perform_request('GET', _make_path(index, '_segments'), params=params)
         return data
