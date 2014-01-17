@@ -7,7 +7,7 @@ class ClusterClient(NamespacedClient):
     def health(self, index=None, params=None):
         """
         Get a very simple status on the health of the cluster.
-        `<http://elasticsearch.org/guide/reference/api/admin-cluster-health/>`_
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/cluster-health.html>`_
 
         :arg index: Limit the information returned to a specific index
         :arg level: Specify the level of detail for returned information, default u'cluster'
