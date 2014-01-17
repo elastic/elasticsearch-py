@@ -144,7 +144,7 @@ class Elasticsearch(object):
         """
         return self.index(index, doc_type, body, id=id, params=params, op_type='create')
 
-    @query_params('consistency', 'op_type', 'parent', 'percolate', 'refresh',
+    @query_params('consistency', 'op_type', 'parent', 'refresh',
         'replication', 'routing', 'timeout', 'timestamp', 'ttl', 'version', 'version_type')
     def index(self, index, doc_type, body, id=None, params=None):
         """
@@ -158,7 +158,6 @@ class Elasticsearch(object):
         :arg consistency: Explicit write consistency setting for the operation
         :arg op_type: Explicit operation type (default: index)
         :arg parent: ID of the parent document
-        :arg percolate: Percolator queries to execute while indexing the document
         :arg refresh: Refresh the index after performing the operation
         :arg replication: Specific replication type (default: sync)
         :arg routing: Specific routing value
