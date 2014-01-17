@@ -495,7 +495,7 @@ class IndicesClient(NamespacedClient):
         return data
 
     @query_params('master_timeout')
-    def put_warmer(self, index, name, body, doc_type=None, params=None):
+    def put_warmer(self, name, body, index=None, doc_type=None, params=None):
         """
         Create an index warmer to run registered search requests to warm up the
         index before it is available for search.
@@ -509,6 +509,8 @@ class IndicesClient(NamespacedClient):
         :arg body: The search request definition for the warmer (query, filters, facets, sorting, etc)
         :arg master_timeout: Specify timeout for connection to master
         """
+        if doc_type and not index:
+            index = '_all'
         _, data = self.transport.perform_request('PUT', _make_path(index, doc_type, '_warmer', name),
             params=params, body=body)
         return data
