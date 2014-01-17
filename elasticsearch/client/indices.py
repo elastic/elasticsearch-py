@@ -108,7 +108,7 @@ class IndicesClient(NamespacedClient):
         return data
 
     @query_params('timeout', 'master_timeout')
-    def close(self, index, params=None):
+    def close(self, index=None, params=None):
         """
         Close an index to remove it's overhead from the cluster. Closed index
         is blocked for read/write operations.
