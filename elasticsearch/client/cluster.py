@@ -55,6 +55,26 @@ class ClusterClient(NamespacedClient):
         _, data = self.transport.perform_request('GET', _make_path('_cluster/state', metric, index), params=params)
         return data
 
+    @query_params('flat_settings', 'human')
+    def stats(self, node_id=None, params=None):
+        """
+        The Cluster Stats API allows to retrieve statistics from a cluster wide
+        perspective. The API returns basic index metrics and information about
+        the current nodes that form the cluster.
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/cluster-stats.html>`_
+
+        :arg node_id: A comma-separated list of node IDs or names to limit the
+            returned information; use `_local` to return information from the node
+            you're connecting to, leave empty to get information from all nodes
+        :arg flat_settings: Return settings in flat format (default: false)
+        :arg human: Whether to return time and byte values in human-readable format.
+
+        """
+        url = '/_cluster/stats'
+        if node_id:
+            url = _make_path('_cluster/stats/nodes', node_id)
+        _, data = self.transport.perform_request('GET', url, params=params)
+        return data
 
     @query_params('dry_run', 'filter_metadata', 'master_timeout', 'timeout')
     def reroute(self, body=None, params=None):
