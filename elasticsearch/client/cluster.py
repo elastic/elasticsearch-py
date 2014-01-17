@@ -23,6 +23,18 @@ class ClusterClient(NamespacedClient):
             params=params)
         return data
 
+    @query_params()
+    def pending_tasks(self, params=None):
+        """
+        The pending cluster tasks API returns a list of any cluster-level
+        changes (e.g. create index, update mapping, allocate or fail shard)
+        which have not yet been executed.
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/cluster-pending.html>`_
+        """
+        _, data = self.transport.perform_request('GET', '/_cluster/pending_tasks',
+            params=params)
+        return data
+
     @query_params('filter_blocks', 'filter_index_templates', 'filter_indices',
         'filter_metadata', 'filter_nodes', 'filter_routing_table', 'local',
         'master_timeout', 'flat_settings')
