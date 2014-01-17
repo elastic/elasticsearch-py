@@ -482,19 +482,18 @@ class IndicesClient(NamespacedClient):
         return data
 
     @query_params('master_timeout')
-    def delete_warmer(self, index, doc_type=None, name=None, params=None):
+    def delete_warmer(self, index, name, params=None):
         """
         Delete an index warmer.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-warmers.html>`_
 
-        :arg index: A comma-separated list of index names to register warmer
-            for; use `_all` or empty string to perform the operation on all indices
-        :arg doc_type: A comma-separated list of document types to register warmer for;
-            use `_all` or empty string to perform the operation on all types
-        :arg name: The name of the warmer (supports wildcards); leave empty to delete all warmers
+        :arg index: A comma-separated list of index names to delete warmers from
+            (supports wildcards); use `_all` to perform the operation on all indices.
+        :arg name: A comma-separated list of warmer names to delete (supports
+            wildcards); use `_all` to delete all warmers in the specified indices.
         :arg master_timeout: Specify timeout for connection to master
         """
-        _, data = self.transport.perform_request('DELETE', _make_path(index, doc_type, '_warmer', name),
+        _, data = self.transport.perform_request('DELETE', _make_path(index, '_warmer', name),
             params=params)
         return data
 
