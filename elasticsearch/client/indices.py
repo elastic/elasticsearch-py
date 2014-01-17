@@ -641,8 +641,7 @@ class IndicesClient(NamespacedClient):
 
     @query_params('flush', 'allow_no_indices', 'expand_wildcards',
         'ignore_indices', 'ignore_unavailable', 'max_num_segments',
-        'only_expunge_deletes', 'operation_threading', 'refresh',
-        'wait_for_merge')
+        'only_expunge_deletes', 'operation_threading', 'wait_for_merge')
     def optimize(self, index=None, params=None):
         """
         Explicitly optimize one or more indices through an API.
@@ -666,8 +665,6 @@ class IndicesClient(NamespacedClient):
         :arg only_expunge_deletes: Specify whether the operation should only
             expunge deleted documents
         :arg operation_threading: TODO: ?
-        :arg refresh: Specify whether the index should be refreshed after
-            performing the operation (default: true)
         :arg wait_for_merge: Specify whether the request should block until the
             merge process is finished (default: true)
         """
