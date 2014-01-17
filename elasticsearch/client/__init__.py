@@ -450,7 +450,7 @@ class Elasticsearch(object):
         """
         Clear the scroll request created by specifying the scroll parameter to
         search.
-        `<http://www.elasticsearch.org/guide/reference/api/search/scroll/>`_
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-scroll.html>`_
 
         :arg scroll_id: The scroll ID or a list of scroll IDs
         """
