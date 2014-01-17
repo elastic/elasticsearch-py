@@ -612,7 +612,7 @@ class Elasticsearch(object):
         return data
 
     @query_params('boost_terms', 'max_doc_freq', 'max_query_terms',
-        'max_word_len', 'min_doc_freq', 'min_term_freq', 'min_word_len',
+        'max_word_length', 'min_doc_freq', 'min_term_freq', 'min_word_length',
         'mlt_fields', 'percent_terms_to_match', 'routing', 'search_from',
         'search_indices', 'search_query_hint', 'search_scroll', 'search_size',
         'search_source', 'search_type', 'search_types', 'stop_words')
@@ -630,12 +630,12 @@ class Elasticsearch(object):
         :arg max_doc_freq: The word occurrence frequency as count: words with
             higher occurrence in the corpus will be ignored
         :arg max_query_terms: The maximum query terms to be included in the generated query
-        :arg max_word_len: The minimum length of the word: longer words will be ignored
+        :arg max_word_length: The minimum length of the word: longer words will be ignored
         :arg min_doc_freq: The word occurrence frequency as count: words with
             lower occurrence in the corpus will be ignored
         :arg min_term_freq: The term frequency as percent: terms with lower
             occurence in the source document will be ignored
-        :arg min_word_len: The minimum length of the word: shorter words will be ignored
+        :arg min_word_length: The minimum length of the word: shorter words will be ignored
         :arg mlt_fields: Specific fields to perform the query against
         :arg percent_terms_to_match: How many terms have to match in order to
             consider the document a match (default: 0.3)
