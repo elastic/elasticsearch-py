@@ -253,11 +253,14 @@ class IndicesClient(NamespacedClient):
         Delete a mapping (type) along with its data.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-delete-mapping.html>`_
 
-        :arg index: A comma-separated list of index names; use `_all` for all indices
-        :arg doc_type: The name of the document type to delete
+        :arg index: A comma-separated list of index names (supports wildcard);
+            use `_all` for all indices
+        :arg doc_type: A comma-separated list of document types to delete
+            (supports wildcards); use `_all` to delete all document types in the
+            specified indices.
         :arg master_timeout: Specify timeout for connection to master
         """
-        _, data = self.transport.perform_request('DELETE', _make_path(index, doc_type, '_mapping'),
+        _, data = self.transport.perform_request('DELETE', _make_path(index, '_mapping', doc_type),
             params=params)
         return data
 
