@@ -129,7 +129,7 @@ class IndicesClient(NamespacedClient):
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-delete-index.html>`_
 
         :arg index: A comma-separated list of indices to delete; use `_all` or
-            empty string to delete all indices
+            '*' to delete all indices
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         """
