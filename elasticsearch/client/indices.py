@@ -51,11 +51,11 @@ class IndicesClient(NamespacedClient):
         return data
 
     @query_params('force', 'full', 'allow_no_indices', 'expand_wildcards',
-        'ignore_indices', 'ignore_unavailable', 'refresh')
+        'ignore_indices', 'ignore_unavailable')
     def flush(self, index=None, params=None):
         """
         Explicitly flush one or more indices.
-        `<http://http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-flush.html>`_
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-flush.html>`_
 
         :arg index: A comma-separated list of index names; use `_all` or empty
             string for all indices
@@ -72,7 +72,6 @@ class IndicesClient(NamespacedClient):
             ignore `missing` ones (default: none)
 		:arg ignore_unavailable: Whether specified concrete indices should be ignored
 			when unavailable (missing or closed)
-        :arg refresh: Refresh the index after performing the operation
         """
         _, data = self.transport.perform_request('POST', _make_path(index, '_flush'),
             params=params)
