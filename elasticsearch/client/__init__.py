@@ -291,9 +291,9 @@ class Elasticsearch(object):
             params=params, body=body)
         return data
 
-    @query_params('consistency', 'fields', 'lang', 'parent', 'percolate',
-        'refresh', 'replication', 'retry_on_conflict', 'routing', 'script',
-        'timeout', 'timestamp', 'ttl', 'version', 'version_type')
+    @query_params('consistency', 'fields', 'lang', 'parent', 'refresh',
+        'replication', 'retry_on_conflict', 'routing', 'script', 'timeout',
+        'timestamp', 'ttl', 'version', 'version_type')
     def update(self, index, doc_type, id, body=None, params=None):
         """
         Update a document based on a script or partial data provided.
@@ -307,8 +307,6 @@ class Elasticsearch(object):
         :arg fields: A comma-separated list of fields to return in the response
         :arg lang: The script language (default: mvel)
         :arg parent: ID of the parent document
-        :arg percolate: Perform percolation during the operation; use specific
-            registered query name, attribute, or wildcard
         :arg refresh: Refresh the index after performing the operation
         :arg replication: Specific replication type (default: sync)
         :arg retry_on_conflict: Specify how many times should the operation be
