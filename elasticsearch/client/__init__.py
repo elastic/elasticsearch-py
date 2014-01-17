@@ -198,7 +198,7 @@ class Elasticsearch(object):
         return True
 
     @query_params('_source', '_source_exclude', '_source_include', 'fields',
-        'parent', 'preference', 'realtime', 'refresh', 'routing')
+        'parent', 'preference', 'realtime', 'refresh', 'routing', 'version', 'version_type')
     def get(self, index, id, doc_type='_all', params=None):
         """
         Get a typed JSON document from the index based on its id.
@@ -223,13 +223,16 @@ class Elasticsearch(object):
         :arg refresh: Refresh the shard containing the document before
             performing the operation
         :arg routing: Specific routing value
+        :arg version: Explicit version number for concurrency control
+        :arg version_type: Explicit version number for concurrency control
+
         """
         _, data = self.transport.perform_request('GET', _make_path(index, doc_type, id),
             params=params)
         return data
 
-    @query_params('_source_exclude', '_source_include', 'parent', 'preference',
-        'realtime', 'refresh', 'routing')
+    @query_params('_source', '_source_exclude', '_source_include', 'parent', 'preference',
+        'realtime', 'refresh', 'routing', 'version', 'version_type')
     def get_source(self, index, id, doc_type='_all', params=None):
         """
         Get the source of a document by it's index, type and id.
@@ -239,9 +242,11 @@ class Elasticsearch(object):
         :arg doc_type: The type of the document (uses `_all` by default to
             fetch the first document matching the ID across all types)
         :arg id: The document ID
-        :arg exclude: A list of fields to exclude from the returned
+        :arg _source: True or false to return the _source field or not, or a
+            list of fields to return
+        :arg _source_exclude: A list of fields to exclude from the returned
             _source field
-        :arg include: A list of fields to extract and return from the
+        :arg _source_include: A list of fields to extract and return from the
             _source field
         :arg parent: The ID of the parent document
         :arg preference: Specify the node or shard the operation should be
@@ -250,6 +255,8 @@ class Elasticsearch(object):
         :arg refresh: Refresh the shard containing the document before
             performing the operation
         :arg routing: Specific routing value
+        :arg version: Explicit version number for concurrency control
+        :arg version_type: Explicit version number for concurrency control
         """
         _, data = self.transport.perform_request('GET', _make_path(index, doc_type, id, '_source'),
             params=params)
