@@ -503,11 +503,11 @@ class Elasticsearch(object):
             params=params, body=body)
         return data
 
-    @query_params('consistency', 'refresh', 'replication', 'timeout')
+    @query_params('consistency', 'refresh', 'routing', 'replication', 'timeout')
     def bulk(self, body, index=None, doc_type=None, params=None):
         """
         Perform many index/delete operations in a single API call.
-        `<http://elasticsearch.org/guide/reference/api/bulk/>`_
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/docs-bulk.html>`_
 
         See the :func:`~elasticsearch.helpers.bulk` helper function for a more
         friendly API.
@@ -519,6 +519,7 @@ class Elasticsearch(object):
         :arg doc_type: Default document type for items which don't provide one
         :arg consistency: Explicit write consistency setting for the operation
         :arg refresh: Refresh the index after performing the operation
+        :arg routing: Specific routing value
         :arg replication: Explicitly set the replication type (default: sync)
         :arg timeout: Explicit operation timeout
         """
