@@ -92,7 +92,8 @@ class IndicesClient(NamespacedClient):
             params=params, body=body)
         return data
 
-    @query_params('timeout', 'master_timeout')
+    @query_params('timeout', 'master_timeout' 'allow_no_indices', 'expand_wildcards',
+        'ignore_unavailable')
     def open(self, index, params=None):
         """
         Open a closed index to make it available for search.
@@ -101,6 +102,13 @@ class IndicesClient(NamespacedClient):
         :arg index: The name of the index
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+			expression resolves into no concrete indices. (This includes `_all` string or
+			when no indices have been specified)
+		:arg expand_wildcards: Whether to expand wildcard expression to concrete indices
+			that are open, closed or both.
+		:arg ignore_unavailable: Whether specified concrete indices should be ignored
+			when unavailable (missing or closed)
         """
         _, data = self.transport.perform_request('POST', _make_path(index, '_open'),
             params=params)
