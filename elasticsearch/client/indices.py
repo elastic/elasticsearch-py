@@ -453,13 +453,14 @@ class IndicesClient(NamespacedClient):
         return data
 
     @query_params('flat_settings')
-    def get_settings(self, index=None, params=None):
+    def get_settings(self, index=None, name=None, params=None):
         """
         Retrieve settings for one or more (or all) indices.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-get-settings.html>`_
 
         :arg index: A comma-separated list of index names; use `_all` or empty
             string to perform the operation on all indices
+        :arg name: The name of the settings that should be included
         :arg flat_settings: Return settings in flat format (default: false)
         """
         _, data = self.transport.perform_request('GET', _make_path(index, '_settings'),
