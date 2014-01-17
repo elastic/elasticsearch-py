@@ -230,8 +230,9 @@ class IndicesClient(NamespacedClient):
             params=params)
         return data
 
-    @query_params("include_defaults")
-    def get_field_mapping(self, index=None, doc_type=None, field=None, params=None):
+    @query_params("include_defaults", 'ignore_unavailable', 'allow_no_indices',
+        'expand_wildcards', 'local')
+    def get_field_mapping(self, field, index=None, doc_type=None, params=None):
         """
         Retrieve mapping definition of a specific field.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-get-field-mapping.html>`_
@@ -241,8 +242,17 @@ class IndicesClient(NamespacedClient):
         :arg doc_type: A comma-separated list of document types
         :arg field: A comma-separated list of fields to retrieve the mapping for
         :arg include_defaults: A boolean indicating whether to return default values
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+			expression resolves into no concrete indices. (This includes `_all` string or
+			when no indices have been specified)
+		:arg expand_wildcards: Whether to expand wildcard expression to concrete indices
+			that are open, closed or both.
+		:arg ignore_unavailable: Whether specified concrete indices should be ignored
+			when unavailable (missing or closed)
+        :arg local: Return local information, do not retrieve the state from
+            master node (default: false)
         """
-        _, data = self.transport.perform_request('GET', _make_path(index, doc_type, '_mapping', 'field', field),
+        _, data = self.transport.perform_request('GET', _make_path(index, '_mapping', doc_type, 'field', field),
             params=params)
         return data
 
