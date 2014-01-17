@@ -206,13 +206,14 @@ class IndicesClient(NamespacedClient):
         return data
 
     @query_params('ignore_conflicts', 'timeout', 'master_timeout')
-    def put_mapping(self, index, doc_type, body, params=None):
+    def put_mapping(self, doc_type, body, index=None, params=None):
         """
         Register specific mapping definition for a specific type.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-put-mapping.html>`_
 
-        :arg index: A comma-separated list of index names; use `_all` to
-            perform the operation on all indices
+        :arg index: A comma-separated list of index names the alias should
+            point to (supports wildcards); use `_all` or omit to perform the
+            operation on all indices.
         :arg doc_type: The name of the document type
         :arg body: The mapping definition
         :arg ignore_conflicts: Specify whether to ignore conflicts while
@@ -220,7 +221,7 @@ class IndicesClient(NamespacedClient):
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         """
-        _, data = self.transport.perform_request('PUT', _make_path(index, doc_type, '_mapping'),
+        _, data = self.transport.perform_request('PUT', _make_path(index, '_mapping', doc_type),
             params=params, body=body)
         return data
 
