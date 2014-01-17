@@ -549,7 +549,7 @@ class IndicesClient(NamespacedClient):
         return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_indices',
-        'ignore_unavailable', 'operation_threading', 'recovery', 'snapshot')
+        'ignore_unavailable', 'operation_threading', 'recovery', 'snapshot', 'human')
     def status(self, index=None, params=None):
         """
         Get a comprehensive status information of one or more indices.
@@ -569,6 +569,7 @@ class IndicesClient(NamespacedClient):
         :arg operation_threading: TODO: ?
         :arg recovery: Return information about shard recovery
         :arg snapshot: TODO: ?
+        :arg human: Whether to return time and byte values in human-readable format.
         """
         _, data = self.transport.perform_request('GET', _make_path(index, '_status'),
             params=params)
