@@ -357,8 +357,10 @@ class IndicesClient(NamespacedClient):
         Delete specific alias.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-aliases.html>`_
 
-        :arg index: The name of the index with an alias
-        :arg name: The name of the alias to be deleted
+        :arg index: A comma-separated list of index names (supports wildcards);
+            use `_all` for all indices
+        :arg name: A comma-separated list of aliases to delete (supports
+            wildcards); use `_all` to delete all aliases for the specified indices.
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit timestamp for the document
         """
