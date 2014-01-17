@@ -327,12 +327,13 @@ class IndicesClient(NamespacedClient):
         return data
 
     @query_params('timeout')
-    def get_aliases(self, index=None, params=None):
+    def get_aliases(self, index=None, name=None, params=None):
         """
         Retrieve specified aliases
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-aliases.html>`_
 
         :arg index: A comma-separated list of index names to filter aliases
+        :arg name: A comma-separated list of alias names to filter
         :arg timeout: Explicit operation timeout
         """
         _, data = self.transport.perform_request('GET', _make_path(index, '_aliases'),
