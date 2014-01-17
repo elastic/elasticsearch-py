@@ -27,7 +27,8 @@ class IndicesClient(NamespacedClient):
             params=params, body=body)
         return data
 
-    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_indices', 'ignore_unavailable')
+    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_indices',
+        'ignore_unavailable', 'force')
     def refresh(self, index=None, params=None):
         """
         Explicitly refresh one or more index, making all operations performed
@@ -45,6 +46,7 @@ class IndicesClient(NamespacedClient):
             ignore `missing` ones, default u'none'
 		:arg ignore_unavailable: Whether specified concrete indices should be ignored
 			when unavailable (missing or closed)
+        :arg force: Force a refresh even if not required
         """
         _, data = self.transport.perform_request('POST', _make_path(index, '_refresh'),
             params=params)
