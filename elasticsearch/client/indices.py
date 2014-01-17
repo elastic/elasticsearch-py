@@ -503,7 +503,7 @@ class IndicesClient(NamespacedClient):
         return data
 
     @query_params()
-    def get_warmer(self, index, doc_type=None, name=None, params=None):
+    def get_warmer(self, index=None, doc_type=None, name=None, params=None):
         """
         Retreieve an index warmer.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-warmers.html>`_
