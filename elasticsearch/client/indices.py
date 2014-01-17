@@ -390,6 +390,21 @@ class IndicesClient(NamespacedClient):
             params=params, body=body)
         return data
 
+    @query_params()
+    def exists_template(self, name, params=None):
+        """
+        Return a boolean indicating whether given template exists.
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-templates.html>`_
+
+        :arg name: The name of the template
+        """
+        try:
+            self.transport.perform_request('HEAD', _make_path('_template', name),
+                params=params)
+        except NotFoundError:
+            return False
+        return True
+
     @query_params('flat_settings')
     def get_template(self, name=None, params=None):
         """
