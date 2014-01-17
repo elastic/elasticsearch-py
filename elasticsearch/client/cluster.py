@@ -35,25 +35,24 @@ class ClusterClient(NamespacedClient):
             params=params)
         return data
 
-    @query_params('filter_blocks', 'filter_index_templates', 'filter_indices',
-        'filter_metadata', 'filter_nodes', 'filter_routing_table', 'local',
-        'master_timeout', 'flat_settings')
-    def state(self, params=None):
+    @query_params('local', 'master_timeout', 'flat_settings')
+    def state(self, metric=None, index=None, params=None):
         """
         Get a comprehensive state information of the whole cluster.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/cluster-state.html>`_
 
-        :arg filter_blocks: Do not return information about blocks
-        :arg filter_index_templates: Do not return information about index templates
-        :arg filter_indices: Limit returned metadata information to specific indices
-        :arg filter_metadata: Do not return information about indices metadata
-        :arg filter_nodes: Do not return information about nodes
-        :arg filter_routing_table: Do not return information about shard allocation (`routing_table` and `routing_nodes`)
+        :arg metric: Limit the information returned to the specified metrics.
+            Possible values: "_all", "blocks", "index_templates", "metadata",
+            "nodes", "routing_table"
+        :arg index: A comma-separated list of index names; use `_all` or empty
+            string to perform the operation on all indices
         :arg local: Return local information, do not retrieve the state from master node (default: false)
         :arg master_timeout: Specify timeout for connection to master
         :arg flat_settings: Return settings in flat format (default: false)
         """
-        _, data = self.transport.perform_request('GET', '/_cluster/state', params=params)
+        if index and not metric:
+            metric = '_all'
+        _, data = self.transport.perform_request('GET', _make_path('_cluster/state', metric, index), params=params)
         return data
 
 
