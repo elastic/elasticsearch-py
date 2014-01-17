@@ -574,34 +574,27 @@ class IndicesClient(NamespacedClient):
             params=params)
         return data
 
-    @query_params('all', 'clear', 'completion', 'completion_fields', 'docs',
-        'fielddata', 'fielddata_fields', 'fields', 'filter_cache', 'flush', 'get', 'groups',
-        'id_cache', 'allow_no_indices', 'expand_wildcards', 'ignore_indices',
-        'ignore_unavailable', 'indexing', 'merge', 'refresh', 'search', 'store', 'warmer')
-    def stats(self, index=None, metric_family=None, params=None):
+    @query_params('completion_fields', 'docs', 'fielddata_fields', 'fields', 'groups',
+        'allow_no_indices', 'expand_wildcards', 'ignore_indices',
+        'ignore_unavailable', 'human', 'level', 'types')
+    def stats(self, index=None, metric=None, params=None):
         """
         Retrieve statistics on different operations happening on an index.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-stats.html>`_
 
         :arg index: A comma-separated list of index names; use `_all` or empty
             string to perform the operation on all indices
-        :arg metric_family: Limit the information returned to a specific metric
-        :arg all: Return all available information
-        :arg clear: Reset the default level of detail
-        :arg completion: Return information about completion suggester stats
+        :arg metric: A comma-separated list of metrics to display. Possible
+            values: "_all", "completion", "docs", "fielddata", "filter_cache",
+            "flush", "get", "id_cache", "indexing", "merge", "percolate",
+            "refresh", "search", "segments", "store", "warmer"
         :arg completion_fields: A comma-separated list of fields for
             `completion` metric (supports wildcards)
-        :arg docs: Return information about indexed and deleted documents
-        :arg fielddata: Return information about field data
         :arg fielddata_fields: A comma-separated list of fields for `fielddata`
             metric (supports wildcards)
         :arg fields: A comma-separated list of fields for `fielddata` and
             `completion` metric (supports wildcards)
-        :arg filter_cache: Return information about filter cache
-        :arg flush: Return information about flush operations
-        :arg get: Return information about get operations
         :arg groups: A comma-separated list of search groups for `search` statistics
-        :arg id_cache: Return information about ID cache
         :arg allow_no_indices: Whether to ignore if a wildcard indices
 			expression resolves into no concrete indices. (This includes `_all` string or
 			when no indices have been specified)
@@ -611,15 +604,13 @@ class IndicesClient(NamespacedClient):
             ignore `missing` ones (default: none)
 		:arg ignore_unavailable: Whether specified concrete indices should be ignored
 			when unavailable (missing or closed)
-        :arg indexing: Return information about indexing operations
-        :arg merge: Return information about merge operations
-        :arg refresh: Return information about refresh operations
-        :arg search: Return information about search operations; use the
-            `groups` parameter to include information for specific search groups
-        :arg store: Return information about the size of the index
-        :arg warmer: Return information about warmers
+        :arg human: Whether to return time and byte values in human-readable format.
+        :arg level: Return stats aggregated at cluster, index or shard level.
+            ("cluster", "indices" or "shards", default: "indices")
+        :arg types: A comma-separated list of document types for the `indexing`
+            index metric
         """
-        _, data = self.transport.perform_request('GET', _make_path(index, '_stats', metric_family),
+        _, data = self.transport.perform_request('GET', _make_path(index, '_stats', metric),
             params=params)
         return data
 
