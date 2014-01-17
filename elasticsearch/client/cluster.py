@@ -41,7 +41,7 @@ class ClusterClient(NamespacedClient):
     def state(self, params=None):
         """
         Get a comprehensive state information of the whole cluster.
-        `<http://elasticsearch.org/guide/reference/api/admin-cluster-state/>`_
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/cluster-state.html>`_
 
         :arg filter_blocks: Do not return information about blocks
         :arg filter_index_templates: Do not return information about index templates
@@ -61,7 +61,7 @@ class ClusterClient(NamespacedClient):
     def reroute(self, body=None, params=None):
         """
         Explicitly execute a cluster reroute allocation command including specific commands.
-        `<http://elasticsearch.org/guide/reference/api/admin-cluster-reroute/>`_
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/cluster-reroute.html>`_
 
         :arg body: The definition of `commands` to perform (`move`, `cancel`, `allocate`)
         :arg dry_run: Simulate the operation only and return the resulting state
@@ -87,7 +87,7 @@ class ClusterClient(NamespacedClient):
     def put_settings(self, body, params=None):
         """
         Update cluster wide specific settings.
-        `<http://elasticsearch.org/guide/reference/api/admin-cluster-update-settings/>`_
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/cluster-update-settings.html>`_
 
         :arg body: The settings to be updated. Can be either `transient` or
             `persistent` (survives cluster restart).

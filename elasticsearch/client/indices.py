@@ -526,7 +526,7 @@ class IndicesClient(NamespacedClient):
     def stats(self, index=None, metric_family=None, params=None):
         """
         Retrieve statistics on different operations happening on an index.
-        `<http://elasticsearch.org/guide/reference/api/admin-indices-stats/>`_
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-stats.html>`_
 
         :arg index: A comma-separated list of index names; use `_all` or empty
             string to perform the operation on all indices
@@ -573,7 +573,7 @@ class IndicesClient(NamespacedClient):
     def segments(self, index=None, params=None):
         """
         Provide low level segments information that a Lucene index (shard level) is built with.
-        `<http://elasticsearch.org/guide/reference/api/admin-indices-segments/>`_
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-segments.html>`_
 
         :arg index: A comma-separated list of index names; use `_all` or empty
             string to perform the operation on all indices
@@ -632,7 +632,7 @@ class IndicesClient(NamespacedClient):
     def validate_query(self, index=None, doc_type=None, body=None, params=None):
         """
         Validate a potentially expensive query without executing it.
-        `<http://www.elasticsearch.org/guide/reference/api/validate/>`_
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-validate.html>`_
 
         :arg index: A comma-separated list of index names to restrict the operation;
             use `_all` or empty string to perform the operation on all indices
