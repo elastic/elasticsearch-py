@@ -44,3 +44,9 @@ Nodes
 .. autoclass:: NodesClient
    :members:
 
+Cat
+---
+
+.. autoclass:: CatClient
+   :members:
+

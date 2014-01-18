@@ -5,6 +5,7 @@ from ..transport import Transport
 from ..exceptions import NotFoundError, TransportError
 from .indices import IndicesClient
 from .cluster import ClusterClient
+from .cat import CatClient
 from .nodes import NodesClient
 from .utils import query_params, _make_path
 
@@ -79,6 +80,7 @@ class Elasticsearch(object):
         # use weakref to make GC's work a little easier
         self.indices = IndicesClient(weakref.proxy(self))
         self.cluster = ClusterClient(weakref.proxy(self))
+        self.cat = CatClient(weakref.proxy(self))
         self.nodes = NodesClient(weakref.proxy(self))
 
     def __repr__(self):
