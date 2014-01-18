@@ -38,3 +38,9 @@ Cluster
 .. autoclass:: ClusterClient
    :members:
 
+Nodes
+-----
+
+.. autoclass:: NodesClient
+   :members:
+
