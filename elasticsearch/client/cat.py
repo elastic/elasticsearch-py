@@ -119,7 +119,7 @@ class CatClient(NamespacedClient):
     @query_params('h', 'help', 'local', 'master_timeout', 'v')
     def master(self, params=None):
         """
-        Displays the master’s node ID, bound IP address, and node name.
+        Displays the master's node ID, bound IP address, and node name.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/master/cat-master.html>`_
 
         :arg h: Comma-separated list of column names to display
