@@ -56,8 +56,8 @@ class ThriftConnection(PoolingConnection):
                     parameters=params, body=body)
 
         start = time.time()
-        tclient = self._get_connection()
         try:
+            tclient = self._get_connection()
             response = tclient.execute(request)
             duration = time.time() - start
         except TException as e:
