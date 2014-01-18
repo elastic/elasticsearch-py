@@ -116,6 +116,10 @@ class YamlTestCase(ElasticTestCase):
             raise SkipTest(reason)
 
     def run_catch(self, catch, exception):
+        if catch == 'param':
+            self.assertIsInstance(exception, TypeError)
+            return
+
         self.assertIsInstance(exception, TransportError)
         if catch in CATCH_CODES:
             self.assertEquals(CATCH_CODES[catch], exception.status_code)
