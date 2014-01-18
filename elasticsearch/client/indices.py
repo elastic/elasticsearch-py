@@ -132,7 +132,7 @@ class IndicesClient(NamespacedClient):
         return data
 
     @query_params('timeout', 'master_timeout')
-    def delete(self, index=None, params=None):
+    def delete(self, index, params=None):
         """
         Delete an index in Elasticsearch
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-delete-index.html>`_
@@ -295,7 +295,7 @@ class IndicesClient(NamespacedClient):
         return data
 
     @query_params('timeout', 'master_timeout')
-    def put_alias(self, index=None, name=None, body=None, params=None):
+    def put_alias(self, name, index=None, body=None, params=None):
         """
         Create an alias for a specific index/indices.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-aliases.html>`_
@@ -369,7 +369,7 @@ class IndicesClient(NamespacedClient):
         :arg name: A comma-separated list of alias names to filter
         :arg timeout: Explicit operation timeout
         """
-        _, data = self.transport.perform_request('GET', _make_path(index, '_aliases'),
+        _, data = self.transport.perform_request('GET', _make_path(index, '_aliases', name),
             params=params)
         return data
 
@@ -476,7 +476,7 @@ class IndicesClient(NamespacedClient):
         :arg name: The name of the settings that should be included
         :arg flat_settings: Return settings in flat format (default: false)
         """
-        _, data = self.transport.perform_request('GET', _make_path(index, '_settings'),
+        _, data = self.transport.perform_request('GET', _make_path(index, '_settings', name),
             params=params)
         return data
 

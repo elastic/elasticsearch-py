@@ -52,7 +52,7 @@ class ClusterClient(NamespacedClient):
         """
         if index and not metric:
             metric = '_all'
-        _, data = self.transport.perform_request('GET', _make_path('_cluster/state', metric, index), params=params)
+        _, data = self.transport.perform_request('GET', _make_path('_cluster', 'state', metric, index), params=params)
         return data
 
     @query_params('flat_settings', 'human')
