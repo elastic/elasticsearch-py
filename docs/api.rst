@@ -50,3 +50,9 @@ Cat
 .. autoclass:: CatClient
    :members:
 
+Snapshot
+---
+
+.. autoclass:: SnapshotClient
+   :members:
+

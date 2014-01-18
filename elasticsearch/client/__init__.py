@@ -7,6 +7,7 @@ from .indices import IndicesClient
 from .cluster import ClusterClient
 from .cat import CatClient
 from .nodes import NodesClient
+from .snapshot import SnapshotClient
 from .utils import query_params, _make_path
 
 logger = logging.getLogger('elasticsearch')
@@ -82,6 +83,7 @@ class Elasticsearch(object):
         self.cluster = ClusterClient(weakref.proxy(self))
         self.cat = CatClient(weakref.proxy(self))
         self.nodes = NodesClient(weakref.proxy(self))
+        self.snapshot = SnapshotClient(weakref.proxy(self))
 
     def __repr__(self):
         try:
