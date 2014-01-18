@@ -20,16 +20,11 @@ The process for contributing to any of the Elasticsearch repositories is similar
 2. Run the test suite to ensure your changes do not break existing code:
 
     ````
-    git submodules init
     python setup.py test
     ````
 
-   If your changes require special configuration of the client you can create a
-   `test_elasticsearch/local.py` file containing a `get_client` with the same
-   signature as the client itself (`hosts, **kwargs` will do) and returns a client
-   instance. This function will be used for any tests running against ES and will
-   be passed all the parameters that would otherwise be used to construct the
-   client instance directly.
+   See the README file in `test_elasticsearch` dirctory for more information on
+   running the test suite.
 
 3. Rebase your changes.
    Update your local repository with the most recent code from the main
