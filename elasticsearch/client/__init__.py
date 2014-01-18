@@ -65,7 +65,7 @@ class Elasticsearch(object):
         :arg hosts: list of nodes we should connect to. Node should be a
             dictionary ({"host": "localhost", "port": 9200}), the entire dictionary
             will be passed to the :class:`~elasticsearch.Connection` class as
-            kwargs, or a string in the format ot ``host[:port]`` which will be
+            kwargs, or a string in the format of ``host[:port]`` which will be
             translated to a dictionary automatically.  If no value is given the
             :class:`~elasticsearch.Connection` class defaults will be used.
 
