@@ -13,7 +13,7 @@ class TestMemcachedConnection(ElasticTestCase):
         except ImportError:
             raise SkipTest("No pylibmc.")
         super(TestMemcachedConnection, self).setUp()
-        nodes = self.client.cluster.node_info()
+        nodes = self.client.nodes.info()
         for node_id, node_info in nodes["nodes"].items():
             if 'memcached_address' in node_info:
                 connection_info = ADDRESS_RE.search(node_info['memcached_address']).groupdict()
