@@ -49,7 +49,7 @@ def _make_path(*parts):
         quote_plus(_escape(p), ',*') for p in parts if p not in SKIP_IN_PATH)
 
 # parameters that apply to all methods
-GLOBAL_PARAMS = ('pretty', )
+GLOBAL_PARAMS = ('pretty', 'format', )
 
 def query_params(*es_query_params):
     """
