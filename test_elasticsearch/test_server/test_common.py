@@ -144,11 +144,11 @@ class YamlTestCase(ElasticTestCase):
         except AssertionError:
             pass
         else:
-            self.assertFalse(value)
+            self.assertIn(value, ('', None, False, 0))
 
     def run_is_true(self, action):
         value = self._lookup(action)
-        self.assertTrue(value)
+        self.assertNotIn(value, ('', None, False, 0))
 
     def run_length(self, action):
         for path, expected in action.items():
