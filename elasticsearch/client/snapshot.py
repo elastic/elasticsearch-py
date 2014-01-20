@@ -64,7 +64,7 @@ class SnapshotClient(NamespacedClient):
             _make_path('_snapshot', repository), params=params)
         return data
     
-    @query_params('master_timeout')
+    @query_params('local', 'master_timeout')
     def get_repository(self, repository=None, params=None):
         """
         Return information about registered repositories.
@@ -73,6 +73,8 @@ class SnapshotClient(NamespacedClient):
         :arg repository: A comma-separated list of repository names
         :arg master_timeout: Explicit operation timeout for connection to master
             node    
+        :arg local: Return local information, do not retrieve the state from
+            master node (default: false)
         """
         _, data = self.transport.perform_request('GET', _make_path('_snapshot',
             repository), params=params)

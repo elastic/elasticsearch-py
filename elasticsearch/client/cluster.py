@@ -23,13 +23,16 @@ class ClusterClient(NamespacedClient):
             params=params)
         return data
 
-    @query_params()
+    @query_params('local', 'master_timeout')
     def pending_tasks(self, params=None):
         """
         The pending cluster tasks API returns a list of any cluster-level
         changes (e.g. create index, update mapping, allocate or fail shard)
         which have not yet been executed.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/cluster-pending.html>`_
+
+        :arg local: Return local information, do not retrieve the state from master node (default: false)
+        :arg master_timeout: Specify timeout for connection to master
         """
         _, data = self.transport.perform_request('GET', '/_cluster/pending_tasks',
             params=params)

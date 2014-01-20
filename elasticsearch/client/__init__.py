@@ -577,7 +577,7 @@ class Elasticsearch(object):
         return data
 
     @query_params('ignore_indices', 'preference', 'routing', 'source')
-    def suggest(self, index=None, body=None, params=None):
+    def suggest(self, body, index=None, params=None):
         """
         The suggest feature suggests similar looking terms based on a provided
         text by using a suggester.

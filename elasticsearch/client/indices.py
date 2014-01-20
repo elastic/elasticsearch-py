@@ -117,13 +117,14 @@ class IndicesClient(NamespacedClient):
         return data
 
     @query_params('timeout', 'master_timeout')
-    def close(self, index=None, params=None):
+    def close(self, index, params=None):
         """
         Close an index to remove it's overhead from the cluster. Closed index
         is blocked for read/write operations.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-open-close.html>`_
 
-        :arg index: The name of the index
+        :arg index: A comma-separated list of indices to delete; use `_all` or
+            '*' to delete all indices
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         """
@@ -146,13 +147,15 @@ class IndicesClient(NamespacedClient):
             params=params)
         return data
 
-    @query_params()
+    @query_params('local')
     def exists(self, index, params=None):
         """
         Return a boolean indicating whether given index exists.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-indices-exists.html>`_
 
         :arg index: A list of indices to check
+        :arg local: Return local information, do not retrieve the state from
+            master node (default: false)
         """
         try:
             self.transport.perform_request('HEAD', _make_path(index), params=params)
@@ -160,7 +163,8 @@ class IndicesClient(NamespacedClient):
             return False
         return True
 
-    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_indices', 'ignore_unavailable')
+    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_indices', 'ignore_unavailable',
+        'local')
     def exists_type(self, index, doc_type, params=None):
         """
         Check if a type/types exists in an index/indices.
@@ -178,6 +182,8 @@ class IndicesClient(NamespacedClient):
             ignore `missing` ones (default: none)
 		:arg ignore_unavailable: Whether specified concrete indices should be ignored
 			when unavailable (missing or closed)
+        :arg local: Return local information, do not retrieve the state from
+            master node (default: false)
         """
         try:
             self.transport.perform_request('HEAD', _make_path(index, doc_type), params=params)
@@ -312,7 +318,8 @@ class IndicesClient(NamespacedClient):
             params=params, body=body)
         return data
 
-    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_indices', 'ignore_unavailable')
+    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_indices', 'ignore_unavailable',
+        'local')
     def exists_alias(self, name, index=None, params=None):
         """
         Return a boolean indicating whether given alias exists.
@@ -329,6 +336,8 @@ class IndicesClient(NamespacedClient):
             ignore `missing` ones (default: none)
 		:arg ignore_unavailable: Whether specified concrete indices should be ignored
 			when unavailable (missing or closed)
+        :arg local: Return local information, do not retrieve the state from
+            master node (default: false)
         """
         try:
             self.transport.perform_request('HEAD', _make_path(index, '_alias', name),
@@ -337,7 +346,7 @@ class IndicesClient(NamespacedClient):
             return False
         return True
 
-    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_indices', 'ignore_unavailable')
+    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_indices', 'ignore_unavailable', 'local')
     def get_alias(self, index=None, name=None, params=None):
         """
         Retrieve a specified alias.
@@ -354,12 +363,14 @@ class IndicesClient(NamespacedClient):
             ignore `missing` ones, default u'none'
 		:arg ignore_unavailable: Whether specified concrete indices should be ignored
 			when unavailable (missing or closed)
+        :arg local: Return local information, do not retrieve the state from
+            master node (default: false)
         """
         _, data = self.transport.perform_request('GET', _make_path(index, '_alias', name),
             params=params)
         return data
 
-    @query_params('timeout')
+    @query_params('local', 'timeout')
     def get_aliases(self, index=None, name=None, params=None):
         """
         Retrieve specified aliases
@@ -367,6 +378,8 @@ class IndicesClient(NamespacedClient):
 
         :arg index: A comma-separated list of index names to filter aliases
         :arg name: A comma-separated list of alias names to filter
+        :arg local: Return local information, do not retrieve the state from
+            master node (default: false)
         :arg timeout: Explicit operation timeout
         """
         _, data = self.transport.perform_request('GET', _make_path(index, '_aliases', name),
@@ -423,13 +436,15 @@ class IndicesClient(NamespacedClient):
             params=params, body=body)
         return data
 
-    @query_params()
+    @query_params('local')
     def exists_template(self, name, params=None):
         """
         Return a boolean indicating whether given template exists.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-templates.html>`_
 
         :arg name: The name of the template
+        :arg local: Return local information, do not retrieve the state from
+            master node (default: false)
         """
         try:
             self.transport.perform_request('HEAD', _make_path('_template', name),
@@ -438,7 +453,7 @@ class IndicesClient(NamespacedClient):
             return False
         return True
 
-    @query_params('flat_settings')
+    @query_params('flat_settings', 'local')
     def get_template(self, name=None, params=None):
         """
         Retrieve an index template by its name.
@@ -446,6 +461,8 @@ class IndicesClient(NamespacedClient):
 
         :arg name: The name of the template
         :arg flat_settings: Return settings in flat format (default: false)
+        :arg local: Return local information, do not retrieve the state from
+            master node (default: false)
         """
         _, data = self.transport.perform_request('GET', _make_path('_template', name),
             params=params)
@@ -465,7 +482,7 @@ class IndicesClient(NamespacedClient):
             params=params)
         return data
 
-    @query_params('flat_settings')
+    @query_params('flat_settings', 'local')
     def get_settings(self, index=None, name=None, params=None):
         """
         Retrieve settings for one or more (or all) indices.
@@ -475,6 +492,8 @@ class IndicesClient(NamespacedClient):
             string to perform the operation on all indices
         :arg name: The name of the settings that should be included
         :arg flat_settings: Return settings in flat format (default: false)
+        :arg local: Return local information, do not retrieve the state from
+            master node (default: false)
         """
         _, data = self.transport.perform_request('GET', _make_path(index, '_settings', name),
             params=params)
@@ -517,7 +536,7 @@ class IndicesClient(NamespacedClient):
             params=params, body=body)
         return data
 
-    @query_params()
+    @query_params('local')
     def get_warmer(self, index=None, doc_type=None, name=None, params=None):
         """
         Retreieve an index warmer.
@@ -528,6 +547,8 @@ class IndicesClient(NamespacedClient):
         :arg doc_type: A comma-separated list of document types to restrict the
             operation; leave empty to perform the operation on all types
         :arg name: The name of the warmer (supports wildcards); leave empty to get all warmers
+        :arg local: Return local information, do not retrieve the state from
+            master node (default: false)
         """
         _, data = self.transport.perform_request('GET', _make_path(index, doc_type, '_warmer', name), params=params)
         return data
