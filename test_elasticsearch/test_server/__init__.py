@@ -28,7 +28,7 @@ def get_client():
         client = Elasticsearch([os.environ.get('TEST_ES_SERVER', {})], **kw)
 
     # wait for yellow status
-    for _ in range(200):
+    for _ in range(100):
         time.sleep(.1)
         try:
             client.cluster.health(wait_for_status='yellow')
@@ -49,11 +49,8 @@ def _get_version(version_string):
     return tuple(int(v) if v.isdigit() else 999 for v in version)
 
 class ElasticTestCase(TestCase):
-    client = None
     def setUp(self):
-        if ElasticTestCase.client is None:
-            ElasticTestCase.client = get_client()
-        self.client = ElasticTestCase.client
+        self.client = get_client()
 
     def tearDown(self):
         self.client.indices.delete('*')
