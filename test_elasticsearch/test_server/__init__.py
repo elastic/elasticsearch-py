@@ -53,8 +53,8 @@ class ElasticTestCase(TestCase):
         self.client = get_client()
 
     def tearDown(self):
-        self.client.indices.delete('*')
-        self.client.indices.delete_template('*', ignore=404)
+        self.client.indices.delete(index='*')
+        self.client.indices.delete_template(name='*', ignore=404)
 
     @property
     def es_version(self):
