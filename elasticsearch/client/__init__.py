@@ -745,3 +745,83 @@ class Elasticsearch(object):
         _, data = self.transport.perform_request('GET', _make_path(index, doc_type, id, '_mlt'),
             params=params, body=body)
         return data
+
+    @query_params('field_statistics', 'fields', 'offsets', 'parent', 'payloads',
+        'positions', 'preference', 'routing', 'term_statistics')
+    def termvector(self, index, doc_type, id, body=None, params=None):
+        """
+        Added in 1.
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/master/search-termvectors.html>`_
+
+        :arg index: The index in which the document resides.
+        :arg doc_type: The type of the document.
+        :arg id: The id of the document.
+        :arg body: Define parameters. See documentation.
+        :arg field_statistics: Specifies if document count, sum of document
+            frequencies and sum of total term frequencies should be returned.,
+            default True
+        :arg fields: A comma-separated list of fields to return.
+        :arg offsets: Specifies if term offsets should be returned., default
+            True
+        :arg parent: Parent id of documents.
+        :arg payloads: Specifies if term payloads should be returned., default
+            True
+        :arg positions: Specifies if term positions should be returned., default
+            True
+        :arg preference: Specify the node or shard the operation should be
+            performed on (default: random).
+        :arg routing: Specific routing value.
+        :arg term_statistics: Specifies if total term frequency and document
+            frequency should be returned., default False
+        """
+        _, data = self.transport.perform_request('GET', _make_path(index,
+            doc_type, id, '_termvector'), params=params, body=body)
+        return data
+
+    @query_params('field_statistics', 'fields', 'ids', 'offsets', 'parent',
+        'payloads', 'positions', 'preference', 'routing', 'term_statistics')
+    def mtermvectors(self, index=None, doc_type=None, body=None, params=None):
+        """
+        Multi termvectors API allows to get multiple termvectors based on an
+        index, type and id.
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/master/docs-multi-termvectors.html>`_
+
+        :arg index: The index in which the document resides.
+        :arg doc_type: The type of the document.
+        :arg body: Define ids, parameters or a list of parameters per document
+            here. You must at least provide a list of document ids. See
+            documentation.
+        :arg field_statistics: Specifies if document count, sum of document
+            frequencies and sum of total term frequencies should be returned.
+            Applies to all returned documents unless otherwise specified in body
+            "params" or "docs"., default True
+        :arg fields: A comma-separated list of fields to return. Applies to all
+            returned documents unless otherwise specified in body "params" or
+            "docs".
+        :arg ids: A comma-separated list of documents ids. You must define ids
+            as parameter or set "ids" or "docs" in the request body
+        :arg offsets: Specifies if term offsets should be returned. Applies to
+            all returned documents unless otherwise specified in body "params"
+            or "docs"., default True
+        :arg parent: Parent id of documents. Applies to all returned documents
+            unless otherwise specified in body "params" or "docs".
+        :arg payloads: Specifies if term payloads should be returned. Applies to
+            all returned documents unless otherwise specified in body "params"
+            or "docs"., default True
+        :arg positions: Specifies if term positions should be returned. Applies
+            to all returned documents unless otherwise specified in body
+            "params" or "docs"., default True
+        :arg preference: Specify the node or shard the operation should be
+            performed on (default: random) .Applies to all returned documents
+            unless otherwise specified in body "params" or "docs".
+        :arg routing: Specific routing value. Applies to all returned documents
+            unless otherwise specified in body "params" or "docs".
+        :arg term_statistics: Specifies if total term frequency and document
+            frequency should be returned. Applies to all returned documents
+            unless otherwise specified in body "params" or "docs"., default
+            False
+        """
+        _, data = self.transport.perform_request('GET', _make_path(index,
+            doc_type, '_mtermvectors'), params=params, body=body)
+        return data
+
