@@ -597,22 +597,107 @@ class Elasticsearch(object):
             params=params, body=body)
         return data
 
-    @query_params('prefer_local')
-    def percolate(self, index, doc_type, body, params=None):
+    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
+        'percolate_index', 'percolate_type', 'preference', 'routing', 'version',
+        'version_type')
+    def percolate(self, index, doc_type, id=None, body=None, params=None):
         """
-        Send a percolate request which include a doc, and get back the queries
-        that match on that doc out of the set of registered queries.
+        The percolator allows to register queries against an index, and then
+        send percolate requests which include a doc, and getting back the
+        queries that match on that doc out of the set of registered queries.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-percolate.html>`_
 
-        :arg index: The name of the index with a registered percolator query
-        :arg doc_type: The document type
-        :arg body: The document (`doc`) to percolate against registered queries;
-            optionally also a `query` to limit the percolation to specific registered queries
-        :arg prefer_local: With `true`, specify that a local shard should be
-            used if available, with `false`, use a random shard (default: true)
+        :arg index: The index of the document being percolated.
+        :arg doc_type: The type of the document being percolated.
+        :arg id: Substitute the document in the request body with a document
+            that is known by the specified id. On top of the id, the index and
+            type parameter will be used to retrieve the document from within the
+            cluster.
+        :arg body: The percolator request definition using the percolate DSL
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+            expression resolves into no concrete indices. (This includes `_all`
+            string or when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete
+            indices that are open, closed or both., default 'open'
+        :arg ignore_unavailable: Whether specified concrete indices should be
+            ignored when unavailable (missing or closed)
+        :arg percolate_index: The index to percolate the document into. Defaults
+            to index.
+        :arg percolate_type: The type to percolate document into. Defaults to
+            type.
+        :arg preference: Specify the node or shard the operation should be
+            performed on (default: random)
+        :arg routing: A comma-separated list of specific routing values
+        :arg version: Explicit version number for concurrency control
+        :arg version_type: Specific version type
         """
-        _, data = self.transport.perform_request('GET', _make_path(index, doc_type, '_percolate'),
-            params=params, body=body)
+        _, data = self.transport.perform_request('GET', _make_path(index,
+            doc_type, id, '_percolate'), params=params, body=body)
+        return data
+
+    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable')
+    def mpercolate(self, body, index=None, doc_type=None, params=None):
+        """
+        The percolator allows to register queries against an index, and then
+        send percolate requests which include a doc, and getting back the
+        queries that match on that doc out of the set of registered queries.
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-percolate.html>`_
+
+        :arg index: The index of the document being count percolated to use as
+            default
+        :arg doc_type: The type of the document being percolated to use as
+            default.
+        :arg body: The percolate request definitions (header & body pair),
+            separated by newlines
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+            expression resolves into no concrete indices. (This includes `_all`
+            string or when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete
+            indices that are open, closed or both., default 'open'
+        :arg ignore_unavailable: Whether specified concrete indices should be
+            ignored when unavailable (missing or closed)
+        """
+        _, data = self.transport.perform_request('GET', _make_path(index,
+            doc_type, '_mpercolate'), params=params, body=self._bulk_body(body))
+        return data
+
+    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
+        'percolate_index', 'percolate_type', 'preference', 'routing', 'version',
+        'version_type')
+    def count_percolate(self, index, doc_type, id=None, body=None, params=None):
+        """
+        The percolator allows to register queries against an index, and then
+        send percolate requests which include a doc, and getting back the
+        queries that match on that doc out of the set of registered queries.
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-percolate.html>`_
+
+        :arg index: The index of the document being count percolated.
+        :arg doc_type: The type of the document being count percolated.
+        :arg id: Substitute the document in the request body with a document
+            that is known by the specified id. On top of the id, the index and
+            type parameter will be used to retrieve the document from within the
+            cluster.
+        :arg body: The count percolator request definition using the percolate
+            DSL
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+            expression resolves into no concrete indices. (This includes `_all`
+            string or when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete
+            indices that are open, closed or both., default 'open'
+        :arg ignore_unavailable: Whether specified concrete indices should be
+            ignored when unavailable (missing or closed)
+        :arg percolate_index: The index to count percolate the document into.
+            Defaults to index.
+        :arg percolate_type: The type to count percolate document into. Defaults
+            to type.
+        :arg preference: Specify the node or shard the operation should be
+            performed on (default: random)
+        :arg routing: A comma-separated list of specific routing values
+        :arg version: Explicit version number for concurrency control
+        :arg version_type: Specific version type
+        """
+        _, data = self.transport.perform_request('GET', _make_path(index,
+            doc_type, id, '_percolate', 'count'), params=params, body=body)
         return data
 
     @query_params('boost_terms', 'max_doc_freq', 'max_query_terms',
