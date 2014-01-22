@@ -63,10 +63,6 @@ def run_all(argv=None):
             '--logging-filter=elasticsearch', '--logging-level=DEBUG',
             '--verbose',
         ]
-    else:
-        for p in ('--with-coverage', '--cover-package=elasticsearch', '--cover-erase'):
-            if p not in argv:
-                argv.append(p)
 
     nose.run_exit(
         argv=argv,
