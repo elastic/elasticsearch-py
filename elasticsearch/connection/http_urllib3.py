@@ -30,7 +30,7 @@ class Urllib3HttpConnection(Connection):
         if use_ssl:
             pool_class = urllib3.HTTPSConnectionPool
 
-        self.pool = pool_class(host, port=port, timeout=kwargs.get('timeout', None), headers=headers, maxsize=maxsize)
+        self.pool = pool_class(host, port=port, timeout=self.timeout, headers=headers, maxsize=maxsize)
 
     def perform_request(self, method, url, params=None, body=None, timeout=None, ignore=()):
         url = self.url_prefix + url

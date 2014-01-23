@@ -28,7 +28,7 @@ class Connection(object):
         if url_prefix:
             url_prefix = '/' + url_prefix.strip('/')
         self.url_prefix = url_prefix
-        self.timeout = 10
+        self.timeout = timeout
 
     def __repr__(self):
         return '<%s: %s>' % (self.__class__.__name__, self.host)

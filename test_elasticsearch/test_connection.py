@@ -24,8 +24,15 @@ class TestThriftConnection(TestCase):
         con = ThriftConnection()
         self.assertIs(con._tsocket_class, TSocket.TSocket)
 
+    def test_timeout_set(self):
+        con = ThriftConnection(timeout=42)
+        self.assertEquals(42, con.timeout)
 
 class TestUrllib3Connection(TestCase):
+    def test_timeout_set(self):
+        con = Urllib3HttpConnection(timeout=42)
+        self.assertEquals(42, con.timeout)
+
     def test_http_auth(self):
         con = Urllib3HttpConnection(http_auth='username:secret')
         self.assertEquals({'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0'}, con.pool.headers)
@@ -71,6 +78,10 @@ class TestRequestsConnection(TestCase):
         self.assertEquals(timeout, kwargs['timeout'])
         self.assertEquals(1, len(args))
         return args[0]
+
+    def test_timeout_set(self):
+        con = RequestsHttpConnection(timeout=42)
+        self.assertEquals(42, con.timeout)
 
     def test_use_https_if_specified(self):
         con = self._get_mock_connection({'use_ssl': True, 'url_prefix': 'url'})
