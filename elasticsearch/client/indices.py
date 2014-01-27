@@ -38,14 +38,14 @@ class IndicesClient(NamespacedClient):
         :arg index: A comma-separated list of index names; use `_all` or empty
             string to perform the operation on all indices
         :arg allow_no_indices: Whether to ignore if a wildcard indices
-			expression resolves into no concrete indices. (This includes `_all` string or
-			when no indices have been specified)
-		:arg expand_wildcards: Whether to expand wildcard expression to concrete indices
-			that are open, closed or both.
-		:arg ignore_indices: When performed on multiple indices, allows to
+            expression resolves into no concrete indices. (This includes `_all` string or
+            when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :arg ignore_indices: When performed on multiple indices, allows to
             ignore `missing` ones, default u'none'
-		:arg ignore_unavailable: Whether specified concrete indices should be ignored
-			when unavailable (missing or closed)
+        :arg ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
         :arg force: Force a refresh even if not required
         """
         _, data = self.transport.perform_request('POST', _make_path(index, '_refresh'),
@@ -66,14 +66,14 @@ class IndicesClient(NamespacedClient):
         :arg full: If set to true a new index writer is created and settings
             that have been changed related to the index writer will be refreshed.
         :arg allow_no_indices: Whether to ignore if a wildcard indices
-			expression resolves into no concrete indices. (This includes `_all` string or
-			when no indices have been specified)
-		:arg expand_wildcards: Whether to expand wildcard expression to concrete indices
-			that are open, closed or both.
-		:arg ignore_indices: When performed on multiple indices, allows to
+            expression resolves into no concrete indices. (This includes `_all` string or
+            when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :arg ignore_indices: When performed on multiple indices, allows to
             ignore `missing` ones (default: none)
-		:arg ignore_unavailable: Whether specified concrete indices should be ignored
-			when unavailable (missing or closed)
+        :arg ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
         """
         _, data = self.transport.perform_request('POST', _make_path(index, '_flush'),
             params=params)
@@ -105,12 +105,12 @@ class IndicesClient(NamespacedClient):
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         :arg allow_no_indices: Whether to ignore if a wildcard indices
-			expression resolves into no concrete indices. (This includes `_all` string or
-			when no indices have been specified)
-		:arg expand_wildcards: Whether to expand wildcard expression to concrete indices
-			that are open, closed or both.
-		:arg ignore_unavailable: Whether specified concrete indices should be ignored
-			when unavailable (missing or closed)
+            expression resolves into no concrete indices. (This includes `_all` string or
+            when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :arg ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
         """
         _, data = self.transport.perform_request('POST', _make_path(index, '_open'),
             params=params)
@@ -174,14 +174,14 @@ class IndicesClient(NamespacedClient):
             the types across all indices
         :arg doc_type: A comma-separated list of document types to check
         :arg allow_no_indices: Whether to ignore if a wildcard indices
-			expression resolves into no concrete indices. (This includes `_all` string or
-			when no indices have been specified)
-		:arg expand_wildcards: Whether to expand wildcard expression to concrete indices
-			that are open, closed or both.
-		:arg ignore_indices: When performed on multiple indices, allows to
+            expression resolves into no concrete indices. (This includes `_all` string or
+            when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :arg ignore_indices: When performed on multiple indices, allows to
             ignore `missing` ones (default: none)
-		:arg ignore_unavailable: Whether specified concrete indices should be ignored
-			when unavailable (missing or closed)
+        :arg ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
         """
@@ -200,14 +200,14 @@ class IndicesClient(NamespacedClient):
         :arg index: A comma-separated list of index names; use `_all` or empty
             string for all indices
         :arg allow_no_indices: Whether to ignore if a wildcard indices
-			expression resolves into no concrete indices. (This includes `_all` string or
-			when no indices have been specified)
-		:arg expand_wildcards: Whether to expand wildcard expression to concrete indices
-			that are open, closed or both.
-		:arg ignore_indices: When performed on multiple indices, allows to
+            expression resolves into no concrete indices. (This includes `_all` string or
+            when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :arg ignore_indices: When performed on multiple indices, allows to
             ignore `missing` ones (default: none)
-		:arg ignore_unavailable: Whether specified concrete indices should be ignored
-			when unavailable (missing or closed)
+        :arg ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
         """
         _, data = self.transport.perform_request('POST',
             _make_path(index, '_gateway', 'snapshot'), params=params)
@@ -244,12 +244,12 @@ class IndicesClient(NamespacedClient):
             string for all indices
         :arg doc_type: A comma-separated list of document types
         :arg allow_no_indices: Whether to ignore if a wildcard indices
-			expression resolves into no concrete indices. (This includes `_all` string or
-			when no indices have been specified)
-		:arg expand_wildcards: Whether to expand wildcard expression to concrete indices
-			that are open, closed or both.
-		:arg ignore_unavailable: Whether specified concrete indices should be ignored
-			when unavailable (missing or closed)
+            expression resolves into no concrete indices. (This includes `_all` string or
+            when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :arg ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
         """
@@ -270,12 +270,12 @@ class IndicesClient(NamespacedClient):
         :arg field: A comma-separated list of fields to retrieve the mapping for
         :arg include_defaults: A boolean indicating whether to return default values
         :arg allow_no_indices: Whether to ignore if a wildcard indices
-			expression resolves into no concrete indices. (This includes `_all` string or
-			when no indices have been specified)
-		:arg expand_wildcards: Whether to expand wildcard expression to concrete indices
-			that are open, closed or both.
-		:arg ignore_unavailable: Whether specified concrete indices should be ignored
-			when unavailable (missing or closed)
+            expression resolves into no concrete indices. (This includes `_all` string or
+            when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :arg ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
         """
@@ -328,14 +328,14 @@ class IndicesClient(NamespacedClient):
         :arg name: A comma-separated list of alias names to return
         :arg index: A comma-separated list of index names to filter aliases
         :arg allow_no_indices: Whether to ignore if a wildcard indices
-			expression resolves into no concrete indices. (This includes `_all` string or
-			when no indices have been specified)
-		:arg expand_wildcards: Whether to expand wildcard expression to concrete indices
-			that are open, closed or both.
-		:arg ignore_indices: When performed on multiple indices, allows to
+            expression resolves into no concrete indices. (This includes `_all` string or
+            when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :arg ignore_indices: When performed on multiple indices, allows to
             ignore `missing` ones (default: none)
-		:arg ignore_unavailable: Whether specified concrete indices should be ignored
-			when unavailable (missing or closed)
+        :arg ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
         """
@@ -355,14 +355,14 @@ class IndicesClient(NamespacedClient):
         :arg name: A comma-separated list of alias names to return
         :arg index: A comma-separated list of index names to filter aliases
         :arg allow_no_indices: Whether to ignore if a wildcard indices
-			expression resolves into no concrete indices. (This includes `_all` string or
-			when no indices have been specified)
-		:arg expand_wildcards: Whether to expand wildcard expression to concrete indices
-			that are open, closed or both.
-		:arg ignore_indices: When performed on multiple indices, allows to
+            expression resolves into no concrete indices. (This includes `_all` string or
+            when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :arg ignore_indices: When performed on multiple indices, allows to
             ignore `missing` ones, default u'none'
-		:arg ignore_unavailable: Whether specified concrete indices should be ignored
-			when unavailable (missing or closed)
+        :arg ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
         """
@@ -579,14 +579,14 @@ class IndicesClient(NamespacedClient):
         :arg index: A comma-separated list of index names; use `_all` or empty
             string to perform the operation on all indices
         :arg allow_no_indices: Whether to ignore if a wildcard indices
-			expression resolves into no concrete indices. (This includes `_all` string or
-			when no indices have been specified)
-		:arg expand_wildcards: Whether to expand wildcard expression to concrete indices
-			that are open, closed or both.
-		:arg ignore_indices: When performed on multiple indices, allows to
+            expression resolves into no concrete indices. (This includes `_all` string or
+            when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :arg ignore_indices: When performed on multiple indices, allows to
             ignore `missing` ones, default u'none'
-		:arg ignore_unavailable: Whether specified concrete indices should be ignored
-			when unavailable (missing or closed)
+        :arg ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
         :arg operation_threading: TODO: ?
         :arg recovery: Return information about shard recovery
         :arg snapshot: TODO: ?
@@ -618,14 +618,14 @@ class IndicesClient(NamespacedClient):
             `completion` metric (supports wildcards)
         :arg groups: A comma-separated list of search groups for `search` statistics
         :arg allow_no_indices: Whether to ignore if a wildcard indices
-			expression resolves into no concrete indices. (This includes `_all` string or
-			when no indices have been specified)
-		:arg expand_wildcards: Whether to expand wildcard expression to concrete indices
-			that are open, closed or both.
-		:arg ignore_indices: When performed on multiple indices, allows to
+            expression resolves into no concrete indices. (This includes `_all` string or
+            when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :arg ignore_indices: When performed on multiple indices, allows to
             ignore `missing` ones (default: none)
-		:arg ignore_unavailable: Whether specified concrete indices should be ignored
-			when unavailable (missing or closed)
+        :arg ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
         :arg human: Whether to return time and byte values in human-readable format.
         :arg level: Return stats aggregated at cluster, index or shard level.
             ("cluster", "indices" or "shards", default: "indices")
@@ -646,14 +646,14 @@ class IndicesClient(NamespacedClient):
         :arg index: A comma-separated list of index names; use `_all` or empty
             string to perform the operation on all indices
         :arg allow_no_indices: Whether to ignore if a wildcard indices
-			expression resolves into no concrete indices. (This includes `_all` string or
-			when no indices have been specified)
-		:arg expand_wildcards: Whether to expand wildcard expression to concrete indices
-			that are open, closed or both.
-		:arg ignore_indices: When performed on multiple indices, allows to
+            expression resolves into no concrete indices. (This includes `_all` string or
+            when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :arg ignore_indices: When performed on multiple indices, allows to
             ignore `missing` ones, default u'none'
-		:arg ignore_unavailable: Whether specified concrete indices should be ignored
-			when unavailable (missing or closed)
+        :arg ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
         :arg human: Whether to return time and byte values in human-readable
             format (default: false)
         """
@@ -673,14 +673,14 @@ class IndicesClient(NamespacedClient):
         :arg flush: Specify whether the index should be flushed after
             performing the operation (default: true)
         :arg allow_no_indices: Whether to ignore if a wildcard indices
-			expression resolves into no concrete indices. (This includes `_all` string or
-			when no indices have been specified)
-		:arg expand_wildcards: Whether to expand wildcard expression to concrete indices
-			that are open, closed or both.
-		:arg ignore_indices: When performed on multiple indices, allows to
+            expression resolves into no concrete indices. (This includes `_all` string or
+            when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :arg ignore_indices: When performed on multiple indices, allows to
             ignore `missing` ones, default u'none'
-		:arg ignore_unavailable: Whether specified concrete indices should be ignored
-			when unavailable (missing or closed)
+        :arg ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
         :arg max_num_segments: The number of segments the index should be
             merged into (default: dynamic)
         :arg only_expunge_deletes: Specify whether the operation should only
@@ -707,14 +707,14 @@ class IndicesClient(NamespacedClient):
         :arg body: The query definition
         :arg explain: Return detailed information about the error
         :arg allow_no_indices: Whether to ignore if a wildcard indices
-			expression resolves into no concrete indices. (This includes `_all` string or
-			when no indices have been specified)
-		:arg expand_wildcards: Whether to expand wildcard expression to concrete indices
-			that are open, closed or both.
-		:arg ignore_indices: When performed on multiple indices, allows to
+            expression resolves into no concrete indices. (This includes `_all` string or
+            when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :arg ignore_indices: When performed on multiple indices, allows to
             ignore `missing` ones (default: none)
-		:arg ignore_unavailable: Whether specified concrete indices should be ignored
-			when unavailable (missing or closed)
+        :arg ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
         :arg operation_threading: TODO: ?
         :arg q: Query in the Lucene query string syntax
         :arg source: The URL-encoded query definition (instead of using the
@@ -744,14 +744,14 @@ class IndicesClient(NamespacedClient):
         :arg id: Clear ID caches for parent/child
         :arg id_cache: Clear ID caches for parent/child
         :arg allow_no_indices: Whether to ignore if a wildcard indices
-			expression resolves into no concrete indices. (This includes `_all` string or
-			when no indices have been specified)
-		:arg expand_wildcards: Whether to expand wildcard expression to concrete indices
-			that are open, closed or both.
-		:arg ignore_indices: When performed on multiple indices, allows to
+            expression resolves into no concrete indices. (This includes `_all` string or
+            when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :arg ignore_indices: When performed on multiple indices, allows to
             ignore `missing` ones (default: none)
-		:arg ignore_unavailable: Whether specified concrete indices should be ignored
-			when unavailable (missing or closed)
+        :arg ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
         :arg index: A comma-separated list of index name to limit the operation
         :arg recycler: Clear the recycler cache
         """

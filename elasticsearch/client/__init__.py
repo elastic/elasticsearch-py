@@ -56,9 +56,40 @@ class Elasticsearch(object):
     Elasticsearch low-level client. Provides a straightforward mapping from
     Python to ES REST endpoints.
 
-    The instance has attributes `indices` and `cluster` that provide access to
-    :class:`~elasticsearch.client.IndicesClient` and
-    :class:`~elasticsearch.client.ClusterClient` instances respectively.
+    The instance has attributes `cat`, `cluster`, `indices`, `nodes` and
+    `snapshot` that provide access to instances of
+    :class:`~elasticsearch.client.CatClient`,
+    :class:`~elasticsearch.client.ClusterClient`,
+    :class:`~elasticsearch.client.IndicesClient`,
+    :class:`~elasticsearch.client.NodesClient` and
+    :class:`~elasticsearch.client.SnapshotClient` respectively. This is the
+    preferred (and only supported) way to get access to those classes and their
+    methods.
+
+    Some examples::
+
+        # create connection to localhost using the ThriftConnection and it's
+        # default port (9500)
+        es = Elasticsearch(connection_class=ThriftConnection)
+
+        # create connection that will automatically inspect the cluster to get
+        # the list of active nodes. Start with nodes 'esnode1' and 'esnode2'
+        es = Elasticsearch(
+            ['esnode1', 'esnode2'],
+            # sniff before doing anything
+            sniff_on_start=True,
+            # refresh nodes after a node fails to respond
+            sniff_on_connection_fail=True,
+            # and also every 60 seconds
+            sniffer_timeout=60
+        )
+
+        # connect to localhost directly and another node using SSL on port 443
+        # and an url_prefix
+        es = Elasticsearch([
+            {'host': 'localhost'},
+            {'host': 'othernode', 'port': 443, 'url_prefix': 'es', 'use_ssl': True},
+        ])
     """
     def __init__(self, hosts=None, transport_class=Transport, **kwargs):
         """
