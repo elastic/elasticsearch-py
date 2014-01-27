@@ -38,7 +38,7 @@ class ClusterClient(NamespacedClient):
             params=params)
         return data
 
-    @query_params('local', 'master_timeout', 'flat_settings')
+    @query_params('index_templates', 'local', 'master_timeout', 'flat_settings')
     def state(self, metric=None, index=None, params=None):
         """
         Get a comprehensive state information of the whole cluster.
@@ -49,6 +49,8 @@ class ClusterClient(NamespacedClient):
             "nodes", "routing_table"
         :arg index: A comma-separated list of index names; use `_all` or empty
             string to perform the operation on all indices
+        :arg index_templates: A comma separated list to return specific index
+            templates when returning metadata.
         :arg local: Return local information, do not retrieve the state from master node (default: false)
         :arg master_timeout: Specify timeout for connection to master
         :arg flat_settings: Return settings in flat format (default: false)
