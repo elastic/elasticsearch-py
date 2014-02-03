@@ -26,6 +26,9 @@ CATCH_CODES = {
     'conflict': 409,
 }
 
+# test features we have implemented
+IMPLEMENTED_FEATURES = ()
+
 class InvalidActionType(Exception):
     pass
 
@@ -108,12 +111,16 @@ class YamlTestCase(ElasticTestCase):
                 raise AssertionError('Failed to catch %r in %r.' % (catch, self.last_response))
 
     def run_skip(self, skip):
-        version, reason = skip['version'], skip['reason']
-        min_version, max_version = version.split('-')
-        min_version = _get_version(min_version)
-        max_version = _get_version(max_version)
-        if  min_version <= self.es_version <= max_version:
-            raise SkipTest(reason)
+        if 'features' in skip and skip['features'] not in IMPLEMENTED_FEATURES:
+            raise SkipTest(skip.get('reason', 'Feature %s is not supported' % skip['features']))
+
+        if 'version' in skip:
+            version, reason = skip['version'], skip['reason']
+            min_version, max_version = version.split('-')
+            min_version = _get_version(min_version)
+            max_version = _get_version(max_version)
+            if  min_version <= self.es_version <= max_version:
+                raise SkipTest(reason)
 
     def run_catch(self, catch, exception):
         if catch == 'param':
