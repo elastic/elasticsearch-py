@@ -27,7 +27,7 @@ CATCH_CODES = {
 }
 
 # test features we have implemented
-IMPLEMENTED_FEATURES = ()
+IMPLEMENTED_FEATURES = ('regex')
 
 class InvalidActionType(Exception):
     pass
@@ -46,11 +46,15 @@ class YamlTestCase(ElasticTestCase):
             value = value[1:]
             self.assertIn(value, self._state)
             value = self._state[value]
+        if isinstance(value, (type(u''), type(''))):
+            value = value.strip()
         return value
 
     def _lookup(self, path):
         # fetch the possibly nested value from last_response
         value = self.last_response
+        if path == '$body':
+            return value
         path = path.replace(r'\.', '\1')
         for step in path.split('.'):
             if not step:
@@ -167,7 +171,12 @@ class YamlTestCase(ElasticTestCase):
         for path, expected in action.items():
             value = self._lookup(path)
             expected = self._resolve(expected)
-            self.assertEquals(expected, value)
+
+            if expected.startswith('/') and expected.endswith('/'):
+                expected = re.compile(expected[1:-1], re.VERBOSE)
+                self.assertTrue(expected.search(value))
+            else:
+                self.assertEquals(expected, value)
 
 
 def construct_case(filename, name):
