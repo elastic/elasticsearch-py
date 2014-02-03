@@ -172,7 +172,8 @@ class YamlTestCase(ElasticTestCase):
             value = self._lookup(path)
             expected = self._resolve(expected)
 
-            if expected.startswith('/') and expected.endswith('/'):
+            if isinstance(expected, (type(''), type(u''))) and \
+                    expected.startswith('/') and expected.endswith('/'):
                 expected = re.compile(expected[1:-1], re.VERBOSE)
                 self.assertTrue(expected.search(value))
             else:
