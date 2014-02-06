@@ -43,6 +43,8 @@ class Urllib3HttpConnection(Connection):
             kw = {}
             if timeout:
                 kw['timeout'] = timeout
+            if isinstance(body, (type(u''))):
+                body = body.encode('utf-8')
             response = self.pool.urlopen(method, url, body, **kw)
             duration = time.time() - start
             raw_data = response.data.decode('utf-8')
