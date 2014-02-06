@@ -175,7 +175,7 @@ class Transport(object):
                 except (ConnectionError, SerializationError):
                     pass
             else:
-                raise TransportError("Enable to sniff hosts.")
+                raise TransportError("N/A", "Enable to sniff hosts.")
         except:
             # keep the previous value on error
             self.last_sniff = previous_sniff
@@ -198,7 +198,7 @@ class Transport(object):
         # we weren't able to get any nodes, maybe using an incompatible
         # transport_schema or host_info_callback blocked all - raise error.
         if not hosts:
-            raise TransportError("Enable to sniff hosts - no viable hosts found.")
+            raise TransportError("N/A", "Enable to sniff hosts - no viable hosts found.")
 
         self.set_connections(hosts)
 
