@@ -32,7 +32,7 @@ class TransportError(ElasticsearchException):
         return self.args[2]
 
     def __str__(self):
-        return 'TransportError(%d, %r)' % (self.status_code, self.error)
+        return 'TransportError(%s, %r)' % (self.status_code, self.error)
 
 
 class ConnectionError(TransportError):
