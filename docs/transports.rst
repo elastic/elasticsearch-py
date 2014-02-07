@@ -47,3 +47,9 @@ MemcachedConnection
 
 .. autoclass:: MemcachedConnection
 
+
+RedisConnection
+-------------------
+
+.. autoclass:: RedisConnection
+

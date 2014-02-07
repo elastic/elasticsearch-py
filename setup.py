@@ -21,7 +21,8 @@ tests_require = [
     'coverage',
     'mock',
     'pyaml',
-    'nosexcover'
+    'nosexcover',
+    'redis'
 ]
 
 # use external unittest for 2.6
@@ -33,6 +34,7 @@ if sys.version_info[0] == 2:
     if os.environ.get('TEST_ES_CONNECTION', None) == 'ThriftConnection':
         tests_require.append('thrift==0.9.1')
     tests_require.append('pylibmc==1.2.3')
+    tests_require.append('redis==2.9.1')
 
 setup(
     name = 'elasticsearch',

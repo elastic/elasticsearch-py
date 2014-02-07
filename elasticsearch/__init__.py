@@ -10,6 +10,6 @@ from elasticsearch.connection_pool import ConnectionPool, ConnectionSelector, \
     RoundRobinSelector
 from elasticsearch.serializer import JSONSerializer
 from elasticsearch.connection import Connection, RequestsHttpConnection, \
-    Urllib3HttpConnection, MemcachedConnection, ThriftConnection
+    Urllib3HttpConnection, MemcachedConnection, ThriftConnection, RedisConnection
 from elasticsearch.exceptions import *
 
