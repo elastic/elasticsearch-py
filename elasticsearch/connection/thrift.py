@@ -75,5 +75,8 @@ class ThriftConnection(PoolingConnection):
         self.log_request_success(method, url, url, body, response.status,
             response.body, duration)
 
-        return response.status, response.headers or {}, response.body
+        headers = {}
+        if response.headers:
+            headers = dict((k.lower(), v) for k, v in response.headers.items())
+        return response.status, headers, response.body
 
