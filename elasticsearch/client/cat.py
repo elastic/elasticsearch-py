@@ -213,3 +213,22 @@ class CatClient(NamespacedClient):
             params=params)
         return data
     
+    @query_params('full_id', 'h', 'help', 'local', 'master_timeout', 'v')
+    def thread_pool(self, params=None):
+        """
+        Get information about thread pools.
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/master/cat-thread-pool.html>`_
+
+        :arg full_id: Enables displaying the complete node ids (default: 'false')
+        :arg h: Comma-separated list of column names to display
+        :arg help: Return help information (default: 'false')
+        :arg local: Return local information, do not retrieve the state from
+            master node (default: false)
+        :arg master_timeout: Explicit operation timeout for connection to master
+            node
+        :arg v: Verbose mode. Display column headers (default: 'false')
+
+        """
+        _, data = self.transport.perform_request('GET', '/_cat/thread_pool',
+            params=params)
+        return data
