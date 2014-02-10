@@ -5,6 +5,17 @@ Official low-level client for Elasticsearch. It's goal is to provide common
 ground for all Elasticsearch-related code in Python; because of this it tries
 to be opinion-free and very extendable.
 
+Versioning
+----------
+
+There are two branches for development - `master` and `0.4`. Master branch is
+used to track all the changes for Elasticsearch 1.0 and beyond whereas 0.4
+tracks Elasticsearch 0.90.
+
+Releases with major version 1 (1.X.Y) are to be used with Elasticsearch 1.0 and
+later, 0.4 releases are meant to work with Elasticsearch 0.90.X.
+
+
 Installation
 ------------
 
@@ -52,17 +63,6 @@ The client's features include:
    retried until a timeout is reached)
  * thread safety
  * pluggable architecture
-
-
-Versioning
-----------
-
-There are two branches for development - `master` and `0.4`. Master branch is
-used to track all the changes for Elasticsearch 1.0 and beyond whereas 0.4
-tracks Elasticsearch 0.90.
-
-Releases with major version 1 (1.X.Y) are to be used with Elasticsearch 1.0 and
-later, 0.4 releases are meant to work with Elasticsearch 0.90.X.
 
 
 License
