@@ -271,7 +271,7 @@ class Transport(object):
             connection = self.get_connection()
 
             try:
-                status, headers, raw_data = connection.perform_request(method, url, params, body, ignore=ignore)
+                status, headers, data = connection.perform_request(method, url, params, body, ignore=ignore)
             except ConnectionError:
                 self.mark_dead(connection)
 
@@ -281,8 +281,7 @@ class Transport(object):
             else:
                 # connection didn't fail, confirm it's live status
                 self.connection_pool.mark_live(connection)
-                data = None
-                if raw_data:
-                    data = self.deserializer.loads(raw_data, headers.get('content-type'))
+                if data:
+                    data = self.deserializer.loads(data, headers.get('content-type'))
                 return status, data
 
