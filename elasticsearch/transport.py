@@ -34,7 +34,7 @@ class Transport(object):
     """
     def __init__(self, hosts, connection_class=Urllib3HttpConnection,
         connection_pool_class=ConnectionPool, host_info_callback=get_host_info,
-        sniff_on_start=False, sniffer_timeout=None,
+        sniff_on_start=False, sniffer_timeout=None, sniff_timeout=.1,
         sniff_on_connection_fail=False, serializer=JSONSerializer(), serializers=None,
         default_mimetype='application/json', max_retries=3,
         send_get_body_as='GET', **kwargs):
@@ -50,6 +50,9 @@ class Transport(object):
             from the cluser at startup time
         :arg sniffer_timeout: number of seconds between automatic sniffs
         :arg sniff_on_connection_fail: flag controlling if connection failure triggers a sniff
+        :arg sniff_timeout: timeout used for the sniff request - it should be a
+            fast api call and we are talking potentially to more nodes so we want
+            to fail quickly.
         :arg serializer: serializer instance
         :arg serializers: optional dict of serializer instances that will be
             used for deserializing data coming from the server. (key is the mimetype)
@@ -100,6 +103,7 @@ class Transport(object):
         self.sniffer_timeout = sniffer_timeout
         self.sniff_on_connection_fail = sniff_on_connection_fail
         self.last_sniff = time.time()
+        self.sniff_timeout = sniff_timeout
 
         # callback to construct host dict from data in /_cluster/nodes
         self.host_info_callback = host_info_callback
@@ -169,7 +173,8 @@ class Transport(object):
             for c in self.connection_pool.connections + self.seed_connections:
                 try:
                     # use small timeout for the sniffing request, should be a fast api call
-                    _, headers, node_info = c.perform_request('GET', '/_nodes', timeout=.1)
+                    _, headers, node_info = c.perform_request('GET', '/_nodes',
+                        timeout=self.sniff_timeout)
                     node_info = self.deserializer.loads(node_info, headers.get('content-type'))
                     break
                 except (ConnectionError, SerializationError):
