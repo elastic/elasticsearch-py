@@ -3,9 +3,15 @@
 Changelog
 =========
 
-0.4.5 (dev)
+1.0.0 (dev)
 -----------
 
+Elasticsearch 1.0 compatibility. See 0.4.X releases (and 0.4 branch) for code
+compatible with 0.90 elasticsearch.
+
+ * major breaking change - compatible with 1.0 elasticsearch releases only!
+ * Add an option to change the timeout used for sniff requests (`sniff_timeout`).
+ * empty responses from the server are now returned as empty strings instead of None
  * `get_alias` now has `name` as another optional parameter due to issue #4539
    in es repo. Note that the order of params have changed so if you are not
    using keyword arguments this is a breaking change.
