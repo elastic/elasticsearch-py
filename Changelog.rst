@@ -3,8 +3,11 @@
 Changelog
 =========
 
-0.4.5 (dev)
+0.4.6 (dev)
 -----------
+
+0.4.5 (2014-02-11)
+------------------
 
  * `get_alias` now has `name` as another optional parameter due to issue #4539
    in es repo. Note that the order of params have changed so if you are not
