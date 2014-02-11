@@ -3,8 +3,8 @@
 Changelog
 =========
 
-1.0.0 (dev)
------------
+1.0.0 (2014-02-11)
+------------------
 
 Elasticsearch 1.0 compatibility. See 0.4.X releases (and 0.4 branch) for code
 compatible with 0.90 elasticsearch.
