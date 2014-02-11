@@ -78,5 +78,5 @@ class ThriftConnection(PoolingConnection):
         headers = {}
         if response.headers:
             headers = dict((k.lower(), v) for k, v in response.headers.items())
-        return response.status, headers, response.body
+        return response.status, headers, response.body or ''
 
