@@ -173,7 +173,7 @@ class Transport(object):
             for c in self.connection_pool.connections + self.seed_connections:
                 try:
                     # use small timeout for the sniffing request, should be a fast api call
-                    _, headers, node_info = c.perform_request('GET', '/_nodes',
+                    _, headers, node_info = c.perform_request('GET', '/_nodes/_all/clear',
                         timeout=self.sniff_timeout)
                     node_info = self.deserializer.loads(node_info, headers.get('content-type'))
                     break
