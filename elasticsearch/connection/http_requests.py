@@ -4,13 +4,10 @@ try:
     REQUESTS_AVAILABLE = True
 except ImportError:
     REQUESTS_AVAILABLE = False
-try:
-    from urllib import urlencode
-except ImportError:
-    from urllib.parse import urlencode
 
 from .base import Connection
 from ..exceptions import ConnectionError, ImproperlyConfigured
+from ..compat import urlencode
 
 class RequestsHttpConnection(Connection):
     """

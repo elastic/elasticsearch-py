@@ -1,11 +1,8 @@
 import time
 import json
-try:
-    from urllib import urlencode
-except ImportError:
-    from urllib.parse import urlencode
 
 from ..exceptions import TransportError, ConnectionError, ImproperlyConfigured
+from ..compat import urlencode
 from .pooling import PoolingConnection
 
 class MemcachedConnection(PoolingConnection):

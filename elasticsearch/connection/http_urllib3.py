@@ -1,12 +1,9 @@
 import time
 import urllib3
-try:
-    from urllib import urlencode
-except ImportError:
-    from urllib.parse import urlencode
 
 from .base import Connection
 from ..exceptions import ConnectionError
+from ..compat import urlencode
 
 class Urllib3HttpConnection(Connection):
     """

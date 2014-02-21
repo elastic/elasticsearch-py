@@ -1,6 +1,7 @@
 from mock import patch
 
 from elasticsearch.client import _normalize_hosts, Elasticsearch
+from elasticsearch.compat import u
 
 from ..test_cases import TestCase, ElasticsearchTestCase
 
@@ -14,7 +15,7 @@ class TestNormalizeHosts(TestCase):
     def test_strings_are_parsed_for_port(self):
         self.assertEquals(
             [{"host": "elasticsearch.org", "port": 42}, {"host": "user:secret@elasticsearch.com"}],
-            _normalize_hosts(["elasticsearch.org:42", u"user:secret@elasticsearch.com"])
+            _normalize_hosts(["elasticsearch.org:42", u("user:secret@elasticsearch.com")])
         )
 
     def test_dicts_are_left_unchanged(self):

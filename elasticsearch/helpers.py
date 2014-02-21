@@ -1,11 +1,8 @@
 from itertools import islice
 from operator import methodcaller
-try:
-    from itertools import imap as map
-except ImportError:
-    pass # python 3, use builtin map
 
 from elasticsearch.exceptions import ElasticsearchException
+from elasticsearch.compat import map
 
 class BulkIndexError(ElasticsearchException):
     @property

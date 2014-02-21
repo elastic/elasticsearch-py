@@ -54,7 +54,7 @@ class TestUrllib3Connection(TestCase):
         self.assertIsInstance(con.pool, urllib3.HTTPConnectionPool)
 
 class TestRequestsConnection(TestCase):
-    def _get_mock_connection(self, connection_params={}, status_code=200, response_body=u'{}'):
+    def _get_mock_connection(self, connection_params={}, status_code=200, response_body='{}'):
         con = RequestsHttpConnection(**connection_params)
         def _dummy_send(*args, **kwargs):
             dummy_response = Mock()
@@ -71,7 +71,7 @@ class TestRequestsConnection(TestCase):
     def _get_request(self, connection, *args, **kwargs):
         status, headers, data = connection.perform_request(*args, **kwargs)
         self.assertEquals(200, status)
-        self.assertEquals(u'{}', data)
+        self.assertEquals('{}', data)
 
         timeout = kwargs.pop('timeout', connection.timeout)
         args, kwargs = connection.session.send.call_args

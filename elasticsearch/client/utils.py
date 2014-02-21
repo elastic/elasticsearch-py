@@ -1,11 +1,6 @@
 from datetime import date, datetime
 from functools import wraps
-try:
-    # PY2
-    from urllib import quote_plus
-except ImportError:
-    # PY3
-    from urllib.parse import quote_plus
+from ..compat import string_types, quote_plus, u
 
 # parts of URL to be omitted
 SKIP_IN_PATH = (None, '', [], ())
@@ -18,7 +13,7 @@ def _escape(value):
 
     # make sequences into comma-separated stings
     if isinstance(value, (list, tuple)):
-        value = u','.join(value)
+        value = u(',').join(value)
 
     # dates and datetimes into isoformat
     elif isinstance(value, (date, datetime)):
@@ -29,7 +24,7 @@ def _escape(value):
         value = str(value).lower()
 
     # encode strings to utf-8
-    if isinstance(value, (type(''), type(u''))):
+    if isinstance(value, string_types):
         try:
             return value.encode('utf-8')
         except UnicodeDecodeError:

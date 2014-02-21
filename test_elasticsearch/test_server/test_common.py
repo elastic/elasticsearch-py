@@ -9,6 +9,7 @@ from os.path import exists, join, dirname, pardir
 import yaml
 
 from elasticsearch import TransportError
+from elasticsearch.compat import string_types
 
 from ..test_cases import SkipTest
 from . import ElasticTestCase, _get_version
@@ -42,11 +43,11 @@ class YamlTestCase(ElasticTestCase):
 
     def _resolve(self, value):
         # resolve variables
-        if isinstance(value, (type(u''), type(''))) and value.startswith('$'):
+        if isinstance(value, string_types) and value.startswith('$'):
             value = value[1:]
             self.assertIn(value, self._state)
             value = self._state[value]
-        if isinstance(value, (type(u''), type(''))):
+        if isinstance(value, string_types):
             value = value.strip()
         return value
 
@@ -172,7 +173,7 @@ class YamlTestCase(ElasticTestCase):
             value = self._lookup(path)
             expected = self._resolve(expected)
 
-            if isinstance(expected, (type(''), type(u''))) and \
+            if isinstance(expected, string_types) and \
                     expected.startswith('/') and expected.endswith('/'):
                 expected = re.compile(expected[1:-1], re.VERBOSE)
                 self.assertTrue(expected.search(value))

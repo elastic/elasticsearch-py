@@ -2,6 +2,7 @@
 from elasticsearch import Elasticsearch, MemcachedConnection, NotFoundError
 
 from elasticsearch.transport import ADDRESS_RE
+from elasticsearch.compat import u
 
 from . import ElasticTestCase
 from ..test_cases import SkipTest
@@ -34,8 +35,8 @@ class TestMemcachedConnection(ElasticTestCase):
         self.assertEquals({"answer": 42}, self.mc_client.get("test_index", doc_type="test_type", id=1)["_source"])
 
     def test_unicode(self):
-        self.mc_client.index("test_index", "test_type", {"answer": u"你好"}, id=u"你好")
-        self.assertEquals({"answer": u"你好"}, self.mc_client.get("test_index", doc_type="test_type", id=u"你好")["_source"])
+        self.mc_client.index("test_index", "test_type", {"answer": u("你好")}, id=u("你好"))
+        self.assertEquals({"answer": u("你好")}, self.mc_client.get("test_index", doc_type="test_type", id=u("你好"))["_source"])
 
     def test_missing(self):
         self.assertRaises(NotFoundError, self.mc_client.get, "test_index", doc_type="test_type", id=42)

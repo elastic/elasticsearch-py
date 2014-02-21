@@ -3,6 +3,7 @@ import logging
 
 from ..transport import Transport
 from ..exceptions import NotFoundError, TransportError
+from ..compat import string_types
 from .indices import IndicesClient
 from .cluster import ClusterClient
 from .cat import CatClient
@@ -22,13 +23,13 @@ def _normalize_hosts(hosts):
         return [{}]
 
     # passed in just one string
-    if isinstance(hosts, (type(''), type(u''))):
+    if isinstance(hosts, string_types):
         hosts = [hosts]
 
     out = []
     # normalize hosts to dicts
     for i, host in enumerate(hosts):
-        if isinstance(host, (type(''), type(u''))):
+        if isinstance(host, string_types):
             host = host.strip('/')
             # remove schema information
             if '://' in host:
@@ -130,7 +131,7 @@ class Elasticsearch(object):
 
     def _bulk_body(self, body):
         # if not passed in a string, serialize items and join by newline
-        if not isinstance(body, (type(''), type(u''))):
+        if not isinstance(body, string_types):
             body = '\n'.join(map(self.transport.serializer.dumps, body))
 
         # bulk body must end with a newline

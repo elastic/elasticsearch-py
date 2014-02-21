@@ -3,6 +3,7 @@ from datetime import date, datetime
 from decimal import Decimal
 
 from .exceptions import SerializationError, ImproperlyConfigured
+from .compat import string_types
 
 class TextSerializer(object):
     mimetype = 'text/plain'
@@ -11,7 +12,7 @@ class TextSerializer(object):
         return s
 
     def dumps(self, data):
-        if isinstance(data, (type(''), type(u''))):
+        if isinstance(data, string_types):
             return data
 
         raise SerializationError('Cannot serialize %r into text.' % data)
@@ -34,7 +35,7 @@ class JSONSerializer(object):
 
     def dumps(self, data):
         # don't serialize strings
-        if isinstance(data, (type(''), type(u''))):
+        if isinstance(data, string_types):
             return data
 
         try:
