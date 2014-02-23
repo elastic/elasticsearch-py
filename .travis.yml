@@ -3,6 +3,7 @@ language: python
 python:
   - "2.6"
   - "2.7"
+  - "3.2"
   - "3.3"
   - "pypy"
 
@@ -16,6 +17,8 @@ matrix:
   exclude:
     # skip testing thrift on py3 and pypy
     - python: "pypy"
+      env: TEST_ES_CONNECTION=ThriftConnection
+    - python: "3.2"
       env: TEST_ES_CONNECTION=ThriftConnection
     - python: "3.3"
       env: TEST_ES_CONNECTION=ThriftConnection
