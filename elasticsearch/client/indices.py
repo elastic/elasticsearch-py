@@ -482,7 +482,8 @@ class IndicesClient(NamespacedClient):
             params=params)
         return data
 
-    @query_params('flat_settings', 'local')
+    @query_params('expand_wildcards', 'ignore_indices', 'ignore_unavailable',
+        'flat_settings', 'local')
     def get_settings(self, index=None, name=None, params=None):
         """
         Retrieve settings for one or more (or all) indices.
@@ -491,6 +492,12 @@ class IndicesClient(NamespacedClient):
         :arg index: A comma-separated list of index names; use `_all` or empty
             string to perform the operation on all indices
         :arg name: The name of the settings that should be included
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :arg ignore_indices: When performed on multiple indices, allows to
+            ignore `missing` ones, default u'none'
+        :arg ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
         :arg flat_settings: Return settings in flat format (default: false)
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
