@@ -22,7 +22,7 @@ def expand_action(data):
     op_type = data.pop('_op_type', 'index')
     action = {op_type: {}}
     for key in ('_index', '_parent', '_percolate', '_routing', '_timestamp',
-            '_ttl', '_type', '_version', '_id', '_retry_on_conflict'):
+            '_ttl', '_type', '_version', '_version_type', '_id', '_retry_on_conflict'):
         if key in data:
             action[op_type][key] = data.pop(key)
 
