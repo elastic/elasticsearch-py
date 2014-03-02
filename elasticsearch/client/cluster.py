@@ -46,7 +46,7 @@ class ClusterClient(NamespacedClient):
 
         :arg metric: Limit the information returned to the specified metrics.
             Possible values: "_all", "blocks", "index_templates", "metadata",
-            "nodes", "routing_table"
+            "nodes", "routing_table", "master_node", "version"
         :arg index: A comma-separated list of index names; use `_all` or empty
             string to perform the operation on all indices
         :arg index_templates: A comma separated list to return specific index
@@ -81,7 +81,7 @@ class ClusterClient(NamespacedClient):
         _, data = self.transport.perform_request('GET', url, params=params)
         return data
 
-    @query_params('dry_run', 'filter_metadata', 'master_timeout', 'timeout')
+    @query_params('dry_run', 'explain', 'filter_metadata', 'master_timeout', 'timeout')
     def reroute(self, body=None, params=None):
         """
         Explicitly execute a cluster reroute allocation command including specific commands.
@@ -89,6 +89,7 @@ class ClusterClient(NamespacedClient):
 
         :arg body: The definition of `commands` to perform (`move`, `cancel`, `allocate`)
         :arg dry_run: Simulate the operation only and return the resulting state
+        :arg explain: Return an explanation of why the commands can or cannot be executed
         :arg filter_metadata: Don't return cluster state metadata (default: false)
         :arg master_timeout: Explicit operation timeout for connection to master node
         :arg timeout: Explicit operation timeout
