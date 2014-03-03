@@ -49,6 +49,10 @@ class YamlTestCase(ElasticTestCase):
             value = self._state[value]
         if isinstance(value, string_types):
             value = value.strip()
+        elif isinstance(value, dict):
+            value = dict((k, self._resolve(v)) for (k, v) in value.items())
+        elif isinstance(value, list):
+            value = list(map(self._resolve, value))
         return value
 
     def _lookup(self, path):
