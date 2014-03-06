@@ -13,7 +13,7 @@ long_description = f.read().strip()
 f.close()
 
 install_requires = [
-    'urllib3>=1.5, <2.0',
+    'urllib3>=1.8, <2.0',
 ]
 tests_require = [
     'requests>=1.0.0, <3.0.0',
