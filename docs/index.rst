@@ -123,6 +123,7 @@ Contents
    :maxdepth: 2
 
    api
+   exceptions
    connection
    transports
    helpers

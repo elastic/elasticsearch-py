@@ -3,13 +3,16 @@
 API Documentation
 =================
 
-.. note::
+All the API calls map the raw REST api as closely as possible, including the
+distinction between required and optional arguments to the calls. This means
+that the code makes distinction between positional and keyword arguments; we,
+however, recommend that people *use keyword arguments for all calls for
+consistency and safety*.
 
-    All the API calls map the raw REST api as closely as possible, including
-    the distinction between required and optional arguments to the calls. This
-    means that the code makes distinction between positional and keyword arguments;
-    we, however, recommend that people use keyword arguments for all calls for
-    consistency and safety.
+An API call is considered successful (and will return a response) if
+elasticsearch returns a 2XX response. Otherwise an instance of
+:class:`~elasticsearch.TransportError` (or a more specific subclass) will be
+raised. You can see other exception and error states in :ref:`exceptions`.
 
 .. note::
    
