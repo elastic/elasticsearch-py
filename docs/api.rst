@@ -12,7 +12,19 @@ consistency and safety*.
 An API call is considered successful (and will return a response) if
 elasticsearch returns a 2XX response. Otherwise an instance of
 :class:`~elasticsearch.TransportError` (or a more specific subclass) will be
-raised. You can see other exception and error states in :ref:`exceptions`.
+raised. You can see other exception and error states in :ref:`exceptions`. If
+you do not wish an exception to be raised you can always pass in an ``ignore``
+parameter with either a single status code that should be ignored or a list of
+them::
+
+    from elasticsearch import Elasticsearch
+    es = Elasticsearch()
+
+    # ignore 400 cause by IndexAlreadyExistsException when creating an index
+    es.indices.create(index='test-index', ignore=400)
+
+    # ignore 404 and 400
+    es.indices.delete(index='test-index', ignore=[400, 404])
 
 .. note::
    
