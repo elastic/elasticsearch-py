@@ -17,7 +17,7 @@ class ElasticsearchException(Exception):
 
 class SerializationError(ElasticsearchException):
     """
-    Data passed int failed to serialize properly in the ``Serializer`` being
+    Data passed in failed to serialize properly in the ``Serializer`` being
     used.
     """
 
