@@ -529,7 +529,8 @@ class Elasticsearch(object):
         _, data = self.transport.perform_request('DELETE', _make_path(index, doc_type, id), params=params)
         return data
 
-    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable', 'min_score', 'preference', 'q', 'routing', 'source')
+    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
+        'min_score', 'preference', 'q', 'routing', 'source')
     def count(self, index=None, doc_type=None, body=None, params=None):
         """
         Execute a query and get the number of matches for that query.
@@ -597,7 +598,8 @@ class Elasticsearch(object):
             params=params, body=self._bulk_body(body))
         return data
 
-    @query_params('consistency', 'allow_no_indices', 'expand_wildcards', 'ignore_unavailable', 'replication', 'routing', 'source', 'timeout', 'q')
+    @query_params('consistency', 'allow_no_indices', 'expand_wildcards',
+        'ignore_unavailable', 'replication', 'routing', 'source', 'timeout', 'q')
     def delete_by_query(self, index, doc_type=None, body=None, params=None):
         """
         Delete documents from one or more indices and one or more types based on a query.
@@ -624,7 +626,8 @@ class Elasticsearch(object):
             params=params, body=body)
         return data
 
-    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable', 'preference', 'routing', 'source')
+    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
+        'preference', 'routing', 'source')
     def suggest(self, body, index=None, params=None):
         """
         The suggest feature suggests similar looking terms based on a provided
