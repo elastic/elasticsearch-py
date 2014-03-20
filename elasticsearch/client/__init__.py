@@ -436,6 +436,23 @@ class Elasticsearch(object):
             params=params, body=body)
         return data
 
+    @query_params()
+    def search_template(self, index=None, doc_type=None, body=None, params=None):
+        """
+        A query that accepts a query template and a map of key/value pairs to
+        fill in template parameters.
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/master/query-dsl-template-query.html>`_
+
+        :arg index: A comma-separated list of index names to search; use `_all`
+            or empty string to perform the operation on all indices
+        :arg doc_type: A comma-separated list of document types to search; leave
+            empty to perform the operation on all types
+        :arg body: The search definition template and its params
+        """
+        _, data = self.transport.perform_request('GET', _make_path(index,
+            doc_type, '_search', 'template'), params=params, body=body)
+        return data
+
     @query_params('_source', '_source_exclude', '_source_include',
         'analyze_wildcard', 'analyzer', 'default_operator', 'df', 'fields',
         'lenient', 'lowercase_expanded_terms', 'parent', 'preference', 'q',
