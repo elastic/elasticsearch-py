@@ -8,7 +8,7 @@ VERSION = (1, 0, 1)
 __version__ = VERSION
 __versionstr__ = '.'.join(map(str, VERSION))
 
-f = open(join(dirname(__file__), 'README.rst'))
+f = open(join(dirname(__file__), 'README'))
 long_description = f.read().strip()
 f.close()
 
