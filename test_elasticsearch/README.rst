@@ -2,7 +2,11 @@ elasticsearch-py test suite
 ===========================
 
 Warning - by default the tests will try and connect to `localhost:9200` and
-will destroy all contents of given cluster!
+will destroy all contents of given cluster! The tests also rely on a checkout
+of `elasticsearch` repository existing on the same level as the
+`elasticsearch-py` clone. Before running the tests we will, by default, pull
+latest changes for that repo and perform `git reset --hard` to the exact
+version that was used to build the server we are running against.
 
 Running the tests
 -----------------
@@ -26,7 +30,7 @@ To simply run the tests just execute the `run_tests.py` script or invoke
  * `TEST_ES_NOFETCH` - controls if we should fetch new updates to elasticsearch
    repo and reset it's version to the sha used to build the current es server.
    Defaults to `False` which means we will fetch the elasticsearch repo and
-   `git checkout` the sha used to build the server.
+   `git reset --hard` the sha used to build the server.
 
 Alternatively, if you wish to control what you are doing you have several additional options:
 

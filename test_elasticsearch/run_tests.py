@@ -47,7 +47,7 @@ def fetch_es_repo():
     print('Fetching elasticsearch repo...')
     subprocess.check_call('cd %s && git fetch https://github.com/elasticsearch/elasticsearch.git' % repo_path, shell=True)
     # reset to the version fron info()
-    subprocess.check_call('cd %s && git checkout %s' % (repo_path, sha), shell=True)
+    subprocess.check_call('cd %s && git reset --hard %s' % (repo_path, sha), shell=True)
 
 def run_all(argv=None):
     sys.exitfunc = lambda: sys.stderr.write('Shutting down....\n')
