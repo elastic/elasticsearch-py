@@ -18,8 +18,10 @@ install_requires = [
 tests_require = [
     'requests>=1.0.0, <3.0.0',
     'nose',
+    'coverage',
     'mock',
     'pyaml',
+    'nosexcover'
 ]
 
 # use external unittest for 2.6
