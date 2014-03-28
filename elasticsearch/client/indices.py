@@ -766,3 +766,24 @@ class IndicesClient(NamespacedClient):
             params=params)
         return data
 
+    @query_params('active_only', 'detailed', 'human')
+    def recovery(self, index=None, params=None):
+        """
+        The indices recovery API provides insight into on-going shard
+        recoveries. Recovery status may be reported for specific indices, or
+        cluster-wide.
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/master/indices-recovery.html>`_
+
+        :arg index: A comma-separated list of index names; use `_all` or empty
+            string to perform the operation on all indices
+        :arg active_only: Display only those recoveries that are currently on-
+            going (default: 'false')
+        :arg detailed: Whether to display detailed information about shard
+            recovery (default: 'false')
+        :arg human: Whether to return time and byte values in human-readable
+            format. (default: 'false')
+
+        """
+        _, data = self.transport.perform_request('GET', _make_path(index,
+            '_recovery'), params=params)
+        return data
