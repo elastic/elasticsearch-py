@@ -28,7 +28,7 @@ CATCH_CODES = {
 }
 
 # test features we have implemented
-IMPLEMENTED_FEATURES = ('regex')
+IMPLEMENTED_FEATURES = ('regex', 'gtelte')
 
 class InvalidActionType(Exception):
     pass
@@ -146,9 +146,17 @@ class YamlTestCase(ElasticTestCase):
         for key, value in action.items():
             self.assertGreater(self._lookup(key), value)
 
+    def run_gte(self, action):
+        for key, value in action.items():
+            self.assertGreaterEqual(self._lookup(key), value)
+
     def run_lt(self, action):
         for key, value in action.items():
             self.assertLess(self._lookup(key), value)
+
+    def run_lte(self, action):
+        for key, value in action.items():
+            self.assertLessEqual(self._lookup(key), value)
 
     def run_set(self, action):
         for key, value in action.items():
