@@ -88,5 +88,3 @@ Build status
 .. image:: https://secure.travis-ci.org/elasticsearch/elasticsearch-py.png
    :target: http://travis-ci.org/#!/elasticsearch/elasticsearch-py
 
-.. image:: https://coveralls.io/repos/elasticsearch/elasticsearch-py/badge.png?branch=master
-   :target: https://coveralls.io/r/elasticsearch/elasticsearch-py

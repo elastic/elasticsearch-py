@@ -17,7 +17,6 @@ install:
   - wget -O - http://s3-us-west-2.amazonaws.com/build.elasticsearch.org/origin/master/nightly/JDK6/elasticsearch-latest-SNAPSHOT.tar.gz | tar xz --directory=/tmp/elasticsearch --strip-components=1
   - /tmp/elasticsearch/bin/plugin -install elasticsearch/elasticsearch-transport-memcached/2.0.0.RC1
   - git clone https://github.com/elasticsearch/elasticsearch.git ../elasticsearch
-  - pip install coveralls
   - pip install .
 
 before_script:
@@ -26,5 +25,3 @@ before_script:
 script:
   - python setup.py test
 
-after_success:
-  - coveralls

@@ -55,11 +55,9 @@ def run_all(argv=None):
     # fetch yaml tests
     fetch_es_repo()
 
-    # always insert coverage when running tests
     if argv is None:
         argv = [
             'nosetests', '--with-xunit',
-            '--with-xcoverage', '--cover-package=elasticsearch', '--cover-erase',
             '--logging-filter=elasticsearch', '--logging-level=DEBUG',
             '--verbose',
         ]
