@@ -17,17 +17,17 @@ class Urllib3HttpConnection(Connection):
     """
     def __init__(self, host='localhost', port=9200, http_auth=None, use_ssl=False, maxsize=10, **kwargs):
         super(Urllib3HttpConnection, self).__init__(host=host, port=port, **kwargs)
-        headers = {}
+        self.headers = {}
         if http_auth is not None:
             if isinstance(http_auth, (tuple, list)):
                 http_auth = ':'.join(http_auth)
-            headers = urllib3.make_headers(basic_auth=http_auth)
+            self.headers = urllib3.make_headers(basic_auth=http_auth)
 
         pool_class = urllib3.HTTPConnectionPool
         if use_ssl:
             pool_class = urllib3.HTTPSConnectionPool
 
-        self.pool = pool_class(host, port=port, timeout=self.timeout, headers=headers, maxsize=maxsize)
+        self.pool = pool_class(host, port=port, timeout=self.timeout, maxsize=maxsize)
 
     def perform_request(self, method, url, params=None, body=None, timeout=None, ignore=()):
         url = self.url_prefix + url
@@ -40,7 +40,10 @@ class Urllib3HttpConnection(Connection):
             kw = {}
             if timeout:
                 kw['timeout'] = timeout
-            response = self.pool.urlopen(method, url, body, retries=0, **kw)
+            headers = self.headers.copy()
+            if body:
+                headers['content-length'] = str(len(body))
+            response = self.pool.urlopen(method, url, body, retries=False, headers=headers, **kw)
             duration = time.time() - start
             raw_data = response.data.decode('utf-8')
         except Exception as e:

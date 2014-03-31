@@ -35,15 +35,15 @@ class TestUrllib3Connection(TestCase):
 
     def test_http_auth(self):
         con = Urllib3HttpConnection(http_auth='username:secret')
-        self.assertEquals({'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0'}, con.pool.headers)
+        self.assertEquals({'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0'}, con.headers)
 
     def test_http_auth_tuple(self):
         con = Urllib3HttpConnection(http_auth=('username', 'secret'))
-        self.assertEquals({'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0'}, con.pool.headers)
+        self.assertEquals({'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0'}, con.headers)
 
     def test_http_auth_list(self):
         con = Urllib3HttpConnection(http_auth=['username', 'secret'])
-        self.assertEquals({'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0'}, con.pool.headers)
+        self.assertEquals({'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0'}, con.headers)
 
     def test_uses_https_if_specified(self):
         con = Urllib3HttpConnection(use_ssl=True)
@@ -52,6 +52,14 @@ class TestUrllib3Connection(TestCase):
     def test_doesnt_use_https_if_not_specified(self):
         con = Urllib3HttpConnection()
         self.assertIsInstance(con.pool, urllib3.HTTPConnectionPool)
+
+    def test_content_length_gets_set(self):
+        con = Urllib3HttpConnection()
+        m = con.pool.urlopen = Mock()
+        m.return_value.status = 200
+
+        con.perform_request('PUT', '/', body='0123456789')
+        m.assert_called_once_with('PUT', '/', '0123456789', headers={'content-length': '10'}, retries=False)
 
 class TestRequestsConnection(TestCase):
     def _get_mock_connection(self, connection_params={}, status_code=200, response_body='{}'):
