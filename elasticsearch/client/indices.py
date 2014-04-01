@@ -229,7 +229,7 @@ class IndicesClient(NamespacedClient):
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         """
-        _, data = self.transport.perform_request('PUT', _make_path(index, '_mapping', doc_type),
+        _, data = self.transport.perform_request('PUT', _make_path(index, doc_type, '_mapping'),
             params=params, body=body)
         return data
 
@@ -253,7 +253,7 @@ class IndicesClient(NamespacedClient):
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
         """
-        _, data = self.transport.perform_request('GET', _make_path(index, '_mapping', doc_type),
+        _, data = self.transport.perform_request('GET', _make_path(index, doc_type, '_mapping'),
             params=params)
         return data
 
@@ -279,7 +279,7 @@ class IndicesClient(NamespacedClient):
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
         """
-        _, data = self.transport.perform_request('GET', _make_path(index, '_mapping', doc_type, 'field', field),
+        _, data = self.transport.perform_request('GET', _make_path(index, doc_type, '_mapping', 'field', field),
             params=params)
         return data
 
@@ -296,7 +296,7 @@ class IndicesClient(NamespacedClient):
             specified indices.
         :arg master_timeout: Specify timeout for connection to master
         """
-        _, data = self.transport.perform_request('DELETE', _make_path(index, '_mapping', doc_type),
+        _, data = self.transport.perform_request('DELETE', _make_path(index, doc_type, '_mapping'),
             params=params)
         return data
 
