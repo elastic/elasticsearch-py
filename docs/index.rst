@@ -19,6 +19,7 @@ Example Usage
 
 .. testcode::
 
+    from datetime import datetime
     from elasticsearch import Elasticsearch
     es = Elasticsearch()
 
