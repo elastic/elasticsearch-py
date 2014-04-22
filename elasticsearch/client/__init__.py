@@ -914,3 +914,50 @@ class Elasticsearch(object):
             doc_type, '_mtermvectors'), params=params, body=body)
         return data
 
+    @query_params('verbose')
+    def benchmark(self, index=None, doc_type=None, body=None, params=None):
+        """
+        The benchmark API provides a standard mechanism for submitting queries
+        and measuring their performance relative to one another.
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/master/search-benchmark.html>`_
+
+        :arg index: A comma-separated list of index names; use `_all` or empty
+            string to perform the operation on all indices
+        :arg doc_type: The name of the document type
+        :arg body: The search definition using the Query DSL
+        :arg verbose: Specify whether to return verbose statistics about each
+            iteration (default: false)
+    
+        """
+        _, data = self.transport.perform_request('PUT', _make_path(index,
+            doc_type, '_bench'), params=params, body=body)
+        return data
+
+    @query_params()
+    def abort_benchmark(self, name=None, params=None):
+        """
+        Aborts a running benchmark.
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/master/search-benchmark.html>`_
+
+        :arg name: A benchmark name
+    
+        """
+        _, data = self.transport.perform_request('POST', _make_path('_bench',
+            'abort', name), params=params)
+        return data
+
+    @query_params()
+    def list_benchmarks(self, index=None, doc_type=None, params=None):
+        """
+        View the progress of long-running benchmarks.
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/master/search-benchmark.html>`_
+
+        :arg index: A comma-separated list of index names; use `_all` or empty
+            string to perform the operation on all indices
+        :arg doc_type: The name of the document type
+    
+        """
+        _, data = self.transport.perform_request('GET', _make_path(index,
+            doc_type, '_bench'), params=params)
+        return data
+
