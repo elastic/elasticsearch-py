@@ -10,9 +10,10 @@ import yaml
 
 from elasticsearch import TransportError
 from elasticsearch.compat import string_types
+from elasticsearch.helpers.test import _get_version
 
 from ..test_cases import SkipTest
-from . import ElasticTestCase, _get_version
+from . import ElasticsearchTestCase
 
 # some params had to be changed in python, keep track of them so we can rename
 # those in the tests accordingly
@@ -33,7 +34,7 @@ IMPLEMENTED_FEATURES = ('regex', 'gtelte')
 class InvalidActionType(Exception):
     pass
 
-class YamlTestCase(ElasticTestCase):
+class YamlTestCase(ElasticsearchTestCase):
     def setUp(self):
         super(YamlTestCase, self).setUp()
         if hasattr(self, '_setup_code'):

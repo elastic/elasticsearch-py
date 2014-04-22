@@ -43,12 +43,10 @@ Customizing the tests
 ---------------------
 
 You can create a `local.py` file in the `test_elasticsearch` directory which
-should contain a `get_client` function:
+should contain a `get_client` function.
 
-    def get_client(hosts, ** kwargs):
-        ...
-
-If this file exists the function will be used instead of the built in one to
-construct the client used for any integration tests. You can use this to make
-sure your plugins and extensions work with `elasticsearch-py`.
+If this file exists the function will be used instead of
+`elasticsearch.helpers.test.get_test_client` to construct the client used for
+any integration tests. You can use this to make sure your plugins and
+extensions work with `elasticsearch-py`.
 

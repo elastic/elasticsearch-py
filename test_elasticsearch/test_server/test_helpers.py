@@ -1,9 +1,9 @@
 from elasticsearch import helpers
 
-from . import ElasticTestCase
+from . import ElasticsearchTestCase
 from ..test_cases import SkipTest
 
-class TestStreamingBulk(ElasticTestCase):
+class TestStreamingBulk(ElasticsearchTestCase):
     def test_actions_remain_unchanged(self):
         actions = [{'_id': 1}, {'_id': 2}]
         for ok, item in helpers.streaming_bulk(self.client, actions, index='test-index', doc_type='answers'):
@@ -53,7 +53,7 @@ class TestStreamingBulk(ElasticTestCase):
         self.assertEquals({'f': 'v'}, self.client.get(index='i', id=47)['_source'])
 
 
-class TestBulk(ElasticTestCase):
+class TestBulk(ElasticsearchTestCase):
     def test_all_documents_get_inserted(self):
         docs = [{"answer": x, '_id': x} for x in range(100)]
         success, failed = helpers.bulk(self.client, docs, index='test-index', doc_type='answers', refresh=True)
@@ -128,7 +128,7 @@ class TestBulk(ElasticTestCase):
         self.assertEquals(1, failed)
 
 
-class TestScan(ElasticTestCase):
+class TestScan(ElasticsearchTestCase):
     def test_all_documents_are_read(self):
         bulk = []
         for x in range(100):
@@ -142,7 +142,7 @@ class TestScan(ElasticTestCase):
         self.assertEquals(set(map(str, range(100))), set(d['_id'] for d in docs))
         self.assertEquals(set(range(100)), set(d['_source']['answer'] for d in docs))
 
-class TestReindex(ElasticTestCase):
+class TestReindex(ElasticsearchTestCase):
     def test_all_documents_get_moved(self):
         bulk = []
         for x in range(100):

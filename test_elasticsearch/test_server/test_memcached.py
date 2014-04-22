@@ -4,10 +4,10 @@ from elasticsearch import Elasticsearch, MemcachedConnection, NotFoundError
 from elasticsearch.transport import ADDRESS_RE
 from elasticsearch.compat import u
 
-from . import ElasticTestCase
+from . import ElasticsearchTestCase
 from ..test_cases import SkipTest
 
-class TestMemcachedConnection(ElasticTestCase):
+class TestMemcachedConnection(ElasticsearchTestCase):
     def setUp(self):
         try:
             import pylibmc
