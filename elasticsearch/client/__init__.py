@@ -437,6 +437,34 @@ class Elasticsearch(object):
         return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
+        'local', 'preference', 'routing')
+    def search_shards(self, index=None, doc_type=None, params=None):
+        """
+        The search shards api returns the indices and shards that a search
+        request would be executed against. This can give useful feedback for working
+        out issues or planning optimizations with routing and shard preferences.
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/master/search-shards.html>`_
+
+        :arg index: The name of the index
+        :arg doc_type: The type of the document
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+            expression resolves into no concrete indices. (This includes `_all`
+            string or when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete
+            indices that are open, closed or both. (default: '"open"')
+        :arg ignore_unavailable: Whether specified concrete indices should be
+            ignored when unavailable (missing or closed)
+        :arg local: Return local information, do not retrieve the state from
+            master node (default: false)
+        :arg preference: Specify the node or shard the operation should be
+            performed on (default: random)
+        :arg routing: Specific routing value
+        """
+        _, data = self.transport.perform_request('GET', _make_path(index,
+            doc_type, '_search_shards'), params=params)
+        return data
+
+    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
         'preference', 'routing', 'scroll', 'search_type')
     def search_template(self, index=None, doc_type=None, body=None, params=None):
         """
