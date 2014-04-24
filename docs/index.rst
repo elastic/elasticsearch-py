@@ -9,15 +9,7 @@ to be opinion-free and very extendable.
 Example Usage
 -------------
 
-
-.. testsetup::
-
-    from datetime import datetime
-    from elasticsearch import Elasticsearch
-    es = Elasticsearch()
-    es.delete_index("test_index", ignore_missing=True)
-
-.. testcode::
+::
 
     from datetime import datetime
     from elasticsearch import Elasticsearch
@@ -40,14 +32,6 @@ Example Usage
     print("Got %d Hits:" % res['hits']['total'])
     for hit in res['hits']['hits']:
         print("%(timestamp)s %(author)s: %(text)s" % hit["_source"])
-
-.. testoutput::
-    :hide:
-
-    True
-    {u'text': u'Elasticsearch: cool. bonsai cool.', u'author': u'kimchy', u'timestamp': u'2010-10-10T10:10:10'}
-    Got 1 Hits:
-    2010-10-10T10:10:10 kimchy: Elasticsearch: cool. bonsai cool.
 
 Features
 --------
