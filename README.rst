@@ -5,21 +5,34 @@ Official low-level client for Elasticsearch. It's goal is to provide common
 ground for all Elasticsearch-related code in Python; because of this it tries
 to be opinion-free and very extendable.
 
-Versioning
-----------
+Compatibility
+-------------
 
-There are two branches for development - `master` and `0.4`. Master branch is
-used to track all the changes for Elasticsearch 1.0 and beyond whereas 0.4
-tracks Elasticsearch 0.90.
+The library is compatible with both Elasticsearch 1.x and 0.90.x but you
+**have to use a matching version**.
 
-Releases with major version 1 (1.X.Y) are to be used with Elasticsearch 1.0 and
-later, 0.4 releases are meant to work with Elasticsearch 0.90.X.
+For **Elasticsearch 1.0** and later, use the major version 1 (``1.x.y``) of the
+library.
+
+For **Elasticsearch 0.90.x**, use a version from ``0.4.x`` releases of the
+library.
+
+The recommended way to set your requirements in your `setup.py` or
+`requirements.txt` is::
+
+    # Elasticsearch 1.0
+    elasticsearch>=1.0.0,<2.0.0
+
+    # Elasticsearch 0.90
+    elasticsearch<1.0.0
+
+The development is happening on ``master`` and ``0.4`` branches, respectively.
 
 
 Installation
 ------------
 
-Install the `elasticsearch` package with `pip
+Install the ``elasticsearch`` package with `pip
 <https://pypi.python.org/pypi/elasticsearch>`_::
 
     pip install elasticsearch
