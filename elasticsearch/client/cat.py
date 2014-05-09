@@ -251,3 +251,28 @@ class CatClient(NamespacedClient):
         _, data = self.transport.perform_request('GET', '/_cat/thread_pool',
             params=params)
         return data
+
+    @query_params('bytes', 'fields', 'h', 'help', 'local', 'master_timeout',
+        'v')
+    def fielddata(self, fields=None, params=None):
+        """
+        Shows information about currently loaded fielddata on a per-node basis.
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/master/cat-fielddata.html>`_
+
+        :arg fields: A comma-separated list of fields to return the fielddata
+            size
+        :arg bytes: The unit in which to display byte values
+        :arg fields: A comma-separated list of fields to return the fielddata
+            size
+        :arg h: Comma-separated list of column names to display
+        :arg help: Return help information (default: 'false')
+        :arg local: Return local information, do not retrieve the state from
+            master node (default: false)
+        :arg master_timeout: Explicit operation timeout for connection to master
+            node
+        :arg v: Verbose mode. Display column headers (default: 'false')
+
+        """
+        _, data = self.transport.perform_request('GET', _make_path('_cat',
+            'fielddata', fields), params=params)
+        return data
