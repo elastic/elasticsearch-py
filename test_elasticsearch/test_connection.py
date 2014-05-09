@@ -58,8 +58,8 @@ class TestUrllib3Connection(TestCase):
         m = con.pool.urlopen = Mock()
         m.return_value.status = 200
 
-        con.perform_request('PUT', '/', body='0123456789')
-        m.assert_called_once_with('PUT', '/', '0123456789', headers={'content-length': '10'}, retries=False)
+        con.perform_request('PUT', '/', body='0123456789'.encode('utf-8'))
+        m.assert_called_once_with('PUT', '/', '0123456789'.encode('utf-8'), headers={'content-length': '10'}, retries=False)
 
 class TestRequestsConnection(TestCase):
     def _get_mock_connection(self, connection_params={}, status_code=200, response_body='{}'):
@@ -77,6 +77,9 @@ class TestRequestsConnection(TestCase):
         return con
 
     def _get_request(self, connection, *args, **kwargs):
+        if 'body' in kwargs:
+            kwargs['body'] = kwargs['body'].encode('utf-8')
+
         status, headers, data = connection.perform_request(*args, **kwargs)
         self.assertEquals(200, status)
         self.assertEquals('{}', data)
@@ -131,7 +134,7 @@ class TestRequestsConnection(TestCase):
     @patch('elasticsearch.connection.base.logger')
     def test_failed_request_logs_and_traces(self, logger, tracer):
         con = self._get_mock_connection(response_body='{"answer": 42}', status_code=500)
-        self.assertRaises(TransportError, con.perform_request, 'GET', '/', {'param': 42}, '{}')
+        self.assertRaises(TransportError, con.perform_request, 'GET', '/', {'param': 42}, '{}'.encode('utf-8'))
 
         # no trace request
         self.assertEquals(0, tracer.info.call_count)
@@ -148,7 +151,7 @@ class TestRequestsConnection(TestCase):
     @patch('elasticsearch.connection.base.logger')
     def test_success_logs_and_traces(self, logger, tracer):
         con = self._get_mock_connection(response_body='''{"answer": "that's it!"}''')
-        status, headers, data = con.perform_request('GET', '/', {'param': 42}, '''{"question": "what's that?"}''')
+        status, headers, data = con.perform_request('GET', '/', {'param': 42}, '''{"question": "what's that?"}'''.encode('utf-8'))
 
         # trace request
         self.assertEquals(1, tracer.info.call_count)
@@ -203,7 +206,7 @@ class TestRequestsConnection(TestCase):
 
         self.assertEquals('http://localhost:9200/', request.url)
         self.assertEquals('GET', request.method)
-        self.assertEquals('{"answer": 42}', request.body)
+        self.assertEquals('{"answer": 42}'.encode('utf-8'), request.body)
 
     def test_http_auth_attached(self):
         con = self._get_mock_connection({'http_auth': 'username:secret'})
@@ -218,7 +221,7 @@ class TestRequestsConnection(TestCase):
 
         self.assertEquals('http://localhost:9200/some-prefix/_search', request.url)
         self.assertEquals('GET', request.method)
-        self.assertEquals('{"answer": 42}', request.body)
+        self.assertEquals('{"answer": 42}'.encode('utf-8'), request.body)
 
         # trace request
         self.assertEquals(1, tracer.info.call_count)

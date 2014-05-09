@@ -44,6 +44,11 @@ class Connection(object):
                 # non-json data or a bulk request
                 return data
 
+        # body has already been serialized to utf-8, deserialize it for logging
+        # TODO: find a better way to avoid (de)encoding the body back and forth
+        if body:
+            body = body.decode('utf-8')
+
         logger.info(
             '%s %s [status:%s request:%.3fs]', method, full_url,
             status_code, duration
@@ -67,6 +72,12 @@ class Connection(object):
             '%s %s [status:%s request:%.3fs]', method, full_url,
             status_code or 'N/A', duration, exc_info=exception is not None
         )
+
+        # body has already been serialized to utf-8, deserialize it for logging
+        # TODO: find a better way to avoid (de)encoding the body back and forth
+        if body:
+            body = body.decode('utf-8')
+
         logger.info('> %s', body)
 
     def _raise_error(self, status_code, raw_data):
