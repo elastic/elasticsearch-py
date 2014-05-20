@@ -9,7 +9,7 @@ except ImportError:
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import ConnectionError
 
-def get_test_client():
+def get_test_client(nowait=False):
     # construct kwargs from the environment
     kw = {}
     if 'TEST_ES_CONNECTION' in os.environ:
@@ -19,13 +19,12 @@ def get_test_client():
     client = Elasticsearch([os.environ.get('TEST_ES_SERVER', {})], **kw)
 
     # wait for yellow status
-    for _ in range(100):
-        time.sleep(.1)
+    for _ in range(1 if nowait else 100):
         try:
             client.cluster.health(wait_for_status='yellow')
             return client
         except ConnectionError:
-            continue
+            time.sleep(.1)
     else:
         # timeout
         raise SkipTest("Elasticsearch failed to start.")
