@@ -16,13 +16,27 @@ class RequestsHttpConnection(Connection):
     :arg http_auth: optional http auth information as either ':' separated
         string or a tuple
     :arg use_ssl: use ssl for the connection if `True`
+    :arg proxies: use specific proxy, see the Requests' documentation__ for
+        details.
+    :arg cert: (optional) SSL certificate. If String, path to ssl client cert
+        file (.pem). If Tuple, ('cert', 'key') pair.
+
+    __ http://docs.python-requests.org/en/latest/user/advanced/#proxies
     """
-    def __init__(self, host='localhost', port=9200, http_auth=None, use_ssl=False, **kwargs):
+    def __init__(self, host='localhost', port=9200,
+                 http_auth=None,
+                 use_ssl=False,
+                 proxies=None,
+                 cert=None,
+                 **kwargs):
         if not REQUESTS_AVAILABLE:
             raise ImproperlyConfigured("Please install requests to use RequestsHttpConnection.")
 
         super(RequestsHttpConnection, self).__init__(host= host, port=port, **kwargs)
         self.session = requests.session()
+        self.cert = cert
+        self.proxies = proxies
+
         if http_auth is not None:
             if not isinstance(http_auth, (tuple, list)):
                 http_auth = http_auth.split(':', 1)
@@ -41,7 +55,10 @@ class RequestsHttpConnection(Connection):
 
         start = time.time()
         try:
-            response = self.session.request(method, url, data=body, timeout=timeout or self.timeout)
+            response = self.session.request(method, url, data=body,
+                                            timeout=timeout or self.timeout,
+                                            proxies=self.proxies,
+                                            cert=self.cert)
             duration = time.time() - start
             raw_data = response.text
         except (requests.ConnectionError, requests.Timeout) as e:
