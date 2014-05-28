@@ -821,7 +821,7 @@ class Elasticsearch(object):
         'max_word_length', 'min_doc_freq', 'min_term_freq', 'min_word_length',
         'mlt_fields', 'percent_terms_to_match', 'routing', 'search_from',
         'search_indices', 'search_query_hint', 'search_scroll', 'search_size',
-        'search_source', 'search_type', 'search_types', 'stop_words')
+        'search_source', 'search_type', 'search_types', 'stop_words', 'include')
     def mlt(self, index, doc_type, id, body=None, params=None):
         """
         Get documents that are "like" a specified document.
@@ -858,6 +858,7 @@ class Elasticsearch(object):
         :arg search_types: A comma-separated list of types to perform the query
             against (default: the same type as the document)
         :arg stop_words: A list of stop words to be ignored
+        :arg include: Whether to include the queried document from the response
         """
         _, data = self.transport.perform_request('GET', _make_path(index, doc_type, id, '_mlt'),
             params=params, body=body)
@@ -955,7 +956,6 @@ class Elasticsearch(object):
         :arg body: The search definition using the Query DSL
         :arg verbose: Specify whether to return verbose statistics about each
             iteration (default: false)
-    
         """
         _, data = self.transport.perform_request('PUT', _make_path(index,
             doc_type, '_bench'), params=params, body=body)
@@ -968,7 +968,6 @@ class Elasticsearch(object):
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/master/search-benchmark.html>`_
 
         :arg name: A benchmark name
-    
         """
         _, data = self.transport.perform_request('POST', _make_path('_bench',
             'abort', name), params=params)
@@ -983,9 +982,7 @@ class Elasticsearch(object):
         :arg index: A comma-separated list of index names; use `_all` or empty
             string to perform the operation on all indices
         :arg doc_type: The name of the document type
-    
         """
         _, data = self.transport.perform_request('GET', _make_path(index,
             doc_type, '_bench'), params=params)
         return data
-
