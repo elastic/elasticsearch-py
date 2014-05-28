@@ -817,7 +817,7 @@ class Elasticsearch(object):
             doc_type, id, '_percolate', 'count'), params=params, body=body)
         return data
 
-    @query_params('boost_terms', 'max_doc_freq', 'max_query_terms',
+    @query_params('boost_terms', 'include', 'max_doc_freq', 'max_query_terms',
         'max_word_length', 'min_doc_freq', 'min_term_freq', 'min_word_length',
         'mlt_fields', 'percent_terms_to_match', 'routing', 'search_from',
         'search_indices', 'search_query_hint', 'search_scroll', 'search_size',
@@ -833,6 +833,7 @@ class Elasticsearch(object):
         :arg id: The document ID
         :arg body: A specific search request definition
         :arg boost_terms: The boost factor
+        :arg include: Whether to include the queried document from the response
         :arg max_doc_freq: The word occurrence frequency as count: words with
             higher occurrence in the corpus will be ignored
         :arg max_query_terms: The maximum query terms to be included in the generated query
@@ -955,7 +956,6 @@ class Elasticsearch(object):
         :arg body: The search definition using the Query DSL
         :arg verbose: Specify whether to return verbose statistics about each
             iteration (default: false)
-    
         """
         _, data = self.transport.perform_request('PUT', _make_path(index,
             doc_type, '_bench'), params=params, body=body)
@@ -968,7 +968,6 @@ class Elasticsearch(object):
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/master/search-benchmark.html>`_
 
         :arg name: A benchmark name
-    
         """
         _, data = self.transport.perform_request('POST', _make_path('_bench',
             'abort', name), params=params)
@@ -983,9 +982,7 @@ class Elasticsearch(object):
         :arg index: A comma-separated list of index names; use `_all` or empty
             string to perform the operation on all indices
         :arg doc_type: The name of the document type
-    
         """
         _, data = self.transport.perform_request('GET', _make_path(index,
             doc_type, '_bench'), params=params)
         return data
-
