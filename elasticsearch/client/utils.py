@@ -1,6 +1,8 @@
+from __future__ import unicode_literals
+
 from datetime import date, datetime
 from functools import wraps
-from ..compat import string_types, quote_plus, u
+from ..compat import string_types, quote_plus
 
 # parts of URL to be omitted
 SKIP_IN_PATH = (None, '', [], ())
@@ -13,7 +15,7 @@ def _escape(value):
 
     # make sequences into comma-separated stings
     if isinstance(value, (list, tuple)):
-        value = u(',').join(value)
+        value = ','.join(value)
 
     # dates and datetimes into isoformat
     elif isinstance(value, (date, datetime)):

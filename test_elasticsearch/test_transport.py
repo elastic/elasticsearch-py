@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import time
 
 from elasticsearch.transport import Transport
 from elasticsearch.connection import Connection
 from elasticsearch.exceptions import ConnectionError
-from elasticsearch.compat import u
 
 from .test_cases import TestCase
 
@@ -55,7 +55,7 @@ class TestTransport(TestCase):
     def test_body_gets_encoded_into_bytes(self):
         t = Transport([{}], connection_class=DummyConnection)
 
-        t.perform_request('GET', '/', body=u('你好'))
+        t.perform_request('GET', '/', body='你好')
         self.assertEquals(1, len(t.get_connection().calls))
         self.assertEquals(('GET', '/', None, b'\xe4\xbd\xa0\xe5\xa5\xbd'), t.get_connection().calls[0][0])
 
