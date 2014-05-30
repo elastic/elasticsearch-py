@@ -1,7 +1,7 @@
 Python Elasticsearch Client
 ===========================
 
-Official low-level client for Elasticsearch. It's goal is to provide common
+Official low-level client for Elasticsearch. Its goal is to provide common
 ground for all Elasticsearch-related code in Python; because of this it tries
 to be opinion-free and very extendable.
 
@@ -75,7 +75,7 @@ The client's features include:
    decoded for performance reasons)
  * configurable automatic discovery of cluster nodes
  * persistent connections
- * load balancing (with pluggable selection strategy) across all availible nodes
+ * load balancing (with pluggable selection strategy) across all available nodes
  * failed connection penalization (time based - failed connections won't be
    retried until a timeout is reached)
  * thread safety
