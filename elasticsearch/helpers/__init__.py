@@ -1,8 +1,8 @@
 from itertools import islice
 from operator import methodcaller
 
-from elasticsearch.exceptions import ElasticsearchException
-from elasticsearch.compat import map
+from ..exceptions import ElasticsearchException
+from ..compat import map
 
 class BulkIndexError(ElasticsearchException):
     @property
