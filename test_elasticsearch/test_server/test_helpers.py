@@ -54,6 +54,15 @@ class TestStreamingBulk(ElasticsearchTestCase):
 
 
 class TestBulk(ElasticsearchTestCase):
+    def test_bulk_works_with_single_item(self):
+        docs = [{"answer": 42, '_id': 1}]
+        success, failed = helpers.bulk(self.client, docs, index='test-index', doc_type='answers', refresh=True)
+
+        self.assertEquals(1, success)
+        self.assertFalse(failed)
+        self.assertEquals(1, self.client.count(index='test-index', doc_type='answers')['count'])
+        self.assertEquals({"answer": 42}, self.client.get(index='test-index', doc_type='answers', id=1)['_source'])
+
     def test_all_documents_get_inserted(self):
         docs = [{"answer": x, '_id': x} for x in range(100)]
         success, failed = helpers.bulk(self.client, docs, index='test-index', doc_type='answers', refresh=True)
