@@ -417,7 +417,7 @@ class IndicesClient(NamespacedClient):
             params=params)
         return data
 
-    @query_params('order', 'timeout', 'master_timeout', 'flat_settings')
+    @query_params('create', 'order', 'timeout', 'master_timeout', 'flat_settings')
     def put_template(self, name, body, params=None):
         """
         Create an index template that will automatically be applied to new
@@ -426,6 +426,8 @@ class IndicesClient(NamespacedClient):
 
         :arg name: The name of the template
         :arg body: The template definition
+        :arg create: Whether the index template should only be added if new or
+            can also replace an existing one
         :arg order: The order for this template when merging multiple matching
             ones (higher numbers are merged later, overriding the lower numbers)
         :arg master_timeout: Specify timeout for connection to master
