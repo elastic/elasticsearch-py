@@ -36,7 +36,8 @@ def expand_action(data):
     return action, data.get('_source', data)
 
 
-def streaming_bulk(client, actions, chunk_size=500, raise_on_error=False, expand_action_callback=expand_action, **kwargs):
+def streaming_bulk(client, actions, chunk_size=500, raise_on_error=False, 
+	expand_action_callback=expand_action, chunk_size_bytes=None, **kwargs):
     """
     Streaming bulk consumes actions from the iterable passed in and yields
     results per action. For non-streaming usecases use
@@ -81,6 +82,8 @@ def streaming_bulk(client, actions, chunk_size=500, raise_on_error=False, expand
     :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use
     :arg actions: iterable containing the actions to be executed
     :arg chunk_size: number of docs in one chunk sent to es (default: 500)
+    :arg chunk_size_bytes: Approx max number of bytes to send in each chunk.
+        Set to None to have no limit (default: None).
     :arg raise_on_error: raise `BulkIndexError` containing errors (as `.errors`
         from the execution of the last chunk)
     :arg expand_action_callback: callback executed on each action passed in,
@@ -94,31 +97,42 @@ def streaming_bulk(client, actions, chunk_size=500, raise_on_error=False, expand
 
     while True:
         chunk = islice(actions, chunk_size)
-        bulk_actions = []
-        for action, data in chunk:
-            bulk_actions.append(action)
-            if data is not None:
-                bulk_actions.append(data)
+         
+        while True:
+            data_len, bulk_actions = 0, []
+            finished = True
+            for action, data in chunk:
+                bulk_actions.append(action)
+                if data is not None:
+                    bulk_actions.append(data)
+                    # If given a max chunk size in bytes, then set it here.
+                    if chunk_size_bytes:
+                        data_len += len(bytes(data))
+                        if data_len > chunk_size_bytes:
+                            finished = False
+                            break
 
-        if not bulk_actions:
-            return
+            if not bulk_actions:
+                return
+            
+            # send the actual request
+            resp = client.bulk(bulk_actions, **kwargs)
+            
+            # go through request-reponse pairs and detect failures
+            for op_type, item in map(methodcaller('popitem'), resp['items']):
+                ok = item.get('ok')
+                if not ok and raise_on_error:
+                    errors.append({op_type: item})
 
-        # send the actual request
-        resp = client.bulk(bulk_actions, **kwargs)
+                if not errors:
+                    # if we are not just recording all errors to be able to raise
+                    # them all at once, yield items individually
+                    yield ok, {op_type: item}
 
-        # go through request-reponse pairs and detect failures
-        for op_type, item in map(methodcaller('popitem'), resp['items']):
-            ok = item.get('ok')
-            if not ok and raise_on_error:
-                errors.append({op_type: item})
-
-            if not errors:
-                # if we are not just recording all errors to be able to raise
-                # them all at once, yield items individually
-                yield ok, {op_type: item}
-
-        if errors:
-            raise BulkIndexError('%i document(s) failed to index.' % len(errors), errors)
+            if finished:
+                break
+    if errors:
+        raise BulkIndexError('%i document(s) failed to index.' % len(errors), errors)
 
 def bulk(client, actions, stats_only=False, **kwargs):
     """
