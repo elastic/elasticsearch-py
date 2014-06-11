@@ -26,7 +26,7 @@ tests_require = [
 
 # use external unittest for 2.6
 if sys.version_info[:2] == (2, 6):
-    tests_require.append('unittest2')
+    install_requires.append('unittest2')
 
 if sys.version_info[0] == 2:
     # only require thrift if we are going to use it
