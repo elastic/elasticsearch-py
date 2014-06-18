@@ -1,5 +1,8 @@
 import time
-import json
+try:
+    import simplejson as json
+except ImportError:
+    import json
 
 from ..exceptions import TransportError, ConnectionError, ImproperlyConfigured
 from ..compat import urlencode
