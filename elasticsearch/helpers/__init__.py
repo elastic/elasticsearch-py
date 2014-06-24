@@ -105,7 +105,7 @@ def streaming_bulk(client, actions, chunk_size=500, raise_on_error=False, expand
 
         # go through request-reponse pairs and detect failures
         for op_type, item in map(methodcaller('popitem'), resp['items']):
-            ok = 200 <= item.get('status', 500) < 300
+            ok = item.get('ok')
             if not ok and raise_on_error:
                 errors.append({op_type: item})
 
