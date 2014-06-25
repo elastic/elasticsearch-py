@@ -31,6 +31,11 @@ CATCH_CODES = {
 # test features we have implemented
 IMPLEMENTED_FEATURES = ('regex', 'gtelte')
 
+# broken YAML tests on some releases
+SKIP_TESTS = {
+    (1, 1, 2): set(('TestCatRecovery10Basic', ))
+}
+
 class InvalidActionType(Exception):
     pass
 
@@ -201,6 +206,8 @@ def construct_case(filename, name):
     """
     def make_test(test_name, definition, i):
         def m(self):
+            if name in SKIP_TESTS.get(self.es_version, ()):
+                raise SkipTest()
             self.run_code(definition)
         m.__doc__ = '%s:%s.test_from_yaml_%d (%s): %s' % (
             __name__, name, i, '/'.join(filename.split('/')[-2:]), test_name)
