@@ -552,7 +552,7 @@ class Elasticsearch(object):
         :arg scroll: Specify how long a consistent view of the index should be
             maintained for scrolled search
         """
-        _, data = self.transport.perform_request('POST', _make_path('_search', 'scroll'),
+        _, data = self.transport.perform_request('GET', '/_search/scroll',
             params=params, body=scroll_id)
         return data
 
