@@ -16,7 +16,6 @@ env:
 install:
   - mkdir /tmp/elasticsearch
   - wget -O - http://s3-us-west-2.amazonaws.com/build.elasticsearch.org/origin/master/nightly/JDK6/elasticsearch-latest-SNAPSHOT.tar.gz | tar xz --directory=/tmp/elasticsearch --strip-components=1
-  - /tmp/elasticsearch/bin/plugin -install elasticsearch/elasticsearch-transport-memcached/3.0.0-SNAPSHOT
   - git clone https://github.com/elasticsearch/elasticsearch.git ../elasticsearch
   - pip install .
 
