@@ -219,7 +219,7 @@ class Transport(object):
         if self.sniff_on_connection_fail:
             self.sniff_hosts()
 
-    def perform_request(self, method, url, params=None, body=None):
+    def perform_request(self, method, url, params=None, body=None, api_timeout=None):
         """
         Perform the actual request. Retrieve a connection from the connection
         pool, pass all the information to it's perform_request method and
@@ -237,6 +237,8 @@ class Transport(object):
             underlying :class:`~elasticsearch.Connection` class for serialization
         :arg body: body of the request, will be serializes using serializer and
             passed to the connection
+        :arg api_timeout: client-side request timeout, either int, float or a
+            urllib3 Timeout object
         """
         if body is not None:
             body = self.serializer.dumps(body)
@@ -271,7 +273,8 @@ class Transport(object):
             connection = self.get_connection()
 
             try:
-                status, headers, data = connection.perform_request(method, url, params, body, ignore=ignore)
+                status, headers, data = connection.perform_request(
+                    method, url, params, body, ignore=ignore, timeout=api_timeout)
             except ConnectionError:
                 self.mark_dead(connection)
 
@@ -284,4 +287,3 @@ class Transport(object):
                 if data:
                     data = self.deserializer.loads(data, headers.get('content-type'))
                 return status, data
-

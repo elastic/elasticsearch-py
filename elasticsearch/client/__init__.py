@@ -623,7 +623,7 @@ class Elasticsearch(object):
         return data
 
     @query_params('consistency', 'refresh', 'routing', 'replication', 'timeout')
-    def bulk(self, body, index=None, doc_type=None, params=None):
+    def bulk(self, body, index=None, doc_type=None, params=None, api_timeout=None):
         """
         Perform many index/delete operations in a single API call.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/docs-bulk.html>`_
@@ -641,9 +641,11 @@ class Elasticsearch(object):
         :arg routing: Specific routing value
         :arg replication: Explicitly set the replication type (default: sync)
         :arg timeout: Explicit operation timeout
+        :arg api_timeout: client-side request timeout, either int, float or a
+            urllib3 Timeout object
         """
         _, data = self.transport.perform_request('POST', _make_path(index, doc_type, '_bulk'),
-            params=params, body=self._bulk_body(body))
+            params=params, body=self._bulk_body(body), api_timeout=api_timeout)
         return data
 
     @query_params('search_type')
