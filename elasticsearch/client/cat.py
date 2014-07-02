@@ -276,3 +276,21 @@ class CatClient(NamespacedClient):
         _, data = self.transport.perform_request('GET', _make_path('_cat',
             'fielddata', fields), params=params)
         return data
+
+    @query_params('h', 'help', 'local', 'master_timeout', 'v')
+    def plugins(self, params=None):
+        """
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/cat-plugins.html>`_
+
+        :arg h: Comma-separated list of column names to display
+        :arg help: Return help information, default False
+        :arg local: Return local information, do not retrieve the state from
+            master node (default: false)
+        :arg master_timeout: Explicit operation timeout for connection to master
+            node
+        :arg v: Verbose mode. Display column headers, default False
+        """
+        _, data = self.transport.perform_request('GET', '/_cat/plugins',
+            params=params)
+        return data
+

@@ -2,8 +2,8 @@ from .utils import NamespacedClient, query_params, _make_path
 from ..exceptions import NotFoundError
 
 class IndicesClient(NamespacedClient):
-    @query_params('analyzer', 'field', 'filters', 'format', 'index',
-        'prefer_local', 'text', 'tokenizer')
+    @query_params('analyzer', 'char_filters', 'field', 'filters', 'format',
+        'index', 'prefer_local', 'text', 'tokenizer')
     def analyze(self, index=None, body=None, params=None):
         """
         Perform the analysis process on a text and return the tokens breakdown of the text.
@@ -12,6 +12,8 @@ class IndicesClient(NamespacedClient):
         :arg index: The name of the index to scope the operation
         :arg body: The text on which the analysis should be performed
         :arg analyzer: The name of the analyzer to use
+        :arg char_filters: A comma-separated list of character filters to use
+            for the analysis
         :arg field: Use the analyzer configured for this field (instead of
             passing the analyzer name)
         :arg filters: A comma-separated list of filters to use for the analysis
@@ -116,15 +118,23 @@ class IndicesClient(NamespacedClient):
             params=params)
         return data
 
-    @query_params('timeout', 'master_timeout')
+    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
+        'master_timeout', 'timeout')
     def close(self, index, params=None):
         """
         Close an index to remove it's overhead from the cluster. Closed index
         is blocked for read/write operations.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-open-close.html>`_
 
-        :arg index: A comma-separated list of indices to delete; use `_all` or
-            '*' to delete all indices
+        :arg index: A comma-separated list of indices to close; use `_all` or
+            '*' to close all indices
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+            expression resolves into no concrete indices. (This includes `_all`
+            string or when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete
+            indices that are open, closed or both., default u'open'
+        :arg ignore_unavailable: Whether specified concrete indices should be
+            ignored when unavailable (missing or closed)
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         """
@@ -147,13 +157,21 @@ class IndicesClient(NamespacedClient):
             params=params)
         return data
 
-    @query_params('local')
+    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
+        'local')
     def exists(self, index, params=None):
         """
         Return a boolean indicating whether given index exists.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-indices-exists.html>`_
 
         :arg index: A list of indices to check
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+            expression resolves into no concrete indices. (This includes `_all`
+            string or when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete
+            indices that are open, closed or both., default u'open'
+        :arg ignore_unavailable: Whether specified concrete indices should be
+            ignored when unavailable (missing or closed)
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
         """
@@ -191,29 +209,8 @@ class IndicesClient(NamespacedClient):
             return False
         return True
 
-    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_indices', 'ignore_unavailable')
-    def snapshot_index(self, index=None, params=None):
-        """
-        Explicitly perform a snapshot through the gateway of one or more indices (backup them).
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-gateway-snapshot.html>`_
-
-        :arg index: A comma-separated list of index names; use `_all` or empty
-            string for all indices
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all` string or
-            when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to concrete indices
-            that are open, closed or both.
-        :arg ignore_indices: When performed on multiple indices, allows to
-            ignore `missing` ones (default: none)
-        :arg ignore_unavailable: Whether specified concrete indices should be ignored
-            when unavailable (missing or closed)
-        """
-        _, data = self.transport.perform_request('POST',
-            _make_path(index, '_gateway', 'snapshot'), params=params)
-        return data
-
-    @query_params('ignore_conflicts', 'timeout', 'master_timeout')
+    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_conflicts',
+        'ignore_unavailable', 'master_timeout', 'timeout')
     def put_mapping(self, doc_type, body, index=None, params=None):
         """
         Register specific mapping definition for a specific type.
@@ -224,8 +221,15 @@ class IndicesClient(NamespacedClient):
             operation on all indices.
         :arg doc_type: The name of the document type
         :arg body: The mapping definition
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+            expression resolves into no concrete indices. (This includes `_all`
+            string or when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete
+            indices that are open, closed or both., default u'open'
         :arg ignore_conflicts: Specify whether to ignore conflicts while
             updating the mapping (default: false)
+        :arg ignore_unavailable: Whether specified concrete indices should be
+            ignored when unavailable (missing or closed)
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         """
@@ -508,35 +512,55 @@ class IndicesClient(NamespacedClient):
             params=params)
         return data
 
-    @query_params('master_timeout', 'flat_settings')
+    @query_params('allow_no_indices', 'expand_wildcards', 'flat_settings',
+        'ignore_unavailable', 'master_timeout')
     def put_settings(self, body, index=None, params=None):
         """
         Change specific index level settings in real time.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-update-settings.html>`_
 
+        :arg body: The index settings to be updated
         :arg index: A comma-separated list of index names; use `_all` or empty
             string to perform the operation on all indices
-        :arg master_timeout: Specify timeout for connection to master
-        :arg body: The index settings to be updated
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+            expression resolves into no concrete indices. (This includes `_all`
+            string or when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete
+            indices that are open, closed or both., default u'open'
         :arg flat_settings: Return settings in flat format (default: false)
+        :arg ignore_unavailable: Whether specified concrete indices should be
+            ignored when unavailable (missing or closed)
+        :arg master_timeout: Specify timeout for connection to master
         """
         _, data = self.transport.perform_request('PUT', _make_path(index, '_settings'),
             params=params, body=body)
         return data
 
-    @query_params('master_timeout')
+    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
+        'master_timeout')
     def put_warmer(self, name, body, index=None, doc_type=None, params=None):
         """
         Create an index warmer to run registered search requests to warm up the
         index before it is available for search.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-warmers.html>`_
 
-        :arg index: A comma-separated list of index names to register the warmer for;
-            use `_all` or empty string to perform the operation on all indices
         :arg name: The name of the warmer
+        :arg body: The search request definition for the warmer (query, filters,
+            facets, sorting, etc)
+        :arg index: A comma-separated list of index names to register the warmer
+            for; use `_all` or omit to perform the operation on all indices
         :arg doc_type: A comma-separated list of document types to register the
             warmer for; leave empty to perform the operation on all types
-        :arg body: The search request definition for the warmer (query, filters, facets, sorting, etc)
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+            expression resolves into no concrete indices in the search request
+            to warm. (This includes `_all` string or when no indices have been
+            specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete
+            indices that are open, closed or both, in the search request to
+            warm., default u'open'
+        :arg ignore_unavailable: Whether specified concrete indices should be
+            ignored when unavailable (missing or closed) in the search request
+            to warm
         :arg master_timeout: Specify timeout for connection to master
         """
         if doc_type and not index:
@@ -545,7 +569,8 @@ class IndicesClient(NamespacedClient):
             params=params, body=body)
         return data
 
-    @query_params('local')
+    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
+        'local')
     def get_warmer(self, index=None, doc_type=None, name=None, params=None):
         """
         Retreieve an index warmer.
@@ -555,7 +580,15 @@ class IndicesClient(NamespacedClient):
             operation; use `_all` to perform the operation on all indices
         :arg doc_type: A comma-separated list of document types to restrict the
             operation; leave empty to perform the operation on all types
-        :arg name: The name of the warmer (supports wildcards); leave empty to get all warmers
+        :arg name: The name of the warmer (supports wildcards); leave empty to
+            get all warmers
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+            expression resolves into no concrete indices. (This includes `_all`
+            string or when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete
+            indices that are open, closed or both., default u'open'
+        :arg ignore_unavailable: Whether specified concrete indices should be
+            ignored when unavailable (missing or closed)
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
         """

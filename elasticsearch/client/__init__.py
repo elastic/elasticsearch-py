@@ -663,28 +663,37 @@ class Elasticsearch(object):
             params=params, body=self._bulk_body(body))
         return data
 
-    @query_params('consistency', 'allow_no_indices', 'expand_wildcards',
-        'ignore_unavailable', 'replication', 'routing', 'source', 'timeout', 'q')
+    @query_params('allow_no_indices', 'analyzer', 'consistency',
+        'default_operator', 'df', 'expand_wildcards', 'ignore_unavailable', 'q',
+        'replication', 'routing', 'source', 'timeout')
     def delete_by_query(self, index, doc_type=None, body=None, params=None):
         """
         Delete documents from one or more indices and one or more types based on a query.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/docs-delete-by-query.html>`_
 
-        :arg index: A comma-separated list of indices to restrict the operation
+        :arg index: A comma-separated list of indices to restrict the operation;
+            use `_all` to perform the operation on all indices
         :arg doc_type: A comma-separated list of types to restrict the operation
-        :arg body: A query to restrict the operation
-        :arg consistency: Specific write consistency setting for the operation
+        :arg body: A query to restrict the operation specified with the Query
+            DSL
         :arg allow_no_indices: Whether to ignore if a wildcard indices
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
+        :arg analyzer: The analyzer to use for the query string
+        :arg consistency: Specific write consistency setting for the operation
+        :arg default_operator: The default operator for query string query (AND
+            or OR), default u'OR'
+        :arg df: The field to use as default where no field prefix is given in
+            the query string
         :arg expand_wildcards: Whether to expand wildcard expression to concrete
-            indices that are open, closed or both., default 'open'
+            indices that are open, closed or both., default u'open'
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
-        :arg replication: Specific replication type (default: sync)
-        :arg routing: Specific routing value
-        :arg source: The URL-encoded query definition (instead of using the request body)
         :arg q: Query in the Lucene query string syntax
+        :arg replication: Specific replication type, default u'sync'
+        :arg routing: Specific routing value
+        :arg source: The URL-encoded query definition (instead of using the
+            request body)
         :arg timeout: Explicit operation timeout
         """
         _, data = self.transport.perform_request('DELETE', _make_path(index, doc_type, '_query'),
@@ -719,8 +728,8 @@ class Elasticsearch(object):
         return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
-        'percolate_index', 'percolate_type', 'preference', 'routing', 'version',
-        'version_type')
+        'percolate_format', 'percolate_index', 'percolate_type', 'preference',
+        'routing', 'version', 'version_type')
     def percolate(self, index, doc_type, id=None, body=None, params=None):
         """
         The percolator allows to register queries against an index, and then
@@ -742,6 +751,8 @@ class Elasticsearch(object):
             indices that are open, closed or both., default 'open'
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
+        :arg percolate_format: Return an array of matching query IDs instead of
+            objects
         :arg percolate_index: The index to percolate the document into. Defaults
             to index.
         :arg percolate_type: The type to percolate document into. Defaults to

@@ -113,5 +113,17 @@ class SnapshotClient(NamespacedClient):
         _, data = self.transport.perform_request('POST', _make_path('_snapshot',
             repository, snapshot, '_restore'), params=params, body=body)
         return data
-    
 
+    @query_params('master_timeout')
+    def status(self, repository=None, snapshot=None, params=None):
+        """
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-snapshots.html>`_
+
+        :arg repository: A repository name
+        :arg snapshot: A comma-separated list of snapshot names
+        :arg master_timeout: Explicit operation timeout for connection to master
+            node
+        """
+        _, data = self.transport.perform_request('GET', _make_path('_snapshot',
+            repository, snapshot, '_status'), params=params)
+        return data
