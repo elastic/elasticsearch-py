@@ -123,8 +123,8 @@ class IndicesClient(NamespacedClient):
         is blocked for read/write operations.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-open-close.html>`_
 
-        :arg index: A comma-separated list of indices to delete; use `_all` or
-            '*' to delete all indices
+        :arg index: A comma-separated list of indices to close; use `_all` or
+            '*' to close all indices.
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         """
