@@ -3,8 +3,17 @@
 Changelog
 =========
 
-1.0.1 (dev)
------------
+1.1.0 (2014-07-02)
+------------------
+
+Compatibility with newest Elasticsearch APIs.
+
+ * Test helpers - `ElasticsearchTestCase` and `get_test_client` for use in your
+   tests
+ * Python 3.2 compatibility
+ * Use ``simplejson`` if installed instead of stdlib json library
+ * Introducing a global `request_timeout` parameter for per-call timeout
+ * Bug fixes
 
 1.0.0 (2014-02-11)
 ------------------
