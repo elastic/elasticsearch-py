@@ -26,6 +26,13 @@ them::
     # ignore 404 and 400
     es.indices.delete(index='test-index', ignore=[400, 404])
 
+You can also specify ``request_timeout`` (float) as part of any API call, this
+value will get passed to the ``perform_request`` method of the connection
+class::
+
+    # only wait for 1 second, regardless of the client's default
+    es.cluster.health(wait_for_status='yellow', request_timeout=1)
+
 .. note::
    
     for compatibility with the Python ecosystem we use ``from_`` instead of
