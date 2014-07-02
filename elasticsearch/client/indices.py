@@ -822,3 +822,25 @@ class IndicesClient(NamespacedClient):
         _, data = self.transport.perform_request('GET', _make_path(index,
             '_recovery'), params=params)
         return data
+
+    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_indices', 'ignore_unavailable')
+    def snapshot_index(self, index=None, params=None):
+        """
+        Explicitly perform a snapshot through the gateway of one or more indices (backup them).
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-gateway-snapshot.html>`_
+
+        :arg index: A comma-separated list of index names; use `_all` or empty
+            string for all indices
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+            expression resolves into no concrete indices. (This includes `_all` string or
+            when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :arg ignore_indices: When performed on multiple indices, allows to
+            ignore `missing` ones (default: none)
+        :arg ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
+        """
+        _, data = self.transport.perform_request('POST',
+            _make_path(index, '_gateway', 'snapshot'), params=params)
+        return data
