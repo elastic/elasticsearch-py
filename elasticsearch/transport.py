@@ -262,8 +262,10 @@ class Transport(object):
                 pass
 
         ignore = ()
-        if params and 'ignore' in params:
-            ignore = params.pop('ignore')
+        timeout = None
+        if params:
+            timeout = params.pop('request_timeout', None)
+            ignore = params.pop('ignore', ())
             if isinstance(ignore, int):
                 ignore = (ignore, )
 
@@ -271,7 +273,7 @@ class Transport(object):
             connection = self.get_connection()
 
             try:
-                status, headers, data = connection.perform_request(method, url, params, body, ignore=ignore)
+                status, headers, data = connection.perform_request(method, url, params, body, ignore=ignore, timeout=timeout)
             except ConnectionError:
                 self.mark_dead(connection)
 
