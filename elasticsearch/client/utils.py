@@ -46,7 +46,7 @@ def _make_path(*parts):
         quote_plus(_escape(p), b',*') for p in parts if p not in SKIP_IN_PATH)
 
 # parameters that apply to all methods
-GLOBAL_PARAMS = ('pretty', 'format', 'request_timeout')
+GLOBAL_PARAMS = ('pretty', 'format')
 
 def query_params(*es_query_params):
     """
@@ -61,9 +61,10 @@ def query_params(*es_query_params):
                 if p in kwargs:
                     params[p] = _escape(kwargs.pop(p))
 
-            # don't treat ignore as other params to avoid escaping
-            if 'ignore' in kwargs:
-                params['ignore'] = kwargs.pop('ignore')
+            # don't treat ignore and request_timeout as other params to avoid escaping
+            for p in ('ignore', 'request_timeout'):
+                if p in kwargs:
+                    params[p] = kwargs.pop(p)
             return func(*args, params=params, **kwargs)
         return _wrapped
     return _wrapper
