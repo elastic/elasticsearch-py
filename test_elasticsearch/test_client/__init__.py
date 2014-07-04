@@ -39,6 +39,11 @@ class TestNormalizeHosts(TestCase):
 
 
 class TestClient(ElasticsearchTestCase):
+    def test_request_timeout_is_passed_through_unescaped(self):
+        self.client.ping(request_timeout=.1)
+        calls = self.assert_url_called('HEAD', '/')
+        self.assertEquals([({'request_timeout': .1}, None)], calls)
+
     def test_from_in_search(self):
         self.client.search(index='i', doc_type='t', from_=10)
         calls = self.assert_url_called('GET', '/i/t/_search')
