@@ -3,6 +3,11 @@
 Changelog
 =========
 
+1.1.1 (2014-07-04)
+------------------
+
+Bugfix release fixing escaping issues with `request_timeout`.
+
 1.1.0 (2014-07-02)
 ------------------
 
