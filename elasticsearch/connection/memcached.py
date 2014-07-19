@@ -1,8 +1,11 @@
 import time
 try:
-    import simplejson as json
+    import yajl as json
 except ImportError:
-    import json
+    try:
+        import simplejson as json
+    except ImportError:
+        import json
 
 from ..exceptions import TransportError, ConnectionError, ImproperlyConfigured
 from ..compat import urlencode

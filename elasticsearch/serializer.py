@@ -1,7 +1,10 @@
 try:
-    import simplejson as json
+    import yajl as json
 except ImportError:
-    import json
+    try:
+        import simplejson as json
+    except ImportError:
+        import json
 from datetime import date, datetime
 from decimal import Decimal
 
