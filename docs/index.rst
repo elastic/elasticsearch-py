@@ -1,7 +1,7 @@
 Python Elasticsearch Client
 ===========================
 
-Official low-level client for Elasticsearch. It's goal is to provide common
+Official low-level client for Elasticsearch. Its goal is to provide common
 ground for all Elasticsearch-related code in Python; because of this it tries
 to be opinion-free and very extendable.
 
@@ -77,7 +77,7 @@ per node and keep track of the health of individual nodes - if a node becomes
 unresponsive (throwing exceptions while connecting to it) it's put on a timeout
 by the :class:`~elasticsearch.ConnectionPool` class and only returned to the
 circulation after the timeout is over (or when no live nodes are left). By
-default node are randomized before passed into the pool and round-robin
+default nodes are randomized before being passed into the pool and round-robin
 strategy is used for load balancing.
 
 You can customize this behavior by passing parameters to the
