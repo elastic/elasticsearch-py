@@ -1001,3 +1001,82 @@ class Elasticsearch(object):
         _, data = self.transport.perform_request('GET', _make_path(index,
             doc_type, '_bench'), params=params)
         return data
+
+    @query_params()
+    def put_script(self, lang, id, body, params=None):
+        """
+        Create a script in given language with specified ID.
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-scripting.html>`_
+
+        :arg lang: Script language
+        :arg id: Script ID
+        :arg body: The document
+        """
+        _, data = self.transport.perform_request('PUT', _make_path('_scripts',
+            lang, id), params=params, body=body)
+        return data
+
+    @query_params()
+    def get_script(self, lang, id, params=None):
+        """
+        Retrieve a script from the API.
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-scripting.html>`_
+
+        :arg lang: Script language
+        :arg id: Script ID
+        """
+        _, data = self.transport.perform_request('GET', _make_path('_scripts',
+            lang, id), params=params)
+        return data
+
+    @query_params()
+    def delete_script(self, lang, id, params=None):
+        """
+        Remove a stored script from elasticsearch.
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-scripting.html>`_
+
+        :arg lang: Script language
+        :arg id: Script ID
+        """
+        _, data = self.transport.perform_request('DELETE',
+            _make_path('_scripts', lang, id), params=params)
+        return data
+
+    @query_params()
+    def put_template(self, id, body, params=None):
+        """
+        Create a search template.
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-template.html>`_
+
+        :arg id: Template ID
+        :arg body: The document
+        """
+        _, data = self.transport.perform_request('PUT', _make_path('_search',
+            'template', id), params=params, body=body)
+        return data
+
+    @query_params()
+    def get_template(self, id, body=None, params=None):
+        """
+        Retrieve a search template.
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-template.html>`_
+
+        :arg id: Template ID
+        :arg body: The document
+        """
+        _, data = self.transport.perform_request('GET', _make_path('_search',
+            'template', id), params=params, body=body)
+        return data
+
+    @query_params()
+    def delete_template(self, id=None, params=None):
+        """
+        Delete a search template.
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-template.html>`_
+
+        :arg id: Template ID
+        """
+        _, data = self.transport.perform_request('DELETE', _make_path('_search',
+            'template', id), params=params)
+        return data
+
