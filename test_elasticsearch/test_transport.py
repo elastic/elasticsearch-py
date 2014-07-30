@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 import time
 
-from elasticsearch.transport import Transport
+from elasticsearch.transport import Transport, get_host_info
 from elasticsearch.connection import Connection
 from elasticsearch.exceptions import ConnectionError
 
@@ -36,6 +36,20 @@ CLUSTER_NODES = '''{
         }
     }
 }'''
+
+class TestHostsInfoCallback(TestCase):
+    def test_master_only_nodes_are_ignored(self):
+        nodes = [
+            {'attributes': {'data': 'false', 'client': 'true'}},
+            {'attributes': {'data': 'false'}},
+            {'attributes': {'data': 'false', 'master': 'true'}},
+            {'attributes': {'data': 'false', 'master': 'false'}},
+            {'attributes': {}},
+            {}
+        ]
+        chosen = [ i for i, node_info in enumerate(nodes) if get_host_info(node_info, i) is not None]
+        self.assertEquals([0, 3, 4, 5], chosen)
+
 
 class TestTransport(TestCase):
     def test_request_timeout_extracted_from_params_and_passed(self):

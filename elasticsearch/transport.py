@@ -18,11 +18,19 @@ def get_host_info(node_info, host):
 
     Useful for filtering nodes (by proximity for example) or if additional
     information needs to be provided for the :class:`~elasticsearch.Connection`
-    class.
+    class. By default master only nodes are filtered out since they shouldn't
+    typically be used for API operations.
 
     :arg node_info: node information from `/_cluster/nodes`
     :arg host: connection information (host, port) extracted from the node info
     """
+    attrs = node_info.get('attributes', {})
+
+    # ignore master only nodes
+    if (attrs.get('data', 'true') == 'false' and
+        attrs.get('client', 'false') == 'false' and
+        attrs.get('master', 'true') == 'true'):
+        return None
     return host
 
 class Transport(object):
