@@ -58,8 +58,8 @@ def streaming_bulk(client, actions, chunk_size=500, raise_on_error=False, expand
     Alternatively, if `_source` is not present, it will pop all metadata fields
     from the doc and use the rest as the document data.
 
-    Alternative actions (`_op_type` field defaults to `index`) can be sent as
-    well::
+    If you wish to perform other operations, like `delete` or `update` use the
+    `_op_type` field in your actions (`_op_type` defaults to `index`)::
 
         {
             '_op_type': 'delete',
