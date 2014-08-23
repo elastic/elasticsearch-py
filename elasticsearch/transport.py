@@ -265,8 +265,8 @@ class Transport(object):
         if body is not None:
             try:
                 body = body.encode('utf-8')
-            except UnicodeDecodeError:
-                # Python 2 and str, no need to re-encode
+            except (UnicodeDecodeError, AttributeError):
+                # bytes/str - no need to re-encode
                 pass
 
         ignore = ()
