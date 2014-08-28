@@ -15,7 +15,7 @@ env:
 
 install:
   - mkdir /tmp/elasticsearch
-  - wget -O - http://s3-us-west-2.amazonaws.com/build.elasticsearch.org/origin/master/nightly/JDK7/elasticsearch-latest-SNAPSHOT.tar.gz | tar xz --directory=/tmp/elasticsearch --strip-components=1
+  - wget -O - http://s3-eu-west-1.amazonaws.com/build-eu.elasticsearch.org/origin/master/nightly/JDK7/elasticsearch-latest-SNAPSHOT.tar.gz | tar xz --directory=/tmp/elasticsearch --strip-components=1
   - git clone https://github.com/elasticsearch/elasticsearch.git ../elasticsearch
   - pip install .
 
