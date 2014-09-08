@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from socket import timeout as SocketTimeout
 import time
 
 try:
@@ -61,7 +62,7 @@ class ThriftConnection(PoolingConnection):
             tclient = self._get_connection()
             response = tclient.execute(request)
             duration = time.time() - start
-        except TException as e:
+        except (TException, SocketTimeout) as e:
             self.log_request_fail(method, url, body, time.time() - start, exception=e)
             raise ConnectionError('N/A', str(e), e)
         finally:
