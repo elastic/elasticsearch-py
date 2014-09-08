@@ -1002,7 +1002,7 @@ class Elasticsearch(object):
             doc_type, '_bench'), params=params)
         return data
 
-    @query_params()
+    @query_params('op_type', 'version', 'version_type')
     def put_script(self, lang, id, body, params=None):
         """
         Create a script in given language with specified ID.
@@ -1011,12 +1011,15 @@ class Elasticsearch(object):
         :arg lang: Script language
         :arg id: Script ID
         :arg body: The document
+        :arg op_type: Explicit operation type, default u'index'
+        :arg version: Explicit version number for concurrency control
+        :arg version_type: Specific version type
         """
         _, data = self.transport.perform_request('PUT', _make_path('_scripts',
             lang, id), params=params, body=body)
         return data
 
-    @query_params()
+    @query_params('version', 'version_type')
     def get_script(self, lang, id, params=None):
         """
         Retrieve a script from the API.
@@ -1024,12 +1027,14 @@ class Elasticsearch(object):
 
         :arg lang: Script language
         :arg id: Script ID
+        :arg version: Explicit version number for concurrency control
+        :arg version_type: Specific version type
         """
         _, data = self.transport.perform_request('GET', _make_path('_scripts',
             lang, id), params=params)
         return data
 
-    @query_params()
+    @query_params('version', 'version_type')
     def delete_script(self, lang, id, params=None):
         """
         Remove a stored script from elasticsearch.
@@ -1037,6 +1042,8 @@ class Elasticsearch(object):
 
         :arg lang: Script language
         :arg id: Script ID
+        :arg version: Explicit version number for concurrency control
+        :arg version_type: Specific version type
         """
         _, data = self.transport.perform_request('DELETE',
             _make_path('_scripts', lang, id), params=params)
