@@ -81,7 +81,7 @@ class ClusterClient(NamespacedClient):
         _, data = self.transport.perform_request('GET', url, params=params)
         return data
 
-    @query_params('dry_run', 'explain', 'filter_metadata', 'master_timeout', 'timeout')
+    @query_params('dry_run', 'explain', 'master_timeout', 'metric', 'timeout')
     def reroute(self, body=None, params=None):
         """
         Explicitly execute a cluster reroute allocation command including specific commands.
@@ -92,6 +92,8 @@ class ClusterClient(NamespacedClient):
         :arg explain: Return an explanation of why the commands can or cannot be executed
         :arg filter_metadata: Don't return cluster state metadata (default: false)
         :arg master_timeout: Explicit operation timeout for connection to master node
+        :arg metric: Limit the information returned to the specified metrics.
+            Defaults to all but metadata
         :arg timeout: Explicit operation timeout
         """
         _, data = self.transport.perform_request('POST', '/_cluster/reroute', params=params, body=body)
