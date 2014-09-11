@@ -38,8 +38,7 @@ class Urllib3HttpConnection(Connection):
         start = time.time()
         try:
             kw = {}
-            if timeout:
-                kw['timeout'] = timeout
+            kw['timeout'] = timeout or self.timeout
             headers = self.headers.copy()
             if body:
                 headers['content-length'] = str(len(body))
