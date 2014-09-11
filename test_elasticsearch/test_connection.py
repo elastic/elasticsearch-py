@@ -59,7 +59,7 @@ class TestUrllib3Connection(TestCase):
         m.return_value.status = 200
 
         con.perform_request('PUT', '/', body='0123456789'.encode('utf-8'))
-        m.assert_called_once_with('PUT', '/', '0123456789'.encode('utf-8'), headers={'content-length': '10'}, retries=False)
+        m.assert_called_once_with('PUT', '/', '0123456789'.encode('utf-8'), headers={'content-length': '10'}, timeout=10, retries=False)
 
 class TestRequestsConnection(TestCase):
     def _get_mock_connection(self, connection_params={}, status_code=200, response_body='{}'):
