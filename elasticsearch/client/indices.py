@@ -96,6 +96,26 @@ class IndicesClient(NamespacedClient):
             params=params, body=body)
         return data
 
+    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
+        'local')
+    def get(self, index, feature=None, params=None):
+        """
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-get.html>`_
+
+        :arg index: A comma-separated list of index names
+        :arg feature: A comma-separated list of features
+        :arg allow_no_indices: Ignore if a wildcard expression resolves to no
+            concrete indices (default: false)
+        :arg expand_wildcards: Whether wildcard expressions should get expanded
+            to open or closed indices (default: open)
+        :arg ignore_unavailable: Ignore unavailable indexes (default: false)
+        :arg local: Return local information, do not retrieve the state from
+            master node (default: false)
+        """
+        _, data = self.transport.perform_request('GET', _make_path(index,
+            feature), params=params)
+        return data
+
     @query_params('timeout', 'master_timeout' 'allow_no_indices', 'expand_wildcards',
         'ignore_unavailable')
     def open(self, index, params=None):
