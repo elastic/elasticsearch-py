@@ -100,7 +100,7 @@ class IndicesClient(NamespacedClient):
         'local')
     def get(self, index, feature=None, params=None):
         """
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-get.html>`_
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-get-index.html>`_
 
         :arg index: A comma-separated list of index names
         :arg feature: A comma-separated list of features
