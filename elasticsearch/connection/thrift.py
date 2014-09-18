@@ -65,9 +65,9 @@ class ThriftConnection(PoolingConnection):
         except (TException, SocketTimeout) as e:
             self.log_request_fail(method, url, body, time.time() - start, exception=e)
             raise ConnectionError('N/A', str(e), e)
-        finally:
-            if tclient:
-                self._release_connection(tclient)
+
+        if tclient:
+            self._release_connection(tclient)
 
         if not (200 <= response.status < 300) and response.status not in ignore:
             self.log_request_fail(method, url, body, duration, response.status)
