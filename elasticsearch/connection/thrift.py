@@ -49,6 +49,7 @@ class ThriftConnection(PoolingConnection):
 
         protocol = TBinaryProtocol.TBinaryProtocolAccelerated(transport)
         client = Rest.Client(protocol)
+        client.transport = transport
         transport.open()
         return client
 
@@ -64,10 +65,11 @@ class ThriftConnection(PoolingConnection):
             duration = time.time() - start
         except (TException, SocketTimeout) as e:
             self.log_request_fail(method, url, body, time.time() - start, exception=e)
-            raise ConnectionError('N/A', str(e), e)
-        finally:
             if tclient:
-                self._release_connection(tclient)
+                tclient.transport.close()
+            raise ConnectionError('N/A', str(e), e)
+
+        self._release_connection(tclient)
 
         if not (200 <= response.status < 300) and response.status not in ignore:
             self.log_request_fail(method, url, body, duration, response.status)
