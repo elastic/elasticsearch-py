@@ -66,7 +66,11 @@ class ThriftConnection(PoolingConnection):
         except (TException, SocketTimeout) as e:
             self.log_request_fail(method, url, body, time.time() - start, exception=e)
             if tclient:
-                tclient.transport.close()
+                try:
+                    # try closing transport socket
+                    tclient.transport.close()
+                except:
+                    pass
             raise ConnectionError('N/A', str(e), e)
 
         self._release_connection(tclient)
