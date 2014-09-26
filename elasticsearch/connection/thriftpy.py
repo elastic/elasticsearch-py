@@ -6,7 +6,7 @@ import os
 import time
 from socket import timeout as SocketTimeout
 
-THRIFT_FILE = os.path.join(os.dirname(__file__), 'elasticsearch.thrift')
+THRIFT_FILE = os.path.join(os.path.dirname(__file__), 'elasticsearch.thrift')
 
 try:
     import thriftpy
