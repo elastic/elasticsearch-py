@@ -12,6 +12,7 @@ env:
   # different connection classes to test
   - TEST_ES_CONNECTION=Urllib3HttpConnection
   - TEST_ES_CONNECTION=RequestsHttpConnection
+  - TEST_ES_CONNECTION=ThriftpyConnection
 
 install:
   - mkdir /tmp/elasticsearch
