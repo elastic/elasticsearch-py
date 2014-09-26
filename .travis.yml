@@ -21,6 +21,7 @@ install:
   - pip install .
 
 before_script:
+  - if [[ $TEST_ES_CONNECTION == 'ThriftpyConnection' ]]; then /tmp/elasticsearch/bin/plugin -install elasticsearch/elasticsearch-transport-thrift/2.3.0; fi
   - /tmp/elasticsearch/bin/elasticsearch -d -D es.path.data=/tmp -D es.gateway.type=none -D es.index.store.type=memory -D es.discovery.zen.ping.multicast.enabled=false -Des.node.bench=true
 
 script:

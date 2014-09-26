@@ -1,4 +1,5 @@
 import re
+import sys
 from mock import Mock, patch
 import urllib3
 
@@ -33,6 +34,8 @@ class TestThriftConnection(TestCase):
 
 class TestThriftpyConnection(TestCase):
     def setUp(self):
+        if sys.version_info[:2] == (2, 6):
+            raise SkipTest('Thriftpy is not available.')
         if not THRIFTPY_AVAILABLE:
             raise SkipTest('Thriftpy is not available.')
         super(TestThriftpyConnection, self).setUp()
