@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from socket import timeout as SocketTimeout
 import time
+import logging
 
 try:
     from .esthrift import Rest
@@ -15,6 +16,8 @@ except ImportError:
 
 from ..exceptions import ConnectionError, ImproperlyConfigured
 from .pooling import PoolingConnection
+
+logger = logging.getLogger('elasticsearch')
 
 class ThriftConnection(PoolingConnection):
     """
@@ -69,8 +72,11 @@ class ThriftConnection(PoolingConnection):
                 try:
                     # try closing transport socket
                     tclient.transport.close()
-                except:
-                    pass
+                except Exception as e:
+                    logger.warning(
+                        'Exception %s occured when closing a failed thrift connection.',
+                        e, exc_info=True
+                    )
             raise ConnectionError('N/A', str(e), e)
 
         self._release_connection(tclient)
