@@ -24,7 +24,7 @@ __all__ = ('THRIFT_FILE', 'THRIFTPY_AVAILABLE', 'ThriftpyConnection')
 
 
 class ThriftpyConnection(PoolingConnection):
-    transport_schema = 'thriftpy'
+    transport_schema = 'thrift'
 
     def __init__(self, host='localhost', port=9500, **kwargs):
         super(ThriftpyConnection, self).__init__(
