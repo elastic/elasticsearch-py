@@ -40,10 +40,7 @@ class Urllib3HttpConnection(Connection):
             kw = {}
             if timeout:
                 kw['timeout'] = timeout
-            headers = self.headers.copy()
-            if body:
-                headers['content-length'] = str(len(body))
-            response = self.pool.urlopen(method, url, body, retries=False, headers=headers, **kw)
+            response = self.pool.urlopen(method, url, body, retries=False, headers=self.headers, **kw)
             duration = time.time() - start
             raw_data = response.data.decode('utf-8')
         except Exception as e:

@@ -53,14 +53,6 @@ class TestUrllib3Connection(TestCase):
         con = Urllib3HttpConnection()
         self.assertIsInstance(con.pool, urllib3.HTTPConnectionPool)
 
-    def test_content_length_gets_set(self):
-        con = Urllib3HttpConnection()
-        m = con.pool.urlopen = Mock()
-        m.return_value.status = 200
-
-        con.perform_request('PUT', '/', body='0123456789'.encode('utf-8'))
-        m.assert_called_once_with('PUT', '/', '0123456789'.encode('utf-8'), headers={'content-length': '10'}, retries=False)
-
 class TestRequestsConnection(TestCase):
     def _get_mock_connection(self, connection_params={}, status_code=200, response_body='{}'):
         con = RequestsHttpConnection(**connection_params)
