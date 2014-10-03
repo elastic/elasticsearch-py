@@ -880,7 +880,7 @@ class Elasticsearch(object):
         return data
 
     @query_params('field_statistics', 'fields', 'offsets', 'parent', 'payloads',
-        'positions', 'preference', 'routing', 'term_statistics')
+        'positions', 'preference', 'realtime', 'routing', 'term_statistics')
     def termvector(self, index, doc_type, id, body=None, params=None):
         """
         Added in 1.
@@ -903,6 +903,8 @@ class Elasticsearch(object):
             True
         :arg preference: Specify the node or shard the operation should be
             performed on (default: random).
+        :arg realtime: Specifies if request is real-time as opposed to near-
+            real-time (default: true).
         :arg routing: Specific routing value.
         :arg term_statistics: Specifies if total term frequency and document
             frequency should be returned., default False
