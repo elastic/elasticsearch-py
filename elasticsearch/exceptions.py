@@ -61,6 +61,13 @@ class ConnectionError(TransportError):
             self.error, self.info.__class__.__name__, self.info)
 
 
+class ConnectionTimeout(ConnectionError):
+    """ A network timeout. """
+    def __str__(self):
+        return 'ConnectionTimeout caused by - %s(%s)' % (
+            self.info.__class__.__name__, self.info)
+
+
 class NotFoundError(TransportError):
     """ Exception representing a 404 status code. """
 

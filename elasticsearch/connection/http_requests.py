@@ -6,7 +6,7 @@ except ImportError:
     REQUESTS_AVAILABLE = False
 
 from .base import Connection
-from ..exceptions import ConnectionError, ImproperlyConfigured
+from ..exceptions import ConnectionError, ImproperlyConfigured, ConnectionTimeout
 from ..compat import urlencode
 
 class RequestsHttpConnection(Connection):
@@ -44,7 +44,10 @@ class RequestsHttpConnection(Connection):
             response = self.session.request(method, url, data=body, timeout=timeout or self.timeout)
             duration = time.time() - start
             raw_data = response.text
-        except (requests.ConnectionError, requests.Timeout) as e:
+        except requests.Timeout as e:
+            self.log_request_fail(method, url, body, time.time() - start, exception=e)
+            raise ConnectionTimeout('TIMEOUT', str(e), e)
+        except requests.ConnectionError as e:
             self.log_request_fail(method, url, body, time.time() - start, exception=e)
             raise ConnectionError('N/A', str(e), e)
 

@@ -14,7 +14,7 @@ try:
 except ImportError:
     THRIFT_AVAILABLE = False
 
-from ..exceptions import ConnectionError, ImproperlyConfigured
+from ..exceptions import ConnectionError, ImproperlyConfigured, ConnectionTimeout
 from .pooling import PoolingConnection
 
 logger = logging.getLogger('elasticsearch')
@@ -66,6 +66,9 @@ class ThriftConnection(PoolingConnection):
             tclient = self._get_connection()
             response = tclient.execute(request)
             duration = time.time() - start
+        except SocketTimeout as e:
+            self.log_request_fail(method, url, body, time.time() - start, exception=e)
+            raise ConnectionTimeout('TIMEOUT', str(e), e)
         except (TException, SocketTimeout) as e:
             self.log_request_fail(method, url, body, time.time() - start, exception=e)
             if tclient:

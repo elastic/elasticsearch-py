@@ -1,5 +1,6 @@
 import time
 import urllib3
+from urllib3.exceptions import ReadTimeoutError
 
 from .base import Connection
 from ..exceptions import ConnectionError
@@ -49,6 +50,9 @@ class Urllib3HttpConnection(Connection):
             response = self.pool.urlopen(method, url, body, retries=False, headers=self.headers, **kw)
             duration = time.time() - start
             raw_data = response.data.decode('utf-8')
+        except ReadTimeoutError as e:
+            self.log_request_fail(method, full_url, body, time.time() - start, exception=e)
+            raise ConnectionError('TIMEOUT', str(e), e)
         except Exception as e:
             self.log_request_fail(method, full_url, body, time.time() - start, exception=e)
             raise ConnectionError('N/A', str(e), e)
