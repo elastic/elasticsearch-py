@@ -118,7 +118,7 @@ class SnapshotClient(NamespacedClient):
     def status(self, repository=None, snapshot=None, params=None):
         """
         Return information about all currently running snapshots. By specifying
-        a repository name, it’s possible to limit the results to a particular
+        a repository name, it's possible to limit the results to a particular
         repository.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-snapshots.html>`_
 
