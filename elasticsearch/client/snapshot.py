@@ -117,6 +117,9 @@ class SnapshotClient(NamespacedClient):
     @query_params('master_timeout')
     def status(self, repository=None, snapshot=None, params=None):
         """
+        Return information about all currently running snapshots. By specifying
+        a repository name, it’s possible to limit the results to a particular
+        repository.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-snapshots.html>`_
 
         :arg repository: A repository name
@@ -127,3 +130,20 @@ class SnapshotClient(NamespacedClient):
         _, data = self.transport.perform_request('GET', _make_path('_snapshot',
             repository, snapshot, '_status'), params=params)
         return data
+
+    @query_params('master_timeout', 'timeout')
+    def verify_repository(self, repository, params=None):
+        """
+        Returns a list of nodes where repository was successfully verified or
+        an error message if verification process failed.
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-snapshots.html>`_
+
+        :arg repository: A repository name
+        :arg master_timeout: Explicit operation timeout for connection to master
+            node
+        :arg timeout: Explicit operation timeout
+        """
+        _, data = self.transport.perform_request('POST', _make_path('_snapshot',
+            repository, '_verify'), params=params)
+        return data
+
