@@ -13,6 +13,7 @@ class Urllib3HttpConnection(Connection):
     :arg http_auth: optional http auth information as either ':' separated
         string or a tuple
     :arg use_ssl: use ssl for the connection if `True`
+    :arg ssl_ca_certs: specify ca certificate files for verification of the ssl connection (only makes sense if use_ssl is set to true)
     :arg maxsize: the maximum number of connections which will be kept open to
         this host.
     """
