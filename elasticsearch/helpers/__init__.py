@@ -173,7 +173,9 @@ def scan(client, query=None, scroll='5m', **kwargs):
     # initial search to
     resp = client.search(body=query, search_type='scan', scroll=scroll, **kwargs)
 
-    scroll_id = resp['_scroll_id']
+    scroll_id = resp.get('_scroll_id')
+    if scroll_id is None:
+        return
 
     while True:
         resp = client.scroll(scroll_id, scroll=scroll)
@@ -181,7 +183,9 @@ def scan(client, query=None, scroll='5m', **kwargs):
             break
         for hit in resp['hits']['hits']:
             yield hit
-        scroll_id = resp['_scroll_id']
+        scroll_id = resp.get('_scroll_id')
+        if scroll_id is None:
+            break
 
 def reindex(client, source_index, target_index, target_client=None, chunk_size=500, scroll='5m'):
     """
