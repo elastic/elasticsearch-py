@@ -13,22 +13,27 @@ class Urllib3HttpConnection(Connection):
     :arg http_auth: optional http auth information as either ':' separated
         string or a tuple
     :arg use_ssl: use ssl for the connection if `True`
+    :arg ssl_ca_certs: specify ca certificate files for verification of the ssl connection (only makes sense if use_ssl is set to true)
     :arg maxsize: the maximum number of connections which will be kept open to
         this host.
     """
-    def __init__(self, host='localhost', port=9200, http_auth=None, use_ssl=False, maxsize=10, **kwargs):
+    def __init__(self, host='localhost', port=9200, http_auth=None, use_ssl=False, ssl_ca_certs=None, maxsize=10, **kwargs):
         super(Urllib3HttpConnection, self).__init__(host=host, port=port, **kwargs)
         self.headers = {}
         if http_auth is not None:
             if isinstance(http_auth, (tuple, list)):
                 http_auth = ':'.join(http_auth)
             self.headers = urllib3.make_headers(basic_auth=http_auth)
-
+            
+        pool_kwargs = {}
         pool_class = urllib3.HTTPConnectionPool
         if use_ssl:
             pool_class = urllib3.HTTPSConnectionPool
+            if ssl_ca_certs is not None:
+                pool_kwargs["ca_certs"] = ssl_ca_certs
+                pool_kwargs["cert_reqs"] = "REQUIRED"
 
-        self.pool = pool_class(host, port=port, timeout=self.timeout, maxsize=maxsize)
+        self.pool = pool_class(host, port=port, timeout=self.timeout, maxsize=maxsize, **pool_kwargs)
 
     def perform_request(self, method, url, params=None, body=None, timeout=None, ignore=()):
         url = self.url_prefix + url
