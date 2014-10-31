@@ -1,5 +1,5 @@
 from .http_requests import RequestsHttpConnection
-
+from ..exceptions import ImproperlyConfigured
 try:
     from alf.client import Client
     ALF_AVAILABLE = True
