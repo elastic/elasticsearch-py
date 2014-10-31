@@ -17,6 +17,7 @@ install_requires = [
 ]
 tests_require = [
     'requests>=1.0.0, <3.0.0',
+    'alf',
     'nose',
     'coverage',
     'mock',
