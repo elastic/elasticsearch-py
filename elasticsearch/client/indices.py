@@ -195,6 +195,9 @@ class IndicesClient(NamespacedClient):
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
         """
+        if isinstance(index, type(None)):
+            raise TypeError("NoneType is invalid argument")
+
         try:
             self.transport.perform_request('HEAD', _make_path(index), params=params)
         except NotFoundError:
