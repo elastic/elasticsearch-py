@@ -325,7 +325,7 @@ class IndicesClient(NamespacedClient):
         return data
 
     @query_params('timeout', 'master_timeout')
-    def put_alias(self, name, index=None, body=None, params=None):
+    def put_alias(self, name, index, body=None, params=None):
         """
         Create an alias for a specific index/indices.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-aliases.html>`_
