@@ -4,7 +4,8 @@ import time
 from .connection import Urllib3HttpConnection
 from .connection_pool import ConnectionPool
 from .serializer import JSONSerializer, Deserializer, DEFAULT_SERIALIZERS
-from .exceptions import ConnectionError, TransportError, SerializationError
+from .exceptions import ConnectionError, TransportError, SerializationError, \
+                        ConnectionTimeout
 
 # get ip/port from "inet[wind/127.0.0.1:9200]"
 ADDRESS_RE = re.compile(r'/(?P<host>[\.:0-9a-f]*):(?P<port>[0-9]+)\]?$')
@@ -45,7 +46,7 @@ class Transport(object):
         sniff_on_start=False, sniffer_timeout=None, sniff_timeout=.1,
         sniff_on_connection_fail=False, serializer=JSONSerializer(), serializers=None,
         default_mimetype='application/json', max_retries=3,
-        send_get_body_as='GET', **kwargs):
+        retry_on_timeout=False, send_get_body_as='GET', **kwargs):
         """
         :arg hosts: list of dictionaries, each containing keyword arguments to
             create a `connection_class` instance
@@ -67,6 +68,8 @@ class Transport(object):
         :arg default_mimetype: when no mimetype is specified by the server
             response assume this mimetype, defaults to `'application/json'`
         :arg max_retries: maximum number of retries before an exception is propagated
+        :arg retry_on_timeout: should timeout trigger a retry on different
+            node? (default `False`)
         :arg send_get_body_as: for GET requests with body this option allows
             you to specify an alternate way of execution for environments that
             don't support passing bodies with GET requests. If you set this to
@@ -89,6 +92,7 @@ class Transport(object):
         self.deserializer = Deserializer(_serializers, default_mimetype)
 
         self.max_retries = max_retries
+        self.retry_on_timeout = retry_on_timeout
         self.send_get_body_as = send_get_body_as
 
         # data serializer
@@ -282,6 +286,16 @@ class Transport(object):
 
             try:
                 status, headers, data = connection.perform_request(method, url, params, body, ignore=ignore, timeout=timeout)
+            except ConnectionTimeout:
+                if self.retry_on_timeout:
+                    # only mark as dead if we are retrying
+                    self.mark_dead(connection)
+                    # raise exception on last retry
+                    if attempt == self.max_retries:
+                        raise
+                else:
+                    raise
+
             except ConnectionError:
                 self.mark_dead(connection)
 

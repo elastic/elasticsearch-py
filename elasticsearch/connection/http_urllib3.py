@@ -3,7 +3,7 @@ import urllib3
 from urllib3.exceptions import ReadTimeoutError
 
 from .base import Connection
-from ..exceptions import ConnectionError
+from ..exceptions import ConnectionError, ConnectionTimeout
 from ..compat import urlencode
 
 class Urllib3HttpConnection(Connection):
@@ -33,7 +33,7 @@ class Urllib3HttpConnection(Connection):
     def perform_request(self, method, url, params=None, body=None, timeout=None, ignore=()):
         url = self.url_prefix + url
         if params:
-            url = '%s?%s' % (url, urlencode(params or {}))
+            url = '%s?%s' % (url, urlencode(params))
         full_url = self.host + url
 
         start = time.time()
@@ -52,7 +52,7 @@ class Urllib3HttpConnection(Connection):
             raw_data = response.data.decode('utf-8')
         except ReadTimeoutError as e:
             self.log_request_fail(method, full_url, body, time.time() - start, exception=e)
-            raise ConnectionError('TIMEOUT', str(e), e)
+            raise ConnectionTimeout('TIMEOUT', str(e), e)
         except Exception as e:
             self.log_request_fail(method, full_url, body, time.time() - start, exception=e)
             raise ConnectionError('N/A', str(e), e)

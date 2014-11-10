@@ -3,6 +3,12 @@
 Changelog
 =========
 
+1.3.0 (dev)
+-----------
+
+ * Timeout now doesn't trigger a retry by default (can be overriden by setting
+   `retry_on_timeout=True`)
+
 1.2.0 (2014-08-03)
 ------------------
 
