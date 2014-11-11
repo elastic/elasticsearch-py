@@ -8,6 +8,7 @@ class ImproperlyConfigured(Exception):
     Exception raised when the config passed to the client is inconsistent or invalid.
     """
 
+
 class ElasticsearchException(Exception):
     """
     Base class for all exceptions raised by this package's operations (doesn't
@@ -61,6 +62,10 @@ class ConnectionError(TransportError):
             self.error, self.info.__class__.__name__, self.info)
 
 
+class SSLError(ConnectionError):
+    """ Error raised when encountering SSL errors.  """
+
+
 class ConnectionTimeout(ConnectionError):
     """ A network timeout. """
     def __str__(self):
@@ -79,9 +84,19 @@ class ConflictError(TransportError):
 class RequestError(TransportError):
     """ Exception representing a 400 status code. """
 
+
+class AuthenticationException(TransportError):
+    """ Exception representing a 401 status code. """
+
+
+class AuthorizationException(TransportError):
+    """ Exception representing a 403 status code. """
+
 # more generic mappings from status_code to python exceptions
 HTTP_EXCEPTIONS = {
     400: RequestError,
+    401: AuthenticationException,
+    403: AuthorizationException,
     404: NotFoundError,
     409: ConflictError,
 }

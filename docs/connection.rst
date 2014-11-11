@@ -36,8 +36,8 @@ Connection Selector
    :members:
 
 
-Connection
-----------
+Urllib3HttpConnection (default connection_class)
+------------------------------------------------
 
-.. autoclass:: Connection
+.. autoclass:: Urllib3HttpConnection
    :members:

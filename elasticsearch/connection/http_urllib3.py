@@ -1,9 +1,9 @@
 import time
 import urllib3
-from urllib3.exceptions import ReadTimeoutError
+from urllib3.exceptions import ReadTimeoutError, SSLError as UrllibSSLError
 
 from .base import Connection
-from ..exceptions import ConnectionError, ConnectionTimeout
+from ..exceptions import ConnectionError, ImproperlyConfigured, ConnectionTimeout, SSLError
 from ..compat import urlencode
 
 class Urllib3HttpConnection(Connection):
@@ -13,10 +13,17 @@ class Urllib3HttpConnection(Connection):
     :arg http_auth: optional http auth information as either ':' separated
         string or a tuple
     :arg use_ssl: use ssl for the connection if `True`
+    :arg verify_certs: whether to verify SSL certificates
+    :arg ca_certs: optional path to CA bundle. See
+        http://urllib3.readthedocs.org/en/latest/security.html#using-certifi-with-urllib3
+        for instructions how to get default set
     :arg maxsize: the maximum number of connections which will be kept open to
         this host.
     """
-    def __init__(self, host='localhost', port=9200, http_auth=None, use_ssl=False, maxsize=10, **kwargs):
+    def __init__(self, host='localhost', port=9200, http_auth=None,
+            use_ssl=False, verify_certs=False, ca_certs=None,  maxsize=10,
+            **kwargs):
+
         super(Urllib3HttpConnection, self).__init__(host=host, port=port, **kwargs)
         self.headers = {}
         if http_auth is not None:
@@ -25,10 +32,17 @@ class Urllib3HttpConnection(Connection):
             self.headers = urllib3.make_headers(basic_auth=http_auth)
 
         pool_class = urllib3.HTTPConnectionPool
+        kw = {}
         if use_ssl:
             pool_class = urllib3.HTTPSConnectionPool
 
-        self.pool = pool_class(host, port=port, timeout=self.timeout, maxsize=maxsize)
+            if verify_certs:
+                kw['cert_reqs'] = 'CERT_REQUIRED'
+                kw['ca_certs'] = ca_certs
+            elif ca_certs:
+                raise ImproperlyConfigured("You cannot pass CA certificates when verify SSL is off.")
+
+        self.pool = pool_class(host, port=port, timeout=self.timeout, maxsize=maxsize, **kw)
 
     def perform_request(self, method, url, params=None, body=None, timeout=None, ignore=()):
         url = self.url_prefix + url
@@ -50,6 +64,9 @@ class Urllib3HttpConnection(Connection):
             response = self.pool.urlopen(method, url, body, retries=False, headers=self.headers, **kw)
             duration = time.time() - start
             raw_data = response.data.decode('utf-8')
+        except UrllibSSLError as e:
+            self.log_request_fail(method, full_url, body, time.time() - start, exception=e)
+            raise SSLError('N/A', str(e), e)
         except ReadTimeoutError as e:
             self.log_request_fail(method, full_url, body, time.time() - start, exception=e)
             raise ConnectionTimeout('TIMEOUT', str(e), e)

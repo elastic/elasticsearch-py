@@ -6,7 +6,7 @@ except ImportError:
     REQUESTS_AVAILABLE = False
 
 from .base import Connection
-from ..exceptions import ConnectionError, ImproperlyConfigured, ConnectionTimeout
+from ..exceptions import ConnectionError, ImproperlyConfigured, ConnectionTimeout, SSLError
 from ..compat import urlencode
 
 class RequestsHttpConnection(Connection):
@@ -16,8 +16,12 @@ class RequestsHttpConnection(Connection):
     :arg http_auth: optional http auth information as either ':' separated
         string or a tuple
     :arg use_ssl: use ssl for the connection if `True`
+    :arg verify_certs: whether to verify SSL certificates
+    :arg ca_certs: optional path to CA bundle. By default standard requests'
+        bundle will be used.
     """
-    def __init__(self, host='localhost', port=9200, http_auth=None, use_ssl=False, **kwargs):
+    def __init__(self, host='localhost', port=9200, http_auth=None,
+        use_ssl=False, verify_certs=False, ca_certs=None, **kwargs):
         if not REQUESTS_AVAILABLE:
             raise ImproperlyConfigured("Please install requests to use RequestsHttpConnection.")
 
@@ -32,7 +36,11 @@ class RequestsHttpConnection(Connection):
             's' if use_ssl else '',
             host, port, self.url_prefix
         )
-
+        self.session.verify = verify_certs
+        if ca_certs:
+            if not verify_certs:
+                raise ImproperlyConfigured("You cannot pass CA certificates when verify SSL is off.")
+            self.session.verify = ca_certs
 
     def perform_request(self, method, url, params=None, body=None, timeout=None, ignore=()):
         url = self.base_url + url
@@ -44,6 +52,9 @@ class RequestsHttpConnection(Connection):
             response = self.session.request(method, url, data=body, timeout=timeout or self.timeout)
             duration = time.time() - start
             raw_data = response.text
+        except requests.exceptions.SSLError as e:
+            self.log_request_fail(method, url, body, time.time() - start, exception=e)
+            raise SSLError('N/A', str(e), e)
         except requests.Timeout as e:
             self.log_request_fail(method, url, body, time.time() - start, exception=e)
             raise ConnectionTimeout('TIMEOUT', str(e), e)
