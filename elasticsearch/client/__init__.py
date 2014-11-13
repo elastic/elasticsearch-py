@@ -1,9 +1,10 @@
+from __future__ import unicode_literals
 import weakref
 import logging
 
 from ..transport import Transport
 from ..exceptions import NotFoundError, TransportError
-from ..compat import string_types
+from ..compat import string_types, urlparse
 from .indices import IndicesClient
 from .cluster import ClusterClient
 from .cat import CatClient
@@ -30,22 +31,27 @@ def _normalize_hosts(hosts):
     # normalize hosts to dicts
     for i, host in enumerate(hosts):
         if isinstance(host, string_types):
-            host = host.strip('/')
-            # remove schema information
-            if '://' in host:
+            if '://' not in host:
+                host = "//%s" % host
+
+            parsed_url = urlparse(host)
+            h = {"host": parsed_url.hostname}
+
+            if parsed_url.port:
+                h["port"] = parsed_url.port
+
+            if parsed_url.scheme == "https":
+                h['port'] = parsed_url.port or 443
+                h['use_ssl'] = True
+            elif parsed_url.scheme == "http":
                 logger.warning(
                     "List of nodes should not include schema information (http://): %r.",
                     host
                 )
-                host = host[host.index('://') + 3:]
 
-            h = {"host": host}
-            if ':' in host:
-                # TODO: detect auth urls
-                host, port = host.rsplit(':', 1)
-                if port.isdigit():
-                    port = int(port)
-                    h = {"host": host, "port": port}
+            if parsed_url.username or parsed_url.password:
+                h['http_auth'] = '%s:%s' % (parsed_url.username, parsed_url.password)
+
             out.append(h)
         else:
             out.append(host)

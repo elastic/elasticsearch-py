@@ -13,10 +13,17 @@ class TestNormalizeHosts(TestCase):
     def test_strings_are_used_as_hostnames(self):
         self.assertEquals([{"host": "elasticsearch.org"}], _normalize_hosts(["elasticsearch.org"]))
 
-    def test_strings_are_parsed_for_port(self):
+    def test_strings_are_parsed_for_port_and_user(self):
         self.assertEquals(
-            [{"host": "elasticsearch.org", "port": 42}, {"host": "user:secret@elasticsearch.com"}],
+            [{"host": "elasticsearch.org", "port": 42}, {"host": "elasticsearch.com", "http_auth": "user:secret"}],
             _normalize_hosts(["elasticsearch.org:42", "user:secret@elasticsearch.com"])
+        )
+
+    def test_strings_are_parsed_for_scheme(self):
+        self.assertEquals(
+            [{"host": "elasticsearch.org", "port": 42, "use_ssl": True},
+             {"host": "elasticsearch.com", "http_auth": "user:secret", "use_ssl": True, "port": 443}],
+            _normalize_hosts(["https://elasticsearch.org:42", "https://user:secret@elasticsearch.com"])
         )
 
     def test_dicts_are_left_unchanged(self):
