@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import weakref
 import logging
 
@@ -30,22 +31,36 @@ def _normalize_hosts(hosts):
     # normalize hosts to dicts
     for i, host in enumerate(hosts):
         if isinstance(host, string_types):
+            h = {}
+
             host = host.strip('/')
-            # remove schema information
-            if '://' in host:
+
+            # Detects https schema
+            if host.startswith('https://'):
+                h['port'] = 443
+                h['use_ssl'] = True
+            else:
                 logger.warning(
                     "List of nodes should not include schema information (http://): %r.",
                     host
                 )
+
+            # Remove schema information
+            if '://' in host:
                 host = host[host.index('://') + 3:]
 
-            h = {"host": host}
+            # Detects auth urls
+            if '@' in host:
+                h['http_auth'], host = host.split('@', 1)
+
+            # Detects port in host
             if ':' in host:
-                # TODO: detect auth urls
                 host, port = host.rsplit(':', 1)
                 if port.isdigit():
                     port = int(port)
-                    h = {"host": host, "port": port}
+                    h['port'] = port
+
+            h['host'] = host
             out.append(h)
         else:
             out.append(host)
