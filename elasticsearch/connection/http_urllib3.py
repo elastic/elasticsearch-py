@@ -17,12 +17,14 @@ class Urllib3HttpConnection(Connection):
     :arg ca_certs: optional path to CA bundle. See
         http://urllib3.readthedocs.org/en/latest/security.html#using-certifi-with-urllib3
         for instructions how to get default set
+    :arg client_cert: path to the file containing the private key and the
+        certificate
     :arg maxsize: the maximum number of connections which will be kept open to
         this host.
     """
     def __init__(self, host='localhost', port=9200, http_auth=None,
-            use_ssl=False, verify_certs=False, ca_certs=None,  maxsize=10,
-            **kwargs):
+            use_ssl=False, verify_certs=False, ca_certs=None, client_cert=None,
+            maxsize=10, **kwargs):
 
         super(Urllib3HttpConnection, self).__init__(host=host, port=port, **kwargs)
         self.headers = {}
@@ -39,6 +41,7 @@ class Urllib3HttpConnection(Connection):
             if verify_certs:
                 kw['cert_reqs'] = 'CERT_REQUIRED'
                 kw['ca_certs'] = ca_certs
+                kw['cert_file'] = client_cert
             elif ca_certs:
                 raise ImproperlyConfigured("You cannot pass CA certificates when verify SSL is off.")
 
