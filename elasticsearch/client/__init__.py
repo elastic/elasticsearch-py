@@ -29,7 +29,7 @@ def _normalize_hosts(hosts):
 
     out = []
     # normalize hosts to dicts
-    for i, host in enumerate(hosts):
+    for host in hosts:
         if isinstance(host, string_types):
             if '://' not in host:
                 host = "//%s" % host
@@ -43,11 +43,10 @@ def _normalize_hosts(hosts):
             if parsed_url.scheme == "https":
                 h['port'] = parsed_url.port or 443
                 h['use_ssl'] = True
-            elif parsed_url.scheme == "http":
-                logger.warning(
-                    "List of nodes should not include schema information (http://): %r.",
-                    host
-                )
+                h['scheme'] = 'http'
+
+            elif parsed_url.scheme:
+                h['scheme'] = parsed_url.scheme
 
             if parsed_url.username or parsed_url.password:
                 h['http_auth'] = '%s:%s' % (parsed_url.username, parsed_url.password)

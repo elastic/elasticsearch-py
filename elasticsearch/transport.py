@@ -5,7 +5,7 @@ from .connection import Urllib3HttpConnection
 from .connection_pool import ConnectionPool
 from .serializer import JSONSerializer, Deserializer, DEFAULT_SERIALIZERS
 from .exceptions import ConnectionError, TransportError, SerializationError, \
-                        ConnectionTimeout
+                        ConnectionTimeout, ImproperlyConfigured
 
 # get ip/port from "inet[wind/127.0.0.1:9200]"
 ADDRESS_RE = re.compile(r'/(?P<host>[\.:0-9a-f]*):(?P<port>[0-9]+)\]?$')
@@ -153,6 +153,12 @@ class Transport(object):
             # previously unseen params, create new connection
             kwargs = self.kwargs.copy()
             kwargs.update(host)
+
+            if 'scheme' in host and host['scheme'] != self.connection_class.transport_schema:
+                raise ImproperlyConfigured(
+                    'Scheme specified in connection (%s) is not the same as the connection class (%s) specifies (%s).' % (
+                        host['scheme'], self.connection_class.__name__, self.connection_class.transport_schema
+                ))
             return self.connection_class(**kwargs)
         connections = map(_create_connection, hosts)
 
