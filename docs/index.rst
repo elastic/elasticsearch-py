@@ -55,6 +55,7 @@ Example Usage
     for hit in res['hits']['hits']:
         print("%(timestamp)s %(author)s: %(text)s" % hit["_source"])
 
+
 Features
 --------
 
@@ -87,6 +88,8 @@ you want to accomplish is not supported you should be able to create a subclass
 of the relevant component and pass it in as a parameter to be used instead of
 the default implementation.
 
+
+.. _sniffing:
 
 Sniffing
 ~~~~~~~~

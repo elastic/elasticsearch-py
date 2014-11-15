@@ -20,10 +20,22 @@ class TestNormalizeHosts(TestCase):
     def test_strings_are_parsed_for_scheme(self):
         self.assertEquals(
             [
-                {"host": "elasticsearch.org", "port": 42, "use_ssl": True, 'scheme': 'http'},
-                {"host": "elasticsearch.com", "http_auth": "user:secret", "use_ssl": True, "port": 443, 'scheme': 'http'}
+                {
+                    "host": "elasticsearch.org",
+                    "port": 42,
+                    "use_ssl": True, 
+                    'scheme': 'http'
+                },
+                {
+                    "host": "elasticsearch.com",
+                    "http_auth": "user:secret",
+                    "use_ssl": True,
+                    "port": 443,
+                    'scheme': 'http',
+                    'url_prefix': '/prefix'
+                }
             ],
-            _normalize_hosts(["https://elasticsearch.org:42", "https://user:secret@elasticsearch.com"])
+            _normalize_hosts(["https://elasticsearch.org:42", "https://user:secret@elasticsearch.com/prefix"])
         )
 
     def test_dicts_are_left_unchanged(self):

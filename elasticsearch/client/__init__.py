@@ -44,12 +44,14 @@ def _normalize_hosts(hosts):
                 h['port'] = parsed_url.port or 443
                 h['use_ssl'] = True
                 h['scheme'] = 'http'
-
             elif parsed_url.scheme:
                 h['scheme'] = parsed_url.scheme
 
             if parsed_url.username or parsed_url.password:
                 h['http_auth'] = '%s:%s' % (parsed_url.username, parsed_url.password)
+
+            if parsed_url.path and parsed_url.path != '/':
+                h['url_prefix'] = parsed_url.path
 
             out.append(h)
         else:
@@ -72,14 +74,18 @@ class Elasticsearch(object):
     preferred (and only supported) way to get access to those classes and their
     methods.
 
-    Some examples::
+    You can speify your own connection class which should be used by providing
+    the ``connection_class`` parameter::
 
-        # create connection to localhost using the ThriftConnection and it's
-        # default port (9500)
+        # create connection to localhost using the ThriftConnection
         es = Elasticsearch(connection_class=ThriftConnection)
 
+    If you want to turn on :ref:`sniffing` you have several options (described
+    in :class:`~elasticsearch.Transport`)::
+
         # create connection that will automatically inspect the cluster to get
-        # the list of active nodes. Start with nodes 'esnode1' and 'esnode2'
+        # the list of active nodes. Start with nodes running on 'esnode1' and
+        # 'esnode2'
         es = Elasticsearch(
             ['esnode1', 'esnode2'],
             # sniff before doing anything
@@ -90,12 +96,41 @@ class Elasticsearch(object):
             sniffer_timeout=60
         )
 
+    Different hosts can have different parameters, use a dictionary per node to
+    specify those::
+
         # connect to localhost directly and another node using SSL on port 443
         # and an url_prefix
         es = Elasticsearch([
             {'host': 'localhost'},
             {'host': 'othernode', 'port': 443, 'url_prefix': 'es', 'use_ssl': True},
         ])
+
+    If using SSL, there are several parameters that control how we deal with
+    certificates (see :class:`~elasticsearch.Urllib3HttpConnection` for
+    detailed description of the options)::
+
+        es = Elasticsearch(
+            ['localhost:443', 'other_host:443'],
+            # turn on SSL
+            use_ssl=True,
+            # make sure we verify SSL certificates (off by default)
+            verify_certs=True,
+            # provide a path to CA certs on disk
+            ca_certs='/path/to/CA_certs'
+        )
+
+    Alternatively you can use RFC-1738 formatted URLs, as long as they are not
+    in conflict with other options::
+
+        es = Elasticsearch(
+            [
+                'http://user:secret@localhost:9200/',
+                'https://user:secret@other_host:443/production'
+            ],
+            verify_certs=True
+        )
+
     """
     def __init__(self, hosts=None, transport_class=Transport, **kwargs):
         """
@@ -104,7 +139,7 @@ class Elasticsearch(object):
             will be passed to the :class:`~elasticsearch.Connection` class as
             kwargs, or a string in the format of ``host[:port]`` which will be
             translated to a dictionary automatically.  If no value is given the
-            :class:`~elasticsearch.Connection` class defaults will be used.
+            :class:`~elasticsearch.Urllib3HttpConnection` class defaults will be used.
 
         :arg transport_class: :class:`~elasticsearch.Transport` subclass to use.
 
