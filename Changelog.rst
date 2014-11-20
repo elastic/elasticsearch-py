@@ -8,6 +8,8 @@ Changelog
 
  * Timeout now doesn't trigger a retry by default (can be overriden by setting
    `retry_on_timeout=True`)
+ * Implemented url parsing according to RFC-1738
+ * added support for proper SSL certificate handling
 
 1.2.0 (2014-08-03)
 ------------------
