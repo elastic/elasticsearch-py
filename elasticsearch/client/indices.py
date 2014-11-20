@@ -231,14 +231,12 @@ class IndicesClient(NamespacedClient):
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_conflicts',
         'ignore_unavailable', 'master_timeout', 'timeout')
-    def put_mapping(self, doc_type, body, index=None, params=None):
+    def put_mapping(self, doc_type, body, index, params=None):
         """
         Register specific mapping definition for a specific type.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-put-mapping.html>`_
 
-        :arg index: A comma-separated list of index names the alias should
-            point to (supports wildcards); use `_all` or omit to perform the
-            operation on all indices.
+        :arg index: The name of the index
         :arg doc_type: The name of the document type
         :arg body: The mapping definition
         :arg allow_no_indices: Whether to ignore if a wildcard indices
