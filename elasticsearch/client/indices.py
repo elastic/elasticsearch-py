@@ -236,9 +236,9 @@ class IndicesClient(NamespacedClient):
         Register specific mapping definition for a specific type.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-put-mapping.html>`_
 
-        :arg index: A comma-separated list of index names the alias should
-            point to (supports wildcards); use `_all` or omit to perform the
-            operation on all indices.
+        :arg index: A comma-separated list of index names the mapping should be
+            added to (supports wildcards); use `_all` or omit to add the
+            mapping on all indices.
         :arg doc_type: The name of the document type
         :arg body: The mapping definition
         :arg allow_no_indices: Whether to ignore if a wildcard indices
