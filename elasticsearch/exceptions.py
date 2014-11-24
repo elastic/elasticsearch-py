@@ -63,11 +63,11 @@ class ConnectionError(TransportError):
 
 
 class SSLError(ConnectionError):
-    """ Error raised when encountering SSL errors.  """
+    """ Error raised when encountering SSL errors. """
 
 
 class ConnectionTimeout(ConnectionError):
-    """ A network timeout. """
+    """ A network timeout. Doesn't cause a node retry by default. """
     def __str__(self):
         return 'ConnectionTimeout caused by - %s(%s)' % (
             self.info.__class__.__name__, self.info)

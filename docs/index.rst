@@ -89,6 +89,21 @@ of the relevant component and pass it in as a parameter to be used instead of
 the default implementation.
 
 
+Automatic Retries
+~~~~~~~~~~~~~~~~~
+
+If a connection to a node fails due to connection issues (raises
+:class:`~elasticsearch.ConnectionError`) it is considered in faulty state. It
+will be placed on hold for ``dead_timeout`` seconds and the request will be
+retried on another node. If a connection fails multiple times in a row the
+timeout will get progressively larger to avoid hitting a node that's, by all
+indication, down. If no live connection is availible, the connection that has
+the smallest timeout will be used.
+
+By default retries are not triggered by a timeout
+(:class:`~elasticsearch.ConnectionTimeout`), set ``retry_on_timeout`` to
+``True`` to also retry on timeouts.
+
 .. _sniffing:
 
 Sniffing

@@ -45,7 +45,7 @@ class Transport(object):
         connection_pool_class=ConnectionPool, host_info_callback=get_host_info,
         sniff_on_start=False, sniffer_timeout=None, sniff_timeout=.1,
         sniff_on_connection_fail=False, serializer=JSONSerializer(), serializers=None,
-        default_mimetype='application/json', max_retries=3,
+        default_mimetype='application/json', max_retries=3, retry_on_status=(503, 504, ),
         retry_on_timeout=False, send_get_body_as='GET', **kwargs):
         """
         :arg hosts: list of dictionaries, each containing keyword arguments to
@@ -68,6 +68,8 @@ class Transport(object):
         :arg default_mimetype: when no mimetype is specified by the server
             response assume this mimetype, defaults to `'application/json'`
         :arg max_retries: maximum number of retries before an exception is propagated
+        :arg retry_on_status: set of HTTP status codes on which we should retry
+            on a different node. defaults to ``(503, 504, )``
         :arg retry_on_timeout: should timeout trigger a retry on different
             node? (default `False`)
         :arg send_get_body_as: for GET requests with body this option allows
@@ -93,6 +95,7 @@ class Transport(object):
 
         self.max_retries = max_retries
         self.retry_on_timeout = retry_on_timeout
+        self.retry_on_status = retry_on_status
         self.send_get_body_as = send_get_body_as
 
         # data serializer
@@ -292,8 +295,17 @@ class Transport(object):
 
             try:
                 status, headers, data = connection.perform_request(method, url, params, body, ignore=ignore, timeout=timeout)
-            except ConnectionTimeout:
-                if self.retry_on_timeout:
+
+            except TransportError as e:
+                retry = False
+                if isinstance(e, ConnectionTimeout):
+                    retry = self.retry_on_timeout
+                elif isinstance(e, ConnectionError):
+                    retry = True
+                elif e.status_code in self.retry_on_status:
+                    retry = True
+
+                if retry:
                     # only mark as dead if we are retrying
                     self.mark_dead(connection)
                     # raise exception on last retry
@@ -302,12 +314,6 @@ class Transport(object):
                 else:
                     raise
 
-            except ConnectionError:
-                self.mark_dead(connection)
-
-                # raise exception on last retry
-                if attempt == self.max_retries:
-                    raise
             else:
                 # connection didn't fail, confirm it's live status
                 self.connection_pool.mark_live(connection)
