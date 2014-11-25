@@ -1,12 +1,15 @@
 import re
+import sys
 from mock import Mock, patch
 import urllib3
 
 from elasticsearch.exceptions import TransportError, ConflictError, RequestError, NotFoundError
 from elasticsearch.connection import RequestsHttpConnection, \
-    Urllib3HttpConnection, THRIFT_AVAILABLE, ThriftConnection
+    Urllib3HttpConnection, THRIFT_AVAILABLE, ThriftConnection, \
+    THRIFTPY_AVAILABLE, ThriftpyConnection
 
 from .test_cases import TestCase, SkipTest
+
 
 class TestThriftConnection(TestCase):
     def setUp(self):
@@ -27,6 +30,20 @@ class TestThriftConnection(TestCase):
     def test_timeout_set(self):
         con = ThriftConnection(timeout=42)
         self.assertEquals(42, con.timeout)
+
+
+class TestThriftpyConnection(TestCase):
+    def setUp(self):
+        if sys.version_info[:2] == (2, 6):
+            raise SkipTest('Thriftpy is not available.')
+        if not THRIFTPY_AVAILABLE:
+            raise SkipTest('Thriftpy is not available.')
+        super(TestThriftpyConnection, self).setUp()
+
+    def test_timeout_set(self):
+        con = ThriftpyConnection(timeout=42)
+        self.assertEquals(42, con.timeout)
+
 
 class TestUrllib3Connection(TestCase):
     def test_timeout_set(self):

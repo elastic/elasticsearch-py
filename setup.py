@@ -24,6 +24,9 @@ tests_require = [
     'nosexcover'
 ]
 
+if os.environ.get('TEST_ES_CONNECTION', None) == 'ThriftpyConnection':
+    tests_require.append('thriftpy')
+
 # use external unittest for 2.6
 if sys.version_info[:2] == (2, 6):
     install_requires.append('unittest2')
@@ -35,14 +38,14 @@ if sys.version_info[0] == 2:
     tests_require.append('pylibmc==1.2.3')
 
 setup(
-    name = 'elasticsearch',
-    description = "Python client for Elasticsearch",
+    name='elasticsearch',
+    description="Python client for Elasticsearch",
     license="Apache License, Version 2.0",
-    url = "https://github.com/elasticsearch/elasticsearch-py",
-    long_description = long_description,
-    version = __versionstr__,
-    author = "Honza Král",
-    author_email = "honza.kral@gmail.com",
+    url="https://github.com/elasticsearch/elasticsearch-py",
+    long_description=long_description,
+    version=__versionstr__,
+    author="Honza Král",
+    author_email="honza.kral@gmail.com",
     packages=find_packages(
         where='.',
         exclude=('test_elasticsearch*', )
