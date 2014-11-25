@@ -20,7 +20,7 @@ install:
   - pip install .
 
 before_script:
-  - /tmp/elasticsearch/bin/elasticsearch -d -D es.path.data=/tmp -D es.gateway.type=none -D es.index.store.type=memory -D es.discovery.zen.ping.multicast.enabled=false -Des.node.bench=true
+  - /tmp/elasticsearch/bin/elasticsearch -d -D es.path.data=/tmp -D es.discovery.zen.ping.multicast.enabled=false -Des.node.bench=true
 
 script:
   - python setup.py test
