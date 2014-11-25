@@ -954,11 +954,16 @@ class Elasticsearch(object):
             frequency should be returned., default False
         """
         _, data = self.transport.perform_request('GET', _make_path(index,
-            doc_type, id, '_termvector'), params=params, body=body)
+            doc_type, id, '_termvectors'), params=params, body=body)
         return data
 
-    # backwards compatibility
-    termvector = termvectors
+    @query_params('field_statistics', 'fields', 'offsets', 'parent', 'payloads',
+        'positions', 'preference', 'realtime', 'routing', 'term_statistics')
+    def termvector(self, index, doc_type, id, body=None, params=None):
+        _, data = self.transport.perform_request('GET', _make_path(index,
+            doc_type, id, '_termvector'), params=params, body=body)
+        return data
+    termvector.__doc__ = termvectors.__doc__
 
     @query_params('field_statistics', 'fields', 'ids', 'offsets', 'parent',
         'payloads', 'positions', 'preference', 'routing', 'term_statistics')
