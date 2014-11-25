@@ -921,10 +921,14 @@ class Elasticsearch(object):
 
     @query_params('field_statistics', 'fields', 'offsets', 'parent', 'payloads',
         'positions', 'preference', 'realtime', 'routing', 'term_statistics')
-    def termvector(self, index, doc_type, id, body=None, params=None):
+    def termvectors(self, index, doc_type, id, body=None, params=None):
         """
-        Added in 1.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/master/search-termvectors.html>`_
+        Returns information and statistics on terms in the fields of a
+        particular document. The document could be stored in the index or
+        artificially provided by the user (Added in 1.4). Note that for
+        documents stored in the index, this is a near realtime API as the term
+        vectors are not available until the next refresh.
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/docs-termvectors.html>`
 
         :arg index: The index in which the document resides.
         :arg doc_type: The type of the document.
@@ -952,6 +956,9 @@ class Elasticsearch(object):
         _, data = self.transport.perform_request('GET', _make_path(index,
             doc_type, id, '_termvector'), params=params, body=body)
         return data
+
+    # backwards compatibility
+    termvector = termvectors
 
     @query_params('field_statistics', 'fields', 'ids', 'offsets', 'parent',
         'payloads', 'positions', 'preference', 'routing', 'term_statistics')
