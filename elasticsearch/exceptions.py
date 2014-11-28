@@ -1,6 +1,7 @@
 __all__ = [
     'ImproperlyConfigured', 'ElasticsearchException', 'SerializationError',
-    'TransportError', 'NotFoundError', 'ConflictError', 'RequestError', 'ConnectionError'
+    'TransportError', 'NotFoundError', 'ConflictError', 'RequestError', 'ConnectionError',
+    'SSLError', 'ConnectionTimeout'
 ]
 
 class ImproperlyConfigured(Exception):

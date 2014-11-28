@@ -141,6 +141,25 @@ be activated separately.
 
 .. _logging library: http://docs.python.org/3.3/library/logging.html
 
+Environment considerations
+--------------------------
+
+When using the client there are several limitations of your environment that
+could come into play.
+
+When using an http load balancer you cannot use the :ref:`sniffing`
+functionality - the cluster would supply the client with IP addresses to
+directly cnnect to the cluster, circumventing the load balancer. Depending on
+your configuration this might be something you don't want or break completely.
+
+In some environments (notably on Google App Engine) your http requests might be
+restricted so that ``GET`` requests won't accept body. In that case use the
+``send_get_body_as`` parameter of :class:`~elasticsearch.Transport` to send all
+bodies via post::
+
+    from elasticsearch import Elasticsearch
+    es = Elasticsearch(send_get_body_as='POST')
+
 Contents
 --------
 
