@@ -12,3 +12,8 @@ class TestIndices(ElasticsearchTestCase):
     def test_exists_index(self):
         self.client.indices.exists('second.index,third/index')
         self.assert_url_called('HEAD', '/second.index,third%2Findex')
+
+    def test_passing_empty_value_for_required_param_raises_exception(self):
+        self.assertRaises(ValueError, self.client.indices.exists, index=None)
+        self.assertRaises(ValueError, self.client.indices.exists, index=[])
+        self.assertRaises(ValueError, self.client.indices.exists, index='')

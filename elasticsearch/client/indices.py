@@ -1,4 +1,4 @@
-from .utils import NamespacedClient, query_params, _make_path
+from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 from ..exceptions import NotFoundError
 
 class IndicesClient(NamespacedClient):
@@ -92,6 +92,8 @@ class IndicesClient(NamespacedClient):
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'index'.")
         _, data = self.transport.perform_request('PUT', _make_path(index),
             params=params, body=body)
         return data
@@ -112,6 +114,8 @@ class IndicesClient(NamespacedClient):
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
         """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'index'.")
         _, data = self.transport.perform_request('GET', _make_path(index,
             feature), params=params)
         return data
@@ -134,6 +138,8 @@ class IndicesClient(NamespacedClient):
         :arg ignore_unavailable: Whether specified concrete indices should be ignored
             when unavailable (missing or closed)
         """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'index'.")
         _, data = self.transport.perform_request('POST', _make_path(index, '_open'),
             params=params)
         return data
@@ -158,6 +164,8 @@ class IndicesClient(NamespacedClient):
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'index'.")
         _, data = self.transport.perform_request('POST', _make_path(index, '_close'),
             params=params)
         return data
@@ -173,6 +181,8 @@ class IndicesClient(NamespacedClient):
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'index'.")
         _, data = self.transport.perform_request('DELETE', _make_path(index),
             params=params)
         return data
@@ -195,6 +205,8 @@ class IndicesClient(NamespacedClient):
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
         """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'index'.")
         try:
             self.transport.perform_request('HEAD', _make_path(index), params=params)
         except NotFoundError:
@@ -223,6 +235,9 @@ class IndicesClient(NamespacedClient):
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
         """
+        for param in (index, doc_type):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
         try:
             self.transport.perform_request('HEAD', _make_path(index, doc_type), params=params)
         except NotFoundError:
@@ -253,6 +268,9 @@ class IndicesClient(NamespacedClient):
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         """
+        for param in (doc_type, body):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
         _, data = self.transport.perform_request('PUT', _make_path(index, '_mapping', doc_type),
             params=params, body=body)
         return data
@@ -303,6 +321,8 @@ class IndicesClient(NamespacedClient):
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
         """
+        if field in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'field'.")
         _, data = self.transport.perform_request('GET', _make_path(index, '_mapping', doc_type, 'field', field),
             params=params)
         return data
@@ -320,6 +340,9 @@ class IndicesClient(NamespacedClient):
             specified indices.
         :arg master_timeout: Specify timeout for connection to master
         """
+        for param in (index, doc_type):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
         _, data = self.transport.perform_request('DELETE', _make_path(index, '_mapping', doc_type),
             params=params)
         return data
@@ -338,6 +361,8 @@ class IndicesClient(NamespacedClient):
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit timestamp for the document
         """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'name'.")
         _, data = self.transport.perform_request('PUT', _make_path(index, '_alias', name),
             params=params, body=body)
         return data
@@ -420,6 +445,8 @@ class IndicesClient(NamespacedClient):
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Request timeout
         """
+        if body in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'body'.")
         _, data = self.transport.perform_request('POST', '/_aliases',
             params=params, body=body)
         return data
@@ -437,6 +464,9 @@ class IndicesClient(NamespacedClient):
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit timestamp for the document
         """
+        for param in (index, name):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
         _, data = self.transport.perform_request('DELETE', _make_path(index, '_alias', name),
             params=params)
         return data
@@ -458,6 +488,9 @@ class IndicesClient(NamespacedClient):
         :arg timeout: Explicit operation timeout
         :arg flat_settings: Return settings in flat format (default: false)
         """
+        for param in (name, body):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
         _, data = self.transport.perform_request('PUT', _make_path('_template', name),
             params=params, body=body)
         return data
@@ -472,6 +505,8 @@ class IndicesClient(NamespacedClient):
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
         """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'name'.")
         try:
             self.transport.perform_request('HEAD', _make_path('_template', name),
                 params=params)
@@ -504,6 +539,8 @@ class IndicesClient(NamespacedClient):
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'name'.")
         _, data = self.transport.perform_request('DELETE', _make_path('_template', name),
             params=params)
         return data
@@ -552,6 +589,8 @@ class IndicesClient(NamespacedClient):
             ignored when unavailable (missing or closed)
         :arg master_timeout: Specify timeout for connection to master
         """
+        if body in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'body'.")
         _, data = self.transport.perform_request('PUT', _make_path(index, '_settings'),
             params=params, body=body)
         return data
@@ -583,6 +622,9 @@ class IndicesClient(NamespacedClient):
             to warm
         :arg master_timeout: Specify timeout for connection to master
         """
+        for param in (name, body):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
         if doc_type and not index:
             index = '_all'
         _, data = self.transport.perform_request('PUT', _make_path(index, doc_type, '_warmer', name),
@@ -627,6 +669,9 @@ class IndicesClient(NamespacedClient):
             wildcards); use `_all` to delete all warmers in the specified indices.
         :arg master_timeout: Specify timeout for connection to master
         """
+        for param in (index, name):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
         _, data = self.transport.perform_request('DELETE', _make_path(index, '_warmer', name),
             params=params)
         return data

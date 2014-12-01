@@ -10,6 +10,7 @@ Changelog
    `retry_on_timeout=True`)
  * Implemented url parsing according to RFC-1738
  * added support for proper SSL certificate handling
+ * Required parameters are now checked for non-empty values
 
 1.2.0 (2014-08-03)
 ------------------

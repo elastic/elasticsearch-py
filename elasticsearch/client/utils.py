@@ -5,7 +5,7 @@ from functools import wraps
 from ..compat import string_types, quote_plus
 
 # parts of URL to be omitted
-SKIP_IN_PATH = (None, b'', [], ())
+SKIP_IN_PATH = (None, '', b'', [], ())
 
 def _escape(value):
     """

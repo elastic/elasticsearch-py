@@ -10,7 +10,7 @@ from .cluster import ClusterClient
 from .cat import CatClient
 from .nodes import NodesClient
 from .snapshot import SnapshotClient
-from .utils import query_params, _make_path
+from .utils import query_params, _make_path, SKIP_IN_PATH
 
 logger = logging.getLogger('elasticsearch')
 
@@ -249,6 +249,9 @@ class Elasticsearch(object):
         :arg version: Explicit version number for concurrency control
         :arg version_type: Specific version type
         """
+        for param in (index, doc_type, body):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
         _, data = self.transport.perform_request('PUT' if id else 'POST',
             _make_path(index, doc_type, id), params=params, body=body)
         return data
@@ -272,6 +275,9 @@ class Elasticsearch(object):
             performing the operation
         :arg routing: Specific routing value
         """
+        for param in (index, doc_type, id):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
         try:
             self.transport.perform_request('HEAD', _make_path(index, doc_type, id), params=params)
         except NotFoundError:
@@ -308,6 +314,9 @@ class Elasticsearch(object):
         :arg version_type: Explicit version number for concurrency control
 
         """
+        for param in (index, doc_type, id):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
         _, data = self.transport.perform_request('GET', _make_path(index, doc_type, id),
             params=params)
         return data
@@ -339,6 +348,9 @@ class Elasticsearch(object):
         :arg version: Explicit version number for concurrency control
         :arg version_type: Explicit version number for concurrency control
         """
+        for param in (index, doc_type, id):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
         _, data = self.transport.perform_request('GET', _make_path(index, doc_type, id, '_source'),
             params=params)
         return data
@@ -369,6 +381,8 @@ class Elasticsearch(object):
             performing the operation
         :arg routing: Specific routing value
         """
+        if body in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'body'.")
         _, data = self.transport.perform_request('GET', _make_path(index, doc_type, '_mget'),
             params=params, body=body)
         return data
@@ -401,6 +415,9 @@ class Elasticsearch(object):
         :arg version: Explicit version number for concurrency control
         :arg version_type: Explicit version number for concurrency control
         """
+        for param in (index, doc_type, id):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
         _, data = self.transport.perform_request('POST', _make_path(index, doc_type, id, '_update'),
             params=params, body=body)
         return data
@@ -578,6 +595,9 @@ class Elasticsearch(object):
         :arg source: The URL-encoded query definition (instead of using the
             request body)
         """
+        for param in (index, doc_type, id):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
         _, data = self.transport.perform_request('GET', _make_path(index, doc_type, id, '_explain'),
             params=params, body=body)
         return data
@@ -631,6 +651,9 @@ class Elasticsearch(object):
         :arg version: Explicit version number for concurrency control
         :arg version_type: Specific version type
         """
+        for param in (index, doc_type, id):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
         _, data = self.transport.perform_request('DELETE', _make_path(index, doc_type, id), params=params)
         return data
 
@@ -682,6 +705,8 @@ class Elasticsearch(object):
         :arg replication: Explicitly set the replication type (default: sync)
         :arg timeout: Explicit operation timeout
         """
+        if body in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'body'.")
         _, data = self.transport.perform_request('POST', _make_path(index, doc_type, '_bulk'),
             params=params, body=self._bulk_body(body))
         return data
@@ -699,6 +724,8 @@ class Elasticsearch(object):
         :arg doc_type: A comma-separated list of document types to use as default
         :arg search_type: Search operation type
         """
+        if body in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'body'.")
         _, data = self.transport.perform_request('GET', _make_path(index, doc_type, '_msearch'),
             params=params, body=self._bulk_body(body))
         return data
@@ -736,6 +763,8 @@ class Elasticsearch(object):
             request body)
         :arg timeout: Explicit operation timeout
         """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'index'.")
         _, data = self.transport.perform_request('DELETE', _make_path(index, doc_type, '_query'),
             params=params, body=body)
         return data
@@ -763,6 +792,8 @@ class Elasticsearch(object):
         :arg routing: Specific routing value
         :arg source: The URL-encoded request definition (instead of using request body)
         """
+        if body in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'body'.")
         _, data = self.transport.perform_request('POST', _make_path(index, '_suggest'),
             params=params, body=body)
         return data
@@ -803,6 +834,9 @@ class Elasticsearch(object):
         :arg version: Explicit version number for concurrency control
         :arg version_type: Specific version type
         """
+        for param in (index, doc_type):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
         _, data = self.transport.perform_request('GET', _make_path(index,
             doc_type, id, '_percolate'), params=params, body=body)
         return data
@@ -829,6 +863,8 @@ class Elasticsearch(object):
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
         """
+        if body in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'body'.")
         _, data = self.transport.perform_request('GET', _make_path(index,
             doc_type, '_mpercolate'), params=params, body=self._bulk_body(body))
         return data
@@ -868,6 +904,9 @@ class Elasticsearch(object):
         :arg version: Explicit version number for concurrency control
         :arg version_type: Specific version type
         """
+        for param in (index, doc_type):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
         _, data = self.transport.perform_request('GET', _make_path(index,
             doc_type, id, '_percolate', 'count'), params=params, body=body)
         return data
@@ -915,6 +954,9 @@ class Elasticsearch(object):
             against (default: the same type as the document)
         :arg stop_words: A list of stop words to be ignored
         """
+        for param in (index, doc_type, id):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
         _, data = self.transport.perform_request('GET', _make_path(index, doc_type, id, '_mlt'),
             params=params, body=body)
         return data
@@ -953,6 +995,9 @@ class Elasticsearch(object):
         :arg term_statistics: Specifies if total term frequency and document
             frequency should be returned., default False
         """
+        for param in (index, doc_type, id):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
         _, data = self.transport.perform_request('GET', _make_path(index,
             doc_type, id, '_termvectors'), params=params, body=body)
         return data
@@ -960,6 +1005,9 @@ class Elasticsearch(object):
     @query_params('field_statistics', 'fields', 'offsets', 'parent', 'payloads',
         'positions', 'preference', 'realtime', 'routing', 'term_statistics')
     def termvector(self, index, doc_type, id, body=None, params=None):
+        for param in (index, doc_type, id):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
         _, data = self.transport.perform_request('GET', _make_path(index,
             doc_type, id, '_termvector'), params=params, body=body)
         return data
@@ -1069,6 +1117,9 @@ class Elasticsearch(object):
         :arg version: Explicit version number for concurrency control
         :arg version_type: Specific version type
         """
+        for param in (lang, id, body):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
         _, data = self.transport.perform_request('PUT', _make_path('_scripts',
             lang, id), params=params, body=body)
         return data
@@ -1084,6 +1135,9 @@ class Elasticsearch(object):
         :arg version: Explicit version number for concurrency control
         :arg version_type: Specific version type
         """
+        for param in (lang, id):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
         _, data = self.transport.perform_request('GET', _make_path('_scripts',
             lang, id), params=params)
         return data
@@ -1099,6 +1153,9 @@ class Elasticsearch(object):
         :arg version: Explicit version number for concurrency control
         :arg version_type: Specific version type
         """
+        for param in (lang, id):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
         _, data = self.transport.perform_request('DELETE',
             _make_path('_scripts', lang, id), params=params)
         return data
@@ -1112,6 +1169,9 @@ class Elasticsearch(object):
         :arg id: Template ID
         :arg body: The document
         """
+        for param in (id, body):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
         _, data = self.transport.perform_request('PUT', _make_path('_search',
             'template', id), params=params, body=body)
         return data
@@ -1125,6 +1185,8 @@ class Elasticsearch(object):
         :arg id: Template ID
         :arg body: The document
         """
+        if id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'id'.")
         _, data = self.transport.perform_request('GET', _make_path('_search',
             'template', id), params=params, body=body)
         return data
