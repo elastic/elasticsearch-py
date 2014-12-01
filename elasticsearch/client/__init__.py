@@ -1203,3 +1203,31 @@ class Elasticsearch(object):
             'template', id), params=params)
         return data
 
+    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
+        'min_score', 'preference', 'routing', 'source')
+    def search_exists(self, index=None, doc_type=None, body=None, params=None):
+        """
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-exists.html>`_
+
+        :arg index: A comma-separated list of indices to restrict the results
+        :arg doc_type: A comma-separated list of types to restrict the results
+        :arg body: A query to restrict the results specified with the Query DSL
+            (optional)
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+            expression resolves into no concrete indices. (This includes `_all`
+            string or when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete
+            indices that are open, closed or both., default u'open'
+        :arg ignore_unavailable: Whether specified concrete indices should be
+            ignored when unavailable (missing or closed)
+        :arg min_score: Include only documents with a specific `_score` value in
+            the result
+        :arg preference: Specify the node or shard the operation should be
+            performed on (default: random)
+        :arg routing: Specific routing value
+        :arg source: The URL-encoded query definition (instead of using the
+            request body)
+        """
+        _, data = self.transport.perform_request('POST', _make_path(index,
+            doc_type, '_search', 'exists'), params=params, body=body)
+        return data
