@@ -176,9 +176,12 @@ def scan(client, query=None, scroll='5m', **kwargs):
     scroll_id = resp.get('_scroll_id')
     if scroll_id is None:
         return
+    firstrun = False
 
     while True:
-        resp = client.scroll(scroll_id, scroll=scroll)
+        if not firstrun:
+            resp = client.scroll(scroll_id, scroll=scroll)
+            firstrun = False
         if not resp['hits']['hits']:
             break
         for hit in resp['hits']['hits']:
