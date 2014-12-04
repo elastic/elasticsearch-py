@@ -136,8 +136,8 @@ two loggers: ``elasticsearch`` and ``elasticsearch.trace``. ``elasticsearch``
 is used by the client to log standard activity, depending on the log level.
 ``elasticsearch.trace`` can be used to log requests to the server in the form
 of ``curl`` commands using pretty-printed json that can then be executed from
-command line. The trace logger doesn't inherit from the base one - it needs to
-be activated separately.
+command line. If the trace logger has not been configured already it is set to
+`propagate=False` so it needs to be activated separately.
 
 .. _logging library: http://docs.python.org/3.3/library/logging.html
 
