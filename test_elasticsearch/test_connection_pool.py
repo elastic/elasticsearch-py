@@ -1,10 +1,14 @@
 import time
 
 from elasticsearch.connection_pool import ConnectionPool, RoundRobinSelector
+from elasticsearch.exceptions import ImproperlyConfigured
 
 from .test_cases import TestCase
 
 class TestConnectionPool(TestCase):
+    def test_raises_exception_when_no_connections_defined(self):
+        self.assertRaises(ImproperlyConfigured, ConnectionPool, [])
+
     def test_default_round_robin(self):
         pool = ConnectionPool([(x, {}) for x in range(100)])
 

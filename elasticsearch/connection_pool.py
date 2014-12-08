@@ -7,6 +7,8 @@ try:
 except ImportError:
     from queue import PriorityQueue, Empty
 
+from .exceptions import ImproperlyConfigured
+
 logger = logging.getLogger('elasticsearch')
 
 class ConnectionSelector(object):
@@ -100,6 +102,9 @@ class ConnectionPool(object):
         :arg randomize_hosts: shuffle the list of connections upon arrival to
             avoid dog piling effect across processes
         """
+        if not connections:
+            raise ImproperlyConfigured("No defined connections, you need to \
+                    specify at least one host.")
         self.connection_opts = connections
         self.connections = [c for (c, opts) in connections]
         # PriorityQueue for thread safety and ease of timeout management
