@@ -12,3 +12,4 @@ dist
 coverage.xml
 nosetests.xml
 junit-*.xml
+build
