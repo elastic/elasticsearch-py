@@ -16,9 +16,10 @@ class TestConnectionPool(TestCase):
     def test_zero_division_round_robin_selector(self):
         try:
             pool = ConnectionPool([])
-            pool.selector.select(pool.connections)
+            connection = pool.get_connection()
         except ZeroDivisionError:
             self.fail("The ConnectionPool throwed a ZeroDivisionError.")
+        self.assertEqual(connection, None)
 
     def test_disable_shuffling(self):
         pool = ConnectionPool([(x, {}) for x in range(100)], randomize_hosts=False)

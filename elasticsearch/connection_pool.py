@@ -60,8 +60,11 @@ class RoundRobinSelector(ConnectionSelector):
 
     def select(self, connections):
         self.rr += 1
-        self.rr %= len(connections)
-        return connections[self.rr]
+        try:
+            self.rr %= len(connections)
+            return connections[self.rr]
+        except ZeroDivisionError:
+            return
 
 
 class ConnectionPool(object):
