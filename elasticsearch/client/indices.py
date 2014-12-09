@@ -909,3 +909,27 @@ class IndicesClient(NamespacedClient):
         _, data = self.transport.perform_request('POST',
             _make_path(index, '_gateway', 'snapshot'), params=params)
         return data
+
+    @query_params('wait_for_completion')
+    def upgrade(self, index=None, params=None):
+        """
+        Upgrade one or more indices to the latest format through an API.
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-upgrade.html>`_
+
+        :arg index: The name of the index to scope the operation
+        :arg wait_for_completion: Should the request wait for the upgrade to complete.
+            Defaults to false
+        """
+        _, data = self.transport.perform_request('POST', _make_path(index, '_upgrade'),
+                                                 params=params)
+        return data
+
+    def status_upgrade(self, index=None):
+        """
+        Monitor how much of one or more index is upgraded.
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-upgrade.html>`_
+
+        :arg index: The name of the index to scope the operation
+        """
+        _, data = self.transport.perform_request('GET', _make_path(index, '_upgrade'))
+        return data
