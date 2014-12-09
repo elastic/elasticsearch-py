@@ -160,7 +160,7 @@ def scan(client, query=None, scroll='5m', **kwargs):
     """
     Simple abstraction on top of the
     :meth:`~elasticsearch.Elasticsearch.scroll` api - a simple iterator that
-    yields all hits as returned by underlining scroll requests.
+    yields all hits as returned by underlining scroll requests any order will be ignored.
 
     :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use
     :arg query: body for the :meth:`~elasticsearch.Elasticsearch.search` api
@@ -179,6 +179,40 @@ def scan(client, query=None, scroll='5m', **kwargs):
 
     while True:
         resp = client.scroll(scroll_id, scroll=scroll)
+        if not resp['hits']['hits']:
+            break
+        for hit in resp['hits']['hits']:
+            yield hit
+        scroll_id = resp.get('_scroll_id')
+        if scroll_id is None:
+            break
+
+def scroll(client, query=None, scroll='5m', **kwargs):
+    """
+    Simple abstraction on top of the
+    :meth:`~elasticsearch.Elasticsearch.scroll` api - a simple iterator that
+    yields all hits as returned by underlining scroll requests but with order (search_type not scan).
+    Note: Not effective for big data.
+    http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-scroll.html#scroll-scan
+    :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use
+    :arg query: body for the :meth:`~elasticsearch.Elasticsearch.search` api
+    :arg scroll: Specify how long a consistent view of the index should be
+        maintained for scrolled search
+    Any additional keyword arguments will be passed to the initial
+    :meth:`~elasticsearch.Elasticsearch.search` call.
+    """
+    # initial search to
+    resp = client.search(body=query, scroll=scroll, **kwargs)
+
+    scroll_id = resp.get('_scroll_id')
+    if scroll_id is None:
+        return
+    firstscan = True
+
+    while True:
+        if not firstscan:
+            resp = client.scroll(scroll_id, scroll=scroll)
+        firstscan = False
         if not resp['hits']['hits']:
             break
         for hit in resp['hits']['hits']:
