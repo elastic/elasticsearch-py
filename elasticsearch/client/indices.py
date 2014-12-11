@@ -909,3 +909,49 @@ class IndicesClient(NamespacedClient):
         _, data = self.transport.perform_request('POST',
             _make_path(index, '_gateway', 'snapshot'), params=params)
         return data
+
+    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
+        'wait_for_completion')
+    def upgrade(self, index=None, params=None):
+        """
+        Upgrade one or more indices to the latest format through an API.
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-upgrade.html>`_
+
+        :arg index: A comma-separated list of index names; use `_all` or empty
+            string to perform the operation on all indices
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+            expression resolves into no concrete indices. (This includes `_all`
+            string or when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete
+            indices that are open, closed or both., default u'open'
+        :arg ignore_unavailable: Whether specified concrete indices should be
+            ignored when unavailable (missing or closed)
+        :arg wait_for_completion: Specify whether the request should block until
+            the all segments are upgraded (default: false)
+        """
+        _, data = self.transport.perform_request('POST', _make_path(index,
+            '_upgrade'), params=params)
+        return data
+
+    @query_params('allow_no_indices', 'expand_wildcards', 'human',
+        'ignore_unavailable')
+    def get_upgrade(self, index=None, params=None):
+        """
+        Monitor how much of one or more index is upgraded.
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-upgrade.html>`_
+
+        :arg index: A comma-separated list of index names; use `_all` or empty
+            string to perform the operation on all indices
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+            expression resolves into no concrete indices. (This includes `_all`
+            string or when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete
+            indices that are open, closed or both., default u'open'
+        :arg human: Whether to return time and byte values in human-readable
+            format., default False
+        :arg ignore_unavailable: Whether specified concrete indices should be
+            ignored when unavailable (missing or closed)
+        """
+        _, data = self.transport.perform_request('GET', _make_path(index,
+            '_upgrade'), params=params)
+        return data
