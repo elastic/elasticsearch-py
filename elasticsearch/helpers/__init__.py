@@ -156,7 +156,7 @@ def bulk(client, actions, stats_only=False, **kwargs):
 # preserve the name for backwards compatibility
 bulk_index = bulk
 
-def scan(client, query=None, scroll='5m', **kwargs):
+def scan(client, query=None, scroll='5m', preserve_order=False, **kwargs):
     """
     Simple abstraction on top of the
     :meth:`~elasticsearch.Elasticsearch.scroll` api - a simple iterator that
@@ -166,19 +166,30 @@ def scan(client, query=None, scroll='5m', **kwargs):
     :arg query: body for the :meth:`~elasticsearch.Elasticsearch.search` api
     :arg scroll: Specify how long a consistent view of the index should be
         maintained for scrolled search
+    :arg preserve_order: don't set the ``search_type`` to ``scan`` - this will
+        cause the scroll to paginate with preserving the order. Note that this
+        can be an extremely expensive operation and can easily lead to
+        unpredictable results, use with caution.
 
     Any additional keyword arguments will be passed to the initial
     :meth:`~elasticsearch.Elasticsearch.search` call.
     """
-    # initial search to
-    resp = client.search(body=query, search_type='scan', scroll=scroll, **kwargs)
+    if not preserve_order:
+        kwargs['search_type'] = 'scan'
+    # initial search
+    resp = client.search(body=query, scroll=scroll, **kwargs)
 
     scroll_id = resp.get('_scroll_id')
     if scroll_id is None:
         return
 
+    first_run = True
     while True:
-        resp = client.scroll(scroll_id, scroll=scroll)
+        # if we didn't set search_type to scan initial search contains data
+        if preserve_order and first_run:
+            first_run = False
+        else:
+            resp = client.scroll(scroll_id, scroll=scroll)
         if not resp['hits']['hits']:
             break
         for hit in resp['hits']['hits']:
