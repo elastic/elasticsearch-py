@@ -1160,7 +1160,7 @@ class Elasticsearch(object):
             _make_path('_scripts', lang, id), params=params)
         return data
 
-    @query_params()
+    @query_params('op_type', 'version', 'version_type')
     def put_template(self, id, body, params=None):
         """
         Create a search template.
@@ -1168,6 +1168,9 @@ class Elasticsearch(object):
 
         :arg id: Template ID
         :arg body: The document
+        :arg op_type: Explicit operation type, default u'index'
+        :arg version: Explicit version number for concurrency control
+        :arg version_type: Specific version type
         """
         for param in (id, body):
             if param in SKIP_IN_PATH:
@@ -1176,28 +1179,31 @@ class Elasticsearch(object):
             'template', id), params=params, body=body)
         return data
 
-    @query_params()
-    def get_template(self, id, body=None, params=None):
+    @query_params('version', 'version_type')
+    def get_template(self, id, params=None):
         """
         Retrieve a search template.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-template.html>`_
 
         :arg id: Template ID
-        :arg body: The document
+        :arg version: Explicit version number for concurrency control
+        :arg version_type: Specific version type
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
-        _, data = self.transport.perform_request('GET', _make_path('_search',
-            'template', id), params=params, body=body)
+        _, data = self.transport.perform_request('GET', _make_path('_search', 'template',
+            id), params=params)
         return data
 
-    @query_params()
+    @query_params('version', 'version_type')
     def delete_template(self, id=None, params=None):
         """
         Delete a search template.
         `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-template.html>`_
 
         :arg id: Template ID
+        :arg version: Explicit version number for concurrency control
+        :arg version_type: Specific version type
         """
         _, data = self.transport.perform_request('DELETE', _make_path('_search',
             'template', id), params=params)

@@ -112,7 +112,7 @@ class ClusterClient(NamespacedClient):
         _, data = self.transport.perform_request('GET', '/_cluster/settings', params=params)
         return data
 
-    @query_params('flat_settings')
+    @query_params('flat_settings', 'master_timeout', 'timeout')
     def put_settings(self, body, params=None):
         """
         Update cluster wide specific settings.
@@ -121,6 +121,9 @@ class ClusterClient(NamespacedClient):
         :arg body: The settings to be updated. Can be either `transient` or
             `persistent` (survives cluster restart).
         :arg flat_settings: Return settings in flat format (default: false)
+        :arg master_timeout: Explicit operation timeout for connection to master
+            node
+        :arg timeout: Explicit operation timeout
         """
         _, data = self.transport.perform_request('PUT', '/_cluster/settings', params=params, body=body)
         return data

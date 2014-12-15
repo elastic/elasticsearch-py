@@ -102,7 +102,8 @@ class IndicesClient(NamespacedClient):
         'local')
     def get(self, index, feature=None, params=None):
         """
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-get.html>`_
+        The get index API allows to retrieve information about one or more indexes.
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-get-index.html>`_
 
         :arg index: A comma-separated list of index names
         :arg feature: A comma-separated list of features
@@ -361,8 +362,9 @@ class IndicesClient(NamespacedClient):
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit timestamp for the document
         """
-        if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'name'.")
+        for param in (index, name):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
         _, data = self.transport.perform_request('PUT', _make_path(index, '_alias', name),
             params=params, body=body)
         return data
