@@ -70,6 +70,14 @@ class TestConnectionPool(TestCase):
         self.assertEquals(42, pool.connections[-1])
         self.assertEquals(100, len(pool.connections))
 
+    def test_force_resurrect_always_returns_a_connection(self):
+        pool = ConnectionPool([(0, {})])
+
+        pool.connections = []
+        self.assertEquals(0, pool.get_connection())
+        self.assertEquals([], pool.connections)
+        self.assertTrue(pool.dead.empty())
+
     def test_already_failed_connection_has_longer_timeout(self):
         pool = ConnectionPool([(x, {}) for x in range(100)])
         now = time.time()

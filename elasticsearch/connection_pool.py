@@ -65,7 +65,6 @@ class RoundRobinSelector(ConnectionSelector):
         self.rr %= len(connections)
         return connections[self.rr]
 
-
 class ConnectionPool(object):
     """
     Container holding the :class:`~elasticsearch.Connection` instances,
@@ -98,7 +97,7 @@ class ConnectionPool(object):
         :arg timeout_cutoff: number of consecutive failures after which the
             timeout doesn't increase
         :arg selector_class: :class:`~elasticsearch.ConnectionSelector`
-            subclass to use
+            subclass to use if more than one connection is live
         :arg randomize_hosts: shuffle the list of connections upon arrival to
             avoid dog piling effect across processes
         """
@@ -107,6 +106,8 @@ class ConnectionPool(object):
                     specify at least one host.")
         self.connection_opts = connections
         self.connections = [c for (c, opts) in connections]
+        # remember original connection list for resurrect(force=True)
+        self.orig_connections = tuple(self.connections)
         # PriorityQueue for thread safety and ease of timeout management
         self.dead = PriorityQueue(len(self.connections))
         self.dead_count = {}
@@ -163,21 +164,32 @@ class ConnectionPool(object):
         """
         Attempt to resurrect a connection from the dead pool. It will try to
         locate one (not all) eligible (it's timeout is over) connection to
-        return to th live pool.
+        return to the live pool. Any resurrected connection is also returned.
 
         :arg force: resurrect a connection even if there is none eligible (used
-            when we have no live connections)
+            when we have no live connections). If force is specified resurrect
+            always returns a connection.
 
         """
         # no dead connections
         if self.dead.empty():
+            # we are forced to return a connection, take one from the original
+            # list. This is to avoid a race condition where get_connection can
+            # see no live connections but when it calls resurrect self.dead is
+            # also empty. We assume that other threat has resurrected all
+            # available connections so we can safely return one at random.
+            if force:
+                return random.choice(self.orig_connections)
             return
 
         try:
             # retrieve a connection to check
             timeout, connection = self.dead.get(block=False)
         except Empty:
-            # other thread has been faster and the queue is now empty
+            # other thread has been faster and the queue is now empty. If we
+            # are forced, return a connection at random again.
+            if force:
+                return random.choice(self.orig_connections)
             return
 
         if not force and timeout > time.time():
@@ -188,6 +200,7 @@ class ConnectionPool(object):
         # either we were forced or the connection is elligible to be retried
         self.connections.append(connection)
         logger.info('Resurrecting connection %r (force=%s).', connection, force)
+        return connection
 
     def get_connection(self):
         """
@@ -201,12 +214,18 @@ class ConnectionPool(object):
         Returns a connection instance and it's current fail count.
         """
         self.resurrect()
+        connections = self.connections[:]
 
-        # no live nodes, resurrect one by force
-        if not self.connections:
-            self.resurrect(True)
+        # no live nodes, resurrect one by force and return it
+        if not connections:
+            return self.resurrect(True)
 
-        connection = self.selector.select(self.connections)
+        # only call selector if we have a selection
+        if len(connections) > 1:
+            return self.selector.select(self.connections)
+
+        # only one connection, no need for a selector
+        return connections[0]
 
         return connection
 
