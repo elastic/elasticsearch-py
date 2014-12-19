@@ -8,9 +8,6 @@ import subprocess
 
 import nose
 
-from test_elasticsearch.test_server import get_client
-from test_elasticsearch.test_cases import SkipTest
-
 def fetch_es_repo():
     # user is manually setting YAML dir, don't tamper with it
     if 'TEST_ES_YAML_DIR' in environ:
@@ -34,6 +31,9 @@ def fetch_es_repo():
     # fetching of yaml tests disabled, we'll run with what's there
     if environ.get('TEST_ES_NOFETCH', False):
         return
+
+    from test_elasticsearch.test_server import get_client
+    from test_elasticsearch.test_cases import SkipTest
 
     # find out the sha of the running es
     try:

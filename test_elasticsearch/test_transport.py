@@ -4,6 +4,7 @@ import time
 
 from elasticsearch.transport import Transport, get_host_info
 from elasticsearch.connection import Connection, ThriftConnection
+from elasticsearch.connection_pool import DummyConnectionPool
 from elasticsearch.exceptions import ConnectionError, ImproperlyConfigured
 
 from .test_cases import TestCase
@@ -52,6 +53,12 @@ class TestHostsInfoCallback(TestCase):
 
 
 class TestTransport(TestCase):
+    def test_single_connection_uses_dummy_connection_pool(self):
+        t = Transport([{}])
+        self.assertIsInstance(t.connection_pool, DummyConnectionPool)
+        t = Transport([{'host': 'localhost'}])
+        self.assertIsInstance(t.connection_pool, DummyConnectionPool)
+
     def test_host_with_scheme_different_from_connection_fails(self):
         self.assertRaises(ImproperlyConfigured, Transport, [{'host': 'localhost', 'scheme': 'thrift'}])
         self.assertRaises(ImproperlyConfigured, Transport, [{'host': 'localhost', 'scheme': 'http'}], connection_class=ThriftConnection)
@@ -100,7 +107,7 @@ class TestTransport(TestCase):
 
     def test_kwargs_passed_on_to_connection_pool(self):
         dt = object()
-        t = Transport([{}], dead_timeout=dt)
+        t = Transport([{}, {}], dead_timeout=dt)
         self.assertIs(dt, t.connection_pool.dead_timeout)
 
     def test_custom_connection_class(self):
@@ -125,19 +132,21 @@ class TestTransport(TestCase):
         self.assertEquals(4, len(t.get_connection().calls))
 
     def test_failed_connection_will_be_marked_as_dead(self):
-        t = Transport([{'exception': ConnectionError('abandon ship')}], connection_class=DummyConnection)
+        t = Transport([{'exception': ConnectionError('abandon ship')}] * 2, connection_class=DummyConnection)
 
         self.assertRaises(ConnectionError, t.perform_request, 'GET', '/')
         self.assertEquals(0, len(t.connection_pool.connections))
 
     def test_resurrected_connection_will_be_marked_as_live_on_success(self):
-        t = Transport([{}], connection_class=DummyConnection)
-        con = t.connection_pool.get_connection()
-        t.connection_pool.mark_dead(con)
+        t = Transport([{}, {}], connection_class=DummyConnection)
+        con1 = t.connection_pool.get_connection()
+        con2 = t.connection_pool.get_connection()
+        t.connection_pool.mark_dead(con1)
+        t.connection_pool.mark_dead(con2)
 
         t.perform_request('GET', '/')
         self.assertEquals(1, len(t.connection_pool.connections))
-        self.assertEquals(0, len(t.connection_pool.dead_count))
+        self.assertEquals(1, len(t.connection_pool.dead_count))
 
     def test_sniff_will_use_seed_connections(self):
         t = Transport([{'data': CLUSTER_NODES}], connection_class=DummyConnection)

@@ -2,7 +2,7 @@ import re
 import time
 
 from .connection import Urllib3HttpConnection
-from .connection_pool import ConnectionPool
+from .connection_pool import ConnectionPool, DummyConnectionPool
 from .serializer import JSONSerializer, Deserializer, DEFAULT_SERIALIZERS
 from .exceptions import ConnectionError, TransportError, SerializationError, \
                         ConnectionTimeout, ImproperlyConfigured
@@ -165,8 +165,12 @@ class Transport(object):
             return self.connection_class(**kwargs)
         connections = map(_create_connection, hosts)
 
-        # pass the hosts dicts to the connection pool to optionally extract parameters from
-        self.connection_pool = self.connection_pool_class(list(zip(connections, hosts)), **self.kwargs)
+        connections = list(zip(connections, hosts))
+        if len(connections) == 1:
+            self.connection_pool = DummyConnectionPool(connections)
+        else:
+            # pass the hosts dicts to the connection pool to optionally extract parameters from
+            self.connection_pool = self.connection_pool_class(connections, **self.kwargs)
 
     def get_connection(self):
         """

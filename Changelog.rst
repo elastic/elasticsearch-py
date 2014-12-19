@@ -12,6 +12,8 @@ Changelog
  * added support for proper SSL certificate handling
  * Required parameters are now checked for non-empty values
  * ConnectionPool now checks if any connections were defined
+ * DummyConnectionPool introduced when no load balancing is needed (only one
+   connection defined)
  * fixed a race condition in ConnectionPool
 
 1.2.0 (2014-08-03)

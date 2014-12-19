@@ -227,6 +227,22 @@ class ConnectionPool(object):
         # only one connection, no need for a selector
         return connections[0]
 
-        return connection
+
+class DummyConnectionPool(ConnectionPool):
+    def __init__(self, connections, **kwargs):
+        if len(connections) != 1:
+            raise ImproperlyConfigured("DummyConnectionPool needs exactly one "
+                    "connection defined.")
+        # we need connection opts for sniffing logic
+        self.connection_opts = connections
+        self.connection = connections[0][0]
+        self.connections = (self.connection, )
+
+    def get_connection(self):
+        return self.connection
+
+    def _noop(self, *args, **kwargs):
+        pass
+    mark_dead = mark_live = resurrect = _noop
 
 
