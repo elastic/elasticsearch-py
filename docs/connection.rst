@@ -11,7 +11,13 @@ will be passed on to :class:`~elasticsearch.Transport`,
 
 For example if you wanted to use your own implementation of the
 :class:`~elasticsearch.ConnectionSelector` class you can just pass in the
-`selector_class` parameter.
+``selector_class`` parameter.
+
+.. note::
+
+  :class:`~elasticsearch.ConnectionPool` and related options (like
+  ``selector_class``) will only be used if more than one connection is defined.
+  Either directly or via the :ref:`sniffing` mechanism.
 
 .. py:module:: elasticsearch
 
