@@ -128,6 +128,44 @@ Some example configurations::
     es = Elasticsearch(["seed1", "seed2"], sniff_on_start=True, sniff_on_connection_fail=True, sniffer_timeout=60)
 
 
+SSL and Authentication
+~~~~~~~~~~~~~~~~~~~~~~
+
+You can configure the client to use ``SSL`` for connecting to your
+elasticsearch cluster, including certificate verification and http auth::
+
+    from elasticsearch import Elasticsearch
+
+    # you can use RFC-1738 to specify the url
+    es = Elasticsearch(['https://user:secret@localhost:443'])
+
+    # ... or specify common parameters as kwargs
+
+    # use certifi for CA certificates
+    import certifi
+
+    es = Elasticsearch(
+        ['localhost', 'otherhost'],
+        http_auth=('user', 'secret'),
+        port=443,
+        use_ssl=True,
+        verify_certs=True,
+        ca_certs=certifi.where(),
+    )
+
+
+..  note::
+
+    By default SSL certificates won't be verified, pass in
+    ``verify_certs=True`` to make sure your certificates will get verified. The
+    client doesn't ship with any CA certificates; easiest way to obtain the
+    common set is by using the `certify`_ package (as shown above).
+
+See class :class:`~elasticsearch.Urllib3HttpConnection` for detailed
+description of the options.
+
+.. _certifi: http://certifi.io/
+
 Logging
 ~~~~~~~
 

@@ -78,6 +78,7 @@ The client's features include:
  * load balancing (with pluggable selection strategy) across all available nodes
  * failed connection penalization (time based - failed connections won't be
    retried until a timeout is reached)
+ * support for ssl and http authentication
  * thread safety
  * pluggable architecture
 
