@@ -6,9 +6,11 @@ __versionstr__ = '.'.join(map(str, VERSION))
 
 import sys
 
-if sys.version_info >= (2, 7):
-    # Install no-op handler per
-    # <https://docs.python.org/2/howto/logging.html#configuring-logging-for-a-library>:
+if (2, 7) <= sys.version_info < (3, 2):
+    # On Python 2.7 and Python3 < 3.2, install no-op handler to silence
+    # `No handlers could be found for logger "elasticsearch"` message per
+    # <https://docs.python.org/2/howto/logging.html#configuring-logging-for-a-library>,
+    # <https://docs.python.org/3/howto/logging.html#configuring-logging-for-a-library>:
     import logging
     logger = logging.getLogger('elasticsearch')
     logger.addHandler(logging.NullHandler())
