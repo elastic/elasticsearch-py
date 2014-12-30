@@ -68,3 +68,13 @@ class TestClient(ElasticsearchTestCase):
     def test_repr_truncates_host_to_10(self):
         hosts = [{"host": "es" + str(i)} for i in range(20)]
         self.assertNotIn("es5", repr(Elasticsearch(hosts)))
+
+    def test_index_uses_post_if_id_is_empty(self):
+        self.client.index(index='my-index', doc_type='test-doc', id='', body={})
+
+        self.assert_url_called('POST', '/my-index/test-doc')
+
+    def test_index_uses_put_if_id_is_not_empty(self):
+        self.client.index(index='my-index', doc_type='test-doc', id=0, body={})
+
+        self.assert_url_called('PUT', '/my-index/test-doc/0')

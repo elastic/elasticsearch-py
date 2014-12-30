@@ -252,7 +252,8 @@ class Elasticsearch(object):
         for param in (index, doc_type, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        _, data = self.transport.perform_request('PUT' if id else 'POST',
+        method = 'POST' if id in SKIP_IN_PATH else 'PUT'
+        _, data = self.transport.perform_request(method,
             _make_path(index, doc_type, id), params=params, body=body)
         return data
 
