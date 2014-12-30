@@ -28,9 +28,9 @@ class Connection(object):
     def __init__(self, host='localhost', port=9200, url_prefix='', timeout=10, **kwargs):
         """
         :arg host: hostname of the node (default: localhost)
-        :arg port: port to use (default: 9200)
+        :arg port: port to use (integer, default: 9200)
         :arg url_prefix: optional url prefix for elasticsearch
-        :arg timeout: default timeout in seconds (default: 10)
+        :arg timeout: default timeout in seconds (float, default: 10)
         """
         self.host = '%s://%s:%s' % (self.transport_schema, host, port)
         if url_prefix:

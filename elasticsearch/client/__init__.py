@@ -64,8 +64,8 @@ class Elasticsearch(object):
     Elasticsearch low-level client. Provides a straightforward mapping from
     Python to ES REST endpoints.
 
-    The instance has attributes `cat`, `cluster`, `indices`, `nodes` and
-    `snapshot` that provide access to instances of
+    The instance has attributes ``cat``, ``cluster``, ``indices``, ``nodes``
+    and ``snapshot`` that provide access to instances of
     :class:`~elasticsearch.client.CatClient`,
     :class:`~elasticsearch.client.ClusterClient`,
     :class:`~elasticsearch.client.IndicesClient`,
@@ -100,7 +100,7 @@ class Elasticsearch(object):
     specify those::
 
         # connect to localhost directly and another node using SSL on port 443
-        # and an url_prefix
+        # and an url_prefix. Note that ``port`` needs to be an int.
         es = Elasticsearch([
             {'host': 'localhost'},
             {'host': 'othernode', 'port': 443, 'url_prefix': 'es', 'use_ssl': True},
