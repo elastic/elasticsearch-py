@@ -3,18 +3,20 @@
 Changelog
 =========
 
-1.3.0 (dev)
------------
+1.3.0 (2014-12-31)
+------------------
 
  * Timeout now doesn't trigger a retry by default (can be overriden by setting
    ``retry_on_timeout=True``)
+ * Introduced new parameter ``retry_on_status`` (defaulting to ``(503, 504,
+   )``) controls which http status code should lead to a retry.
  * Implemented url parsing according to RFC-1738
- * added support for proper SSL certificate handling
+ * Added support for proper SSL certificate handling
  * Required parameters are now checked for non-empty values
  * ConnectionPool now checks if any connections were defined
  * DummyConnectionPool introduced when no load balancing is needed (only one
    connection defined)
- * fixed a race condition in ConnectionPool
+ * Fixed a race condition in ConnectionPool
 
 1.2.0 (2014-08-03)
 ------------------
