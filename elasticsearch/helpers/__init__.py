@@ -198,10 +198,11 @@ def scan(client, query=None, scroll='5m', preserve_order=False, **kwargs):
         if scroll_id is None:
             break
 
-def reindex(client, source_index, target_index, target_client=None, chunk_size=500, scroll='5m'):
+def reindex(client, source_index, target_index, query=None, target_client=None, chunk_size=500, scroll='5m'):
     """
-    Reindex all documents from one index to another, potentially (if
-    `target_client` is specified) on a different cluster.
+    Reindex all documents from one index that satisfy a given query
+    to another, potentially (if `target_client` is specified) on a different cluster.
+    If you don't specify the query you will reindex all the documents.
 
     .. note::
 
@@ -211,6 +212,7 @@ def reindex(client, source_index, target_index, target_client=None, chunk_size=5
         read if `target_client` is specified as well)
     :arg source_index: index (or list of indices) to read documents from
     :arg target_index: name of the index in the target cluster to populate
+    :arg query: body for the :meth:`~elasticsearch.Elasticsearch.search` api
     :arg target_client: optional, is specified will be used for writing (thus
         enabling reindex between clusters)
     :arg chunk_size: number of docs in one chunk sent to es (default: 500)
@@ -219,7 +221,7 @@ def reindex(client, source_index, target_index, target_client=None, chunk_size=5
     """
     target_client = client if target_client is None else target_client
 
-    docs = scan(client, index=source_index, scroll=scroll)
+    docs = scan(client, query=query, index=source_index, scroll=scroll)
     def _change_doc_index(hits, index):
         for h in hits:
             h['_index'] = index
