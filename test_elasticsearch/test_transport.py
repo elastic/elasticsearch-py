@@ -168,6 +168,16 @@ class TestTransport(TestCase):
         self.assertEquals(1, len(t.connection_pool.connections))
         self.assertEquals('http://1.1.1.1:123', t.get_connection().host)
 
+    def test_sniff_on_start_ignores_sniff_timeout(self):
+        t = Transport([{'data': CLUSTER_NODES}], connection_class=DummyConnection, sniff_on_start=True, sniff_timeout=12)
+        self.assertEquals((('GET', '/_nodes/_all/clear'), {'timeout': None}), t.seed_connections[0].calls[0])
+
+    def test_sniff_uses_sniff_timeout(self):
+        t = Transport([{'data': CLUSTER_NODES}], connection_class=DummyConnection, sniff_timeout=42)
+        t.sniff_hosts()
+        self.assertEquals((('GET', '/_nodes/_all/clear'), {'timeout': 42}), t.seed_connections[0].calls[0])
+
+
     def test_sniff_reuses_connection_instances_if_possible(self):
         t = Transport([{'data': CLUSTER_NODES}, {"host": "1.1.1.1", "port": 123}], connection_class=DummyConnection, randomize_hosts=False)
         connection = t.connection_pool.connections[1]
