@@ -1,7 +1,7 @@
 from itertools import islice
 from operator import methodcaller
 
-from ..exceptions import ElasticsearchException
+from ..exceptions import ElasticsearchException, TransportError
 from ..compat import map
 
 class BulkIndexError(ElasticsearchException):
@@ -33,7 +33,9 @@ def expand_action(data):
     return action, data.get('_source', data)
 
 
-def streaming_bulk(client, actions, chunk_size=500, raise_on_error=False, expand_action_callback=expand_action, **kwargs):
+def streaming_bulk(client, actions, chunk_size=500, raise_on_error=False,
+        expand_action_callback=expand_action, raise_on_exception=True, 
+        **kwargs):
     """
     Streaming bulk consumes actions from the iterable passed in and yields
     results per action. For non-streaming usecases use
@@ -78,8 +80,10 @@ def streaming_bulk(client, actions, chunk_size=500, raise_on_error=False, expand
     :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use
     :arg actions: iterable containing the actions to be executed
     :arg chunk_size: number of docs in one chunk sent to es (default: 500)
-    :arg raise_on_error: raise `BulkIndexError` containing errors (as `.errors`
+    :arg raise_on_error: raise ``BulkIndexError`` containing errors (as `.errors`
         from the execution of the last chunk)
+    :arg raise_on_exception: if ``False`` then don't propagate exceptions from
+        call to ``bulk`` and just report the items that failed as failed.
     :arg expand_action_callback: callback executed on each action passed in,
         should return a tuple containing the action line and the data line
         (`None` if data line should be omitted).
@@ -100,8 +104,30 @@ def streaming_bulk(client, actions, chunk_size=500, raise_on_error=False, expand
         if not bulk_actions:
             return
 
-        # send the actual request
-        resp = client.bulk(bulk_actions, **kwargs)
+        try:
+            # send the actual request
+            resp = client.bulk(bulk_actions, **kwargs)
+        except TransportError as e:
+            # default behavior - just propagate exception
+            if raise_on_exception:
+                raise e
+
+            # if we are not propagating, mark all actions in current chunk as failed
+            err_message = str(e)
+            exc_errors = []
+            for action, data in chunk:
+                info = {"error": err_message, "status": e.status_code, "exception": e, "data": data}
+                op_type, action = action.popitem()
+                info.update(action)
+                exc_errors.append({op_type: info})
+
+            # emulate standard behavior for failed actions
+            if raise_on_error:
+                raise BulkIndexError('%i document(s) failed to index.' % len(exc_errors), exc_errors)
+            else:
+                for err in exc_errors:
+                    yield False, err
+                continue
 
         # go through request-reponse pairs and detect failures
         for op_type, item in map(methodcaller('popitem'), resp['items']):
