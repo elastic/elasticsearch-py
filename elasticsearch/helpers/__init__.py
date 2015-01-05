@@ -95,6 +95,11 @@ def streaming_bulk(client, actions, chunk_size=500, raise_on_error=False,
 
     while True:
         chunk = islice(actions, chunk_size)
+
+        # raise on exception means we might need to iterate on chunk twice
+        if not raise_on_exception:
+            chunk = list(chunk)
+
         bulk_actions = []
         for action, data in chunk:
             bulk_actions.append(action)

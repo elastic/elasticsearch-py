@@ -1,7 +1,19 @@
-from elasticsearch import helpers
+from elasticsearch import helpers, TransportError
 
 from . import ElasticsearchTestCase
 from ..test_cases import SkipTest
+
+class FailingBulkClient(object):
+    def __init__(self, client, fail_at=1):
+        self.client = client
+        self._called = -1
+        self._fail_at = fail_at
+
+    def bulk(self, *args, **kwargs):
+        self._called += 1
+        if self._called == self._fail_at:
+            raise TransportError(599, "Error!", "INFO")
+        return  self.client.bulk(*args, **kwargs)
 
 class TestStreamingBulk(ElasticsearchTestCase):
     def test_actions_remain_unchanged(self):
@@ -43,7 +55,7 @@ class TestStreamingBulk(ElasticsearchTestCase):
         docs = [
             {'_index': 'i', '_type': 't', '_id': 47, 'f': 'v'},
             {'_op_type': 'delete', '_index': 'i', '_type': 't', '_id': 45},
-            {'_op_type': 'update', '_index': 'i', '_type': 't', '_id': 42, 'doc': {'answer': 42}},
+            {'_op_type': 'update', '_index': 'i', '_type': 't', '_id': 42, 'doc': {'answer': 42}}
         ]
         for ok, item in helpers.streaming_bulk(self.client, docs):
             self.assertTrue(ok)
@@ -51,6 +63,36 @@ class TestStreamingBulk(ElasticsearchTestCase):
         self.assertFalse(self.client.exists(index='i', id=45))
         self.assertEquals({'answer': 42}, self.client.get(index='i', id=42)['_source'])
         self.assertEquals({'f': 'v'}, self.client.get(index='i', id=47)['_source'])
+
+    def test_transport_error_can_becaught(self):
+        failing_client = FailingBulkClient(self.client)
+        docs = [
+            {'_index': 'i', '_type': 't', '_id': 47, 'f': 'v'},
+            {'_index': 'i', '_type': 't', '_id': 45, 'f': 'v'},
+            {'_index': 'i', '_type': 't', '_id': 42, 'f': 'v'},
+        ]
+
+        results = list(helpers.streaming_bulk(failing_client, docs, raise_on_exception=False, raise_on_error=False, chunk_size=1))
+        self.assertEquals(3, len(results))
+        self.assertEquals([True, False, True], [r[0] for r in results])
+
+        exc = results[1][1]['index'].pop('exception')
+        self.assertIsInstance(exc, TransportError)
+        self.assertEquals(599, exc.status_code)
+        self.assertEquals(
+            {
+                'index': {
+                    '_index': 'i',
+                    '_type': 't',
+                    '_id': 45,
+
+                    'data': {'f': 'v'},
+                    'error': "TransportError(599, 'Error!')",
+                    'status': 599
+                }
+            },
+            results[1][1]
+        )
 
 
 class TestBulk(ElasticsearchTestCase):
