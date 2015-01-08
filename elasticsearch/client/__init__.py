@@ -209,10 +209,9 @@ class Elasticsearch(object):
 
         :arg index: The name of the index
         :arg doc_type: The type of the document
-        :arg id: Document ID
         :arg body: The document
-        :arg consistency: Explicit write consistency setting for the operation
         :arg id: Specific document ID (when the POST method is used)
+        :arg consistency: Explicit write consistency setting for the operation
         :arg parent: ID of the parent document
         :arg percolate: Percolator queries to execute while indexing the document
         :arg refresh: Refresh the index after performing the operation
