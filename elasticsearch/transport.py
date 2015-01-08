@@ -201,7 +201,7 @@ class Transport(object):
             self.last_sniff = time.time()
             # go through all current connections as well as the
             # seed_connections for good measure
-            for c in chain(self.connection_pool.connections + self.seed_connections):
+            for c in chain(self.connection_pool.connections, self.seed_connections):
                 try:
                     # use small timeout for the sniffing request, should be a fast api call
                     _, headers, node_info = c.perform_request('GET', '/_nodes/_all/clear',
