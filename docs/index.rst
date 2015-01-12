@@ -159,7 +159,7 @@ elasticsearch cluster, including certificate verification and http auth::
     By default SSL certificates won't be verified, pass in
     ``verify_certs=True`` to make sure your certificates will get verified. The
     client doesn't ship with any CA certificates; easiest way to obtain the
-    common set is by using the `certify`_ package (as shown above).
+    common set is by using the `certifi`_ package (as shown above).
 
 See class :class:`~elasticsearch.Urllib3HttpConnection` for detailed
 description of the options.
