@@ -125,8 +125,27 @@ class YamlTestCase(ElasticsearchTestCase):
             if catch:
                 raise AssertionError('Failed to catch %r in %r.' % (catch, self.last_response))
 
+    def _get_nodes(self):
+        if not hasattr(self, '_node_info'):
+            self._node_info = list(self.client.nodes.info(node_id='_all', metric='clear')['nodes'].values())
+        return self._node_info
+
+    def _get_data_nodes(self):
+        return len([info for info in self._get_nodes() if info.get('attributes', {}).get('data', 'true') == 'true'])
+
+    def _get_benchmark_nodes(self):
+        return len([info for info in self._get_nodes() if info.get('attributes', {}).get('bench', 'false') == 'true'])
+
     def run_skip(self, skip):
-        if 'features' in skip and skip['features'] not in IMPLEMENTED_FEATURES:
+        if 'features' in skip:
+            if skip['features'] in IMPLEMENTED_FEATURES:
+                return
+            elif skip['features'] == 'requires_replica':
+                if self._get_data_nodes() > 1:
+                    return
+            elif skip['features'] == 'benchmark':
+                if self._get_benchmark_nodes():
+                    return
             raise SkipTest(skip.get('reason', 'Feature %s is not supported' % skip['features']))
 
         if 'version' in skip:
