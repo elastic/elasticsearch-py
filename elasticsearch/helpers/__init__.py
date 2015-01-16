@@ -172,7 +172,14 @@ def scan(client, query=None, scroll='5m', preserve_order=False, **kwargs):
         unpredictable results, use with caution.
 
     Any additional keyword arguments will be passed to the initial
-    :meth:`~elasticsearch.Elasticsearch.search` call.
+    :meth:`~elasticsearch.Elasticsearch.search` call::
+
+        scan(es,
+            query={"match": {"title": "python"}},
+            index="orders-*",
+            doc_type="books"
+        )
+
     """
     if not preserve_order:
         kwargs['search_type'] = 'scan'
