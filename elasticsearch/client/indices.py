@@ -193,7 +193,7 @@ class IndicesClient(NamespacedClient):
     def exists(self, index, params=None):
         """
         Return a boolean indicating whether given index exists.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-indices-exists.html>`_
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/indices-exists.html>`_
 
         :arg index: A list of indices to check
         :arg allow_no_indices: Whether to ignore if a wildcard indices

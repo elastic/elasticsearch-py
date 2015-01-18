@@ -4,7 +4,7 @@ class CatClient(NamespacedClient):
     @query_params('h', 'help', 'local', 'master_timeout', 'v')
     def aliases(self, name=None, params=None):
         """
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/master/cat-aliases.html>`_
+        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/master/cat-alias.html>`_
 
         :arg name: A comma-separated list of alias names to return
         :arg h: Comma-separated list of column names to display
