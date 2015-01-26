@@ -102,8 +102,8 @@ class ConnectionPool(object):
             avoid dog piling effect across processes
         """
         if not connections:
-            raise ImproperlyConfigured("No defined connections, you need to \
-                    specify at least one host.")
+            raise ImproperlyConfigured("No defined connections, you need to "
+                    "specify at least one host.")
         self.connection_opts = connections
         self.connections = [c for (c, opts) in connections]
         # remember original connection list for resurrect(force=True)
