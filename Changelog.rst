@@ -7,8 +7,11 @@ Changelog
 -----------
 
  * Using insecure SSL configuration (``verify_cert=False``) raises a warning
+ * ``reindex`` accepts a query parameter
  * enable ``reindex`` helper to accept any kwargs for underlying ``bulk`` and
    ``scan`` calls
+ * when doing an initial sniff (via ``sniff_on_start``) ignore special sniff timeout
+ * option to treat ``TransportError`` as normal failure in ``bulk`` helpers
 
 1.3.0 (2014-12-31)
 ------------------
