@@ -6,6 +6,8 @@ Changelog
 1.4.0 (dev)
 -----------
 
+ * Using insecure SSL configuration (``verify_cert=False``) raises a warning
+
 1.3.0 (2014-12-31)
 ------------------
 
