@@ -7,6 +7,8 @@ Changelog
 -----------
 
  * Using insecure SSL configuration (``verify_cert=False``) raises a warning
+ * enable ``reindex`` helper to accept any kwargs for underlying ``bulk`` and
+   ``scan`` calls
 
 1.3.0 (2014-12-31)
 ------------------

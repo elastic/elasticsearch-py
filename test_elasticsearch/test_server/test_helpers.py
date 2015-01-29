@@ -215,6 +215,15 @@ class TestReindex(ElasticsearchTestCase):
             bulk.append({"answer": x, "correct": x == 42})
         self.client.bulk(bulk, refresh=True)
 
+    def test_reindex_passes_kwargs_to_scan_and_bulk(self):
+        helpers.reindex(self.client, "test_index", "prod_index", scan_kwargs={'doc_type': 'answers'}, bulk_kwargs={'refresh': True})
+
+        self.assertTrue(self.client.indices.exists("prod_index"))
+        self.assertFalse(self.client.indices.exists_type(index='prod_index', doc_type='questions'))
+        self.assertEquals(50, self.client.count(index='prod_index', doc_type='answers')['count'])
+
+        self.assertEquals({"answer": 42, "correct": True}, self.client.get(index="prod_index", doc_type="answers", id=42)['_source'])
+
     def test_reindex_accepts_a_query(self):
         helpers.reindex(self.client, "test_index", "prod_index", query={"query": {"filtered": {"filter": {"term": {"_type": "answers"}}}}})
         self.client.indices.refresh()

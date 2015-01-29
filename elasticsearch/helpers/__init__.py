@@ -236,7 +236,9 @@ def scan(client, query=None, scroll='5m', preserve_order=False, **kwargs):
         if scroll_id is None:
             break
 
-def reindex(client, source_index, target_index, query=None, target_client=None, chunk_size=500, scroll='5m'):
+def reindex(client, source_index, target_index, query=None, target_client=None,
+        chunk_size=500, scroll='5m', scan_kwargs={}, bulk_kwargs={}):
+
     """
     Reindex all documents from one index that satisfy a given query
     to another, potentially (if `target_client` is specified) on a different cluster.
@@ -256,14 +258,18 @@ def reindex(client, source_index, target_index, query=None, target_client=None, 
     :arg chunk_size: number of docs in one chunk sent to es (default: 500)
     :arg scroll: Specify how long a consistent view of the index should be
         maintained for scrolled search
+    :arg scan_kwargs: additional kwargs to be passed to
+        :func:`~elasticsearch.helpers.scan`
+    :arg bulk_kwargs: additional kwargs to be passed to
+        :func:`~elasticsearch.helpers.bulk`
     """
     target_client = client if target_client is None else target_client
 
-    docs = scan(client, query=query, index=source_index, scroll=scroll)
+    docs = scan(client, query=query, index=source_index, scroll=scroll, **scan_kwargs)
     def _change_doc_index(hits, index):
         for h in hits:
             h['_index'] = index
             yield h
 
     return bulk(target_client, _change_doc_index(docs, target_index),
-        chunk_size=chunk_size, stats_only=True)
+        chunk_size=chunk_size, stats_only=True, **bulk_kwargs)
