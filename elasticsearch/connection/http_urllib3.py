@@ -1,6 +1,7 @@
 import time
 import urllib3
 from urllib3.exceptions import ReadTimeoutError, SSLError as UrllibSSLError
+import warnings
 
 from .base import Connection
 from ..exceptions import ConnectionError, ImproperlyConfigured, ConnectionTimeout, SSLError
@@ -44,6 +45,9 @@ class Urllib3HttpConnection(Connection):
                 kw['cert_file'] = client_cert
             elif ca_certs:
                 raise ImproperlyConfigured("You cannot pass CA certificates when verify SSL is off.")
+            else:
+                warnings.warn(
+                    'Connecting to %s using SSL with verify_certs=False is insecure.' % host)
 
         self.pool = pool_class(host, port=port, timeout=self.timeout, maxsize=maxsize, **kw)
 

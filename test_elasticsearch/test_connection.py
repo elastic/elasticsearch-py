@@ -1,6 +1,7 @@
 import re
 from mock import Mock, patch
 import urllib3
+import warnings
 
 from elasticsearch.exceptions import TransportError, ConflictError, RequestError, NotFoundError
 from elasticsearch.connection import RequestsHttpConnection, \
@@ -46,7 +47,11 @@ class TestUrllib3Connection(TestCase):
         self.assertEquals({'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0'}, con.headers)
 
     def test_uses_https_if_specified(self):
-        con = Urllib3HttpConnection(use_ssl=True)
+        with warnings.catch_warnings(record=True) as w:
+            con = Urllib3HttpConnection(use_ssl=True)
+            self.assertEquals(1, len(w))
+            self.assertEquals('Connecting to localhost using SSL with verify_certs=False is insecure.', str(w[0].message))
+
         self.assertIsInstance(con.pool, urllib3.HTTPSConnectionPool)
 
     def test_doesnt_use_https_if_not_specified(self):
@@ -87,7 +92,11 @@ class TestRequestsConnection(TestCase):
         self.assertEquals(42, con.timeout)
 
     def test_use_https_if_specified(self):
-        con = self._get_mock_connection({'use_ssl': True, 'url_prefix': 'url'})
+        with warnings.catch_warnings(record=True) as w:
+            con = self._get_mock_connection({'use_ssl': True, 'url_prefix': 'url'})
+            self.assertEquals(1, len(w))
+            self.assertEquals('Connecting to https://localhost:9200/url using SSL with verify_certs=False is insecure.', str(w[0].message))
+
         request = self._get_request(con, 'GET', '/')
 
         self.assertEquals('https://localhost:9200/url/', request.url)

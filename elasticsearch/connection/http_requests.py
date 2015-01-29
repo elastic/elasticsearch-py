@@ -1,4 +1,5 @@
 import time
+import warnings
 try:
     import requests
     REQUESTS_AVAILABLE = True
@@ -45,6 +46,10 @@ class RequestsHttpConnection(Connection):
             if not verify_certs:
                 raise ImproperlyConfigured("You cannot pass CA certificates when verify SSL is off.")
             self.session.verify = ca_certs
+
+        if use_ssl and not verify_certs:
+            warnings.warn(
+                'Connecting to %s using SSL with verify_certs=False is insecure.' % self.base_url)
 
     def perform_request(self, method, url, params=None, body=None, timeout=None, ignore=()):
         url = self.base_url + url
