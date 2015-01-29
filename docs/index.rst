@@ -154,7 +154,7 @@ elasticsearch cluster, including certificate verification and http auth::
     )
 
 
-..  note::
+..  warning::
 
     By default SSL certificates won't be verified, pass in
     ``verify_certs=True`` to make sure your certificates will get verified. The
