@@ -29,7 +29,7 @@ CATCH_CODES = {
 }
 
 # test features we have implemented
-IMPLEMENTED_FEATURES = ('regex', 'gtelte')
+IMPLEMENTED_FEATURES = ('gtelte', 'stash_in_path')
 
 # broken YAML tests on some releases
 SKIP_TESTS = {
@@ -71,6 +71,7 @@ class YamlTestCase(ElasticsearchTestCase):
             if not step:
                 continue
             step = step.replace('\1', '.')
+            step = self._resolve(step)
             if step.isdigit():
                 step = int(step)
                 self.assertIsInstance(value, list)
