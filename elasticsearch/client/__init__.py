@@ -74,7 +74,7 @@ class Elasticsearch(object):
     preferred (and only supported) way to get access to those classes and their
     methods.
 
-    You can speify your own connection class which should be used by providing
+    You can specify your own connection class which should be used by providing
     the ``connection_class`` parameter::
 
         # create connection to localhost using the ThriftConnection
