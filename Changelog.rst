@@ -3,15 +3,16 @@
 Changelog
 =========
 
-1.4.0 (dev)
------------
+1.4.0 (2015-02-11)
+------------------
 
  * Using insecure SSL configuration (``verify_cert=False``) raises a warning
- * ``reindex`` accepts a query parameter
+ * ``reindex`` accepts a ``query`` parameter
  * enable ``reindex`` helper to accept any kwargs for underlying ``bulk`` and
    ``scan`` calls
  * when doing an initial sniff (via ``sniff_on_start``) ignore special sniff timeout
  * option to treat ``TransportError`` as normal failure in ``bulk`` helpers
+ * fixed an issue with sniffing when only a single host was passed in
 
 1.3.0 (2014-12-31)
 ------------------
