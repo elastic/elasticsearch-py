@@ -193,6 +193,12 @@ def scan(client, query=None, scroll='5m', preserve_order=False, **kwargs):
     :meth:`~elasticsearch.Elasticsearch.scroll` api - a simple iterator that
     yields all hits as returned by underlining scroll requests.
 
+    By default scan does not return results in any pre-determined order. To
+    have a standard order in the returned documents (either by score or
+    explicit sort definition) when scrolling, use ``preserve_order=True``. This
+    may be an expensive operation and will negate the performance benefits of
+    using ``scan``.
+
     :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use
     :arg query: body for the :meth:`~elasticsearch.Elasticsearch.search` api
     :arg scroll: Specify how long a consistent view of the index should be
