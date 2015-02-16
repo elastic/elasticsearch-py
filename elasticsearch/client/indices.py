@@ -496,7 +496,7 @@ class IndicesClient(NamespacedClient):
             params=params, body=body)
         return data
 
-    @query_params('local')
+    @query_params('local', 'master_timeout')
     def exists_template(self, name, params=None):
         """
         Return a boolean indicating whether given template exists.
@@ -505,6 +505,8 @@ class IndicesClient(NamespacedClient):
         :arg name: The name of the template
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
+        :arg master_timeout: Explicit operation timeout for connection to master
+            node
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
@@ -515,7 +517,7 @@ class IndicesClient(NamespacedClient):
             return False
         return True
 
-    @query_params('flat_settings', 'local')
+    @query_params('flat_settings', 'local', 'master_timeout')
     def get_template(self, name=None, params=None):
         """
         Retrieve an index template by its name.
@@ -525,6 +527,8 @@ class IndicesClient(NamespacedClient):
         :arg flat_settings: Return settings in flat format (default: false)
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
+        :arg master_timeout: Explicit operation timeout for connection to master
+            node
         """
         _, data = self.transport.perform_request('GET', _make_path('_template', name),
             params=params)
