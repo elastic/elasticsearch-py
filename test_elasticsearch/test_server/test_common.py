@@ -72,7 +72,7 @@ class YamlTestCase(ElasticsearchTestCase):
                 continue
             step = step.replace('\1', '.')
             step = self._resolve(step)
-            if step.isdigit():
+            if step.isdigit() and step not in value:
                 step = int(step)
                 self.assertIsInstance(value, list)
                 self.assertGreater(len(value), step)
