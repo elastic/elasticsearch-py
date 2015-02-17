@@ -25,7 +25,7 @@ class Urllib3HttpConnection(Connection):
     """
     def __init__(self, host='localhost', port=9200, http_auth=None,
             use_ssl=False, verify_certs=False, ca_certs=None, client_cert=None,
-            maxsize=10, **kwargs):
+            maxsize=10, show_ssl_warnings=True, **kwargs):
 
         super(Urllib3HttpConnection, self).__init__(host=host, port=port, **kwargs)
         self.headers = {}
@@ -46,8 +46,9 @@ class Urllib3HttpConnection(Connection):
             elif ca_certs:
                 raise ImproperlyConfigured("You cannot pass CA certificates when verify SSL is off.")
             else:
-                warnings.warn(
-                    'Connecting to %s using SSL with verify_certs=False is insecure.' % host)
+                if show_ssl_warnings:
+                    warnings.warn(
+                        'Connecting to %s using SSL with verify_certs=False is insecure.' % host)
 
         self.pool = pool_class(host, port=port, timeout=self.timeout, maxsize=maxsize, **kw)
 

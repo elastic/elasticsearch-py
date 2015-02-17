@@ -25,7 +25,7 @@ class RequestsHttpConnection(Connection):
     """
     def __init__(self, host='localhost', port=9200, http_auth=None,
         use_ssl=False, verify_certs=False, ca_certs=None, client_cert=None,
-        **kwargs):
+        show_ssl_warnings=True, **kwargs):
         if not REQUESTS_AVAILABLE:
             raise ImproperlyConfigured("Please install requests to use RequestsHttpConnection.")
 
@@ -48,8 +48,9 @@ class RequestsHttpConnection(Connection):
             self.session.verify = ca_certs
 
         if use_ssl and not verify_certs:
-            warnings.warn(
-                'Connecting to %s using SSL with verify_certs=False is insecure.' % self.base_url)
+            if show_ssl_warnings:
+                warnings.warn(
+                    'Connecting to %s using SSL with verify_certs=False is insecure.' % self.base_url)
 
     def perform_request(self, method, url, params=None, body=None, timeout=None, ignore=()):
         url = self.base_url + url
