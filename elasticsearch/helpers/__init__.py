@@ -1,8 +1,11 @@
+import logging
 from itertools import islice
 from operator import methodcaller
 
 from ..exceptions import ElasticsearchException, TransportError
 from ..compat import map
+
+logger = logging.getLogger('elasticsearch.helpers')
 
 class BulkIndexError(ElasticsearchException):
     @property
@@ -10,6 +13,9 @@ class BulkIndexError(ElasticsearchException):
         """ List of errors from execution of the last chunk. """
         return self.args[1]
 
+
+class ScanError(ElasticsearchException):
+    pass
 
 def expand_action(data):
     """
@@ -33,7 +39,7 @@ def expand_action(data):
     return action, data.get('_source', data)
 
 
-def streaming_bulk(client, actions, chunk_size=500, raise_on_error=False,
+def streaming_bulk(client, actions, chunk_size=500, raise_on_error=True,
         expand_action_callback=expand_action, raise_on_exception=True, 
         **kwargs):
     """
@@ -80,8 +86,8 @@ def streaming_bulk(client, actions, chunk_size=500, raise_on_error=False,
     :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use
     :arg actions: iterable containing the actions to be executed
     :arg chunk_size: number of docs in one chunk sent to es (default: 500)
-    :arg raise_on_error: raise ``BulkIndexError`` containing errors (as `.errors`
-        from the execution of the last chunk)
+    :arg raise_on_error: raise ``BulkIndexError`` containing errors (as `.errors`)
+        from the execution of the last chunk when some occur. By default we raise.
     :arg raise_on_exception: if ``False`` then don't propagate exceptions from
         call to ``bulk`` and just report the items that failed as failed.
     :arg expand_action_callback: callback executed on each action passed in,
@@ -187,7 +193,7 @@ def bulk(client, actions, stats_only=False, **kwargs):
 # preserve the name for backwards compatibility
 bulk_index = bulk
 
-def scan(client, query=None, scroll='5m', preserve_order=False, **kwargs):
+def scan(client, query=None, scroll='5m', raise_on_error=True, preserve_order=False, **kwargs):
     """
     Simple abstraction on top of the
     :meth:`~elasticsearch.Elasticsearch.scroll` api - a simple iterator that
@@ -203,6 +209,8 @@ def scan(client, query=None, scroll='5m', preserve_order=False, **kwargs):
     :arg query: body for the :meth:`~elasticsearch.Elasticsearch.search` api
     :arg scroll: Specify how long a consistent view of the index should be
         maintained for scrolled search
+    :arg raise_on_error: raises an exception (``ScanError``) if an error is
+        encountered (some shards fail to execute). By default we raise.
     :arg preserve_order: don't set the ``search_type`` to ``scan`` - this will
         cause the scroll to paginate with preserving the order. Note that this
         can be an extremely expensive operation and can easily lead to
@@ -234,12 +242,25 @@ def scan(client, query=None, scroll='5m', preserve_order=False, **kwargs):
             first_run = False
         else:
             resp = client.scroll(scroll_id, scroll=scroll)
-        if not resp['hits']['hits']:
-            break
+
         for hit in resp['hits']['hits']:
             yield hit
+
+        # check if we have any errrors
+        if resp["_shards"]["failed"]:
+            logger.warning(
+                'Scrol request has failed on %d shards out of %d.',
+                resp['_shards']['failed'], resp['_shards']['total']
+            )
+            if raise_on_error:
+                raise ScanError(
+                    'Scrol request has failed on %d shards out of %d.',
+                    resp['_shards']['failed'], resp['_shards']['total']
+                )
+
         scroll_id = resp.get('_scroll_id')
-        if scroll_id is None:
+        # end of scroll
+        if scroll_id is None or not resp['hits']['hits']:
             break
 
 def reindex(client, source_index, target_index, query=None, target_client=None,

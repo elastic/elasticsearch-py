@@ -6,6 +6,9 @@ Changelog
 1.5.0 (dev)
 -----------
 
+ * helpers have been made more secure by changing defaults to raise an
+   exception on errors
+
 1.4.0 (2015-02-11)
 ------------------
 

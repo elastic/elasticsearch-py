@@ -134,7 +134,8 @@ class TestBulk(ElasticsearchTestCase):
             self.client,
             [{"a": 42}, {"a": "c", '_id': 42}],
             index="i",
-            doc_type="t"
+            doc_type="t",
+            raise_on_error=False
         )
         self.assertEquals(1, success)
         self.assertEquals(1, len(failed))
@@ -144,7 +145,7 @@ class TestBulk(ElasticsearchTestCase):
         self.assertEquals('i', error['index']['_index'])
         self.assertIn('MapperParsingException', error['index']['error'])
 
-    def test_error_is_raised_if_requested(self):
+    def test_error_is_raised(self):
         self.client.indices.create("i",
             {
                 "mappings": {"t": {"properties": {"a": {"type": "integer"}}}},
@@ -156,8 +157,7 @@ class TestBulk(ElasticsearchTestCase):
             self.client,
             [{"a": 42}, {"a": "c"}],
             index="i",
-            doc_type="t",
-            raise_on_error=True
+            doc_type="t"
         )
 
     def test_errors_are_collected_properly(self):
@@ -173,7 +173,8 @@ class TestBulk(ElasticsearchTestCase):
             [{"a": 42}, {"a": "c"}],
             index="i",
             doc_type="t",
-            stats_only=True
+            stats_only=True,
+            raise_on_error=False
         )
         self.assertEquals(1, success)
         self.assertEquals(1, failed)
