@@ -63,10 +63,13 @@ class Urllib3HttpConnection(Connection):
             if timeout:
                 kw['timeout'] = timeout
 
-            # in python2 we need to make sure the url is not unicode. Otherwise
-            # the body will be decoded into unicode too and that will fail (#133).
+            # in python2 we need to make sure the url and method are not
+            # unicode. Otherwise the body will be decoded into unicode too and
+            # that will fail (#133, #201).
             if not isinstance(url, str):
                 url = url.encode('utf-8')
+            if not isinstance(method, str):
+                method = method.encode('utf-8')
 
             response = self.pool.urlopen(method, url, body, retries=False, headers=self.headers, **kw)
             duration = time.time() - start
