@@ -6,7 +6,7 @@ class NodesClient(NamespacedClient):
         """
         The cluster nodes info API allows to retrieve one or more (or all) of
         the cluster nodes information.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/cluster-nodes-info.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-info.html>`_
 
         :arg node_id: A comma-separated list of node IDs or names to limit the
             returned information; use `_local` to return information from the
@@ -28,7 +28,7 @@ class NodesClient(NamespacedClient):
         """
         The nodes shutdown API allows to shutdown one or more (or all) nodes in
         the cluster.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/cluster-nodes-shutdown.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-shutdown.html>`_
 
         :arg node_id: A comma-separated list of node IDs or names to perform the
             operation on; use `_local` to perform the operation on the node
@@ -46,7 +46,7 @@ class NodesClient(NamespacedClient):
         """
         The cluster nodes stats API allows to retrieve one or more (or all) of
         the cluster nodes statistics.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/cluster-nodes-stats.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-stats.html>`_
 
         :arg node_id: A comma-separated list of node IDs or names to limit the
             returned information; use `_local` to return information from the
@@ -84,7 +84,7 @@ class NodesClient(NamespacedClient):
     def hot_threads(self, node_id=None, params=None):
         """
         An API allowing to get the current hot threads on each node in the cluster.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/cluster-nodes-hot-threads.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-hot-threads.html>`_
 
         :arg node_id: A comma-separated list of node IDs or names to limit the
             returned information; use `_local` to return information from the

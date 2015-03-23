@@ -86,7 +86,7 @@ The client's features include:
 License
 -------
 
-Copyright 2013 Elasticsearch
+Copyright 2015 Elasticsearch
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -103,6 +103,5 @@ limitations under the License.
 Build status
 ------------
 
-.. image:: https://secure.travis-ci.org/elasticsearch/elasticsearch-py.png
-   :target: http://travis-ci.org/#!/elasticsearch/elasticsearch-py
-
+.. image:: https://secure.travis-ci.org/elastic/elasticsearch-py.png
+   :target: http://travis-ci.org/#!/elastic/elasticsearch-py

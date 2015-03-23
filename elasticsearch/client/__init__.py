@@ -205,7 +205,7 @@ class Elasticsearch(object):
         """
         Adds a typed JSON document in a specific index, making it searchable.
         Behind the scenes this method calls index(..., op_type='create')
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/docs-index_.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/docs-index_.html>`_
 
         :arg index: The name of the index
         :arg doc_type: The type of the document
@@ -230,7 +230,7 @@ class Elasticsearch(object):
     def index(self, index, doc_type, body, id=None, params=None):
         """
         Adds or updates a typed JSON document in a specific index, making it searchable.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/docs-index_.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/docs-index_.html>`_
 
         :arg index: The name of the index
         :arg doc_type: The type of the document
@@ -260,7 +260,7 @@ class Elasticsearch(object):
     def exists(self, index, id, doc_type='_all', params=None):
         """
         Returns a boolean indicating whether or not given document exists in Elasticsearch.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/docs-get.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/docs-get.html>`_
 
         :arg index: The name of the index
         :arg id: The document ID
@@ -289,7 +289,7 @@ class Elasticsearch(object):
     def get(self, index, id, doc_type='_all', params=None):
         """
         Get a typed JSON document from the index based on its id.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/docs-get.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/docs-get.html>`_
 
         :arg index: The name of the index
         :arg id: The document ID
@@ -326,7 +326,7 @@ class Elasticsearch(object):
     def get_source(self, index, id, doc_type='_all', params=None):
         """
         Get the source of a document by it's index, type and id.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/docs-get.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/docs-get.html>`_
 
         :arg index: The name of the index
         :arg doc_type: The type of the document (uses `_all` by default to
@@ -360,7 +360,7 @@ class Elasticsearch(object):
     def mget(self, body, index=None, doc_type=None, params=None):
         """
         Get multiple documents based on an index, type (optional) and ids.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/docs-multi-get.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/docs-multi-get.html>`_
 
         :arg body: Document identifiers; can be either `docs` (containing full
             document information) or `ids` (when index and type is provided in the URL.
@@ -393,7 +393,7 @@ class Elasticsearch(object):
     def update(self, index, doc_type, id, body=None, params=None):
         """
         Update a document based on a script or partial data provided.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/docs-update.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update.html>`_
 
         :arg index: The name of the index
         :arg doc_type: The type of the document
@@ -433,7 +433,7 @@ class Elasticsearch(object):
     def search(self, index=None, doc_type=None, body=None, params=None):
         """
         Execute a search query and get back search hits that match the query.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-search.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-search.html>`_
 
         :arg index: A comma-separated list of index names to search; use `_all`
             or empty string to perform the operation on all indices
@@ -504,7 +504,7 @@ class Elasticsearch(object):
         The search shards api returns the indices and shards that a search
         request would be executed against. This can give useful feedback for working
         out issues or planning optimizations with routing and shard preferences.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/master/search-shards.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/master/search-shards.html>`_
 
         :arg index: The name of the index
         :arg doc_type: The type of the document
@@ -531,7 +531,7 @@ class Elasticsearch(object):
         """
         A query that accepts a query template and a map of key/value pairs to
         fill in template parameters.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/master/query-dsl-template-query.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/master/query-dsl-template-query.html>`_
 
         :arg index: A comma-separated list of index names to search; use `_all`
             or empty string to perform the operation on all indices
@@ -565,7 +565,7 @@ class Elasticsearch(object):
         The explain api computes a score explanation for a query and a specific
         document. This can give useful feedback whether a document matches or
         didn't match a specific query.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-explain.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-explain.html>`_
 
         :arg index: The name of the index
         :arg doc_type: The type of the document
@@ -606,7 +606,7 @@ class Elasticsearch(object):
     def scroll(self, scroll_id, params=None):
         """
         Scroll a search request created by specifying the scroll parameter.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-scroll.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-scroll.html>`_
 
         :arg scroll_id: The scroll ID
         :arg scroll: Specify how long a consistent view of the index should be
@@ -621,7 +621,7 @@ class Elasticsearch(object):
         """
         Clear the scroll request created by specifying the scroll parameter to
         search.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-request-scroll.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-scroll.html>`_
 
         :arg scroll_id: The scroll ID or a list of scroll IDs
         :arg body: A comma-separated list of scroll IDs to clear if none was
@@ -637,7 +637,7 @@ class Elasticsearch(object):
     def delete(self, index, doc_type, id, params=None):
         """
         Delete a typed JSON document from a specific index based on its id.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/docs-delete.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/docs-delete.html>`_
 
         :arg index: The name of the index
         :arg doc_type: The type of the document
@@ -662,7 +662,7 @@ class Elasticsearch(object):
     def count(self, index=None, doc_type=None, body=None, params=None):
         """
         Execute a query and get the number of matches for that query.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-count.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-count.html>`_
 
         :arg index: A comma-separated list of indices to restrict the results
         :arg doc_type: A comma-separated list of types to restrict the results
@@ -689,7 +689,7 @@ class Elasticsearch(object):
     def bulk(self, body, index=None, doc_type=None, params=None):
         """
         Perform many index/delete operations in a single API call.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/docs-bulk.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html>`_
 
         See the :func:`~elasticsearch.helpers.bulk` helper function for a more
         friendly API.
@@ -715,7 +715,7 @@ class Elasticsearch(object):
     def msearch(self, body, index=None, doc_type=None, params=None):
         """
         Execute several search requests within the same API.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-multi-search.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-multi-search.html>`_
 
         :arg body: The request definitions (metadata-search request definition
             pairs), as either a newline separated string, or a sequence of
@@ -736,7 +736,7 @@ class Elasticsearch(object):
     def delete_by_query(self, index, doc_type=None, body=None, params=None):
         """
         Delete documents from one or more indices and one or more types based on a query.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/docs-delete-by-query.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/docs-delete-by-query.html>`_
 
         :arg index: A comma-separated list of indices to restrict the operation;
             use `_all` to perform the operation on all indices
@@ -775,7 +775,7 @@ class Elasticsearch(object):
         """
         The suggest feature suggests similar looking terms based on a provided
         text by using a suggester.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-search.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-search.html>`_
 
         :arg index: A comma-separated list of index names to restrict the operation;
             use `_all` or empty string to perform the operation on all indices
@@ -806,7 +806,7 @@ class Elasticsearch(object):
         The percolator allows to register queries against an index, and then
         send percolate requests which include a doc, and getting back the
         queries that match on that doc out of the set of registered queries.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-percolate.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-percolate.html>`_
 
         :arg index: The index of the document being percolated.
         :arg doc_type: The type of the document being percolated.
@@ -847,7 +847,7 @@ class Elasticsearch(object):
         The percolator allows to register queries against an index, and then
         send percolate requests which include a doc, and getting back the
         queries that match on that doc out of the set of registered queries.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-percolate.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-percolate.html>`_
 
         :arg index: The index of the document being count percolated to use as
             default
@@ -877,7 +877,7 @@ class Elasticsearch(object):
         The percolator allows to register queries against an index, and then
         send percolate requests which include a doc, and getting back the
         queries that match on that doc out of the set of registered queries.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-percolate.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-percolate.html>`_
 
         :arg index: The index of the document being count percolated.
         :arg doc_type: The type of the document being count percolated.
@@ -919,7 +919,7 @@ class Elasticsearch(object):
     def mlt(self, index, doc_type, id, body=None, params=None):
         """
         Get documents that are "like" a specified document.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-more-like-this.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-more-like-this.html>`_
 
         :arg index: The name of the index
         :arg doc_type: The type of the document (use `_all` to fetch the first
@@ -970,7 +970,7 @@ class Elasticsearch(object):
         artificially provided by the user (Added in 1.4). Note that for
         documents stored in the index, this is a near realtime API as the term
         vectors are not available until the next refresh.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/docs-termvectors.html>`
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/docs-termvectors.html>`
 
         :arg index: The index in which the document resides.
         :arg doc_type: The type of the document.
@@ -1019,7 +1019,7 @@ class Elasticsearch(object):
         """
         Multi termvectors API allows to get multiple termvectors based on an
         index, type and id.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/master/docs-multi-termvectors.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/master/docs-multi-termvectors.html>`_
 
         :arg index: The index in which the document resides.
         :arg doc_type: The type of the document.
@@ -1065,7 +1065,7 @@ class Elasticsearch(object):
         """
         The benchmark API provides a standard mechanism for submitting queries
         and measuring their performance relative to one another.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/master/search-benchmark.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/master/search-benchmark.html>`_
 
         :arg index: A comma-separated list of index names; use `_all` or empty
             string to perform the operation on all indices
@@ -1082,7 +1082,7 @@ class Elasticsearch(object):
     def abort_benchmark(self, name=None, params=None):
         """
         Aborts a running benchmark.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/master/search-benchmark.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/master/search-benchmark.html>`_
 
         :arg name: A benchmark name
         """
@@ -1094,7 +1094,7 @@ class Elasticsearch(object):
     def list_benchmarks(self, index=None, doc_type=None, params=None):
         """
         View the progress of long-running benchmarks.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/master/search-benchmark.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/master/search-benchmark.html>`_
 
         :arg index: A comma-separated list of index names; use `_all` or empty
             string to perform the operation on all indices
@@ -1108,7 +1108,7 @@ class Elasticsearch(object):
     def put_script(self, lang, id, body, params=None):
         """
         Create a script in given language with specified ID.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-scripting.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/modules-scripting.html>`_
 
         :arg lang: Script language
         :arg id: Script ID
@@ -1128,7 +1128,7 @@ class Elasticsearch(object):
     def get_script(self, lang, id, params=None):
         """
         Retrieve a script from the API.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-scripting.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/modules-scripting.html>`_
 
         :arg lang: Script language
         :arg id: Script ID
@@ -1146,7 +1146,7 @@ class Elasticsearch(object):
     def delete_script(self, lang, id, params=None):
         """
         Remove a stored script from elasticsearch.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-scripting.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/modules-scripting.html>`_
 
         :arg lang: Script language
         :arg id: Script ID
@@ -1164,7 +1164,7 @@ class Elasticsearch(object):
     def put_template(self, id, body, params=None):
         """
         Create a search template.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-template.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html>`_
 
         :arg id: Template ID
         :arg body: The document
@@ -1183,7 +1183,7 @@ class Elasticsearch(object):
     def get_template(self, id, params=None):
         """
         Retrieve a search template.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-template.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html>`_
 
         :arg id: Template ID
         :arg version: Explicit version number for concurrency control
@@ -1199,7 +1199,7 @@ class Elasticsearch(object):
     def delete_template(self, id=None, params=None):
         """
         Delete a search template.
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-template.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html>`_
 
         :arg id: Template ID
         :arg version: Explicit version number for concurrency control
@@ -1213,7 +1213,7 @@ class Elasticsearch(object):
         'min_score', 'preference', 'routing', 'source')
     def search_exists(self, index=None, doc_type=None, body=None, params=None):
         """
-        `<http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/search-exists.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-exists.html>`_
 
         :arg index: A comma-separated list of indices to restrict the results
         :arg doc_type: A comma-separated list of types to restrict the results
