@@ -32,7 +32,7 @@ if sys.version_info[0] == 2:
     # only require thrift if we are going to use it
     if os.environ.get('TEST_ES_CONNECTION', None) == 'ThriftConnection':
         tests_require.append('thrift==0.9.1')
-    tests_require.append('pylibmc==1.2.3')
+    tests_require.append('pylibmc==1.4.1')
 
 setup(
     name = 'elasticsearch',

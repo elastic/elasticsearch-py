@@ -24,4 +24,3 @@ before_script:
 
 script:
   - python setup.py test
-

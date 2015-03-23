@@ -9,25 +9,25 @@ class TestNormalizeHosts(TestCase):
         self.assertEquals([{}], _normalize_hosts(None))
 
     def test_strings_are_used_as_hostnames(self):
-        self.assertEquals([{"host": "elasticsearch.org"}], _normalize_hosts(["elasticsearch.org"]))
+        self.assertEquals([{"host": "elastic.co"}], _normalize_hosts(["elastic.co"]))
 
     def test_strings_are_parsed_for_port_and_user(self):
         self.assertEquals(
-            [{"host": "elasticsearch.org", "port": 42}, {"host": "elasticsearch.com", "http_auth": "user:secret"}],
-            _normalize_hosts(["elasticsearch.org:42", "user:secret@elasticsearch.com"])
+            [{"host": "elastic.co", "port": 42}, {"host": "elastic.co", "http_auth": "user:secret"}],
+            _normalize_hosts(["elastic.co:42", "user:secret@elastic.co"])
         )
 
     def test_strings_are_parsed_for_scheme(self):
         self.assertEquals(
             [
                 {
-                    "host": "elasticsearch.org",
+                    "host": "elastic.co",
                     "port": 42,
-                    "use_ssl": True, 
+                    "use_ssl": True,
                     'scheme': 'http'
                 },
                 {
-                    "host": "elasticsearch.com",
+                    "host": "elastic.co",
                     "http_auth": "user:secret",
                     "use_ssl": True,
                     "port": 443,
@@ -35,7 +35,7 @@ class TestNormalizeHosts(TestCase):
                     'url_prefix': '/prefix'
                 }
             ],
-            _normalize_hosts(["https://elasticsearch.org:42", "https://user:secret@elasticsearch.com/prefix"])
+            _normalize_hosts(["https://elastic.co:42", "https://user:secret@elastic.co/prefix"])
         )
 
     def test_dicts_are_left_unchanged(self):
@@ -43,8 +43,8 @@ class TestNormalizeHosts(TestCase):
 
     def test_single_string_is_wrapped_in_list(self):
         self.assertEquals(
-            [{"host": "elasticsearch.org"}],
-            _normalize_hosts("elasticsearch.org")
+            [{"host": "elastic.co"}],
+            _normalize_hosts("elastic.co")
         )
 
 
