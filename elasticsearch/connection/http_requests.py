@@ -1,4 +1,3 @@
-import six
 import time
 import warnings
 try:
@@ -9,7 +8,7 @@ except ImportError:
 
 from .base import Connection
 from ..exceptions import ConnectionError, ImproperlyConfigured, ConnectionTimeout, SSLError
-from ..compat import urlencode
+from ..compat import urlencode, string_types
 
 class RequestsHttpConnection(Connection):
     """
@@ -35,9 +34,8 @@ class RequestsHttpConnection(Connection):
         if http_auth is not None:
             if isinstance(http_auth, (tuple, list)):
                 http_auth = tuple(http_auth)
-            elif isinstance(http_auth, six.string_types):
+            elif isinstance(http_auth, string_types):
                 http_auth = tuple(http_auth.split(':', 1))
-            http_auth = tuple(http_auth)
             self.session.auth = http_auth
         self.base_url = 'http%s://%s:%d%s' % (
             's' if use_ssl else '',

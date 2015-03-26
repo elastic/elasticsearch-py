@@ -2,6 +2,7 @@ import re
 from mock import Mock, patch
 import urllib3
 import warnings
+from requests.auth import AuthBase
 
 from elasticsearch.exceptions import TransportError, ConflictError, RequestError, NotFoundError
 from elasticsearch.connection import RequestsHttpConnection, \
@@ -86,6 +87,12 @@ class TestRequestsConnection(TestCase):
         self.assertEquals(timeout, kwargs['timeout'])
         self.assertEquals(1, len(args))
         return args[0]
+
+    def test_custom_http_auth_is_allowed(self):
+        auth = AuthBase()
+        c = RequestsHttpConnection(http_auth=auth)
+
+        self.assertEquals(auth, c.session.auth)
 
     def test_timeout_set(self):
         con = RequestsHttpConnection(timeout=42)
