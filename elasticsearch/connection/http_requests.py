@@ -1,3 +1,4 @@
+import six
 import time
 import warnings
 try:
@@ -32,8 +33,10 @@ class RequestsHttpConnection(Connection):
         super(RequestsHttpConnection, self).__init__(host= host, port=port, **kwargs)
         self.session = requests.session()
         if http_auth is not None:
-            if not isinstance(http_auth, (tuple, list)):
-                http_auth = http_auth.split(':', 1)
+            if isinstance(http_auth, (tuple, list)):
+                http_auth = tuple(http_auth)
+            elif isinstance(http_auth, six.string_types):
+                http_auth = tuple(http_auth.split(':', 1))
             http_auth = tuple(http_auth)
             self.session.auth = http_auth
         self.base_url = 'http%s://%s:%d%s' % (
