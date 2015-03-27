@@ -15,7 +15,7 @@ class RequestsHttpConnection(Connection):
     Connection using the `requests` library.
 
     :arg http_auth: optional http auth information as either ':' separated
-        string or a tuple
+        string or a tuple. Any value will be passed into requests as `auth`.
     :arg use_ssl: use ssl for the connection if `True`
     :arg verify_certs: whether to verify SSL certificates
     :arg ca_certs: optional path to CA bundle. By default standard requests'
