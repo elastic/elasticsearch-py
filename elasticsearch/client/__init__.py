@@ -681,6 +681,9 @@ class Elasticsearch(object):
         :arg routing: Specific routing value
         :arg source: The URL-encoded query definition (instead of using the request body)
         """
+        if doc_type and not index:
+            index = '_all'
+
         _, data = self.transport.perform_request('POST', _make_path(index, doc_type, '_count'),
             params=params, body=body)
         return data
