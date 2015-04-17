@@ -6,6 +6,7 @@ Changelog
 1.5.0 (dev)
 -----------
 
+ * Add support for ``query_cache`` parameter when searching
  * helpers have been made more secure by changing defaults to raise an
    exception on errors
 

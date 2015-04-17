@@ -426,10 +426,10 @@ class Elasticsearch(object):
         'analyze_wildcard', 'analyzer', 'default_operator', 'df',
         'explain', 'fields', 'indices_boost', 'lenient',
         'allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
-        'lowercase_expanded_terms', 'from_', 'preference', 'q', 'routing',
-        'scroll', 'search_type', 'size', 'sort', 'source', 'stats',
-        'suggest_field', 'suggest_mode', 'suggest_size', 'suggest_text', 'timeout',
-        'version')
+        'lowercase_expanded_terms', 'from_', 'preference', 'q', 'query_cache',
+        'routing', 'scroll', 'search_type', 'size', 'sort', 'source', 'stats',
+        'suggest_field', 'suggest_mode', 'suggest_size', 'suggest_text',
+        'timeout', 'version')
     def search(self, index=None, doc_type=None, body=None, params=None):
         """
         Execute a search query and get back search hits that match the query.
@@ -471,6 +471,7 @@ class Elasticsearch(object):
         :arg preference: Specify the node or shard the operation should be
             performed on (default: random)
         :arg q: Query in the Lucene query string syntax
+        :arg query_cache: Enable or disable caching on a per-query basis
         :arg routing: A comma-separated list of specific routing values
         :arg scroll: Specify how long a consistent view of the index should be
             maintained for scrolled search
