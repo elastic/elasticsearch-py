@@ -298,5 +298,9 @@ def reindex(client, source_index, target_index, query=None, target_client=None,
             h['_index'] = index
             yield h
 
+    kwargs = {
+        'stats_only': True,
+    }
+    kwargs.update(bulk_kwargs)
     return bulk(target_client, _change_doc_index(docs, target_index),
-        chunk_size=chunk_size, stats_only=True, **bulk_kwargs)
+        chunk_size=chunk_size, **kwargs)
