@@ -200,7 +200,7 @@ class Elasticsearch(object):
         return data
 
     @query_params('consistency', 'parent', 'percolate', 'refresh',
-        'replication', 'routing', 'timeout', 'timestamp', 'ttl', 'version', 'version_type')
+        'routing', 'timeout', 'timestamp', 'ttl', 'version', 'version_type')
     def create(self, index, doc_type, body, id=None, params=None):
         """
         Adds a typed JSON document in a specific index, making it searchable.
@@ -215,7 +215,6 @@ class Elasticsearch(object):
         :arg parent: ID of the parent document
         :arg percolate: Percolator queries to execute while indexing the document
         :arg refresh: Refresh the index after performing the operation
-        :arg replication: Specific replication type (default: sync)
         :arg routing: Specific routing value
         :arg timeout: Explicit operation timeout
         :arg timestamp: Explicit timestamp for the document
@@ -226,7 +225,7 @@ class Elasticsearch(object):
         return self.index(index, doc_type, body, id=id, params=params, op_type='create')
 
     @query_params('consistency', 'op_type', 'parent', 'refresh',
-        'replication', 'routing', 'timeout', 'timestamp', 'ttl', 'version', 'version_type')
+        'routing', 'timeout', 'timestamp', 'ttl', 'version', 'version_type')
     def index(self, index, doc_type, body, id=None, params=None):
         """
         Adds or updates a typed JSON document in a specific index, making it searchable.
@@ -240,7 +239,6 @@ class Elasticsearch(object):
         :arg op_type: Explicit operation type (default: index)
         :arg parent: ID of the parent document
         :arg refresh: Refresh the index after performing the operation
-        :arg replication: Specific replication type (default: sync)
         :arg routing: Specific routing value
         :arg timeout: Explicit operation timeout
         :arg timestamp: Explicit timestamp for the document
@@ -388,8 +386,9 @@ class Elasticsearch(object):
         return data
 
     @query_params('consistency', 'fields', 'lang', 'parent', 'refresh',
-        'replication', 'retry_on_conflict', 'routing', 'script', 'timeout',
-        'timestamp', 'ttl', 'version', 'version_type')
+        'retry_on_conflict', 'routing', 'script', 'script_id',
+        'scripted_upsert', 'timeout', 'timestamp', 'ttl', 'version',
+        'version_type')
     def update(self, index, doc_type, id, body=None, params=None):
         """
         Update a document based on a script or partial data provided.
@@ -404,11 +403,13 @@ class Elasticsearch(object):
         :arg lang: The script language (default: mvel)
         :arg parent: ID of the parent document
         :arg refresh: Refresh the index after performing the operation
-        :arg replication: Specific replication type (default: sync)
         :arg retry_on_conflict: Specify how many times should the operation be
             retried when a conflict occurs (default: 0)
         :arg routing: Specific routing value
         :arg script: The URL-encoded script definition (instead of using request body)
+        :arg script_id: The id of a stored script
+        :arg scripted_upsert: True if the script referenced in script or
+            script_id should be called to perform inserts - defaults to false
         :arg timeout: Explicit operation timeout
         :arg timestamp: Explicit timestamp for the document
         :arg ttl: Expiration time for the document
@@ -429,7 +430,7 @@ class Elasticsearch(object):
         'lowercase_expanded_terms', 'from_', 'preference', 'q', 'query_cache',
         'routing', 'scroll', 'search_type', 'size', 'sort', 'source', 'stats',
         'suggest_field', 'suggest_mode', 'suggest_size', 'suggest_text',
-        'timeout', 'version')
+        'terminate_after', 'timeout', 'track_scores', 'version')
     def search(self, index=None, doc_type=None, body=None, params=None):
         """
         Execute a search query and get back search hits that match the query.
@@ -485,7 +486,12 @@ class Elasticsearch(object):
         :arg suggest_mode: Specify suggest mode (default: missing)
         :arg suggest_size: How many suggestions to return in response
         :arg suggest_text: The source text for which the suggestions should be returned
+        :arg terminate_after: The maximum number of documents to collect for
+            each shard, upon reaching which the query execution will terminate
+            early.
         :arg timeout: Explicit operation timeout
+        :arg track_scores: Whether to calculate and return scores even if they
+            are not used for sorting
         :arg version: Specify whether to return document version as part of a hit
         """
         # from is a reserved word so it cannot be used, use from_ instead
@@ -632,9 +638,8 @@ class Elasticsearch(object):
             body=body, params=params)
         return data
 
-
-    @query_params('consistency', 'parent', 'refresh', 'replication', 'routing',
-        'timeout', 'version', 'version_type')
+    @query_params('consistency', 'parent', 'refresh', 'routing', 'timeout',
+        'version', 'version_type')
     def delete(self, index, doc_type, id, params=None):
         """
         Delete a typed JSON document from a specific index based on its id.
@@ -646,7 +651,6 @@ class Elasticsearch(object):
         :arg consistency: Specific write consistency setting for the operation
         :arg parent: ID of parent document
         :arg refresh: Refresh the index after performing the operation
-        :arg replication: Specific replication type (default: sync)
         :arg routing: Specific routing value
         :arg timeout: Explicit operation timeout
         :arg version: Explicit version number for concurrency control
@@ -659,7 +663,7 @@ class Elasticsearch(object):
         return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
-        'min_score', 'preference', 'q', 'routing', 'source')
+        'min_score', 'preference', 'q', 'routing')
     def count(self, index=None, doc_type=None, body=None, params=None):
         """
         Execute a query and get the number of matches for that query.
@@ -680,7 +684,6 @@ class Elasticsearch(object):
             performed on (default: random)
         :arg q: Query in the Lucene query string syntax
         :arg routing: Specific routing value
-        :arg source: The URL-encoded query definition (instead of using the request body)
         """
         if doc_type and not index:
             index = '_all'
@@ -689,7 +692,7 @@ class Elasticsearch(object):
             params=params, body=body)
         return data
 
-    @query_params('consistency', 'refresh', 'routing', 'replication', 'timeout')
+    @query_params('consistency', 'refresh', 'routing', 'timeout')
     def bulk(self, body, index=None, doc_type=None, params=None):
         """
         Perform many index/delete operations in a single API call.
@@ -706,7 +709,6 @@ class Elasticsearch(object):
         :arg consistency: Explicit write consistency setting for the operation
         :arg refresh: Refresh the index after performing the operation
         :arg routing: Specific routing value
-        :arg replication: Explicitly set the replication type (default: sync)
         :arg timeout: Explicit operation timeout
         """
         if body in SKIP_IN_PATH:
@@ -736,7 +738,7 @@ class Elasticsearch(object):
 
     @query_params('allow_no_indices', 'analyzer', 'consistency',
         'default_operator', 'df', 'expand_wildcards', 'ignore_unavailable', 'q',
-        'replication', 'routing', 'source', 'timeout')
+        'routing', 'source', 'timeout')
     def delete_by_query(self, index, doc_type=None, body=None, params=None):
         """
         Delete documents from one or more indices and one or more types based on a query.
@@ -761,7 +763,6 @@ class Elasticsearch(object):
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
         :arg q: Query in the Lucene query string syntax
-        :arg replication: Specific replication type, default u'sync'
         :arg routing: Specific routing value
         :arg source: The URL-encoded query definition (instead of using the
             request body)
@@ -774,7 +775,7 @@ class Elasticsearch(object):
         return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
-        'preference', 'routing', 'source')
+        'preference', 'routing')
     def suggest(self, body, index=None, params=None):
         """
         The suggest feature suggests similar looking terms based on a provided
@@ -794,7 +795,6 @@ class Elasticsearch(object):
         :arg preference: Specify the node or shard the operation should be
             performed on (default: random)
         :arg routing: Specific routing value
-        :arg source: The URL-encoded request definition (instead of using request body)
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
@@ -803,8 +803,9 @@ class Elasticsearch(object):
         return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
-        'percolate_format', 'percolate_index', 'percolate_type', 'preference',
-        'routing', 'version', 'version_type')
+        'percolate_format', 'percolate_index', 'percolate_preference',
+        'percolate_routing', 'percolate_type', 'preference', 'routing',
+        'version', 'version_type')
     def percolate(self, index, doc_type, id=None, body=None, params=None):
         """
         The percolator allows to register queries against an index, and then
@@ -830,6 +831,10 @@ class Elasticsearch(object):
             objects
         :arg percolate_index: The index to percolate the document into. Defaults
             to index.
+        :arg percolate_preference: Which shard to prefer when executing the
+            percolate request.
+        :arg percolate_routing: The routing value to use when percolating the
+            existing document.
         :arg percolate_type: The type to percolate document into. Defaults to
             type.
         :arg preference: Specify the node or shard the operation should be
@@ -965,9 +970,10 @@ class Elasticsearch(object):
             params=params, body=body)
         return data
 
-    @query_params('field_statistics', 'fields', 'offsets', 'parent', 'payloads',
-        'positions', 'preference', 'realtime', 'routing', 'term_statistics')
-    def termvectors(self, index, doc_type, id, body=None, params=None):
+    @query_params('dfs', 'field_statistics', 'fields', 'offsets', 'parent',
+        'payloads', 'positions', 'preference', 'realtime', 'routing',
+        'term_statistics', 'version', 'version_type')
+    def termvectors(self, index, doc_type, id=None, body=None, params=None):
         """
         Returns information and statistics on terms in the fields of a
         particular document. The document could be stored in the index or
@@ -978,8 +984,12 @@ class Elasticsearch(object):
 
         :arg index: The index in which the document resides.
         :arg doc_type: The type of the document.
-        :arg id: The id of the document.
-        :arg body: Define parameters. See documentation.
+        :arg id: The id of the document, when not specified a doc param should
+            be supplied.
+        :arg body: Define parameters and or supply a document to get termvectors
+            for. See documentation.
+        :arg dfs: Specifies if distributed frequencies should be returned
+            instead shard frequencies., default False
         :arg field_statistics: Specifies if document count, sum of document
             frequencies and sum of total term frequencies should be returned.,
             default True
@@ -998,6 +1008,8 @@ class Elasticsearch(object):
         :arg routing: Specific routing value.
         :arg term_statistics: Specifies if total term frequency and document
             frequency should be returned., default False
+        :arg version: Explicit version number for concurrency control
+        :arg version_type: Specific version type
         """
         for param in (index, doc_type, id):
             if param in SKIP_IN_PATH:
@@ -1018,7 +1030,8 @@ class Elasticsearch(object):
     termvector.__doc__ = termvectors.__doc__
 
     @query_params('field_statistics', 'fields', 'ids', 'offsets', 'parent',
-        'payloads', 'positions', 'preference', 'routing', 'term_statistics')
+        'payloads', 'positions', 'preference', 'realtime', 'routing',
+        'term_statistics')
     def mtermvectors(self, index=None, doc_type=None, body=None, params=None):
         """
         Multi termvectors API allows to get multiple termvectors based on an
@@ -1053,6 +1066,8 @@ class Elasticsearch(object):
         :arg preference: Specify the node or shard the operation should be
             performed on (default: random) .Applies to all returned documents
             unless otherwise specified in body "params" or "docs".
+        :arg realtime: Specifies if requests are real-time as opposed to near-
+            real-time (default: true).
         :arg routing: Specific routing value. Applies to all returned documents
             unless otherwise specified in body "params" or "docs".
         :arg term_statistics: Specifies if total term frequency and document
@@ -1062,50 +1077,6 @@ class Elasticsearch(object):
         """
         _, data = self.transport.perform_request('GET', _make_path(index,
             doc_type, '_mtermvectors'), params=params, body=body)
-        return data
-
-    @query_params('verbose')
-    def benchmark(self, index=None, doc_type=None, body=None, params=None):
-        """
-        The benchmark API provides a standard mechanism for submitting queries
-        and measuring their performance relative to one another.
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/master/search-benchmark.html>`_
-
-        :arg index: A comma-separated list of index names; use `_all` or empty
-            string to perform the operation on all indices
-        :arg doc_type: The name of the document type
-        :arg body: The search definition using the Query DSL
-        :arg verbose: Specify whether to return verbose statistics about each
-            iteration (default: false)
-        """
-        _, data = self.transport.perform_request('PUT', _make_path(index,
-            doc_type, '_bench'), params=params, body=body)
-        return data
-
-    @query_params()
-    def abort_benchmark(self, name=None, params=None):
-        """
-        Aborts a running benchmark.
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/master/search-benchmark.html>`_
-
-        :arg name: A benchmark name
-        """
-        _, data = self.transport.perform_request('POST', _make_path('_bench',
-            'abort', name), params=params)
-        return data
-
-    @query_params()
-    def list_benchmarks(self, index=None, doc_type=None, params=None):
-        """
-        View the progress of long-running benchmarks.
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/master/search-benchmark.html>`_
-
-        :arg index: A comma-separated list of index names; use `_all` or empty
-            string to perform the operation on all indices
-        :arg doc_type: The name of the document type
-        """
-        _, data = self.transport.perform_request('GET', _make_path(index,
-            doc_type, '_bench'), params=params)
         return data
 
     @query_params('op_type', 'version', 'version_type')

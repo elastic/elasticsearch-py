@@ -9,6 +9,7 @@ Changelog
  * Add support for ``query_cache`` parameter when searching
  * helpers have been made more secure by changing defaults to raise an
    exception on errors
+ * removed deprecated options ``replication`` and the deprecated benchmark api.
 
 1.4.0 (2015-02-11)
 ------------------

@@ -41,7 +41,8 @@ class NodesClient(NamespacedClient):
             'nodes', node_id, '_shutdown'), params=params)
         return data
     
-    @query_params('completion_fields', 'fielddata_fields', 'fields', 'groups', 'human', 'level', 'types')
+    @query_params('completion_fields', 'fielddata_fields', 'fields', 'groups',
+        'human', 'level', 'types')
     def stats(self, node_id=None, metric=None, index_metric=None, params=None):
         """
         The cluster nodes stats API allows to retrieve one or more (or all) of
@@ -80,7 +81,8 @@ class NodesClient(NamespacedClient):
             node_id, 'stats', metric, index_metric), params=params)
         return data
     
-    @query_params('type_', 'interval', 'snapshots', 'threads')
+    @query_params('type_', 'ignore_idle_threads', 'interval', 'snapshots',
+        'threads')
     def hot_threads(self, node_id=None, params=None):
         """
         An API allowing to get the current hot threads on each node in the cluster.
@@ -91,6 +93,9 @@ class NodesClient(NamespacedClient):
             node you're connecting to, leave empty to get information from all
             nodes
         :arg type_: The type to sample (default: cpu)
+        :arg ignore_idle_threads: Don't show threads that are in known-idle
+            places, such as waiting on a socket select or pulling from an empty
+            task queue (default: true)
         :arg interval: The interval for the second sampling of threads
         :arg snapshots: Number of samples of thread stacktrace (default: 10)
         :arg threads: Specify the number of threads to provide information for

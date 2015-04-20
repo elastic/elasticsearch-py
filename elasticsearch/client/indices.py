@@ -53,8 +53,8 @@ class IndicesClient(NamespacedClient):
             params=params)
         return data
 
-    @query_params('force', 'full', 'allow_no_indices', 'expand_wildcards',
-        'ignore_indices', 'ignore_unavailable')
+    @query_params('allow_no_indices', 'expand_wildcards', 'force', 'full',
+        'ignore_indices', 'ignore_unavailable', 'wait_if_ongoing')
     def flush(self, index=None, params=None):
         """
         Explicitly flush one or more indices.
@@ -75,6 +75,11 @@ class IndicesClient(NamespacedClient):
             ignore `missing` ones (default: none)
         :arg ignore_unavailable: Whether specified concrete indices should be ignored
             when unavailable (missing or closed)
+        :arg wait_if_ongoing: If set to true the flush operation will block
+            until the flush can be executed if another flush operation is
+            already executing. The default is false and will cause an exception
+            to be thrown on the shard level if another flush operation is
+            already running.
         """
         _, data = self.transport.perform_request('POST', _make_path(index, '_flush'),
             params=params)
@@ -120,8 +125,8 @@ class IndicesClient(NamespacedClient):
             feature), params=params)
         return data
 
-    @query_params('timeout', 'master_timeout' 'allow_no_indices', 'expand_wildcards',
-        'ignore_unavailable')
+    @query_params('timeout', 'master_timeout' 'allow_no_indices',
+        'expand_wildcards', 'ignore_unavailable')
     def open(self, index, params=None):
         """
         Open a closed index to make it available for search.
@@ -213,8 +218,8 @@ class IndicesClient(NamespacedClient):
             return False
         return True
 
-    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_indices', 'ignore_unavailable',
-        'local')
+    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_indices',
+        'ignore_unavailable', 'local')
     def exists_type(self, index, doc_type, params=None):
         """
         Check if a type/types exists in an index/indices.
@@ -251,11 +256,11 @@ class IndicesClient(NamespacedClient):
         Register specific mapping definition for a specific type.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/indices-put-mapping.html>`_
 
-        :arg index: A comma-separated list of index names the mapping should be
-            added to (supports wildcards); use `_all` or omit to add the
-            mapping on all indices.
         :arg doc_type: The name of the document type
         :arg body: The mapping definition
+        :arg index: A list of index names the mapping should be added to
+            (supports wildcards); use `_all` or omit to add the mapping on all
+            indices.
         :arg allow_no_indices: Whether to ignore if a wildcard indices
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
@@ -275,8 +280,8 @@ class IndicesClient(NamespacedClient):
             params=params, body=body)
         return data
 
-    @query_params('ignore_unavailable', 'allow_no_indices',
-        'expand_wildcards', 'local')
+    @query_params('ignore_unavailable', 'allow_no_indices', 'expand_wildcards',
+        'local')
     def get_mapping(self, index=None, doc_type=None, params=None):
         """
         Retrieve mapping definition of index or index/type.
@@ -805,8 +810,7 @@ class IndicesClient(NamespacedClient):
         return data
 
     @query_params('explain', 'allow_no_indices', 'expand_wildcards',
-        'ignore_indices', 'ignore_unavailable', 'operation_threading', 'q',
-        'source')
+        'ignore_indices', 'ignore_unavailable', 'operation_threading', 'q')
     def validate_query(self, index=None, doc_type=None, body=None, params=None):
         """
         Validate a potentially expensive query without executing it.
@@ -829,8 +833,6 @@ class IndicesClient(NamespacedClient):
             when unavailable (missing or closed)
         :arg operation_threading: TODO: ?
         :arg q: Query in the Lucene query string syntax
-        :arg source: The URL-encoded query definition (instead of using the
-            request body)
         """
         _, data = self.transport.perform_request('GET', _make_path(index, doc_type, '_validate', 'query'),
             params=params, body=body)
@@ -838,7 +840,7 @@ class IndicesClient(NamespacedClient):
 
     @query_params('field_data', 'fielddata', 'fields', 'filter', 'filter_cache',
         'filter_keys', 'id', 'id_cache', 'allow_no_indices', 'expand_wildcards',
-        'ignore_indices', 'ignore_unavailable', 'recycler')
+        'ignore_indices', 'ignore_unavailable', 'query_cache', 'recycler')
     def clear_cache(self, index=None, params=None):
         """
         Clear either all caches or specific cached associated with one ore more indices.
@@ -864,6 +866,7 @@ class IndicesClient(NamespacedClient):
             ignore `missing` ones (default: none)
         :arg ignore_unavailable: Whether specified concrete indices should be ignored
             when unavailable (missing or closed)
+        :arg query_cache: Clear query cache
         :arg recycler: Clear the recycler cache
         """
         _, data = self.transport.perform_request('POST', _make_path(index, '_cache', 'clear'),
@@ -892,30 +895,8 @@ class IndicesClient(NamespacedClient):
             '_recovery'), params=params)
         return data
 
-    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_indices', 'ignore_unavailable')
-    def snapshot_index(self, index=None, params=None):
-        """
-        Explicitly perform a snapshot through the gateway of one or more indices (backup them).
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/indices-gateway-snapshot.html>`_
-
-        :arg index: A comma-separated list of index names; use `_all` or empty
-            string for all indices
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all` string or
-            when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to concrete indices
-            that are open, closed or both.
-        :arg ignore_indices: When performed on multiple indices, allows to
-            ignore `missing` ones (default: none)
-        :arg ignore_unavailable: Whether specified concrete indices should be ignored
-            when unavailable (missing or closed)
-        """
-        _, data = self.transport.perform_request('POST',
-            _make_path(index, '_gateway', 'snapshot'), params=params)
-        return data
-
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
-        'wait_for_completion')
+        'only_ancient_segments', 'wait_for_completion')
     def upgrade(self, index=None, params=None):
         """
         Upgrade one or more indices to the latest format through an API.
@@ -930,8 +911,10 @@ class IndicesClient(NamespacedClient):
             indices that are open, closed or both., default u'open'
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
+        :arg only_ancient_segments: If true, only ancient (an older Lucene major
+            release) segments will be upgraded
         :arg wait_for_completion: Specify whether the request should block until
-            the all segments are upgraded (default: false)
+            the all segments are upgraded (default: true)
         """
         _, data = self.transport.perform_request('POST', _make_path(index,
             '_upgrade'), params=params)

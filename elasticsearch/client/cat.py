@@ -197,6 +197,7 @@ class CatClient(NamespacedClient):
     def segments(self, index=None, params=None):
         """
         The segments command is the detailed view of Lucene segments per index.
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/master/cat-segments.html>`_
 
         :arg index: A comma-separated list of index names to limit the returned
             information
