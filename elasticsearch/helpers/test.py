@@ -30,6 +30,8 @@ def get_test_client(nowait=False):
         raise SkipTest("Elasticsearch failed to start.")
 
 def _get_version(version_string):
+    if '.' not in version_string:
+        return ()
     version = version_string.strip().split('.')
     return tuple(int(v) if v.isdigit() else 999 for v in version)
 
