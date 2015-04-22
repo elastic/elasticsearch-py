@@ -167,6 +167,7 @@ class YamlTestCase(ElasticsearchTestCase):
             self.assertEquals(CATCH_CODES[catch], exception.status_code)
         elif catch[0] == '/' and catch[-1] == '/':
             self.assertTrue(re.search(catch[1:-1], exception.error))
+        self.last_response = exception.info
 
     def run_gt(self, action):
         for key, value in action.items():
