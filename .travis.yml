@@ -16,11 +16,14 @@ env:
 install:
   - mkdir /tmp/elasticsearch
   - wget -O - http://s3-eu-west-1.amazonaws.com/build-eu.elasticsearch.org/origin/master/nightly/JDK7/elasticsearch-latest-SNAPSHOT.tar.gz | tar xz --directory=/tmp/elasticsearch --strip-components=1
-  - git clone https://github.com/elasticsearch/elasticsearch.git ../elasticsearch
+  - /tmp/elasticsearch/bin/elasticsearch -d --path.data /tmp --discovery.zen.ping.multicast.enabled false --script.inline on --script.indexed on
+  - git clone https://github.com/elastic/elasticsearch.git ../elasticsearch
   - pip install .
-
-before_script:
-  - /tmp/elasticsearch/bin/elasticsearch -d --path.data /tmp --discovery.zen.ping.multicast.enabled false --node.bench true --script.disable_dynamic false
 
 script:
   - python setup.py test
+
+notifications:
+  email:
+    recipients:
+      - honza.kral@gmail.com
