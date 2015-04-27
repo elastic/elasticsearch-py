@@ -95,6 +95,8 @@ class Connection(object):
         try:
             additional_info = json.loads(raw_data)
             error_message = additional_info.get('error', error_message)
+            if isinstance(error_message, dict) and 'type' in error_message:
+                error_message = error_message['type']
         except:
             # we don't care what went wrong
             pass
