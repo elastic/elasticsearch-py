@@ -1196,6 +1196,8 @@ class Elasticsearch(object):
         'min_score', 'preference', 'routing', 'source')
     def search_exists(self, index=None, doc_type=None, body=None, params=None):
         """
+        The exists API allows to easily determine if any matching documents
+        exist for a provided query.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-exists.html>`_
 
         :arg index: A comma-separated list of indices to restrict the results
