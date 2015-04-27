@@ -1220,3 +1220,31 @@ class Elasticsearch(object):
         _, data = self.transport.perform_request('POST', _make_path(index,
             doc_type, '_search', 'exists'), params=params, body=body)
         return data
+
+    @query_params('allow_no_indices', 'expand_wildcards', 'fields',
+        'ignore_unavailable', 'level')
+    def field_stats(self, index=None, params=None):
+        """
+        The field stats api allows one to find statistical properties of a
+        field without executing a search, but looking up measurements that are
+        natively available in the Lucene index.
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/master/search-field-stats.html>`_
+
+        :arg index: A comma-separated list of index names; use `_all` or empty
+            string to perform the operation on all indices
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+            expression resolves into no concrete indices. (This includes `_all`
+            string or when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete
+            indices that are open, closed or both., default u'open'
+        :arg fields: A comma-separated list of fields for to get field
+            statistics for (min value, max value, and more)
+        :arg ignore_unavailable: Whether specified concrete indices should be
+            ignored when unavailable (missing or closed)
+        :arg level: Defines if field stats should be returned on a per index
+            level or on a cluster wide level, default u'cluster'
+        """
+        _, data = self.transport.perform_request('GET', _make_path(index,
+            '_field_stats'), params=params)
+        return data
+
