@@ -12,7 +12,8 @@ logger = logging.getLogger('elasticsearch')
 # logger hasn't already been configured
 _tracer_already_configured = 'elasticsearch.trace' in logging.Logger.manager.loggerDict
 tracer = logging.getLogger('elasticsearch.trace')
-tracer.propagate = not _tracer_already_configured
+if not _tracer_already_configured:
+    tracer.propagate = False
 
 
 class Connection(object):
