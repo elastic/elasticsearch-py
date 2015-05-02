@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import weakref
 from datetime import date, datetime
 from functools import wraps
 from ..compat import string_types, quote_plus
@@ -77,3 +78,10 @@ class NamespacedClient(object):
     @property
     def transport(self):
         return self.client.transport
+
+class AddonClient(NamespacedClient):
+    @classmethod
+    def infect_client(cls, client):
+        addon = cls(weakref.proxy(client))
+        setattr(client, cls.namespace, addon)
+        return client
