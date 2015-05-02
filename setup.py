@@ -38,7 +38,7 @@ setup(
     name = 'elasticsearch',
     description = "Python client for Elasticsearch",
     license="Apache License, Version 2.0",
-    url = "https://github.com/elasticsearch/elasticsearch-py",
+    url = "https://github.com/elastic/elasticsearch-py",
     long_description = long_description,
     version = __versionstr__,
     author = "Honza Král",
@@ -48,7 +48,7 @@ setup(
         exclude=('test_elasticsearch*', )
     ),
     classifiers = [
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "License :: OSI Approved :: Apache Software License",
         "Intended Audience :: Developers",
         "Operating System :: OS Independent",
