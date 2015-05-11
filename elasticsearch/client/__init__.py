@@ -670,8 +670,10 @@ class Elasticsearch(object):
         _, data = self.transport.perform_request('DELETE', _make_path(index, doc_type, id), params=params)
         return data
 
-    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
-        'min_score', 'preference', 'q', 'routing')
+    @query_params('allow_no_indices', 'analyze_wildcard', 'analyzer',
+        'default_operator', 'df', 'expand_wildcards', 'ignore_unavailable',
+        'min_score', 'lenient', 'lowercase_expanded_terms', 'min_score',
+        'preference', 'q', 'routing')
     def count(self, index=None, doc_type=None, body=None, params=None):
         """
         Execute a query and get the number of matches for that query.
@@ -683,11 +685,24 @@ class Elasticsearch(object):
         :arg allow_no_indices: Whether to ignore if a wildcard indices
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
+        :arg analyze_wildcard: Specify whether wildcard and prefix queries
+            should be analyzed (default: false)
+        :arg analyzer: The analyzer to use for the query string
+        :arg default_operator: The default operator for query string query (AND
+            or OR), default u'OR'
+        :arg df: The field to use as default where no field prefix is given in
+            the query string
         :arg expand_wildcards: Whether to expand wildcard expression to concrete
             indices that are open, closed or both., default 'open'
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
         :arg min_score: Include only documents with a specific `_score` value in the result
+        :arg lenient: Specify whether format-based query failures (such as
+            providing text to a numeric field) should be ignored
+        :arg lowercase_expanded_terms: Specify whether query terms should be
+            lowercased
+        :arg min_score: Include only documents with a specific `_score` value in
+            the result
         :arg preference: Specify the node or shard the operation should be
             performed on (default: random)
         :arg q: Query in the Lucene query string syntax
@@ -746,7 +761,7 @@ class Elasticsearch(object):
 
     @query_params('allow_no_indices', 'analyzer', 'consistency',
         'default_operator', 'df', 'expand_wildcards', 'ignore_unavailable', 'q',
-        'routing', 'source', 'timeout')
+        'routing', 'timeout')
     def delete_by_query(self, index, doc_type=None, body=None, params=None):
         """
         Delete documents from one or more indices and one or more types based on a query.
@@ -772,8 +787,6 @@ class Elasticsearch(object):
             ignored when unavailable (missing or closed)
         :arg q: Query in the Lucene query string syntax
         :arg routing: Specific routing value
-        :arg source: The URL-encoded query definition (instead of using the
-            request body)
         :arg timeout: Explicit operation timeout
         """
         if index in SKIP_IN_PATH:
@@ -1192,8 +1205,10 @@ class Elasticsearch(object):
             'template', id), params=params)
         return data
 
-    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
-        'min_score', 'preference', 'routing', 'source')
+    @query_params('allow_no_indices', 'analyze_wildcard', 'analyzer',
+        'default_operator', 'df', 'expand_wildcards', 'ignore_unavailable',
+        'lenient', 'lowercase_expanded_terms', 'min_score', 'preference', 'q',
+        'routing')
     def search_exists(self, index=None, doc_type=None, body=None, params=None):
         """
         The exists API allows to easily determine if any matching documents
@@ -1207,17 +1222,27 @@ class Elasticsearch(object):
         :arg allow_no_indices: Whether to ignore if a wildcard indices
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
+        :arg analyze_wildcard: Specify whether wildcard and prefix queries
+            should be analyzed (default: false)
+        :arg analyzer: The analyzer to use for the query string
+        :arg default_operator: The default operator for query string query (AND
+            or OR), default u'OR'
+        :arg df: The field to use as default where no field prefix is given in
+            the query string
         :arg expand_wildcards: Whether to expand wildcard expression to concrete
             indices that are open, closed or both., default u'open'
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
+        :arg lenient: Specify whether format-based query failures (such as
+            providing text to a numeric field) should be ignored
+        :arg lowercase_expanded_terms: Specify whether query terms should be
+            lowercased
         :arg min_score: Include only documents with a specific `_score` value in
             the result
         :arg preference: Specify the node or shard the operation should be
             performed on (default: random)
+        :arg q: Query in the Lucene query string syntax
         :arg routing: Specific routing value
-        :arg source: The URL-encoded query definition (instead of using the
-            request body)
         """
         _, data = self.transport.perform_request('POST', _make_path(index,
             doc_type, '_search', 'exists'), params=params, body=body)

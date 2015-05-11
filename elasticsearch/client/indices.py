@@ -809,28 +809,40 @@ class IndicesClient(NamespacedClient):
         _, data = self.transport.perform_request('POST', _make_path(index, '_optimize'), params=params)
         return data
 
-    @query_params('explain', 'allow_no_indices', 'expand_wildcards',
-        'ignore_indices', 'ignore_unavailable', 'operation_threading', 'q')
+    @query_params('allow_no_indices', 'analyze_wildcard', 'analyzer',
+        'default_operator', 'df', 'expand_wildcards', 'explain',
+        'ignore_unavailable', 'lenient', 'lowercase_expanded_terms',
+        'operation_threading', 'q')
     def validate_query(self, index=None, doc_type=None, body=None, params=None):
         """
         Validate a potentially expensive query without executing it.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-validate.html>`_
 
-        :arg index: A comma-separated list of index names to restrict the operation;
-            use `_all` or empty string to perform the operation on all indices
+        :arg index: A comma-separated list of index names to restrict the
+            operation; use `_all` or empty string to perform the operation on
+            all indices
         :arg doc_type: A comma-separated list of document types to restrict the
             operation; leave empty to perform the operation on all types
-        :arg body: The query definition
-        :arg explain: Return detailed information about the error
+        :arg body: The query definition specified with the Query DSL
         :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all` string or
-            when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to concrete indices
-            that are open, closed or both.
-        :arg ignore_indices: When performed on multiple indices, allows to
-            ignore `missing` ones (default: none)
-        :arg ignore_unavailable: Whether specified concrete indices should be ignored
-            when unavailable (missing or closed)
+            expression resolves into no concrete indices. (This includes `_all`
+            string or when no indices have been specified)
+        :arg analyze_wildcard: Specify whether wildcard and prefix queries
+            should be analyzed (default: false)
+        :arg analyzer: The analyzer to use for the query string
+        :arg default_operator: The default operator for query string query (AND
+            or OR), default u'OR'
+        :arg df: The field to use as default where no field prefix is given in
+            the query string
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete
+            indices that are open, closed or both., default u'open'
+        :arg explain: Return detailed information about the error
+        :arg ignore_unavailable: Whether specified concrete indices should be
+            ignored when unavailable (missing or closed)
+        :arg lenient: Specify whether format-based query failures (such as
+            providing text to a numeric field) should be ignored
+        :arg lowercase_expanded_terms: Specify whether query terms should be
+            lowercased
         :arg operation_threading: TODO: ?
         :arg q: Query in the Lucene query string syntax
         """
