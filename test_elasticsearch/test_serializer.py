@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
 
-from datetime import datetime
+from datetime import datetime, time
 from decimal import Decimal
 
 from elasticsearch.serializer import JSONSerializer, Deserializer, DEFAULT_SERIALIZERS, TextSerializer
@@ -9,7 +9,11 @@ from elasticsearch.exceptions import SerializationError, ImproperlyConfigured
 
 from .test_cases import TestCase, SkipTest
 
+
 class TestJSONSerializer(TestCase):
+    def test_time_serialization(self):
+        self.assertEqual('{"t": "02:03:45"}', JSONSerializer().dumps({'t': time(2, 3, 45)}))
+
     def test_datetime_serialization(self):
         self.assertEquals('{"d": "2010-10-01T02:30:00"}', JSONSerializer().dumps({'d': datetime(2010, 10, 1, 2, 30)}))
 

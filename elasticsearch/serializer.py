@@ -2,7 +2,7 @@ try:
     import simplejson as json
 except ImportError:
     import json
-from datetime import date, datetime
+from datetime import date, time
 from decimal import Decimal
 
 from .exceptions import SerializationError, ImproperlyConfigured
@@ -24,7 +24,7 @@ class JSONSerializer(object):
     mimetype = 'application/json'
 
     def default(self, data):
-        if isinstance(data, (date, datetime)):
+        if isinstance(data, (date, time)):
             return data.isoformat()
         elif isinstance(data, Decimal):
             return float(data)
