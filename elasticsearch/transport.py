@@ -273,7 +273,7 @@ class Transport(object):
             body = self.serializer.dumps(body)
 
             # some clients or environments don't support sending GET with body
-            if method == 'GET' and self.send_get_body_as != 'GET':
+            if method in ('HEAD', 'GET') and self.send_get_body_as != 'GET':
                 # send it as post instead
                 if self.send_get_body_as == 'POST':
                     method = 'POST'
