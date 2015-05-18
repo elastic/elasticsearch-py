@@ -3,13 +3,14 @@
 Changelog
 =========
 
-1.5.0 (dev)
------------
+1.5.0 (2015-05-18)
+------------------
 
  * Add support for ``query_cache`` parameter when searching
  * helpers have been made more secure by changing defaults to raise an
    exception on errors
  * removed deprecated options ``replication`` and the deprecated benchmark api.
+ * Added ``AddonClient`` class to allow for extending the client from outside
 
 1.4.0 (2015-02-11)
 ------------------
