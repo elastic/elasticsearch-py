@@ -958,7 +958,8 @@ class IndicesClient(NamespacedClient):
     @query_params()
     def flush_synced(self, index=None, params=None):
         """
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/indices-flush.html>`_
+        Perform a normal flush, then add a generated unique marker (sync_id) to all shards.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-synced-flush.html>`_
 
         :arg index: A comma-separated list of index names; use `_all` or empty
             string for all indices
