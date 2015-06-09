@@ -954,3 +954,16 @@ class IndicesClient(NamespacedClient):
         _, data = self.transport.perform_request('GET', _make_path(index,
             '_upgrade'), params=params)
         return data
+
+    @query_params()
+    def flush_synced(self, index=None, params=None):
+        """
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/indices-flush.html>`_
+
+        :arg index: A comma-separated list of index names; use `_all` or empty
+            string for all indices
+        """
+        _, data = self.transport.perform_request('POST', _make_path(index,
+            '_flush', 'synced'), params=params)
+        return data
+
