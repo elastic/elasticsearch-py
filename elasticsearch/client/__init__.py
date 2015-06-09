@@ -425,7 +425,7 @@ class Elasticsearch(object):
 
     @query_params('_source', '_source_exclude', '_source_include',
         'analyze_wildcard', 'analyzer', 'default_operator', 'df',
-        'explain', 'fields', 'indices_boost', 'lenient',
+        'explain', 'fielddata_fields', 'fields', 'indices_boost', 'lenient',
         'allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
         'lowercase_expanded_terms', 'from_', 'preference', 'q', 'query_cache',
         'routing', 'scroll', 'search_type', 'size', 'sort', 'source', 'stats',
@@ -456,6 +456,8 @@ class Elasticsearch(object):
             the query string
         :arg explain: Specify whether to return detailed information about
             score computation as part of a hit
+        :arg fielddata_fields: A comma-separated list of fields to return as the
+            field data representation of a field for each hit
         :arg fields: A comma-separated list of fields to return as part of a hit
         :arg indices_boost: Comma-separated list of index boosts
         :arg lenient: Specify whether format-based query failures (such as
