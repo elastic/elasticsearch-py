@@ -95,6 +95,14 @@ of the relevant component and pass it in as a parameter to be used instead of
 the default implementation.
 
 
+.. note::
+
+    Since we use persistent connections throughout the client it means that the
+    client doesn't tolerate ``fork`` very well. If your application calls for
+    multiple processes make sure you create a fresh client after call to
+    ``fork``.
+
+
 Automatic Retries
 ~~~~~~~~~~~~~~~~~
 
