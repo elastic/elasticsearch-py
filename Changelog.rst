@@ -7,6 +7,7 @@ Changelog
 ------------------
 
  * Add ``indices.flush_synced`` API
+ * ``helpers.reindex`` now supports reindexing parent/child documents
 
 1.5.0 (2015-05-18)
 ------------------

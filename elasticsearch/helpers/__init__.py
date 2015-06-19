@@ -292,10 +292,18 @@ def reindex(client, source_index, target_index, query=None, target_client=None,
     """
     target_client = client if target_client is None else target_client
 
-    docs = scan(client, query=query, index=source_index, scroll=scroll, **scan_kwargs)
+    docs = scan(client,
+        query=query,
+        index=source_index,
+        scroll=scroll,
+        fields=('_source', '_parent', '_routing', '_timestamp'),
+        **scan_kwargs
+    )
     def _change_doc_index(hits, index):
         for h in hits:
             h['_index'] = index
+            if 'fields' in h:
+                h.update(h.pop('fields'))
             yield h
 
     kwargs = {

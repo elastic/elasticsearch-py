@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from elasticsearch import helpers, TransportError
 
 from . import ElasticsearchTestCase
@@ -244,3 +246,75 @@ class TestReindex(ElasticsearchTestCase):
         self.assertEquals(50, self.client.count(index='prod_index', doc_type='answers')['count'])
 
         self.assertEquals({"answer": 42, "correct": True}, self.client.get(index="prod_index", doc_type="answers", id=42)['_source'])
+
+class TestParentChildReindex(ElasticsearchTestCase):
+    def setUp(self):
+        super(TestParentChildReindex, self).setUp()
+        body={
+            'settings': {"number_of_shards": 1, "number_of_replicas": 0},
+            'mappings': {
+                'question': {
+                    '_timestamp': {'enabled': True, 'store': True},
+                },
+                'answer': {
+                    '_parent': {'type': 'question'},
+                }
+            }
+        }
+        self.client.indices.create(index='test-index', body=body)
+        self.client.indices.create(index='real-index', body=body)
+
+        self.client.index(
+            index='test-index',
+            doc_type='question',
+            id=42,
+            body={},
+            timestamp=datetime(2015, 1, 1)
+        )
+        self.client.index(
+            index='test-index',
+            doc_type='answer',
+            id=47,
+            body={'some': 'data'},
+            parent=42
+        )
+        self.client.indices.refresh(index='test-index')
+
+    def test_children_are_reindexed_correctly(self):
+        helpers.reindex(self.client, 'test-index', 'real-index')
+
+        self.assertEquals(
+            {
+                '_id': '42',
+                '_index': 'real-index',
+                '_source': {},
+                '_type': 'question',
+                '_version': 1,
+                'fields': {'_timestamp': 1420070400000},
+                'found': True
+            },
+            self.client.get(
+                index='real-index',
+                doc_type='question',
+                id=42,
+                fields=['_source', '_timestamp']
+            )
+        )
+        self.assertEquals(
+            {
+                '_id': '47',
+                '_index': 'test-index',
+                '_source': {'some': 'data'},
+                '_type': 'answer',
+                '_version': 1,
+                'fields': {'_parent': '42'},
+                'found': True
+            },
+            self.client.get(
+                index='test-index',
+                doc_type='answer',
+                id=47,
+                parent=42,
+                fields=['_source', '_parent']
+            )
+        )
