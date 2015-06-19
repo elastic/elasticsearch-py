@@ -102,8 +102,8 @@ class IndicesClient(NamespacedClient):
             params=params, body=body)
         return data
 
-    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
-        'local')
+    @query_params('allow_no_indices', 'expand_wildcards', 'flat_settings',
+        'human', 'ignore_unavailable', 'local')
     def get(self, index, feature=None, params=None):
         """
         The get index API allows to retrieve information about one or more indexes.
@@ -115,6 +115,9 @@ class IndicesClient(NamespacedClient):
             concrete indices (default: false)
         :arg expand_wildcards: Whether wildcard expressions should get expanded
             to open or closed indices (default: open)
+        :arg flat_settings: Return settings in flat format (default: false)
+        :arg human: Whether to return version and creation date values in human-
+            readable format., default False
         :arg ignore_unavailable: Ignore unavailable indexes (default: false)
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
@@ -556,7 +559,7 @@ class IndicesClient(NamespacedClient):
         return data
 
     @query_params('expand_wildcards', 'ignore_indices', 'ignore_unavailable',
-        'flat_settings', 'local')
+        'flat_settings', 'local', 'human')
     def get_settings(self, index=None, name=None, params=None):
         """
         Retrieve settings for one or more (or all) indices.
@@ -572,6 +575,8 @@ class IndicesClient(NamespacedClient):
         :arg ignore_unavailable: Whether specified concrete indices should be ignored
             when unavailable (missing or closed)
         :arg flat_settings: Return settings in flat format (default: false)
+        :arg human: Whether to return version and creation date values in human-
+            readable format., default False
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
         """
