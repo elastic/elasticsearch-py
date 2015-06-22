@@ -35,17 +35,24 @@ class TestUrllib3Connection(TestCase):
         con = Urllib3HttpConnection(timeout=42)
         self.assertEquals(42, con.timeout)
 
+    def test_keep_alive_is_on_by_default(self):
+        con = Urllib3HttpConnection()
+        self.assertEquals({'connection': 'keep-alive'}, con.headers)
+
     def test_http_auth(self):
         con = Urllib3HttpConnection(http_auth='username:secret')
-        self.assertEquals({'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0'}, con.headers)
+        self.assertEquals({'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0',
+            'connection': 'keep-alive'}, con.headers)
 
     def test_http_auth_tuple(self):
         con = Urllib3HttpConnection(http_auth=('username', 'secret'))
-        self.assertEquals({'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0'}, con.headers)
+        self.assertEquals({'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0',
+            'connection': 'keep-alive'}, con.headers)
 
     def test_http_auth_list(self):
         con = Urllib3HttpConnection(http_auth=['username', 'secret'])
-        self.assertEquals({'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0'}, con.headers)
+        self.assertEquals({'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0',
+            'connection': 'keep-alive'}, con.headers)
 
     def test_uses_https_if_specified(self):
         with warnings.catch_warnings(record=True) as w:

@@ -28,11 +28,11 @@ class Urllib3HttpConnection(Connection):
             maxsize=10, **kwargs):
 
         super(Urllib3HttpConnection, self).__init__(host=host, port=port, **kwargs)
-        self.headers = {}
+        self.headers = urllib3.make_headers(keep_alive=True)
         if http_auth is not None:
             if isinstance(http_auth, (tuple, list)):
                 http_auth = ':'.join(http_auth)
-            self.headers = urllib3.make_headers(basic_auth=http_auth)
+            self.headers.update(urllib3.make_headers(basic_auth=http_auth))
 
         pool_class = urllib3.HTTPConnectionPool
         kw = {}
