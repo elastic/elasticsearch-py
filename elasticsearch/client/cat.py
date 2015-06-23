@@ -134,7 +134,7 @@ class CatClient(NamespacedClient):
             params=params)
         return data
 
-    @query_params('h', 'help', 'local', 'master_timeout', 'v')
+    @query_params('bytes', 'h', 'help', 'local', 'master_timeout', 'v')
     def nodes(self, params=None):
         """
         The nodes command shows the cluster topology.
@@ -173,7 +173,7 @@ class CatClient(NamespacedClient):
             'recovery', index), params=params)
         return data
 
-    @query_params('h', 'help', 'local', 'master_timeout', 'v')
+    @query_params('bytes', 'h', 'help', 'local', 'master_timeout', 'v')
     def shards(self, index=None, params=None):
         """
         The shards command is the detailed view of what nodes contain which shards.
@@ -193,7 +193,7 @@ class CatClient(NamespacedClient):
             'shards', index), params=params)
         return data
 
-    @query_params('h', 'help', 'local', 'master_timeout', 'v')
+    @query_params('bytes', 'h', 'help', 'local', 'master_timeout', 'v')
     def segments(self, index=None, params=None):
         """
         The segments command is the detailed view of Lucene segments per index.
