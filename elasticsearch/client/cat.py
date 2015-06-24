@@ -134,7 +134,7 @@ class CatClient(NamespacedClient):
             params=params)
         return data
 
-    @query_params('bytes', 'h', 'help', 'local', 'master_timeout', 'v')
+    @query_params('bytes', 'h', 'help', 'local', 'master_timeout', 'time', 'v')
     def nodes(self, params=None):
         """
         The nodes command shows the cluster topology.
@@ -146,6 +146,7 @@ class CatClient(NamespacedClient):
             master node (default: false)
         :arg master_timeout: Explicit operation timeout for connection to master
             node
+        :arg time: The unit in which to display time values
         :arg v: Verbose mode. Display column headers, default False
         """
         _, data = self.transport.perform_request('GET', '/_cat/nodes',
