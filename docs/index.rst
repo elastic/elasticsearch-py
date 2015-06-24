@@ -46,7 +46,7 @@ Example Usage
     doc = {
         'author': 'kimchy', 
         'text': 'Elasticsearch: cool. bonsai cool.', 
-        'timestamp': datetime(2010, 10, 10, 10, 10, 10)
+        'timestamp': datetime.now(),
     }
     res = es.index(index="test-index", doc_type='tweet', id=1, body=doc)
     print(res['created'])
