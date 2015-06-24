@@ -134,18 +134,20 @@ class CatClient(NamespacedClient):
             params=params)
         return data
 
-    @query_params('bytes', 'h', 'help', 'local', 'master_timeout', 'v')
+    @query_params('bytes', 'h', 'help', 'local', 'master_timeout', 'time', 'v')
     def nodes(self, params=None):
         """
         The nodes command shows the cluster topology.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/master/cat-nodes.html>`_
 
+        :arg bytes: The unit in which to display byte values
         :arg h: Comma-separated list of column names to display
         :arg help: Return help information, default False
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
         :arg master_timeout: Explicit operation timeout for connection to master
             node
+        :arg time: The unit in which to display time values
         :arg v: Verbose mode. Display column headers, default False
         """
         _, data = self.transport.perform_request('GET', '/_cat/nodes',
@@ -181,6 +183,7 @@ class CatClient(NamespacedClient):
 
         :arg index: A comma-separated list of index names to limit the returned
             information
+        :arg bytes: The unit in which to display byte values
         :arg h: Comma-separated list of column names to display
         :arg help: Return help information, default False
         :arg local: Return local information, do not retrieve the state from
@@ -201,6 +204,7 @@ class CatClient(NamespacedClient):
 
         :arg index: A comma-separated list of index names to limit the returned
             information
+        :arg bytes: The unit in which to display byte values
         :arg h: Comma-separated list of column names to display
         :arg help: Return help information, default False
         :arg local: Return local information, do not retrieve the state from
