@@ -140,6 +140,7 @@ class CatClient(NamespacedClient):
         The nodes command shows the cluster topology.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/master/cat-nodes.html>`_
 
+        :arg bytes: The unit in which to display byte values
         :arg h: Comma-separated list of column names to display
         :arg help: Return help information, default False
         :arg local: Return local information, do not retrieve the state from
@@ -182,6 +183,7 @@ class CatClient(NamespacedClient):
 
         :arg index: A comma-separated list of index names to limit the returned
             information
+        :arg bytes: The unit in which to display byte values
         :arg h: Comma-separated list of column names to display
         :arg help: Return help information, default False
         :arg local: Return local information, do not retrieve the state from
@@ -202,6 +204,7 @@ class CatClient(NamespacedClient):
 
         :arg index: A comma-separated list of index names to limit the returned
             information
+        :arg bytes: The unit in which to display byte values
         :arg h: Comma-separated list of column names to display
         :arg help: Return help information, default False
         :arg local: Return local information, do not retrieve the state from
