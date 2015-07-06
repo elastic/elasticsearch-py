@@ -22,6 +22,8 @@ logger = logging.getLogger('elasticsearch')
 
 class ThriftConnection(PoolingConnection):
     """
+    This connection class is deprecated and may be removed in future versions.
+
     Connection using the `thrift` protocol to communicate with elasticsearch.
 
     See https://github.com/elasticsearch/elasticsearch-transport-thrift for additional info.
