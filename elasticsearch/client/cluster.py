@@ -47,7 +47,7 @@ class ClusterClient(NamespacedClient):
 
         :arg metric: Limit the information returned to the specified metrics.
             Possible values: "_all", "blocks", "index_templates", "metadata",
-            "nodes", "routing_table", "master_node", "version"
+            "nodes", "routing_nodes", "routing_table", "master_node", "version"
         :arg index: A comma-separated list of index names; use `_all` or empty
             string to perform the operation on all indices
         :arg allow_no_indices: Whether to ignore if a wildcard indices
