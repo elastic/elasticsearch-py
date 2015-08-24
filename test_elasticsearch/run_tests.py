@@ -26,7 +26,7 @@ def fetch_es_repo():
         return
 
     # set YAML test dir
-    environ['TEST_ES_YAML_DIR'] = join(repo_path, 'rest-api-spec', 'test')
+    environ['TEST_ES_YAML_DIR'] = join(repo_path, 'rest-api-spec', 'src', 'main', 'resources', 'rest-api-spec', 'test')
 
     # fetching of yaml tests disabled, we'll run with what's there
     if environ.get('TEST_ES_NOFETCH', False):

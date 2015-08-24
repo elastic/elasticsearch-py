@@ -62,7 +62,7 @@ class TestStreamingBulk(ElasticsearchTestCase):
         for ok, item in helpers.streaming_bulk(self.client, docs):
             self.assertTrue(ok)
 
-        self.assertFalse(self.client.exists(index='i', id=45))
+        self.assertFalse(self.client.exists(index='i', doc_type='t', id=45))
         self.assertEquals({'answer': 42}, self.client.get(index='i', id=42)['_source'])
         self.assertEquals({'f': 'v'}, self.client.get(index='i', id=47)['_source'])
 
@@ -254,7 +254,7 @@ class TestParentChildReindex(ElasticsearchTestCase):
             'settings': {"number_of_shards": 1, "number_of_replicas": 0},
             'mappings': {
                 'question': {
-                    '_timestamp': {'enabled': True, 'store': True},
+                    '_timestamp': {'enabled': True},
                 },
                 'answer': {
                     '_parent': {'type': 'question'},
@@ -283,6 +283,14 @@ class TestParentChildReindex(ElasticsearchTestCase):
     def test_children_are_reindexed_correctly(self):
         helpers.reindex(self.client, 'test-index', 'real-index')
 
+        q = self.client.get(
+            index='real-index',
+            doc_type='question',
+            id=42,
+            fields=['_source', '_timestamp']
+        )
+        if 'fields' in q:
+            q.update(q.pop('fields'))
         self.assertEquals(
             {
                 '_id': '42',
@@ -290,16 +298,21 @@ class TestParentChildReindex(ElasticsearchTestCase):
                 '_source': {},
                 '_type': 'question',
                 '_version': 1,
-                'fields': {'_timestamp': 1420070400000},
+                '_timestamp': 1420070400000,
                 'found': True
-            },
-            self.client.get(
-                index='real-index',
-                doc_type='question',
-                id=42,
-                fields=['_source', '_timestamp']
-            )
+            }, q
         )
+        q = self.client.get(
+            index='test-index',
+            doc_type='answer',
+            id=47,
+            parent=42,
+            fields=['_source', '_parent']
+        )
+        if 'fields' in q:
+            q.update(q.pop('fields'))
+        if '_routing' in q:
+            self.assertEquals(q.pop('_routing'), '42')
         self.assertEquals(
             {
                 '_id': '47',
@@ -307,14 +320,7 @@ class TestParentChildReindex(ElasticsearchTestCase):
                 '_source': {'some': 'data'},
                 '_type': 'answer',
                 '_version': 1,
-                'fields': {'_parent': '42'},
+                '_parent': '42',
                 'found': True
-            },
-            self.client.get(
-                index='test-index',
-                doc_type='answer',
-                id=47,
-                parent=42,
-                fields=['_source', '_parent']
-            )
+            }, q
         )

@@ -259,15 +259,16 @@ YAML_DIR = environ.get(
     'TEST_ES_YAML_DIR',
     join(
         dirname(__file__), pardir, pardir, pardir,
-        'elasticsearch', 'rest-api-spec', 'test'
+        'elasticsearch', 'rest-api-spec', 'src', 'main', 'resources', 'rest-api-spec', 'test'
     )
 )
+
 
 if exists(YAML_DIR):
 # find all the test definitions in yaml files ...
     for (path, dirs, files) in walk(YAML_DIR):
         for filename in files:
-            if not filename.endswith('.yaml'):
+            if not filename.endswith(('.yaml', '.yml')):
                 continue
             # ... parse them
             name = ('Test' + ''.join(s.title() for s in path[len(YAML_DIR) + 1:].split('/')) + filename.rsplit('.', 1)[0].title()).replace('_', '').replace('.', '')
