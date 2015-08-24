@@ -13,16 +13,15 @@ class NodesClient(NamespacedClient):
             node you're connecting to, leave empty to get information from all
             nodes
         :arg metric: A comma-separated list of metrics you wish returned. Leave
-            empty to return all. Choices are "settings", "os", "process",
-            "jvm", "thread_pool", "network", "transport", "http", "plugin"
+            empty to return all.
         :arg flat_settings: Return settings in flat format (default: false)
         :arg human: Whether to return time and byte values in human-readable
-            format., default False    
+            format., default False
         """
         _, data = self.transport.perform_request('GET', _make_path('_nodes',
             node_id, metric), params=params)
         return data
-    
+
     @query_params('delay', 'exit')
     def shutdown(self, node_id=None, params=None):
         """
@@ -53,15 +52,10 @@ class NodesClient(NamespacedClient):
             returned information; use `_local` to return information from the
             node you're connecting to, leave empty to get information from all
             nodes
-        :arg metric: Limit the information returned to the specified metrics.
-            Possible options are: "_all", "breaker", "fs", "http", "indices",
-            "jvm", "network", "os", "process", "thread_pool", "transport"
+        :arg metric: Limit the information returned to the specified metrics
         :arg index_metric: Limit the information returned for `indices` metric
             to the specific index metrics. Isn't used if `indices` (or `all`)
-            metric isn't specified. Possible options are: "_all", "completion",
-            "docs", "fielddata", "filter_cache", "flush", "get", "id_cache",
-            "indexing", "merge", "percolate", "refresh", "search", "segments",
-            "store", "warmer"
+            metric isn't specified.
         :arg completion_fields: A comma-separated list of fields for `fielddata`
             and `suggest` index metric (supports wildcards)
         :arg fielddata_fields: A comma-separated list of fields for `fielddata`
@@ -73,15 +67,16 @@ class NodesClient(NamespacedClient):
         :arg human: Whether to return time and byte values in human-readable
             format., default False
         :arg level: Return indices stats aggregated at node, index or shard
-            level, default 'node'
+            level, default 'node', valid choices are: 'node', 'indices',
+            'shards'
         :arg types: A comma-separated list of document types for the `indexing`
-            index metric    
+            index metric
         """
         _, data = self.transport.perform_request('GET', _make_path('_nodes',
             node_id, 'stats', metric, index_metric), params=params)
         return data
-    
-    @query_params('type_', 'ignore_idle_threads', 'interval', 'snapshots',
+
+    @query_params('doc_type', 'ignore_idle_threads', 'interval', 'snapshots',
         'threads')
     def hot_threads(self, node_id=None, params=None):
         """
@@ -92,20 +87,20 @@ class NodesClient(NamespacedClient):
             returned information; use `_local` to return information from the
             node you're connecting to, leave empty to get information from all
             nodes
-        :arg type_: The type to sample (default: cpu)
+        :arg doc_type: The type to sample (default: cpu), valid choices are:
+            'cpu', 'wait', 'block'
         :arg ignore_idle_threads: Don't show threads that are in known-idle
             places, such as waiting on a socket select or pulling from an empty
             task queue (default: true)
         :arg interval: The interval for the second sampling of threads
         :arg snapshots: Number of samples of thread stacktrace (default: 10)
         :arg threads: Specify the number of threads to provide information for
-            (default: 3)    
+            (default: 3)
         """
         # avoid python reserved words
         if params and 'type_' in params:
             params['type'] = params.pop('type_')
-        _, data = self.transport.perform_request('GET', _make_path('_nodes',
-            node_id, 'hot_threads'), params=params)
+        _, data = self.transport.perform_request('GET', _make_path('_cluster',
+            'nodes', node_id, 'hotthreads'), params=params)
         return data
-    
 

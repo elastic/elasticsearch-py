@@ -2,25 +2,32 @@ from .utils import NamespacedClient, query_params, _make_path
 
 class ClusterClient(NamespacedClient):
     @query_params('level', 'local', 'master_timeout', 'timeout',
-        'wait_for_active_shards', 'wait_for_nodes', 'wait_for_relocating_shards',
-        'wait_for_status')
+        'wait_for_active_shards', 'wait_for_nodes',
+        'wait_for_relocating_shards', 'wait_for_status')
     def health(self, index=None, params=None):
         """
         Get a very simple status on the health of the cluster.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-health.html>`_
 
         :arg index: Limit the information returned to a specific index
-        :arg level: Specify the level of detail for returned information, default u'cluster'
-        :arg local: Return local information, do not retrieve the state from master node (default: false)
-        :arg master_timeout: Explicit operation timeout for connection to master node
+        :arg level: Specify the level of detail for returned information,
+            default 'cluster', valid choices are: 'cluster', 'indices', 'shards'
+        :arg local: Return local information, do not retrieve the state from
+            master node (default: false)
+        :arg master_timeout: Explicit operation timeout for connection to master
+            node
         :arg timeout: Explicit operation timeout
-        :arg wait_for_active_shards: Wait until the specified number of shards is active
-        :arg wait_for_nodes: Wait until the specified number of nodes is available
-        :arg wait_for_relocating_shards: Wait until the specified number of relocating shards is finished
-        :arg wait_for_status: Wait until cluster is in a specific state, default None
+        :arg wait_for_active_shards: Wait until the specified number of shards
+            is active
+        :arg wait_for_nodes: Wait until the specified number of nodes is
+            available
+        :arg wait_for_relocating_shards: Wait until the specified number of
+            relocating shards is finished
+        :arg wait_for_status: Wait until cluster is in a specific state, default
+            None, valid choices are: 'green', 'yellow', 'red'
         """
-        _, data = self.transport.perform_request('GET', _make_path('_cluster', 'health', index),
-            params=params)
+        _, data = self.transport.perform_request('GET', _make_path('_cluster',
+            'health', index), params=params)
         return data
 
     @query_params('local', 'master_timeout')
@@ -31,11 +38,12 @@ class ClusterClient(NamespacedClient):
         which have not yet been executed.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-pending.html>`_
 
-        :arg local: Return local information, do not retrieve the state from master node (default: false)
+        :arg local: Return local information, do not retrieve the state from
+            master node (default: false)
         :arg master_timeout: Specify timeout for connection to master
         """
-        _, data = self.transport.perform_request('GET', '/_cluster/pending_tasks',
-            params=params)
+        _, data = self.transport.perform_request('GET',
+            '/_cluster/pending_tasks', params=params)
         return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'flat_settings',
@@ -45,16 +53,15 @@ class ClusterClient(NamespacedClient):
         Get a comprehensive state information of the whole cluster.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-state.html>`_
 
-        :arg metric: Limit the information returned to the specified metrics.
-            Possible values: "_all", "blocks", "index_templates", "metadata",
-            "nodes", "routing_table", "master_node", "version"
+        :arg metric: Limit the information returned to the specified metrics
         :arg index: A comma-separated list of index names; use `_all` or empty
             string to perform the operation on all indices
         :arg allow_no_indices: Whether to ignore if a wildcard indices
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
-        :arg expand_wildcards: Whether wildcard expressions should get expanded
-            to open or closed indices (default: open)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete
+            indices that are open, closed or both., default 'open', valid
+            choices are: 'open', 'closed', 'none', 'all'
         :arg flat_settings: Return settings in flat format (default: false)
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
@@ -64,7 +71,8 @@ class ClusterClient(NamespacedClient):
         """
         if index and not metric:
             metric = '_all'
-        _, data = self.transport.perform_request('GET', _make_path('_cluster', 'state', metric, index), params=params)
+        _, data = self.transport.perform_request('GET', _make_path('_cluster',
+            'state', metric, index), params=params)
         return data
 
     @query_params('flat_settings', 'human')
@@ -76,11 +84,12 @@ class ClusterClient(NamespacedClient):
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-stats.html>`_
 
         :arg node_id: A comma-separated list of node IDs or names to limit the
-            returned information; use `_local` to return information from the node
-            you're connecting to, leave empty to get information from all nodes
+            returned information; use `_local` to return information from the
+            node you're connecting to, leave empty to get information from all
+            nodes
         :arg flat_settings: Return settings in flat format (default: false)
-        :arg human: Whether to return time and byte values in human-readable format.
-
+        :arg human: Whether to return time and byte values in human-readable
+            format., default False
         """
         url = '/_cluster/stats'
         if node_id:
@@ -94,16 +103,20 @@ class ClusterClient(NamespacedClient):
         Explicitly execute a cluster reroute allocation command including specific commands.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-reroute.html>`_
 
-        :arg body: The definition of `commands` to perform (`move`, `cancel`, `allocate`)
+        :arg body: The definition of `commands` to perform (`move`, `cancel`,
+            `allocate`)
         :arg dry_run: Simulate the operation only and return the resulting state
-        :arg explain: Return an explanation of why the commands can or cannot be executed
-        :arg filter_metadata: Don't return cluster state metadata (default: false)
-        :arg master_timeout: Explicit operation timeout for connection to master node
+        :arg explain: Return an explanation of why the commands can or cannot be
+            executed
+        :arg master_timeout: Explicit operation timeout for connection to master
+            node
         :arg metric: Limit the information returned to the specified metrics.
-            Defaults to all but metadata
+            Defaults to all but metadata, valid choices are: '_all', 'blocks',
+            'metadata', 'nodes', 'routing_table', 'master_node', 'version'
         :arg timeout: Explicit operation timeout
         """
-        _, data = self.transport.perform_request('POST', '/_cluster/reroute', params=params, body=body)
+        _, data = self.transport.perform_request('POST', '/_cluster/reroute',
+            params=params, body=body)
         return data
 
     @query_params('flat_settings', 'master_timeout', 'timeout')
@@ -113,14 +126,16 @@ class ClusterClient(NamespacedClient):
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-update-settings.html>`_
 
         :arg flat_settings: Return settings in flat format (default: false)
-        :arg master_timeout: Explicit operation timeout for connection to master node
+        :arg master_timeout: Explicit operation timeout for connection to master
+            node
         :arg timeout: Explicit operation timeout
         """
-        _, data = self.transport.perform_request('GET', '/_cluster/settings', params=params)
+        _, data = self.transport.perform_request('GET', '/_cluster/settings',
+            params=params)
         return data
 
     @query_params('flat_settings', 'master_timeout', 'timeout')
-    def put_settings(self, body, params=None):
+    def put_settings(self, body=None, params=None):
         """
         Update cluster wide specific settings.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-update-settings.html>`_
@@ -132,6 +147,7 @@ class ClusterClient(NamespacedClient):
             node
         :arg timeout: Explicit operation timeout
         """
-        _, data = self.transport.perform_request('PUT', '/_cluster/settings', params=params, body=body)
+        _, data = self.transport.perform_request('PUT', '/_cluster/settings',
+            params=params, body=body)
         return data
 

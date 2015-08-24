@@ -145,7 +145,8 @@ class TestBulk(ElasticsearchTestCase):
         self.assertEquals('42', error['index']['_id'])
         self.assertEquals('t', error['index']['_type'])
         self.assertEquals('i', error['index']['_index'])
-        self.assertIn('MapperParsingException', error['index']['error'])
+        print(error['index']['error'])
+        self.assertTrue('MapperParsingException' in repr(error['index']['error']) or 'mapper_parsing_exception' in repr(error['index']['error']))
 
     def test_error_is_raised(self):
         self.client.indices.create("i",
