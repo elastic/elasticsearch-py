@@ -3,7 +3,7 @@ from ..exceptions import NotFoundError
 
 class IndicesClient(NamespacedClient):
     @query_params('analyzer', 'char_filters', 'field', 'filters', 'format',
-        'index', 'prefer_local', 'text', 'tokenizer')
+        'prefer_local', 'text', 'tokenizer')
     def analyze(self, index=None, body=None, params=None):
         """
         Perform the analysis process on a text and return the tokens breakdown of the text.
@@ -19,7 +19,6 @@ class IndicesClient(NamespacedClient):
         :arg filters: A comma-separated list of filters to use for the analysis
         :arg format: Format of the output, default 'detailed', valid choices
             are: 'detailed', 'text'
-        :arg index: The name of the index to scope the operation
         :arg prefer_local: With `true`, specify that a local shard should be
             used if available, with `false`, use a random shard (default: true)
         :arg text: The text on which the analysis should be performed (when
@@ -864,8 +863,8 @@ class IndicesClient(NamespacedClient):
         return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'field_data',
-        'fielddata', 'fields', 'ignore_unavailable', 'index', 'query',
-        'recycler', 'request')
+        'fielddata', 'fields', 'ignore_unavailable', 'query', 'recycler',
+        'request')
     def clear_cache(self, index=None, params=None):
         """
         Clear either all caches or specific cached associated with one ore more indices.
@@ -884,7 +883,6 @@ class IndicesClient(NamespacedClient):
             `field_data` parameter (default: all)
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
-        :arg index: A comma-separated list of index name to limit the operation
         :arg query: Clear query caches
         :arg recycler: Clear the recycler cache
         :arg request: Clear request cache

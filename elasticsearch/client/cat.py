@@ -250,8 +250,7 @@ class CatClient(NamespacedClient):
             params=params)
         return data
 
-    @query_params('bytes', 'fields', 'h', 'help', 'local', 'master_timeout',
-        'v')
+    @query_params('bytes', 'h', 'help', 'local', 'master_timeout', 'v')
     def fielddata(self, fields=None, params=None):
         """
         Shows information about currently loaded fielddata on a per-node basis.
@@ -261,7 +260,6 @@ class CatClient(NamespacedClient):
             size
         :arg bytes: The unit in which to display byte values, valid choices are:
             'b', 'k', 'm', 'g'
-        :arg fields: A comma-separated list of fields to return in the output
         :arg h: Comma-separated list of column names to display
         :arg help: Return help information, default False
         :arg local: Return local information, do not retrieve the state from
