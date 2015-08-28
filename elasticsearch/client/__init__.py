@@ -760,7 +760,6 @@ class Elasticsearch(object):
         :arg doc_type: Default document type for items which don't provide one
         :arg consistency: Explicit write consistency setting for the operation,
             valid choices are: 'one', 'quorum', 'all'
-        :arg doc_type: Default document type for items which don't provide one
         :arg fields: Default comma-separated list of fields to return in the
             response for updates
         :arg refresh: Refresh the index after performing the operation
