@@ -67,8 +67,8 @@ def streaming_bulk(client, actions, chunk_size=500, raise_on_error=True,
     from the doc and use the rest as the document data.
 
     The :meth:`~elasticsearch.Elasticsearch.bulk` api accepts `index`, `create`,
-    `delete`, and `update` actions. Optionally use the `_op_type` field to specify
-    an action (`_op_type` defaults to `index`)::
+    `delete`, and `update` actions. Use the `_op_type` field to specify an
+    action (`_op_type` defaults to `index`)::
 
         {
             '_op_type': 'delete',
