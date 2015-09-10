@@ -741,7 +741,7 @@ class Elasticsearch(object):
         if doc_type and not index:
             index = '_all'
 
-        _, data = self.transport.perform_request('POST', _make_path(index,
+        _, data = self.transport.perform_request('GET', _make_path(index,
             doc_type, '_count'), params=params, body=body)
         return data
 
