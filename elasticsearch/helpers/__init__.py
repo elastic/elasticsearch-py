@@ -66,8 +66,9 @@ def streaming_bulk(client, actions, chunk_size=500, raise_on_error=True,
     Alternatively, if `_source` is not present, it will pop all metadata fields
     from the doc and use the rest as the document data.
 
-    If you wish to perform other operations, like `delete` or `update` use the
-    `_op_type` field in your actions (`_op_type` defaults to `index`)::
+    The :meth:`~elasticsearch.Elasticsearch.bulk` api accepts `index`, `create`,
+    `delete`, and `update` actions. Use the `_op_type` field to specify an
+    action (`_op_type` defaults to `index`)::
 
         {
             '_op_type': 'delete',
