@@ -255,7 +255,6 @@ class TestParentChildReindex(ElasticsearchTestCase):
             'settings': {"number_of_shards": 1, "number_of_replicas": 0},
             'mappings': {
                 'question': {
-                    '_timestamp': {'enabled': True},
                 },
                 'answer': {
                     '_parent': {'type': 'question'},
@@ -270,7 +269,6 @@ class TestParentChildReindex(ElasticsearchTestCase):
             doc_type='question',
             id=42,
             body={},
-            timestamp=datetime(2015, 1, 1)
         )
         self.client.index(
             index='test-index',
@@ -288,7 +286,7 @@ class TestParentChildReindex(ElasticsearchTestCase):
             index='real-index',
             doc_type='question',
             id=42,
-            fields=['_source', '_timestamp']
+            fields=['_source']
         )
         if 'fields' in q:
             q.update(q.pop('fields'))
@@ -299,7 +297,6 @@ class TestParentChildReindex(ElasticsearchTestCase):
                 '_source': {},
                 '_type': 'question',
                 '_version': 1,
-                '_timestamp': 1420070400000,
                 'found': True
             }, q
         )
