@@ -1083,6 +1083,19 @@ class Elasticsearch(object):
             doc_type, id, '_termvectors'), params=params, body=body)
         return data
 
+    @query_params('dfs', 'field_statistics', 'fields', 'offsets', 'parent',
+        'payloads', 'positions', 'preference', 'realtime', 'routing',
+        'term_statistics', 'version', 'version_type')
+    def termvector(self, index, doc_type, id, body=None, params=None):
+        for param in (index, doc_type, id):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
+        _, data = self.transport.perform_request('GET', _make_path(index,
+            doc_type, id, '_termvector'), params=params, body=body)
+        return data
+    termvector.__doc__ = termvectors.__doc__
+
+
     @query_params('field_statistics', 'fields', 'ids', 'offsets', 'parent',
         'payloads', 'positions', 'preference', 'realtime', 'routing',
         'term_statistics', 'version', 'version_type')
