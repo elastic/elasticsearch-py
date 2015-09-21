@@ -3,6 +3,13 @@
 Changelog
 =========
 
+1.7.0 (2015-09-21)
+------------------
+
+ * elasticsearch 2.0 compatibility
+ * thrift now deprecated, to be remoeved in future version
+ * make sure urllib3 always uses keep-alive
+
 1.6.0 (2015-06-10)
 ------------------
 
