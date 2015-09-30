@@ -1,9 +1,21 @@
-from datetime import datetime
-
 from elasticsearch import helpers, TransportError
+from elasticsearch.serializer import JSONSerializer
 
 from . import ElasticsearchTestCase
-from ..test_cases import SkipTest
+from ..test_cases import SkipTest, TestCase
+
+
+class TestChunkActions(TestCase):
+    def setUp(self):
+        super(TestChunkActions, self).setUp()
+        self.actions = [({'index': {}}, {'some': 'data', 'i': i}) for i in range(100)]
+
+    def test_chunks_are_chopped_by_byte_size(self):
+        self.assertEquals(100, len(list(helpers._chunk_actions(self.actions, 100000, 1, JSONSerializer()))))
+
+    def test_chunks_are_chopped_by_chunk_size(self):
+        self.assertEquals(10, len(list(helpers._chunk_actions(self.actions, 10, 99999999, JSONSerializer()))))
+
 
 class FailingBulkClient(object):
     def __init__(self, client, fail_at=1):

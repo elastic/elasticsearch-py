@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
 
 import logging
-from itertools import islice
 from operator import methodcaller
 
 from ..exceptions import ElasticsearchException, TransportError
@@ -40,22 +39,35 @@ def expand_action(data):
 
     return action, data.get('_source', data)
 
-def _chunk_actions(actions, chunk_size, serializer):
-    while True:
-        bulk_actions = []
-        for action, data in islice(actions, chunk_size):
-            bulk_actions.append(serializer.dumps(action))
-            if data is not None:
-                bulk_actions.append(serializer.dumps(data))
+def _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer):
+    bulk_actions = []
+    size, action_count = 0, 0
+    for action, data in actions:
+        action = serializer.dumps(action)
+        cur_size = len(action) + 1
 
-        if not bulk_actions:
-            return
+        if data is not None:
+            data = serializer.dumps(data)
+            cur_size += len(data) + 1
 
+        # full chunk, send it and start a new one
+        if bulk_actions and (size + cur_size > max_chunk_bytes or action_count == chunk_size):
+            yield bulk_actions
+            bulk_actions = []
+            size, action_count = 0, 0
+
+        bulk_actions.append(action)
+        if data is not None:
+            bulk_actions.append(data)
+        size += cur_size
+        action_count += 1
+
+    if bulk_actions:
         yield bulk_actions
 
-def streaming_bulk(client, actions, chunk_size=500, raise_on_error=True,
-        expand_action_callback=expand_action, raise_on_exception=True, 
-        **kwargs):
+def streaming_bulk(client, actions, chunk_size=500, max_chunk_bytes=100 * 1014 * 1024,
+        raise_on_error=True, expand_action_callback=expand_action,
+        raise_on_exception=True, **kwargs):
     """
     Streaming bulk consumes actions from the iterable passed in and yields
     results per action. For non-streaming usecases use
@@ -101,6 +113,7 @@ def streaming_bulk(client, actions, chunk_size=500, raise_on_error=True,
     :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use
     :arg actions: iterable containing the actions to be executed
     :arg chunk_size: number of docs in one chunk sent to es (default: 500)
+    :arg max_chunk_bytes: the maximum size of the request in bytes (default: 100MB)
     :arg raise_on_error: raise ``BulkIndexError`` containing errors (as `.errors`)
         from the execution of the last chunk when some occur. By default we raise.
     :arg raise_on_exception: if ``False`` then don't propagate exceptions from
@@ -115,7 +128,7 @@ def streaming_bulk(client, actions, chunk_size=500, raise_on_error=True,
     # if raise on error is set, we need to collect errors per chunk before raising them
     errors = []
 
-    for bulk_actions in _chunk_actions(actions, chunk_size, serializer):
+    for bulk_actions in _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer):
         try:
             # send the actual request
             resp = client.bulk('\n'.join(bulk_actions) + '\n', **kwargs)
