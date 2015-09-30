@@ -40,7 +40,16 @@ def expand_action(data):
 
 def _chunk_actions(actions, chunk_size):
     while True:
-        yield islice(actions, chunk_size)
+        bulk_actions = []
+        for action, data in islice(actions, chunk_size):
+            bulk_actions.append(action)
+            if data is not None:
+                bulk_actions.append(data)
+
+        if not bulk_actions:
+            return
+
+        yield bulk_actions
 
 def streaming_bulk(client, actions, chunk_size=500, raise_on_error=True,
         expand_action_callback=expand_action, raise_on_exception=True, 
@@ -103,16 +112,8 @@ def streaming_bulk(client, actions, chunk_size=500, raise_on_error=True,
     # if raise on error is set, we need to collect errors per chunk before raising them
     errors = []
 
-    for chunk in _chunk_actions(actions, chunk_size):
+    for bulk_actions in _chunk_actions(actions, chunk_size):
 
-        bulk_actions = []
-        for action, data in chunk:
-            bulk_actions.append(action)
-            if data is not None:
-                bulk_actions.append(data)
-
-        if not bulk_actions:
-            return
 
         try:
             # send the actual request
