@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import logging
 from itertools import islice
 from operator import methodcaller
@@ -38,13 +40,13 @@ def expand_action(data):
 
     return action, data.get('_source', data)
 
-def _chunk_actions(actions, chunk_size):
+def _chunk_actions(actions, chunk_size, serializer):
     while True:
         bulk_actions = []
         for action, data in islice(actions, chunk_size):
-            bulk_actions.append(action)
+            bulk_actions.append(serializer.dumps(action))
             if data is not None:
-                bulk_actions.append(data)
+                bulk_actions.append(serializer.dumps(data))
 
         if not bulk_actions:
             return
@@ -107,17 +109,16 @@ def streaming_bulk(client, actions, chunk_size=500, raise_on_error=True,
         should return a tuple containing the action line and the data line
         (`None` if data line should be omitted).
     """
+    serializer = client.transport.serializer
     actions = map(expand_action_callback, actions)
 
     # if raise on error is set, we need to collect errors per chunk before raising them
     errors = []
 
-    for bulk_actions in _chunk_actions(actions, chunk_size):
-
-
+    for bulk_actions in _chunk_actions(actions, chunk_size, serializer):
         try:
             # send the actual request
-            resp = client.bulk(bulk_actions, **kwargs)
+            resp = client.bulk('\n'.join(bulk_actions) + '\n', **kwargs)
         except TransportError as e:
             # default behavior - just propagate exception
             if raise_on_exception:
@@ -126,7 +127,11 @@ def streaming_bulk(client, actions, chunk_size=500, raise_on_error=True,
             # if we are not propagating, mark all actions in current chunk as failed
             err_message = str(e)
             exc_errors = []
-            bulk_data = iter(bulk_actions)
+
+            # deserialize the data back, thisis expensive but only run on
+            # errors if raise_on_exception is false, so shouldn't be a real
+            # issue
+            bulk_data = iter(map(serializer.loads, bulk_actions))
             while True:
                 try:
                     # collect all the information about failed actions

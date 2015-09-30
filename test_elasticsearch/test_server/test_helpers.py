@@ -10,6 +10,7 @@ class FailingBulkClient(object):
         self.client = client
         self._called = -1
         self._fail_at = fail_at
+        self.transport = client.transport
 
     def bulk(self, *args, **kwargs):
         self._called += 1
