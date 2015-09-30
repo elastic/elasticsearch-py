@@ -38,6 +38,9 @@ def expand_action(data):
 
     return action, data.get('_source', data)
 
+def _chunk_actions(actions, chunk_size):
+    while True:
+        yield islice(actions, chunk_size)
 
 def streaming_bulk(client, actions, chunk_size=500, raise_on_error=True,
         expand_action_callback=expand_action, raise_on_exception=True, 
@@ -100,8 +103,7 @@ def streaming_bulk(client, actions, chunk_size=500, raise_on_error=True,
     # if raise on error is set, we need to collect errors per chunk before raising them
     errors = []
 
-    while True:
-        chunk = islice(actions, chunk_size)
+    for chunk in _chunk_actions(actions, chunk_size):
 
         # raise on exception means we might need to iterate on chunk twice
         if not raise_on_exception:
