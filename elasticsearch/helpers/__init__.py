@@ -105,10 +105,6 @@ def streaming_bulk(client, actions, chunk_size=500, raise_on_error=True,
 
     for chunk in _chunk_actions(actions, chunk_size):
 
-        # raise on exception means we might need to iterate on chunk twice
-        if not raise_on_exception:
-            chunk = list(chunk)
-
         bulk_actions = []
         for action, data in chunk:
             bulk_actions.append(action)
@@ -129,11 +125,19 @@ def streaming_bulk(client, actions, chunk_size=500, raise_on_error=True,
             # if we are not propagating, mark all actions in current chunk as failed
             err_message = str(e)
             exc_errors = []
-            for action, data in chunk:
-                info = {"error": err_message, "status": e.status_code, "exception": e, "data": data}
-                op_type, action = action.popitem()
-                info.update(action)
-                exc_errors.append({op_type: info})
+            bulk_data = iter(bulk_actions)
+            while True:
+                try:
+                    # collect all the information about failed actions
+                    action = next(bulk_data)
+                    op_type, action = action.popitem()
+                    info = {"error": err_message, "status": e.status_code, "exception": e}
+                    if op_type != 'delete':
+                        info['data'] = next(bulk_data)
+                    info.update(action)
+                    exc_errors.append({op_type: info})
+                except StopIteration:
+                    break
 
             # emulate standard behavior for failed actions
             if raise_on_error:
