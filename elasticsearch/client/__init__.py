@@ -1302,9 +1302,12 @@ class Elasticsearch(object):
         :arg q: Query in the Lucene query string syntax
         :arg routing: Specific routing value
         """
-        _, data = self.transport.perform_request('POST', _make_path(index,
-            doc_type, '_search', 'exists'), params=params, body=body)
-        return data
+        try:
+            self.transport.perform_request('POST', _make_path(index,
+                doc_type, '_search', 'exists'), params=params, body=body)
+        except NotFoundError:
+            return False
+        return True
 
     @query_params('allow_no_indices', 'expand_wildcards', 'fields',
         'ignore_unavailable', 'level')
