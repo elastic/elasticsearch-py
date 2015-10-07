@@ -6,29 +6,10 @@ from requests.auth import AuthBase
 
 from elasticsearch.exceptions import TransportError, ConflictError, RequestError, NotFoundError
 from elasticsearch.connection import RequestsHttpConnection, \
-    Urllib3HttpConnection, THRIFT_AVAILABLE, ThriftConnection
+    Urllib3HttpConnection
 
-from .test_cases import TestCase, SkipTest
+from .test_cases import TestCase
 
-class TestThriftConnection(TestCase):
-    def setUp(self):
-        if not THRIFT_AVAILABLE:
-            raise SkipTest('Thrift is not available.')
-        super(TestThriftConnection, self).setUp()
-
-    def test_use_ssl_uses_ssl_socket(self):
-        from thrift.transport import TSSLSocket
-        con = ThriftConnection(use_ssl=True)
-        self.assertIs(con._tsocket_class, TSSLSocket.TSSLSocket)
-
-    def test_use_normal_tsocket_by_default(self):
-        from thrift.transport import TSocket
-        con = ThriftConnection()
-        self.assertIs(con._tsocket_class, TSocket.TSocket)
-
-    def test_timeout_set(self):
-        con = ThriftConnection(timeout=42)
-        self.assertEquals(42, con.timeout)
 
 class TestUrllib3Connection(TestCase):
     def test_timeout_set(self):

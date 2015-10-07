@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 import time
 
 from elasticsearch.transport import Transport, get_host_info
-from elasticsearch.connection import Connection, ThriftConnection
+from elasticsearch.connection import Connection
 from elasticsearch.connection_pool import DummyConnectionPool
 from elasticsearch.exceptions import ConnectionError, ImproperlyConfigured
 
@@ -61,7 +61,6 @@ class TestTransport(TestCase):
 
     def test_host_with_scheme_different_from_connection_fails(self):
         self.assertRaises(ImproperlyConfigured, Transport, [{'host': 'localhost', 'scheme': 'thrift'}])
-        self.assertRaises(ImproperlyConfigured, Transport, [{'host': 'localhost', 'scheme': 'http'}], connection_class=ThriftConnection)
 
     def test_request_timeout_extracted_from_params_and_passed(self):
         t = Transport([{}], connection_class=DummyConnection)
