@@ -3,11 +3,18 @@
 Changelog
 =========
 
+1.8.0
+-----
+
+ * removed thrift and memcached connections, if you wish to continue using
+   those, extract the classes and use them separately.
+ * added a new, parallel version of the bulk helper using thread pools
+
 1.7.0 (2015-09-21)
 ------------------
 
  * elasticsearch 2.0 compatibility
- * thrift now deprecated, to be remoeved in future version
+ * thrift now deprecated, to be removed in future version
  * make sure urllib3 always uses keep-alive
 
 1.6.0 (2015-06-10)
