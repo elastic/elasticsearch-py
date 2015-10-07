@@ -55,7 +55,7 @@ class Connection(object):
 
         # body has already been serialized to utf-8, deserialize it for logging
         # TODO: find a better way to avoid (de)encoding the body back and forth
-        if body:
+        if body and isinstance(body, bytes):
             body = body.decode('utf-8')
 
         logger.info(
@@ -84,7 +84,7 @@ class Connection(object):
 
         # body has already been serialized to utf-8, deserialize it for logging
         # TODO: find a better way to avoid (de)encoding the body back and forth
-        if body:
+        if body and isinstance(body, bytes):
             body = body.decode('utf-8')
 
         logger.debug('> %s', body)
