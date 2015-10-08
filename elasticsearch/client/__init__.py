@@ -229,8 +229,8 @@ class Elasticsearch(object):
         """
         return self.index(index, doc_type, body, id=id, params=params, op_type='create')
 
-    @query_params('consistency', 'op_type', 'parent', 'refresh', 'routing',
-        'timeout', 'timestamp', 'ttl', 'version', 'version_type')
+    @query_params('consistency', 'op_type', 'parent', 'refresh', 'replication',
+        'routing', 'timeout', 'timestamp', 'ttl', 'version', 'version_type')
     def index(self, index, doc_type, body, id=None, params=None):
         """
         Adds or updates a typed JSON document in a specific index, making it searchable.
@@ -246,6 +246,8 @@ class Elasticsearch(object):
             are: 'index', 'create'
         :arg parent: ID of the parent document
         :arg refresh: Refresh the index after performing the operation
+        :arg replication: Specific replication type, default 'sync', valid
+            choices are: 'sync', 'async'
         :arg routing: Specific routing value
         :arg timeout: Explicit operation timeout
         :arg timestamp: Explicit timestamp for the document
@@ -398,7 +400,7 @@ class Elasticsearch(object):
         return data
 
     @query_params('consistency', 'fields', 'lang', 'parent', 'refresh',
-        'retry_on_conflict', 'routing', 'script', 'script_id',
+        'replication', 'retry_on_conflict', 'routing', 'script', 'script_id',
         'scripted_upsert', 'timeout', 'timestamp', 'ttl', 'version',
         'version_type')
     def update(self, index, doc_type, id, body=None, params=None):
@@ -417,6 +419,8 @@ class Elasticsearch(object):
         :arg parent: ID of the parent document. Is is only used for routing and
             when for the upsert request
         :arg refresh: Refresh the index after performing the operation
+        :arg replication: Specific replication type, default 'sync', valid
+            choices are: 'sync', 'async'
         :arg retry_on_conflict: Specify how many times should the operation be
             retried when a conflict occurs (default: 0)
         :arg routing: Specific routing value
@@ -674,8 +678,8 @@ class Elasticsearch(object):
             'scroll', scroll_id), params=params, body=body)
         return data
 
-    @query_params('consistency', 'parent', 'refresh', 'routing', 'timeout',
-        'version', 'version_type')
+    @query_params('consistency', 'parent', 'refresh', 'replication', 'routing',
+        'timeout', 'version', 'version_type')
     def delete(self, index, doc_type, id, params=None):
         """
         Delete a typed JSON document from a specific index based on its id.
@@ -688,6 +692,8 @@ class Elasticsearch(object):
             valid choices are: 'one', 'quorum', 'all'
         :arg parent: ID of parent document
         :arg refresh: Refresh the index after performing the operation
+        :arg replication: Specific replication type, default 'sync', valid
+            choices are: 'sync', 'async'
         :arg routing: Specific routing value
         :arg timeout: Explicit operation timeout
         :arg version: Explicit version number for concurrency control
@@ -747,7 +753,7 @@ class Elasticsearch(object):
             doc_type, '_count'), params=params, body=body)
         return data
 
-    @query_params('consistency', 'fields', 'refresh', 'routing', 'timeout')
+    @query_params('consistency', 'fields', 'refresh', 'replication', 'routing', 'timeout')
     def bulk(self, body, index=None, doc_type=None, params=None):
         """
         Perform many index/delete operations in a single API call.
@@ -765,6 +771,8 @@ class Elasticsearch(object):
         :arg fields: Default comma-separated list of fields to return in the
             response for updates
         :arg refresh: Refresh the index after performing the operation
+        :arg replication: Explicitely set the replication type, default 'sync',
+            valid choices are: 'sync', 'async'
         :arg routing: Specific routing value
         :arg timeout: Explicit operation timeout
         """
@@ -797,7 +805,7 @@ class Elasticsearch(object):
 
     @query_params('allow_no_indices', 'analyzer', 'consistency',
         'default_operator', 'df', 'expand_wildcards', 'ignore_unavailable', 'q',
-        'routing', 'timeout')
+        'replication', 'routing', 'timeout')
     def delete_by_query(self, index, doc_type=None, body=None, params=None):
         """
         Delete documents from one or more indices and one or more types based on a query.
@@ -822,6 +830,8 @@ class Elasticsearch(object):
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
         :arg q: Query in the Lucene query string syntax
+        :arg replication: Specific replication type, default 'sync', valid
+            choices are: 'sync', 'async'
         :arg routing: Specific routing value
         :arg timeout: Explicit operation timeout
         """

@@ -257,8 +257,8 @@ class IndicesClient(NamespacedClient):
             return False
         return True
 
-    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
-        'master_timeout', 'timeout')
+    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_conflicts',
+        'ignore_unavailable', 'master_timeout', 'timeout')
     def put_mapping(self, doc_type, body, index=None, params=None):
         """
         Register specific mapping definition for a specific type.
@@ -275,6 +275,8 @@ class IndicesClient(NamespacedClient):
         :arg expand_wildcards: Whether to expand wildcard expression to concrete
             indices that are open, closed or both., default 'open', valid
             choices are: 'open', 'closed', 'none', 'all'
+        :arg ignore_conflicts: Specify whether to ignore conflicts while
+            updating the mapping (default: false)
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
         :arg master_timeout: Specify timeout for connection to master
@@ -786,7 +788,7 @@ class IndicesClient(NamespacedClient):
             '_segments'), params=params)
         return data
 
-    @query_params('allow_no_indices', 'expand_wildcards', 'flush',
+    @query_params('allow_no_indices', 'expand_wildcards', 'flush', 'force',
         'ignore_unavailable', 'max_num_segments', 'only_expunge_deletes',
         'operation_threading', 'wait_for_merge')
     def optimize(self, index=None, params=None):
@@ -804,6 +806,8 @@ class IndicesClient(NamespacedClient):
             choices are: 'open', 'closed', 'none', 'all'
         :arg flush: Specify whether the index should be flushed after performing
             the operation (default: true)
+        :arg force: Force a merge operation to run, even if there is a single
+            segment in the index (default: false)
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
         :arg max_num_segments: The number of segments the index should be merged
@@ -863,8 +867,8 @@ class IndicesClient(NamespacedClient):
         return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'field_data',
-        'fielddata', 'fields', 'ignore_unavailable', 'query', 'recycler',
-        'request')
+        'fielddata', 'fields', 'filter', 'filter_cache', 'filter_keys', 'id',
+        'id_cache', 'ignore_unavailable', 'query_cache', 'recycler')
     def clear_cache(self, index=None, params=None):
         """
         Clear either all caches or specific cached associated with one ore more indices.
@@ -881,6 +885,12 @@ class IndicesClient(NamespacedClient):
         :arg fielddata: Clear field data
         :arg fields: A comma-separated list of fields to clear when using the
             `field_data` parameter (default: all)
+        :arg filter: Clear filter caches
+        :arg filter_cache: Clear filter caches
+        :arg filter_keys: A comma-separated list of keys to clear when using the
+            `filter_cache` parameter (default: all)
+        :arg id: Clear ID caches for parent/child
+        :arg id_cache: Clear ID caches for parent/child
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
         :arg query: Clear query caches
