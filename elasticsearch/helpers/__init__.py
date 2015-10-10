@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 import logging
+from multiprocessing.dummy import Pool
 from operator import methodcaller
 
 from ..exceptions import ElasticsearchException, TransportError
@@ -226,8 +227,38 @@ def bulk(client, actions, stats_only=False, **kwargs):
 
     return success, failed if stats_only else errors
 
-# preserve the name for backwards compatibility
-bulk_index = bulk
+def parallel_bulk(client, actions, thread_count=4, chunk_size=500,
+        max_chunk_bytes=100 * 1014 * 1024,
+        expand_action_callback=expand_action, **kwargs):
+    """
+    Parallel version of the bulk helper.
+
+    :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use
+    :arg actions: iterator containing the actions
+    :arg thread_count: size of the threadpool to use for the bulk requests
+    :arg chunk_size: number of docs in one chunk sent to es (default: 500)
+    :arg max_chunk_bytes: the maximum size of the request in bytes (default: 100MB)
+    :arg raise_on_error: raise ``BulkIndexError`` containing errors (as `.errors`)
+        from the execution of the last chunk when some occur. By default we raise.
+    :arg raise_on_exception: if ``False`` then don't propagate exceptions from
+        call to ``bulk`` and just report the items that failed as failed.
+    :arg expand_action_callback: callback executed on each action passed in,
+        should return a tuple containing the action line and the data line
+        (`None` if data line should be omitted).
+    """
+    actions = map(expand_action_callback, actions)
+
+    pool = Pool(thread_count)
+
+    for result in pool.imap(
+        lambda chunk: list(_process_bulk_chunk(client, chunk, **kwargs)),
+        _chunk_actions(actions, chunk_size, max_chunk_bytes, client.transport.serializer)
+        ):
+        for item in result:
+            yield item
+
+    pool.close()
+    pool.join()
 
 def scan(client, query=None, scroll='5m', raise_on_error=True, preserve_order=False, **kwargs):
     """
