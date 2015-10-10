@@ -4,10 +4,8 @@ import logging
 from multiprocessing.dummy import Pool
 from operator import methodcaller
 
-import six
-
 from ..exceptions import ElasticsearchException, TransportError
-from ..compat import map
+from ..compat import map, string_types
 
 logger = logging.getLogger('elasticsearch.helpers')
 
@@ -28,7 +26,7 @@ def expand_action(data):
     :meth:`~elasticsearch.Elasticsearch.bulk` api.
     """
     # when given a string, assume user wants to index raw json
-    if isinstance(data, six.string_types):
+    if isinstance(data, string_types):
         return '{"index": {}}', data
 
     # make sure we don't alter the action
