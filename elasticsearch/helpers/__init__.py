@@ -4,6 +4,8 @@ import logging
 from multiprocessing.dummy import Pool
 from operator import methodcaller
 
+import six
+
 from ..exceptions import ElasticsearchException, TransportError
 from ..compat import map
 
@@ -25,6 +27,10 @@ def expand_action(data):
     action/data lines needed for elasticsearch's
     :meth:`~elasticsearch.Elasticsearch.bulk` api.
     """
+    # when given a string, assume user wants to index raw json
+    if isinstance(data, six.string_types):
+        return '{"index": {}}', data
+
     # make sure we don't alter the action
     data = data.copy()
     op_type = data.pop('_op_type', 'index')
@@ -154,6 +160,11 @@ def streaming_bulk(client, actions, chunk_size=500, max_chunk_bytes=100 * 1014 *
 
     Alternatively, if `_source` is not present, it will pop all metadata fields
     from the doc and use the rest as the document data.
+
+    When reading raw json strings from a file, you can also pass them in. In
+    that case, however, you lose the ability to specify anything (index, type,
+    even id) on a per-record basis, all documents will just be sent to
+    elasticsearch to be indexed as-is.
 
     The :meth:`~elasticsearch.Elasticsearch.bulk` api accepts `index`, `create`,
     `delete`, and `update` actions. Use the `_op_type` field to specify an
