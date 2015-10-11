@@ -142,45 +142,6 @@ def streaming_bulk(client, actions, chunk_size=500, max_chunk_bytes=100 * 1014 *
     bulk that returns summary information about the bulk operation once the
     entire input is consumed and sent.
 
-    This function expects the action to be in the format as returned by
-    :meth:`~elasticsearch.Elasticsearch.search`, for example::
-
-        {
-            '_index': 'index-name',
-            '_type': 'document',
-            '_id': 42,
-            '_parent': 5,
-            '_ttl': '1d',
-            '_source': {
-                ...
-            }
-        }
-
-    Alternatively, if `_source` is not present, it will pop all metadata fields
-    from the doc and use the rest as the document data.
-
-    When reading raw json strings from a file, you can also pass them in. In
-    that case, however, you lose the ability to specify anything (index, type,
-    even id) on a per-record basis, all documents will just be sent to
-    elasticsearch to be indexed as-is.
-
-    The :meth:`~elasticsearch.Elasticsearch.bulk` api accepts `index`, `create`,
-    `delete`, and `update` actions. Use the `_op_type` field to specify an
-    action (`_op_type` defaults to `index`)::
-
-        {
-            '_op_type': 'delete',
-            '_index': 'index-name',
-            '_type': 'document',
-            '_id': 42,
-        }
-        {
-            '_op_type': 'update',
-            '_index': 'index-name',
-            '_type': 'document',
-            '_id': 42,
-            'doc': {'question': 'The life, universe and everything.'}
-        }
 
     :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use
     :arg actions: iterable containing the actions to be executed
@@ -208,8 +169,8 @@ def bulk(client, actions, stats_only=False, **kwargs):
     information - number of successfully executed actions and either list of
     errors or number of errors if `stats_only` is set to `True`.
 
-    See :func:`~elasticsearch.helpers.streaming_bulk` for more information
-    and accepted formats.
+    See :func:`~elasticsearch.helpers.streaming_bulk` for more accepted
+    parameters
 
     :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use
     :arg actions: iterator containing the actions
@@ -240,7 +201,7 @@ def parallel_bulk(client, actions, thread_count=4, chunk_size=500,
         max_chunk_bytes=100 * 1014 * 1024,
         expand_action_callback=expand_action, **kwargs):
     """
-    Parallel version of the bulk helper.
+    Parallel version of the bulk helper run in multiple threads at once.
 
     :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use
     :arg actions: iterator containing the actions
