@@ -18,7 +18,7 @@ class TestParallelBulk(TestCase):
     @mock.patch(
         'elasticsearch.helpers._process_bulk_chunk',
         # make sure we spend some time in the thread
-        side_effect=lambda *a: [(True, time.sleep(.001) or threading.get_ident())]
+        side_effect=lambda *a: [(True, time.sleep(.001) or threading.current_thread().ident)]
     )
     def test_chunk_sent_from_different_threads(self, _process_bulk_chunk):
         actions = ({'x': i} for i in range(100))
