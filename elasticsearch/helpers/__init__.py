@@ -27,7 +27,7 @@ def expand_action(data):
     """
     # when given a string, assume user wants to index raw json
     if isinstance(data, string_types):
-        return '{"index": {}}', data
+        return '{"index":{}}', data
 
     # make sure we don't alter the action
     data = data.copy()

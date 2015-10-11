@@ -36,3 +36,7 @@ class TestChunkActions(TestCase):
 
     def test_chunks_are_chopped_by_chunk_size(self):
         self.assertEquals(10, len(list(helpers._chunk_actions(self.actions, 10, 99999999, JSONSerializer()))))
+
+class TestExpandActions(TestCase):
+    def test_string_actions_are_marked_as_simple_inserts(self):
+        self.assertEquals(('{"index":{}}', "whatever"), helpers.expand_action('whatever'))
