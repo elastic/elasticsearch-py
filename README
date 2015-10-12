@@ -40,7 +40,6 @@ The recommended way to set your requirements in your `setup.py` or
 
 The development is happening on ``master`` and ``1.x`` branches, respectively.
 
-
 Installation
 ------------
 

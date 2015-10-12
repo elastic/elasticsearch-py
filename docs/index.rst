@@ -14,8 +14,11 @@ For a more high level client library with more limited scope, have a look at
 Compatibility
 -------------
 
-The library is compatible with both Elasticsearch 1.x and 0.90.x but you
-**have to use a matching version**.
+The library is compatible with all Elasticsearch versions since ``0.90.x`` but you
+**have to use a matching major version**:
+
+For **Elasticsearch 2.0** and later, use the major version 1 (``1.x.y``) of the
+library.
 
 For **Elasticsearch 1.0** and later, use the major version 1 (``1.x.y``) of the
 library.
@@ -26,13 +29,16 @@ library.
 The recommended way to set your requirements in your `setup.py` or
 `requirements.txt` is::
 
-    # Elasticsearch 1.0
+    # Elasticsearch 2.x
+    elasticsearch>=2.0.0,<3.0.0
+
+    # Elasticsearch 1.x
     elasticsearch>=1.0.0,<2.0.0
 
-    # Elasticsearch 0.90
+    # Elasticsearch 0.90.x
     elasticsearch<1.0.0
 
-The development is happening on ``master`` and ``0.4`` branches, respectively.
+The development is happening on ``master`` and ``1.x`` branches, respectively.
 
 Example Usage
 -------------
