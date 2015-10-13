@@ -413,7 +413,7 @@ class Elasticsearch(object):
         :arg consistency: Explicit write consistency setting for the operation,
             valid choices are: 'one', 'quorum', 'all'
         :arg detect_noop: Specifying as true will cause Elasticsearch to check
-            if there are changes and, if there aren’t, turn the update request
+            if there are changes and, if there aren't, turn the update request
             into a noop.
         :arg fields: A comma-separated list of fields to return in the response
         :arg lang: The script language (default: groovy)
