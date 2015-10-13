@@ -3,8 +3,8 @@
 Changelog
 =========
 
-1.8.0
------
+1.8.0 (2015-10-14)
+------------------
 
  * removed thrift and memcached connections, if you wish to continue using
    those, extract the classes and use them separately.
