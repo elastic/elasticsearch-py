@@ -397,8 +397,8 @@ class Elasticsearch(object):
             doc_type, '_mget'), params=params, body=body)
         return data
 
-    @query_params('consistency', 'fields', 'lang', 'parent', 'refresh',
-        'retry_on_conflict', 'routing', 'script', 'script_id',
+    @query_params('consistency', 'detect_noop', 'fields', 'lang', 'parent',
+        'refresh', 'retry_on_conflict', 'routing', 'script', 'script_id',
         'scripted_upsert', 'timeout', 'timestamp', 'ttl', 'version',
         'version_type')
     def update(self, index, doc_type, id, body=None, params=None):
@@ -412,6 +412,9 @@ class Elasticsearch(object):
         :arg body: The request definition using either `script` or partial `doc`
         :arg consistency: Explicit write consistency setting for the operation,
             valid choices are: 'one', 'quorum', 'all'
+        :arg detect_noop: Specifying as true will cause Elasticsearch to check
+            if there are changes and, if there aren’t, turn the update request
+            into a noop.
         :arg fields: A comma-separated list of fields to return in the response
         :arg lang: The script language (default: groovy)
         :arg parent: ID of the parent document. Is is only used for routing and
@@ -795,42 +798,6 @@ class Elasticsearch(object):
             doc_type, '_msearch'), params=params, body=self._bulk_body(body))
         return data
 
-    @query_params('allow_no_indices', 'analyzer', 'consistency',
-        'default_operator', 'df', 'expand_wildcards', 'ignore_unavailable', 'q',
-        'routing', 'timeout')
-    def delete_by_query(self, index, doc_type=None, body=None, params=None):
-        """
-        Delete documents from one or more indices and one or more types based on a query.
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/docs-delete-by-query.html>`_
-
-        :arg index: A comma-separated list of indices to restrict the operation;
-            use `_all` to perform the operation on all indices
-        :arg doc_type: A comma-separated list of types to restrict the operation
-        :arg body: A query to restrict the operation specified with the Query
-            DSL
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg analyzer: The analyzer to use for the query string
-        :arg consistency: Specific write consistency setting for the operation
-        :arg default_operator: The default operator for query string query (AND
-            or OR), default u'OR'
-        :arg df: The field to use as default where no field prefix is given in
-            the query string
-        :arg expand_wildcards: Whether to expand wildcard expression to concrete
-            indices that are open, closed or both., default u'open'
-        :arg ignore_unavailable: Whether specified concrete indices should be
-            ignored when unavailable (missing or closed)
-        :arg q: Query in the Lucene query string syntax
-        :arg routing: Specific routing value
-        :arg timeout: Explicit operation timeout
-        """
-        if index in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'index'.")
-        _, data = self.transport.perform_request('DELETE', _make_path(index, doc_type, '_query'),
-            params=params, body=body)
-        return data
-
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
         'preference', 'routing')
     def suggest(self, body, index=None, params=None):
@@ -984,56 +951,6 @@ class Elasticsearch(object):
             doc_type, id, '_percolate', 'count'), params=params, body=body)
         return data
 
-    @query_params('boost_terms', 'include', 'max_doc_freq', 'max_query_terms',
-        'max_word_length', 'min_doc_freq', 'min_term_freq', 'min_word_length',
-        'mlt_fields', 'percent_terms_to_match', 'routing', 'search_from',
-        'search_indices', 'search_query_hint', 'search_scroll', 'search_size',
-        'search_source', 'search_type', 'search_types', 'stop_words')
-    def mlt(self, index, doc_type, id, body=None, params=None):
-        """
-        Get documents that are "like" a specified document.
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-more-like-this.html>`_
-
-        :arg index: The name of the index
-        :arg doc_type: The type of the document (use `_all` to fetch the first
-            document matching the ID across all types)
-        :arg id: The document ID
-        :arg body: A specific search request definition
-        :arg boost_terms: The boost factor
-        :arg include: Whether to include the queried document from the response
-        :arg max_doc_freq: The word occurrence frequency as count: words with
-            higher occurrence in the corpus will be ignored
-        :arg max_query_terms: The maximum query terms to be included in the generated query
-        :arg max_word_length: The minimum length of the word: longer words will be ignored
-        :arg min_doc_freq: The word occurrence frequency as count: words with
-            lower occurrence in the corpus will be ignored
-        :arg min_term_freq: The term frequency as percent: terms with lower
-            occurence in the source document will be ignored
-        :arg min_word_length: The minimum length of the word: shorter words will be ignored
-        :arg mlt_fields: Specific fields to perform the query against
-        :arg percent_terms_to_match: How many terms have to match in order to
-            consider the document a match (default: 0.3)
-        :arg routing: Specific routing value
-        :arg search_from: The offset from which to return results
-        :arg search_indices: A comma-separated list of indices to perform the
-            query against (default: the index containing the document)
-        :arg search_query_hint: The search query hint
-        :arg search_scroll: A scroll search request definition
-        :arg search_size: The number of documents to return (default: 10)
-        :arg search_source: A specific search request definition (instead of
-            using the request body)
-        :arg search_type: Specific search type (eg. `dfs_then_fetch`, `count`, etc)
-        :arg search_types: A comma-separated list of types to perform the query
-            against (default: the same type as the document)
-        :arg stop_words: A list of stop words to be ignored
-        """
-        for param in (index, doc_type, id):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-        _, data = self.transport.perform_request('GET', _make_path(index, doc_type, id, '_mlt'),
-            params=params, body=body)
-        return data
-
     @query_params('dfs', 'field_statistics', 'fields', 'offsets', 'parent',
         'payloads', 'positions', 'preference', 'realtime', 'routing',
         'term_statistics', 'version', 'version_type')
@@ -1082,19 +999,6 @@ class Elasticsearch(object):
         _, data = self.transport.perform_request('GET', _make_path(index,
             doc_type, id, '_termvectors'), params=params, body=body)
         return data
-
-    @query_params('dfs', 'field_statistics', 'fields', 'offsets', 'parent',
-        'payloads', 'positions', 'preference', 'realtime', 'routing',
-        'term_statistics', 'version', 'version_type')
-    def termvector(self, index, doc_type, id, body=None, params=None):
-        for param in (index, doc_type, id):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-        _, data = self.transport.perform_request('GET', _make_path(index,
-            doc_type, id, '_termvector'), params=params, body=body)
-        return data
-    termvector.__doc__ = termvectors.__doc__
-
 
     @query_params('field_statistics', 'fields', 'ids', 'offsets', 'parent',
         'payloads', 'positions', 'preference', 'realtime', 'routing',
@@ -1248,7 +1152,7 @@ class Elasticsearch(object):
         return data
 
     @query_params('version', 'version_type')
-    def delete_template(self, id=None, params=None):
+    def delete_template(self, id, params=None):
         """
         Delete a search template.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html>`_
@@ -1258,6 +1162,8 @@ class Elasticsearch(object):
         :arg version_type: Specific version type, valid choices are: 'internal',
             'external', 'external_gte', 'force'
         """
+        if id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'id'.")
         _, data = self.transport.perform_request('DELETE', _make_path('_search',
             'template', id), params=params)
         return data

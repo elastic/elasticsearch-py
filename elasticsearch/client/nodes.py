@@ -1,7 +1,7 @@
 from .utils import NamespacedClient, query_params, _make_path
 
 class NodesClient(NamespacedClient):
-    @query_params('flat_settings', 'human')
+    @query_params('flat_settings', 'human', 'timeout')
     def info(self, node_id=None, metric=None, params=None):
         """
         The cluster nodes info API allows to retrieve one or more (or all) of
@@ -17,31 +17,14 @@ class NodesClient(NamespacedClient):
         :arg flat_settings: Return settings in flat format (default: false)
         :arg human: Whether to return time and byte values in human-readable
             format., default False
+        :arg timeout: Explicit operation timeout
         """
         _, data = self.transport.perform_request('GET', _make_path('_nodes',
             node_id, metric), params=params)
         return data
 
-    @query_params('delay', 'exit')
-    def shutdown(self, node_id=None, params=None):
-        """
-        The nodes shutdown API allows to shutdown one or more (or all) nodes in
-        the cluster.
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-shutdown.html>`_
-
-        :arg node_id: A comma-separated list of node IDs or names to perform the
-            operation on; use `_local` to perform the operation on the node
-            you're connected to, leave empty to perform the operation on all
-            nodes
-        :arg delay: Set the delay for the operation (default: 1s)
-        :arg exit: Exit the JVM as well (default: true)    
-        """
-        _, data = self.transport.perform_request('POST', _make_path('_cluster',
-            'nodes', node_id, '_shutdown'), params=params)
-        return data
-    
     @query_params('completion_fields', 'fielddata_fields', 'fields', 'groups',
-        'human', 'level', 'types')
+        'human', 'level', 'timeout', 'types')
     def stats(self, node_id=None, metric=None, index_metric=None, params=None):
         """
         The cluster nodes stats API allows to retrieve one or more (or all) of
@@ -69,6 +52,7 @@ class NodesClient(NamespacedClient):
         :arg level: Return indices stats aggregated at node, index or shard
             level, default 'node', valid choices are: 'node', 'indices',
             'shards'
+        :arg timeout: Explicit operation timeout
         :arg types: A comma-separated list of document types for the `indexing`
             index metric
         """
@@ -77,7 +61,7 @@ class NodesClient(NamespacedClient):
         return data
 
     @query_params('doc_type', 'ignore_idle_threads', 'interval', 'snapshots',
-        'threads')
+        'threads', 'timeout')
     def hot_threads(self, node_id=None, params=None):
         """
         An API allowing to get the current hot threads on each node in the cluster.
@@ -96,6 +80,7 @@ class NodesClient(NamespacedClient):
         :arg snapshots: Number of samples of thread stacktrace (default: 10)
         :arg threads: Specify the number of threads to provide information for
             (default: 3)
+        :arg timeout: Explicit operation timeout
         """
         # avoid python reserved words
         if params and 'type_' in params:

@@ -14,7 +14,7 @@ class CatClient(NamespacedClient):
             master node (default: false)
         :arg master_timeout: Explicit operation timeout for connection to master
             node
-        :arg v: Verbose mode. Display column headers, default True
+        :arg v: Verbose mode. Display column headers, default False
         """
         _, data = self.transport.perform_request('GET', _make_path('_cat',
             'aliases', name), params=params)
@@ -37,7 +37,7 @@ class CatClient(NamespacedClient):
             master node (default: false)
         :arg master_timeout: Explicit operation timeout for connection to master
             node
-        :arg v: Verbose mode. Display column headers, default True
+        :arg v: Verbose mode. Display column headers, default False
         """
         _, data = self.transport.perform_request('GET', _make_path('_cat',
             'allocation', node_id), params=params)
@@ -58,7 +58,7 @@ class CatClient(NamespacedClient):
             master node (default: false)
         :arg master_timeout: Explicit operation timeout for connection to master
             node
-        :arg v: Verbose mode. Display column headers, default True
+        :arg v: Verbose mode. Display column headers, default False
         """
         _, data = self.transport.perform_request('GET', _make_path('_cat',
             'count', index), params=params)
@@ -78,7 +78,7 @@ class CatClient(NamespacedClient):
         :arg master_timeout: Explicit operation timeout for connection to master
             node
         :arg ts: Set to false to disable timestamping, default True
-        :arg v: Verbose mode. Display column headers, default True
+        :arg v: Verbose mode. Display column headers, default False
         """
         _, data = self.transport.perform_request('GET', '/_cat/health',
             params=params)
@@ -113,7 +113,7 @@ class CatClient(NamespacedClient):
             node
         :arg pri: Set to true to return stats only for primary shards, default
             False
-        :arg v: Verbose mode. Display column headers, default True
+        :arg v: Verbose mode. Display column headers, default False
         """
         _, data = self.transport.perform_request('GET', _make_path('_cat',
             'indices', index), params=params)
@@ -131,7 +131,7 @@ class CatClient(NamespacedClient):
             master node (default: false)
         :arg master_timeout: Explicit operation timeout for connection to master
             node
-        :arg v: Verbose mode. Display column headers, default True
+        :arg v: Verbose mode. Display column headers, default False
         """
         _, data = self.transport.perform_request('GET', '/_cat/master',
             params=params)
@@ -149,7 +149,7 @@ class CatClient(NamespacedClient):
             master node (default: false)
         :arg master_timeout: Explicit operation timeout for connection to master
             node
-        :arg v: Verbose mode. Display column headers, default True
+        :arg v: Verbose mode. Display column headers, default False
         """
         _, data = self.transport.perform_request('GET', '/_cat/nodes',
             params=params)
@@ -169,7 +169,7 @@ class CatClient(NamespacedClient):
         :arg help: Return help information, default False
         :arg master_timeout: Explicit operation timeout for connection to master
             node
-        :arg v: Verbose mode. Display column headers, default True
+        :arg v: Verbose mode. Display column headers, default False
         """
         _, data = self.transport.perform_request('GET', _make_path('_cat',
             'recovery', index), params=params)
@@ -189,7 +189,7 @@ class CatClient(NamespacedClient):
             master node (default: false)
         :arg master_timeout: Explicit operation timeout for connection to master
             node
-        :arg v: Verbose mode. Display column headers, default True
+        :arg v: Verbose mode. Display column headers, default False
         """
         _, data = self.transport.perform_request('GET', _make_path('_cat',
             'shards', index), params=params)
@@ -205,7 +205,7 @@ class CatClient(NamespacedClient):
             information
         :arg h: Comma-separated list of column names to display
         :arg help: Return help information, default False
-        :arg v: Verbose mode. Display column headers, default True
+        :arg v: Verbose mode. Display column headers, default False
         """
         _, data = self.transport.perform_request('GET', _make_path('_cat',
             'segments', index), params=params)
@@ -225,7 +225,7 @@ class CatClient(NamespacedClient):
             master node (default: false)
         :arg master_timeout: Explicit operation timeout for connection to master
             node
-        :arg v: Verbose mode. Display column headers, default True
+        :arg v: Verbose mode. Display column headers, default False
         """
         _, data = self.transport.perform_request('GET', '/_cat/pending_tasks',
             params=params)
@@ -244,7 +244,7 @@ class CatClient(NamespacedClient):
             master node (default: false)
         :arg master_timeout: Explicit operation timeout for connection to master
             node
-        :arg v: Verbose mode. Display column headers, default True
+        :arg v: Verbose mode. Display column headers, default False
         """
         _, data = self.transport.perform_request('GET', '/_cat/thread_pool',
             params=params)
@@ -266,7 +266,7 @@ class CatClient(NamespacedClient):
             master node (default: false)
         :arg master_timeout: Explicit operation timeout for connection to master
             node
-        :arg v: Verbose mode. Display column headers, default True
+        :arg v: Verbose mode. Display column headers, default False
         """
         _, data = self.transport.perform_request('GET', _make_path('_cat',
             'fielddata', fields), params=params)
@@ -284,7 +284,7 @@ class CatClient(NamespacedClient):
             master node (default: false)
         :arg master_timeout: Explicit operation timeout for connection to master
             node
-        :arg v: Verbose mode. Display column headers, default True
+        :arg v: Verbose mode. Display column headers, default False
         """
         _, data = self.transport.perform_request('GET', '/_cat/plugins',
             params=params)
@@ -301,7 +301,7 @@ class CatClient(NamespacedClient):
             master node (default: false)
         :arg master_timeout: Explicit operation timeout for connection to master
             node
-        :arg v: Verbose mode. Display column headers, default True
+        :arg v: Verbose mode. Display column headers, default False
         """
         _, data = self.transport.perform_request('GET', '/_cat/nodeattrs',
             params=params)

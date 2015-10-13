@@ -75,7 +75,7 @@ class ClusterClient(NamespacedClient):
             'state', metric, index), params=params)
         return data
 
-    @query_params('flat_settings', 'human')
+    @query_params('flat_settings', 'human', 'timeout')
     def stats(self, node_id=None, params=None):
         """
         The Cluster Stats API allows to retrieve statistics from a cluster wide
@@ -90,6 +90,7 @@ class ClusterClient(NamespacedClient):
         :arg flat_settings: Return settings in flat format (default: false)
         :arg human: Whether to return time and byte values in human-readable
             format., default False
+        :arg timeout: Explicit operation timeout
         """
         url = '/_cluster/stats'
         if node_id:
