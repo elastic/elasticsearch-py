@@ -259,7 +259,7 @@ YAML_DIR = environ.get(
     'TEST_ES_YAML_DIR',
     join(
         dirname(__file__), pardir, pardir, pardir,
-        'elasticsearch', 'rest-api-spec', 'src', 'main', 'resources', 'rest-api-spec', 'test'
+        'elasticsearch', 'rest-api-spec', 'test'
     )
 )
 
