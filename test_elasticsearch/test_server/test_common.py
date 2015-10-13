@@ -33,7 +33,8 @@ IMPLEMENTED_FEATURES = ('gtelte', 'stash_in_path')
 
 # broken YAML tests on some releases
 SKIP_TESTS = {
-    (1, 1, 2): set(('TestCatRecovery10Basic', ))
+    (1, 1, 2): set(('TestCatRecovery10Basic', )),
+    '*': set(('TestSearchExists20QueryString', 'TestSearchExists10Basic'))
 }
 
 class InvalidActionType(Exception):
@@ -229,7 +230,7 @@ def construct_case(filename, name):
     """
     def make_test(test_name, definition, i):
         def m(self):
-            if name in SKIP_TESTS.get(self.es_version, ()):
+            if name in SKIP_TESTS.get(self.es_version, ()) or name in SKIP_TESTS.get('*', ()):
                 raise SkipTest()
             self.run_code(definition)
         m.__doc__ = '%s:%s.test_from_yaml_%d (%s): %s' % (
