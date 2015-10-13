@@ -3,8 +3,13 @@
 Changelog
 =========
 
-1.8.0
------
+2.0.0 (2015-10-14)
+------------------
+
+ * Elasticsearch 2.0 compatibility release
+
+1.8.0 (2015-10-14)
+------------------
 
  * removed thrift and memcached connections, if you wish to continue using
    those, extract the classes and use them separately.
