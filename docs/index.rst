@@ -17,7 +17,7 @@ Compatibility
 The library is compatible with all Elasticsearch versions since ``0.90.x`` but you
 **have to use a matching major version**:
 
-For **Elasticsearch 2.0** and later, use the major version 1 (``1.x.y``) of the
+For **Elasticsearch 2.0** and later, use the major version 2 (``2.x.y``) of the
 library.
 
 For **Elasticsearch 1.0** and later, use the major version 1 (``1.x.y``) of the
