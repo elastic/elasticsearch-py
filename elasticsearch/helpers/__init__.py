@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
 
 import logging
-from multiprocessing.dummy import Pool
 from operator import methodcaller
 
 from ..exceptions import ElasticsearchException, TransportError
@@ -216,6 +215,9 @@ def parallel_bulk(client, actions, thread_count=4, chunk_size=500,
         should return a tuple containing the action line and the data line
         (`None` if data line should be omitted).
     """
+    # Avoid importing multiprocessing unless parallel_bulk is used
+    # to avoid exceptions on restricted environments like App Engine
+    from multiprocessing.dummy import Pool
     actions = map(expand_action_callback, actions)
 
     pool = Pool(thread_count)
