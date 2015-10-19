@@ -14,6 +14,8 @@ Changelog
  * removed thrift and memcached connections, if you wish to continue using
    those, extract the classes and use them separately.
  * added a new, parallel version of the bulk helper using thread pools
+ * In helpers, removed ``bulk_index`` as an alias for ``bulk``. Use ``bulk``
+   instead.
 
 1.7.0 (2015-09-21)
 ------------------
