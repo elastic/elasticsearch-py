@@ -3,6 +3,11 @@
 Changelog
 =========
 
+2.1.0 (2015-10-19)
+------------------
+
+  * move multiprocessing import inside parallel bulk for Google App Engine
+
 2.0.0 (2015-10-14)
 ------------------
 
