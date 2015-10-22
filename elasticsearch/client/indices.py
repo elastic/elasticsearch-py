@@ -356,7 +356,7 @@ class IndicesClient(NamespacedClient):
         :arg name: The name of the alias to be created or updated
         :arg body: The settings for the alias, such as `routing` or `filter`
         :arg master_timeout: Specify timeout for connection to master
-        :arg timeout: Explicit timestamp for the document
+        :arg timeout: Explicit timeout for the operation
         """
         for param in (index, name):
             if param in SKIP_IN_PATH:
@@ -460,7 +460,7 @@ class IndicesClient(NamespacedClient):
             wildcards); use `_all` to delete all aliases for the specified
             indices.
         :arg master_timeout: Specify timeout for connection to master
-        :arg timeout: Explicit timestamp for the document
+        :arg timeout: Explicit timeout for the operation
         """
         for param in (index, name):
             if param in SKIP_IN_PATH:
