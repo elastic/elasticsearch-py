@@ -259,7 +259,7 @@ def scan(client, query=None, scroll='5m', raise_on_error=True, preserve_order=Fa
     :meth:`~elasticsearch.Elasticsearch.search` call::
 
         scan(es,
-            query={"match": {"title": "python"}},
+            query={"query": {"match": {"title": "python"}}},
             index="orders-*",
             doc_type="books"
         )
