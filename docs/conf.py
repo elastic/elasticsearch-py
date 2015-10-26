@@ -228,7 +228,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'elasticsearch', u'Elasticsearch Documentation',
+    ('index', 'elasticsearch-py', u'Elasticsearch Documentation',
      [u'Honza Král'], 1)
 ]
 
