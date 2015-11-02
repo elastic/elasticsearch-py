@@ -29,11 +29,11 @@ CLUSTER_NODES = '''{
     "nodes" : {
         "wE_6OGBNSjGksbONNncIbg" : {
             "name" : "Nightwind",
-            "transport_address" : "inet[/127.0.0.1:9300]",
+            "transport_address" : "127.0.0.1:9300",
             "hostname" : "wind",
             "version" : "0.20.4",
-            "http_address" : "inet[/1.1.1.1:123]",
-            "thrift_address" : "/1.1.1.1:9500]"
+            "http_address" : "1.1.1.1:123",
+            "thrift_address" : "1.1.1.1:9500"
         }
     }
 }'''
