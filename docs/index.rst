@@ -74,7 +74,11 @@ Features
 This client was designed as very thin wrapper around Elasticseach's REST API to
 allow for maximum flexibility. This means that there are no opinions in this
 client; it also means that some of the APIs are a little cumbersome to use from
-Python. We have created some :ref:`helpers` to help with this issue.
+Python. We have created some :ref:`helpers` to help with this issue as well as
+a more high level library (`elasticsearch-dsl`_) on top of this one to provide
+a more convenient way of working with Elasticsearch.
+
+.. _elasticsearch-dsl: http://elasticsearch-dsl.rtfd.org/
 
 Persistent Connections
 ~~~~~~~~~~~~~~~~~~~~~~

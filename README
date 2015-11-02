@@ -6,12 +6,20 @@ ground for all Elasticsearch-related code in Python; because of this it tries
 to be opinion-free and very extendable.
 
 For a more high level client library with more limited scope, have a look at
-`elasticsearch-dsl`_ - it is a more pythonic library sitting on top of
-``elasticsearch-py`` That contains a `query builder`_ and a `persistance
-layer`_ that adds an ORM-like layer for convenience.
+`elasticsearch-dsl`_ - a more pythonic library sitting on top of
+``elasticsearch-py``.
+
+It provides a more convenient and idiomatic way to write and manipulate
+`queries`_. It stays close to the Elasticsearch JSON DSL, mirroring its
+terminology and structure while exposing the whole range of the DSL from Python
+either directly using defined classes or a queryset-like expressions.
+
+It also provides an optional `persistence layer`_ for working with documents as
+Python objects in an ORM-like fashion: defining mappings, retrieving and saving
+documents, wrapping the document data in user-defined classes.
 
 .. _elasticsearch-dsl: http://elasticsearch-dsl.rtfd.org/
-.. _query builder: http://elasticsearch-dsl.readthedocs.org/en/latest/search_dsl.html
+.. _queries: http://elasticsearch-dsl.readthedocs.org/en/latest/search_dsl.html
 .. _persistance layer: http://elasticsearch-dsl.readthedocs.org/en/latest/persistence.html#doctype
 
 Compatibility
