@@ -20,7 +20,7 @@ documents, wrapping the document data in user-defined classes.
 
 .. _elasticsearch-dsl: http://elasticsearch-dsl.rtfd.org/
 .. _queries: http://elasticsearch-dsl.readthedocs.org/en/latest/search_dsl.html
-.. _persistance layer: http://elasticsearch-dsl.readthedocs.org/en/latest/persistence.html#doctype
+.. _persistence layer: http://elasticsearch-dsl.readthedocs.org/en/latest/persistence.html#doctype
 
 Compatibility
 -------------
