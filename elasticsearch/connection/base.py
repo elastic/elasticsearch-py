@@ -42,6 +42,9 @@ class Connection(object):
     def __repr__(self):
         return '<%s: %s>' % (self.__class__.__name__, self.host)
 
+    def log_message(self, message):
+        logger.info('%s', message)
+
     def log_request_success(self, method, full_url, path, body, status_code, response, duration):
         """ Log a successful API call.  """
         #  TODO: optionally pass in params instead of full_url and do urlencode only when needed
