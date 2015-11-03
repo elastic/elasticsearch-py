@@ -1,5 +1,5 @@
 import time
-import warnings, hashlib, hmac, os, datetime, base64
+import warnings, hashlib, hmac, os, datetime, base64, sys
 try:
     import requests
     REQUESTS_AVAILABLE = True
@@ -79,7 +79,7 @@ class AwsHttpConnection(Connection):
 
         authorization_header = self.algorithm + ' ' + 'Credential=' + self.access_key + '/' + credential_scope + ', ' +  'SignedHeaders=' + self.signed_headers + ', ' + 'Signature=' + signature
         print authorization_header
-        
+
         self.session.headers.update({'x-amz-date':amzdate, 'Authorization':authorization_header})
 
         if params:
