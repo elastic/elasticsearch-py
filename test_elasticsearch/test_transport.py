@@ -38,6 +38,21 @@ CLUSTER_NODES = '''{
     }
 }'''
 
+CLUSTER_NODES_HOSTNAME = '''{
+    "ok" : true,
+    "cluster_name" : "super_cluster",
+    "nodes" : {
+        "wE_6OGBNSjGksbONNncIbg" : {
+            "name" : "Nightwind",
+            "transport_address" : "inet[/127.0.0.1:9300]",
+            "hostname" : "wind",
+            "version" : "0.20.4",
+            "http_address" : "inet[www.example.com/1.1.1.1:123]",
+            "thrift_address" : "/1.1.1.1:9500]"
+        }
+    }
+}'''
+
 class TestHostsInfoCallback(TestCase):
     def test_master_only_nodes_are_ignored(self):
         nodes = [
@@ -208,3 +223,10 @@ class TestTransport(TestCase):
         self.assertEquals('http://1.1.1.1:123', t.get_connection().host)
         self.assertTrue(time.time() - 1 < t.last_sniff < time.time() + 0.01 )
 
+    def test_sniff_will_use_hostname_when_available(self):
+        t = Transport([{'data': CLUSTER_NODES_HOSTNAME}], connection_class=DummyConnection)
+        t.set_connections([{'data': 'invalid'}])
+
+        t.sniff_hosts()
+        self.assertEquals(1, len(t.connection_pool.connections))
+        self.assertEquals('http://www.example.com:123', t.get_connection().host)
