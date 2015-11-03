@@ -8,8 +8,11 @@ from .serializer import JSONSerializer, Deserializer, DEFAULT_SERIALIZERS
 from .exceptions import ConnectionError, TransportError, SerializationError, \
                         ConnectionTimeout, ImproperlyConfigured
 
-# get host/ip and port from "inet[wind/127.0.0.1:9200]" or "inet[127.0.0.1:9200"
-ADDRESS_RE = re.compile(r'(?P<host>[-a-zA-Z0-9\.]+(?=/[\.:0-9a-f]*:)|(?<=/)[\.:0-9a-f]*)[^:]*:(?P<port>[0-9]+)\]?$')
+# get host/ip and port from one of the following format:
+#   "inet[wind/127.0.0.1:9200]"
+#   "inet[/127.0.0.1:9200]"
+#   "127.0.0.1:9200"
+ADDRESS_RE = re.compile(r'(?P<host>[-a-zA-Z0-9\.]+(?=/[\.:0-9a-f]*:)|(?<=/)[\.:0-9a-f]+|^[\.:0-9a-f]+)[^:]*:(?P<port>[0-9]+)\]?$')
 
 
 def get_host_info(node_info, host):
