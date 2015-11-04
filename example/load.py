@@ -13,6 +13,19 @@ from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk, streaming_bulk
 
 def create_git_index(client, index):
+    # we will use user on several places
+    user_mapping = {
+      'properties': {
+        'name': {
+          'type': 'multi_field',
+          'fields': {
+            'raw': {'type' : 'string', 'index' : 'not_analyzed'},
+            'name': {'type' : 'string'}
+          }
+        }
+      }
+    }
+
     # create empty index
     client.indices.create(
         index=index,
@@ -32,90 +45,65 @@ def create_git_index(client, index):
                 }
               }
             }
+          },
+          'mappings': {
+            'commits': {
+              '_parent': {
+                'type': 'repos'
+              },
+              'properties': {
+                'author': user_mapping,
+                'authored_date': {'type': 'date'},
+                'committer': user_mapping,
+                'committed_date': {'type': 'date'},
+                'parent_shas': {'type': 'string', 'index' : 'not_analyzed'},
+                'description': {'type': 'string', 'analyzer': 'snowball'},
+                'files': {'type': 'string', 'analyzer': 'file_path'}
+              }
+            },
+            'repos': {
+              'properties': {
+                'owner': user_mapping,
+                'created_at': {'type': 'date'},
+                'description': {
+                  'type': 'string',
+                  'analyzer': 'snowball',
+                },
+                'tags': {
+                  'type': 'string',
+                  'index': 'not_analyzed'
+                }
+              }
+            }
           }
         },
         # ignore already existing index
         ignore=400
     )
 
-    # we will use user on several places
-    user_mapping = {
-      'properties': {
-        'name': {
-          'type': 'multi_field',
-          'fields': {
-            'raw': {'type' : 'string', 'index' : 'not_analyzed'},
-            'name': {'type' : 'string'}
-          }
-        }
-      }
-    }
-
-    client.indices.put_mapping(
-        index=index,
-        doc_type='repos',
-        body={
-          'repos': {
-            'properties': {
-              'owner': user_mapping,
-              'created_at': {'type': 'date'},
-              'description': {
-                'type': 'string',
-                'analyzer': 'snowball',
-              },
-              'tags': {
-                'type': 'string',
-                'index': 'not_analyzed'
-              }
-            }
-          }
-        }
-    )
-
-    client.indices.put_mapping(
-        index=index,
-        doc_type='commits',
-        body={
-          'commits': {
-            '_parent': {
-              'type': 'repos'
-            },
-            'properties': {
-              'author': user_mapping,
-              'authored_date': {'type': 'date'},
-              'committer': user_mapping,
-              'committed_date': {'type': 'date'},
-              'parent_shas': {'type': 'string', 'index' : 'not_analyzed'},
-              'description': {'type': 'string', 'analyzer': 'snowball'},
-              'files': {'type': 'string', 'analyzer': 'file_path'}
-            }
-          }
-        }
-    )
-
-def parse_commits(repo, name):
+def parse_commits(head, name):
     """
     Go through the git repository log and generate a document per commit
     containing all the metadata.
     """
-    for commit in repo.log():
+    for commit in head.traverse():
         yield {
-            '_id': commit.id,
+            '_id': commit.hexsha,
             '_parent': name,
-            'committed_date': datetime(*commit.committed_date[:6]),
+            'committed_date': datetime.fromtimestamp(commit.committed_date),
             'committer': {
                 'name': commit.committer.name,
                 'email': commit.committer.email,
             },
-            'authored_date': datetime(*commit.authored_date[:6]),
+            'authored_date': datetime.fromtimestamp(commit.authored_date),
             'author': {
                 'name': commit.author.name,
                 'email': commit.author.email,
             },
             'description': commit.message,
-            'parent_shas': [p.id for p in commit.parents],
+            'parent_shas': [p.hexsha for p in commit.parents],
             # we only care about the filenames, not the per-file stats
-            'files': list(chain(commit.stats.files)),
+            'files': list(commit.stats.files),
             'stats': commit.stats.total,
         }
 
@@ -144,7 +132,7 @@ def load_repo(client, path=None, index='git'):
     # loading all the commits into memory
     for ok, result in streaming_bulk(
             client,
-            parse_commits(repo, repo_name),
+            parse_commits(repo.refs.master.commit, repo_name),
             index=index,
             doc_type='commits',
             chunk_size=50 # keep the batch sizes small for appearances only
