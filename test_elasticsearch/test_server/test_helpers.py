@@ -14,7 +14,7 @@ class FailingBulkClient(object):
     def bulk(self, *args, **kwargs):
         self._called += 1
         if self._called == self._fail_at:
-            raise TransportError(599, "Error!", "INFO")
+            raise TransportError(599, "Error!", {})
         return  self.client.bulk(*args, **kwargs)
 
 class TestStreamingBulk(ElasticsearchTestCase):
