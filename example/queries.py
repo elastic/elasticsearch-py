@@ -6,12 +6,14 @@ from dateutil.parser import parse as parse_date
 
 from elasticsearch import Elasticsearch
 
-def print_hits(results, facet_masks={}):
-    " Simple utility function to print results of a search query. "
+def print_search_stats(results):
     print('=' * 80)
     print('Total %d found in %dms' % (results['hits']['total'], results['took']))
-    if results['hits']['hits']:
-        print('-' * 80)
+    print('-' * 80)
+
+def print_hits(results):
+    " Simple utility function to print results of a search query. "
+    print_search_stats(results)
     for hit in results['hits']['hits']:
         # get created date for a repo and fallback to authored_date for a commit
         created_at = parse_date(hit['_source'].get('created_at', hit['_source']['authored_date']))
@@ -20,10 +22,6 @@ def print_hits(results, facet_masks={}):
                 created_at.strftime('%Y-%m-%d'),
                 hit['_source']['description'].replace('\n', ' ')))
 
-    for facet, mask in facet_masks.items():
-        print('-' * 80)
-        for d in results['facets'][facet]['terms']:
-            print(mask % d)
     print('=' * 80)
     print()
 
@@ -105,15 +103,23 @@ result = es.search(
           }
         }
       },
-      'facets': {
+      'aggs': {
         'committers': {
-          'terms_stats': {
-            'key_field': 'committer.name.raw',
-            'value_field': 'stats.lines'
+          'terms': {
+            'field': 'committer.name.raw',
+          },
+          'aggs': {
+            'line_stats': {
+              'stats': {'field': 'stats.lines'}
+            }
           }
         }
       }
     }
 )
-print_hits(result, {'committers': '%(term)15s: %(count)3d commits changing %(total)6d lines'})
 
+print_search_stats(result)
+for committer in result['aggregations']['committers']['buckets']:
+    print('%15s: %3d commits changing %6d lines' % (
+        committer['key'], committer['doc_count'], committer['line_stats']['sum']))
+print('=' * 80)
