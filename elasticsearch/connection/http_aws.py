@@ -28,7 +28,6 @@ class AwsHttpConnection(Connection):
 
         self.access_key = os.environ.get('AWS_ACCESS_KEY_ID')
         self.secret_key = os.environ.get('AWS_SECRET_ACCESS_KEY')
-        self.log_message("access_key = %s" % self.access_key)
 
         if self.access_key is None or self.secret_key is None:
             print 'No access key is available.'
@@ -64,7 +63,6 @@ class AwsHttpConnection(Connection):
 
         credential_scope = datestamp + '/' + self.region + '/' + self.service + '/' + 'aws4_request'
 
-        print canonical_request
         string_to_sign = self.algorithm + '\n' +  amzdate + '\n' +  credential_scope + '\n' +  hashlib.sha256(canonical_request).hexdigest()
 
 
@@ -72,13 +70,10 @@ class AwsHttpConnection(Connection):
         # Create the signing key using the function defined above.
         signing_key = self.getSignatureKey(self.secret_key, datestamp, self.region, self.service)
 
-        print string_to_sign
-
         # Sign the string_to_sign using the signing_key
         signature = hmac.new(signing_key, (string_to_sign).encode('utf-8'), hashlib.sha256).hexdigest()
 
         authorization_header = self.algorithm + ' ' + 'Credential=' + self.access_key + '/' + credential_scope + ', ' +  'SignedHeaders=' + self.signed_headers + ', ' + 'Signature=' + signature
-        print authorization_header
 
         self.session.headers.update({'x-amz-date':amzdate, 'Authorization':authorization_header})
 
