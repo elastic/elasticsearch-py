@@ -12,9 +12,17 @@ from ..compat import urlencode, string_types
 
 class AwsHttpConnection(Connection):
     """
-    Connection for AWS elastic search that provides necessary authentication.  The AWS
-    credentitals are required to be set as Unix environment variables.
+    Connection for AWS elastic search that provides supports authentication for IAM users granted access
+    to the cluster.
 
+    When you select the option to grant IAM users access to an AWS elasticsearch cluster, any elasticsearch 
+    requests must use the same AWS V4 authentication that other AWS APIs use.  This Connection implementation 
+    provides the necessary HTTP payload based on the AWS credentials associated with IAM user granted access.  
+    The only requirement is that standard AWS credentials be defined as Unix environment variables.  
+
+    Those are: AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY.
+
+    :arg region: AWS region to which the Elasticsearch cluster is deployed.  Defaults to us-west-1.
     """
     def __init__(self, host='localhost', use_ssl=False, port=80, region='us-west-1', **kwargs):
         super(AwsHttpConnection, self).__init__(host= host, port=port, **kwargs)
