@@ -3,6 +3,12 @@
 Changelog
 =========
 
+2.2.0 (dev)
+-----------
+
+ * adding additional options for ssh - ``ssl_assert_hostname`` and
+   ``ssl_assert_fingerprint`` to the default connection class
+
 2.1.0 (2015-10-19)
 ------------------
 
