@@ -11,6 +11,10 @@ class Urllib3HttpConnection(Connection):
     """
     Default connection class using the `urllib3` library and the http protocol.
 
+    :arg host: hostname of the node (default: localhost)
+    :arg port: port to use (integer, default: 9200)
+    :arg url_prefix: optional url prefix for elasticsearch
+    :arg timeout: default timeout in seconds (float, default: 10)
     :arg http_auth: optional http auth information as either ':' separated
         string or a tuple
     :arg use_ssl: use ssl for the connection if `True`
