@@ -8,8 +8,21 @@ from .serializer import JSONSerializer, Deserializer, DEFAULT_SERIALIZERS
 from .exceptions import ConnectionError, TransportError, SerializationError, \
                         ConnectionTimeout, ImproperlyConfigured
 
-# get ip/port from "127.0.0.1:9200"
-ADDRESS_RE = re.compile(r'^(?P<host>[\.:0-9a-f]*):(?P<port>[0-9]+)?$')
+# strip out square brackets if exist, e.g.:
+#   "inet[wind/127.0.0.1:9200]"  ->  "wind/127.0.0.1:9200"
+#   "inet[/127.0.0.1:9200]"      ->  "/127.0.0.1:9200"
+#   "127.0.0.1:9200"             ->  "127.0.0.1:9200"  (untouched)
+ADDRESS_RE_GET_FULLADDR = re.compile(r'(?<=\[).+(?=\])|^[^\[\]]+$')
+
+# find hostname in format: 'wind/127.0.0.1:9200'
+ADDRESS_RE_GET_HOSTNAME = re.compile(r'^(?<!/)[-a-zA-Z0-9\.]+')
+
+# find host IP address and port number in on of the following format:
+#   "wind/127.0.0.1:9200"
+#   "/127.0.0.1:9200"
+#   "127.0.0.1:9200"
+ADDRESS_RE_GET_HOSTIP = re.compile(r'[\.:0-9a-f]+(?=:)')
+ADDRESS_RE_GET_PORT = re.compile(r'(?<=:)[0-9]+$')
 
 
 def get_host_info(node_info, host):
@@ -220,13 +233,27 @@ class Transport(object):
         hosts = []
         address = self.connection_class.transport_schema + '_address'
         for n in node_info['nodes'].values():
-            match = ADDRESS_RE.search(n.get(address, ''))
+            match = ADDRESS_RE_GET_FULLADDR.search(n.get(address, ''))
             if not match:
                 continue
 
-            host = match.groupdict()
-            if 'port' in host:
-                host['port'] = int(host['port'])
+            address = match.group()
+            match_hostname = ADDRESS_RE_GET_HOSTNAME.search(address)
+            match_hostip = ADDRESS_RE_GET_HOSTIP.search(address)
+            match_port = ADDRESS_RE_GET_PORT.search(address)
+
+            host = {}
+            if match_port:
+                host['port'] = int(match_port.group())
+
+            # prefer to use host name, use IP if hostname not found
+            if match_hostname:
+                host['host'] = match_hostname.group()
+            elif match_hostip:
+                host['host'] = match_hostip.group()
+            else:
+                continue
+
             host = self.host_info_callback(n, host)
             if host is not None:
                 hosts.append(host)
