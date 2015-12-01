@@ -38,6 +38,26 @@ CLUSTER_NODES = '''{
     }
 }'''
 
+CLUSTER_NODE_PUBLISH_HOST = '''{
+    "ok" : true,
+    "cluster_name" : "super_cluster",
+    "nodes" : {
+        "wE_6OGBNSjGksbONNncIbg" : {
+            "name": "Thunderbird",
+            "transport_address": "obsidian/192.168.1.60:9300",
+            "host": "192.168.1.60",
+            "ip": "192.168.1.60",
+            "version": "2.1.0",
+            "build": "72cd1f1",
+            "http_address": "obsidian/192.168.1.60:9200",
+            "attributes": {
+                "testattr": "test"
+            }
+        }
+    }
+}'''
+
+
 class TestHostsInfoCallback(TestCase):
     def test_master_only_nodes_are_ignored(self):
         nodes = [
@@ -154,6 +174,14 @@ class TestTransport(TestCase):
         t.sniff_hosts()
         self.assertEquals(1, len(t.connection_pool.connections))
         self.assertEquals('http://1.1.1.1:123', t.get_connection().host)
+
+    def test_sniff_will_pick_up_published_host(self):
+        t = Transport([{'data': CLUSTER_NODE_PUBLISH_HOST}], connection_class=DummyConnection)
+        t.sniff_hosts()
+
+        self.assertEquals(1, len(t.connection_pool.connections))
+        self.assertEquals('http://obsidian:9200', t.get_connection().host)
+
 
     def test_sniff_on_start_fetches_and_uses_nodes_list_for_its_schema(self):
         class DummyThriftConnection(DummyConnection):

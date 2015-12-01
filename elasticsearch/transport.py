@@ -1,4 +1,3 @@
-import re
 import time
 from itertools import chain
 
@@ -7,9 +6,6 @@ from .connection_pool import ConnectionPool, DummyConnectionPool
 from .serializer import JSONSerializer, Deserializer, DEFAULT_SERIALIZERS
 from .exceptions import ConnectionError, TransportError, SerializationError, \
                         ConnectionTimeout, ImproperlyConfigured
-
-# get ip/port from "127.0.0.1:9200"
-ADDRESS_RE = re.compile(r'^(?P<host>[\.:0-9a-f]*):(?P<port>[0-9]+)?$')
 
 
 def get_host_info(node_info, host):
@@ -218,15 +214,23 @@ class Transport(object):
             raise
 
         hosts = []
-        address = self.connection_class.transport_schema + '_address'
+        address_key = self.connection_class.transport_schema + '_address'
         for n in node_info['nodes'].values():
-            match = ADDRESS_RE.search(n.get(address, ''))
-            if not match:
+            host = {}
+            address = n.get(address_key, '')
+            if '/' in address:
+                host['host'], address = address.split('/', 1)
+
+            # malformed address
+            if ':' not in address:
                 continue
 
-            host = match.groupdict()
-            if 'port' in host:
-                host['port'] = int(host['port'])
+            ip, port = address.rsplit(':', 1)
+
+            # use the ip if not overridden by publish_host
+            host.setdefault('host', ip)
+            host['port'] = int(port)
+
             host = self.host_info_callback(n, host)
             if host is not None:
                 hosts.append(host)
