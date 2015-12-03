@@ -23,6 +23,10 @@ def _normalize_hosts(hosts):
     if hosts is None:
         return [{}]
 
+    # If we were given a callable, lets call it.
+    if callable(hosts):
+        hosts = hosts()
+
     # passed in just one string
     if isinstance(hosts, string_types):
         hosts = [hosts]
