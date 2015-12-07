@@ -181,17 +181,14 @@ class Transport(object):
                 self.sniff_hosts()
         return self.connection_pool.get_connection()
 
-    def sniff_hosts(self, initial=False):
+    def _get_sniff_data(self, initial=False):
         """
-        Obtain a list of nodes from the cluster and create a new connection
-        pool using the information retrieved.
-
-        To extract the node connection parameters use the ``nodes_to_host_callback``.
-
-        :arg initial: flag indicating if this is during startup
-            (``sniff_on_start``), ignore the ``sniff_timeout`` if ``True``
+        Perform the request to get sniffins information. Returns a list of
+        dictionaries (one per node) containing all the information from the
+        cluster.
         """
         previous_sniff = self.last_sniff
+
         try:
             # reset last_sniff timestamp
             self.last_sniff = time.time()
@@ -213,9 +210,24 @@ class Transport(object):
             self.last_sniff = previous_sniff
             raise
 
+        return list(node_info['nodes'].values())
+
+
+    def sniff_hosts(self, initial=False):
+        """
+        Obtain a list of nodes from the cluster and create a new connection
+        pool using the information retrieved.
+
+        To extract the node connection parameters use the ``nodes_to_host_callback``.
+
+        :arg initial: flag indicating if this is during startup
+            (``sniff_on_start``), ignore the ``sniff_timeout`` if ``True``
+        """
+        node_info = self._get_sniff_data(initial)
+
         hosts = []
         address_key = self.connection_class.transport_schema + '_address'
-        for n in node_info['nodes'].values():
+        for n in node_info:
             host = {}
             address = n.get(address_key, '')
             if '/' in address:
