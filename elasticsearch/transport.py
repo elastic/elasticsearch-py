@@ -186,6 +186,12 @@ class Transport(object):
         Perform the request to get sniffins information. Returns a list of
         dictionaries (one per node) containing all the information from the
         cluster.
+
+        It also sets the last_sniff attribute in case of a successful attempt.
+
+        In rare cases it might be possible to override this method in your
+        custom Transport class to serve data from alternative source like
+        configuration management.
         """
         previous_sniff = self.last_sniff
 
