@@ -966,3 +966,33 @@ class IndicesClient(NamespacedClient):
             '_shard_stores'), params=params)
         return data
 
+    @query_params('allow_no_indices', 'expand_wildcards', 'flush',
+        'ignore_unavailable', 'max_num_segments', 'only_expunge_deletes',
+        'operation_threading', 'wait_for_merge')
+    def forcemerge(self, index=None, params=None):
+        """
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/2.1/indices-forcemerge.html>`_
+
+        :arg index: A comma-separated list of index names; use `_all` or empty
+            string to perform the operation on all indices
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+            expression resolves into no concrete indices. (This includes `_all`
+            string or when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete
+            indices that are open, closed or both., default 'open', valid
+            choices are: 'open', 'closed', 'none', 'all'
+        :arg flush: Specify whether the index should be flushed after performing
+            the operation (default: true)
+        :arg ignore_unavailable: Whether specified concrete indices should be
+            ignored when unavailable (missing or closed)
+        :arg max_num_segments: The number of segments the index should be merged
+            into (default: dynamic)
+        :arg only_expunge_deletes: Specify whether the operation should only
+            expunge deleted documents
+        :arg operation_threading: TODO: ?
+        :arg wait_for_merge: Specify whether the request should block until the
+            merge process is finished (default: true)
+        """
+        _, data = self.transport.perform_request('POST', _make_path(index,
+            '_forcemerge'), params=params)
+        return data

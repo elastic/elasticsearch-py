@@ -4,7 +4,7 @@ class CatClient(NamespacedClient):
     @query_params('h', 'help', 'local', 'master_timeout', 'v')
     def aliases(self, name=None, params=None):
         """
-        
+
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cat-alias.html>`_
 
         :arg name: A comma-separated list of alias names to return
@@ -275,7 +275,7 @@ class CatClient(NamespacedClient):
     @query_params('h', 'help', 'local', 'master_timeout', 'v')
     def plugins(self, params=None):
         """
-        
+
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cat-plugins.html>`_
 
         :arg h: Comma-separated list of column names to display
@@ -307,3 +307,36 @@ class CatClient(NamespacedClient):
             params=params)
         return data
 
+    @query_params('h', 'help', 'local', 'master_timeout', 'v')
+    def repositories(self, params=None):
+        """
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cat-repositories.html>`_
+
+        :arg h: Comma-separated list of column names to display
+        :arg help: Return help information, default False
+        :arg local: Return local information, do not retrieve the state from
+            master node, default False
+        :arg master_timeout: Explicit operation timeout for connection to master
+            node
+        :arg v: Verbose mode. Display column headers, default False
+        """
+        _, data = self.transport.perform_request('GET', '/_cat/repositories',
+            params=params)
+        return data
+
+    @query_params('h', 'help', 'master_timeout', 'v')
+    def snapshots(self, repository=None, params=None):
+        """
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cat-snapshots.html>`_
+
+        :arg repository: Name of repository from which to fetch the snapshot
+            information
+        :arg h: Comma-separated list of column names to display
+        :arg help: Return help information, default False
+        :arg master_timeout: Explicit operation timeout for connection to master
+            node
+        :arg v: Verbose mode. Display column headers, default False
+        """
+        _, data = self.transport.perform_request('GET', _make_path('_cat',
+            'snapshots', repository), params=params)
+        return data
