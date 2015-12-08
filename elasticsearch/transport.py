@@ -351,7 +351,7 @@ class Transport(object):
                 self.connection_pool.mark_live(connection)
                 if data:
                     data = self.deserializer.loads(data, headers.get('content-type'))
-                return status, data
+                return data
 
     def close(self):
         """

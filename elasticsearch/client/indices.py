@@ -25,9 +25,8 @@ class IndicesClient(NamespacedClient):
             request body is not used)
         :arg tokenizer: The name of the tokenizer to use for the analysis
         """
-        _, data = self.transport.perform_request('GET', _make_path(index,
+        return self.transport.perform_request('GET', _make_path(index,
             '_analyze'), params=params, body=body)
-        return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'force',
         'ignore_unavailable', 'operation_threading')
@@ -50,9 +49,8 @@ class IndicesClient(NamespacedClient):
             ignored when unavailable (missing or closed)
         :arg operation_threading: TODO: ?
         """
-        _, data = self.transport.perform_request('POST', _make_path(index,
+        return self.transport.perform_request('POST', _make_path(index,
             '_refresh'), params=params)
-        return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'force',
         'ignore_unavailable', 'wait_if_ongoing')
@@ -82,9 +80,8 @@ class IndicesClient(NamespacedClient):
             to be thrown on the shard level if another flush operation is
             already running.
         """
-        _, data = self.transport.perform_request('POST', _make_path(index,
+        return self.transport.perform_request('POST', _make_path(index,
             '_flush'), params=params)
-        return data
 
     @query_params('master_timeout', 'timeout', 'update_all_types')
     def create(self, index, body=None, params=None):
@@ -101,9 +98,8 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
-        _, data = self.transport.perform_request('PUT', _make_path(index),
+        return self.transport.perform_request('PUT', _make_path(index),
             params=params, body=body)
-        return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'flat_settings',
         'human', 'ignore_unavailable', 'local')
@@ -128,9 +124,8 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
-        _, data = self.transport.perform_request('GET', _make_path(index,
+        return self.transport.perform_request('GET', _make_path(index,
             feature), params=params)
-        return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
         'master_timeout', 'timeout')
@@ -153,9 +148,8 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
-        _, data = self.transport.perform_request('POST', _make_path(index,
+        return self.transport.perform_request('POST', _make_path(index,
             '_open'), params=params)
-        return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
         'master_timeout', 'timeout')
@@ -179,9 +173,8 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
-        _, data = self.transport.perform_request('POST', _make_path(index,
+        return self.transport.perform_request('POST', _make_path(index,
             '_close'), params=params)
-        return data
 
     @query_params('master_timeout', 'timeout')
     def delete(self, index, params=None):
@@ -196,9 +189,8 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
-        _, data = self.transport.perform_request('DELETE', _make_path(index),
+        return self.transport.perform_request('DELETE', _make_path(index),
             params=params)
-        return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
         'local')
@@ -287,9 +279,8 @@ class IndicesClient(NamespacedClient):
         for param in (doc_type, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        _, data = self.transport.perform_request('PUT', _make_path(index,
+        return self.transport.perform_request('PUT', _make_path(index,
             '_mapping', doc_type), params=params, body=body)
-        return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
         'local')
@@ -311,9 +302,8 @@ class IndicesClient(NamespacedClient):
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
         """
-        _, data = self.transport.perform_request('GET', _make_path(index,
+        return self.transport.perform_request('GET', _make_path(index,
             '_mapping', doc_type), params=params)
-        return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
         'include_defaults', 'local')
@@ -340,9 +330,8 @@ class IndicesClient(NamespacedClient):
         """
         if fields in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'fields'.")
-        _, data = self.transport.perform_request('GET', _make_path(index,
+        return self.transport.perform_request('GET', _make_path(index,
             '_mapping', doc_type, 'field', fields), params=params)
-        return data
 
     @query_params('master_timeout', 'timeout')
     def put_alias(self, index, name, body=None, params=None):
@@ -361,9 +350,8 @@ class IndicesClient(NamespacedClient):
         for param in (index, name):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        _, data = self.transport.perform_request('PUT', _make_path(index,
+        return self.transport.perform_request('PUT', _make_path(index,
             '_alias', name), params=params, body=body)
-        return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
         'local')
@@ -412,9 +400,8 @@ class IndicesClient(NamespacedClient):
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
         """
-        _, data = self.transport.perform_request('GET', _make_path(index,
+        return self.transport.perform_request('GET', _make_path(index,
             '_alias', name), params=params)
-        return data
 
     @query_params('local', 'timeout')
     def get_aliases(self, index=None, name=None, params=None):
@@ -428,9 +415,8 @@ class IndicesClient(NamespacedClient):
             master node (default: false)
         :arg timeout: Explicit operation timeout
         """
-        _, data = self.transport.perform_request('GET', _make_path(index,
+        return self.transport.perform_request('GET', _make_path(index,
             '_aliases', name), params=params)
-        return data
 
     @query_params('master_timeout', 'timeout')
     def update_aliases(self, body, params=None):
@@ -444,9 +430,8 @@ class IndicesClient(NamespacedClient):
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
-        _, data = self.transport.perform_request('POST', '/_aliases',
+        return self.transport.perform_request('POST', '/_aliases',
             params=params, body=body)
-        return data
 
     @query_params('master_timeout', 'timeout')
     def delete_alias(self, index, name, params=None):
@@ -465,9 +450,8 @@ class IndicesClient(NamespacedClient):
         for param in (index, name):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        _, data = self.transport.perform_request('DELETE', _make_path(index,
+        return self.transport.perform_request('DELETE', _make_path(index,
             '_alias', name), params=params)
-        return data
 
     @query_params('create', 'flat_settings', 'master_timeout', 'order',
         'timeout')
@@ -490,9 +474,8 @@ class IndicesClient(NamespacedClient):
         for param in (name, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        _, data = self.transport.perform_request('PUT', _make_path('_template',
+        return self.transport.perform_request('PUT', _make_path('_template',
             name), params=params, body=body)
-        return data
 
     @query_params('local', 'master_timeout')
     def exists_template(self, name, params=None):
@@ -528,9 +511,8 @@ class IndicesClient(NamespacedClient):
         :arg master_timeout: Explicit operation timeout for connection to master
             node
         """
-        _, data = self.transport.perform_request('GET', _make_path('_template',
+        return self.transport.perform_request('GET', _make_path('_template',
             name), params=params)
-        return data
 
     @query_params('master_timeout', 'timeout')
     def delete_template(self, name, params=None):
@@ -544,9 +526,8 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
-        _, data = self.transport.perform_request('DELETE',
+        return self.transport.perform_request('DELETE',
             _make_path('_template', name), params=params)
-        return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'flat_settings',
         'human', 'ignore_unavailable', 'local')
@@ -572,9 +553,8 @@ class IndicesClient(NamespacedClient):
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
         """
-        _, data = self.transport.perform_request('GET', _make_path(index,
+        return self.transport.perform_request('GET', _make_path(index,
             '_settings', name), params=params)
-        return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'flat_settings',
         'ignore_unavailable', 'master_timeout')
@@ -599,9 +579,8 @@ class IndicesClient(NamespacedClient):
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
-        _, data = self.transport.perform_request('PUT', _make_path(index,
+        return self.transport.perform_request('PUT', _make_path(index,
             '_settings'), params=params, body=body)
-        return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
         'master_timeout', 'request_cache')
@@ -636,9 +615,8 @@ class IndicesClient(NamespacedClient):
         for param in (name, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        _, data = self.transport.perform_request('PUT', _make_path(index,
+        return self.transport.perform_request('PUT', _make_path(index,
             doc_type, '_warmer', name), params=params, body=body)
-        return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
         'local')
@@ -664,9 +642,8 @@ class IndicesClient(NamespacedClient):
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
         """
-        _, data = self.transport.perform_request('GET', _make_path(index,
+        return self.transport.perform_request('GET', _make_path(index,
             doc_type, '_warmer', name), params=params)
-        return data
 
     @query_params('master_timeout')
     def delete_warmer(self, index, name, params=None):
@@ -686,9 +663,8 @@ class IndicesClient(NamespacedClient):
         for param in (index, name):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        _, data = self.transport.perform_request('DELETE', _make_path(index,
+        return self.transport.perform_request('DELETE', _make_path(index,
             '_warmer', name), params=params)
-        return data
 
     @query_params('completion_fields', 'fielddata_fields', 'fields', 'groups',
         'human', 'level', 'types')
@@ -715,9 +691,8 @@ class IndicesClient(NamespacedClient):
         :arg types: A comma-separated list of document types for the `indexing`
             index metric
         """
-        _, data = self.transport.perform_request('GET', _make_path(index,
+        return self.transport.perform_request('GET', _make_path(index,
             '_stats', metric), params=params)
-        return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'human',
         'ignore_unavailable', 'operation_threading')
@@ -740,9 +715,8 @@ class IndicesClient(NamespacedClient):
             ignored when unavailable (missing or closed)
         :arg operation_threading: TODO: ?
         """
-        _, data = self.transport.perform_request('GET', _make_path(index,
+        return self.transport.perform_request('GET', _make_path(index,
             '_segments'), params=params)
-        return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'flush',
         'ignore_unavailable', 'max_num_segments', 'only_expunge_deletes',
@@ -772,9 +746,8 @@ class IndicesClient(NamespacedClient):
         :arg wait_for_merge: Specify whether the request should block until the
             merge process is finished (default: true)
         """
-        _, data = self.transport.perform_request('POST', _make_path(index,
+        return self.transport.perform_request('POST', _make_path(index,
             '_optimize'), params=params)
-        return data
 
     @query_params('allow_no_indices', 'analyze_wildcard', 'analyzer',
         'default_operator', 'df', 'expand_wildcards', 'explain',
@@ -816,9 +789,8 @@ class IndicesClient(NamespacedClient):
         :arg rewrite: Provide a more detailed explanation showing the actual
             Lucene query that will be executed.
         """
-        _, data = self.transport.perform_request('GET', _make_path(index,
+        return self.transport.perform_request('GET', _make_path(index,
             doc_type, '_validate', 'query'), params=params, body=body)
-        return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'field_data',
         'fielddata', 'fields', 'ignore_unavailable', 'query', 'recycler',
@@ -845,9 +817,8 @@ class IndicesClient(NamespacedClient):
         :arg recycler: Clear the recycler cache
         :arg request: Clear request cache
         """
-        _, data = self.transport.perform_request('POST', _make_path(index,
+        return self.transport.perform_request('POST', _make_path(index,
             '_cache', 'clear'), params=params)
-        return data
 
     @query_params('active_only', 'detailed', 'human')
     def recovery(self, index=None, params=None):
@@ -866,9 +837,8 @@ class IndicesClient(NamespacedClient):
         :arg human: Whether to return time and byte values in human-readable
             format., default False
         """
-        _, data = self.transport.perform_request('GET', _make_path(index,
+        return self.transport.perform_request('GET', _make_path(index,
             '_recovery'), params=params)
-        return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
         'only_ancient_segments', 'wait_for_completion')
@@ -892,9 +862,8 @@ class IndicesClient(NamespacedClient):
         :arg wait_for_completion: Specify whether the request should block until
             the all segments are upgraded (default: false)
         """
-        _, data = self.transport.perform_request('POST', _make_path(index,
+        return self.transport.perform_request('POST', _make_path(index,
             '_upgrade'), params=params)
-        return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'human',
         'ignore_unavailable')
@@ -916,9 +885,8 @@ class IndicesClient(NamespacedClient):
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
         """
-        _, data = self.transport.perform_request('GET', _make_path(index,
+        return self.transport.perform_request('GET', _make_path(index,
             '_upgrade'), params=params)
-        return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable')
     def flush_synced(self, index=None, params=None):
@@ -937,9 +905,8 @@ class IndicesClient(NamespacedClient):
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
         """
-        _, data = self.transport.perform_request('POST', _make_path(index,
+        return self.transport.perform_request('POST', _make_path(index,
             '_flush', 'synced'), params=params)
-        return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
         'operation_threading', 'status')
@@ -962,9 +929,8 @@ class IndicesClient(NamespacedClient):
             to get store information for, valid choices are: 'green', 'yellow',
             'red', 'all'
         """
-        _, data = self.transport.perform_request('GET', _make_path(index,
+        return self.transport.perform_request('GET', _make_path(index,
             '_shard_stores'), params=params)
-        return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'flush',
         'ignore_unavailable', 'max_num_segments', 'only_expunge_deletes',
@@ -993,6 +959,5 @@ class IndicesClient(NamespacedClient):
         :arg wait_for_merge: Specify whether the request should block until the
             merge process is finished (default: true)
         """
-        _, data = self.transport.perform_request('POST', _make_path(index,
+        return self.transport.perform_request('POST', _make_path(index,
             '_forcemerge'), params=params)
-        return data

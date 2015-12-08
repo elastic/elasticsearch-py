@@ -26,9 +26,8 @@ class ClusterClient(NamespacedClient):
         :arg wait_for_status: Wait until cluster is in a specific state, default
             None, valid choices are: 'green', 'yellow', 'red'
         """
-        _, data = self.transport.perform_request('GET', _make_path('_cluster',
+        return self.transport.perform_request('GET', _make_path('_cluster',
             'health', index), params=params)
-        return data
 
     @query_params('local', 'master_timeout')
     def pending_tasks(self, params=None):
@@ -42,9 +41,8 @@ class ClusterClient(NamespacedClient):
             master node (default: false)
         :arg master_timeout: Specify timeout for connection to master
         """
-        _, data = self.transport.perform_request('GET',
+        return self.transport.perform_request('GET',
             '/_cluster/pending_tasks', params=params)
-        return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'flat_settings',
         'ignore_unavailable', 'local', 'master_timeout')
@@ -71,9 +69,8 @@ class ClusterClient(NamespacedClient):
         """
         if index and not metric:
             metric = '_all'
-        _, data = self.transport.perform_request('GET', _make_path('_cluster',
+        return self.transport.perform_request('GET', _make_path('_cluster',
             'state', metric, index), params=params)
-        return data
 
     @query_params('flat_settings', 'human', 'timeout')
     def stats(self, node_id=None, params=None):
@@ -95,8 +92,7 @@ class ClusterClient(NamespacedClient):
         url = '/_cluster/stats'
         if node_id:
             url = _make_path('_cluster/stats/nodes', node_id)
-        _, data = self.transport.perform_request('GET', url, params=params)
-        return data
+        return self.transport.perform_request('GET', url, params=params)
 
     @query_params('dry_run', 'explain', 'master_timeout', 'metric', 'timeout')
     def reroute(self, body=None, params=None):
@@ -116,9 +112,8 @@ class ClusterClient(NamespacedClient):
             'metadata', 'nodes', 'routing_table', 'master_node', 'version'
         :arg timeout: Explicit operation timeout
         """
-        _, data = self.transport.perform_request('POST', '/_cluster/reroute',
+        return self.transport.perform_request('POST', '/_cluster/reroute',
             params=params, body=body)
-        return data
 
     @query_params('flat_settings', 'master_timeout', 'timeout')
     def get_settings(self, params=None):
@@ -131,9 +126,8 @@ class ClusterClient(NamespacedClient):
             node
         :arg timeout: Explicit operation timeout
         """
-        _, data = self.transport.perform_request('GET', '/_cluster/settings',
+        return self.transport.perform_request('GET', '/_cluster/settings',
             params=params)
-        return data
 
     @query_params('flat_settings', 'master_timeout', 'timeout')
     def put_settings(self, body=None, params=None):
@@ -148,7 +142,6 @@ class ClusterClient(NamespacedClient):
             node
         :arg timeout: Explicit operation timeout
         """
-        _, data = self.transport.perform_request('PUT', '/_cluster/settings',
+        return self.transport.perform_request('PUT', '/_cluster/settings',
             params=params, body=body)
-        return data
 
