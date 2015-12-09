@@ -121,7 +121,7 @@ If a connection to a node fails due to connection issues (raises
 will be placed on hold for ``dead_timeout`` seconds and the request will be
 retried on another node. If a connection fails multiple times in a row the
 timeout will get progressively larger to avoid hitting a node that's, by all
-indication, down. If no live connection is availible, the connection that has
+indication, down. If no live connection is available, the connection that has
 the smallest timeout will be used.
 
 By default retries are not triggered by a timeout
@@ -211,7 +211,7 @@ could come into play.
 
 When using an http load balancer you cannot use the :ref:`sniffing`
 functionality - the cluster would supply the client with IP addresses to
-directly cnnect to the cluster, circumventing the load balancer. Depending on
+directly connect to the cluster, circumventing the load balancer. Depending on
 your configuration this might be something you don't want or break completely.
 
 In some environments (notably on Google App Engine) your http requests might be
