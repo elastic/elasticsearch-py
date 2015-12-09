@@ -222,15 +222,17 @@ def parallel_bulk(client, actions, thread_count=4, chunk_size=500,
 
     pool = Pool(thread_count)
 
-    for result in pool.imap(
-        lambda chunk: list(_process_bulk_chunk(client, chunk, **kwargs)),
-        _chunk_actions(actions, chunk_size, max_chunk_bytes, client.transport.serializer)
-        ):
-        for item in result:
-            yield item
+    try:
+        for result in pool.imap(
+            lambda chunk: list(_process_bulk_chunk(client, chunk, **kwargs)),
+            _chunk_actions(actions, chunk_size, max_chunk_bytes, client.transport.serializer)
+            ):
+            for item in result:
+                yield item
 
-    pool.close()
-    pool.join()
+    finally:
+        pool.close()
+        pool.join()
 
 def scan(client, query=None, scroll='5m', raise_on_error=True, preserve_order=False, **kwargs):
     """
