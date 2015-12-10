@@ -2,6 +2,7 @@ try:
     import simplejson as json
 except ImportError:
     import json
+import uuid
 from datetime import date, datetime
 from decimal import Decimal
 
@@ -28,6 +29,8 @@ class JSONSerializer(object):
             return data.isoformat()
         elif isinstance(data, Decimal):
             return float(data)
+        elif isinstance(data, uuid.UUID): 
+            return str(data)
         raise TypeError("Unable to serialize %r (type: %s)" % (data, type(data)))
 
     def loads(self, s):
