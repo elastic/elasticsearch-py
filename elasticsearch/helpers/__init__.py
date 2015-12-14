@@ -280,7 +280,7 @@ def scan(client, query=None, scroll='5m', raise_on_error=True, preserve_order=Fa
         if preserve_order and first_run:
             first_run = False
         else:
-            resp = client.scroll(scroll_id, scroll=scroll)
+            resp = client.scroll(scroll_id, scroll=scroll, **kwargs)
 
         for hit in resp['hits']['hits']:
             yield hit
