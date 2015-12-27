@@ -484,7 +484,7 @@ class Elasticsearch(object):
         :arg fielddata_fields: A comma-separated list of fields to return as the
             field data representation of a field for each hit
         :arg fields: A comma-separated list of fields to return as part of a hit
-        :arg from_: Starting offset (default: 0)
+        :arg from\_: Starting offset (default: 0)
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
         :arg lenient: Specify whether format-based query failures (such as
