@@ -222,8 +222,8 @@ bodies via post::
     from elasticsearch import Elasticsearch
     es = Elasticsearch(send_get_body_as='POST')
 
-Running with AWS Elasticsearc service
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Running with AWS Elasticsearch service
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If you want to use this client with IAM based authentication on AWS you can use
 the `requests-aws4auth`_ package::
