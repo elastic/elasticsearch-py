@@ -1,4 +1,4 @@
-from elasticsearch import helpers, TransportError
+from elasticsearch import helpers, TransportError, NotFoundError
 
 from . import ElasticsearchTestCase
 from ..test_cases import SkipTest
@@ -184,26 +184,44 @@ class TestBulk(ElasticsearchTestCase):
 
 
 class TestScan(ElasticsearchTestCase):
-    def test_order_can_be_preserved(self):
+    def setUp(self):
+        super(TestScan, self).setUp()
         bulk = []
         for x in range(100):
             bulk.append({"index": {"_index": "test_index", "_type": "answers", "_id": x}})
             bulk.append({"answer": x, "correct": x == 42})
         self.client.bulk(bulk, refresh=True)
 
+    def test_order_can_be_preserved(self):
         docs = list(helpers.scan(self.client, index="test_index", doc_type="answers", size=2, query={"sort": ["answer"]}, preserve_order=True))
 
         self.assertEquals(100, len(docs))
         self.assertEquals(list(map(str, range(100))), list(d['_id'] for d in docs))
         self.assertEquals(list(range(100)), list(d['_source']['answer'] for d in docs))
 
-    def test_all_documents_are_read(self):
-        bulk = []
-        for x in range(100):
-            bulk.append({"index": {"_index": "test_index", "_type": "answers", "_id": x}})
-            bulk.append({"answer": x, "correct": x == 42})
-        self.client.bulk(bulk, refresh=True)
+    def test_general_kwargs_forwarded_to_search(self):
+        inexistent_index = 'test_index_123'
+        self.assertRaises(
+            NotFoundError,
+            lambda: list(helpers.scan(self.client, index=inexistent_index, doc_type="answers", size=2))
+        )
+        global_kwargs = {'ignore': 404}
+        list(helpers.scan(self.client, index=inexistent_index, doc_type="answers", size=2, global_kwargs=global_kwargs))
 
+    def test_general_kwargs_forwarded_to_scroll(self):
+        with self.assertRaises(NotFoundError):
+            for page in helpers.scan(self.client, index="test_index", doc_type="answers", size=2):
+                # Deleting the index after first request was done makes sure
+                # we test the scroll method.
+                self.client.indices.delete('test_index', ignore=404)
+        self.setUp()
+        # Still raises a scanning error, but gets to that point only because
+        # ignore=404 was forwarded to scroll.
+        with self.assertRaises(helpers.ScanError):
+            for page in helpers.scan(self.client, index="test_index", doc_type="answers", size=2, global_kwargs={'ignore': 404}):
+                self.client.indices.delete('test_index', ignore=404)
+
+    def test_all_documents_are_read(self):
         docs = list(helpers.scan(self.client, index="test_index", doc_type="answers", size=2))
 
         self.assertEquals(100, len(docs))
