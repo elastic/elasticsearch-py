@@ -232,7 +232,9 @@ def parallel_bulk(client, actions, thread_count=4, chunk_size=500,
     pool.close()
     pool.join()
 
-def scan(client, query=None, scroll='5m', raise_on_error=True, preserve_order=False, **kwargs):
+def scan(client, query=None, scroll='5m', raise_on_error=True,
+        preserve_order=False, global_kwargs={}, search_kwargs=None,
+        scroll_kwargs=None, **kwargs):
     """
     Simple abstraction on top of the
     :meth:`~elasticsearch.Elasticsearch.scroll` api - a simple iterator that
@@ -254,6 +256,13 @@ def scan(client, query=None, scroll='5m', raise_on_error=True, preserve_order=Fa
         cause the scroll to paginate with preserving the order. Note that this
         can be an extremely expensive operation and can easily lead to
         unpredictable results, use with caution.
+    :arg global_kwargs: additional kwargs to be passed to both
+        :meth:`~elasticsearch.Elasticsearch.search` and to
+        :meth:`~elasticsearch.Elasticsearch.scroll`
+    :arg search_kwargs: additional kwargs to be passed to
+        :meth:`~elasticsearch.Elasticsearch.search`
+    :arg scroll_kwargs: additional kwargs to be passed to
+        :meth:`~elasticsearch.Elasticsearch.scroll`
 
     Any additional keyword arguments will be passed to the initial
     :meth:`~elasticsearch.Elasticsearch.search` call::
@@ -268,7 +277,10 @@ def scan(client, query=None, scroll='5m', raise_on_error=True, preserve_order=Fa
     if not preserve_order:
         kwargs['search_type'] = 'scan'
     # initial search
-    resp = client.search(body=query, scroll=scroll, **kwargs)
+    search_kwargs = search_kwargs or {}
+    search_kwargs.update(global_kwargs)
+    search_kwargs.update(kwargs)
+    resp = client.search(body=query, scroll=scroll, **search_kwargs)
 
     scroll_id = resp.get('_scroll_id')
     if scroll_id is None:
@@ -280,7 +292,9 @@ def scan(client, query=None, scroll='5m', raise_on_error=True, preserve_order=Fa
         if preserve_order and first_run:
             first_run = False
         else:
-            resp = client.scroll(scroll_id, scroll=scroll, **kwargs)
+            scroll_kwargs = scroll_kwargs or {}
+            scroll_kwargs.update(global_kwargs)
+            resp = client.scroll(scroll_id, scroll=scroll, **scroll_kwargs)
 
         for hit in resp['hits']['hits']:
             yield hit
