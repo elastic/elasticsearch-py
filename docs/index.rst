@@ -85,8 +85,7 @@ Persistent Connections
 
 ``elasticsearch-py`` uses persistent connections inside of individual connection
 pools (one per each configured or sniffed node). Out of the box you can choose
-to use ``http``, ``thrift`` or an experimental ``memcached`` protocol to
-communicate with the elasticsearch nodes. See :ref:`transports` for more
+between two ``http`` protocol implementations. See :ref:`transports` for more
 information.
 
 The transport layer will create an instance of the selected connection class
@@ -103,14 +102,6 @@ You can customize this behavior by passing parameters to the
 you want to accomplish is not supported you should be able to create a subclass
 of the relevant component and pass it in as a parameter to be used instead of
 the default implementation.
-
-
-.. note::
-
-    Since we use persistent connections throughout the client it means that the
-    client doesn't tolerate ``fork`` very well. If your application calls for
-    multiple processes make sure you create a fresh client after call to
-    ``fork``.
 
 
 Automatic Retries
@@ -149,8 +140,33 @@ Some example configurations::
     es = Elasticsearch(["seed1", "seed2"], sniff_on_start=True)
 
     # you can also sniff periodically and/or after failure:
-    es = Elasticsearch(["seed1", "seed2"], sniff_on_start=True, sniff_on_connection_fail=True, sniffer_timeout=60)
+    es = Elasticsearch(["seed1", "seed2"],
+              sniff_on_start=True,
+              sniff_on_connection_fail=True,
+              sniffer_timeout=60)
 
+Thread safety
+~~~~~~~~~~~~~
+
+The client is thread safe and can be used in a multi threaded environment. Best
+practice is to create a single global instance of the client and use it
+throughout your application. If your application is long-running consider
+turning on :ref:`sniffing` to make sure the client is up to date on the cluster
+location.
+
+By default we allow ``urllib3`` to open up to 10 connections to each node, if
+your application calls for more paralelism, use the ``maxsize`` parameter to
+raise the limit::
+
+    # allow up to 25 connections to each node
+    es = Elasticsearch(["host1", "host2"], maxsize=25)
+
+.. note::
+
+    Since we use persistent connections throughout the client it means that the
+    client doesn't tolerate ``fork`` very well. If your application calls for
+    multiple processes make sure you create a fresh client after call to
+    ``fork``.
 
 SSL and Authentication
 ~~~~~~~~~~~~~~~~~~~~~~
