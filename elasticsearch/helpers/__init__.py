@@ -197,7 +197,7 @@ def bulk(client, actions, stats_only=False, **kwargs):
     return success, failed if stats_only else errors
 
 def parallel_bulk(client, actions, thread_count=4, chunk_size=500,
-        max_chunk_bytes=100 * 1014 * 1024,
+        max_chunk_bytes=100 * 1024 * 1024,
         expand_action_callback=expand_action, **kwargs):
     """
     Parallel version of the bulk helper run in multiple threads at once.
