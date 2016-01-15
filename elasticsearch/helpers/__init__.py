@@ -95,7 +95,7 @@ def _process_bulk_chunk(client, bulk_actions, raise_on_exception=True, raise_on_
         # deserialize the data back, thisis expensive but only run on
         # errors if raise_on_exception is false, so shouldn't be a real
         # issue
-        bulk_data = iter(map(client.transport.serializer.loads, bulk_actions))
+        bulk_data = map(client.transport.serializer.loads, bulk_actions)
         while True:
             try:
                 # collect all the information about failed actions
