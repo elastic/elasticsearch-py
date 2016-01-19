@@ -6,6 +6,10 @@ Changelog
 2.2.0 (2016-01-05)
 ------------------
 
+Due to change in json encoding the client will no longer mask issues with
+encoding - if you work with non-ascii data in python 2 you must use the
+``unicode`` type or have proper encoding set in your environment.
+
  * adding additional options for ssh - ``ssl_assert_hostname`` and
    ``ssl_assert_fingerprint`` to the default connection class
  * fix sniffing
