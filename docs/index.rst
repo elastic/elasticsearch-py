@@ -166,7 +166,8 @@ raise the limit::
     Since we use persistent connections throughout the client it means that the
     client doesn't tolerate ``fork`` very well. If your application calls for
     multiple processes make sure you create a fresh client after call to
-    ``fork``.
+    ``fork``. Note that Python's ``multiprocessing`` module uses ``fork`` to
+    create new processes on POSIX systems.
 
 SSL and Authentication
 ~~~~~~~~~~~~~~~~~~~~~~
