@@ -23,7 +23,9 @@ class Urllib3HttpConnection(Connection):
         http://urllib3.readthedocs.org/en/latest/security.html#using-certifi-with-urllib3
         for instructions how to get default set
     :arg client_cert: path to the file containing the private key and the
-        certificate
+        certificate, or cert only if using client_key
+    :arg client_key: path to the file containing the private key if using
+        separate cert and key files (client_cert will contain only the cert)
     :arg ssl_version: version of the SSL protocol to use. Choices are:
         SSLv23 (default) SSLv2 SSLv3 TLSv1 (see ``PROTOCOL_*`` constants in the
         ``ssl`` module for exact options for your environment).
@@ -34,8 +36,8 @@ class Urllib3HttpConnection(Connection):
     """
     def __init__(self, host='localhost', port=9200, http_auth=None,
             use_ssl=False, verify_certs=False, ca_certs=None, client_cert=None,
-            ssl_version=None, ssl_assert_hostname=None, ssl_assert_fingerprint=None,
-            maxsize=10, **kwargs):
+            client_key=None, ssl_version=None, ssl_assert_hostname=None,
+            ssl_assert_fingerprint=None, maxsize=10, **kwargs):
 
         super(Urllib3HttpConnection, self).__init__(host=host, port=port, **kwargs)
         self.headers = urllib3.make_headers(keep_alive=True)
@@ -59,6 +61,7 @@ class Urllib3HttpConnection(Connection):
                     'cert_reqs': 'CERT_REQUIRED',
                     'ca_certs': ca_certs,
                     'cert_file': client_cert,
+                    'key_file': client_key,
                 })
             elif ca_certs:
                 raise ImproperlyConfigured("You cannot pass CA certificates when verify SSL is off.")

@@ -120,6 +120,24 @@ class Elasticsearch(object):
             ca_certs='/path/to/CA_certs'
         )
 
+    SSL client authentication is supported
+    (see :class:`~elasticsearch.Urllib3HttpConnection` for
+    detailed description of the options)::
+
+        es = Elasticsearch(
+            ['localhost:443', 'other_host:443'],
+            # turn on SSL
+            use_ssl=True,
+            # make sure we verify SSL certificates (off by default)
+            verify_certs=True,
+            # provide a path to CA certs on disk
+            ca_certs='/path/to/CA_certs',
+            # PEM formatted SSL client certificate
+            client_cert='/path/to/clientcert.pem',
+            # PEM formatted SSL client key
+            client_key='/path/to/clientkey.pem'
+        )
+
     Alternatively you can use RFC-1738 formatted URLs, as long as they are not
     in conflict with other options::
 
