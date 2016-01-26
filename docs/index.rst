@@ -194,6 +194,18 @@ elasticsearch cluster, including certificate verification and http auth::
         ca_certs=certifi.where(),
     )
 
+    # SSL client authentication using client_cert and client_key
+
+    es = Elasticsearch(
+        ['localhost', 'otherhost'],
+        http_auth=('user', 'secret'),
+        port=443,
+        use_ssl=True,
+        verify_certs=True,
+        ca_certs='/path/to/cacert.pem',
+        client_cert='/path/to/client_cert.pem',
+        client_key='/path/to/client_key.pem',
+    )
 
 ..  warning::
 

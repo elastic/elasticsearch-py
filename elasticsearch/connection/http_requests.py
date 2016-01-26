@@ -21,11 +21,13 @@ class RequestsHttpConnection(Connection):
     :arg ca_certs: optional path to CA bundle. By default standard requests'
         bundle will be used.
     :arg client_cert: path to the file containing the private key and the
-        certificate
+        certificate, or cert only if using client_key
+    :arg client_key: path to the file containing the private key if using
+        separate cert and key files (client_cert will contain only the cert)
     """
     def __init__(self, host='localhost', port=9200, http_auth=None,
         use_ssl=False, verify_certs=False, ca_certs=None, client_cert=None,
-        **kwargs):
+        client_key=None, **kwargs):
         if not REQUESTS_AVAILABLE:
             raise ImproperlyConfigured("Please install requests to use RequestsHttpConnection.")
 
@@ -42,7 +44,11 @@ class RequestsHttpConnection(Connection):
             host, port, self.url_prefix
         )
         self.session.verify = verify_certs
-        self.session.cert = client_cert
+        if not client_key:
+            self.session.cert = client_cert
+        else:
+            # cert is a tuple of (certfile, keyfile)
+            self.session.cert = (client_cert, client_key)
         if ca_certs:
             if not verify_certs:
                 raise ImproperlyConfigured("You cannot pass CA certificates when verify SSL is off.")
