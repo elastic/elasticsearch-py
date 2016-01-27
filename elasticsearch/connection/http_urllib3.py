@@ -102,7 +102,7 @@ class Urllib3HttpConnection(Connection):
             raise ConnectionError('N/A', str(e), e)
 
         if not (200 <= response.status < 300) and response.status not in ignore:
-            self.log_request_fail(method, url, body, duration, response.status)
+            self.log_request_fail(method, url, body, duration, response.status, raw_data)
             self._raise_error(response.status, raw_data)
 
         self.log_request_success(method, full_url, url, body, response.status,
