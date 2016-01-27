@@ -75,7 +75,7 @@ class Connection(object):
         if tracer.isEnabledFor(logging.DEBUG):
             tracer.debug('#[%s] (%.3fs)\n#%s', status_code, duration, _pretty_json(response).replace('\n', '\n#') if response else '')
 
-    def log_request_fail(self, method, full_url, body, duration, status_code=None, exception=None):
+    def log_request_fail(self, method, full_url, body, duration, status_code=None, response=None, exception=None):
         """ Log an unsuccessful API call.  """
         logger.warning(
             '%s %s [status:%s request:%.3fs]', method, full_url,
@@ -88,6 +88,9 @@ class Connection(object):
             body = body.decode('utf-8')
 
         logger.debug('> %s', body)
+
+        if response is not None:
+            logger.debug('< %s', response)
 
     def _raise_error(self, status_code, raw_data):
         """ Locate appropriate exception and raise it. """
