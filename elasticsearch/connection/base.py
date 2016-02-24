@@ -101,9 +101,8 @@ class Connection(object):
             error_message = additional_info.get('error', error_message)
             if isinstance(error_message, dict) and 'type' in error_message:
                 error_message = error_message['type']
-        except:
-            # we don't care what went wrong
-            pass
+        except (ValueError, TypeError) as err:
+            logger.warning('Undecodable raw error response from server: %s', err)
 
         raise HTTP_EXCEPTIONS.get(status_code, TransportError)(status_code, error_message, additional_info)
 
