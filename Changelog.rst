@@ -3,6 +3,12 @@
 Changelog
 =========
 
+2.3.0 (2016-02-29)
+------------------
+
+ * added ``client_key`` argument to configure client certificates
+ * debug logging now includes response body even for failed requests
+
 2.2.0 (2016-01-05)
 ------------------
 
