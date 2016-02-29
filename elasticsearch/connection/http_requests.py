@@ -46,7 +46,7 @@ class RequestsHttpConnection(Connection):
         self.session.verify = verify_certs
         if not client_key:
             self.session.cert = client_cert
-        else:
+        elif client_cert:
             # cert is a tuple of (certfile, keyfile)
             self.session.cert = (client_cert, client_key)
         if ca_certs:
