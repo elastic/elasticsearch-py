@@ -222,7 +222,7 @@ class ConnectionPool(object):
 
         # only call selector if we have a selection
         if len(connections) > 1:
-            return self.selector.select(self.connections)
+            return self.selector.select(connections)
 
         # only one connection, no need for a selector
         return connections[0]
