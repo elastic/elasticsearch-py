@@ -353,3 +353,9 @@ class Transport(object):
                     data = self.deserializer.loads(data, headers.get('content-type'))
                 return status, data
 
+    def close(self):
+        """
+        Explcitly closes connections
+        """
+        self.connection_pool.close()
+        return True

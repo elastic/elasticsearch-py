@@ -113,3 +113,9 @@ class Urllib3HttpConnection(Connection):
 
         return response.status, response.getheaders(), raw_data
 
+    def close(self):
+        """
+        Explicitly closes connection
+        """
+        self.pool.close()
+        return True

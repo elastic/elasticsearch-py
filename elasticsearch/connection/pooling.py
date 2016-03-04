@@ -24,3 +24,10 @@ class PoolingConnection(Connection):
 
     def _release_connection(self, con):
         self._free_connections.put(con)
+
+    def close(self):
+        """
+        Explicitly close connection
+        """
+        return True
+

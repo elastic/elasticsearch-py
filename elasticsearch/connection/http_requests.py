@@ -86,3 +86,10 @@ class RequestsHttpConnection(Connection):
         self.log_request_success(method, url, response.request.path_url, body, response.status_code, raw_data, duration)
 
         return response.status_code, response.headers, raw_data
+
+    def close(self):
+        """
+        Explicitly closes connections
+        """
+        self.session.close()
+        return True
