@@ -118,4 +118,3 @@ class Urllib3HttpConnection(Connection):
         Explicitly closes connection
         """
         self.pool.close()
-        return True

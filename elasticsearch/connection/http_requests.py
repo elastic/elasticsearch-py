@@ -92,4 +92,3 @@ class RequestsHttpConnection(Connection):
         Explicitly closes connections
         """
         self.session.close()
-        return True

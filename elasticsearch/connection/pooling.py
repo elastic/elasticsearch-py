@@ -29,5 +29,5 @@ class PoolingConnection(Connection):
         """
         Explicitly close connection
         """
-        return True
+        pass
 

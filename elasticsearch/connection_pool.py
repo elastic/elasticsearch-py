@@ -231,10 +231,8 @@ class ConnectionPool(object):
         """
         Explicitly closes connections
         """
-        for conn in self.connections:
+        for conn in self.orig_connections:
             conn.close()
-
-        return True
 
 class DummyConnectionPool(ConnectionPool):
     def __init__(self, connections, **kwargs):
@@ -253,8 +251,7 @@ class DummyConnectionPool(ConnectionPool):
         """
         Explicitly closes connections
         """
-        for conn in self.connections:
-            conn.close()
+        self.connection.close()
 
     def _noop(self, *args, **kwargs):
         pass

@@ -358,4 +358,3 @@ class Transport(object):
         Explcitly closes connections
         """
         self.connection_pool.close()
-        return True
