@@ -219,6 +219,22 @@ description of the options.
 
 .. _certifi: http://certifi.io/
 
+Accessing over Reverse Proxy:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+If you have a reverse proxy like nginx configured to protect your elastic server with basic http authentication, then remember the following :
+
++ if you have exposed your elastic search over http://example.com/examplepath, then ::
+
+    es = Elasticsearch(
+        ['http://example.com:80/examplepath'],
+        connection_class=RequestsHttpConnection,
+        http_auth=('user', 'secret'),
+        use_ssl=False,
+        verify_certs=False
+    )
+  
+NOTE: Failing to specify port :80 causes the client to assume default port `:9200` and thus it wont be able to talk to your server over reverse proxy.
+
 Logging
 ~~~~~~~
 
