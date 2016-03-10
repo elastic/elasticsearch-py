@@ -3,7 +3,7 @@ import weakref
 import logging
 
 from ..transport import Transport
-from ..exceptions import NotFoundError, TransportError
+from ..exceptions import TransportError
 from ..compat import string_types, urlparse
 from .indices import IndicesClient
 from .cluster import ClusterClient
@@ -204,11 +204,7 @@ class Elasticsearch(object):
         Returns True if the cluster is up, False otherwise.
         `<http://www.elastic.co/guide/>`_
         """
-        try:
-            self.transport.perform_request('HEAD', '/', params=params)
-        except NotFoundError:
-            return False
-        return True
+        return self.transport.perform_request('HEAD', '/', params=params)
 
     @query_params()
     def info(self, params=None):
@@ -299,12 +295,8 @@ class Elasticsearch(object):
         for param in (index, doc_type, id):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        try:
-            self.transport.perform_request('HEAD', _make_path(index, doc_type,
+        return self.transport.perform_request('HEAD', _make_path(index, doc_type,
                 id), params=params)
-        except NotFoundError:
-            return False
-        return True
 
     @query_params('_source', '_source_exclude', '_source_include', 'fields',
         'parent', 'preference', 'realtime', 'refresh', 'routing', 'version',
@@ -1157,53 +1149,6 @@ class Elasticsearch(object):
             raise ValueError("Empty value passed for a required argument 'id'.")
         return self.transport.perform_request('DELETE', _make_path('_search',
             'template', id), params=params)
-
-    @query_params('allow_no_indices', 'analyze_wildcard', 'analyzer',
-        'default_operator', 'df', 'expand_wildcards', 'ignore_unavailable',
-        'lenient', 'lowercase_expanded_terms', 'min_score', 'preference', 'q',
-        'routing')
-    def search_exists(self, index=None, doc_type=None, body=None, params=None):
-        """
-        The exists API allows to easily determine if any matching documents
-        exist for a provided query.
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-exists.html>`_
-
-        :arg index: A comma-separated list of indices to restrict the results
-        :arg doc_type: A comma-separated list of types to restrict the results
-        :arg body: A query to restrict the results specified with the Query DSL
-            (optional)
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg analyze_wildcard: Specify whether wildcard and prefix queries
-            should be analyzed (default: false)
-        :arg analyzer: The analyzer to use for the query string
-        :arg default_operator: The default operator for query string query (AND
-            or OR), default 'OR', valid choices are: 'AND', 'OR'
-        :arg df: The field to use as default where no field prefix is given in
-            the query string
-        :arg expand_wildcards: Whether to expand wildcard expression to concrete
-            indices that are open, closed or both., default 'open', valid
-            choices are: 'open', 'closed', 'none', 'all'
-        :arg ignore_unavailable: Whether specified concrete indices should be
-            ignored when unavailable (missing or closed)
-        :arg lenient: Specify whether format-based query failures (such as
-            providing text to a numeric field) should be ignored
-        :arg lowercase_expanded_terms: Specify whether query terms should be
-            lowercased
-        :arg min_score: Include only documents with a specific `_score` value in
-            the result
-        :arg preference: Specify the node or shard the operation should be
-            performed on (default: random)
-        :arg q: Query in the Lucene query string syntax
-        :arg routing: Specific routing value
-        """
-        try:
-            self.transport.perform_request('POST', _make_path(index,
-                doc_type, '_search', 'exists'), params=params, body=body)
-        except NotFoundError:
-            return False
-        return True
 
     @query_params('allow_no_indices', 'expand_wildcards', 'fields',
         'ignore_unavailable', 'level')

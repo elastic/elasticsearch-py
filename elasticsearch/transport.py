@@ -329,6 +329,9 @@ class Transport(object):
                 status, headers, data = connection.perform_request(method, url, params, body, ignore=ignore, timeout=timeout)
 
             except TransportError as e:
+                if method == 'HEAD' and e.status_code == 404:
+                    return False
+
                 retry = False
                 if isinstance(e, ConnectionTimeout):
                     retry = self.retry_on_timeout
@@ -347,6 +350,9 @@ class Transport(object):
                     raise
 
             else:
+                if method == 'HEAD':
+                    return 200 <= status < 300
+
                 # connection didn't fail, confirm it's live status
                 self.connection_pool.mark_live(connection)
                 if data:

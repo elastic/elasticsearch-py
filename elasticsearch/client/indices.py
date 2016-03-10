@@ -1,5 +1,4 @@
 from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
-from ..exceptions import NotFoundError
 
 class IndicesClient(NamespacedClient):
     @query_params('analyzer', 'char_filters', 'field', 'filters', 'format',
@@ -213,12 +212,8 @@ class IndicesClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
-        try:
-            self.transport.perform_request('HEAD', _make_path(index),
+        return self.transport.perform_request('HEAD', _make_path(index),
                 params=params)
-        except NotFoundError:
-            return False
-        return True
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
         'local')
@@ -244,12 +239,8 @@ class IndicesClient(NamespacedClient):
         for param in (index, doc_type):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        try:
-            self.transport.perform_request('HEAD', _make_path(index, doc_type),
+        return self.transport.perform_request('HEAD', _make_path(index, doc_type),
                 params=params)
-        except NotFoundError:
-            return False
-        return True
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
         'master_timeout', 'timeout', 'update_all_types')
@@ -373,12 +364,8 @@ class IndicesClient(NamespacedClient):
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
         """
-        try:
-            self.transport.perform_request('HEAD', _make_path(index, '_alias',
+        return self.transport.perform_request('HEAD', _make_path(index, '_alias',
                 name), params=params)
-        except NotFoundError:
-            return False
-        return True
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
         'local')
@@ -491,12 +478,8 @@ class IndicesClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
-        try:
-            self.transport.perform_request('HEAD', _make_path('_template',
+        return self.transport.perform_request('HEAD', _make_path('_template',
                 name), params=params)
-        except NotFoundError:
-            return False
-        return True
 
     @query_params('flat_settings', 'local', 'master_timeout')
     def get_template(self, name=None, params=None):
