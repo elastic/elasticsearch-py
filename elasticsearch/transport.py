@@ -218,6 +218,24 @@ class Transport(object):
 
         return list(node_info['nodes'].values())
 
+    def _get_host_info(self, host_info):
+        address_key = self.connection_class.transport_schema + '_address'
+        host = {}
+        address = host_info.get(address_key, '')
+        if '/' in address:
+            host['host'], address = address.split('/', 1)
+
+        # malformed address
+        if ':' not in address:
+            return None
+
+        ip, port = address.rsplit(':', 1)
+
+        # use the ip if not overridden by publish_host
+        host.setdefault('host', ip)
+        host['port'] = int(port)
+
+        return self.host_info_callback(host_info, host)
 
     def sniff_hosts(self, initial=False):
         """
@@ -231,27 +249,7 @@ class Transport(object):
         """
         node_info = self._get_sniff_data(initial)
 
-        hosts = []
-        address_key = self.connection_class.transport_schema + '_address'
-        for n in node_info:
-            host = {}
-            address = n.get(address_key, '')
-            if '/' in address:
-                host['host'], address = address.split('/', 1)
-
-            # malformed address
-            if ':' not in address:
-                continue
-
-            ip, port = address.rsplit(':', 1)
-
-            # use the ip if not overridden by publish_host
-            host.setdefault('host', ip)
-            host['port'] = int(port)
-
-            host = self.host_info_callback(n, host)
-            if host is not None:
-                hosts.append(host)
+        hosts = list(filter(None, (self._get_host_info(n) for n in node_info)))
 
         # we weren't able to get any nodes, maybe using an incompatible
         # transport_schema or host_info_callback blocked all - raise error.

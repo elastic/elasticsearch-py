@@ -31,7 +31,7 @@ class RequestsHttpConnection(Connection):
         if not REQUESTS_AVAILABLE:
             raise ImproperlyConfigured("Please install requests to use RequestsHttpConnection.")
 
-        super(RequestsHttpConnection, self).__init__(host= host, port=port, **kwargs)
+        super(RequestsHttpConnection, self).__init__(host=host, port=port, **kwargs)
         self.session = requests.session()
         if http_auth is not None:
             if isinstance(http_auth, (tuple, list)):
