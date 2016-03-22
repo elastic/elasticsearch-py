@@ -16,9 +16,8 @@ class CatClient(NamespacedClient):
             node
         :arg v: Verbose mode. Display column headers, default False
         """
-        _, data = self.transport.perform_request('GET', _make_path('_cat',
+        return self.transport.perform_request('GET', _make_path('_cat',
             'aliases', name), params=params)
-        return data
 
     @query_params('bytes', 'h', 'help', 'local', 'master_timeout', 'v')
     def allocation(self, node_id=None, params=None):
@@ -39,9 +38,8 @@ class CatClient(NamespacedClient):
             node
         :arg v: Verbose mode. Display column headers, default False
         """
-        _, data = self.transport.perform_request('GET', _make_path('_cat',
+        return self.transport.perform_request('GET', _make_path('_cat',
             'allocation', node_id), params=params)
-        return data
 
     @query_params('h', 'help', 'local', 'master_timeout', 'v')
     def count(self, index=None, params=None):
@@ -60,9 +58,8 @@ class CatClient(NamespacedClient):
             node
         :arg v: Verbose mode. Display column headers, default False
         """
-        _, data = self.transport.perform_request('GET', _make_path('_cat',
+        return self.transport.perform_request('GET', _make_path('_cat',
             'count', index), params=params)
-        return data
 
     @query_params('h', 'help', 'local', 'master_timeout', 'ts', 'v')
     def health(self, params=None):
@@ -80,9 +77,8 @@ class CatClient(NamespacedClient):
         :arg ts: Set to false to disable timestamping, default True
         :arg v: Verbose mode. Display column headers, default False
         """
-        _, data = self.transport.perform_request('GET', '/_cat/health',
+        return self.transport.perform_request('GET', '/_cat/health',
             params=params)
-        return data
 
     @query_params('help')
     def help(self, params=None):
@@ -92,8 +88,7 @@ class CatClient(NamespacedClient):
 
         :arg help: Return help information, default False
         """
-        _, data = self.transport.perform_request('GET', '/_cat', params=params)
-        return data
+        return self.transport.perform_request('GET', '/_cat', params=params)
 
     @query_params('bytes', 'h', 'help', 'local', 'master_timeout', 'pri', 'v')
     def indices(self, index=None, params=None):
@@ -115,9 +110,8 @@ class CatClient(NamespacedClient):
             False
         :arg v: Verbose mode. Display column headers, default False
         """
-        _, data = self.transport.perform_request('GET', _make_path('_cat',
+        return self.transport.perform_request('GET', _make_path('_cat',
             'indices', index), params=params)
-        return data
 
     @query_params('h', 'help', 'local', 'master_timeout', 'v')
     def master(self, params=None):
@@ -133,9 +127,8 @@ class CatClient(NamespacedClient):
             node
         :arg v: Verbose mode. Display column headers, default False
         """
-        _, data = self.transport.perform_request('GET', '/_cat/master',
+        return self.transport.perform_request('GET', '/_cat/master',
             params=params)
-        return data
 
     @query_params('h', 'help', 'local', 'master_timeout', 'v')
     def nodes(self, params=None):
@@ -151,9 +144,8 @@ class CatClient(NamespacedClient):
             node
         :arg v: Verbose mode. Display column headers, default False
         """
-        _, data = self.transport.perform_request('GET', '/_cat/nodes',
+        return self.transport.perform_request('GET', '/_cat/nodes',
             params=params)
-        return data
 
     @query_params('bytes', 'h', 'help', 'master_timeout', 'v')
     def recovery(self, index=None, params=None):
@@ -171,9 +163,8 @@ class CatClient(NamespacedClient):
             node
         :arg v: Verbose mode. Display column headers, default False
         """
-        _, data = self.transport.perform_request('GET', _make_path('_cat',
+        return self.transport.perform_request('GET', _make_path('_cat',
             'recovery', index), params=params)
-        return data
 
     @query_params('bytes', 'h', 'help', 'local', 'master_timeout', 'v')
     def shards(self, index=None, params=None):
@@ -193,9 +184,8 @@ class CatClient(NamespacedClient):
             node
         :arg v: Verbose mode. Display column headers, default False
         """
-        _, data = self.transport.perform_request('GET', _make_path('_cat',
+        return self.transport.perform_request('GET', _make_path('_cat',
             'shards', index), params=params)
-        return data
 
     @query_params('bytes', 'h', 'help', 'v')
     def segments(self, index=None, params=None):
@@ -211,9 +201,8 @@ class CatClient(NamespacedClient):
         :arg help: Return help information, default False
         :arg v: Verbose mode. Display column headers, default False
         """
-        _, data = self.transport.perform_request('GET', _make_path('_cat',
+        return self.transport.perform_request('GET', _make_path('_cat',
             'segments', index), params=params)
-        return data
 
     @query_params('h', 'help', 'local', 'master_timeout', 'v')
     def pending_tasks(self, params=None):
@@ -231,9 +220,8 @@ class CatClient(NamespacedClient):
             node
         :arg v: Verbose mode. Display column headers, default False
         """
-        _, data = self.transport.perform_request('GET', '/_cat/pending_tasks',
+        return self.transport.perform_request('GET', '/_cat/pending_tasks',
             params=params)
-        return data
 
     @query_params('full_id', 'h', 'help', 'local', 'master_timeout', 'v')
     def thread_pool(self, params=None):
@@ -250,9 +238,8 @@ class CatClient(NamespacedClient):
             node
         :arg v: Verbose mode. Display column headers, default False
         """
-        _, data = self.transport.perform_request('GET', '/_cat/thread_pool',
+        return self.transport.perform_request('GET', '/_cat/thread_pool',
             params=params)
-        return data
 
     @query_params('bytes', 'h', 'help', 'local', 'master_timeout', 'v')
     def fielddata(self, fields=None, params=None):
@@ -272,9 +259,8 @@ class CatClient(NamespacedClient):
             node
         :arg v: Verbose mode. Display column headers, default False
         """
-        _, data = self.transport.perform_request('GET', _make_path('_cat',
+        return self.transport.perform_request('GET', _make_path('_cat',
             'fielddata', fields), params=params)
-        return data
 
     @query_params('h', 'help', 'local', 'master_timeout', 'v')
     def plugins(self, params=None):
@@ -290,9 +276,8 @@ class CatClient(NamespacedClient):
             node
         :arg v: Verbose mode. Display column headers, default False
         """
-        _, data = self.transport.perform_request('GET', '/_cat/plugins',
+        return self.transport.perform_request('GET', '/_cat/plugins',
             params=params)
-        return data
 
     @query_params('h', 'help', 'local', 'master_timeout', 'v')
     def nodeattrs(self, params=None):
@@ -307,9 +292,8 @@ class CatClient(NamespacedClient):
             node
         :arg v: Verbose mode. Display column headers, default False
         """
-        _, data = self.transport.perform_request('GET', '/_cat/nodeattrs',
+        return self.transport.perform_request('GET', '/_cat/nodeattrs',
             params=params)
-        return data
 
     @query_params('h', 'help', 'local', 'master_timeout', 'v')
     def repositories(self, params=None):
@@ -324,9 +308,8 @@ class CatClient(NamespacedClient):
             node
         :arg v: Verbose mode. Display column headers, default False
         """
-        _, data = self.transport.perform_request('GET', '/_cat/repositories',
+        return self.transport.perform_request('GET', '/_cat/repositories',
             params=params)
-        return data
 
     @query_params('h', 'help', 'master_timeout', 'v')
     def snapshots(self, repository=None, params=None):
@@ -341,6 +324,5 @@ class CatClient(NamespacedClient):
             node
         :arg v: Verbose mode. Display column headers, default False
         """
-        _, data = self.transport.perform_request('GET', _make_path('_cat',
+        return self.transport.perform_request('GET', _make_path('_cat',
             'snapshots', repository), params=params)
-        return data
