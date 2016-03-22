@@ -7,6 +7,7 @@ import re
 from os import walk, environ
 from os.path import exists, join, dirname, pardir
 import yaml
+from shutil import rmtree
 
 from elasticsearch import TransportError
 from elasticsearch.compat import string_types
@@ -47,6 +48,13 @@ class YamlTestCase(ElasticsearchTestCase):
             self.run_code(self._setup_code)
         self.last_response = None
         self._state = {}
+
+    def tearDown(self):
+        super(YamlTestCase, self).tearDown()
+        for repo, definition in self.client.snapshot.get_repository(repository='_all').items():
+            self.client.snapshot.delete_repository(repository=repo)
+            if definition['type'] == 'fs':
+                rmtree('/tmp/%s' % definition['settings']['location'])
 
     def _resolve(self, value):
         # resolve variables

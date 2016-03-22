@@ -268,7 +268,8 @@ def scan(client, query=None, scroll='5m', raise_on_error=True, preserve_order=Fa
 
     """
     if not preserve_order:
-        kwargs['search_type'] = 'scan'
+        body = query.copy() if query else {}
+        body["sort"] = "_doc"
     # initial search
     resp = client.search(body=query, scroll=scroll, **kwargs)
 
@@ -279,7 +280,7 @@ def scan(client, query=None, scroll='5m', raise_on_error=True, preserve_order=Fa
     first_run = True
     while True:
         # if we didn't set search_type to scan initial search contains data
-        if preserve_order and first_run:
+        if first_run:
             first_run = False
         else:
             resp = client.scroll(scroll_id, scroll=scroll)

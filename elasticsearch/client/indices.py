@@ -1,8 +1,8 @@
 from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 class IndicesClient(NamespacedClient):
-    @query_params('analyzer', 'char_filters', 'field', 'filters', 'format',
-        'prefer_local', 'text', 'tokenizer')
+    @query_params('analyzer', 'attributes', 'char_filters', 'explain', 'field',
+        'filters', 'format', 'prefer_local', 'text', 'tokenizer')
     def analyze(self, index=None, body=None, params=None):
         """
         Perform the analysis process on a text and return the tokens breakdown of the text.
@@ -11,8 +11,12 @@ class IndicesClient(NamespacedClient):
         :arg index: The name of the index to scope the operation
         :arg body: The text on which the analysis should be performed
         :arg analyzer: The name of the analyzer to use
+        :arg attributes: A comma-separated list of token attributes to output,
+            this parameter works only with `explain=true`
         :arg char_filters: A comma-separated list of character filters to use
             for the analysis
+        :arg explain: With `true`, outputs more advanced details. (default:
+            false)
         :arg field: Use the analyzer configured for this field (instead of
             passing the analyzer name)
         :arg filters: A comma-separated list of filters to use for the analysis
@@ -513,7 +517,7 @@ class IndicesClient(NamespacedClient):
             _make_path('_template', name), params=params)
 
     @query_params('allow_no_indices', 'expand_wildcards', 'flat_settings',
-        'human', 'ignore_unavailable', 'local')
+        'human', 'ignore_unavailable', 'include_defaults', 'local')
     def get_settings(self, index=None, name=None, params=None):
         """
         Retrieve settings for one or more (or all) indices.
@@ -533,6 +537,8 @@ class IndicesClient(NamespacedClient):
             readable format., default False
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
+        :arg include_defaults: Whether to return all default setting for each of
+            the indices., default False
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
         """
@@ -540,7 +546,7 @@ class IndicesClient(NamespacedClient):
             '_settings', name), params=params)
 
     @query_params('allow_no_indices', 'expand_wildcards', 'flat_settings',
-        'ignore_unavailable', 'master_timeout')
+        'ignore_unavailable', 'master_timeout', 'preserve_existing')
     def put_settings(self, body, index=None, params=None):
         """
         Change specific index level settings in real time.
@@ -559,95 +565,14 @@ class IndicesClient(NamespacedClient):
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
         :arg master_timeout: Specify timeout for connection to master
+        :arg preserve_existing: Whether to update existing settings. If set to
+            `true` existing settings on an index remain unchanged, the default
+            is `false`
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
         return self.transport.perform_request('PUT', _make_path(index,
             '_settings'), params=params, body=body)
-
-    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
-        'master_timeout', 'request_cache')
-    def put_warmer(self, name, body, index=None, doc_type=None, params=None):
-        """
-        Create an index warmer to run registered search requests to warm up the
-        index before it is available for search.
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/indices-warmers.html>`_
-
-        :arg name: The name of the warmer
-        :arg body: The search request definition for the warmer (query, filters,
-            facets, sorting, etc)
-        :arg index: A comma-separated list of index names to register the warmer
-            for; use `_all` or omit to perform the operation on all indices
-        :arg doc_type: A comma-separated list of document types to register the
-            warmer for; leave empty to perform the operation on all types
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices in the search request
-            to warm. (This includes `_all` string or when no indices have been
-            specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to concrete
-            indices that are open, closed or both, in the search request to
-            warm., default 'open', valid choices are: 'open', 'closed', 'none',
-            'all'
-        :arg ignore_unavailable: Whether specified concrete indices should be
-            ignored when unavailable (missing or closed) in the search request
-            to warm
-        :arg master_timeout: Specify timeout for connection to master
-        :arg request_cache: Specify whether the request to be warmed should use
-            the request cache, defaults to index level setting
-        """
-        for param in (name, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('PUT', _make_path(index,
-            doc_type, '_warmer', name), params=params, body=body)
-
-    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
-        'local')
-    def get_warmer(self, index=None, doc_type=None, name=None, params=None):
-        """
-        Retreieve an index warmer.
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/indices-warmers.html>`_
-
-        :arg index: A comma-separated list of index names to restrict the
-            operation; use `_all` to perform the operation on all indices
-        :arg doc_type: A comma-separated list of document types to restrict the
-            operation; leave empty to perform the operation on all types
-        :arg name: The name of the warmer (supports wildcards); leave empty to
-            get all warmers
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to concrete
-            indices that are open, closed or both., default 'open', valid
-            choices are: 'open', 'closed', 'none', 'all'
-        :arg ignore_unavailable: Whether specified concrete indices should be
-            ignored when unavailable (missing or closed)
-        :arg local: Return local information, do not retrieve the state from
-            master node (default: false)
-        """
-        return self.transport.perform_request('GET', _make_path(index,
-            doc_type, '_warmer', name), params=params)
-
-    @query_params('master_timeout')
-    def delete_warmer(self, index, name, params=None):
-        """
-        Delete an index warmer.
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/indices-warmers.html>`_
-
-        :arg index: A comma-separated list of index names to delete warmers from
-            (supports wildcards); use `_all` to perform the operation on all
-            indices.
-        :arg name: A comma-separated list of warmer names to delete (supports
-            wildcards); use `_all` to delete all warmers in the specified
-            indices. You must specify a name either in the uri or in the
-            parameters.
-        :arg master_timeout: Specify timeout for connection to master
-        """
-        for param in (index, name):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('DELETE', _make_path(index,
-            '_warmer', name), params=params)
 
     @query_params('completion_fields', 'fielddata_fields', 'fields', 'groups',
         'human', 'level', 'types')
@@ -678,7 +603,7 @@ class IndicesClient(NamespacedClient):
             '_stats', metric), params=params)
 
     @query_params('allow_no_indices', 'expand_wildcards', 'human',
-        'ignore_unavailable', 'operation_threading')
+        'ignore_unavailable', 'operation_threading', 'verbose')
     def segments(self, index=None, params=None):
         """
         Provide low level segments information that a Lucene index (shard level) is built with.
@@ -697,40 +622,10 @@ class IndicesClient(NamespacedClient):
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
         :arg operation_threading: TODO: ?
+        :arg verbose: Includes detailed memory usage by Lucene., default False
         """
         return self.transport.perform_request('GET', _make_path(index,
             '_segments'), params=params)
-
-    @query_params('allow_no_indices', 'expand_wildcards', 'flush',
-        'ignore_unavailable', 'max_num_segments', 'only_expunge_deletes',
-        'operation_threading', 'wait_for_merge')
-    def optimize(self, index=None, params=None):
-        """
-        Explicitly optimize one or more indices through an API.
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/indices-optimize.html>`_
-
-        :arg index: A comma-separated list of index names; use `_all` or empty
-            string to perform the operation on all indices
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to concrete
-            indices that are open, closed or both., default 'open', valid
-            choices are: 'open', 'closed', 'none', 'all'
-        :arg flush: Specify whether the index should be flushed after performing
-            the operation (default: true)
-        :arg ignore_unavailable: Whether specified concrete indices should be
-            ignored when unavailable (missing or closed)
-        :arg max_num_segments: The number of segments the index should be merged
-            into (default: dynamic)
-        :arg only_expunge_deletes: Specify whether the operation should only
-            expunge deleted documents
-        :arg operation_threading: TODO: ?
-        :arg wait_for_merge: Specify whether the request should block until the
-            merge process is finished (default: true)
-        """
-        return self.transport.perform_request('POST', _make_path(index,
-            '_optimize'), params=params)
 
     @query_params('allow_no_indices', 'analyze_wildcard', 'analyzer',
         'default_operator', 'df', 'expand_wildcards', 'explain',

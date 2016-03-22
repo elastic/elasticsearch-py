@@ -191,7 +191,7 @@ class TestScan(ElasticsearchTestCase):
             bulk.append({"answer": x, "correct": x == 42})
         self.client.bulk(bulk, refresh=True)
 
-        docs = list(helpers.scan(self.client, index="test_index", doc_type="answers", size=2, query={"sort": ["answer"]}, preserve_order=True))
+        docs = list(helpers.scan(self.client, index="test_index", doc_type="answers", query={"sort": "answer"}, preserve_order=True))
 
         self.assertEquals(100, len(docs))
         self.assertEquals(list(map(str, range(100))), list(d['_id'] for d in docs))
@@ -229,7 +229,7 @@ class TestReindex(ElasticsearchTestCase):
         self.assertEquals({"answer": 42, "correct": True}, self.client.get(index="prod_index", doc_type="answers", id=42)['_source'])
 
     def test_reindex_accepts_a_query(self):
-        helpers.reindex(self.client, "test_index", "prod_index", query={"query": {"filtered": {"filter": {"term": {"_type": "answers"}}}}})
+        helpers.reindex(self.client, "test_index", "prod_index", query={"query": {"bool": {"filter": {"term": {"_type": "answers"}}}}})
         self.client.indices.refresh()
 
         self.assertTrue(self.client.indices.exists("prod_index"))

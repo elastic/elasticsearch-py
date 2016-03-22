@@ -115,13 +115,16 @@ class ClusterClient(NamespacedClient):
         return self.transport.perform_request('POST', '/_cluster/reroute',
             params=params, body=body)
 
-    @query_params('flat_settings', 'master_timeout', 'timeout')
+    @query_params('flat_settings', 'include_defaults', 'master_timeout',
+        'timeout')
     def get_settings(self, params=None):
         """
         Get cluster settings.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-update-settings.html>`_
 
         :arg flat_settings: Return settings in flat format (default: false)
+        :arg include_defaults: Whether to return all default clusters setting.,
+            default False
         :arg master_timeout: Explicit operation timeout for connection to master
             node
         :arg timeout: Explicit operation timeout

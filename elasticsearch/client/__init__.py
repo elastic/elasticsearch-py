@@ -6,10 +6,12 @@ from ..transport import Transport
 from ..exceptions import TransportError
 from ..compat import string_types, urlparse
 from .indices import IndicesClient
+from .ingest import IngestClient
 from .cluster import ClusterClient
 from .cat import CatClient
 from .nodes import NodesClient
 from .snapshot import SnapshotClient
+from .tasks import TasksClient
 from .utils import query_params, _make_path, SKIP_IN_PATH
 
 logger = logging.getLogger('elasticsearch')
@@ -64,13 +66,15 @@ class Elasticsearch(object):
     Elasticsearch low-level client. Provides a straightforward mapping from
     Python to ES REST endpoints.
 
-    The instance has attributes ``cat``, ``cluster``, ``indices``, ``nodes``
-    and ``snapshot`` that provide access to instances of
+    The instance has attributes ``cat``, ``cluster``, ``indices``, ``ingest``,
+    ``nodes``, ``snapshot`` and ``tasks`` that provide access to instances of
     :class:`~elasticsearch.client.CatClient`,
     :class:`~elasticsearch.client.ClusterClient`,
     :class:`~elasticsearch.client.IndicesClient`,
-    :class:`~elasticsearch.client.NodesClient` and
-    :class:`~elasticsearch.client.SnapshotClient` respectively. This is the
+    :class:`~elasticsearch.client.IngestClient`,
+    :class:`~elasticsearch.client.NodesClient`,
+    :class:`~elasticsearch.client.SnapshotClient` and
+    :class:`~elasticsearch.client.TasksClient` respectively. This is the
     preferred (and only supported) way to get access to those classes and their
     methods.
 
@@ -170,10 +174,12 @@ class Elasticsearch(object):
         # namespaced clients for compatibility with API names
         # use weakref to make GC's work a little easier
         self.indices = IndicesClient(weakref.proxy(self))
+        self.ingest = IngestClient(weakref.proxy(self))
         self.cluster = ClusterClient(weakref.proxy(self))
         self.cat = CatClient(weakref.proxy(self))
         self.nodes = NodesClient(weakref.proxy(self))
         self.snapshot = SnapshotClient(weakref.proxy(self))
+        self.tasks = TasksClient(weakref.proxy(self))
 
     def __repr__(self):
         try:
@@ -214,7 +220,7 @@ class Elasticsearch(object):
         """
         return self.transport.perform_request('GET', '/', params=params)
 
-    @query_params('consistency', 'parent', 'refresh', 'routing',
+    @query_params('consistency', 'parent', 'pipeline', 'refresh', 'routing',
         'timeout', 'timestamp', 'ttl', 'version', 'version_type')
     def create(self, index, doc_type, body, id=None, params=None):
         """
@@ -242,8 +248,8 @@ class Elasticsearch(object):
         """
         return self.index(index, doc_type, body, id=id, params=params, op_type='create')
 
-    @query_params('consistency', 'op_type', 'parent', 'refresh', 'routing',
-        'timeout', 'timestamp', 'ttl', 'version', 'version_type')
+    @query_params('consistency', 'op_type', 'parent', 'pipeline', 'refresh',
+        'routing', 'timeout', 'timestamp', 'ttl', 'version', 'version_type')
     def index(self, index, doc_type, body, id=None, params=None):
         """
         Adds or updates a typed JSON document in a specific index, making it searchable.
@@ -258,6 +264,7 @@ class Elasticsearch(object):
         :arg op_type: Explicit operation type, default 'index', valid choices
             are: 'index', 'create'
         :arg parent: ID of the parent document
+        :arg pipeline: The pipeline id to preprocess incoming documents with
         :arg refresh: Refresh the index after performing the operation
         :arg routing: Specific routing value
         :arg timeout: Explicit operation timeout
@@ -295,8 +302,8 @@ class Elasticsearch(object):
         for param in (index, doc_type, id):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('HEAD', _make_path(index, doc_type,
-                id), params=params)
+        return self.transport.perform_request('HEAD', _make_path(index,
+            doc_type, id), params=params)
 
     @query_params('_source', '_source_exclude', '_source_include', 'fields',
         'parent', 'preference', 'realtime', 'refresh', 'routing', 'version',
@@ -402,8 +409,8 @@ class Elasticsearch(object):
         return self.transport.perform_request('GET', _make_path(index,
             doc_type, '_mget'), params=params, body=body)
 
-    @query_params('consistency', 'detect_noop', 'fields', 'lang', 'parent',
-        'refresh', 'retry_on_conflict', 'routing', 'script', 'script_id',
+    @query_params('consistency', 'fields', 'lang', 'parent', 'refresh',
+        'retry_on_conflict', 'routing', 'script', 'script_id',
         'scripted_upsert', 'timeout', 'timestamp', 'ttl', 'version',
         'version_type')
     def update(self, index, doc_type, id, body=None, params=None):
@@ -417,9 +424,6 @@ class Elasticsearch(object):
         :arg body: The request definition using either `script` or partial `doc`
         :arg consistency: Explicit write consistency setting for the operation,
             valid choices are: 'one', 'quorum', 'all'
-        :arg detect_noop: Specifying as true will cause Elasticsearch to check
-            if there are changes and, if there aren't, turn the update request
-            into a noop.
         :arg fields: A comma-separated list of fields to return in the response
         :arg lang: The script language (default: groovy)
         :arg parent: ID of the parent document. Is is only used for routing and
@@ -504,7 +508,7 @@ class Elasticsearch(object):
         :arg scroll: Specify how long a consistent view of the index should be
             maintained for scrolled search
         :arg search_type: Search operation type, valid choices are:
-            'query_then_fetch', 'dfs_query_then_fetch', 'count', 'scan'
+            'query_then_fetch', 'dfs_query_then_fetch'
         :arg size: Number of hits to return (default: 10)
         :arg sort: A comma-separated list of <field>:<direction> pairs
         :arg stats: Specific 'tag' of the request for logging and statistical
@@ -591,7 +595,7 @@ class Elasticsearch(object):
             maintained for scrolled search
         :arg search_type: Search operation type, valid choices are:
             'query_then_fetch', 'query_and_fetch', 'dfs_query_then_fetch',
-            'dfs_query_and_fetch', 'count', 'scan'
+            'dfs_query_and_fetch'
         """
         return self.transport.perform_request('GET', _make_path(index,
             doc_type, '_search', 'template'), params=params, body=body)
@@ -746,7 +750,8 @@ class Elasticsearch(object):
         return self.transport.perform_request('GET', _make_path(index,
             doc_type, '_count'), params=params, body=body)
 
-    @query_params('consistency', 'fields', 'refresh', 'routing', 'timeout')
+    @query_params('consistency', 'fields', 'pipeline', 'refresh', 'routing',
+        'timeout')
     def bulk(self, body, index=None, doc_type=None, params=None):
         """
         Perform many index/delete operations in a single API call.
@@ -763,6 +768,7 @@ class Elasticsearch(object):
             valid choices are: 'one', 'quorum', 'all'
         :arg fields: Default comma-separated list of fields to return in the
             response for updates
+        :arg pipeline: The pipeline id to preprocess incoming documents with
         :arg refresh: Refresh the index after performing the operation
         :arg routing: Specific routing value
         :arg timeout: Explicit operation timeout
@@ -785,7 +791,7 @@ class Elasticsearch(object):
             default
         :arg search_type: Search operation type, valid choices are:
             'query_then_fetch', 'query_and_fetch', 'dfs_query_then_fetch',
-            'dfs_query_and_fetch', 'count', 'scan'
+            'dfs_query_and_fetch'
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
@@ -941,9 +947,9 @@ class Elasticsearch(object):
         return self.transport.perform_request('GET', _make_path(index,
             doc_type, id, '_percolate', 'count'), params=params, body=body)
 
-    @query_params('dfs', 'field_statistics', 'fields', 'offsets', 'parent',
-        'payloads', 'positions', 'preference', 'realtime', 'routing',
-        'term_statistics', 'version', 'version_type')
+    @query_params('field_statistics', 'fields', 'offsets', 'parent', 'payloads',
+        'positions', 'preference', 'realtime', 'routing', 'term_statistics',
+        'version', 'version_type')
     def termvectors(self, index, doc_type, id=None, body=None, params=None):
         """
         Returns information and statistics on terms in the fields of a
@@ -959,8 +965,6 @@ class Elasticsearch(object):
             be supplied.
         :arg body: Define parameters and or supply a document to get termvectors
             for. See documentation.
-        :arg dfs: Specifies if distributed frequencies should be returned
-            instead shard frequencies., default False
         :arg field_statistics: Specifies if document count, sum of document
             frequencies and sum of total term frequencies should be returned.,
             default True
