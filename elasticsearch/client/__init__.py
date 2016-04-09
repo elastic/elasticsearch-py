@@ -221,7 +221,7 @@ class Elasticsearch(object):
         return self.transport.perform_request('GET', '/', params=params)
 
     @query_params('consistency', 'parent', 'pipeline', 'refresh', 'routing',
-        'timeout', 'timestamp', 'ttl', 'version', 'version_type')
+        'request_timeout', 'timestamp', 'ttl', 'version', 'version_type')
     def create(self, index, doc_type, body, id=None, params=None):
         """
         Adds a typed JSON document in a specific index, making it searchable.
@@ -239,7 +239,7 @@ class Elasticsearch(object):
         :arg parent: ID of the parent document
         :arg refresh: Refresh the index after performing the operation
         :arg routing: Specific routing value
-        :arg timeout: Explicit operation timeout
+        :arg request_timeout: Explicit operation timeout
         :arg timestamp: Explicit timestamp for the document
         :arg ttl: Expiration time for the document
         :arg version: Explicit version number for concurrency control
@@ -249,7 +249,7 @@ class Elasticsearch(object):
         return self.index(index, doc_type, body, id=id, params=params, op_type='create')
 
     @query_params('consistency', 'op_type', 'parent', 'pipeline', 'refresh',
-        'routing', 'timeout', 'timestamp', 'ttl', 'version', 'version_type')
+        'routing', 'request_timeout', 'timestamp', 'ttl', 'version', 'version_type')
     def index(self, index, doc_type, body, id=None, params=None):
         """
         Adds or updates a typed JSON document in a specific index, making it searchable.
@@ -267,7 +267,7 @@ class Elasticsearch(object):
         :arg pipeline: The pipeline id to preprocess incoming documents with
         :arg refresh: Refresh the index after performing the operation
         :arg routing: Specific routing value
-        :arg timeout: Explicit operation timeout
+        :arg request_timeout: Explicit operation timeout
         :arg timestamp: Explicit timestamp for the document
         :arg ttl: Expiration time for the document
         :arg version: Explicit version number for concurrency control
@@ -411,7 +411,7 @@ class Elasticsearch(object):
 
     @query_params('consistency', 'fields', 'lang', 'parent', 'refresh',
         'retry_on_conflict', 'routing', 'script', 'script_id',
-        'scripted_upsert', 'timeout', 'timestamp', 'ttl', 'version',
+        'scripted_upsert', 'request_timeout', 'timestamp', 'ttl', 'version',
         'version_type')
     def update(self, index, doc_type, id, body=None, params=None):
         """
@@ -437,7 +437,7 @@ class Elasticsearch(object):
         :arg script_id: The id of a stored script
         :arg scripted_upsert: True if the script referenced in script or
             script_id should be called to perform inserts - defaults to false
-        :arg timeout: Explicit operation timeout
+        :arg request_timeout: Explicit operation timeout
         :arg timestamp: Explicit timestamp for the document
         :arg ttl: Expiration time for the document
         :arg version: Explicit version number for concurrency control
@@ -456,7 +456,7 @@ class Elasticsearch(object):
         'from_', 'ignore_unavailable', 'lenient', 'lowercase_expanded_terms',
         'preference', 'q', 'request_cache', 'routing', 'scroll', 'search_type',
         'size', 'sort', 'stats', 'suggest_field', 'suggest_mode',
-        'suggest_size', 'suggest_text', 'terminate_after', 'timeout',
+        'suggest_size', 'suggest_text', 'terminate_after', 'request_timeout',
         'track_scores', 'version')
     def search(self, index=None, doc_type=None, body=None, params=None):
         """
@@ -522,7 +522,7 @@ class Elasticsearch(object):
         :arg terminate_after: The maximum number of documents to collect for
             each shard, upon reaching which the query execution will terminate
             early.
-        :arg timeout: Explicit operation timeout
+        :arg request_timeout: Explicit operation timeout
         :arg track_scores: Whether to calculate and return scores even if they
             are not used for sorting
         :arg version: Specify whether to return document version as part of a
@@ -679,7 +679,7 @@ class Elasticsearch(object):
         return self.transport.perform_request('DELETE', _make_path('_search',
             'scroll', scroll_id), params=params, body=body)
 
-    @query_params('consistency', 'parent', 'refresh', 'routing', 'timeout',
+    @query_params('consistency', 'parent', 'refresh', 'routing', 'request_timeout',
         'version', 'version_type')
     def delete(self, index, doc_type, id, params=None):
         """
@@ -694,7 +694,7 @@ class Elasticsearch(object):
         :arg parent: ID of parent document
         :arg refresh: Refresh the index after performing the operation
         :arg routing: Specific routing value
-        :arg timeout: Explicit operation timeout
+        :arg request_timeout: Explicit operation timeout
         :arg version: Explicit version number for concurrency control
         :arg version_type: Specific version type, valid choices are: 'internal',
             'external', 'external_gte', 'force'
@@ -771,7 +771,7 @@ class Elasticsearch(object):
         :arg pipeline: The pipeline id to preprocess incoming documents with
         :arg refresh: Refresh the index after performing the operation
         :arg routing: Specific routing value
-        :arg timeout: Explicit operation timeout
+        :arg request_timeout: Explicit operation timeout
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
