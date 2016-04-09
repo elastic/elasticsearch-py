@@ -65,7 +65,7 @@ class Connection(object):
         logger.debug('> %s', body)
         logger.debug('< %s', response)
 
-        if tracer.isEnabledFor(logging.INFO):
+        if tracer.isEnabledFor(logging.INFO) and tracer.hasHandlers():
             # include pretty in trace curls
             path = path.replace('?', '?pretty&', 1) if '?' in path else path + '?pretty'
             if self.url_prefix:
