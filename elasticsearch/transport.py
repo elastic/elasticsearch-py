@@ -42,7 +42,7 @@ class Transport(object):
         connection_pool_class=ConnectionPool, host_info_callback=get_host_info,
         sniff_on_start=False, sniffer_timeout=None, sniff_timeout=.1,
         sniff_on_connection_fail=False, serializer=JSONSerializer(), serializers=None,
-        default_mimetype='application/json', max_retries=3, retry_on_status=(503, 504, ),
+        default_mimetype='application/json', max_retries=3, retry_on_status=(502, 503, 504, ),
         retry_on_timeout=False, send_get_body_as='GET', **kwargs):
         """
         :arg hosts: list of dictionaries, each containing keyword arguments to
@@ -68,7 +68,7 @@ class Transport(object):
             response assume this mimetype, defaults to `'application/json'`
         :arg max_retries: maximum number of retries before an exception is propagated
         :arg retry_on_status: set of HTTP status codes on which we should retry
-            on a different node. defaults to ``(503, 504, )``
+            on a different node. defaults to ``(502, 503, 504)``
         :arg retry_on_timeout: should timeout trigger a retry on different
             node? (default `False`)
         :arg send_get_body_as: for GET requests with body this option allows
