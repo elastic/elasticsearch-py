@@ -126,6 +126,12 @@ class TestRequestsConnection(TestCase):
         con = self._get_mock_connection(status_code=400)
         self.assertRaises(RequestError, con.perform_request, 'GET', '/', {}, '')
 
+    @patch('elasticsearch.connection.base.logger')
+    def test_head_with_404_doesnt_get_logged(self, logger):
+        con = self._get_mock_connection(status_code=404)
+        self.assertRaises(NotFoundError, con.perform_request, 'HEAD', '/', {}, '')
+        self.assertEquals(0, logger.warning.call_count)
+
     @patch('elasticsearch.connection.base.tracer')
     @patch('elasticsearch.connection.base.logger')
     def test_failed_request_logs_and_traces(self, logger, tracer):
