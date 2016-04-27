@@ -77,6 +77,9 @@ class Connection(object):
 
     def log_request_fail(self, method, full_url, body, duration, status_code=None, response=None, exception=None):
         """ Log an unsuccessful API call.  """
+        # do not log 404s on HEAD requests
+        if method == 'HEAD' and status_code == 404:
+            return
         logger.warning(
             '%s %s [status:%s request:%.3fs]', method, full_url,
             status_code or 'N/A', duration, exc_info=exception is not None
