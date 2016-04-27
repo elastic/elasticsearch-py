@@ -3,6 +3,12 @@
 Changelog
 =========
 
+2.4.0 (dev)
+-----------
+
+ * ``ping`` now ignores all ``TransportError`` exceptions and just returns
+   ``False``
+
 2.3.0 (2016-02-29)
 ------------------
 
