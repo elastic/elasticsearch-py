@@ -210,7 +210,10 @@ class Elasticsearch(object):
         Returns True if the cluster is up, False otherwise.
         `<http://www.elastic.co/guide/>`_
         """
-        return self.transport.perform_request('HEAD', '/', params=params)
+        try:
+            return self.transport.perform_request('HEAD', '/', params=params)
+        except TransportError:
+            return False
 
     @query_params()
     def info(self, params=None):
