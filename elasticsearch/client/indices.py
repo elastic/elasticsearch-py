@@ -1,8 +1,8 @@
 from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 class IndicesClient(NamespacedClient):
-    @query_params('analyzer', 'attributes', 'char_filters', 'explain', 'field',
-        'filters', 'format', 'prefer_local', 'text', 'tokenizer')
+    @query_params('analyzer', 'attributes', 'char_filter', 'explain', 'field',
+        'filter', 'format', 'prefer_local', 'text', 'tokenizer')
     def analyze(self, index=None, body=None, params=None):
         """
         Perform the analysis process on a text and return the tokens breakdown of the text.
@@ -13,13 +13,13 @@ class IndicesClient(NamespacedClient):
         :arg analyzer: The name of the analyzer to use
         :arg attributes: A comma-separated list of token attributes to output,
             this parameter works only with `explain=true`
-        :arg char_filters: A comma-separated list of character filters to use
+        :arg char_filter: A comma-separated list of character filters to use
             for the analysis
         :arg explain: With `true`, outputs more advanced details. (default:
             false)
         :arg field: Use the analyzer configured for this field (instead of
             passing the analyzer name)
-        :arg filters: A comma-separated list of filters to use for the analysis
+        :arg filter: A comma-separated list of filters to use for the analysis
         :arg format: Format of the output, default 'detailed', valid choices
             are: 'detailed', 'text'
         :arg prefer_local: With `true`, specify that a local shard should be
@@ -105,7 +105,7 @@ class IndicesClient(NamespacedClient):
             params=params, body=body)
 
     @query_params('allow_no_indices', 'expand_wildcards', 'flat_settings',
-        'human', 'ignore_unavailable', 'local')
+        'human', 'ignore_unavailable', 'include_defaults', 'local')
     def get(self, index, feature=None, params=None):
         """
         The get index API allows to retrieve information about one or more indexes.
@@ -122,6 +122,8 @@ class IndicesClient(NamespacedClient):
         :arg human: Whether to return version and creation date values in human-
             readable format., default False
         :arg ignore_unavailable: Ignore unavailable indexes (default: false)
+        :arg include_defaults: Whether to return all default setting for each of
+            the indices., default False
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
         """
@@ -393,21 +395,6 @@ class IndicesClient(NamespacedClient):
         """
         return self.transport.perform_request('GET', _make_path(index,
             '_alias', name), params=params)
-
-    @query_params('local', 'timeout')
-    def get_aliases(self, index=None, name=None, params=None):
-        """
-        Retrieve specified aliases
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/indices-aliases.html>`_
-
-        :arg index: A comma-separated list of index names to filter aliases
-        :arg name: A comma-separated list of alias names to filter
-        :arg local: Return local information, do not retrieve the state from
-            master node (default: false)
-        :arg timeout: Explicit operation timeout
-        """
-        return self.transport.perform_request('GET', _make_path(index,
-            '_aliases', name), params=params)
 
     @query_params('master_timeout', 'timeout')
     def update_aliases(self, body, params=None):

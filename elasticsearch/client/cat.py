@@ -223,7 +223,7 @@ class CatClient(NamespacedClient):
         return self.transport.perform_request('GET', '/_cat/pending_tasks',
             params=params)
 
-    @query_params('full_id', 'h', 'help', 'local', 'master_timeout', 'v')
+    @query_params('full_id', 'h', 'help', 'local', 'master_timeout', 'size', 'v')
     def thread_pool(self, params=None):
         """
         Get information about thread pools.
@@ -236,6 +236,8 @@ class CatClient(NamespacedClient):
             master node (default: false)
         :arg master_timeout: Explicit operation timeout for connection to master
             node
+        :arg size: The multiplier in which to display values, valid choices are:
+            '', 'k', 'm', 'g', 't', 'p'
         :arg v: Verbose mode. Display column headers, default False
         """
         return self.transport.perform_request('GET', '/_cat/thread_pool',
@@ -250,7 +252,7 @@ class CatClient(NamespacedClient):
         :arg fields: A comma-separated list of fields to return the fielddata
             size
         :arg bytes: The unit in which to display byte values, valid choices are:
-            'b', 'k', 'm', 'g'
+            'b', 'k', 'kb', 'm', 'mb', 'g', 'gb', 't', 'tb', 'p', 'pb'
         :arg h: Comma-separated list of column names to display
         :arg help: Return help information, default False
         :arg local: Return local information, do not retrieve the state from
@@ -328,3 +330,28 @@ class CatClient(NamespacedClient):
         """
         return self.transport.perform_request('GET', _make_path('_cat',
             'snapshots', repository), params=params)
+
+    @query_params('actions', 'detailed', 'format', 'h', 'help', 'node_id',
+        'parent_node', 'parent_task', 'v')
+    def tasks(self, params=None):
+        """
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/tasks.html>`_
+
+        :arg actions: A comma-separated list of actions that should be returned.
+            Leave empty to return all.
+        :arg detailed: Return detailed task information (default: false)
+        :arg format: a short version of the Accept header, e.g. json, yaml
+        :arg h: Comma-separated list of column names to display
+        :arg help: Return help information, default False
+        :arg node_id: A comma-separated list of node IDs or names to limit the
+            returned information; use `_local` to return information from the
+            node you're connecting to, leave empty to get information from all
+            nodes
+        :arg parent_node: Return tasks with specified parent node.
+        :arg parent_task: Return tasks with specified parent task id. Set to -1
+            to return all.
+        :arg v: Verbose mode. Display column headers, default False
+        """
+        return self.transport.perform_request('GET', '/_cat/tasks',
+            params=params)
+

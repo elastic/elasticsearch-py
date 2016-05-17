@@ -1048,7 +1048,7 @@ class Elasticsearch(object):
         return self.transport.perform_request('GET', _make_path(index,
             doc_type, '_mtermvectors'), params=params, body=body)
 
-    @query_params('op_type', 'version', 'version_type')
+    @query_params()
     def put_script(self, lang, id, body, params=None):
         """
         Create a script in given language with specified ID.
@@ -1057,11 +1057,6 @@ class Elasticsearch(object):
         :arg lang: Script language
         :arg id: Script ID
         :arg body: The document
-        :arg op_type: Explicit operation type, default 'index', valid choices
-            are: 'index', 'create'
-        :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type, valid choices are: 'internal',
-            'external', 'external_gte', 'force'
         """
         for param in (lang, id, body):
             if param in SKIP_IN_PATH:
@@ -1069,7 +1064,7 @@ class Elasticsearch(object):
         return self.transport.perform_request('PUT', _make_path('_scripts',
             lang, id), params=params, body=body)
 
-    @query_params('version', 'version_type')
+    @query_params()
     def get_script(self, lang, id, params=None):
         """
         Retrieve a script from the API.
@@ -1077,9 +1072,6 @@ class Elasticsearch(object):
 
         :arg lang: Script language
         :arg id: Script ID
-        :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type, valid choices are: 'internal',
-            'external', 'external_gte', 'force'
         """
         for param in (lang, id):
             if param in SKIP_IN_PATH:
@@ -1087,7 +1079,7 @@ class Elasticsearch(object):
         return self.transport.perform_request('GET', _make_path('_scripts',
             lang, id), params=params)
 
-    @query_params('version', 'version_type')
+    @query_params()
     def delete_script(self, lang, id, params=None):
         """
         Remove a stored script from elasticsearch.
@@ -1095,9 +1087,6 @@ class Elasticsearch(object):
 
         :arg lang: Script language
         :arg id: Script ID
-        :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type, valid choices are: 'internal',
-            'external', 'external_gte', 'force'
         """
         for param in (lang, id):
             if param in SKIP_IN_PATH:
@@ -1105,7 +1094,7 @@ class Elasticsearch(object):
         return self.transport.perform_request('DELETE',
             _make_path('_scripts', lang, id), params=params)
 
-    @query_params('op_type', 'version', 'version_type')
+    @query_params()
     def put_template(self, id, body, params=None):
         """
         Create a search template.
@@ -1113,11 +1102,6 @@ class Elasticsearch(object):
 
         :arg id: Template ID
         :arg body: The document
-        :arg op_type: Explicit operation type, default 'index', valid choices
-            are: 'index', 'create'
-        :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type, valid choices are: 'internal',
-            'external', 'external_gte', 'force'
         """
         for param in (id, body):
             if param in SKIP_IN_PATH:
@@ -1125,32 +1109,26 @@ class Elasticsearch(object):
         return self.transport.perform_request('PUT', _make_path('_search',
             'template', id), params=params, body=body)
 
-    @query_params('version', 'version_type')
+    @query_params()
     def get_template(self, id, params=None):
         """
         Retrieve a search template.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html>`_
 
         :arg id: Template ID
-        :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type, valid choices are: 'internal',
-            'external', 'external_gte', 'force'
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
         return self.transport.perform_request('GET', _make_path('_search',
             'template', id), params=params)
 
-    @query_params('version', 'version_type')
+    @query_params()
     def delete_template(self, id, params=None):
         """
         Delete a search template.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html>`_
 
         :arg id: Template ID
-        :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type, valid choices are: 'internal',
-            'external', 'external_gte', 'force'
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
