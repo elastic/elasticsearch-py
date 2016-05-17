@@ -16,7 +16,9 @@ class BulkIndexError(ElasticsearchException):
 
 
 class ScanError(ElasticsearchException):
-    pass
+    def __init__(self, scroll_id, *args, **kwargs):
+        super(ScanError, self).__init__(*args, **kwargs)
+        self.scroll_id = scroll_id
 
 def expand_action(data):
     """
@@ -277,33 +279,38 @@ def scan(client, query=None, scroll='5m', raise_on_error=True, preserve_order=Fa
     if scroll_id is None:
         return
 
-    first_run = True
-    while True:
-        # if we didn't set search_type to scan initial search contains data
-        if first_run:
-            first_run = False
-        else:
-            resp = client.scroll(scroll_id, scroll=scroll)
+    try:
+        first_run = True
+        while True:
+            # if we didn't set search_type to scan initial search contains data
+            if first_run:
+                first_run = False
+            else:
+                resp = client.scroll(scroll_id, scroll=scroll)
 
-        for hit in resp['hits']['hits']:
-            yield hit
+            for hit in resp['hits']['hits']:
+                yield hit
 
-        # check if we have any errrors
-        if resp["_shards"]["failed"]:
-            logger.warning(
-                'Scroll request has failed on %d shards out of %d.',
-                resp['_shards']['failed'], resp['_shards']['total']
-            )
-            if raise_on_error:
-                raise ScanError(
-                    'Scroll request has failed on %d shards out of %d.' %
-                    (resp['_shards']['failed'], resp['_shards']['total'])
+            # check if we have any errrors
+            if resp["_shards"]["failed"]:
+                logger.warning(
+                    'Scroll request has failed on %d shards out of %d.',
+                    resp['_shards']['failed'], resp['_shards']['total']
                 )
+                if raise_on_error:
+                    raise ScanError(
+                        scroll_id,
+                        'Scroll request has failed on %d shards out of %d.' %
+                            (resp['_shards']['failed'], resp['_shards']['total'])
+                    )
 
-        scroll_id = resp.get('_scroll_id')
-        # end of scroll
-        if scroll_id is None or not resp['hits']['hits']:
-            break
+            scroll_id = resp.get('_scroll_id')
+            # end of scroll
+            if scroll_id is None or not resp['hits']['hits']:
+                break
+    finally:
+        if scroll_id:
+            client.clear_scroll(body={'scroll_id': [scroll_id]}, ignore=(404, ))
 
 def reindex(client, source_index, target_index, query=None, target_client=None,
         chunk_size=500, scroll='5m', scan_kwargs={}, bulk_kwargs={}):
