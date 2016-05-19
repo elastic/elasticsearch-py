@@ -679,8 +679,15 @@ class Elasticsearch(object):
         :arg body: A comma-separated list of scroll IDs to clear if none was
             specified via the scroll_id parameter
         """
-        return self.transport.perform_request('DELETE', _make_path('_search',
-            'scroll', scroll_id), params=params, body=body)
+        if scroll_id in SKIP_IN_PATH and body in SKIP_IN_PATH:
+            raise ValueError("You need to supply scroll_id or body.")
+        elif scroll_id and not body:
+            body = scroll_id
+        elif scroll_id:
+            params['scroll_id'] = scroll_id
+
+        return self.transport.perform_request('DELETE', '/_search/scroll',
+            params=params, body=body)
 
     @query_params('consistency', 'parent', 'refresh', 'routing', 'timeout',
         'version', 'version_type')
