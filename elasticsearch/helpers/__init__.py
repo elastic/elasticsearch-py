@@ -232,7 +232,8 @@ def parallel_bulk(client, actions, thread_count=4, chunk_size=500,
     pool.close()
     pool.join()
 
-def scan(client, query=None, scroll='5m', raise_on_error=True, preserve_order=False, **kwargs):
+def scan(client, query=None, scroll='5m', raise_on_error=True,
+         preserve_order=False, size=1000, **kwargs):
     """
     Simple abstraction on top of the
     :meth:`~elasticsearch.Elasticsearch.scroll` api - a simple iterator that
@@ -254,6 +255,7 @@ def scan(client, query=None, scroll='5m', raise_on_error=True, preserve_order=Fa
         cause the scroll to paginate with preserving the order. Note that this
         can be an extremely expensive operation and can easily lead to
         unpredictable results, use with caution.
+    :arg size: size (per shard) of the batch send at each iteration.
 
     Any additional keyword arguments will be passed to the initial
     :meth:`~elasticsearch.Elasticsearch.search` call::
@@ -268,7 +270,7 @@ def scan(client, query=None, scroll='5m', raise_on_error=True, preserve_order=Fa
     if not preserve_order:
         kwargs['search_type'] = 'scan'
     # initial search
-    resp = client.search(body=query, scroll=scroll, **kwargs)
+    resp = client.search(body=query, scroll=scroll, size=size, **kwargs)
 
     scroll_id = resp.get('_scroll_id')
     if scroll_id is None:
