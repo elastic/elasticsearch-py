@@ -103,10 +103,11 @@ class Connection(object):
         error_message = raw_data
         additional_info = None
         try:
-            additional_info = json.loads(raw_data)
-            error_message = additional_info.get('error', error_message)
-            if isinstance(error_message, dict) and 'type' in error_message:
-                error_message = error_message['type']
+            if raw_data:
+                additional_info = json.loads(raw_data)
+                error_message = additional_info.get('error', error_message)
+                if isinstance(error_message, dict) and 'type' in error_message:
+                    error_message = error_message['type']
         except (ValueError, TypeError) as err:
             logger.warning('Undecodable raw error response from server: %s', err)
 
