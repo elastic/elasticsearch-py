@@ -20,7 +20,7 @@ class Urllib3HttpConnection(Connection):
     :arg use_ssl: use ssl for the connection if `True`
     :arg verify_certs: whether to verify SSL certificates
     :arg ca_certs: optional path to CA bundle. See
-        http://urllib3.readthedocs.org/en/latest/security.html#using-certifi-with-urllib3
+        https://urllib3.readthedocs.io/en/latest/security.html#using-certifi-with-urllib3
         for instructions how to get default set
     :arg client_cert: path to the file containing the private key and the
         certificate, or cert only if using client_key
