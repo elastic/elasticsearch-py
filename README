@@ -18,9 +18,9 @@ It also provides an optional `persistence layer`_ for working with documents as
 Python objects in an ORM-like fashion: defining mappings, retrieving and saving
 documents, wrapping the document data in user-defined classes.
 
-.. _elasticsearch-dsl: http://elasticsearch-dsl.rtfd.org/
-.. _queries: http://elasticsearch-dsl.readthedocs.org/en/latest/search_dsl.html
-.. _persistence layer: http://elasticsearch-dsl.readthedocs.org/en/latest/persistence.html#doctype
+.. _elasticsearch-dsl: https://elasticsearch-dsl.readthedocs.io/
+.. _queries: https://elasticsearch-dsl.readthedocs.io/en/latest/search_dsl.html
+.. _persistence layer: https://elasticsearch-dsl.readthedocs.io/en/latest/persistence.html#doctype
 
 Compatibility
 -------------
@@ -91,7 +91,7 @@ Simple use-case::
 
 `Full documentation`_.
 
-.. _Full documentation: http://elasticsearch-py.rtfd.org/
+.. _Full documentation: https://elasticsearch-py.readthedocs.io/
 
 
 Features

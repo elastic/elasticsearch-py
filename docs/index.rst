@@ -9,7 +9,7 @@ For a more high level client library with more limited scope, have a look at
 `elasticsearch-dsl`_ - it is a more pythonic library sitting on top of
 ``elasticsearch-py``.
 
-.. _elasticsearch-dsl: http://elasticsearch-dsl.rtfd.org/
+.. _elasticsearch-dsl: https://elasticsearch-dsl.readthedocs.io/
 
 Compatibility
 -------------
@@ -78,7 +78,7 @@ Python. We have created some :ref:`helpers` to help with this issue as well as
 a more high level library (`elasticsearch-dsl`_) on top of this one to provide
 a more convenient way of working with Elasticsearch.
 
-.. _elasticsearch-dsl: http://elasticsearch-dsl.rtfd.org/
+.. _elasticsearch-dsl: https://elasticsearch-dsl.readthedocs.io/
 
 Persistent Connections
 ~~~~~~~~~~~~~~~~~~~~~~
