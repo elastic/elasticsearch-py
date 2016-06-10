@@ -9,6 +9,9 @@ python:
   - "3.4"
   - "3.5"
 
+jdk:
+  - "oraclejdk8"
+
 env:
   # different connection classes to test
   - TEST_ES_CONNECTION=Urllib3HttpConnection
