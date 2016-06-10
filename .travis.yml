@@ -7,6 +7,7 @@ python:
   - "2.7"
   - "3.3"
   - "3.4"
+  - "3.5"
 
 env:
   # different connection classes to test
@@ -14,9 +15,10 @@ env:
   - TEST_ES_CONNECTION=RequestsHttpConnection
 
 install:
-  - mkdir /tmp/elasticsearch
-  - wget -O - http://s3-eu-west-1.amazonaws.com/build.eu-west-1.elastic.co/origin/2.0/nightly/JDK7/elasticsearch-latest-SNAPSHOT.tar.gz | tar xz --directory=/tmp/elasticsearch --strip-components=1
-  - /tmp/elasticsearch/bin/elasticsearch -d --path.data /tmp --discovery.zen.ping.multicast.enabled false --script.inline on --script.indexed on --path.repo=/tmp --repositories.url.allowed_urls='http://*' --node.testattr=test
+  - wget -O /tmp/es-snap.zip "https://oss.sonatype.org/service/local/artifact/maven/redirect?r=snapshots&g=org.elasticsearch.distribution.zip&a=elasticsearch&e=zip&v=5.0.0-SNAPSHOT"
+  - unzip /tmp/es-snap.zip -d /tmp/
+  - mv /tmp/elasticsearch-5.0.0-SNAPSHOT /tmp/elasticsearch
+  - /tmp/elasticsearch/bin/elasticsearch -E script.inline=true -E path.repo=/tmp -E repositories.url.allowed_urls='http://*' -E node.attr.testattr=test
   - git clone https://github.com/elastic/elasticsearch.git ../elasticsearch
   - pip install .
 
