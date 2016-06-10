@@ -826,3 +826,31 @@ class IndicesClient(NamespacedClient):
         """
         return self.transport.perform_request('POST', _make_path(index,
             '_forcemerge'), params=params)
+
+    @query_params('master_timeout', 'timeout')
+    def shrink(self, index, target, body=None, params=None):
+        """
+        The shrink index API allows you to shrink an existing index into a new
+        index with fewer primary shards. The number of primary shards in the
+        target index must be a factor of the shards in the source index. For
+        example an index with 8 primary shards can be shrunk into 4, 2 or 1
+        primary shards or an index with 15 primary shards can be shrunk into 5,
+        3 or 1. If the number of shards in the index is a prime number it can
+        only be shrunk into a single primary shard. Before shrinking, a
+        (primary or replica) copy of every shard in the index must be present
+        on the same node.
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/indices-shrink-index.html>`_
+
+        :arg index: The name of the source index to shrink
+        :arg target: The name of the target index to shrink into
+        :arg body: The configuration for the target index (`settings` and
+            `aliases`)
+        :arg master_timeout: Specify timeout for connection to master
+        :arg timeout: Explicit operation timeout
+        """
+        for param in (index, target):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
+        return self.transport.perform_request('PUT', _make_path(index,
+            '_shrink', target), params=params, body=body)
+
