@@ -26,14 +26,15 @@ class Connection(object):
     """
     transport_schema = 'http'
 
-    def __init__(self, host='localhost', port=9200, url_prefix='', timeout=10, **kwargs):
+    def __init__(self, host='localhost', port=9200, use_ssl=False, url_prefix='', timeout=10, **kwargs):
         """
         :arg host: hostname of the node (default: localhost)
         :arg port: port to use (integer, default: 9200)
         :arg url_prefix: optional url prefix for elasticsearch
         :arg timeout: default timeout in seconds (float, default: 10)
         """
-        self.host = '%s://%s:%s' % (self.transport_schema, host, port)
+        scheme = 'https' if use_ssl else 'http'
+        self.host = '%s://%s:%s' % (scheme, host, port)
         if url_prefix:
             url_prefix = '/' + url_prefix.strip('/')
         self.url_prefix = url_prefix

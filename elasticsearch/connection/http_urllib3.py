@@ -39,7 +39,7 @@ class Urllib3HttpConnection(Connection):
             client_key=None, ssl_version=None, ssl_assert_hostname=None,
             ssl_assert_fingerprint=None, maxsize=10, **kwargs):
 
-        super(Urllib3HttpConnection, self).__init__(host=host, port=port, **kwargs)
+        super(Urllib3HttpConnection, self).__init__(host=host, port=port, use_ssl=use_ssl, **kwargs)
         self.headers = urllib3.make_headers(keep_alive=True)
         if http_auth is not None:
             if isinstance(http_auth, (tuple, list)):
