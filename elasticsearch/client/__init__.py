@@ -173,13 +173,14 @@ class Elasticsearch(object):
 
         # namespaced clients for compatibility with API names
         # use weakref to make GC's work a little easier
-        self.indices = IndicesClient(weakref.proxy(self))
-        self.ingest = IngestClient(weakref.proxy(self))
-        self.cluster = ClusterClient(weakref.proxy(self))
-        self.cat = CatClient(weakref.proxy(self))
-        self.nodes = NodesClient(weakref.proxy(self))
-        self.snapshot = SnapshotClient(weakref.proxy(self))
-        self.tasks = TasksClient(weakref.proxy(self))
+        client = weakref.proxy(self)
+        self.indices = IndicesClient(client)
+        self.ingest = IngestClient(client)
+        self.cluster = ClusterClient(client)
+        self.cat = CatClient(client)
+        self.nodes = NodesClient(client)
+        self.snapshot = SnapshotClient(client)
+        self.tasks = TasksClient(client)
 
     def __repr__(self):
         try:
