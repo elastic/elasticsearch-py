@@ -33,7 +33,9 @@ class Connection(object):
         :arg url_prefix: optional url prefix for elasticsearch
         :arg timeout: default timeout in seconds (float, default: 10)
         """
-        scheme = 'https' if use_ssl else 'http'
+        scheme = self.transport_schema
+        if use_ssl:
+            scheme += 's'
         self.host = '%s://%s:%s' % (scheme, host, port)
         if url_prefix:
             url_prefix = '/' + url_prefix.strip('/')
