@@ -94,7 +94,8 @@ class ClusterClient(NamespacedClient):
             url = _make_path('_cluster/stats/nodes', node_id)
         return self.transport.perform_request('GET', url, params=params)
 
-    @query_params('dry_run', 'explain', 'master_timeout', 'metric', 'timeout')
+    @query_params('dry_run', 'explain', 'master_timeout', 'metric',
+        'retry_failed', 'timeout')
     def reroute(self, body=None, params=None):
         """
         Explicitly execute a cluster reroute allocation command including specific commands.
@@ -110,6 +111,8 @@ class ClusterClient(NamespacedClient):
         :arg metric: Limit the information returned to the specified metrics.
             Defaults to all but metadata, valid choices are: '_all', 'blocks',
             'metadata', 'nodes', 'routing_table', 'master_node', 'version'
+        :arg retry_failed: Retries allocation of shards that are blocked due to
+            too many subsequent allocation failures
         :arg timeout: Explicit operation timeout
         """
         return self.transport.perform_request('POST', '/_cluster/reroute',

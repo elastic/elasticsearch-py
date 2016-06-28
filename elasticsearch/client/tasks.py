@@ -47,3 +47,15 @@ class TasksClient(NamespacedClient):
         return self.transport.perform_request('POST', _make_path('_tasks',
             task_id, '_cancel'), params=params)
 
+    @query_params('wait_for_completion')
+    def get(self, task_id=None, params=None):
+        """
+        Retrieve information for a particular task.
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/tasks.html>`_
+
+        :arg task_id: Return the task with specified id (node_id:task_number)
+        :arg wait_for_completion: Wait for the matching tasks to complete
+            (default: false)
+        """
+        return self.transport.perform_request('GET', _make_path('_tasks',
+            task_id), params=params)

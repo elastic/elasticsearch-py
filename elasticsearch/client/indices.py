@@ -777,7 +777,11 @@ class IndicesClient(NamespacedClient):
         'operation_threading', 'status')
     def shard_stores(self, index=None, params=None):
         """
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/indices-shard-stores.html>`_
+        Provides store information for shard copies of indices. Store
+        information reports on which nodes shard copies exist, the shard copy
+        version, indicating how recent they are, and any exceptions encountered
+        while opening the shard index or from earlier engine failure.
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/indices-shards-stores.html>`_
 
         :arg index: A comma-separated list of index names; use `_all` or empty
             string to perform the operation on all indices
@@ -802,7 +806,15 @@ class IndicesClient(NamespacedClient):
         'operation_threading', 'wait_for_merge')
     def forcemerge(self, index=None, params=None):
         """
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/2.1/indices-forcemerge.html>`_
+        The force merge API allows to force merging of one or more indices
+        through an API. The merge relates to the number of segments a Lucene
+        index holds within each shard. The force merge operation allows to
+        reduce the number of segments by merging them.
+
+        This call will block until the merge is complete. If the http
+        connection is lost, the request will continue in the background, and
+        any new requests will block until the previous force merge is complete.
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/indices-forcemerge.html>`_
 
         :arg index: A comma-separated list of index names; use `_all` or empty
             string to perform the operation on all indices
@@ -854,3 +866,25 @@ class IndicesClient(NamespacedClient):
         return self.transport.perform_request('PUT', _make_path(index,
             '_shrink', target), params=params, body=body)
 
+    @query_params('master_timeout', 'timeout')
+    def rollover(self, alias, new_index=None, body=None, params=None):
+        """
+        The rollover index API rolls an alias over to a new index when the
+        existing index is considered to be too large or too old.
+
+        The API accepts a single alias name and a list of conditions. The alias
+        must point to a single index only. If the index satisfies the specified
+        conditions then a new index is created and the alias is switched to
+        point to the new alias.
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/indices-rollover-index.html>`_
+
+        :arg alias: The name of the alias to rollover
+        :arg new_index: The name of the rollover index
+        :arg body: The conditions that needs to be met for executing rollover
+        :arg master_timeout: Specify timeout for connection to master
+        :arg timeout: Explicit operation timeout
+        """
+        if alias in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'alias'.")
+        return self.transport.perform_request('POST', _make_path(alias,
+            '_rollover', new_index), params=params, body=body)
