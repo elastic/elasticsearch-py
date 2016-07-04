@@ -109,7 +109,7 @@ Cat
    :members:
 
 Snapshot
----
+--------
 
 .. autoclass:: SnapshotClient
    :members:
