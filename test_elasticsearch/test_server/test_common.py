@@ -50,6 +50,8 @@ class YamlTestCase(ElasticsearchTestCase):
         self._state = {}
 
     def tearDown(self):
+        if hasattr(self, '_teardown_code'):
+            self.run_code(self._teardown_code)
         super(YamlTestCase, self).tearDown()
         for repo, definition in self.client.snapshot.get_repository(repository='_all').items():
             self.client.snapshot.delete_repository(repository=repo)
@@ -255,8 +257,8 @@ def construct_case(filename, name):
     i = 0
     for test in tests:
         for test_name, definition in test.items():
-            if test_name == 'setup':
-                attrs['_setup_code'] = definition
+            if test_name in ('setup', 'teardown'):
+                attrs['_%s_code' % test_name] = definition
                 continue
 
             attrs['test_from_yaml_%d' % i] = make_test(test_name, definition, i)
