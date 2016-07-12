@@ -30,7 +30,7 @@ CATCH_CODES = {
 }
 
 # test features we have implemented
-IMPLEMENTED_FEATURES = ('gtelte', 'stash_in_path')
+IMPLEMENTED_FEATURES = ('gtelte', 'stash_in_path', 'headers')
 
 # broken YAML tests on some releases
 SKIP_TESTS = {
@@ -105,6 +105,9 @@ class YamlTestCase(ElasticsearchTestCase):
 
     def run_do(self, action):
         """ Perform an api call with given parameters. """
+        api = self.client
+        if 'headers' in action:
+            api = self._get_client(headers=action.pop('headers'))
 
         catch = action.pop('catch', None)
         self.assertEquals(1, len(action))
@@ -112,7 +115,6 @@ class YamlTestCase(ElasticsearchTestCase):
         method, args = list(action.items())[0]
 
         # locate api endpoint
-        api = self.client
         for m in method.split('.'):
             self.assertTrue(hasattr(api, m))
             api = getattr(api, m)
