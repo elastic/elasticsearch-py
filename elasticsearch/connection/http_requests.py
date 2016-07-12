@@ -24,15 +24,17 @@ class RequestsHttpConnection(Connection):
         certificate, or cert only if using client_key
     :arg client_key: path to the file containing the private key if using
         separate cert and key files (client_cert will contain only the cert)
+    :arg headers: any custom http headers to be add to requests
     """
     def __init__(self, host='localhost', port=9200, http_auth=None,
         use_ssl=False, verify_certs=False, ca_certs=None, client_cert=None,
-        client_key=None, **kwargs):
+        client_key=None, headers=None, **kwargs):
         if not REQUESTS_AVAILABLE:
             raise ImproperlyConfigured("Please install requests to use RequestsHttpConnection.")
 
         super(RequestsHttpConnection, self).__init__(host=host, port=port, **kwargs)
-        self.session = requests.session()
+        self.session = requests.Session()
+        self.session.headers = headers
         if http_auth is not None:
             if isinstance(http_auth, (tuple, list)):
                 http_auth = tuple(http_auth)

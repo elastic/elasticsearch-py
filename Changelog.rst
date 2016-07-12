@@ -8,6 +8,8 @@ Changelog
 
 Version compatible with elasticsearch 5.0
 
+ * added ``headers`` arg to connections to support custom http headers
+
 2.3.0 (2016-02-29)
 ------------------
 

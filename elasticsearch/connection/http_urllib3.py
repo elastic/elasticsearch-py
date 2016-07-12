@@ -33,14 +33,16 @@ class Urllib3HttpConnection(Connection):
     :arg ssl_assert_fingerprint: verify the supplied certificate fingerprint if not `None`
     :arg maxsize: the maximum number of connections which will be kept open to
         this host.
+    :arg headers: any custom http headers to be add to requests
     """
     def __init__(self, host='localhost', port=9200, http_auth=None,
             use_ssl=False, verify_certs=False, ca_certs=None, client_cert=None,
             client_key=None, ssl_version=None, ssl_assert_hostname=None,
-            ssl_assert_fingerprint=None, maxsize=10, **kwargs):
+            ssl_assert_fingerprint=None, maxsize=10, headers=None, **kwargs):
 
         super(Urllib3HttpConnection, self).__init__(host=host, port=port, use_ssl=use_ssl, **kwargs)
-        self.headers = urllib3.make_headers(keep_alive=True)
+        self.headers = headers.copy() if headers else {}
+        self.headers.update(urllib3.make_headers(keep_alive=True))
         if http_auth is not None:
             if isinstance(http_auth, (tuple, list)):
                 http_auth = ':'.join(http_auth)
