@@ -1,5 +1,4 @@
 from __future__ import unicode_literals
-import weakref
 import logging
 
 from ..transport import Transport
@@ -172,15 +171,13 @@ class Elasticsearch(object):
         self.transport = transport_class(_normalize_hosts(hosts), **kwargs)
 
         # namespaced clients for compatibility with API names
-        # use weakref to make GC's work a little easier
-        client = weakref.proxy(self)
-        self.indices = IndicesClient(client)
-        self.ingest = IngestClient(client)
-        self.cluster = ClusterClient(client)
-        self.cat = CatClient(client)
-        self.nodes = NodesClient(client)
-        self.snapshot = SnapshotClient(client)
-        self.tasks = TasksClient(client)
+        self.indices = IndicesClient(self)
+        self.ingest = IngestClient(self)
+        self.cluster = ClusterClient(self)
+        self.cat = CatClient(self)
+        self.nodes = NodesClient(self)
+        self.snapshot = SnapshotClient(self)
+        self.tasks = TasksClient(self)
 
     def __repr__(self):
         try:
