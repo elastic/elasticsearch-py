@@ -464,12 +464,12 @@ class Elasticsearch(object):
 
     @query_params('_source', '_source_exclude', '_source_include',
         'allow_no_indices', 'analyze_wildcard', 'analyzer', 'default_operator',
-        'df', 'expand_wildcards', 'explain', 'fielddata_fields', 'fields',
-        'from_', 'ignore_unavailable', 'lenient', 'lowercase_expanded_terms',
-        'preference', 'q', 'request_cache', 'routing', 'scroll', 'search_type',
-        'size', 'sort', 'stats', 'suggest_field', 'suggest_mode',
-        'suggest_size', 'suggest_text', 'terminate_after', 'timeout',
-        'track_scores', 'version')
+        'df', 'docvalue_fields', 'expand_wildcards', 'explain',
+        'fielddata_fields', 'from_', 'ignore_unavailable', 'lenient',
+        'lowercase_expanded_terms', 'preference', 'q', 'request_cache',
+        'routing', 'scroll', 'search_type', 'size', 'sort', 'stats',
+        'stored_fields', 'suggest_field', 'suggest_mode', 'suggest_size',
+        'suggest_text', 'terminate_after', 'timeout', 'track_scores', 'version')
     def search(self, index=None, doc_type=None, body=None, params=None):
         """
         Execute a search query and get back search hits that match the query.
@@ -496,14 +496,15 @@ class Elasticsearch(object):
             or OR), default 'OR', valid choices are: 'AND', 'OR'
         :arg df: The field to use as default where no field prefix is given in
             the query string
+        :arg docvalue_fields: A comma-separated list of fields to return as the
+            docvalue representation of a field for each hit
         :arg expand_wildcards: Whether to expand wildcard expression to concrete
             indices that are open, closed or both., default 'open', valid
             choices are: 'open', 'closed', 'none', 'all'
         :arg explain: Specify whether to return detailed information about score
             computation as part of a hit
         :arg fielddata_fields: A comma-separated list of fields to return as the
-            field data representation of a field for each hit
-        :arg fields: A comma-separated list of fields to return as part of a hit
+            docvalue representation of a field for each hit
         :arg from\_: Starting offset (default: 0)
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
@@ -525,6 +526,8 @@ class Elasticsearch(object):
         :arg sort: A comma-separated list of <field>:<direction> pairs
         :arg stats: Specific 'tag' of the request for logging and statistical
             purposes
+        :arg stored_fields: A comma-separated list of stored fields to return as
+            part of a hit
         :arg suggest_field: Specify which field to use for suggestions
         :arg suggest_mode: Specify suggest mode, default 'missing', valid
             choices are: 'missing', 'popular', 'always'
