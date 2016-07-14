@@ -152,15 +152,19 @@ class YamlTestCase(ElasticsearchTestCase):
 
     def run_skip(self, skip):
         if 'features' in skip:
-            if skip['features'] in IMPLEMENTED_FEATURES:
-                return
-            elif skip['features'] == 'requires_replica':
-                if self._get_data_nodes() > 1:
-                    return
-            elif skip['features'] == 'benchmark':
-                if self._get_benchmark_nodes():
-                    return
-            raise SkipTest(skip.get('reason', 'Feature %s is not supported' % skip['features']))
+            features = skip['features']
+            if not isinstance(features, (tuple, list)):
+                features = [features]
+            for feature in features:
+                if feature in IMPLEMENTED_FEATURES:
+                    continue
+                elif feature == 'requires_replica':
+                    if self._get_data_nodes() > 1:
+                        continue
+                elif feature == 'benchmark':
+                    if self._get_benchmark_nodes():
+                        continue
+                raise SkipTest(skip.get('reason', 'Feature %s is not supported' % feature))
 
         if 'version' in skip:
             version, reason = skip['version'], skip['reason']
