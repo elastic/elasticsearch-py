@@ -2,7 +2,7 @@ from .utils import NamespacedClient, query_params, _make_path
 
 class ClusterClient(NamespacedClient):
     @query_params('level', 'local', 'master_timeout', 'timeout',
-        'wait_for_active_shards', 'wait_for_nodes',
+        'wait_for_active_shards', 'wait_for_events', 'wait_for_nodes',
         'wait_for_relocating_shards', 'wait_for_status')
     def health(self, index=None, params=None):
         """
@@ -19,6 +19,9 @@ class ClusterClient(NamespacedClient):
         :arg timeout: Explicit operation timeout
         :arg wait_for_active_shards: Wait until the specified number of shards
             is active
+        :arg wait_for_events: Wait until all currently queued events with the
+            given priorty are processed, valid choices are: 'immediate',
+            'urgent', 'high', 'normal', 'low', 'languid'
         :arg wait_for_nodes: Wait until the specified number of nodes is
             available
         :arg wait_for_relocating_shards: Wait until the specified number of
@@ -151,13 +154,15 @@ class ClusterClient(NamespacedClient):
         return self.transport.perform_request('PUT', '/_cluster/settings',
             params=params, body=body)
 
-    @query_params('include_yes_decisions')
+    @query_params('include_disk_info', 'include_yes_decisions')
     def allocation_explain(self, body=None, params=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-allocation-explain.html>`_
 
         :arg body: The index, shard, and primary flag to explain. Empty means
             'explain the first unassigned shard'
+        :arg include_disk_info: Return information about disk usage and shard
+            sizes (default: false)
         :arg include_yes_decisions: Return 'YES' decisions in explanation
             (default: false)
         """
