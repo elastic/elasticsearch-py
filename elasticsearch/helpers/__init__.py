@@ -347,7 +347,6 @@ def reindex(client, source_index, target_index, query=None, target_client=None,
         query=query,
         index=source_index,
         scroll=scroll,
-        stored_fields=('_source', '_parent', '_routing', '_timestamp'),
         **scan_kwargs
     )
     def _change_doc_index(hits, index):
