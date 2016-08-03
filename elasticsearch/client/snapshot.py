@@ -31,6 +31,7 @@ class SnapshotClient(NamespacedClient):
         :arg snapshot: A snapshot name
         :arg master_timeout: Explicit operation timeout for connection to master
             node
+        :arg timeout: Explicit operation timeout
         """
         for param in (repository, snapshot):
             if param in SKIP_IN_PATH:
