@@ -21,7 +21,7 @@ class SnapshotClient(NamespacedClient):
         return self.transport.perform_request('PUT', _make_path('_snapshot',
             repository, snapshot), params=params, body=body)
 
-    @query_params('master_timeout')
+    @query_params('master_timeout', 'timeout')
     def delete(self, repository, snapshot, params=None):
         """
         Deletes a snapshot from a repository.
