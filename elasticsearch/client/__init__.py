@@ -1201,3 +1201,177 @@ class Elasticsearch(object):
         """
         return self.transport.perform_request('GET', _make_path('_render',
             'template', id), params=params, body=body)
+
+    @query_params('allow_no_indices', 'analyze_wildcard', 'analyzer',
+        'default_operator', 'df', 'expand_wildcards', 'ignore_unavailable',
+        'lenient', 'lowercase_expanded_terms', 'min_score', 'preference', 'q',
+        'routing')
+    def search_exists(self, index=None, doc_type=None, body=None, params=None):
+        """
+        The exists API allows to easily determine if any matching documents
+        exist for a provided query. It can be executed across one or more
+        indices and across one or more types. The query can either be provided
+        using a simple query string as a parameter, or using the Query DSL
+        defined within the request body.
+
+        Deprecated in Elasticsearch ``2.1.0``, use ``.search()`` instead with
+        ``size=0`` and ``terminate_after=1``.
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-exists.html>`_
+
+        :arg index: A comma-separated list of indices to restrict the results
+        :arg doc_type: A comma-separated list of types to restrict the results
+        :arg body: A query to restrict the results specified with the Query DSL
+            (optional)
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+            expression resolves into no concrete indices. (This includes `_all`
+            string or when no indices have been specified)
+        :arg analyze_wildcard: Specify whether wildcard and prefix queries
+            should be analyzed (default: false)
+        :arg analyzer: The analyzer to use for the query string
+        :arg default_operator: The default operator for query string query (AND
+            or OR), default 'OR', valid choices are: 'AND', 'OR'
+        :arg df: The field to use as default where no field prefix is given in
+            the query string
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete
+            indices that are open, closed or both., default 'open', valid
+            choices are: 'open', 'closed', 'none', 'all'
+        :arg ignore_unavailable: Whether specified concrete indices should be
+            ignored when unavailable (missing or closed)
+        :arg lenient: Specify whether format-based query failures (such as
+            providing text to a numeric field) should be ignored
+        :arg lowercase_expanded_terms: Specify whether query terms should be
+            lowercased
+        :arg min_score: Include only documents with a specific `_score` value in
+            the result
+        :arg preference: Specify the node or shard the operation should be
+            performed on (default: random)
+        :arg q: Query in the Lucene query string syntax
+        :arg routing: Specific routing value
+        """
+        return self.transport.perform_request('POST', _make_path(index,
+            doc_type, '_search', 'exists'), params=params, body=body)
+
+    @query_params('consistency', 'refresh', 'requests_per_second', 'timeout',
+        'wait_for_completion')
+    def reindex(self, body, params=None):
+        """
+        Reindex data from one index to another.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-reindex.html>`_
+
+        :arg body: The search definition using the Query DSL and the prototype
+            for the index request.
+        :arg consistency: Explicit write consistency setting for the operation,
+            valid choices are: 'one', 'quorum', 'all'
+        :arg refresh: Should the effected indexes be refreshed?
+        :arg requests_per_second: The throttle for this request in sub-requests
+            per second. 0 means set no throttle., default 0
+        :arg timeout: Time each individual bulk request should wait for shards
+            that are unavailable., default '1m'
+        :arg wait_for_completion: Should the request should block until the
+            reindex is complete., default False
+        """
+        if body in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'body'.")
+        return self.transport.perform_request('POST', '/_reindex',
+            params=params, body=body)
+
+    @query_params('_source', '_source_exclude', '_source_include',
+        'allow_no_indices', 'analyze_wildcard', 'analyzer', 'conflicts',
+        'consistency', 'default_operator', 'df', 'expand_wildcards', 'explain',
+        'fielddata_fields', 'fields', 'from_', 'ignore_unavailable', 'lenient',
+        'lowercase_expanded_terms', 'preference', 'q', 'refresh',
+        'request_cache', 'requests_per_second', 'routing', 'scroll',
+        'scroll_size', 'search_timeout', 'search_type', 'size', 'sort', 'stats',
+        'suggest_field', 'suggest_mode', 'suggest_size', 'suggest_text',
+        'terminate_after', 'timeout', 'track_scores', 'version', 'version_type',
+        'wait_for_completion')
+    def update_by_query(self, index, doc_type=None, body=None, params=None):
+        """
+        Update all documents matchng a query.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update-by-query.html>`_
+
+        :arg index: A comma-separated list of index names to search; use `_all`
+            or empty string to perform the operation on all indices
+        :arg doc_type: A comma-separated list of document types to search; leave
+            empty to perform the operation on all types
+        :arg body: The search definition using the Query DSL
+        :arg _source: True or false to return the _source field or not, or a
+            list of fields to return
+        :arg _source_exclude: A list of fields to exclude from the returned
+            _source field
+        :arg _source_include: A list of fields to extract and return from the
+            _source field
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+            expression resolves into no concrete indices. (This includes `_all`
+            string or when no indices have been specified)
+        :arg analyze_wildcard: Specify whether wildcard and prefix queries
+            should be analyzed (default: false)
+        :arg analyzer: The analyzer to use for the query string
+        :arg conflicts: What to do when the reindex hits version conflicts?,
+            default 'abort', valid choices are: 'abort', 'proceed'
+        :arg consistency: Explicit write consistency setting for the operation,
+            valid choices are: 'one', 'quorum', 'all'
+        :arg default_operator: The default operator for query string query (AND
+            or OR), default 'OR', valid choices are: 'AND', 'OR'
+        :arg df: The field to use as default where no field prefix is given in
+            the query string
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete
+            indices that are open, closed or both., default 'open', valid
+            choices are: 'open', 'closed', 'none', 'all'
+        :arg explain: Specify whether to return detailed information about score
+            computation as part of a hit
+        :arg fielddata_fields: A comma-separated list of fields to return as the
+            field data representation of a field for each hit
+        :arg fields: A comma-separated list of fields to return as part of a hit
+        :arg from_: Starting offset (default: 0)
+        :arg ignore_unavailable: Whether specified concrete indices should be
+            ignored when unavailable (missing or closed)
+        :arg lenient: Specify whether format-based query failures (such as
+            providing text to a numeric field) should be ignored
+        :arg lowercase_expanded_terms: Specify whether query terms should be
+            lowercased
+        :arg preference: Specify the node or shard the operation should be
+            performed on (default: random)
+        :arg q: Query in the Lucene query string syntax
+        :arg refresh: Should the effected indexes be refreshed?
+        :arg request_cache: Specify if request cache should be used for this
+            request or not, defaults to index level setting
+        :arg requests_per_second: The throttle for this request in sub-requests
+            per second. 0 means set no throttle., default 0
+        :arg routing: A comma-separated list of specific routing values
+        :arg scroll: Specify how long a consistent view of the index should be
+            maintained for scrolled search
+        :arg scroll_size: Size on the scroll request powering the
+            update_by_query
+        :arg search_timeout: Explicit timeout for each search request. Defaults
+            to no timeout.
+        :arg search_type: Search operation type, valid choices are:
+            'query_then_fetch', 'dfs_query_then_fetch'
+        :arg size: Number of hits to return (default: 10)
+        :arg sort: A comma-separated list of <field>:<direction> pairs
+        :arg stats: Specific 'tag' of the request for logging and statistical
+            purposes
+        :arg suggest_field: Specify which field to use for suggestions
+        :arg suggest_mode: Specify suggest mode, default 'missing', valid
+            choices are: 'missing', 'popular', 'always'
+        :arg suggest_size: How many suggestions to return in response
+        :arg suggest_text: The source text for which the suggestions should be
+            returned
+        :arg terminate_after: The maximum number of documents to collect for
+            each shard, upon reaching which the query execution will terminate
+            early.
+        :arg timeout: Time each individual bulk request should wait for shards
+            that are unavailable., default '1m'
+        :arg track_scores: Whether to calculate and return scores even if they
+            are not used for sorting
+        :arg version: Specify whether to return document version as part of a
+            hit
+        :arg version_type: Should the document increment the version number
+            (internal) on hit or not (reindex)
+        :arg wait_for_completion: Should the request should block until the
+            reindex is complete., default False
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'index'.")
+        return self.transport.perform_request('POST', _make_path(index,
+            doc_type, '_update_by_query'), params=params, body=body)
