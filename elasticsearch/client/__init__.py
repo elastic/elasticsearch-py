@@ -922,8 +922,8 @@ class Elasticsearch(object):
         return self.transport.perform_request('DELETE', '/_search/scroll',
             params=params, body=body)
 
-    @query_params('consistency', 'parent', 'refresh', 'routing', 'timeout',
-        'version', 'version_type')
+    @query_params('parent', 'refresh', 'routing', 'timeout', 'version',
+        'version_type', 'wait_for_active_shards')
     def delete(self, index, doc_type, id, params=None):
         """
         Delete a typed JSON document from a specific index based on its id.
@@ -932,8 +932,6 @@ class Elasticsearch(object):
         :arg index: The name of the index
         :arg doc_type: The type of the document
         :arg id: The document ID
-        :arg consistency: Specific write consistency setting for the operation,
-            valid choices are: 'one', 'quorum', 'all'
         :arg parent: ID of parent document
         :arg refresh: If `true` then refresh the effected shards to make this
             operation visible to search, if `wait_for` then wait for a refresh
@@ -945,6 +943,11 @@ class Elasticsearch(object):
         :arg version: Explicit version number for concurrency control
         :arg version_type: Specific version type, valid choices are: 'internal',
             'external', 'external_gte', 'force'
+        :arg wait_for_active_shards: Sets the number of shard copies that must
+            be active before proceeding with the delete operation. Defaults to
+            1, meaning the primary shard only. Set to `all` for all shard
+            copies, otherwise set to any non-negative value less than or equal
+            to the total number of copies for the shard (number of replicas + 1)
         """
         for param in (index, doc_type, id):
             if param in SKIP_IN_PATH:
@@ -997,8 +1000,8 @@ class Elasticsearch(object):
         return self.transport.perform_request('GET', _make_path(index,
             doc_type, '_count'), params=params, body=body)
 
-    @query_params('consistency', 'fields', 'pipeline', 'refresh', 'routing',
-        'timeout')
+    @query_params('fields', 'pipeline', 'refresh', 'routing', 'timeout',
+        'wait_for_active_shards')
     def bulk(self, body, index=None, doc_type=None, params=None):
         """
         Perform many index/delete operations in a single API call.
@@ -1011,8 +1014,6 @@ class Elasticsearch(object):
             separated by newlines
         :arg index: Default index for items which don't provide one
         :arg doc_type: Default document type for items which don't provide one
-        :arg consistency: Explicit write consistency setting for the operation,
-            valid choices are: 'one', 'quorum', 'all'
         :arg fields: Default comma-separated list of fields to return in the
             response for updates
         :arg pipeline: The pipeline id to preprocess incoming documents with
@@ -1023,6 +1024,11 @@ class Elasticsearch(object):
             'wait_for'
         :arg routing: Specific routing value
         :arg timeout: Explicit operation timeout
+        :arg wait_for_active_shards: Sets the number of shard copies that must
+            be active before proceeding with the bulk operation. Defaults to 1,
+            meaning the primary shard only. Set to `all` for all shard copies,
+            otherwise set to any non-negative value less than or equal to the
+            total number of copies for the shard (number of replicas + 1)
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
@@ -1426,3 +1432,26 @@ class Elasticsearch(object):
         """
         return self.transport.perform_request('GET', _make_path('_render',
             'template', id), params=params, body=body)
+
+    @query_params('search_type')
+    def msearch_template(self, body, index=None, doc_type=None, params=None):
+        """
+        The /_search/template endpoint allows to use the mustache language to
+        pre render search requests, before they are executed and fill existing
+        templates with template parameters.
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html>`_
+
+        :arg body: The request definitions (metadata-search request definition
+            pairs), separated by newlines
+        :arg index: A comma-separated list of index names to use as default
+        :arg doc_type: A comma-separated list of document types to use as
+            default
+        :arg search_type: Search operation type, valid choices are:
+            'query_then_fetch', 'query_and_fetch', 'dfs_query_then_fetch',
+            'dfs_query_and_fetch'
+        """
+        if body in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'body'.")
+        return self.transport.perform_request('GET', _make_path(index, doc_type,
+            '_msearch', 'template'), params=params, body=self._bulk_body(body))
+

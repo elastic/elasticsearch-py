@@ -1,4 +1,4 @@
-from .utils import NamespacedClient, query_params, _make_path
+from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 class CatClient(NamespacedClient):
     @query_params('h', 'help', 'local', 'master_timeout', 'v')
@@ -29,7 +29,7 @@ class CatClient(NamespacedClient):
         :arg node_id: A comma-separated list of node IDs or names to limit the
             returned information
         :arg bytes: The unit in which to display byte values, valid choices are:
-            'b', 'k', 'm', 'g'
+            'b', 'k', 'kb', 'm', 'mb', 'g', 'gb', 't', 'tb', 'p', 'pb'
         :arg h: Comma-separated list of column names to display
         :arg help: Return help information, default False
         :arg local: Return local information, do not retrieve the state from
@@ -156,7 +156,7 @@ class CatClient(NamespacedClient):
         :arg index: A comma-separated list of index names to limit the returned
             information
         :arg bytes: The unit in which to display byte values, valid choices are:
-            'b', 'k', 'm', 'g'
+            'b', 'k', 'kb', 'm', 'mb', 'g', 'gb', 't', 'tb', 'p', 'pb'
         :arg h: Comma-separated list of column names to display
         :arg help: Return help information, default False
         :arg master_timeout: Explicit operation timeout for connection to master
@@ -166,7 +166,7 @@ class CatClient(NamespacedClient):
         return self.transport.perform_request('GET', _make_path('_cat',
             'recovery', index), params=params)
 
-    @query_params('bytes', 'h', 'help', 'local', 'master_timeout', 'v')
+    @query_params('h', 'help', 'local', 'master_timeout', 'v')
     def shards(self, index=None, params=None):
         """
         The shards command is the detailed view of what nodes contain which shards.
@@ -174,8 +174,6 @@ class CatClient(NamespacedClient):
 
         :arg index: A comma-separated list of index names to limit the returned
             information
-        :arg bytes: The unit in which to display byte values, valid choices are:
-            'b', 'k', 'm', 'g'
         :arg h: Comma-separated list of column names to display
         :arg help: Return help information, default False
         :arg local: Return local information, do not retrieve the state from
@@ -187,7 +185,7 @@ class CatClient(NamespacedClient):
         return self.transport.perform_request('GET', _make_path('_cat',
             'shards', index), params=params)
 
-    @query_params('bytes', 'h', 'help', 'v')
+    @query_params('h', 'help', 'v')
     def segments(self, index=None, params=None):
         """
         The segments command is the detailed view of Lucene segments per index.
@@ -195,8 +193,6 @@ class CatClient(NamespacedClient):
 
         :arg index: A comma-separated list of index names to limit the returned
             information
-        :arg bytes: The unit in which to display byte values, valid choices are:
-            'b', 'k', 'm', 'g'
         :arg h: Comma-separated list of column names to display
         :arg help: Return help information, default False
         :arg v: Verbose mode. Display column headers, default False
@@ -223,13 +219,13 @@ class CatClient(NamespacedClient):
         return self.transport.perform_request('GET', '/_cat/pending_tasks',
             params=params)
 
-    @query_params('full_id', 'h', 'help', 'local', 'master_timeout', 'size', 'v')
-    def thread_pool(self, params=None):
+    @query_params('h', 'help', 'local', 'master_timeout', 'size',
+        'thread_pool_patterns', 'v')
+    def thread_pool(self, thread_pools=None, params=None):
         """
         Get information about thread pools.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cat-thread-pool.html>`_
 
-        :arg full_id: Enables displaying the complete node ids, default False
         :arg h: Comma-separated list of column names to display
         :arg help: Return help information, default False
         :arg local: Return local information, do not retrieve the state from
@@ -238,10 +234,12 @@ class CatClient(NamespacedClient):
             node
         :arg size: The multiplier in which to display values, valid choices are:
             '', 'k', 'm', 'g', 't', 'p'
+        :arg thread_pool_patterns: A comma-separated list of regular-expressions
+            to filter the thread pools in the output
         :arg v: Verbose mode. Display column headers, default False
         """
-        return self.transport.perform_request('GET', '/_cat/thread_pool',
-            params=params)
+        return self.transport.perform_request('GET', _make_path('_cat',
+            'thread_pool', thread_pools), params=params)
 
     @query_params('bytes', 'h', 'help', 'local', 'master_timeout', 'v')
     def fielddata(self, fields=None, params=None):
@@ -314,7 +312,7 @@ class CatClient(NamespacedClient):
             params=params)
 
     @query_params('h', 'help', 'ignore_unavailable', 'master_timeout', 'v')
-    def snapshots(self, repository=None, params=None):
+    def snapshots(self, repository, params=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cat-snapshots.html>`_
 
@@ -328,6 +326,8 @@ class CatClient(NamespacedClient):
             node
         :arg v: Verbose mode. Display column headers, default False
         """
+        if repository in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'repository'.")
         return self.transport.perform_request('GET', _make_path('_cat',
             'snapshots', repository), params=params)
 

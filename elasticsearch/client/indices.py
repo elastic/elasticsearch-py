@@ -86,7 +86,8 @@ class IndicesClient(NamespacedClient):
         return self.transport.perform_request('POST', _make_path(index,
             '_flush'), params=params)
 
-    @query_params('master_timeout', 'timeout', 'update_all_types')
+    @query_params('master_timeout', 'timeout', 'update_all_types',
+        'wait_for_active_shards')
     def create(self, index, body=None, params=None):
         """
         Create an index in Elasticsearch.
@@ -98,6 +99,8 @@ class IndicesClient(NamespacedClient):
         :arg timeout: Explicit operation timeout
         :arg update_all_types: Whether to update the mapping for all fields with
             the same name across all types or not
+        :arg wait_for_active_shards: Set the number of active shards to wait for
+            before the operation returns.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
@@ -386,7 +389,7 @@ class IndicesClient(NamespacedClient):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to concrete
-            indices that are open, closed or both., default 'open', valid
+            indices that are open, closed or both., default 'all', valid
             choices are: 'open', 'closed', 'none', 'all'
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
@@ -839,7 +842,7 @@ class IndicesClient(NamespacedClient):
         return self.transport.perform_request('POST', _make_path(index,
             '_forcemerge'), params=params)
 
-    @query_params('master_timeout', 'timeout')
+    @query_params('master_timeout', 'timeout', 'wait_for_active_shards')
     def shrink(self, index, target, body=None, params=None):
         """
         The shrink index API allows you to shrink an existing index into a new
@@ -859,6 +862,8 @@ class IndicesClient(NamespacedClient):
             `aliases`)
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
+        :arg wait_for_active_shards: Set the number of active shards to wait for
+            on the shrunken index before the operation returns.
         """
         for param in (index, target):
             if param in SKIP_IN_PATH:
@@ -866,7 +871,7 @@ class IndicesClient(NamespacedClient):
         return self.transport.perform_request('PUT', _make_path(index,
             '_shrink', target), params=params, body=body)
 
-    @query_params('master_timeout', 'timeout')
+    @query_params('master_timeout', 'timeout', 'wait_for_active_shards')
     def rollover(self, alias, new_index=None, body=None, params=None):
         """
         The rollover index API rolls an alias over to a new index when the
@@ -883,6 +888,8 @@ class IndicesClient(NamespacedClient):
         :arg body: The conditions that needs to be met for executing rollover
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
+        :arg wait_for_active_shards: Set the number of active shards to wait for
+            on the newly created rollover index before the operation returns.
         """
         if alias in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'alias'.")
