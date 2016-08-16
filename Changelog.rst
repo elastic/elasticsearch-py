@@ -9,6 +9,8 @@ Changelog
 Version compatible with elasticsearch 5.0
 
  * added ``headers`` arg to connections to support custom http headers
+ * passing in a keyword parameter with ``None`` as value will cause that param
+   to be ignored 
 
 2.3.0 (2016-02-29)
 ------------------

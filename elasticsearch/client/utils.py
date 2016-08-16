@@ -33,7 +33,7 @@ def _escape(value):
         except UnicodeDecodeError:
             # Python 2 and str, no need to re-encode
             pass
-    
+
     return str(value)
 
 def _make_path(*parts):
@@ -60,7 +60,9 @@ def query_params(*es_query_params):
             params = kwargs.pop('params', {})
             for p in es_query_params + GLOBAL_PARAMS:
                 if p in kwargs:
-                    params[p] = _escape(kwargs.pop(p))
+                    v = kwargs.pop(p)
+                    if v is not None:
+                        params[p] = _escape(v)
 
             # don't treat ignore and request_timeout as other params to avoid escaping
             for p in ('ignore', 'request_timeout'):
