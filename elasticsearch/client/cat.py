@@ -311,7 +311,7 @@ class CatClient(NamespacedClient):
         return self.transport.perform_request('GET', '/_cat/repositories',
             params=params)
 
-    @query_params('h', 'help', 'master_timeout', 'v')
+    @query_params('h', 'help', 'ignore_unavailable', 'master_timeout', 'v')
     def snapshots(self, repository=None, params=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cat-snapshots.html>`_
@@ -320,6 +320,8 @@ class CatClient(NamespacedClient):
             information
         :arg h: Comma-separated list of column names to display
         :arg help: Return help information, default False
+        :arg ignore_unavailable: Set to true to ignore unavailable snapshots,
+            default False
         :arg master_timeout: Explicit operation timeout for connection to master
             node
         :arg v: Verbose mode. Display column headers, default False

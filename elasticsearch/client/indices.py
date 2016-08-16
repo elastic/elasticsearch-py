@@ -1,8 +1,9 @@
 from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 class IndicesClient(NamespacedClient):
-    @query_params('analyzer', 'char_filters', 'field', 'filters', 'format',
-        'prefer_local', 'text', 'tokenizer')
+    @query_params('analyzer', 'attributes', 'char_filter', 'char_filters',
+        'explain', 'field', 'filter', 'filters', 'format', 'prefer_local',
+        'text', 'tokenizer')
     def analyze(self, index=None, body=None, params=None):
         """
         Perform the analysis process on a text and return the tokens breakdown of the text.
@@ -11,11 +12,19 @@ class IndicesClient(NamespacedClient):
         :arg index: The name of the index to scope the operation
         :arg body: The text on which the analysis should be performed
         :arg analyzer: The name of the analyzer to use
-        :arg char_filters: A comma-separated list of character filters to use
-            for the analysis
+        :arg attributes: A comma-separated list of token attributes to output,
+            this parameter works only with `explain=true`
+        :arg char_filter: A comma-separated list of character filters to use for
+            the analysis
+        :arg char_filters: Deprecated : A comma-separated list of character
+            filters to use for the analysis
+        :arg explain: With `true`, outputs more advanced details. (default:
+            false)
         :arg field: Use the analyzer configured for this field (instead of
             passing the analyzer name)
-        :arg filters: A comma-separated list of filters to use for the analysis
+        :arg filter: A comma-separated list of filters to use for the analysis
+        :arg filters: Deprecated : A comma-separated list of filters to use for
+            the analysis
         :arg format: Format of the output, default 'detailed', valid choices
             are: 'detailed', 'text'
         :arg prefer_local: With `true`, specify that a local shard should be

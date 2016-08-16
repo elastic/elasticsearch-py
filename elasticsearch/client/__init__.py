@@ -10,6 +10,7 @@ from .cluster import ClusterClient
 from .cat import CatClient
 from .nodes import NodesClient
 from .snapshot import SnapshotClient
+from .tasks import TasksClient
 from .utils import query_params, _make_path, SKIP_IN_PATH
 
 logger = logging.getLogger('elasticsearch')
@@ -174,6 +175,7 @@ class Elasticsearch(object):
         self.cat = CatClient(weakref.proxy(self))
         self.nodes = NodesClient(weakref.proxy(self))
         self.snapshot = SnapshotClient(weakref.proxy(self))
+        self.tasks = TasksClient(weakref.proxy(self))
 
     def __repr__(self):
         try:
@@ -1256,7 +1258,7 @@ class Elasticsearch(object):
     def reindex(self, body, params=None):
         """
         Reindex data from one index to another.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-reindex.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/plugins/current/plugins-reindex.html>`_
 
         :arg body: The search definition using the Query DSL and the prototype
             for the index request.
@@ -1288,7 +1290,7 @@ class Elasticsearch(object):
     def update_by_query(self, index, doc_type=None, body=None, params=None):
         """
         Update all documents matchng a query.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update-by-query.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/plugins/current/plugins-reindex.html>`_
 
         :arg index: A comma-separated list of index names to search; use `_all`
             or empty string to perform the operation on all indices
