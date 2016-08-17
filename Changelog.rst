@@ -3,11 +3,17 @@
 Changelog
 =========
 
-2.4.0 (dev)
------------
+2.4.0 (2016-08-17)
+------------------
 
  * ``ping`` now ignores all ``TransportError`` exceptions and just returns
    ``False``
+ * expose ``scroll_id`` on ``ScanError``
+ * increase default size for ``scan`` helper to 1000
+
+Internal:
+
+ * changed ``Transport.perform_request`` to just return the body, not status as well.
 
 2.3.0 (2016-02-29)
 ------------------
