@@ -237,7 +237,7 @@ def parallel_bulk(client, actions, thread_count=4, chunk_size=500,
         pool.join()
 
 def scan(client, query=None, scroll='5m', raise_on_error=True,
-         preserve_order=False, size=1000, **kwargs):
+         preserve_order=False, size=1000, request_timeout=None, **kwargs):
     """
     Simple abstraction on top of the
     :meth:`~elasticsearch.Elasticsearch.scroll` api - a simple iterator that
@@ -260,6 +260,7 @@ def scan(client, query=None, scroll='5m', raise_on_error=True,
         can be an extremely expensive operation and can easily lead to
         unpredictable results, use with caution.
     :arg size: size (per shard) of the batch send at each iteration.
+    :arg request_timeout: explicit timeout for each call to ``scan``
 
     Any additional keyword arguments will be passed to the initial
     :meth:`~elasticsearch.Elasticsearch.search` call::
@@ -275,7 +276,8 @@ def scan(client, query=None, scroll='5m', raise_on_error=True,
         body = query.copy() if query else {}
         body["sort"] = "_doc"
     # initial search
-    resp = client.search(body=query, scroll=scroll, size=size, **kwargs)
+    resp = client.search(body=query, scroll=scroll, size=size,
+                         request_timeout=request_timeout, **kwargs)
 
     scroll_id = resp.get('_scroll_id')
     if scroll_id is None:
@@ -288,7 +290,7 @@ def scan(client, query=None, scroll='5m', raise_on_error=True,
             if first_run:
                 first_run = False
             else:
-                resp = client.scroll(scroll_id, scroll=scroll)
+                resp = client.scroll(scroll_id, scroll=scroll, request_timeout=request_timeout)
 
             for hit in resp['hits']['hits']:
                 yield hit
