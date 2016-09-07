@@ -24,7 +24,7 @@ class RequestsHttpConnection(Connection):
         certificate, or cert only if using client_key
     :arg client_key: path to the file containing the private key if using
         separate cert and key files (client_cert will contain only the cert)
-    :arg headers: a dictionary with custom headers to use in http requests
+    :arg headers: a dictionary with custom headers to use in http requests.
     """
     def __init__(self, host='localhost', port=9200, http_auth=None,
         use_ssl=False, verify_certs=False, ca_certs=None, client_cert=None,
