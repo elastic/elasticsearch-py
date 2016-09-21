@@ -14,6 +14,11 @@ For example to use the ``requests``-based connection just import it and use it::
     from elasticsearch import Elasticsearch, RequestsHttpConnection
     es = Elasticsearch(connection_class=RequestsHttpConnection)
 
+The default connection class is based on ``urllib3`` which is more performant
+and lightweight than the optional ``requests``-based class. Only use
+``RequestsHttpConnection`` if you have need of any of ``requests`` advanced
+features like custom auth plugins etc.
+
 
 .. py:module:: elasticsearch.connection
 

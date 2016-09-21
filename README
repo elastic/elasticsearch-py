@@ -18,15 +18,18 @@ It also provides an optional `persistence layer`_ for working with documents as
 Python objects in an ORM-like fashion: defining mappings, retrieving and saving
 documents, wrapping the document data in user-defined classes.
 
-.. _elasticsearch-dsl: http://elasticsearch-dsl.rtfd.org/
-.. _queries: http://elasticsearch-dsl.readthedocs.org/en/latest/search_dsl.html
-.. _persistence layer: http://elasticsearch-dsl.readthedocs.org/en/latest/persistence.html#doctype
+.. _elasticsearch-dsl: https://elasticsearch-dsl.readthedocs.io/
+.. _queries: https://elasticsearch-dsl.readthedocs.io/en/latest/search_dsl.html
+.. _persistence layer: https://elasticsearch-dsl.readthedocs.io/en/latest/persistence.html#doctype
 
 Compatibility
 -------------
 
 The library is compatible with all Elasticsearch versions since ``0.90.x`` but you
 **have to use a matching major version**:
+
+For **Elasticsearch 5.0** and later, use the major version 5 (``5.x.y``) of the
+library.
 
 For **Elasticsearch 2.0** and later, use the major version 2 (``2.x.y``) of the
 library.
@@ -40,6 +43,9 @@ library.
 The recommended way to set your requirements in your `setup.py` or
 `requirements.txt` is::
 
+    # Elasticsearch 5.x
+    elasticsearch>=5.0.0,<6.0.0
+
     # Elasticsearch 2.x
     elasticsearch>=2.0.0,<3.0.0
 
@@ -49,7 +55,7 @@ The recommended way to set your requirements in your `setup.py` or
     # Elasticsearch 0.90.x
     elasticsearch<1.0.0
 
-The development is happening on ``master`` and ``1.x`` branches, respectively.
+The development is happening on ``master`` and ``2.x`` branches respectively.
 
 Installation
 ------------
@@ -85,7 +91,7 @@ Simple use-case::
 
 `Full documentation`_.
 
-.. _Full documentation: http://elasticsearch-py.rtfd.org/
+.. _Full documentation: https://elasticsearch-py.readthedocs.io/
 
 
 Features

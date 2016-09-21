@@ -26,14 +26,17 @@ class Connection(object):
     """
     transport_schema = 'http'
 
-    def __init__(self, host='localhost', port=9200, url_prefix='', timeout=10, **kwargs):
+    def __init__(self, host='localhost', port=9200, use_ssl=False, url_prefix='', timeout=10, **kwargs):
         """
         :arg host: hostname of the node (default: localhost)
         :arg port: port to use (integer, default: 9200)
         :arg url_prefix: optional url prefix for elasticsearch
         :arg timeout: default timeout in seconds (float, default: 10)
         """
-        self.host = '%s://%s:%s' % (self.transport_schema, host, port)
+        scheme = self.transport_schema
+        if use_ssl:
+            scheme += 's'
+        self.host = '%s://%s:%s' % (scheme, host, port)
         if url_prefix:
             url_prefix = '/' + url_prefix.strip('/')
         self.url_prefix = url_prefix
@@ -65,7 +68,7 @@ class Connection(object):
         logger.debug('> %s', body)
         logger.debug('< %s', response)
 
-        if tracer.isEnabledFor(logging.INFO):
+        if tracer.isEnabledFor(logging.INFO) and tracer.handlers:
             # include pretty in trace curls
             path = path.replace('?', '?pretty&', 1) if '?' in path else path + '?pretty'
             if self.url_prefix:
@@ -77,6 +80,9 @@ class Connection(object):
 
     def log_request_fail(self, method, full_url, body, duration, status_code=None, response=None, exception=None):
         """ Log an unsuccessful API call.  """
+        # do not log 404s on HEAD requests
+        if method == 'HEAD' and status_code == 404:
+            return
         logger.warning(
             '%s %s [status:%s request:%.3fs]', method, full_url,
             status_code or 'N/A', duration, exc_info=exception is not None
@@ -97,13 +103,13 @@ class Connection(object):
         error_message = raw_data
         additional_info = None
         try:
-            additional_info = json.loads(raw_data)
-            error_message = additional_info.get('error', error_message)
-            if isinstance(error_message, dict) and 'type' in error_message:
-                error_message = error_message['type']
-        except:
-            # we don't care what went wrong
-            pass
+            if raw_data:
+                additional_info = json.loads(raw_data)
+                error_message = additional_info.get('error', error_message)
+                if isinstance(error_message, dict) and 'type' in error_message:
+                    error_message = error_message['type']
+        except (ValueError, TypeError) as err:
+            logger.warning('Undecodable raw error response from server: %s', err)
 
         raise HTTP_EXCEPTIONS.get(status_code, TransportError)(status_code, error_message, additional_info)
 

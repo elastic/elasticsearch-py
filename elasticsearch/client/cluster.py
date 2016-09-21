@@ -2,7 +2,7 @@ from .utils import NamespacedClient, query_params, _make_path
 
 class ClusterClient(NamespacedClient):
     @query_params('level', 'local', 'master_timeout', 'timeout',
-        'wait_for_active_shards', 'wait_for_nodes',
+        'wait_for_active_shards', 'wait_for_events', 'wait_for_nodes',
         'wait_for_relocating_shards', 'wait_for_status')
     def health(self, index=None, params=None):
         """
@@ -19,6 +19,9 @@ class ClusterClient(NamespacedClient):
         :arg timeout: Explicit operation timeout
         :arg wait_for_active_shards: Wait until the specified number of shards
             is active
+        :arg wait_for_events: Wait until all currently queued events with the
+            given priorty are processed, valid choices are: 'immediate',
+            'urgent', 'high', 'normal', 'low', 'languid'
         :arg wait_for_nodes: Wait until the specified number of nodes is
             available
         :arg wait_for_relocating_shards: Wait until the specified number of
@@ -26,9 +29,8 @@ class ClusterClient(NamespacedClient):
         :arg wait_for_status: Wait until cluster is in a specific state, default
             None, valid choices are: 'green', 'yellow', 'red'
         """
-        _, data = self.transport.perform_request('GET', _make_path('_cluster',
+        return self.transport.perform_request('GET', _make_path('_cluster',
             'health', index), params=params)
-        return data
 
     @query_params('local', 'master_timeout')
     def pending_tasks(self, params=None):
@@ -42,9 +44,8 @@ class ClusterClient(NamespacedClient):
             master node (default: false)
         :arg master_timeout: Specify timeout for connection to master
         """
-        _, data = self.transport.perform_request('GET',
+        return self.transport.perform_request('GET',
             '/_cluster/pending_tasks', params=params)
-        return data
 
     @query_params('allow_no_indices', 'expand_wildcards', 'flat_settings',
         'ignore_unavailable', 'local', 'master_timeout')
@@ -71,9 +72,8 @@ class ClusterClient(NamespacedClient):
         """
         if index and not metric:
             metric = '_all'
-        _, data = self.transport.perform_request('GET', _make_path('_cluster',
+        return self.transport.perform_request('GET', _make_path('_cluster',
             'state', metric, index), params=params)
-        return data
 
     @query_params('flat_settings', 'human', 'timeout')
     def stats(self, node_id=None, params=None):
@@ -95,10 +95,10 @@ class ClusterClient(NamespacedClient):
         url = '/_cluster/stats'
         if node_id:
             url = _make_path('_cluster/stats/nodes', node_id)
-        _, data = self.transport.perform_request('GET', url, params=params)
-        return data
+        return self.transport.perform_request('GET', url, params=params)
 
-    @query_params('dry_run', 'explain', 'master_timeout', 'metric', 'timeout')
+    @query_params('dry_run', 'explain', 'master_timeout', 'metric',
+        'retry_failed', 'timeout')
     def reroute(self, body=None, params=None):
         """
         Explicitly execute a cluster reroute allocation command including specific commands.
@@ -114,26 +114,29 @@ class ClusterClient(NamespacedClient):
         :arg metric: Limit the information returned to the specified metrics.
             Defaults to all but metadata, valid choices are: '_all', 'blocks',
             'metadata', 'nodes', 'routing_table', 'master_node', 'version'
+        :arg retry_failed: Retries allocation of shards that are blocked due to
+            too many subsequent allocation failures
         :arg timeout: Explicit operation timeout
         """
-        _, data = self.transport.perform_request('POST', '/_cluster/reroute',
+        return self.transport.perform_request('POST', '/_cluster/reroute',
             params=params, body=body)
-        return data
 
-    @query_params('flat_settings', 'master_timeout', 'timeout')
+    @query_params('flat_settings', 'include_defaults', 'master_timeout',
+        'timeout')
     def get_settings(self, params=None):
         """
         Get cluster settings.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-update-settings.html>`_
 
         :arg flat_settings: Return settings in flat format (default: false)
+        :arg include_defaults: Whether to return all default clusters setting.,
+            default False
         :arg master_timeout: Explicit operation timeout for connection to master
             node
         :arg timeout: Explicit operation timeout
         """
-        _, data = self.transport.perform_request('GET', '/_cluster/settings',
+        return self.transport.perform_request('GET', '/_cluster/settings',
             params=params)
-        return data
 
     @query_params('flat_settings', 'master_timeout', 'timeout')
     def put_settings(self, body=None, params=None):
@@ -148,7 +151,22 @@ class ClusterClient(NamespacedClient):
             node
         :arg timeout: Explicit operation timeout
         """
-        _, data = self.transport.perform_request('PUT', '/_cluster/settings',
+        return self.transport.perform_request('PUT', '/_cluster/settings',
             params=params, body=body)
-        return data
+
+    @query_params('include_disk_info', 'include_yes_decisions')
+    def allocation_explain(self, body=None, params=None):
+        """
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-allocation-explain.html>`_
+
+        :arg body: The index, shard, and primary flag to explain. Empty means
+            'explain the first unassigned shard'
+        :arg include_disk_info: Return information about disk usage and shard
+            sizes (default: false)
+        :arg include_yes_decisions: Return 'YES' decisions in explanation
+            (default: false)
+        """
+        return self.transport.perform_request('GET',
+            '/_cluster/allocation/explain', params=params, body=body)
+
 

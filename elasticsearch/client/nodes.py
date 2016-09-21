@@ -19,9 +19,8 @@ class NodesClient(NamespacedClient):
             format., default False
         :arg timeout: Explicit operation timeout
         """
-        _, data = self.transport.perform_request('GET', _make_path('_nodes',
+        return self.transport.perform_request('GET', _make_path('_nodes',
             node_id, metric), params=params)
-        return data
 
     @query_params('completion_fields', 'fielddata_fields', 'fields', 'groups',
         'human', 'level', 'timeout', 'types')
@@ -56,9 +55,8 @@ class NodesClient(NamespacedClient):
         :arg types: A comma-separated list of document types for the `indexing`
             index metric
         """
-        _, data = self.transport.perform_request('GET', _make_path('_nodes',
+        return self.transport.perform_request('GET', _make_path('_nodes',
             node_id, 'stats', metric, index_metric), params=params)
-        return data
 
     @query_params('doc_type', 'ignore_idle_threads', 'interval', 'snapshots',
         'threads', 'timeout')
@@ -85,7 +83,5 @@ class NodesClient(NamespacedClient):
         # avoid python reserved words
         if params and 'type_' in params:
             params['type'] = params.pop('type_')
-        _, data = self.transport.perform_request('GET', _make_path('_cluster',
+        return self.transport.perform_request('GET', _make_path('_cluster',
             'nodes', node_id, 'hotthreads'), params=params)
-        return data
-

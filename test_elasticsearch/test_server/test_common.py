@@ -7,6 +7,7 @@ import re
 from os import walk, environ
 from os.path import exists, join, dirname, pardir
 import yaml
+from shutil import rmtree
 
 from elasticsearch import TransportError
 from elasticsearch.compat import string_types
@@ -29,7 +30,7 @@ CATCH_CODES = {
 }
 
 # test features we have implemented
-IMPLEMENTED_FEATURES = ('gtelte', 'stash_in_path')
+IMPLEMENTED_FEATURES = ('gtelte', 'stash_in_path', 'headers')
 
 # broken YAML tests on some releases
 SKIP_TESTS = {
@@ -47,6 +48,15 @@ class YamlTestCase(ElasticsearchTestCase):
             self.run_code(self._setup_code)
         self.last_response = None
         self._state = {}
+
+    def tearDown(self):
+        if hasattr(self, '_teardown_code'):
+            self.run_code(self._teardown_code)
+        super(YamlTestCase, self).tearDown()
+        for repo, definition in self.client.snapshot.get_repository(repository='_all').items():
+            self.client.snapshot.delete_repository(repository=repo)
+            if definition['type'] == 'fs':
+                rmtree('/tmp/%s' % definition['settings']['location'])
 
     def _resolve(self, value):
         # resolve variables
@@ -95,6 +105,9 @@ class YamlTestCase(ElasticsearchTestCase):
 
     def run_do(self, action):
         """ Perform an api call with given parameters. """
+        api = self.client
+        if 'headers' in action:
+            api = self._get_client(headers=action.pop('headers'))
 
         catch = action.pop('catch', None)
         self.assertEquals(1, len(action))
@@ -102,7 +115,6 @@ class YamlTestCase(ElasticsearchTestCase):
         method, args = list(action.items())[0]
 
         # locate api endpoint
-        api = self.client
         for m in method.split('.'):
             self.assertTrue(hasattr(api, m))
             api = getattr(api, m)
@@ -140,15 +152,19 @@ class YamlTestCase(ElasticsearchTestCase):
 
     def run_skip(self, skip):
         if 'features' in skip:
-            if skip['features'] in IMPLEMENTED_FEATURES:
-                return
-            elif skip['features'] == 'requires_replica':
-                if self._get_data_nodes() > 1:
-                    return
-            elif skip['features'] == 'benchmark':
-                if self._get_benchmark_nodes():
-                    return
-            raise SkipTest(skip.get('reason', 'Feature %s is not supported' % skip['features']))
+            features = skip['features']
+            if not isinstance(features, (tuple, list)):
+                features = [features]
+            for feature in features:
+                if feature in IMPLEMENTED_FEATURES:
+                    continue
+                elif feature == 'requires_replica':
+                    if self._get_data_nodes() > 1:
+                        continue
+                elif feature == 'benchmark':
+                    if self._get_benchmark_nodes():
+                        continue
+                raise SkipTest(skip.get('reason', 'Feature %s is not supported' % feature))
 
         if 'version' in skip:
             version, reason = skip['version'], skip['reason']
@@ -247,8 +263,8 @@ def construct_case(filename, name):
     i = 0
     for test in tests:
         for test_name, definition in test.items():
-            if test_name == 'setup':
-                attrs['_setup_code'] = definition
+            if test_name in ('setup', 'teardown'):
+                attrs['_%s_code' % test_name] = definition
                 continue
 
             attrs['test_from_yaml_%d' % i] = make_test(test_name, definition, i)

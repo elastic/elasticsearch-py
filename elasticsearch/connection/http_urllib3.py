@@ -20,7 +20,7 @@ class Urllib3HttpConnection(Connection):
     :arg use_ssl: use ssl for the connection if `True`
     :arg verify_certs: whether to verify SSL certificates
     :arg ca_certs: optional path to CA bundle. See
-        http://urllib3.readthedocs.org/en/latest/security.html#using-certifi-with-urllib3
+        https://urllib3.readthedocs.io/en/latest/security.html#using-certifi-with-urllib3
         for instructions how to get default set
     :arg client_cert: path to the file containing the private key and the
         certificate, or cert only if using client_key
@@ -33,14 +33,16 @@ class Urllib3HttpConnection(Connection):
     :arg ssl_assert_fingerprint: verify the supplied certificate fingerprint if not `None`
     :arg maxsize: the maximum number of connections which will be kept open to
         this host.
+    :arg headers: any custom http headers to be add to requests
     """
     def __init__(self, host='localhost', port=9200, http_auth=None,
             use_ssl=False, verify_certs=False, ca_certs=None, client_cert=None,
             client_key=None, ssl_version=None, ssl_assert_hostname=None,
-            ssl_assert_fingerprint=None, maxsize=10, **kwargs):
+            ssl_assert_fingerprint=None, maxsize=10, headers=None, **kwargs):
 
-        super(Urllib3HttpConnection, self).__init__(host=host, port=port, **kwargs)
-        self.headers = urllib3.make_headers(keep_alive=True)
+        super(Urllib3HttpConnection, self).__init__(host=host, port=port, use_ssl=use_ssl, **kwargs)
+        self.headers = headers.copy() if headers else {}
+        self.headers.update(urllib3.make_headers(keep_alive=True))
         if http_auth is not None:
             if isinstance(http_auth, (tuple, list)):
                 http_auth = ':'.join(http_auth)
@@ -113,3 +115,8 @@ class Urllib3HttpConnection(Connection):
 
         return response.status, response.getheaders(), raw_data
 
+    def close(self):
+        """
+        Explicitly closes connection
+        """
+        self.pool.close()

@@ -227,6 +227,12 @@ class ConnectionPool(object):
         # only one connection, no need for a selector
         return connections[0]
 
+    def close(self):
+        """
+        Explicitly closes connections
+        """
+        for conn in self.orig_connections:
+            conn.close()
 
 class DummyConnectionPool(ConnectionPool):
     def __init__(self, connections, **kwargs):
@@ -240,6 +246,12 @@ class DummyConnectionPool(ConnectionPool):
 
     def get_connection(self):
         return self.connection
+
+    def close(self):
+        """
+        Explicitly closes connections
+        """
+        self.connection.close()
 
     def _noop(self, *args, **kwargs):
         pass

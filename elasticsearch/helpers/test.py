@@ -48,7 +48,7 @@ class ElasticsearchTestCase(TestCase):
 
     def tearDown(self):
         super(ElasticsearchTestCase, self).tearDown()
-        self.client.indices.delete(index='*')
+        self.client.indices.delete(index='*', ignore=404)
         self.client.indices.delete_template(name='*', ignore=404)
 
     @property
