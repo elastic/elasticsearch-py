@@ -686,7 +686,8 @@ class Elasticsearch(object):
         'wait_for_completion')
     def delete_by_query(self, index, body, doc_type=None, params=None):
         """
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-delete-by-query.html>`_
+        Note that this API is not available below Elasticsearch 5.x.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/5.x/docs-delete-by-query.html>`_
 
         :arg index: A comma-separated list of index names to search; use `_all`
             or empty string to perform the operation on all indices
