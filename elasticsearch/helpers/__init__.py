@@ -237,7 +237,7 @@ def parallel_bulk(client, actions, thread_count=4, chunk_size=500,
         pool.join()
 
 def scan(client, query=None, scroll='5m', raise_on_error=True,
-         preserve_order=False, size=1000, request_timeout=None, **kwargs):
+         preserve_order=False, size=1000, request_timeout=None, clear_scroll=True, **kwargs):
     """
     Simple abstraction on top of the
     :meth:`~elasticsearch.Elasticsearch.scroll` api - a simple iterator that
@@ -261,6 +261,9 @@ def scan(client, query=None, scroll='5m', raise_on_error=True,
         unpredictable results, use with caution.
     :arg size: size (per shard) of the batch send at each iteration.
     :arg request_timeout: explicit timeout for each call to ``scan``
+    :arg clear_scroll: explicitly calls delete on the scroll id via the clear
+        scroll API at the end of the method on completion or error, defaults
+        to true.
 
     Any additional keyword arguments will be passed to the initial
     :meth:`~elasticsearch.Elasticsearch.search` call::
@@ -313,7 +316,7 @@ def scan(client, query=None, scroll='5m', raise_on_error=True,
             if scroll_id is None or not resp['hits']['hits']:
                 break
     finally:
-        if scroll_id:
+        if scroll_id and clear_scroll:
             client.clear_scroll(body={'scroll_id': [scroll_id]}, ignore=(404, ))
 
 def reindex(client, source_index, target_index, query=None, target_client=None,
