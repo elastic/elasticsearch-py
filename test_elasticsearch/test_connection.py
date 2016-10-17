@@ -35,9 +35,9 @@ class TestUrllib3Connection(TestCase):
         self.assertEquals({'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0',
             'connection': 'keep-alive'}, con.headers)
 
-    def test_uses_https_if_specified(self):
+    def test_uses_https_if_verify_certs_is_off(self):
         with warnings.catch_warnings(record=True) as w:
-            con = Urllib3HttpConnection(use_ssl=True)
+            con = Urllib3HttpConnection(use_ssl=True, verify_certs=False)
             self.assertEquals(1, len(w))
             self.assertEquals('Connecting to localhost using SSL with verify_certs=False is insecure.', str(w[0].message))
 
@@ -86,9 +86,9 @@ class TestRequestsConnection(TestCase):
         con = RequestsHttpConnection(timeout=42)
         self.assertEquals(42, con.timeout)
 
-    def test_use_https_if_specified(self):
+    def test_uses_https_if_verify_certs_is_off(self):
         with warnings.catch_warnings(record=True) as w:
-            con = self._get_mock_connection({'use_ssl': True, 'url_prefix': 'url'})
+            con = self._get_mock_connection({'use_ssl': True, 'url_prefix': 'url', 'verify_certs': False})
             self.assertEquals(1, len(w))
             self.assertEquals('Connecting to https://localhost:9200/url using SSL with verify_certs=False is insecure.', str(w[0].message))
 

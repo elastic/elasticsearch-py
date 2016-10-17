@@ -189,9 +189,7 @@ elasticsearch cluster, including certificate verification and http auth::
         ['localhost', 'otherhost'],
         http_auth=('user', 'secret'),
         port=443,
-        use_ssl=True,
-        verify_certs=True,
-        ca_certs=certifi.where(),
+        use_ssl=True
     )
 
     # SSL client authentication using client_cert and client_key
@@ -201,7 +199,6 @@ elasticsearch cluster, including certificate verification and http auth::
         http_auth=('user', 'secret'),
         port=443,
         use_ssl=True,
-        verify_certs=True,
         ca_certs='/path/to/cacert.pem',
         client_cert='/path/to/client_cert.pem',
         client_key='/path/to/client_key.pem',
@@ -209,10 +206,11 @@ elasticsearch cluster, including certificate verification and http auth::
 
 ..  warning::
 
-    By default SSL certificates won't be verified, pass in
-    ``verify_certs=True`` to make sure your certificates will get verified. The
-    client doesn't ship with any CA certificates; easiest way to obtain the
-    common set is by using the `certifi`_ package (as shown above).
+    ``elasticsearch-py`` doesn't ship with default set of root certificates. To
+    have working SSL certificate validation you need to either specify your own
+    as ``ca_certs`` or install `certifi`_ which will be picked up
+    automatically.
+
 
 See class :class:`~elasticsearch.Urllib3HttpConnection` for detailed
 description of the options.

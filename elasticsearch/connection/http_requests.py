@@ -27,7 +27,7 @@ class RequestsHttpConnection(Connection):
     :arg headers: any custom http headers to be add to requests
     """
     def __init__(self, host='localhost', port=9200, http_auth=None,
-        use_ssl=False, verify_certs=False, ca_certs=None, client_cert=None,
+        use_ssl=False, verify_certs=True, ca_certs=None, client_cert=None,
         client_key=None, headers=None, **kwargs):
         if not REQUESTS_AVAILABLE:
             raise ImproperlyConfigured("Please install requests to use RequestsHttpConnection.")
