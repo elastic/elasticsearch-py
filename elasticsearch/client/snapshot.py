@@ -38,7 +38,7 @@ class SnapshotClient(NamespacedClient):
         return self.transport.perform_request('DELETE',
             _make_path('_snapshot', repository, snapshot), params=params)
 
-    @query_params('master_timeout')
+    @query_params('ignore_unavailable', 'master_timeout')
     def get(self, repository, snapshot, params=None):
         """
         Retrieve information about a snapshot.
@@ -46,6 +46,8 @@ class SnapshotClient(NamespacedClient):
 
         :arg repository: A repository name
         :arg snapshot: A comma-separated list of snapshot names
+        :arg ignore_unavailable: Whether to ignore unavailable snapshots,
+            defaults to false which means a SnapshotMissingException is thrown
         :arg master_timeout: Explicit operation timeout for connection to master
             node
         """
@@ -125,7 +127,7 @@ class SnapshotClient(NamespacedClient):
         return self.transport.perform_request('POST', _make_path('_snapshot',
             repository, snapshot, '_restore'), params=params, body=body)
 
-    @query_params('master_timeout')
+    @query_params('ignore_unavailable', 'master_timeout')
     def status(self, repository=None, snapshot=None, params=None):
         """
         Return information about all currently running snapshots. By specifying
@@ -135,6 +137,8 @@ class SnapshotClient(NamespacedClient):
 
         :arg repository: A repository name
         :arg snapshot: A comma-separated list of snapshot names
+        :arg ignore_unavailable: Whether to ignore unavailable snapshots,
+            defaults to false which means a SnapshotMissingException is thrown
         :arg master_timeout: Explicit operation timeout for connection to master
             node
         """

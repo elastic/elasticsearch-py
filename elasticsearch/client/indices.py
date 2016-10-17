@@ -13,8 +13,8 @@ class IndicesClient(NamespacedClient):
         :arg analyzer: The name of the analyzer to use
         :arg attributes: A comma-separated list of token attributes to output,
             this parameter works only with `explain=true`
-        :arg char_filter: A comma-separated list of character filters to use
-            for the analysis
+        :arg char_filter: A comma-separated list of character filters to use for
+            the analysis
         :arg explain: With `true`, outputs more advanced details. (default:
             false)
         :arg field: Use the analyzer configured for this field (instead of
@@ -79,9 +79,8 @@ class IndicesClient(NamespacedClient):
             ignored when unavailable (missing or closed)
         :arg wait_if_ongoing: If set to true the flush operation will block
             until the flush can be executed if another flush operation is
-            already executing. The default is false and will cause an exception
-            to be thrown on the shard level if another flush operation is
-            already running.
+            already executing. The default is true. If set to false the flush
+            will be skipped iff if another flush operation is already running.
         """
         return self.transport.perform_request('POST', _make_path(index,
             '_flush'), params=params)

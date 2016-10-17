@@ -285,11 +285,8 @@ class TestParentChildReindex(ElasticsearchTestCase):
         q = self.client.get(
             index='real-index',
             doc_type='question',
-            id=42,
-            fields=['_source']
+            id=42
         )
-        if 'fields' in q:
-            q.update(q.pop('fields'))
         self.assertEquals(
             {
                 '_id': '42',
@@ -304,11 +301,8 @@ class TestParentChildReindex(ElasticsearchTestCase):
             index='test-index',
             doc_type='answer',
             id=47,
-            parent=42,
-            fields=['_source', '_parent']
+            parent=42
         )
-        if 'fields' in q:
-            q.update(q.pop('fields'))
         if '_routing' in q:
             self.assertEquals(q.pop('_routing'), '42')
         self.assertEquals(

@@ -250,7 +250,8 @@ class Elasticsearch(object):
         return self.index(index, doc_type, body, id=id, params=params, op_type='create')
 
     @query_params('consistency', 'op_type', 'parent', 'pipeline', 'refresh',
-        'routing', 'timeout', 'timestamp', 'ttl', 'version', 'version_type')
+        'routing', 'timeout', 'timestamp', 'ttl', 'version', 'version_type',
+        'wait_for_active_shards')
     def index(self, index, doc_type, body, id=None, params=None):
         """
         Adds or updates a typed JSON document in a specific index, making it searchable.
@@ -260,13 +261,11 @@ class Elasticsearch(object):
         :arg doc_type: The type of the document
         :arg body: The document
         :arg id: Document ID
-        :arg consistency: Explicit write consistency setting for the operation,
-            valid choices are: 'one', 'quorum', 'all'
         :arg op_type: Explicit operation type, default 'index', valid choices
             are: 'index', 'create'
         :arg parent: ID of the parent document
         :arg pipeline: The pipeline id to preprocess incoming documents with
-        :arg refresh: If `true` then refresh the effected shards to make this
+        :arg refresh: If `true` then refresh the affected shards to make this
             operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default)
             then do nothing with refreshes., valid choices are: 'true', 'false',
@@ -278,6 +277,11 @@ class Elasticsearch(object):
         :arg version: Explicit version number for concurrency control
         :arg version_type: Specific version type, valid choices are: 'internal',
             'external', 'external_gte', 'force'
+        :arg wait_for_active_shards: Sets the number of shard copies that must
+            be active before proceeding with the index operation. Defaults to 1,
+            meaning the primary shard only. Set to `all` for all shard copies,
+            otherwise set to any non-negative value less than or equal to the
+            total number of copies for the shard (number of replicas + 1)
         """
         for param in (index, doc_type, body):
             if param in SKIP_IN_PATH:
@@ -310,9 +314,9 @@ class Elasticsearch(object):
         return self.transport.perform_request('HEAD', _make_path(index,
             doc_type, id), params=params)
 
-    @query_params('_source', '_source_exclude', '_source_include', 'fields',
-        'parent', 'preference', 'realtime', 'refresh', 'routing', 'version',
-        'version_type')
+    @query_params('_source', '_source_exclude', '_source_include', 'parent',
+        'preference', 'realtime', 'refresh', 'routing', 'stored_fields',
+        'version', 'version_type')
     def get(self, index, id, doc_type='_all', params=None):
         """
         Get a typed JSON document from the index based on its id.
@@ -328,7 +332,6 @@ class Elasticsearch(object):
             _source field
         :arg _source_include: A list of fields to extract and return from the
             _source field
-        :arg fields: A comma-separated list of fields to return in the response
         :arg parent: The ID of the parent document
         :arg preference: Specify the node or shard the operation should be
             performed on (default: random)
@@ -337,6 +340,8 @@ class Elasticsearch(object):
         :arg refresh: Refresh the shard containing the document before
             performing the operation
         :arg routing: Specific routing value
+        :arg stored_fields: A comma-separated list of stored fields to return in
+            the response
         :arg version: Explicit version number for concurrency control
         :arg version_type: Specific version type, valid choices are: 'internal',
             'external', 'external_gte', 'force'
@@ -383,8 +388,8 @@ class Elasticsearch(object):
         return self.transport.perform_request('GET', _make_path(index,
             doc_type, id, '_source'), params=params)
 
-    @query_params('_source', '_source_exclude', '_source_include', 'fields',
-        'preference', 'realtime', 'refresh')
+    @query_params('_source', '_source_exclude', '_source_include', 'preference',
+        'realtime', 'refresh', 'stored_fields')
     def mget(self, body, index=None, doc_type=None, params=None):
         """
         Get multiple documents based on an index, type (optional) and ids.
@@ -401,23 +406,23 @@ class Elasticsearch(object):
             _source field
         :arg _source_include: A list of fields to extract and return from the
             _source field
-        :arg fields: A comma-separated list of fields to return in the response
         :arg preference: Specify the node or shard the operation should be
             performed on (default: random)
         :arg realtime: Specify whether to perform the operation in realtime or
             search mode
         :arg refresh: Refresh the shard containing the document before
             performing the operation
+        :arg stored_fields: A comma-separated list of stored fields to return in
+            the response
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
         return self.transport.perform_request('GET', _make_path(index,
             doc_type, '_mget'), params=params, body=body)
 
-    @query_params('consistency', 'fields', 'lang', 'parent', 'refresh',
-        'retry_on_conflict', 'routing', 'script', 'script_id',
-        'scripted_upsert', 'timeout', 'timestamp', 'ttl', 'version',
-        'version_type')
+    @query_params('_source', '_source_exclude', '_source_include', 'fields',
+        'lang', 'parent', 'refresh', 'retry_on_conflict', 'routing', 'timeout',
+        'timestamp', 'ttl', 'version', 'version_type', 'wait_for_active_shards')
     def update(self, index, doc_type, id, body=None, params=None):
         """
         Update a document based on a script or partial data provided.
@@ -427,8 +432,12 @@ class Elasticsearch(object):
         :arg doc_type: The type of the document
         :arg id: Document ID
         :arg body: The request definition using either `script` or partial `doc`
-        :arg consistency: Explicit write consistency setting for the operation,
-            valid choices are: 'one', 'quorum', 'all'
+        :arg _source: True or false to return the _source field or not, or a
+            list of fields to return
+        :arg _source_exclude: A list of fields to exclude from the returned
+            _source field
+        :arg _source_include: A list of fields to extract and return from the
+            _source field
         :arg fields: A comma-separated list of fields to return in the response
         :arg lang: The script language (default: groovy)
         :arg parent: ID of the parent document. Is is only used for routing and
@@ -441,17 +450,17 @@ class Elasticsearch(object):
         :arg retry_on_conflict: Specify how many times should the operation be
             retried when a conflict occurs (default: 0)
         :arg routing: Specific routing value
-        :arg script: The URL-encoded script definition (instead of using request
-            body)
-        :arg script_id: The id of a stored script
-        :arg scripted_upsert: True if the script referenced in script or
-            script_id should be called to perform inserts - defaults to false
         :arg timeout: Explicit operation timeout
         :arg timestamp: Explicit timestamp for the document
         :arg ttl: Expiration time for the document
         :arg version: Explicit version number for concurrency control
         :arg version_type: Specific version type, valid choices are: 'internal',
             'force'
+        :arg wait_for_active_shards: Sets the number of shard copies that must
+            be active before proceeding with the update operation. Defaults to
+            1, meaning the primary shard only. Set to `all` for all shard
+            copies, otherwise set to any non-negative value less than or equal
+            to the total number of copies for the shard (number of replicas + 1)
         """
         for param in (index, doc_type, id):
             if param in SKIP_IN_PATH:
@@ -551,16 +560,17 @@ class Elasticsearch(object):
 
     @query_params('_source', '_source_exclude', '_source_include',
         'allow_no_indices', 'analyze_wildcard', 'analyzer', 'conflicts',
-        'consistency', 'default_operator', 'df', 'expand_wildcards', 'explain',
-        'fielddata_fields', 'fields', 'from_', 'ignore_unavailable', 'lenient',
+        'default_operator', 'df', 'docvalue_fields', 'expand_wildcards',
+        'explain', 'fielddata_fields', 'from_', 'ignore_unavailable', 'lenient',
         'lowercase_expanded_terms', 'pipeline', 'preference', 'q', 'refresh',
         'request_cache', 'requests_per_second', 'routing', 'scroll',
         'scroll_size', 'search_timeout', 'search_type', 'size', 'sort', 'stats',
-        'suggest_field', 'suggest_mode', 'suggest_size', 'suggest_text',
-        'terminate_after', 'timeout', 'track_scores', 'version', 'version_type',
-        'wait_for_completion')
+        'stored_fields', 'suggest_field', 'suggest_mode', 'suggest_size',
+        'suggest_text', 'terminate_after', 'timeout', 'track_scores', 'version',
+        'version_type', 'wait_for_active_shards', 'wait_for_completion')
     def update_by_query(self, index, doc_type=None, body=None, params=None):
         """
+        Perform an update on all documents matching a query.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update-by-query.html>`_
 
         :arg index: A comma-separated list of index names to search; use `_all`
@@ -582,21 +592,20 @@ class Elasticsearch(object):
         :arg analyzer: The analyzer to use for the query string
         :arg conflicts: What to do when the reindex hits version conflicts?,
             default 'abort', valid choices are: 'abort', 'proceed'
-        :arg consistency: Explicit write consistency setting for the operation,
-            valid choices are: 'one', 'quorum', 'all'
         :arg default_operator: The default operator for query string query (AND
             or OR), default 'OR', valid choices are: 'AND', 'OR'
         :arg df: The field to use as default where no field prefix is given in
             the query string
+        :arg docvalue_fields: A comma-separated list of fields to return as the
+            docvalue representation of a field for each hit
         :arg expand_wildcards: Whether to expand wildcard expression to concrete
             indices that are open, closed or both., default 'open', valid
             choices are: 'open', 'closed', 'none', 'all'
         :arg explain: Specify whether to return detailed information about score
             computation as part of a hit
         :arg fielddata_fields: A comma-separated list of fields to return as the
-            field data representation of a field for each hit
-        :arg fields: A comma-separated list of fields to return as part of a hit
-        :arg from_: Starting offset (default: 0)
+            docvalue representation of a field for each hit
+        :arg from\_: Starting offset (default: 0)
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
         :arg lenient: Specify whether format-based query failures (such as
@@ -611,8 +620,9 @@ class Elasticsearch(object):
         :arg refresh: Should the effected indexes be refreshed?
         :arg request_cache: Specify if request cache should be used for this
             request or not, defaults to index level setting
-        :arg requests_per_second: The throttle for this request in sub-requests
-            per second. 0 means set no throttle., default 0
+        :arg requests_per_second: The throttle to set on this request in sub-
+            requests per second. -1 means set no throttle as does "unlimited"
+            which is the only non-float this accepts., default 0
         :arg routing: A comma-separated list of specific routing values
         :arg scroll: Specify how long a consistent view of the index should be
             maintained for scrolled search
@@ -626,6 +636,8 @@ class Elasticsearch(object):
         :arg sort: A comma-separated list of <field>:<direction> pairs
         :arg stats: Specific 'tag' of the request for logging and statistical
             purposes
+        :arg stored_fields: A comma-separated list of stored fields to return as
+            part of a hit
         :arg suggest_field: Specify which field to use for suggestions
         :arg suggest_mode: Specify suggest mode, default 'missing', valid
             choices are: 'missing', 'popular', 'always'
@@ -643,6 +655,12 @@ class Elasticsearch(object):
             hit
         :arg version_type: Should the document increment the version number
             (internal) on hit or not (reindex)
+        :arg wait_for_active_shards: Sets the number of shard copies that must
+            be active before proceeding with the update by query operation.
+            Defaults to 1, meaning the primary shard only. Set to `all` for all
+            shard copies, otherwise set to any non-negative value less than or
+            equal to the total number of copies for the shard (number of
+            replicas + 1)
         :arg wait_for_completion: Should the request should block until the
             reindex is complete., default False
         """
@@ -651,21 +669,26 @@ class Elasticsearch(object):
         return self.transport.perform_request('POST', _make_path(index,
             doc_type, '_update_by_query'), params=params, body=body)
 
-    @query_params('consistency', 'refresh', 'requests_per_second', 'timeout',
-        'wait_for_completion')
+    @query_params('refresh', 'requests_per_second', 'timeout',
+        'wait_for_active_shards', 'wait_for_completion')
     def reindex(self, body, params=None):
         """
+        Reindex all documents from one index to another.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-reindex.html>`_
 
         :arg body: The search definition using the Query DSL and the prototype
             for the index request.
-        :arg consistency: Explicit write consistency setting for the operation,
-            valid choices are: 'one', 'quorum', 'all'
         :arg refresh: Should the effected indexes be refreshed?
-        :arg requests_per_second: The throttle for this request in sub-requests
-            per second. 0 means set no throttle., default 0
+        :arg requests_per_second: The throttle to set on this request in sub-
+            requests per second. -1 means set no throttle as does "unlimited"
+            which is the only non-float this accepts., default 0
         :arg timeout: Time each individual bulk request should wait for shards
             that are unavailable., default '1m'
+        :arg wait_for_active_shards: Sets the number of shard copies that must
+            be active before proceeding with the reindex operation. Defaults to
+            1, meaning the primary shard only. Set to `all` for all shard
+            copies, otherwise set to any non-negative value less than or equal
+            to the total number of copies for the shard (number of replicas + 1)
         :arg wait_for_completion: Should the request should block until the
             reindex is complete., default False
         """
@@ -674,18 +697,33 @@ class Elasticsearch(object):
         return self.transport.perform_request('POST', '/_reindex',
             params=params, body=body)
 
+
+    @query_params('requests_per_second')
+    def reindex_rethrottle(self, task_id=None, params=None):
+        """
+        Change the value of ``requests_per_second`` of a running ``reindex`` task.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-reindex.html>`_
+
+        :arg task_id: The task id to rethrottle
+        :arg requests_per_second: The throttle to set on this request in
+            floating sub-requests per second. -1 means set no throttle.
+        """
+        return self.transport.perform_request('POST', _make_path('_reindex',
+            task_id, '_rethrottle'), params=params)
+
     @query_params('_source', '_source_exclude', '_source_include',
         'allow_no_indices', 'analyze_wildcard', 'analyzer', 'conflicts',
-        'consistency', 'default_operator', 'df', 'expand_wildcards', 'explain',
-        'fielddata_fields', 'fields', 'from_', 'ignore_unavailable', 'lenient',
+        'default_operator', 'df', 'docvalue_fields', 'expand_wildcards',
+        'explain', 'from_', 'ignore_unavailable', 'lenient',
         'lowercase_expanded_terms', 'preference', 'q', 'refresh',
         'request_cache', 'requests_per_second', 'routing', 'scroll',
         'scroll_size', 'search_timeout', 'search_type', 'size', 'sort', 'stats',
-        'suggest_field', 'suggest_mode', 'suggest_size', 'suggest_text',
-        'terminate_after', 'timeout', 'track_scores', 'version',
-        'wait_for_completion')
+        'stored_fields', 'suggest_field', 'suggest_mode', 'suggest_size',
+        'suggest_text', 'terminate_after', 'timeout', 'track_scores', 'version',
+        'wait_for_active_shards', 'wait_for_completion')
     def delete_by_query(self, index, body, doc_type=None, params=None):
         """
+        Delete all documents matching a query.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-delete-by-query.html>`_
 
         :arg index: A comma-separated list of index names to search; use `_all`
@@ -707,21 +745,18 @@ class Elasticsearch(object):
         :arg analyzer: The analyzer to use for the query string
         :arg conflicts: What to do when the delete-by-query hits version
             conflicts?, default 'abort', valid choices are: 'abort', 'proceed'
-        :arg consistency: Explicit write consistency setting for the operation,
-            valid choices are: 'one', 'quorum', 'all'
         :arg default_operator: The default operator for query string query (AND
             or OR), default 'OR', valid choices are: 'AND', 'OR'
         :arg df: The field to use as default where no field prefix is given in
             the query string
+        :arg docvalue_fields: A comma-separated list of fields to return as the
+            docvalue representation of a field for each hit
         :arg expand_wildcards: Whether to expand wildcard expression to concrete
             indices that are open, closed or both., default 'open', valid
             choices are: 'open', 'closed', 'none', 'all'
         :arg explain: Specify whether to return detailed information about score
             computation as part of a hit
-        :arg fielddata_fields: A comma-separated list of fields to return as the
-            field data representation of a field for each hit
-        :arg fields: A comma-separated list of fields to return as part of a hit
-        :arg from_: Starting offset (default: 0)
+        :arg from\_: Starting offset (default: 0)
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
         :arg lenient: Specify whether format-based query failures (such as
@@ -735,7 +770,7 @@ class Elasticsearch(object):
         :arg request_cache: Specify if request cache should be used for this
             request or not, defaults to index level setting
         :arg requests_per_second: The throttle for this request in sub-requests
-            per second. 0 means set no throttle., default 0
+            per second. -1 means set no throttle., default 0
         :arg routing: A comma-separated list of specific routing values
         :arg scroll: Specify how long a consistent view of the index should be
             maintained for scrolled search
@@ -749,6 +784,8 @@ class Elasticsearch(object):
         :arg sort: A comma-separated list of <field>:<direction> pairs
         :arg stats: Specific 'tag' of the request for logging and statistical
             purposes
+        :arg stored_fields: A comma-separated list of stored fields to return as
+            part of a hit
         :arg suggest_field: Specify which field to use for suggestions
         :arg suggest_mode: Specify suggest mode, default 'missing', valid
             choices are: 'missing', 'popular', 'always'
@@ -764,6 +801,12 @@ class Elasticsearch(object):
             are not used for sorting
         :arg version: Specify whether to return document version as part of a
             hit
+        :arg wait_for_active_shards: Sets the number of shard copies that must
+            be active before proceeding with the delete by query operation.
+            Defaults to 1, meaning the primary shard only. Set to `all` for all
+            shard copies, otherwise set to any non-negative value less than or
+            equal to the total number of copies for the shard (number of
+            replicas + 1)
         :arg wait_for_completion: Should the request should block until the
             delete-by-query is complete., default False
         """
@@ -837,9 +880,9 @@ class Elasticsearch(object):
             doc_type, '_search', 'template'), params=params, body=body)
 
     @query_params('_source', '_source_exclude', '_source_include',
-        'analyze_wildcard', 'analyzer', 'default_operator', 'df', 'fields',
-        'lenient', 'lowercase_expanded_terms', 'parent', 'preference', 'q',
-        'routing')
+        'analyze_wildcard', 'analyzer', 'default_operator', 'df', 'lenient',
+        'lowercase_expanded_terms', 'parent', 'preference', 'q', 'routing',
+        'stored_fields')
     def explain(self, index, doc_type, id, body=None, params=None):
         """
         The explain api computes a score explanation for a query and a specific
@@ -863,7 +906,6 @@ class Elasticsearch(object):
         :arg default_operator: The default operator for query string query (AND
             or OR), default 'OR', valid choices are: 'AND', 'OR'
         :arg df: The default field for query string query (default: _all)
-        :arg fields: A comma-separated list of fields to return in the response
         :arg lenient: Specify whether format-based query failures (such as
             providing text to a numeric field) should be ignored
         :arg lowercase_expanded_terms: Specify whether query terms should be
@@ -873,6 +915,8 @@ class Elasticsearch(object):
             performed on (default: random)
         :arg q: Query in the Lucene query string syntax
         :arg routing: Specific routing value
+        :arg stored_fields: A comma-separated list of stored fields to return in
+            the response
         """
         for param in (index, doc_type, id):
             if param in SKIP_IN_PATH:
@@ -1000,8 +1044,8 @@ class Elasticsearch(object):
         return self.transport.perform_request('GET', _make_path(index,
             doc_type, '_count'), params=params, body=body)
 
-    @query_params('fields', 'pipeline', 'refresh', 'routing', 'timeout',
-        'wait_for_active_shards')
+    @query_params('_source', '_source_exclude', '_source_include', 'fields',
+        'pipeline', 'refresh', 'routing', 'timeout', 'wait_for_active_shards')
     def bulk(self, body, index=None, doc_type=None, params=None):
         """
         Perform many index/delete operations in a single API call.
@@ -1014,8 +1058,15 @@ class Elasticsearch(object):
             separated by newlines
         :arg index: Default index for items which don't provide one
         :arg doc_type: Default document type for items which don't provide one
+        :arg _source: True or false to return the _source field or not, or
+            default list of fields to return, can be overridden on each sub-
+            request
+        :arg _source_exclude: Default list of fields to exclude from the
+            returned _source field, can be overridden on each sub-request
+        :arg _source_include: Default list of fields to extract and return from
+            the _source field, can be overridden on each sub-request
         :arg fields: Default comma-separated list of fields to return in the
-            response for updates
+            response for updates, can be overridden on each sub-request
         :arg pipeline: The pipeline id to preprocess incoming documents with
         :arg refresh: If `true` then refresh the effected shards to make this
             operation visible to search, if `wait_for` then wait for a refresh

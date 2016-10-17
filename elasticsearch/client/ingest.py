@@ -2,7 +2,7 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 class IngestClient(NamespacedClient):
     @query_params('master_timeout')
-    def get_pipeline(self, id, params=None):
+    def get_pipeline(self, id=None, params=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/plugins/current/ingest.html>`_
 
@@ -10,8 +10,6 @@ class IngestClient(NamespacedClient):
         :arg master_timeout: Explicit operation timeout for connection to master
             node
         """
-        if id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'id'.")
         return self.transport.perform_request('GET', _make_path('_ingest',
             'pipeline', id), params=params)
 

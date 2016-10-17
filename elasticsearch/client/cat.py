@@ -90,7 +90,8 @@ class CatClient(NamespacedClient):
         """
         return self.transport.perform_request('GET', '/_cat', params=params)
 
-    @query_params('bytes', 'h', 'help', 'local', 'master_timeout', 'pri', 'v')
+    @query_params('bytes', 'format', 'h', 'health', 'help', 'local',
+        'master_timeout', 'pri', 'v')
     def indices(self, index=None, params=None):
         """
         The indices command provides a cross-section of each index.
@@ -101,6 +102,9 @@ class CatClient(NamespacedClient):
         :arg bytes: The unit in which to display byte values, valid choices are:
             'b', 'k', 'm', 'g'
         :arg h: Comma-separated list of column names to display
+        :arg health: A health status ("green", "yellow", or "red" to filter only
+            indices matching the specified health status, default None, valid
+            choices are: 'green', 'yellow', 'red'
         :arg help: Return help information, default False
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
@@ -312,7 +316,7 @@ class CatClient(NamespacedClient):
             params=params)
 
     @query_params('h', 'help', 'ignore_unavailable', 'master_timeout', 'v')
-    def snapshots(self, repository, params=None):
+    def snapshots(self, repository=None, params=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cat-snapshots.html>`_
 
@@ -326,8 +330,6 @@ class CatClient(NamespacedClient):
             node
         :arg v: Verbose mode. Display column headers, default False
         """
-        if repository in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'repository'.")
         return self.transport.perform_request('GET', _make_path('_cat',
             'snapshots', repository), params=params)
 

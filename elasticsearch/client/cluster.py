@@ -2,8 +2,8 @@ from .utils import NamespacedClient, query_params, _make_path
 
 class ClusterClient(NamespacedClient):
     @query_params('level', 'local', 'master_timeout', 'timeout',
-        'wait_for_active_shards', 'wait_for_events', 'wait_for_nodes',
-        'wait_for_relocating_shards', 'wait_for_status')
+        'wait_for_active_shards', 'wait_for_events',
+        'wait_for_no_relocating_shards', 'wait_for_nodes', 'wait_for_status')
     def health(self, index=None, params=None):
         """
         Get a very simple status on the health of the cluster.
@@ -22,10 +22,10 @@ class ClusterClient(NamespacedClient):
         :arg wait_for_events: Wait until all currently queued events with the
             given priorty are processed, valid choices are: 'immediate',
             'urgent', 'high', 'normal', 'low', 'languid'
+        :arg wait_for_no_relocating_shards: Whether to wait until there are no
+            relocating shards in the cluster
         :arg wait_for_nodes: Wait until the specified number of nodes is
             available
-        :arg wait_for_relocating_shards: Wait until the specified number of
-            relocating shards is finished
         :arg wait_for_status: Wait until cluster is in a specific state, default
             None, valid choices are: 'green', 'yellow', 'red'
         """
