@@ -39,8 +39,9 @@ class Urllib3HttpConnection(Connection):
         ``ssl`` module for exact options for your environment).
     :arg ssl_assert_hostname: use hostname verification if not `False`
     :arg ssl_assert_fingerprint: verify the supplied certificate fingerprint if not `None`
-    :arg maxsize: the maximum number of connections which will be kept open to
-        this host.
+    :arg maxsize: the number of connections which will be kept open to this
+        host. See https://urllib3.readthedocs.io/en/1.4/pools.html#api for more
+        information.
     :arg headers: any custom http headers to be add to requests
     """
     def __init__(self, host='localhost', port=9200, http_auth=None,
