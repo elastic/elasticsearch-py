@@ -327,6 +327,12 @@ def reindex(client, source_index, target_index, query=None, target_client=None,
     to another, potentially (if `target_client` is specified) on a different cluster.
     If you don't specify the query you will reindex all the documents.
 
+    Since ``2.3`` a :meth:`~elasticsearch.Elasticsearch.reindex` api is
+    available as part of elasticsearch itself. It is recommended to use the api
+    instead of this helper wherever possible. The helper is here mostly for
+    backwards compatibility and for situations where more flexibility is
+    needed.
+
     .. note::
 
         This helper doesn't transfer mappings, just the data.
