@@ -45,16 +45,30 @@ class Connection(object):
     def __repr__(self):
         return '<%s: %s>' % (self.__class__.__name__, self.host)
 
+    def _pretty_json(self, data):
+        # pretty JSON in tracer curl logs
+        try:
+            return json.dumps(json.loads(data), sort_keys=True, indent=2, separators=(',', ': ')).replace("'", r'\u0027')
+        except (ValueError, TypeError):
+            # non-json data or a bulk request
+            return data
+
+    def _log_trace(self, method, path, body, status_code, response, duration):
+        if not tracer.isEnabledFor(logging.INFO) or not tracer.handlers:
+            return
+
+        # include pretty in trace curls
+        path = path.replace('?', '?pretty&', 1) if '?' in path else path + '?pretty'
+        if self.url_prefix:
+            path = path.replace(self.url_prefix, '', 1)
+        tracer.info("curl -X%s 'http://localhost:9200%s' -d '%s'", method, path, self._pretty_json(body) if body else '')
+
+        if tracer.isEnabledFor(logging.DEBUG):
+            tracer.debug('#[%s] (%.3fs)\n#%s', status_code, duration, self._pretty_json(response).replace('\n', '\n#') if response else '')
+
     def log_request_success(self, method, full_url, path, body, status_code, response, duration):
         """ Log a successful API call.  """
         #  TODO: optionally pass in params instead of full_url and do urlencode only when needed
-        def _pretty_json(data):
-            # pretty JSON in tracer curl logs
-            try:
-                return json.dumps(json.loads(data), sort_keys=True, indent=2, separators=(',', ': ')).replace("'", r'\u0027')
-            except (ValueError, TypeError):
-                # non-json data or a bulk request
-                return data
 
         # body has already been serialized to utf-8, deserialize it for logging
         # TODO: find a better way to avoid (de)encoding the body back and forth
@@ -68,17 +82,9 @@ class Connection(object):
         logger.debug('> %s', body)
         logger.debug('< %s', response)
 
-        if tracer.isEnabledFor(logging.INFO) and tracer.handlers:
-            # include pretty in trace curls
-            path = path.replace('?', '?pretty&', 1) if '?' in path else path + '?pretty'
-            if self.url_prefix:
-                path = path.replace(self.url_prefix, '', 1)
-            tracer.info("curl -X%s 'http://localhost:9200%s' -d '%s'", method, path, _pretty_json(body) if body else '')
+        self._log_trace(method, path, body, status_code, response, duration)
 
-        if tracer.isEnabledFor(logging.DEBUG):
-            tracer.debug('#[%s] (%.3fs)\n#%s', status_code, duration, _pretty_json(response).replace('\n', '\n#') if response else '')
-
-    def log_request_fail(self, method, full_url, body, duration, status_code=None, response=None, exception=None):
+    def log_request_fail(self, method, full_url, path, body, duration, status_code=None, response=None, exception=None):
         """ Log an unsuccessful API call.  """
         # do not log 404s on HEAD requests
         if method == 'HEAD' and status_code == 404:
@@ -94,6 +100,8 @@ class Connection(object):
             body = body.decode('utf-8')
 
         logger.debug('> %s', body)
+
+        self._log_trace(method, path, body, status_code, response, duration)
 
         if response is not None:
             logger.debug('< %s', response)

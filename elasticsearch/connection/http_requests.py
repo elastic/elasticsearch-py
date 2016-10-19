@@ -71,18 +71,18 @@ class RequestsHttpConnection(Connection):
             duration = time.time() - start
             raw_data = response.text
         except requests.exceptions.SSLError as e:
-            self.log_request_fail(method, url, body, time.time() - start, exception=e)
+            self.log_request_fail(method, url, response.request.path_url, body, time.time() - start, exception=e)
             raise SSLError('N/A', str(e), e)
         except requests.Timeout as e:
-            self.log_request_fail(method, url, body, time.time() - start, exception=e)
+            self.log_request_fail(method, url, response.request.path_url, body, time.time() - start, exception=e)
             raise ConnectionTimeout('TIMEOUT', str(e), e)
         except requests.ConnectionError as e:
-            self.log_request_fail(method, url, body, time.time() - start, exception=e)
+            self.log_request_fail(method, url, response.request.path_url, body, time.time() - start, exception=e)
             raise ConnectionError('N/A', str(e), e)
 
         # raise errors based on http status codes, let the client handle those if needed
         if not (200 <= response.status_code < 300) and response.status_code not in ignore:
-            self.log_request_fail(method, url, body, duration, response.status_code, raw_data)
+            self.log_request_fail(method, url, response.request.path_url, body, duration, response.status_code, raw_data)
             self._raise_error(response.status_code, raw_data)
 
         self.log_request_success(method, url, response.request.path_url, body, response.status_code, raw_data, duration)

@@ -138,10 +138,10 @@ class TestRequestsConnection(TestCase):
         con = self._get_mock_connection(response_body='{"answer": 42}', status_code=500)
         self.assertRaises(TransportError, con.perform_request, 'GET', '/', {'param': 42}, '{}'.encode('utf-8'))
 
-        # no trace request
-        self.assertEquals(0, tracer.info.call_count)
-        # no trace response
-        self.assertEquals(0, tracer.debug.call_count)
+        # trace request
+        self.assertEquals(1, tracer.info.call_count)
+        # trace response
+        self.assertEquals(1, tracer.debug.call_count)
         # log url and duration
         self.assertEquals(1, logger.warning.call_count)
         self.assertTrue(re.match(

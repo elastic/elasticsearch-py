@@ -10,6 +10,9 @@ Version compatible with elasticsearch 5.0
 
  * when using SSL certificate validation is now on by default. Install
    ``certifi`` or supply root certificate bundle.
+ * ``elasticsearch.trace`` logger now also logs failed requests, signature of
+   internal logging method ``log_request_fail`` has changed, all custom
+   connection classes need to be updated
  * added ``headers`` arg to connections to support custom http headers
  * passing in a keyword parameter with ``None`` as value will cause that param
    to be ignored 
