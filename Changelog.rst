@@ -3,8 +3,8 @@
 Changelog
 =========
 
-5.0.0 (dev)
------------
+5.0.0 (2016-10-19)
+------------------
 
 Version compatible with elasticsearch 5.0
 
