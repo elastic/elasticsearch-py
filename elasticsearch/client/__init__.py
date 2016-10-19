@@ -221,9 +221,9 @@ class Elasticsearch(object):
         """
         return self.transport.perform_request('GET', '/', params=params)
 
-    @query_params('consistency', 'parent', 'pipeline', 'refresh', 'routing',
+    @query_params('parent', 'pipeline', 'refresh', 'routing',
         'timeout', 'timestamp', 'ttl', 'version', 'version_type')
-    def create(self, index, doc_type, body, id=None, params=None):
+    def create(self, index, doc_type, id, body, params=None):
         """
         Adds a typed JSON document in a specific index, making it searchable.
         Behind the scenes this method calls index(..., op_type='create')
@@ -231,26 +231,36 @@ class Elasticsearch(object):
 
         :arg index: The name of the index
         :arg doc_type: The type of the document
-        :arg body: The document
         :arg id: Document ID
-        :arg consistency: Explicit write consistency setting for the operation,
-            valid choices are: 'one', 'quorum', 'all'
-        :arg op_type: Explicit operation type, default 'index', valid choices
-            are: 'index', 'create'
+        :arg body: The document
         :arg parent: ID of the parent document
-        :arg refresh: Refresh the index after performing the operation
+        :arg pipeline: The pipeline id to preprocess incoming documents with
+        :arg refresh: If `true` then refresh the affected shards to make this
+            operation visible to search, if `wait_for` then wait for a refresh
+            to make this operation visible to search, if `false` (the default)
+            then do nothing with refreshes., valid choices are: u'true',
+            u'false', u'wait_for'
         :arg routing: Specific routing value
         :arg timeout: Explicit operation timeout
         :arg timestamp: Explicit timestamp for the document
         :arg ttl: Expiration time for the document
         :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type, valid choices are: 'internal',
-            'external', 'external_gte', 'force'
+        :arg version_type: Specific version type, valid choices are:
+            u'internal', u'external', u'external_gte', u'force'
+        :arg wait_for_active_shards: Sets the number of shard copies that must
+            be active before proceeding with the index operation. Defaults to 1,
+            meaning the primary shard only. Set to `all` for all shard copies,
+            otherwise set to any non-negative value less than or equal to the
+            total number of copies for the shard (number of replicas + 1)
         """
-        return self.index(index, doc_type, body, id=id, params=params, op_type='create')
+        for param in (index, doc_type, id, body):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
+        return self.transport.perform_request('PUT', _make_path(index, doc_type,
+            id, '_create'), params=params, body=body)
 
-    @query_params('consistency', 'op_type', 'parent', 'pipeline', 'refresh',
-        'routing', 'timeout', 'timestamp', 'ttl', 'version', 'version_type',
+    @query_params('op_type', 'parent', 'pipeline', 'refresh', 'routing',
+        'timeout', 'timestamp', 'ttl', 'version', 'version_type',
         'wait_for_active_shards')
     def index(self, index, doc_type, body, id=None, params=None):
         """
@@ -268,8 +278,8 @@ class Elasticsearch(object):
         :arg refresh: If `true` then refresh the affected shards to make this
             operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default)
-            then do nothing with refreshes., valid choices are: 'true', 'false',
-            'wait_for'
+            then do nothing with refreshes., valid choices are: u'true',
+            u'false', u'wait_for'
         :arg routing: Specific routing value
         :arg timeout: Explicit operation timeout
         :arg timestamp: Explicit timestamp for the document
@@ -696,7 +706,6 @@ class Elasticsearch(object):
             raise ValueError("Empty value passed for a required argument 'body'.")
         return self.transport.perform_request('POST', '/_reindex',
             params=params, body=body)
-
 
     @query_params('requests_per_second')
     def reindex_rethrottle(self, task_id=None, params=None):
