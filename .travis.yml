@@ -1,6 +1,6 @@
+sudo: required
+dist: trusty
 language: python
-
-sudo: false
 
 python:
   - "2.6"
@@ -9,8 +9,8 @@ python:
   - "3.4"
   - "3.5"
 
-jdk:
-  - "oraclejdk8"
+before_install:
+  - jdk_switcher use oraclejdk8
 
 env:
   # different connection classes to test
