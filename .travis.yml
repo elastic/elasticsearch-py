@@ -11,6 +11,10 @@ python:
 
 before_install:
   - jdk_switcher use oraclejdk8
+  - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.0.0-rc1.deb && sudo dpkg -i --force-confnew elasticsearch-5.0.0-rc1.deb && sudo service elasticsearch restart
+
+before_script:
+  - sleep 10
 
 env:
   # different connection classes to test
@@ -18,10 +22,6 @@ env:
   - TEST_ES_CONNECTION=RequestsHttpConnection
 
 install:
-  - wget -O /tmp/es-snap.zip "https://oss.sonatype.org/service/local/artifact/maven/redirect?r=snapshots&g=org.elasticsearch.distribution.zip&a=elasticsearch&e=zip&v=5.0.0-SNAPSHOT"
-  - unzip /tmp/es-snap.zip -d /tmp/
-  - mv /tmp/elasticsearch-5.0.0-SNAPSHOT /tmp/elasticsearch
-  - /tmp/elasticsearch/bin/elasticsearch -E script.inline=true -E path.repo=/tmp -E repositories.url.allowed_urls='http://*' -E node.attr.testattr=test
   - git clone https://github.com/elastic/elasticsearch.git ../elasticsearch
   - pip install .
 
