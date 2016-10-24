@@ -9,7 +9,6 @@ except ImportError:
 from .base import Connection
 from ..exceptions import ConnectionError, ImproperlyConfigured, ConnectionTimeout, SSLError
 from ..compat import urlencode, string_types
-from requests_kerberos import HTTPKerberosAuth
 
 class RequestsHttpConnection(Connection):
     """
