@@ -9,6 +9,7 @@ except ImportError:
 from .base import Connection
 from ..exceptions import ConnectionError, ImproperlyConfigured, ConnectionTimeout, SSLError
 from ..compat import urlencode, string_types
+from requests_kerberos import HTTPKerberosAuth
 
 class RequestsHttpConnection(Connection):
     """
@@ -25,6 +26,7 @@ class RequestsHttpConnection(Connection):
     :arg client_key: path to the file containing the private key if using
         separate cert and key files (client_cert will contain only the cert)
     :arg headers: any custom http headers to be add to requests
+    :arg auth: custom authentication provider (e.g. HTTPKerberosAuth())
     """
     def __init__(self, host='localhost', port=9200, http_auth=None,
         use_ssl=False, verify_certs=True, ca_certs=None, client_cert=None,
@@ -35,6 +37,10 @@ class RequestsHttpConnection(Connection):
         super(RequestsHttpConnection, self).__init__(host=host, port=port, **kwargs)
         self.session = requests.Session()
         self.session.headers = headers
+        if 'auth' in kwargs:
+            self.custom_auth = kwargs['auth']
+        else:
+            self.custom_auth = None
         if http_auth is not None:
             if isinstance(http_auth, (tuple, list)):
                 http_auth = tuple(http_auth)
@@ -67,7 +73,10 @@ class RequestsHttpConnection(Connection):
 
         start = time.time()
         try:
-            response = self.session.request(method, url, data=body, timeout=timeout or self.timeout)
+            if self.custom_auth is not None:
+                response = self.session.request(method, url, data=body, timeout=timeout, auth=self.custom_auth or self.timeout)
+            else:
+                response = self.session.request(method, url, data=body, timeout=timeout or self.timeout)
             duration = time.time() - start
             raw_data = response.text
         except requests.exceptions.SSLError as e:
