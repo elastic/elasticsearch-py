@@ -30,6 +30,7 @@ class Urllib3HttpConnection(Connection):
     :arg ca_certs: optional path to CA bundle. See
         https://urllib3.readthedocs.io/en/latest/security.html#using-certifi-with-urllib3
         for instructions how to get default set
+    :arg ca_cert_dir: optional path to the CA directory
     :arg client_cert: path to the file containing the private key and the
         certificate, or cert only if using client_key
     :arg client_key: path to the file containing the private key if using
@@ -45,7 +46,7 @@ class Urllib3HttpConnection(Connection):
     :arg headers: any custom http headers to be add to requests
     """
     def __init__(self, host='localhost', port=9200, http_auth=None,
-            use_ssl=False, verify_certs=True, ca_certs=None, client_cert=None,
+            use_ssl=False, verify_certs=True, ca_certs=None, ca_cert_dir=None, client_cert=None,
             client_key=None, ssl_version=None, ssl_assert_hostname=None,
             ssl_assert_fingerprint=None, maxsize=10, headers=None, **kwargs):
 
@@ -57,6 +58,9 @@ class Urllib3HttpConnection(Connection):
                 http_auth = ':'.join(http_auth)
             self.headers.update(urllib3.make_headers(basic_auth=http_auth))
 
+        if ca_certs and ca_cert_dir:
+            raise ImproperlyConfigured("Please use ca_certs or ca_cert_dir for specifying root certificates"
+   
         ca_certs = CA_CERTS if ca_certs is None else ca_certs
         pool_class = urllib3.HTTPConnectionPool
         kw = {}
@@ -76,10 +80,14 @@ class Urllib3HttpConnection(Connection):
 
                 kw.update({
                     'cert_reqs': 'CERT_REQUIRED',
-                    'ca_certs': ca_certs,
                     'cert_file': client_cert,
                     'key_file': client_key,
                 })
+                if ca_cert_dir:
+                    kw['ca_cert_dir'] = ca_cert_dir
+                else:
+                    kw['ca_certs'] = ca_certs
+                
             else:
                 warnings.warn(
                     'Connecting to %s using SSL with verify_certs=False is insecure.' % host)
