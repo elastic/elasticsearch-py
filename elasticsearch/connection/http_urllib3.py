@@ -59,7 +59,7 @@ class Urllib3HttpConnection(Connection):
             self.headers.update(urllib3.make_headers(basic_auth=http_auth))
 
         if ca_certs and ca_cert_dir:
-            raise ImproperlyConfigured("Please use ca_certs or ca_cert_dir for specifying root certificates"
+            raise ImproperlyConfigured("Please use ca_certs or ca_cert_dir for specifying root certificates")
    
         ca_certs = CA_CERTS if ca_certs is None else ca_certs
         pool_class = urllib3.HTTPConnectionPool
