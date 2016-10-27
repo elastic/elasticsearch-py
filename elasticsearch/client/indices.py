@@ -247,8 +247,8 @@ class IndicesClient(NamespacedClient):
         for param in (index, doc_type):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('HEAD', _make_path(index, doc_type),
-                params=params)
+        return self.transport.perform_request('HEAD', _make_path(index,
+            '_mapping', doc_type), params=params)
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
         'master_timeout', 'timeout', 'update_all_types')
