@@ -276,8 +276,8 @@ def scan(client, query=None, scroll='5m', raise_on_error=True,
 
     """
     if not preserve_order:
-        body = query.copy() if query else {}
-        body["sort"] = "_doc"
+        query = query.copy() if query else {}
+        query["sort"] = "_doc"
     # initial search
     resp = client.search(body=query, scroll=scroll, size=size,
                          request_timeout=request_timeout, **kwargs)
