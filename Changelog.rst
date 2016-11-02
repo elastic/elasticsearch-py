@@ -3,7 +3,12 @@
 Changelog
 =========
 
-5.0.0 (2016-10-19)
+5.0.1 (2016-11-02)
+------------------
+
+Fixed performance regression in ``scan`` helper
+
+5.0.1 (2016-10-19)
 ------------------
 
 Version compatible with elasticsearch 5.0
