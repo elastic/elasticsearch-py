@@ -1,7 +1,5 @@
 language: python
 
-sudo: false
-
 python:
   - "2.6"
   - "2.7"
@@ -9,19 +7,25 @@ python:
   - "3.4"
   - "3.5"
 
-jdk:
-  - "oraclejdk8"
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
 
 env:
   # different connection classes to test
-  - TEST_ES_CONNECTION=Urllib3HttpConnection
-  - TEST_ES_CONNECTION=RequestsHttpConnection
+  - TEST_ES_CONNECTION=Urllib3HttpConnection ES_VERSION=5.0.0
+  - TEST_ES_CONNECTION=RequestsHttpConnection ES_VERSION=5.0.0
+
+before_install:
+  - sudo update-java-alternatives -s java-8-oracle
+  - export JAVA_HOME=/usr/lib/jvm/java-8-oracle/jre
+  - java -version
 
 install:
-  - wget -O /tmp/es-snap.zip "https://oss.sonatype.org/service/local/artifact/maven/redirect?r=snapshots&g=org.elasticsearch.distribution.zip&a=elasticsearch&e=zip&v=5.0.0-SNAPSHOT"
+  - curl -L -o /tmp/es-snap.zip https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ES_VERSION}.zip
   - unzip /tmp/es-snap.zip -d /tmp/
-  - mv /tmp/elasticsearch-5.0.0-SNAPSHOT /tmp/elasticsearch
-  - /tmp/elasticsearch/bin/elasticsearch -E script.inline=true -E path.repo=/tmp -E repositories.url.allowed_urls='http://*' -E node.attr.testattr=test
+  - /tmp/elasticsearch-*/bin/elasticsearch -E script.inline=true -E path.repo=/tmp -E repositories.url.allowed_urls='http://*' -E node.attr.testattr=test -d
   - git clone https://github.com/elastic/elasticsearch.git ../elasticsearch
   - pip install .
 
