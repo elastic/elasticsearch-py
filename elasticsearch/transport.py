@@ -203,7 +203,7 @@ class Transport(object):
             for c in chain(self.connection_pool.connections, self.seed_connections):
                 try:
                     # use small timeout for the sniffing request, should be a fast api call
-                    _, headers, node_info = c.perform_request('GET', '/_nodes/_all/clear',
+                    _, headers, node_info = c.perform_request('GET', '/_nodes/_all/http',
                         timeout=self.sniff_timeout if not initial else None)
                     node_info = self.deserializer.loads(node_info, headers.get('content-type'))
                     break
@@ -219,9 +219,10 @@ class Transport(object):
         return list(node_info['nodes'].values())
 
     def _get_host_info(self, host_info):
-        address_key = self.connection_class.transport_schema + '_address'
+        address_schema = 'http'
+        address_key = 'publish_address'
         host = {}
-        address = host_info.get(address_key, '')
+        address = host_info.get(address_schema, '').get(address_key, '')
         if '/' in address:
             host['host'], address = address.split('/', 1)
 
