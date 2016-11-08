@@ -15,7 +15,7 @@ env:
   - TEST_ES_CONNECTION=RequestsHttpConnection
 
 install:
-  - sudo apt install -y openjdk-8-jdk
+  - sudo apt-get install -y openjdk-8-jdk
   - wget -O /tmp/es-snap.zip "https://oss.sonatype.org/service/local/artifact/maven/redirect?r=snapshots&g=org.elasticsearch.distribution.zip&a=elasticsearch&e=zip&v=5.1.0-SNAPSHOT"
   - unzip /tmp/es-snap.zip -d /tmp/
   - mv /tmp/elasticsearch-5.1.0-SNAPSHOT /tmp/elasticsearch
