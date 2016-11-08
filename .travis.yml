@@ -10,7 +10,7 @@ python:
   - "3.5"
 
 jdk:
-  - "oraclejdk8"
+  - "oraclejdk9"
 
 env:
   # different connection classes to test
