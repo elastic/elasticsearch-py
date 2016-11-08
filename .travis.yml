@@ -20,6 +20,8 @@ install:
   - sudo add-apt-repository -y ppa:openjdk-r/ppa
   - sudo apt-get update
   - sudo apt-get install -y openjdk-8-jdk
+  - sudo update-alternatives --set java /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java
+  - sudo update-alternatives --set javac /usr/lib/jvm/java-8-openjdk-amd64/bin/javac
   - wget -O /tmp/es-snap.zip "https://oss.sonatype.org/service/local/artifact/maven/redirect?r=snapshots&g=org.elasticsearch.distribution.zip&a=elasticsearch&e=zip&v=5.1.0-SNAPSHOT"
   - unzip /tmp/es-snap.zip -d /tmp/
   - mv /tmp/elasticsearch-5.1.0-SNAPSHOT /tmp/elasticsearch
