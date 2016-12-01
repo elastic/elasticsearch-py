@@ -60,13 +60,8 @@ result = es.search(
     doc_type='commits',
     body={
       'query': {
-        'bool': {
-          'must': {
-            'term': {
-              # parent ref is stored as type#id
-              '_parent': 'repos#elasticsearch-py'
-            }
-          }
+        'parent_id': {
+            'type': 'commits', 'id': 'elasticsearch-py'
         }
       },
       'sort': [
