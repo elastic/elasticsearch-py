@@ -197,8 +197,8 @@ if __name__ == '__main__':
         doc_type='repos',
         id='elasticsearch',
         body={
-        "script": {
-          "inline" : "ctx._source.tags.add(params.tag)",
+          "script": {
+            "inline" : "ctx._source.tags.add(params.tag)",
             "params" : {
               "tag" : "java"
             }
