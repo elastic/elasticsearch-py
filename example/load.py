@@ -159,7 +159,7 @@ REPO_ACTIONS = [
     {'_type': 'repos', '_id': 'elasticsearch', '_source': {
         'owner': {'name': 'Shay Bannon', 'email': 'kimchy@gmail.com'},
         'created_at': datetime(2010, 2, 8, 15, 22, 27),
-        'tags': ['search', 'distributed', 'lucene', 'java'],
+        'tags': ['search', 'distributed', 'lucene'],
         'description': 'You know, for search.'}
     },
 
@@ -190,6 +190,21 @@ if __name__ == '__main__':
     # now we can retrieve the documents
     es_repo = es.get(index='git', doc_type='repos', id='elasticsearch')
     print('%s: %s' % (es_repo['_id'], es_repo['_source']['description']))
+
+    # update - add java to es tags
+    es.update(
+        index='git',
+        doc_type='repos',
+        id='elasticsearch',
+        body={
+        "script": {
+          "inline" : "ctx._source.tags.add(params.tag)",
+            "params" : {
+              "tag" : "java"
+            }
+          }
+        }
+    )
 
     # refresh to make the documents available for search
     es.indices.refresh(index='git')
