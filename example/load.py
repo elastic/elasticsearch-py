@@ -164,7 +164,7 @@ REPO_ACTIONS = [
     },
 
     {'_type': 'repos', '_id': 'elasticsearch-py', '_op_type': 'update', 'doc': {
-        'owner': {'name': 'Honza Král', 'email': 'honza.kral@gmail.com'},
+        'owner': {'name': u'Honza Král', 'email': 'honza.kral@gmail.com'},
         'created_at': datetime(2013, 5, 1, 16, 37, 32),
         'tags': ['elasticsearch', 'search', 'python', 'client'],
         'description': 'For searching snakes.'}
