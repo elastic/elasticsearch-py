@@ -1,4 +1,6 @@
 import time
+import re
+
 from itertools import chain
 
 from .connection import Urllib3HttpConnection
@@ -96,6 +98,7 @@ class Transport(object):
         self.retry_on_timeout = retry_on_timeout
         self.retry_on_status = retry_on_status
         self.send_get_body_as = send_get_body_as
+        self._extract_address = re.compile('^inet\[\/(\d+\.\d+\.+\d+\.\d+:\d+)\]$')
 
         # data serializer
         self.serializer = serializer
@@ -221,18 +224,20 @@ class Transport(object):
     def _get_host_info(self, host_info):
         address_key = self.connection_class.transport_schema + '_address'
         host = {}
+
+        # address format is 'inet[/127.0.0.1:9300]'.
         address = host_info.get(address_key, '')
         if '/' in address:
-            host['host'], address = address.split('/', 1)
+            address = self._extract_address.findall(address)
 
         # malformed address
-        if ':' not in address:
+        if not address or ':' not in address[0]:
             return None
 
-        ip, port = address.rsplit(':', 1)
+        ip, port = address[0].rsplit(':', 1)
 
         # use the ip if not overridden by publish_host
-        host.setdefault('host', ip)
+        host['host'] = ip
         host['port'] = int(port)
 
         return self.host_info_callback(host_info, host)
