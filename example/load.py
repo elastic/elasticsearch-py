@@ -10,6 +10,7 @@ import logging
 import git
 
 from elasticsearch import Elasticsearch
+from elasticsearch.exceptions import TransportError
 from elasticsearch.helpers import bulk, streaming_bulk
 
 def create_git_index(client, index):
@@ -17,69 +18,75 @@ def create_git_index(client, index):
     user_mapping = {
       'properties': {
         'name': {
-          'type': 'multi_field',
+          'type': 'string',
           'fields': {
             'raw': {'type' : 'string', 'index' : 'not_analyzed'},
-            'name': {'type' : 'string'}
+          }
+        }
+      }
+    }
+
+    create_index_body = {
+      'settings': {
+        # just one shard, no replicas for testing
+        'number_of_shards': 1,
+        'number_of_replicas': 0,
+
+        # custom analyzer for analyzing file paths
+        'analysis': {
+          'analyzer': {
+            'file_path': {
+              'type': 'custom',
+              'tokenizer': 'path_hierarchy',
+              'filter': ['lowercase']
+            }
+          }
+        }
+      },
+      'mappings': {
+        'commits': {
+          '_parent': {
+            'type': 'repos'
+          },
+          'properties': {
+            'author': user_mapping,
+            'authored_date': {'type': 'date'},
+            'committer': user_mapping,
+            'committed_date': {'type': 'date'},
+            'parent_shas': {'type': 'string', 'index' : 'not_analyzed'},
+            'description': {'type': 'string', 'analyzer': 'snowball'},
+            'files': {'type': 'string', 'analyzer': 'file_path'}
+          }
+        },
+        'repos': {
+          'properties': {
+            'owner': user_mapping,
+            'created_at': {'type': 'date'},
+            'description': {
+              'type': 'string',
+              'analyzer': 'snowball',
+            },
+            'tags': {
+              'type': 'string',
+              'index': 'not_analyzed'
+            }
           }
         }
       }
     }
 
     # create empty index
-    client.indices.create(
-        index=index,
-        body={
-          'settings': {
-            # just one shard, no replicas for testing
-            'number_of_shards': 1,
-            'number_of_replicas': 0,
-
-            # custom analyzer for analyzing file paths
-            'analysis': {
-              'analyzer': {
-                'file_path': {
-                  'type': 'custom',
-                  'tokenizer': 'path_hierarchy',
-                  'filter': ['lowercase']
-                }
-              }
-            }
-          },
-          'mappings': {
-            'commits': {
-              '_parent': {
-                'type': 'repos'
-              },
-              'properties': {
-                'author': user_mapping,
-                'authored_date': {'type': 'date'},
-                'committer': user_mapping,
-                'committed_date': {'type': 'date'},
-                'parent_shas': {'type': 'string', 'index' : 'not_analyzed'},
-                'description': {'type': 'string', 'analyzer': 'snowball'},
-                'files': {'type': 'string', 'analyzer': 'file_path'}
-              }
-            },
-            'repos': {
-              'properties': {
-                'owner': user_mapping,
-                'created_at': {'type': 'date'},
-                'description': {
-                  'type': 'string',
-                  'analyzer': 'snowball',
-                },
-                'tags': {
-                  'type': 'string',
-                  'index': 'not_analyzed'
-                }
-              }
-            }
-          }
-        },
+    try:
+        client.indices.create(
+            index=index,
+            body=create_index_body,
+        )
+    except TransportError as e:
         # ignore already existing index
-        ignore=400
-    )
+        if e.error == 'index_already_exists_exception':
+            pass
+        else:
+            raise
 
 def parse_commits(head, name):
     """
@@ -157,7 +164,7 @@ REPO_ACTIONS = [
     },
 
     {'_type': 'repos', '_id': 'elasticsearch-py', '_op_type': 'update', 'doc': {
-        'owner': {'name': 'Honza Král', 'email': 'honza.kral@gmail.com'},
+        'owner': {'name': u'Honza Král', 'email': 'honza.kral@gmail.com'},
         'created_at': datetime(2013, 5, 1, 16, 37, 32),
         'tags': ['elasticsearch', 'search', 'python', 'client'],
         'description': 'For searching snakes.'}
@@ -190,9 +197,11 @@ if __name__ == '__main__':
         doc_type='repos',
         id='elasticsearch',
         body={
-          "script" : "ctx._source.tags += tag",
-          "params" : {
-            "tag" : "java"
+          "script": {
+            "inline" : "ctx._source.tags.add(params.tag)",
+            "params" : {
+              "tag" : "java"
+            }
           }
         }
     )

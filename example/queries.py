@@ -41,14 +41,12 @@ result = es.search(
     doc_type='commits',
     body={
       'query': {
-        'filtered': {
-          'query': {
+        'bool': {
+          'must': {
             'match': {'description': 'fix'}
           },
-          'filter': {
-            'not': {
-              'term': {'files': 'test_elasticsearch'}
-            }
+          'must_not': {
+            'term': {'files': 'test_elasticsearch'}
           }
         }
       }
@@ -62,13 +60,8 @@ result = es.search(
     doc_type='commits',
     body={
       'query': {
-        'filtered': {
-          'filter': {
-            'term': {
-              # parent ref is stored as type#id
-              '_parent': 'repos#elasticsearch-py'
-            }
-          }
+        'parent_id': {
+            'type': 'commits', 'id': 'elasticsearch-py'
         }
       },
       'sort': [
@@ -86,19 +79,11 @@ result = es.search(
     body={
       'size': 0,
       'query': {
-        'filtered': {
-          'filter': {
-            'has_parent': {
-              'type': 'repos',
-              'query': {
-                'filtered': {
-                  'filter': {
-                    'term': {
-                      'tags': 'python'
-                    }
-                  }
-                }
-              }
+        'has_parent': {
+          'parent_type': 'repos',
+          'query': {
+            'term': {
+              'tags': 'python'
             }
           }
         }
