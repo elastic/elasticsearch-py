@@ -22,12 +22,8 @@ def get_host_info(node_info, host):
     :arg node_info: node information from `/_cluster/nodes`
     :arg host: connection information (host, port) extracted from the node info
     """
-    attrs = node_info.get('attributes', {})
-
     # ignore master only nodes
-    if (attrs.get('data', 'true') == 'false' and
-        attrs.get('client', 'false') == 'false' and
-        attrs.get('master', 'true') == 'true'):
+    if node_info.get('roles', []) == ['master']:
         return None
     return host
 
@@ -203,7 +199,8 @@ class Transport(object):
             for c in chain(self.connection_pool.connections, self.seed_connections):
                 try:
                     # use small timeout for the sniffing request, should be a fast api call
-                    _, headers, node_info = c.perform_request('GET', '/_nodes/_all/clear',
+                    _, headers, node_info = c.perform_request(
+                        'GET', '/_nodes/_all/http',
                         timeout=self.sniff_timeout if not initial else None)
                     node_info = self.deserializer.loads(node_info, headers.get('content-type'))
                     break
@@ -219,21 +216,15 @@ class Transport(object):
         return list(node_info['nodes'].values())
 
     def _get_host_info(self, host_info):
-        address_key = self.connection_class.transport_schema + '_address'
         host = {}
-        address = host_info.get(address_key, '')
-        if '/' in address:
-            host['host'], address = address.split('/', 1)
+        address = host_info.get('http', {}).get('publish_address')
 
         # malformed address
         if ':' not in address:
             return None
 
-        ip, port = address.rsplit(':', 1)
-
-        # use the ip if not overridden by publish_host
-        host.setdefault('host', ip)
-        host['port'] = int(port)
+        host['host'], host['port'] = address.rsplit(':', 1)
+        host['port'] = int(host['port'])
 
         return self.host_info_callback(host_info, host)
 

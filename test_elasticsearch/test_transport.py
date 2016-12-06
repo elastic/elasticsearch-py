@@ -24,52 +24,41 @@ class DummyConnection(Connection):
         return self.status, self.headers, self.data
 
 CLUSTER_NODES = '''{
-    "ok" : true,
-    "cluster_name" : "super_cluster",
-    "nodes" : {
-        "wE_6OGBNSjGksbONNncIbg" : {
-            "name" : "Nightwind",
-            "transport_address" : "127.0.0.1:9300",
-            "hostname" : "wind",
-            "version" : "0.20.4",
-            "http_address" : "1.1.1.1:123",
-            "thrift_address" : "1.1.1.1:9500"
-        }
+  "_nodes" : {
+    "total" : 1,
+    "successful" : 1,
+    "failed" : 0
+  },
+  "cluster_name" : "elasticsearch",
+  "nodes" : {
+    "SRZpKFZdQguhhvifmN6UVA" : {
+      "name" : "SRZpKFZ",
+      "transport_address" : "127.0.0.1:9300",
+      "host" : "127.0.0.1",
+      "ip" : "127.0.0.1",
+      "version" : "5.0.0",
+      "build_hash" : "253032b",
+      "roles" : [ "master", "data", "ingest" ],
+      "http" : {
+        "bound_address" : [ "[fe80::1]:9200", "[::1]:9200", "127.0.0.1:9200" ],
+        "publish_address" : "1.1.1.1:123",
+        "max_content_length_in_bytes" : 104857600
+      }
     }
+  }
 }'''
-
-CLUSTER_NODE_PUBLISH_HOST = '''{
-    "ok" : true,
-    "cluster_name" : "super_cluster",
-    "nodes" : {
-        "wE_6OGBNSjGksbONNncIbg" : {
-            "name": "Thunderbird",
-            "transport_address": "obsidian/192.168.1.60:9300",
-            "host": "192.168.1.60",
-            "ip": "192.168.1.60",
-            "version": "2.1.0",
-            "build": "72cd1f1",
-            "http_address": "obsidian/192.168.1.60:9200",
-            "attributes": {
-                "testattr": "test"
-            }
-        }
-    }
-}'''
-
 
 class TestHostsInfoCallback(TestCase):
     def test_master_only_nodes_are_ignored(self):
         nodes = [
-            {'attributes': {'data': 'false', 'client': 'true'}},
-            {'attributes': {'data': 'false'}},
-            {'attributes': {'data': 'false', 'master': 'true'}},
-            {'attributes': {'data': 'false', 'master': 'false'}},
-            {'attributes': {}},
+            {'roles': [ "master"]},
+            {'roles': [ "master", "data", "ingest"]},
+            {'roles': [ "data", "ingest"]},
+            {'roles': [ ]},
             {}
         ]
-        chosen = [ i for i, node_info in enumerate(nodes) if get_host_info(node_info, i) is not None]
-        self.assertEquals([0, 3, 4, 5], chosen)
+        chosen = [i for i, node_info in enumerate(nodes) if get_host_info(node_info, i) is not None]
+        self.assertEquals([1, 2, 3, 4], chosen)
 
 
 class TestTransport(TestCase):
@@ -175,21 +164,6 @@ class TestTransport(TestCase):
         self.assertEquals(1, len(t.connection_pool.connections))
         self.assertEquals('http://1.1.1.1:123', t.get_connection().host)
 
-    def test_sniff_will_pick_up_published_host(self):
-        t = Transport([{'data': CLUSTER_NODE_PUBLISH_HOST}], connection_class=DummyConnection)
-        t.sniff_hosts()
-
-        self.assertEquals(1, len(t.connection_pool.connections))
-        self.assertEquals('http://obsidian:9200', t.get_connection().host)
-
-
-    def test_sniff_on_start_fetches_and_uses_nodes_list_for_its_schema(self):
-        class DummyThriftConnection(DummyConnection):
-            transport_schema = 'thrift'
-        t = Transport([{'data': CLUSTER_NODES}], connection_class=DummyThriftConnection, sniff_on_start=True)
-        self.assertEquals(1, len(t.connection_pool.connections))
-        self.assertEquals('thrift://1.1.1.1:9500', t.get_connection().host)
-
     def test_sniff_on_start_fetches_and_uses_nodes_list(self):
         t = Transport([{'data': CLUSTER_NODES}], connection_class=DummyConnection, sniff_on_start=True)
         self.assertEquals(1, len(t.connection_pool.connections))
@@ -197,12 +171,12 @@ class TestTransport(TestCase):
 
     def test_sniff_on_start_ignores_sniff_timeout(self):
         t = Transport([{'data': CLUSTER_NODES}], connection_class=DummyConnection, sniff_on_start=True, sniff_timeout=12)
-        self.assertEquals((('GET', '/_nodes/_all/clear'), {'timeout': None}), t.seed_connections[0].calls[0])
+        self.assertEquals((('GET', '/_nodes/_all/http'), {'timeout': None}), t.seed_connections[0].calls[0])
 
     def test_sniff_uses_sniff_timeout(self):
         t = Transport([{'data': CLUSTER_NODES}], connection_class=DummyConnection, sniff_timeout=42)
         t.sniff_hosts()
-        self.assertEquals((('GET', '/_nodes/_all/clear'), {'timeout': 42}), t.seed_connections[0].calls[0])
+        self.assertEquals((('GET', '/_nodes/_all/http'), {'timeout': 42}), t.seed_connections[0].calls[0])
 
 
     def test_sniff_reuses_connection_instances_if_possible(self):
