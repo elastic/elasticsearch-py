@@ -3,7 +3,6 @@
 from __future__ import print_function
 
 from os.path import dirname, basename, abspath
-from itertools import chain
 from datetime import datetime
 import logging
 
@@ -18,9 +17,9 @@ def create_git_index(client, index):
     user_mapping = {
       'properties': {
         'name': {
-          'type': 'string',
+          'type': 'text',
           'fields': {
-            'raw': {'type' : 'string', 'index' : 'not_analyzed'},
+            'raw': {'type': 'keyword'},
           }
         }
       }
@@ -53,9 +52,9 @@ def create_git_index(client, index):
             'authored_date': {'type': 'date'},
             'committer': user_mapping,
             'committed_date': {'type': 'date'},
-            'parent_shas': {'type': 'string', 'index' : 'not_analyzed'},
-            'description': {'type': 'string', 'analyzer': 'snowball'},
-            'files': {'type': 'string', 'analyzer': 'file_path'}
+            'parent_shas': {'type': 'keyword'},
+            'description': {'type': 'text', 'analyzer': 'snowball'},
+            'files': {'type': 'text', 'analyzer': 'file_path'}
           }
         },
         'repos': {
@@ -63,13 +62,10 @@ def create_git_index(client, index):
             'owner': user_mapping,
             'created_at': {'type': 'date'},
             'description': {
-              'type': 'string',
+              'type': 'text',
               'analyzer': 'snowball',
             },
-            'tags': {
-              'type': 'string',
-              'index': 'not_analyzed'
-            }
+            'tags': {'type': 'keyword'}
           }
         }
       }
