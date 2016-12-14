@@ -170,7 +170,7 @@ class CatClient(NamespacedClient):
         return self.transport.perform_request('GET', _make_path('_cat',
             'recovery', index), params=params)
 
-    @query_params('h', 'help', 'local', 'master_timeout', 'v')
+    @query_params('bytes', 'h', 'help', 'local', 'master_timeout', 'v')
     def shards(self, index=None, params=None):
         """
         The shards command is the detailed view of what nodes contain which shards.
@@ -178,6 +178,8 @@ class CatClient(NamespacedClient):
 
         :arg index: A comma-separated list of index names to limit the returned
             information
+        :arg bytes: The unit in which to display byte values, valid choices are:
+            'b', 'k', 'm', 'g'
         :arg h: Comma-separated list of column names to display
         :arg help: Return help information, default False
         :arg local: Return local information, do not retrieve the state from
@@ -189,7 +191,7 @@ class CatClient(NamespacedClient):
         return self.transport.perform_request('GET', _make_path('_cat',
             'shards', index), params=params)
 
-    @query_params('h', 'help', 'v')
+    @query_params('bytes', 'h', 'help', 'v')
     def segments(self, index=None, params=None):
         """
         The segments command is the detailed view of Lucene segments per index.
@@ -197,6 +199,8 @@ class CatClient(NamespacedClient):
 
         :arg index: A comma-separated list of index names to limit the returned
             information
+        :arg bytes: The unit in which to display byte values, valid choices are:
+            'b', 'k', 'm', 'g'
         :arg h: Comma-separated list of column names to display
         :arg help: Return help information, default False
         :arg v: Verbose mode. Display column headers, default False
