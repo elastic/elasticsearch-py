@@ -22,8 +22,12 @@ def get_host_info(node_info, host):
     :arg node_info: node information from `/_cluster/nodes`
     :arg host: connection information (host, port) extracted from the node info
     """
+    attrs = node_info.get('attributes', {})
+
     # ignore master only nodes
-    if node_info.get('roles', []) == ['master']:
+    if (attrs.get('data', 'true') == 'false' and
+        attrs.get('client', 'false') == 'false' and
+        attrs.get('master', 'true') == 'true'):
         return None
     return host
 
@@ -198,9 +202,18 @@ class Transport(object):
             # seed_connections for good measure
             for c in chain(self.connection_pool.connections, self.seed_connections):
                 try:
+                    # get ES version due to breaking changes in 5.x
+                    _, headers, cluster_info = c.perform_request('GET', '/',
+                        timeout=self.sniff_timeout if not initial else None)
+                    cluster_info = self.deserializer.loads(cluster_info, headers.get('content-type'))
+                    cluster_version = cluster_info.get('version').get('number')
+                    # string comparison for version check works fine since "5.0.0" > "5"
                     # use small timeout for the sniffing request, should be a fast api call
-                    _, headers, node_info = c.perform_request(
-                        'GET', '/_nodes/_all/http',
+                    if cluster_version > "5":
+                        _, headers, node_info = c.perform_request('GET', '/_nodes/_all/http',
+                        timeout=self.sniff_timeout if not initial else None)
+                    else:
+                        _, headers, node_info = c.perform_request('GET', '/_nodes/_all/clear',
                         timeout=self.sniff_timeout if not initial else None)
                     node_info = self.deserializer.loads(node_info, headers.get('content-type'))
                     break
@@ -213,18 +226,31 @@ class Transport(object):
             self.last_sniff = previous_sniff
             raise
 
-        return list(node_info['nodes'].values())
+        return [list(node_info['nodes'].values()), cluster_version]
 
-    def _get_host_info(self, host_info):
+    def _get_host_info(self, host_info, cluster_version):
+        # string comparison for version check works fine since "5.0.0" > "5"
+        if cluster_version > "5":
+            address_schema = 'http'
+            address_key = 'publish_address'
+            address = host_info.get(address_schema, '').get(address_key, '')
+        else:
+            address_key = self.connection_class.transport_schema + '_address'
+            address = host_info.get(address_key, '')
+
         host = {}
-        address = host_info.get('http', {}).get('publish_address')
+        if '/' in address:
+            host['host'], address = address.split('/', 1)
 
         # malformed address
         if ':' not in address:
             return None
 
-        host['host'], host['port'] = address.rsplit(':', 1)
-        host['port'] = int(host['port'])
+        ip, port = address.rsplit(':', 1)
+
+        # use the ip if not overridden by publish_host
+        host.setdefault('host', ip)
+        host['port'] = int(port)
 
         return self.host_info_callback(host_info, host)
 
@@ -238,9 +264,9 @@ class Transport(object):
         :arg initial: flag indicating if this is during startup
             (``sniff_on_start``), ignore the ``sniff_timeout`` if ``True``
         """
-        node_info = self._get_sniff_data(initial)
+        node_info, cluster_version = self._get_sniff_data(initial)
 
-        hosts = list(filter(None, (self._get_host_info(n) for n in node_info)))
+        hosts = list(filter(None, (self._get_host_info(n, cluster_version) for n in node_info)))
 
         # we weren't able to get any nodes, maybe using an incompatible
         # transport_schema or host_info_callback blocked all - raise error.
