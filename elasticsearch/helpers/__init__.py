@@ -168,7 +168,11 @@ def bulk(client, actions, stats_only=False, **kwargs):
     a more human friendly interface - it consumes an iterator of actions and
     sends them to elasticsearch in chunks. It returns a tuple with summary
     information - number of successfully executed actions and either list of
-    errors or number of errors if `stats_only` is set to `True`.
+    errors or number of errors if ``stats_only`` is set to ``True``. Note that
+    by default we raise a ``BulkIndexError`` when we encounter an error so
+    options like ``stats_only`` only apply when ``raise_on_error`` is set to
+    ``False``.
+
 
     See :func:`~elasticsearch.helpers.streaming_bulk` for more accepted
     parameters
