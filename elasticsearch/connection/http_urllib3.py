@@ -109,16 +109,15 @@ class Urllib3HttpConnection(Connection):
             response = self.pool.urlopen(method, url, body, retries=False, headers=self.headers, **kw)
             duration = time.time() - start
             raw_data = response.data.decode('utf-8')
-        except UrllibSSLError as e:
-            self.log_request_fail(method, full_url, url, body, time.time() - start, exception=e)
-            raise SSLError('N/A', str(e), e)
-        except ReadTimeoutError as e:
-            self.log_request_fail(method, full_url, url, body, time.time() - start, exception=e)
-            raise ConnectionTimeout('TIMEOUT', str(e), e)
         except Exception as e:
             self.log_request_fail(method, full_url, url, body, time.time() - start, exception=e)
+            if isinstance(e, UrllibSSLError):
+                raise SSLError('N/A', str(e), e)
+            if isinstance(e, ReadTimeoutError):
+                raise ConnectionTimeout('TIMEOUT', str(e), e)
             raise ConnectionError('N/A', str(e), e)
 
+        # raise errors based on http status codes, let the client handle those if needed
         if not (200 <= response.status < 300) and response.status not in ignore:
             self.log_request_fail(method, full_url, url, body, duration, response.status, raw_data)
             self._raise_error(response.status, raw_data)

@@ -74,14 +74,12 @@ class RequestsHttpConnection(Connection):
                 timeout=timeout or self.timeout)
             duration = time.time() - start
             raw_data = response.text
-        except requests.exceptions.SSLError as e:
+        except Exception as e:
             self.log_request_fail(method, url, prepared_request.path_url, body, time.time() - start, exception=e)
-            raise SSLError('N/A', str(e), e)
-        except requests.Timeout as e:
-            self.log_request_fail(method, url, prepared_request.path_url, body, time.time() - start, exception=e)
-            raise ConnectionTimeout('TIMEOUT', str(e), e)
-        except requests.ConnectionError as e:
-            self.log_request_fail(method, url, prepared_request.path_url, body, time.time() - start, exception=e)
+            if isinstance(e, requests.exceptions.SSLError):
+                raise SSLError('N/A', str(e), e)
+            if isinstance(e, requests.Timeout):
+                raise ConnectionTimeout('TIMEOUT', str(e), e)
             raise ConnectionError('N/A', str(e), e)
 
         # raise errors based on http status codes, let the client handle those if needed
