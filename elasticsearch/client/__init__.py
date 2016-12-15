@@ -123,6 +123,19 @@ class Elasticsearch(object):
             ca_certs='/path/to/CA_certs'
         )
 
+    If using SSL with a certain CA directory, it can be specified in the following way::
+
+        es = Elasticsearch(
+            ['localhost:443', 'other_host:443'],
+            # turn on SSL
+            use_ssl=True,
+            # make sure we verify SSL certificates (off by default)
+            verify_certs=True,
+            # provide a path to CA directory on disk
+            ca_cert_dir='/path/to/CA_certs_directory'
+        )
+    Note: Only ca_certs or ca_cert_dir option can be given
+ 
     SSL client authentication is supported
     (see :class:`~elasticsearch.Urllib3HttpConnection` for
     detailed description of the options)::
