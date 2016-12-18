@@ -219,7 +219,7 @@ class Transport(object):
         host = {}
         address = host_info.get('http', {}).get('publish_address')
 
-        # malformed address
+        # malformed or no address given
         if not address or ':' not in address:
             return None
 
