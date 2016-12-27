@@ -27,10 +27,11 @@ PARAMS_RENAMES = {
 CATCH_CODES = {
     'missing': 404,
     'conflict': 409,
+    'unauthorized': 401,
 }
 
 # test features we have implemented
-IMPLEMENTED_FEATURES = ('gtelte', 'stash_in_path', 'headers')
+IMPLEMENTED_FEATURES = ('gtelte', 'stash_in_path', 'headers', 'catch_unauthorized')
 
 # broken YAML tests on some releases
 SKIP_TESTS = {
