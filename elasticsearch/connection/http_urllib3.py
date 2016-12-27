@@ -50,12 +50,16 @@ class Urllib3HttpConnection(Connection):
             ssl_assert_fingerprint=None, maxsize=10, headers=None, **kwargs):
 
         super(Urllib3HttpConnection, self).__init__(host=host, port=port, use_ssl=use_ssl, **kwargs)
-        self.headers = headers.copy() if headers else {}
-        self.headers.update(urllib3.make_headers(keep_alive=True))
+        self.headers = urllib3.make_headers(keep_alive=True)
         if http_auth is not None:
             if isinstance(http_auth, (tuple, list)):
                 http_auth = ':'.join(http_auth)
             self.headers.update(urllib3.make_headers(basic_auth=http_auth))
+
+        # update headers in lowercase to allow overriding of auth headers
+        if headers:
+            for k in headers:
+                self.headers[k.lower()] = headers[k]
 
         ca_certs = CA_CERTS if ca_certs is None else ca_certs
         pool_class = urllib3.HTTPConnectionPool
