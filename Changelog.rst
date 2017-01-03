@@ -3,6 +3,11 @@
 Changelog
 =========
 
+2.4.1 (2017-01-03)
+------------------
+ * don't warn on empty data returned from server
+ * Propagate request_timeout to scroll calls
+
 2.4.0 (2016-08-17)
 ------------------
 
