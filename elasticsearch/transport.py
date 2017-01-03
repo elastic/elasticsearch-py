@@ -219,8 +219,8 @@ class Transport(object):
         host = {}
         address = host_info.get('http', {}).get('publish_address')
 
-        # malformed address
-        if ':' not in address:
+        # malformed or no address given
+        if not address or ':' not in address:
             return None
 
         host['host'], host['port'] = address.rsplit(':', 1)
