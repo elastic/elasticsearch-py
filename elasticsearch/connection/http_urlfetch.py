@@ -3,11 +3,15 @@ import time
 import warnings
 from urlparse import urlparse
 
-from google.appengine.api import urlfetch
+try:
+    from google.appengine.api import urlfetch
+    URLFETCH_AVAILABLE = True
+except ImportError as e:
+    URLFETCH_AVAILABLE = False
 
 from .base import Connection
 from ..compat import urlencode
-from ..exceptions import ConnectionError, ConnectionTimeout, SSLError
+from ..exceptions import ConnectionError, ConnectionTimeout, SSLError, ImproperlyConfigured
 
 
 class URLFetchHttpConnection(Connection):
@@ -27,6 +31,9 @@ class URLFetchHttpConnection(Connection):
     def __init__(self, host='localhost', port=9200, http_auth=None,
                  use_ssl=False, verify_certs=True, headers=None, **kwargs):
         super(URLFetchHttpConnection, self).__init__(host=host, port=port, **kwargs)
+
+        if not URLFETCH_AVAILABLE:
+            raise ImproperlyConfigured("Please install urlfetch to use URLFetchHttpConnection.")
 
         timeout = kwargs.get('timeout', 60)
 
