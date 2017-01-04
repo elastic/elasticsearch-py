@@ -1,16 +1,15 @@
 import base64
 import time
 import warnings
-from urlparse import urlparse
 
 try:
     from google.appengine.api import urlfetch
     URLFETCH_AVAILABLE = True
-except ImportError as e:
+except ImportError:
     URLFETCH_AVAILABLE = False
 
 from .base import Connection
-from ..compat import urlencode
+from ..compat import urlencode, urlparse
 from ..exceptions import ConnectionError, ConnectionTimeout, SSLError, ImproperlyConfigured
 
 
