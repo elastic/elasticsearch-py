@@ -30,10 +30,10 @@ class URLFetchHttpConnection(Connection):
 
     def __init__(self, host='localhost', port=9200, http_auth=None,
                  use_ssl=False, verify_certs=True, headers=None, **kwargs):
-        super(URLFetchHttpConnection, self).__init__(host=host, port=port, **kwargs)
-
         if not URLFETCH_AVAILABLE:
-            raise ImproperlyConfigured("Please install urlfetch to use URLFetchHttpConnection.")
+            raise ImproperlyConfigured('Please install urlfetch to use URLFetchHttpConnection.')
+
+        super(URLFetchHttpConnection, self).__init__(host=host, port=port, **kwargs)
 
         timeout = kwargs.get('timeout', 60)
 
