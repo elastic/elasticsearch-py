@@ -69,7 +69,6 @@ class URLFetchHttpConnection(Connection):
         path = urlparse(url).path
 
         start = time.time()
-        print(url)
         try:
             urlfetch.make_fetch_call(self.rpc, url, payload=body, method=method,
                                      headers=self.headers, allow_truncated=False, follow_redirects=True,
@@ -86,6 +85,9 @@ class URLFetchHttpConnection(Connection):
         except (urlfetch.ConnectionClosedError, urlfetch.DownloadError, urlfetch.InternalTransientError) as e:
             self.log_request_fail(method, url, path, '', time.time() - start, exception=e)
             raise ConnectionError('N/A', str(e), e)
+        except AssertionError as e:
+            self.log_request_fail(method, url, path, '', time.time() - start, exception=e)
+            raise AssertionError('URLFetchHTTPConnection RPC error: {}'.format(e))
 
         # raise errors based on http status codes, let the client handle those if needed
         if not (200 <= response.status_code < 300) and response.status_code not in ignore:
