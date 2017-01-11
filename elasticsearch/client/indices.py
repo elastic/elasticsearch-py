@@ -870,7 +870,8 @@ class IndicesClient(NamespacedClient):
         return self.transport.perform_request('PUT', _make_path(index,
             '_shrink', target), params=params, body=body)
 
-    @query_params('master_timeout', 'timeout', 'wait_for_active_shards')
+    @query_params('dry_run', 'master_timeout', 'timeout',
+        'wait_for_active_shards')
     def rollover(self, alias, new_index=None, body=None, params=None):
         """
         The rollover index API rolls an alias over to a new index when the
@@ -885,6 +886,9 @@ class IndicesClient(NamespacedClient):
         :arg alias: The name of the alias to rollover
         :arg new_index: The name of the rollover index
         :arg body: The conditions that needs to be met for executing rollover
+        :arg dry_run: If set to true the rollover action will only be validated
+            but not actually performed even if a condition matches. The default
+            is false
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         :arg wait_for_active_shards: Set the number of active shards to wait for
