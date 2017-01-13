@@ -17,7 +17,7 @@ To simply run the tests just execute the `run_tests.py` script or invoke
  * `TEST_ES_SERVER` - can contain "hostname[:port]" of running es cluster
 
  * `TEST_ES_CONNECTION` - name of the connection class to use from
-    `elasticsearch.connection` module. If you want to run completely with your
+    `elasticsearch5.connection` module. If you want to run completely with your
     own see section on customizing tests.
 
  * `TEST_ES_YAML_DIR` - path to the yaml test suite contained in the
@@ -46,7 +46,7 @@ You can create a `local.py` file in the `test_elasticsearch` directory which
 should contain a `get_client` function.
 
 If this file exists the function will be used instead of
-`elasticsearch.helpers.test.get_test_client` to construct the client used for
+`elasticsearch5.helpers.test.get_test_client` to construct the client used for
 any integration tests. You can use this to make sure your plugins and
 extensions work with `elasticsearch-py`.
 
