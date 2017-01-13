@@ -1,3 +1,5 @@
+from mock import patch
+
 from elasticsearch import helpers, TransportError
 
 from . import ElasticsearchTestCase
@@ -95,6 +97,18 @@ class TestStreamingBulk(ElasticsearchTestCase):
             },
             results[1][1]
         )
+
+    @patch('elasticsearch.connection.http_urllib3.Urllib3HttpConnection.perform_request')
+    def test_params_are_not_mutated_in__process_bulk_chunk(self, mocked_perform_request):
+        mocked_perform_request.return_value = 200, {}, '{"items": [{"index": {"_index": "real-index", "status": 201}}]}'
+        docs = [{"answer": x, '_id': x} for x in range(100)]
+
+        for ok, item in helpers.streaming_bulk(self.client, docs, index='test-index', doc_type='answers', refresh=True,
+                                               chunk_size=1, max_chunk_bytes=100, params=dict(request_timeout=100)):
+            self.assertTrue(ok)
+        self.assertEqual(mocked_perform_request.call_count, 100)
+        self.assertTrue(all((function_parameters.get('timeout') == 100
+                             for (_, function_parameters) in mocked_perform_request.call_args_list)))
 
 
 class TestBulk(ElasticsearchTestCase):
