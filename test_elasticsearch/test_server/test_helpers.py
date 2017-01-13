@@ -1,4 +1,4 @@
-from elasticsearch import helpers, TransportError
+from elasticsearch5 import helpers, TransportError
 
 from . import ElasticsearchTestCase
 from ..test_cases import SkipTest
