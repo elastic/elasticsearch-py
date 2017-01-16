@@ -77,7 +77,7 @@ Example Usage
 Features
 --------
 
-This client was designed as very thin wrapper around Elasticseach's REST API to
+This client was designed as very thin wrapper around Elasticsearch's REST API to
 allow for maximum flexibility. This means that there are no opinions in this
 client; it also means that some of the APIs are a little cumbersome to use from
 Python. We have created some :ref:`helpers` to help with this issue as well as
@@ -161,7 +161,7 @@ turning on :ref:`sniffing` to make sure the client is up to date on the cluster
 location.
 
 By default we allow ``urllib3`` to open up to 10 connections to each node, if
-your application calls for more paralelism, use the ``maxsize`` parameter to
+your application calls for more parallelism, use the ``maxsize`` parameter to
 raise the limit::
 
     # allow up to 25 connections to each node
@@ -233,7 +233,7 @@ is used by the client to log standard activity, depending on the log level.
 of ``curl`` commands using pretty-printed json that can then be executed from
 command line. Because it is designed to be shared (for example to demonstrate
 an issue) it also just uses ``localhost:9200`` as the address instead of the
-actuall address of the host. If the trace logger has not been configured
+actual address of the host. If the trace logger has not been configured
 already it is set to `propagate=False` so it needs to be activated separately.
 
 .. _logging library: http://docs.python.org/3.3/library/logging.html
