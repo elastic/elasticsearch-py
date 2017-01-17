@@ -57,7 +57,9 @@ def query_params(*es_query_params):
     def _wrapper(func):
         @wraps(func)
         def _wrapped(*args, **kwargs):
-            params = kwargs.pop('params', {})
+            params = {}
+            if 'params' in kwargs:
+                params = kwargs.pop('params').copy()
             for p in es_query_params + GLOBAL_PARAMS:
                 if p in kwargs:
                     v = kwargs.pop(p)
