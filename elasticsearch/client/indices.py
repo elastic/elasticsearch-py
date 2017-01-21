@@ -664,7 +664,7 @@ class IndicesClient(NamespacedClient):
         'request_cache')
     def clear_cache(self, index=None, params=None):
         """
-        Clear either all caches or specific cached associated with one ore more indices.
+        Clear either all caches or specific cached associated with one or more indices.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/indices-clearcache.html>`_
 
         :arg index: A comma-separated list of index name to limit the operation
