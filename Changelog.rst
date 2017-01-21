@@ -168,7 +168,7 @@ compatible with 0.90 elasticsearch.
    backwards compatibility, to be removed in future versions)
  * Added ``helpers.streaming_bulk`` to consume an iterator and yield results per
    operation
- * ``helpers.bulk`` and ``helpers.streaming_bulk`` are no longer limitted to just
+ * ``helpers.bulk`` and ``helpers.streaming_bulk`` are no longer limited to just
    index operations.
  * unicode body (for ``incices.analyze`` for example) is now handled correctly
  * changed ``perform_request`` on ``Connection`` classes to return headers as well.
@@ -189,7 +189,7 @@ compatible with 0.90 elasticsearch.
 0.4.2 (2013-10-08)
 ------------------
  
- * ``ignore`` param acceted by all APIs
+ * ``ignore`` param accepted by all APIs
  * Fixes to ``helpers.bulk_index``
 
 0.4.1 (2013-09-24)
