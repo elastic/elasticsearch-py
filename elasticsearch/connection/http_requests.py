@@ -34,7 +34,8 @@ class RequestsHttpConnection(Connection):
 
         super(RequestsHttpConnection, self).__init__(host=host, port=port, **kwargs)
         self.session = requests.Session()
-        self.session.headers = headers
+        self.session.headers = headers or {}
+        self.session.headers.setdefault('content-type', 'application/json')
         if http_auth is not None:
             if isinstance(http_auth, (tuple, list)):
                 http_auth = tuple(http_auth)

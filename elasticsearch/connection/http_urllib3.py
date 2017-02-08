@@ -61,6 +61,7 @@ class Urllib3HttpConnection(Connection):
             for k in headers:
                 self.headers[k.lower()] = headers[k]
 
+        self.headers.setdefault('content-type', 'application/json')
         ca_certs = CA_CERTS if ca_certs is None else ca_certs
         pool_class = urllib3.HTTPConnectionPool
         kw = {}

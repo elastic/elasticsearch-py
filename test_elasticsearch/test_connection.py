@@ -18,21 +18,27 @@ class TestUrllib3Connection(TestCase):
 
     def test_keep_alive_is_on_by_default(self):
         con = Urllib3HttpConnection()
-        self.assertEquals({'connection': 'keep-alive'}, con.headers)
+        self.assertEquals({'connection': 'keep-alive',
+            'content-type': 'application/json'}, con.headers)
 
     def test_http_auth(self):
         con = Urllib3HttpConnection(http_auth='username:secret')
-        self.assertEquals({'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0',
-            'connection': 'keep-alive'}, con.headers)
+        self.assertEquals({
+            'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0',
+            'connection': 'keep-alive',
+            'content-type': 'application/json'
+        }, con.headers)
 
     def test_http_auth_tuple(self):
         con = Urllib3HttpConnection(http_auth=('username', 'secret'))
         self.assertEquals({'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0',
+            'content-type': 'application/json',
             'connection': 'keep-alive'}, con.headers)
 
     def test_http_auth_list(self):
         con = Urllib3HttpConnection(http_auth=['username', 'secret'])
         self.assertEquals({'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0',
+            'content-type': 'application/json',
             'connection': 'keep-alive'}, con.headers)
 
     def test_uses_https_if_verify_certs_is_off(self):
