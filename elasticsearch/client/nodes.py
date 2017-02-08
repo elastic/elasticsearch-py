@@ -1,12 +1,12 @@
 from .utils import NamespacedClient, query_params, _make_path
 
 class NodesClient(NamespacedClient):
-    @query_params('flat_settings', 'human', 'timeout')
+    @query_params('flat_settings', 'timeout')
     def info(self, node_id=None, metric=None, params=None):
         """
         The cluster nodes info API allows to retrieve one or more (or all) of
         the cluster nodes information.
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-info.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-info.html>`_
 
         :arg node_id: A comma-separated list of node IDs or names to limit the
             returned information; use `_local` to return information from the
@@ -15,20 +15,18 @@ class NodesClient(NamespacedClient):
         :arg metric: A comma-separated list of metrics you wish returned. Leave
             empty to return all.
         :arg flat_settings: Return settings in flat format (default: false)
-        :arg human: Whether to return time and byte values in human-readable
-            format., default False
         :arg timeout: Explicit operation timeout
         """
         return self.transport.perform_request('GET', _make_path('_nodes',
             node_id, metric), params=params)
 
     @query_params('completion_fields', 'fielddata_fields', 'fields', 'groups',
-        'human', 'level', 'timeout', 'types')
+        'include_segment_file_sizes', 'level', 'timeout', 'types')
     def stats(self, node_id=None, metric=None, index_metric=None, params=None):
         """
         The cluster nodes stats API allows to retrieve one or more (or all) of
         the cluster nodes statistics.
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-stats.html>`_
 
         :arg node_id: A comma-separated list of node IDs or names to limit the
             returned information; use `_local` to return information from the
@@ -46,10 +44,11 @@ class NodesClient(NamespacedClient):
             `completion` index metric (supports wildcards)
         :arg groups: A comma-separated list of search groups for `search` index
             metric
-        :arg human: Whether to return time and byte values in human-readable
-            format., default False
-        :arg level: Return indices stats aggregated at node, index or shard
-            level, default 'node', valid choices are: 'node', 'indices',
+        :arg include_segment_file_sizes: Whether to report the aggregated disk
+            usage of each one of the Lucene index files (only applies if segment
+            stats are requested), default False
+        :arg level: Return indices stats aggregated at index, node or shard
+            level, default 'node', valid choices are: 'indices', 'node',
             'shards'
         :arg timeout: Explicit operation timeout
         :arg types: A comma-separated list of document types for the `indexing`
@@ -63,7 +62,7 @@ class NodesClient(NamespacedClient):
     def hot_threads(self, node_id=None, params=None):
         """
         An API allowing to get the current hot threads on each node in the cluster.
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-hot-threads.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-hot-threads.html>`_
 
         :arg node_id: A comma-separated list of node IDs or names to limit the
             returned information; use `_local` to return information from the

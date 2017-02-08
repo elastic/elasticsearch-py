@@ -564,7 +564,7 @@ class IndicesClient(NamespacedClient):
             '_settings'), params=params, body=body)
 
     @query_params('completion_fields', 'fielddata_fields', 'fields', 'groups',
-        'human', 'level', 'types')
+        'include_segment_file_sizes', 'level', 'types')
     def stats(self, index=None, metric=None, params=None):
         """
         Retrieve statistics on different operations happening on an index.
@@ -581,8 +581,9 @@ class IndicesClient(NamespacedClient):
             `completion` index metric (supports wildcards)
         :arg groups: A comma-separated list of search groups for `search` index
             metric
-        :arg human: Whether to return time and byte values in human-readable
-            format., default False
+        :arg include_segment_file_sizes: Whether to report the aggregated disk
+            usage of each one of the Lucene index files (only applies if segment
+            stats are requested), default False
         :arg level: Return stats aggregated at cluster, index or shard level,
             default 'indices', valid choices are: 'cluster', 'indices', 'shards'
         :arg types: A comma-separated list of document types for the `indexing`
@@ -591,8 +592,8 @@ class IndicesClient(NamespacedClient):
         return self.transport.perform_request('GET', _make_path(index,
             '_stats', metric), params=params)
 
-    @query_params('allow_no_indices', 'expand_wildcards', 'human',
-        'ignore_unavailable', 'operation_threading', 'verbose')
+    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
+        'operation_threading', 'verbose')
     def segments(self, index=None, params=None):
         """
         Provide low level segments information that a Lucene index (shard level) is built with.
@@ -606,8 +607,6 @@ class IndicesClient(NamespacedClient):
         :arg expand_wildcards: Whether to expand wildcard expression to concrete
             indices that are open, closed or both., default 'open', valid
             choices are: 'open', 'closed', 'none', 'all'
-        :arg human: Whether to return time and byte values in human-readable
-            format., default False
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
         :arg operation_threading: TODO: ?
@@ -687,7 +686,7 @@ class IndicesClient(NamespacedClient):
         return self.transport.perform_request('POST', _make_path(index,
             '_cache', 'clear'), params=params)
 
-    @query_params('active_only', 'detailed', 'human')
+    @query_params('active_only', 'detailed')
     def recovery(self, index=None, params=None):
         """
         The indices recovery API provides insight into on-going shard
@@ -701,8 +700,6 @@ class IndicesClient(NamespacedClient):
             going, default False
         :arg detailed: Whether to display detailed information about shard
             recovery, default False
-        :arg human: Whether to return time and byte values in human-readable
-            format., default False
         """
         return self.transport.perform_request('GET', _make_path(index,
             '_recovery'), params=params)
@@ -732,8 +729,7 @@ class IndicesClient(NamespacedClient):
         return self.transport.perform_request('POST', _make_path(index,
             '_upgrade'), params=params)
 
-    @query_params('allow_no_indices', 'expand_wildcards', 'human',
-        'ignore_unavailable')
+    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable')
     def get_upgrade(self, index=None, params=None):
         """
         Monitor how much of one or more index is upgraded.
@@ -747,8 +743,6 @@ class IndicesClient(NamespacedClient):
         :arg expand_wildcards: Whether to expand wildcard expression to concrete
             indices that are open, closed or both., default 'open', valid
             choices are: 'open', 'closed', 'none', 'all'
-        :arg human: Whether to return time and byte values in human-readable
-            format., default False
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
         """
