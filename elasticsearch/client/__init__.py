@@ -333,9 +333,9 @@ class Elasticsearch(object):
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/docs-get.html>`_
 
         :arg index: The name of the index
+        :arg id: The document ID
         :arg doc_type: The type of the document (use `_all` to fetch the first
             document matching the ID across all types)
-        :arg id: The document ID
         :arg _source: True or false to return the _source field or not, or a
             list of fields to return
         :arg _source_exclude: A list of fields to exclude from the returned
