@@ -14,8 +14,8 @@ addons:
 
 env:
   # different connection classes to test
-  - TEST_ES_CONNECTION=Urllib3HttpConnection ES_VERSION=5.1.1
-  - TEST_ES_CONNECTION=RequestsHttpConnection ES_VERSION=5.1.1
+  - TEST_ES_CONNECTION=Urllib3HttpConnection ES_VERSION=5.2.0
+  - TEST_ES_CONNECTION=RequestsHttpConnection ES_VERSION=5.2.0
 
 before_install:
   - sudo update-java-alternatives -s java-8-oracle

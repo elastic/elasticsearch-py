@@ -3,8 +3,8 @@
 Changelog
 =========
 
-5.2.0 (dev)
------------
+5.2.0 (2017-02-12)
+------------------
 
 The client now automatically sends ``Content-Type`` http header set to
 ``application/json``. If you are explicitly passing in other encoding than
