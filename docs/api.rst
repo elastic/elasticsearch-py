@@ -90,6 +90,12 @@ Indices
 .. autoclass:: IndicesClient
    :members:
 
+Ingest
+------
+
+.. autoclass:: IngestClient
+   :members:
+
 Cluster
 -------
 
@@ -114,3 +120,8 @@ Snapshot
 .. autoclass:: SnapshotClient
    :members:
 
+Tasks
+-----
+
+.. autoclass:: TasksClient
+   :members:
