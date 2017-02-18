@@ -54,7 +54,7 @@ def create_git_index(client, index):
             'committed_date': {'type': 'date'},
             'parent_shas': {'type': 'keyword'},
             'description': {'type': 'text', 'analyzer': 'snowball'},
-            'files': {'type': 'text', 'analyzer': 'file_path'}
+            'files': {'type': 'text', 'analyzer': 'file_path', "fielddata": True}
           }
         },
         'repos': {
