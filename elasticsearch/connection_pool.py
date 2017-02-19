@@ -1,6 +1,7 @@
 import time
 import random
 import logging
+import threading
 
 try:
     from Queue import PriorityQueue, Empty
@@ -58,12 +59,12 @@ class RoundRobinSelector(ConnectionSelector):
     """
     def __init__(self, opts):
         super(RoundRobinSelector, self).__init__(opts)
-        self.rr = -1
+        self.data = threading.local()
 
     def select(self, connections):
-        self.rr += 1
-        self.rr %= len(connections)
-        return connections[self.rr]
+        self.data.rr = getattr(self.data, 'rr', -1) + 1
+        self.data.rr %= len(connections)
+        return connections[self.data.rr]
 
 class ConnectionPool(object):
     """
