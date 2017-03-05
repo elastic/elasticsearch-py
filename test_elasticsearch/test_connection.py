@@ -164,7 +164,7 @@ class TestRequestsConnection(TestCase):
         # trace request
         self.assertEquals(1, tracer.info.call_count)
         self.assertEquals(
-            """curl -XGET 'http://localhost:9200/?pretty&param=42' -d '{\n  "question": "what\\u0027s that?"\n}'""",
+            """curl -H 'Content-Type: application/json' -XGET 'http://localhost:9200/?pretty&param=42' -d '{\n  "question": "what\\u0027s that?"\n}'""",
             tracer.info.call_args[0][0] % tracer.info.call_args[0][1:]
         )
         # trace response
@@ -234,6 +234,6 @@ class TestRequestsConnection(TestCase):
         # trace request
         self.assertEquals(1, tracer.info.call_count)
         self.assertEquals(
-            "curl -XGET 'http://localhost:9200/_search?pretty' -d '{\n  \"answer\": 42\n}'",
+            "curl -H 'Content-Type: application/json' -XGET 'http://localhost:9200/_search?pretty' -d '{\n  \"answer\": 42\n}'",
             tracer.info.call_args[0][0] % tracer.info.call_args[0][1:]
         )

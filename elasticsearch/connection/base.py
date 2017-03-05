@@ -61,7 +61,9 @@ class Connection(object):
         path = path.replace('?', '?pretty&', 1) if '?' in path else path + '?pretty'
         if self.url_prefix:
             path = path.replace(self.url_prefix, '', 1)
-        tracer.info("curl -X%s 'http://localhost:9200%s' -d '%s'", method, path, self._pretty_json(body) if body else '')
+        tracer.info("curl %s-X%s 'http://localhost:9200%s' -d '%s'",
+                    "-H 'Content-Type: application/json' " if body else '',
+                    method, path, self._pretty_json(body) if body else '')
 
         if tracer.isEnabledFor(logging.DEBUG):
             tracer.debug('#[%s] (%.3fs)\n#%s', status_code, duration, self._pretty_json(response).replace('\n', '\n#') if response else '')
