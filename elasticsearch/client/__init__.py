@@ -672,7 +672,7 @@ class Elasticsearch(object):
             equal to the total number of copies for the shard (number of
             replicas + 1)
         :arg wait_for_completion: Should the request should block until the
-            reindex is complete., default False
+            reindex is complete., default True
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
@@ -700,7 +700,7 @@ class Elasticsearch(object):
             copies, otherwise set to any non-negative value less than or equal
             to the total number of copies for the shard (number of replicas + 1)
         :arg wait_for_completion: Should the request should block until the
-            reindex is complete., default False
+            reindex is complete., default True
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
