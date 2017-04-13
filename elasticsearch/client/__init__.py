@@ -3,7 +3,7 @@ import logging
 
 from ..transport import Transport
 from ..exceptions import TransportError
-from ..compat import string_types, urlparse
+from ..compat import string_types, urlparse, unquote
 from .indices import IndicesClient
 from .ingest import IngestClient
 from .cluster import ClusterClient
@@ -49,7 +49,8 @@ def _normalize_hosts(hosts):
                 h['scheme'] = parsed_url.scheme
 
             if parsed_url.username or parsed_url.password:
-                h['http_auth'] = '%s:%s' % (parsed_url.username, parsed_url.password)
+                h['http_auth'] = '%s:%s' % (unquote(parsed_url.username),
+                                            unquote(parsed_url.password))
 
             if parsed_url.path and parsed_url.path != '/':
                 h['url_prefix'] = parsed_url.path
