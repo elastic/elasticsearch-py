@@ -13,8 +13,8 @@ class TestNormalizeHosts(TestCase):
 
     def test_strings_are_parsed_for_port_and_user(self):
         self.assertEquals(
-            [{"host": "elastic.co", "port": 42}, {"host": "elastic.co", "http_auth": "user:secret"}],
-            _normalize_hosts(["elastic.co:42", "user:secret@elastic.co"])
+            [{"host": "elastic.co", "port": 42}, {"host": "elastic.co", "http_auth": "user:secre]"}],
+            _normalize_hosts(["elastic.co:42", "user:secre%5D@elastic.co"])
         )
 
     def test_strings_are_parsed_for_scheme(self):
