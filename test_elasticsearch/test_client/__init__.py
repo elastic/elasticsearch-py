@@ -93,3 +93,9 @@ class TestClient(ElasticsearchTestCase):
         self.client.index(index='my-index', doc_type='test-doc', id=0, body={})
 
         self.assert_url_called('PUT', '/my-index/test-doc/0')
+
+    def test_msearch_template(self):
+        body = '{"index":"i"}\n{"inline": "{\"query\": {\"match_{{template}}\": {}}}", "params": {"template": "all"}}\n'
+        self.client.msearch_template(body, index='i', doc_type='t')
+        calls = self.assert_url_called('GET', '/i/t/_msearch/template')
+        self.assertEquals([({}, body)], calls)

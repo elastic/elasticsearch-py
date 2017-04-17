@@ -1191,6 +1191,27 @@ class Elasticsearch(object):
         return self.transport.perform_request('GET', _make_path(index,
             doc_type, '_msearch'), params=params, body=self._bulk_body(body))
 
+    @query_params('search_type')
+    def msearch_template(self, body, index=None, doc_type=None, params=None):
+        """
+        Execute several search template requests within the same API.
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-multi-search.html>`_
+
+        :arg body: The request definitions (metadata-search request definition
+            pairs), separated by newlines
+        :arg index: A comma-separated list of index names to use as default
+        :arg doc_type: A comma-separated list of document types to use as
+            default
+        :arg search_type: Search operation type, valid choices are:
+            'query_then_fetch', 'query_and_fetch', 'dfs_query_then_fetch',
+            'dfs_query_and_fetch', 'count', 'scan'
+        """
+        if body in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'body'.")
+        _, data = self.transport.perform_request('GET', _make_path(index,
+            doc_type, '_msearch', 'template'), params=params, body=self._bulk_body(body))
+        return data
+
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
         'preference', 'routing')
     def suggest(self, body, index=None, params=None):
