@@ -3,6 +3,12 @@
 Changelog
 =========
 
+5.4.0 (dev)
+-----------
+
+ * ``bulk`` helpers now extract ``pipeline`` parameter from the action
+   dictionary.
+
 5.3.0 (2017-03-30)
 ------------------
 

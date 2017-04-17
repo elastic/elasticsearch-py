@@ -29,7 +29,7 @@ in several formats. The most common one is the same  as returned by
         '_type': 'document',
         '_id': 42,
         '_parent': 5,
-        '_ttl': '1d',
+        'pipeline': 'my-ingest-pipeline',
         '_source': {
             "title": "Hello World!",
             "body": "..."
