@@ -67,12 +67,13 @@ class RequestsHttpConnection(Connection):
             url = '%s?%s' % (url, urlencode(params or {}))
 
         start = time.time()
+        request = requests.Request(method=method, url=url, data=body)
+        prepared_request = self.session.prepare_request(request)
+        settings = self.session.merge_environment_settings(prepared_request.url, {}, None, None, None)
+        send_kwargs = {'timeout': timeout or self.timeout}
+        send_kwargs.update(settings)
         try:
-            request = requests.Request(method=method, url=url, data=body)
-            prepared_request = self.session.prepare_request(request)
-            response = self.session.send(
-                prepared_request,
-                timeout=timeout or self.timeout)
+            response = self.session.send(prepared_request, **send_kwargs)
             duration = time.time() - start
             raw_data = response.text
         except Exception as e:
