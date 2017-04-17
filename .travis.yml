@@ -6,6 +6,7 @@ python:
   - "3.3"
   - "3.4"
   - "3.5"
+  - "3.6"
 
 addons:
   apt:
@@ -14,8 +15,8 @@ addons:
 
 env:
   # different connection classes to test
-  - TEST_ES_CONNECTION=Urllib3HttpConnection ES_VERSION=5.2.0
-  - TEST_ES_CONNECTION=RequestsHttpConnection ES_VERSION=5.2.0
+  - TEST_ES_CONNECTION=Urllib3HttpConnection
+  - TEST_ES_CONNECTION=RequestsHttpConnection
 
 before_install:
   - sudo update-java-alternatives -s java-8-oracle
@@ -23,7 +24,7 @@ before_install:
   - java -version
 
 install:
-  - curl -L -o /tmp/es-snap.zip https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${ES_VERSION}.zip
+  - curl -L -o /tmp/es-snap.zip https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.3.0.zip
   - unzip /tmp/es-snap.zip -d /tmp/
   - /tmp/elasticsearch-*/bin/elasticsearch -E script.inline=true -E path.repo=/tmp -E repositories.url.allowed_urls='http://*' -E node.attr.testattr=test -d
   - git clone https://github.com/elastic/elasticsearch.git ../elasticsearch
