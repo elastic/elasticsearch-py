@@ -4,8 +4,8 @@ import urllib3
 import warnings
 from requests.auth import AuthBase
 
-from elasticsearch.exceptions import TransportError, ConflictError, RequestError, NotFoundError
-from elasticsearch.connection import RequestsHttpConnection, \
+from elasticsearch2.exceptions import TransportError, ConflictError, RequestError, NotFoundError
+from elasticsearch2.connection import RequestsHttpConnection, \
     Urllib3HttpConnection
 
 from .test_cases import TestCase
@@ -126,14 +126,14 @@ class TestRequestsConnection(TestCase):
         con = self._get_mock_connection(status_code=400)
         self.assertRaises(RequestError, con.perform_request, 'GET', '/', {}, '')
 
-    @patch('elasticsearch.connection.base.logger')
+    @patch('elasticsearch2.connection.base.logger')
     def test_head_with_404_doesnt_get_logged(self, logger):
         con = self._get_mock_connection(status_code=404)
         self.assertRaises(NotFoundError, con.perform_request, 'HEAD', '/', {}, '')
         self.assertEquals(0, logger.warning.call_count)
 
-    @patch('elasticsearch.connection.base.tracer')
-    @patch('elasticsearch.connection.base.logger')
+    @patch('elasticsearch2.connection.base.tracer')
+    @patch('elasticsearch2.connection.base.logger')
     def test_failed_request_logs_and_traces(self, logger, tracer):
         con = self._get_mock_connection(response_body='{"answer": 42}', status_code=500)
         self.assertRaises(TransportError, con.perform_request, 'GET', '/', {'param': 42}, '{}'.encode('utf-8'))
@@ -149,8 +149,8 @@ class TestRequestsConnection(TestCase):
             logger.warning.call_args[0][0] % logger.warning.call_args[0][1:]
         ))
 
-    @patch('elasticsearch.connection.base.tracer')
-    @patch('elasticsearch.connection.base.logger')
+    @patch('elasticsearch2.connection.base.tracer')
+    @patch('elasticsearch2.connection.base.logger')
     def test_success_logs_and_traces(self, logger, tracer):
         con = self._get_mock_connection(response_body='''{"answer": "that's it!"}''')
         status, headers, data = con.perform_request('GET', '/', {'param': 42}, '''{"question": "what's that?"}'''.encode('utf-8'))
@@ -216,7 +216,7 @@ class TestRequestsConnection(TestCase):
 
         self.assertEquals(request.headers['authorization'], 'Basic dXNlcm5hbWU6c2VjcmV0')
 
-    @patch('elasticsearch.connection.base.tracer')
+    @patch('elasticsearch2.connection.base.tracer')
     def test_url_prefix(self, tracer):
         con = self._get_mock_connection({"url_prefix": "/some-prefix/"})
         request = self._get_request(con, 'GET', '/_search', body='{"answer": 42}', timeout=0.1)

@@ -1,4 +1,4 @@
-from test_elasticsearch.test_cases import ElasticsearchTestCase
+from ..test_cases import ElasticsearchTestCase
 
 class TestIndices(ElasticsearchTestCase):
     def test_create_one_index(self):

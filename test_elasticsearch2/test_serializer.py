@@ -5,8 +5,8 @@ import uuid
 from datetime import datetime
 from decimal import Decimal
 
-from elasticsearch.serializer import JSONSerializer, Deserializer, DEFAULT_SERIALIZERS, TextSerializer
-from elasticsearch.exceptions import SerializationError, ImproperlyConfigured
+from elasticsearch2.serializer import JSONSerializer, Deserializer, DEFAULT_SERIALIZERS, TextSerializer
+from elasticsearch2.exceptions import SerializationError, ImproperlyConfigured
 
 from .test_cases import TestCase, SkipTest
 

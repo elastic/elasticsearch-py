@@ -32,8 +32,8 @@ def fetch_es_repo():
     if environ.get('TEST_ES_NOFETCH', False):
         return
 
-    from test_elasticsearch.test_server import get_client
-    from test_elasticsearch.test_cases import SkipTest
+    from test_elasticsearch2.test_server import get_client
+    from test_elasticsearch2.test_cases import SkipTest
 
     # find out the sha of the running es
     try:
@@ -45,7 +45,7 @@ def fetch_es_repo():
 
     # fetch new commits to be sure...
     print('Fetching elasticsearch repo...')
-    subprocess.check_call('cd %s && git fetch https://github.com/elasticsearch/elasticsearch.git' % repo_path, shell=True)
+    subprocess.check_call('cd %s && git fetch https://github.com/elastic/elasticsearch.git' % repo_path, shell=True)
     # reset to the version fron info()
     subprocess.check_call('cd %s && git reset --hard %s' % (repo_path, sha), shell=True)
 
@@ -59,7 +59,7 @@ def run_all(argv=None):
     if argv is None:
         argv = [
             'nosetests', '--with-xunit',
-            '--with-xcoverage', '--cover-package=elasticsearch', '--cover-erase',
+            '--with-xcoverage', '--cover-package=elasticsearch2', '--cover-erase',
             '--logging-filter=elasticsearch', '--logging-level=DEBUG',
             '--verbose',
         ]
@@ -71,4 +71,3 @@ def run_all(argv=None):
 
 if __name__ == '__main__':
     run_all(sys.argv)
-

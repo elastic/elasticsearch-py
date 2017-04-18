@@ -3,6 +3,11 @@
 Changelog
 =========
 
+2.5.0 (dev)
+-----------
+
+``elasticsearch-py`` ``2.x`` is now available as ``elasticsearch2`` from PyPI
+
 2.4.1 (2017-01-03)
 ------------------
  * don't warn on empty data returned from server

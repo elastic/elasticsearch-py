@@ -6,8 +6,8 @@ try:
 except ImportError:
     from unittest import TestCase, SkipTest
 
-from elasticsearch import Elasticsearch
-from elasticsearch.exceptions import ConnectionError
+from .. import Elasticsearch
+from ..exceptions import ConnectionError
 
 def get_test_client(nowait=False, **kwargs):
     # construct kwargs from the environment
