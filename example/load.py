@@ -9,8 +9,8 @@ import logging
 
 import git
 
-from elasticsearch import Elasticsearch
-from elasticsearch.helpers import bulk, streaming_bulk
+from elasticsearch2 import Elasticsearch
+from elasticsearch2.helpers import bulk, streaming_bulk
 
 def create_git_index(client, index):
     # we will use user on several places

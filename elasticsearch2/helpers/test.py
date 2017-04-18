@@ -13,7 +13,7 @@ def get_test_client(nowait=False, **kwargs):
     # construct kwargs from the environment
     kw = {'timeout': 30}
     if 'TEST_ES_CONNECTION' in os.environ:
-        from elasticsearch import connection
+        from elasticsearch2 import connection
         kw['connection_class'] = getattr(connection, os.environ['TEST_ES_CONNECTION'])
 
     kw.update(kwargs)
