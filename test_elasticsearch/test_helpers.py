@@ -24,7 +24,7 @@ class TestParallelBulk(TestCase):
         actions = ({'x': i} for i in range(100))
         results = list(helpers.parallel_bulk(Elasticsearch(), actions, thread_count=10, chunk_size=2))
 
-        self.assertTrue(len(set([r[1] for r in results])) > 1)
+        self.assertTrue(len({r[1] for r in results}) > 1)
 
 class TestChunkActions(TestCase):
     def setUp(self):
