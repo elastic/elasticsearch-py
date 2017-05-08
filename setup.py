@@ -15,7 +15,7 @@ install_requires = [
     'urllib3>=1.8, <2.0',
 ]
 tests_require = [
-    'requests>=1.0.0, <3.0.0',
+    'requests>=2.0.0, <3.0.0',
     'nose',
     'coverage',
     'mock',
