@@ -85,8 +85,8 @@ class ConnectionPool(object):
     put on a timeout (if it fails N times in a row the timeout is exponentially
     longer - the formula is `default_timeout * 2 ** (fail_count - 1)`). When
     the timeout is over the connection will be resurrected and returned to the
-    live pool. A connection that has been peviously marked as dead and
-    succeedes will be marked as live (it's fail count will be deleted).
+    live pool. A connection that has been previously marked as dead and
+    succeeds will be marked as live (its fail count will be deleted).
     """
     def __init__(self, connections, dead_timeout=60, timeout_cutoff=5,
         selector_class=RoundRobinSelector, randomize_hosts=True, **kwargs):

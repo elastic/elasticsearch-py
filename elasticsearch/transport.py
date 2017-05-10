@@ -74,7 +74,7 @@ class Transport(object):
             will be serialized and passed as a query parameter `source`.
 
         Any extra keyword arguments will be passed to the `connection_class`
-        when creating and instance unless overriden by that connection's
+        when creating and instance unless overridden by that connection's
         options provided as part of the hosts parameter.
         """
 
