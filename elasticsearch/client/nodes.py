@@ -57,7 +57,7 @@ class NodesClient(NamespacedClient):
         return self.transport.perform_request('GET', _make_path('_nodes',
             node_id, 'stats', metric, index_metric), params=params)
 
-    @query_params('doc_type', 'ignore_idle_threads', 'interval', 'snapshots',
+    @query_params('type', 'ignore_idle_threads', 'interval', 'snapshots',
         'threads', 'timeout')
     def hot_threads(self, node_id=None, params=None):
         """
@@ -68,7 +68,7 @@ class NodesClient(NamespacedClient):
             returned information; use `_local` to return information from the
             node you're connecting to, leave empty to get information from all
             nodes
-        :arg doc_type: The type to sample (default: cpu), valid choices are:
+        :arg type: The type to sample (default: cpu), valid choices are:
             'cpu', 'wait', 'block'
         :arg ignore_idle_threads: Don't show threads that are in known-idle
             places, such as waiting on a socket select or pulling from an empty
