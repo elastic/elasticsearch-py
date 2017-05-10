@@ -60,4 +60,8 @@ setup(
 
     test_suite='test_elasticsearch.run_tests.run_all',
     tests_require=tests_require,
+
+    extras_require={
+        'develop': tests_require + ["sphinx", "sphinx_rtd_theme"]
+    },
 )
