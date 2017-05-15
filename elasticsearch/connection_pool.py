@@ -243,7 +243,7 @@ class DummyConnectionPool(ConnectionPool):
         # we need connection opts for sniffing logic
         self.connection_opts = connections
         self.connection = connections[0][0]
-        self.connections = (self.connection, )
+        self.connections = [self.connection]
 
     def get_connection(self):
         return self.connection
