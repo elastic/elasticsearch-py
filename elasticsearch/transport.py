@@ -151,12 +151,6 @@ class Transport(object):
             # previously unseen params, create new connection
             kwargs = self.kwargs.copy()
             kwargs.update(host)
-
-            if 'scheme' in host and host['scheme'] != self.connection_class.transport_schema:
-                raise ImproperlyConfigured(
-                    'Scheme specified in connection (%s) is not the same as the connection class (%s) specifies (%s).' % (
-                        host['scheme'], self.connection_class.__name__, self.connection_class.transport_schema
-                ))
             return self.connection_class(**kwargs)
         connections = map(_create_connection, hosts)
 
@@ -242,8 +236,8 @@ class Transport(object):
 
         hosts = list(filter(None, (self._get_host_info(n) for n in node_info)))
 
-        # we weren't able to get any nodes, maybe using an incompatible
-        # transport_schema or host_info_callback blocked all - raise error.
+        # we weren't able to get any nodes or host_info_callback blocked all -
+        # raise error.
         if not hosts:
             raise TransportError("N/A", "Unable to sniff hosts - no viable hosts found.")
 

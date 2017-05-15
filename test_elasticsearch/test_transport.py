@@ -68,9 +68,6 @@ class TestTransport(TestCase):
         t = Transport([{'host': 'localhost'}])
         self.assertIsInstance(t.connection_pool, DummyConnectionPool)
 
-    def test_host_with_scheme_different_from_connection_fails(self):
-        self.assertRaises(ImproperlyConfigured, Transport, [{'host': 'localhost', 'scheme': 'thrift'}])
-
     def test_request_timeout_extracted_from_params_and_passed(self):
         t = Transport([{}], connection_class=DummyConnection)
 
@@ -111,7 +108,7 @@ class TestTransport(TestCase):
     def test_kwargs_passed_on_to_connections(self):
         t = Transport([{'host': 'google.com'}], port=123)
         self.assertEquals(1, len(t.connection_pool.connections))
-        self.assertEquals('%s://google.com:123' % t.connection_pool.connections[0].transport_schema, t.connection_pool.connections[0].host)
+        self.assertEquals('http://google.com:123', t.connection_pool.connections[0].host)
 
     def test_kwargs_passed_on_to_connection_pool(self):
         dt = object()
@@ -131,7 +128,7 @@ class TestTransport(TestCase):
         t.add_connection({"host": "google.com", "port": 1234})
 
         self.assertEquals(2, len(t.connection_pool.connections))
-        self.assertEquals('%s://google.com:1234' % t.connection_pool.connections[1].transport_schema, t.connection_pool.connections[1].host)
+        self.assertEquals('http://google.com:1234', t.connection_pool.connections[1].host)
 
     def test_request_will_fail_after_X_retries(self):
         t = Transport([{'exception': ConnectionError('abandon ship')}], connection_class=DummyConnection)

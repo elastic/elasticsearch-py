@@ -24,14 +24,12 @@ class TestNormalizeHosts(TestCase):
                     "host": "elastic.co",
                     "port": 42,
                     "use_ssl": True,
-                    'scheme': 'http'
                 },
                 {
                     "host": "elastic.co",
                     "http_auth": "user:secret",
                     "use_ssl": True,
                     "port": 443,
-                    'scheme': 'http',
                     'url_prefix': '/prefix'
                 }
             ],

@@ -44,9 +44,6 @@ def _normalize_hosts(hosts):
             if parsed_url.scheme == "https":
                 h['port'] = parsed_url.port or 443
                 h['use_ssl'] = True
-                h['scheme'] = 'http'
-            elif parsed_url.scheme:
-                h['scheme'] = parsed_url.scheme
 
             if parsed_url.username or parsed_url.password:
                 h['http_auth'] = '%s:%s' % (unquote(parsed_url.username),

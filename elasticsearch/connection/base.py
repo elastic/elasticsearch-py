@@ -24,8 +24,6 @@ class Connection(object):
 
     Also responsible for logging.
     """
-    transport_schema = 'http'
-
     def __init__(self, host='localhost', port=9200, use_ssl=False, url_prefix='', timeout=10, **kwargs):
         """
         :arg host: hostname of the node (default: localhost)
@@ -33,9 +31,12 @@ class Connection(object):
         :arg url_prefix: optional url prefix for elasticsearch
         :arg timeout: default timeout in seconds (float, default: 10)
         """
-        scheme = self.transport_schema
-        if use_ssl:
-            scheme += 's'
+        scheme = kwargs.get('scheme', 'http')
+        if use_ssl or scheme == 'https':
+            scheme = 'https'
+            use_ssl = True
+        self.use_ssl = use_ssl
+
         self.host = '%s://%s:%s' % (scheme, host, port)
         if url_prefix:
             url_prefix = '/' + url_prefix.strip('/')

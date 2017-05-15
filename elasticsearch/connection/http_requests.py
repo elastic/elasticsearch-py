@@ -32,7 +32,7 @@ class RequestsHttpConnection(Connection):
         if not REQUESTS_AVAILABLE:
             raise ImproperlyConfigured("Please install requests to use RequestsHttpConnection.")
 
-        super(RequestsHttpConnection, self).__init__(host=host, port=port, **kwargs)
+        super(RequestsHttpConnection, self).__init__(host=host, port=port, use_ssl=use_ssl, **kwargs)
         self.session = requests.Session()
         self.session.headers = headers or {}
         self.session.headers.setdefault('content-type', 'application/json')
@@ -43,7 +43,7 @@ class RequestsHttpConnection(Connection):
                 http_auth = tuple(http_auth.split(':', 1))
             self.session.auth = http_auth
         self.base_url = 'http%s://%s:%d%s' % (
-            's' if use_ssl else '',
+            's' if self.use_ssl else '',
             host, port, self.url_prefix
         )
         self.session.verify = verify_certs
@@ -57,7 +57,7 @@ class RequestsHttpConnection(Connection):
                 raise ImproperlyConfigured("You cannot pass CA certificates when verify SSL is off.")
             self.session.verify = ca_certs
 
-        if use_ssl and not verify_certs:
+        if self.use_ssl and not verify_certs:
             warnings.warn(
                 'Connecting to %s using SSL with verify_certs=False is insecure.' % self.base_url)
 
