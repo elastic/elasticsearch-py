@@ -5,7 +5,7 @@ from .connection import Urllib3HttpConnection
 from .connection_pool import ConnectionPool, DummyConnectionPool
 from .serializer import JSONSerializer, Deserializer, DEFAULT_SERIALIZERS
 from .exceptions import ConnectionError, TransportError, SerializationError, \
-                        ConnectionTimeout, ImproperlyConfigured
+                        ConnectionTimeout, ImproperlyConfigured, ElasticsearchException
 
 
 def get_host_info(node_info, host):
@@ -255,6 +255,16 @@ class Transport(object):
         if self.sniff_on_connection_fail:
             self.sniff_hosts()
 
+    def validate_raw_size(self, raw_data, max_raw_size_mb):
+        mb = 1048576
+        raw_data_size_bytes = len(raw_data)
+        raw_data_size_mb = raw_data_size_bytes / mb
+        if raw_data_size_mb > max_raw_size_mb:
+            raise ElasticsearchException(
+                'Returned raw data size (%smb) is bigger than the max allowed (%smb).' % (
+                    raw_data_size_mb, max_raw_size_mb
+                ))
+
     def perform_request(self, method, url, params=None, body=None):
         """
         Perform the actual request. Retrieve a connection from the connection
@@ -299,9 +309,11 @@ class Transport(object):
 
         ignore = ()
         timeout = None
+        max_raw_size_mb = 100
         if params:
             timeout = params.pop('request_timeout', None)
             ignore = params.pop('ignore', ())
+            max_raw_size_mb = params.pop('max_raw_size_mb', max_raw_size_mb)
             if isinstance(ignore, int):
                 ignore = (ignore, )
 
@@ -339,6 +351,7 @@ class Transport(object):
                 # connection didn't fail, confirm it's live status
                 self.connection_pool.mark_live(connection)
                 if data:
+                    self.validate_raw_size(data, max_raw_size_mb)
                     data = self.deserializer.loads(data, headers.get('content-type'))
                 return data
 
