@@ -5,6 +5,7 @@ from __future__ import print_function
 from os.path import dirname, basename, abspath
 from datetime import datetime
 import logging
+import sys
 
 import git
 
@@ -177,7 +178,7 @@ if __name__ == '__main__':
     es = Elasticsearch()
 
     # we load the repo and all commits
-    load_repo(es)
+    load_repo(es, path=sys.argv[1] if len(sys.argv) == 2 else None)
 
     # run the bulk operations
     success, _ = bulk(es, REPO_ACTIONS, index='git', raise_on_error=True)
