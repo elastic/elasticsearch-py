@@ -1,5 +1,23 @@
 Python Elasticsearch Client
 ===========================
+.. image:: https://secure.travis-ci.org/elastic/elasticsearch-py?branch=master
+    :target: http://travis-ci.org/elastic/elasticsearch-py/
+
+.. image:: https://img.shields.io/pypi/v/elasticsearch.svg
+    :target: http://elasticsearch-py.readthedocs.io/en/master/Changelog.html
+    :alt: Latest Version
+
+.. image:: https://img.shields.io/pypi/pyversions/elasticsearch.svg
+    :target: https://pypi.python.org/pypi/elasticsearch/
+    :alt: Supported Python versions
+
+.. image:: https://img.shields.io/pypi/wheel/elasticsearch.svg
+    :target: https://pypi.python.org/pypi/elasticsearch/
+    :alt: Wheel status
+
+.. image:: https://img.shields.io/pypi/l/elasticsearch.svg
+    :target: https://pypi.python.org/pypi/elasticsearch/
+    :alt: License
 
 Official low-level client for Elasticsearch. Its goal is to provide common
 ground for all Elasticsearch-related code in Python; because of this it tries
@@ -147,9 +165,3 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
-Build status
-------------
-
-.. image:: https://secure.travis-ci.org/elastic/elasticsearch-py.png
-   :target: http://travis-ci.org/#!/elastic/elasticsearch-py
