@@ -20,6 +20,5 @@ from .connection_pool import ConnectionPool, ConnectionSelector, \
     RoundRobinSelector
 from .serializer import JSONSerializer
 from .connection import Connection, RequestsHttpConnection, \
-    Urllib3HttpConnection
+    Urllib3HttpConnection, UrlFetchAppEngine
 from .exceptions import *
-
