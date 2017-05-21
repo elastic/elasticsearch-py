@@ -5,7 +5,7 @@ class TasksClient(NamespacedClient):
         'parent_task', 'wait_for_completion')
     def list(self, task_id=None, params=None):
         """
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/tasks-list.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/tasks.html>`_
 
         :arg task_id: Return the task with specified id (node_id:task_number)
         :arg actions: A comma-separated list of actions that should be returned.
@@ -30,7 +30,7 @@ class TasksClient(NamespacedClient):
     def cancel(self, task_id=None, params=None):
         """
 
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/tasks-cancel.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/tasks.html>`_
 
         :arg task_id: Cancel the task with specified task id
             (node_id:task_number)
