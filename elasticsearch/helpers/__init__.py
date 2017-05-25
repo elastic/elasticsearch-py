@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import copy
 import logging
 from operator import methodcaller
 
@@ -160,7 +161,8 @@ def streaming_bulk(client, actions, chunk_size=500, max_chunk_bytes=100 * 1024 *
     actions = map(expand_action_callback, actions)
 
     for bulk_actions in _chunk_actions(actions, chunk_size, max_chunk_bytes, client.transport.serializer):
-        for result in _process_bulk_chunk(client, bulk_actions, raise_on_exception, raise_on_error, **kwargs):
+        for result in _process_bulk_chunk(client, bulk_actions, raise_on_exception, raise_on_error,
+                                          **copy.deepcopy(kwargs)):
             yield result
 
 def bulk(client, actions, stats_only=False, **kwargs):
