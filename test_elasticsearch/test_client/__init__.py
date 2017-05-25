@@ -72,6 +72,10 @@ class TestClient(ElasticsearchTestCase):
         calls = self.assert_url_called('GET', '/i/t/_search')
         self.assertEquals([({'from': '10'}, None)], calls)
 
+    def test_method_kwarg_in_search(self):
+	self.client.search(index='i', doc_type='t', method='POST')
+	self.assert_url_called('POST', '/i/t/_search')
+
     def test_repr_contains_hosts(self):
         self.assertEquals('<Elasticsearch([{}])>', repr(self.client))
 

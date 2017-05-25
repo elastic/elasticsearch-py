@@ -533,7 +533,7 @@ class Elasticsearch(object):
         'search_type', 'size', 'sort', 'stats', 'stored_fields',
         'suggest_field', 'suggest_mode', 'suggest_size', 'suggest_text',
         'terminate_after', 'timeout', 'track_scores', 'typed_keys', 'version')
-    def search(self, index=None, doc_type=None, body=None, params=None):
+    def search(self, index=None, doc_type=None, body=None, params=None, method='GET'):
         """
         Execute a search query and get back search hits that match the query.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-search.html>`_
@@ -543,6 +543,7 @@ class Elasticsearch(object):
         :arg doc_type: A comma-separated list of document types to search; leave
             empty to perform the operation on all types
         :arg body: The search definition using the Query DSL
+        :arg method: The http method for making the search request (default: GET)
         :arg _source: True or false to return the _source field or not, or a
             list of fields to return
         :arg _source_exclude: A list of fields to exclude from the returned
@@ -619,7 +620,7 @@ class Elasticsearch(object):
 
         if doc_type and not index:
             index = '_all'
-        return self.transport.perform_request('GET', _make_path(index,
+        return self.transport.perform_request(method, _make_path(index,
             doc_type, '_search'), params=params, body=body)
 
     @query_params('_source', '_source_exclude', '_source_include',
