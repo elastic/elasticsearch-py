@@ -660,10 +660,10 @@ class IndicesClient(NamespacedClient):
 
     @query_params('allow_no_indices', 'expand_wildcards', 'field_data',
         'fielddata', 'fields', 'ignore_unavailable', 'query', 'recycler',
-        'request')
+        'request_cache')
     def clear_cache(self, index=None, params=None):
         """
-        Clear either all caches or specific cached associated with one ore more indices.
+        Clear either all caches or specific cached associated with one or more indices.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/indices-clearcache.html>`_
 
         :arg index: A comma-separated list of index name to limit the operation
@@ -681,7 +681,7 @@ class IndicesClient(NamespacedClient):
             ignored when unavailable (missing or closed)
         :arg query: Clear query caches
         :arg recycler: Clear the recycler cache
-        :arg request: Clear request cache
+        :arg request_cache: Clear request cache
         """
         return self.transport.perform_request('POST', _make_path(index,
             '_cache', 'clear'), params=params)
