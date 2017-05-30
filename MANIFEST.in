@@ -11,6 +11,6 @@ include elasticsearch/connection/esthrift/Rest-remote
 recursive-include docs *
 
 prune docs/_build
-prune test_elasticsearch
+prune test_elasticsearch2
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
