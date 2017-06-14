@@ -66,26 +66,6 @@ Install the ``elasticsearch`` package with `pip
     pip install elasticsearch
 
 
-Run Elasticsearch in a Container
---------------------------------
-
-To run elasticsearch in a container, optionally set the `ES_VERSION` environment evariable to either 5.4, 5.3 or 2.4. `ES_VERSION` is defaulted to `latest`.
-Then run ./start_elasticsearch.sh::
-
-    export ES_VERSION=5.4
-    ./start_elasticsearch.sh
-
-
-This will run a version fo Elastic Search in a Docker container suitable for running the tests. To check that elasticearch is running
-first wait for a `healthy` status in `docker ps`::
-
-    $ docker ps
-    CONTAINER ID        IMAGE                      COMMAND                  CREATED             STATUS                   PORTS                              NAMES
-    955e57564e53        7d2ad83f8446               "/docker-entrypoin..."   6 minutes ago       Up 6 minutes (healthy)   0.0.0.0:9200->9200/tcp, 9300/tcp   trusting_brattain
-
-Then you can navigate to `locahost:9200` in your browser.
-
-
 Example use
 -----------
 
