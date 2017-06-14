@@ -6,6 +6,7 @@ from os.path import dirname, basename, abspath
 from datetime import datetime
 import logging
 import sys
+import argparse
 
 import git
 
@@ -174,11 +175,25 @@ if __name__ == '__main__':
     tracer.setLevel(logging.INFO)
     tracer.addHandler(logging.FileHandler('/tmp/es_trace.log'))
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-H", "--host",
+        action="store",
+        default="localhost:9200",
+        help="The elasticsearch host you wish to connect too. (Default: localhost:9200)")
+    parser.add_argument(
+        "-p", "--path",
+        action="store",
+        default=None,
+        help="Path to git repo. Commits used as data to load into Elasticsearch. (Default: None")
+
+    args = parser.parse_args()
+
     # instantiate es client, connects to localhost:9200 by default
-    es = Elasticsearch()
+    es = Elasticsearch(args.host)
 
     # we load the repo and all commits
-    load_repo(es, path=sys.argv[1] if len(sys.argv) == 2 else None)
+    load_repo(es, path=args.path)
 
     # run the bulk operations
     success, _ = bulk(es, REPO_ACTIONS, index='git', raise_on_error=True)
