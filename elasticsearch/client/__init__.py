@@ -9,6 +9,7 @@ from .ingest import IngestClient
 from .cluster import ClusterClient
 from .cat import CatClient
 from .nodes import NodesClient
+from .remote import RemoteClient
 from .snapshot import SnapshotClient
 from .tasks import TasksClient
 from .utils import query_params, _make_path, SKIP_IN_PATH
@@ -174,6 +175,7 @@ class Elasticsearch(object):
         self.cluster = ClusterClient(self)
         self.cat = CatClient(self)
         self.nodes = NodesClient(self)
+        self.remote = RemoteClient(self)
         self.snapshot = SnapshotClient(self)
         self.tasks = TasksClient(self)
 
@@ -1585,4 +1587,27 @@ class Elasticsearch(object):
             raise ValueError("Empty value passed for a required argument 'body'.")
         return self.transport.perform_request('GET', _make_path(index, doc_type,
             '_msearch', 'template'), params=params, body=self._bulk_body(body))
+
+    @query_params('allow_no_indices', 'expand_wildcards', 'fields',
+        'ignore_unavailable')
+    def field_caps(self, index=None, body=None, params=None):
+        """
+        The field capabilities API allows to retrieve the capabilities of fields among multiple indices.
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-field-caps.html>`_
+
+        :arg index: A comma-separated list of index names; use `_all` or empty
+            string to perform the operation on all indices
+        :arg body: Field json objects containing an array of field names
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+            expression resolves into no concrete indices. (This includes `_all`
+            string or when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete
+            indices that are open, closed or both., default 'open', valid
+            choices are: 'open', 'closed', 'none', 'all'
+        :arg fields: A comma-separated list of field names
+        :arg ignore_unavailable: Whether specified concrete indices should be
+            ignored when unavailable (missing or closed)
+        """
+        return self.transport.perform_request('GET', _make_path(index,
+            '_field_caps'), params=params, body=body)
 
