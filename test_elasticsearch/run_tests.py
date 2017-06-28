@@ -61,7 +61,7 @@ def run_all(argv=None):
             'nosetests', '--with-xunit',
             '--with-xcoverage', '--cover-package=elasticsearch', '--cover-erase',
             '--logging-filter=elasticsearch', '--logging-level=DEBUG',
-            '--verbose',
+            '--verbose', '--with-id',
         ]
 
     nose.run_exit(
@@ -71,4 +71,3 @@ def run_all(argv=None):
 
 if __name__ == '__main__':
     run_all(sys.argv)
-
