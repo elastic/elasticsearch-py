@@ -110,7 +110,7 @@ class TestTransport(TestCase):
 
         t.perform_request('GET', '/', body='你好\udd9e')
         self.assertEquals(1, len(t.get_connection().calls))
-        self.assertEquals(('GET', '/', None, b'\xe4\xbd\xa0\xe5\xa5\xbd\\udd9e'), t.get_connection().calls[0][0])        
+        self.assertEquals(('GET', '/', None, b'\xe4\xbd\xa0\xe5\xa5\xbd\xed\xb6\x9e'), t.get_connection().calls[0][0])        
                 
     def test_kwargs_passed_on_to_connections(self):
         t = Transport([{'host': 'google.com'}], port=123)
