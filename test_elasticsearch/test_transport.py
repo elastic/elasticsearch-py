@@ -96,7 +96,7 @@ class TestTransport(TestCase):
         t.perform_request('GET', '/', body='你好')
         self.assertEquals(1, len(t.get_connection().calls))
         self.assertEquals(('GET', '/', None, b'\xe4\xbd\xa0\xe5\xa5\xbd'), t.get_connection().calls[0][0])
-                
+
     def test_body_bytes_get_passed_untouched(self):
         t = Transport([{}], connection_class=DummyConnection)
 
