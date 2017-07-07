@@ -292,12 +292,7 @@ class Transport(object):
 
         if body is not None:
             try:
-                body = body.encode('utf-8')
-            except UnicodeEncodeError as e:
-                if e.reason == 'surrogates not allowed':
-                  body = body.encode('utf-8', "surrogatepass")
-                else:                
-                  raise e
+                body = body.encode('utf-8', 'surrogatepass')            
             except (UnicodeDecodeError, AttributeError):
                 # bytes/str - no need to re-encode
                 pass
