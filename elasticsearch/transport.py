@@ -292,7 +292,7 @@ class Transport(object):
 
         if body is not None:
             try:
-                body = body.encode('utf-8')
+                body = body.encode('utf-8', 'surrogatepass')            
             except (UnicodeDecodeError, AttributeError):
                 # bytes/str - no need to re-encode
                 pass

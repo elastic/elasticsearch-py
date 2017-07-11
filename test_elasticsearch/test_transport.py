@@ -105,6 +105,13 @@ class TestTransport(TestCase):
         self.assertEquals(1, len(t.get_connection().calls))
         self.assertEquals(('GET', '/', None, body), t.get_connection().calls[0][0])
 
+    def test_body_surrogates_replaced_encoded_into_bytes(self):
+        t = Transport([{}], connection_class=DummyConnection)
+
+        t.perform_request('GET', '/', body='你好\uda6a')
+        self.assertEquals(1, len(t.get_connection().calls))
+        self.assertEquals(('GET', '/', None, b'\xe4\xbd\xa0\xe5\xa5\xbd\xed\xa9\xaa'), t.get_connection().calls[0][0])        
+                
     def test_kwargs_passed_on_to_connections(self):
         t = Transport([{'host': 'google.com'}], port=123)
         self.assertEquals(1, len(t.connection_pool.connections))
