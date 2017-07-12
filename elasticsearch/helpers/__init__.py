@@ -4,7 +4,8 @@ import logging
 from operator import methodcaller
 
 from ..exceptions import ElasticsearchException, TransportError
-from ..compat import map, string_types
+from ..compat import map, string_types, Queue
+
 
 logger = logging.getLogger('elasticsearch.helpers')
 
@@ -204,7 +205,7 @@ def bulk(client, actions, stats_only=False, **kwargs):
     return success, failed if stats_only else errors
 
 def parallel_bulk(client, actions, thread_count=4, chunk_size=500,
-        max_chunk_bytes=100 * 1024 * 1024,
+        max_chunk_bytes=100 * 1024 * 1024, queue_size=4,
         expand_action_callback=expand_action, **kwargs):
     """
     Parallel version of the bulk helper run in multiple threads at once.
@@ -221,13 +222,22 @@ def parallel_bulk(client, actions, thread_count=4, chunk_size=500,
     :arg expand_action_callback: callback executed on each action passed in,
         should return a tuple containing the action line and the data line
         (`None` if data line should be omitted).
+    :arg queue_size: size of the task queue between the main thread (producing
+        chunks to send) and the processing threads.
     """
     # Avoid importing multiprocessing unless parallel_bulk is used
     # to avoid exceptions on restricted environments like App Engine
-    from multiprocessing.dummy import Pool
+    from multiprocessing.pool import ThreadPool
+
     actions = map(expand_action_callback, actions)
 
-    pool = Pool(thread_count)
+    class BlockingPool(ThreadPool):
+        def _setup_queues(self):
+            super(BlockingPool, self)._setup_queues()
+            self._inqueue = Queue(queue_size)
+            self._quick_put = self._inqueue.put
+
+    pool = BlockingPool(thread_count)
 
     try:
         for result in pool.imap(

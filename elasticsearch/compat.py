@@ -7,7 +7,9 @@ if PY2:
     from urllib import quote_plus, urlencode, unquote
     from urlparse import  urlparse
     from itertools import imap as map
+    from Queue import Queue
 else:
     string_types = str, bytes
     from urllib.parse import quote_plus, urlencode, urlparse, unquote
     map = map
+    from queue import Queue
