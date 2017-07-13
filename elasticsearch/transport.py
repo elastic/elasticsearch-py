@@ -255,7 +255,7 @@ class Transport(object):
         if self.sniff_on_connection_fail:
             self.sniff_hosts()
 
-    def perform_request(self, method, url, params=None, body=None):
+    def perform_request(self, method, url, headers=None, params=None, body=None):
         """
         Perform the actual request. Retrieve a connection from the connection
         pool, pass all the information to it's perform_request method and
@@ -269,6 +269,8 @@ class Transport(object):
 
         :arg method: HTTP method to use
         :arg url: absolute url (without host) to target
+        :arg headers: dictionary of headers, will be handed over to the
+            underlying :class:`~elasticsearch.Connection` class for serialization
         :arg params: dictionary of query parameters, will be handed over to the
             underlying :class:`~elasticsearch.Connection` class for serialization
         :arg body: body of the request, will be serializes using serializer and
@@ -292,7 +294,7 @@ class Transport(object):
 
         if body is not None:
             try:
-                body = body.encode('utf-8', 'surrogatepass')            
+                body = body.encode('utf-8', 'surrogatepass')
             except (UnicodeDecodeError, AttributeError):
                 # bytes/str - no need to re-encode
                 pass
@@ -309,7 +311,7 @@ class Transport(object):
             connection = self.get_connection()
 
             try:
-                status, headers, data = connection.perform_request(method, url, params, body, ignore=ignore, timeout=timeout)
+                status, headers, data = connection.perform_request(method, url, params, body, headers=headers, ignore=ignore, timeout=timeout)
 
             except TransportError as e:
                 if method == 'HEAD' and e.status_code == 404:

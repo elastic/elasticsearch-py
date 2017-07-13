@@ -1127,7 +1127,8 @@ class Elasticsearch(object):
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
         return self.transport.perform_request('POST', _make_path(index,
-            doc_type, '_bulk'), params=params, body=self._bulk_body(body))
+            doc_type, '_bulk'), params=params, body=self._bulk_body(body),
+            headers={'Content-Type': 'application/x-ndjson'})
 
     @query_params('max_concurrent_searches', 'pre_filter_shard_size',
         'search_type', 'typed_keys')

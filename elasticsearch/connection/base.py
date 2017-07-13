@@ -123,5 +123,3 @@ class Connection(object):
             logger.warning('Undecodable raw error response from server: %s', err)
 
         raise HTTP_EXCEPTIONS.get(status_code, TransportError)(status_code, error_message, additional_info)
-
-
