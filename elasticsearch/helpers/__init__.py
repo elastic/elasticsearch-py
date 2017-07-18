@@ -55,6 +55,7 @@ def _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer):
     bulk_actions, bulk_data = [], []
     size, action_count = 0, 0
     for action, data in actions:
+        raw_action = action
         action = serializer.dumps(action)
         cur_size = len(action) + 1
 
@@ -71,9 +72,9 @@ def _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer):
         bulk_actions.append(action)
         if data is not None:
             bulk_actions.append(data)
-            bulk_data.append((action, data))
+            bulk_data.append((raw_action, data))
         else:
-            bulk_data.append((action, ))
+            bulk_data.append((raw_action, ))
 
         size += cur_size
         action_count += 1
@@ -237,7 +238,7 @@ def parallel_bulk(client, actions, thread_count=4, chunk_size=500,
 
     try:
         for result in pool.imap(
-            lambda bulk_data, bulk_actions: list(_process_bulk_chunk(client, bulk_actions, bulk_data, **kwargs)),
+            lambda bulk_chunk: list(_process_bulk_chunk(client, bulk_chunk[1], bulk_chunk[0], **kwargs)),
             _chunk_actions(actions, chunk_size, max_chunk_bytes, client.transport.serializer)
             ):
             for item in result:
