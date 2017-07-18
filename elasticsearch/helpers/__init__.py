@@ -55,7 +55,7 @@ def _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer):
     bulk_actions, bulk_data = [], []
     size, action_count = 0, 0
     for action, data in actions:
-        raw_action = action
+        raw_data, raw_action = action
         action = serializer.dumps(action)
         cur_size = len(action) + 1
 
@@ -72,7 +72,7 @@ def _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer):
         bulk_actions.append(action)
         if data is not None:
             bulk_actions.append(data)
-            bulk_data.append((raw_action, data))
+            bulk_data.append((raw_action, raw_data))
         else:
             bulk_data.append((raw_action, ))
 
