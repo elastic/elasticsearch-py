@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 import logging
 from operator import methodcaller
+import time
 
 from ..exceptions import ElasticsearchException, TransportError
 from ..compat import map, string_types, Queue
@@ -133,8 +134,10 @@ def _process_bulk_chunk(client, bulk_actions, bulk_data, raise_on_exception=True
         raise BulkIndexError('%i document(s) failed to index.' % len(errors), errors)
 
 def streaming_bulk(client, actions, chunk_size=500, max_chunk_bytes=100 * 1024 * 1024,
-        raise_on_error=True, expand_action_callback=expand_action,
-        raise_on_exception=True, **kwargs):
+                   raise_on_error=True, expand_action_callback=expand_action,
+                   raise_on_exception=True, max_retries=0, initial_backoff=2,
+                   max_backoff=600, yield_ok=True, **kwargs):
+
     """
     Streaming bulk consumes actions from the iterable passed in and yields
     results per action. For non-streaming usecases use
@@ -154,12 +157,58 @@ def streaming_bulk(client, actions, chunk_size=500, max_chunk_bytes=100 * 1024 *
     :arg expand_action_callback: callback executed on each action passed in,
         should return a tuple containing the action line and the data line
         (`None` if data line should be omitted).
+    :arg max_retries: maximum number of times a document will be retried when
+        ``429`` is received, set to 0 (default) for no retires on ``429``
+    :arg initial_backoff: number of seconds we should wait before the first
+        retry. Any subsequent retries will be powers of ``inittial_backoff *
+        2**retry_number``
+    :arg max_backoff: maximum number of seconds a retry will wait
+
     """
     actions = map(expand_action_callback, actions)
 
-    for bulk_data, bulk_actions in _chunk_actions(actions, chunk_size, max_chunk_bytes, client.transport.serializer):
-        for result in _process_bulk_chunk(client, bulk_actions, bulk_data, raise_on_exception, raise_on_error, **kwargs):
-            yield result
+    for bulk_data, bulk_actions in _chunk_actions(actions, chunk_size,
+                                                  max_chunk_bytes,
+                                                  client.transport.serializer):
+
+        for attempt in range(max_retries + 1):
+            to_retry, to_retry_data = [], []
+            if attempt:
+                time.sleep(min(max_backoff, initial_backoff * 2**(attempt-1)))
+
+            try:
+                for data, (ok, info) in zip(
+                            bulk_data,
+                            _process_bulk_chunk(client, bulk_actions, bulk_data,
+                                                raise_on_exception=raise_on_exception,
+                                                raise_on_error=raise_on_error, **kwargs)
+                        ):
+
+                    if not ok:
+                        action, info = info.popitem()
+                        # retry if retries enabled, we get 429, and we are not
+                        # in the last attempt
+                        if max_retries and info['status'] == 429 and (attempt+1) <= max_retries:
+                            to_retry.extend(data)
+                            to_retry_data.append(data)
+                        else:
+                            if action != 'delete':
+                                info['data'] = data[1]
+                            yield ok, {action: info}
+                    elif yield_ok:
+                        yield ok, info
+
+            except TransportError as e:
+                # suppress 429 errors since we will retry them
+                if not max_retries or e.status_code != 429:
+                    raise
+            else:
+                if not to_retry:
+                    break
+                # retry only subset of documents that didn't succeed
+                bulk_actions = to_retry
+                bulk_data = to_retry_data
+
 
 def bulk(client, actions, stats_only=False, **kwargs):
     """
@@ -190,6 +239,8 @@ def bulk(client, actions, stats_only=False, **kwargs):
     # list of errors to be collected is not stats_only
     errors = []
 
+    # make streaming_bulk yield successful results so we can count them
+    kwargs['yield_ok'] = True
     for ok, item in streaming_bulk(client, actions, **kwargs):
         # go through request-reponse pairs and detect failures
         if not ok:
