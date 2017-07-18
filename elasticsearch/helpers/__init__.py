@@ -145,6 +145,11 @@ def streaming_bulk(client, actions, chunk_size=500, max_chunk_bytes=100 * 1024 *
     bulk that returns summary information about the bulk operation once the
     entire input is consumed and sent.
 
+    If you specify ``max_retries`` it will also retry any documents that were
+    rejected with a ``429`` status code. To do this it will wait (**by calling
+    time.sleep which will block**) for ``initial_backoff`` seconds and then,
+    every subsequent rejection for the same chunk, for double the time every
+    time up to ``max_backoff`` seconds.
 
     :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use
     :arg actions: iterable containing the actions to be executed
@@ -163,7 +168,6 @@ def streaming_bulk(client, actions, chunk_size=500, max_chunk_bytes=100 * 1024 *
         retry. Any subsequent retries will be powers of ``inittial_backoff *
         2**retry_number``
     :arg max_backoff: maximum number of seconds a retry will wait
-
     """
     actions = map(expand_action_callback, actions)
 
