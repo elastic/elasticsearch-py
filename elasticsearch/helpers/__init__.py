@@ -47,13 +47,12 @@ def expand_action(data):
 
     return action, data.get('_source', data)
 
-def _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer, include_data=False):
+def _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer):
     """
     Split actions into chunks by number or size, serialize them into strings in
     the process.
     """
-    bulk_actions = []
-    bulk_data = []
+    bulk_actions, bulk_data = [], []
     size, action_count = 0, 0
     for action, data in actions:
         action = serializer.dumps(action)
@@ -65,34 +64,24 @@ def _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer, include_dat
 
         # full chunk, send it and start a new one
         if bulk_actions and (size + cur_size > max_chunk_bytes or action_count == chunk_size):
-            if include_data:
-                yield bulk_data, bulk_actions
-            else:
-                yield bulk_actions
-            bulk_actions = []
-            bulk_data = []
+            yield bulk_data, bulk_actions
+            bulk_actions, bulk_data = [], []
             size, action_count = 0, 0
 
         bulk_actions.append(action)
         if data is not None:
             bulk_actions.append(data)
-
-        if include_data:
-            if data is not None:
-                bulk_data.append((action, data))
-            else:
-                bulk_data.append((action, ))
+            bulk_data.append((action, data))
+        else:
+            bulk_data.append((action, ))
 
         size += cur_size
         action_count += 1
 
     if bulk_actions:
-        if include_data:
-            yield bulk_data, bulk_actions
-        else:
-            yield bulk_actions
+        yield bulk_data, bulk_actions
 
-def _process_bulk_chunk(client, bulk_actions, raise_on_exception=True, raise_on_error=True, **kwargs):
+def _process_bulk_chunk(client, bulk_actions, bulk_data, raise_on_exception=True, raise_on_error=True, **kwargs):
     """
     Send a bulk request to elasticsearch and process the output.
     """
@@ -111,22 +100,14 @@ def _process_bulk_chunk(client, bulk_actions, raise_on_exception=True, raise_on_
         err_message = str(e)
         exc_errors = []
 
-        # deserialize the data back, thisis expensive but only run on
-        # errors if raise_on_exception is false, so shouldn't be a real
-        # issue
-        bulk_data = map(client.transport.serializer.loads, bulk_actions)
-        while True:
-            try:
-                # collect all the information about failed actions
-                action = next(bulk_data)
-                op_type, action = action.popitem()
-                info = {"error": err_message, "status": e.status_code, "exception": e}
-                if op_type != 'delete':
-                    info['data'] = next(bulk_data)
-                info.update(action)
-                exc_errors.append({op_type: info})
-            except StopIteration:
-                break
+        for data in bulk_data:
+            # collect all the information about failed actions
+            op_type, action = data[0].popitem()
+            info = {"error": err_message, "status": e.status_code, "exception": e}
+            if op_type != 'delete':
+                info['data'] = data[1]
+            info.update(action)
+            exc_errors.append({op_type: info})
 
         # emulate standard behavior for failed actions
         if raise_on_error:
@@ -175,8 +156,8 @@ def streaming_bulk(client, actions, chunk_size=500, max_chunk_bytes=100 * 1024 *
     """
     actions = map(expand_action_callback, actions)
 
-    for bulk_actions in _chunk_actions(actions, chunk_size, max_chunk_bytes, client.transport.serializer):
-        for result in _process_bulk_chunk(client, bulk_actions, raise_on_exception, raise_on_error, **kwargs):
+    for bulk_data, bulk_actions in _chunk_actions(actions, chunk_size, max_chunk_bytes, client.transport.serializer):
+        for result in _process_bulk_chunk(client, bulk_actions, bulk_data, raise_on_exception, raise_on_error, **kwargs):
             yield result
 
 def bulk(client, actions, stats_only=False, **kwargs):
@@ -256,7 +237,7 @@ def parallel_bulk(client, actions, thread_count=4, chunk_size=500,
 
     try:
         for result in pool.imap(
-            lambda chunk: list(_process_bulk_chunk(client, chunk, **kwargs)),
+            lambda bulk_data, bulk_actions: list(_process_bulk_chunk(client, bulk_actions, bulk_data, **kwargs)),
             _chunk_actions(actions, chunk_size, max_chunk_bytes, client.transport.serializer)
             ):
             for item in result:

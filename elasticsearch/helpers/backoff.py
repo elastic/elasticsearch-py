@@ -30,16 +30,24 @@ def backoff_bulk(client, actions, chunk_size=500, max_chunk_bytes=100 * 1024 * 1
     """
     actions = map(expand_action_callback, actions)
 
-    for bulk_data, bulk_actions in _chunk_actions(actions, chunk_size, max_chunk_bytes, client.transport.serializer, include_data=True):
+    for bulk_data, bulk_actions in _chunk_actions(actions, chunk_size,
+                                                  max_chunk_bytes,
+                                                  client.transport.serializer):
         retry = 0
         while max_retries == -1 or retry <= max_retries:
-            to_retry = []
-            to_retry_data = []
+            to_retry, to_retry_data = [], []
             if retry:
                 time.sleep(min(max_backoff, initial_backoff * 2**(retry-1)))
 
             try:
-                for data, (ok, info) in zip(bulk_data, _process_bulk_chunk(client, bulk_actions, raise_on_exception=True, raise_on_error=False, **kwargs)):
+                for data, (ok, info) in zip(bulk_data,
+                                            _process_bulk_chunk(client,
+                                                                bulk_actions,
+                                                                bulk_data,
+                                                                raise_on_exception=True,
+                                                                raise_on_error=False,
+                                                                **kwargs)):
+
                     if not ok:
                         action, info = info.popitem()
                         if info['status'] == 429 and (retry+1) <= max_retries:
@@ -52,7 +60,6 @@ def backoff_bulk(client, actions, chunk_size=500, max_chunk_bytes=100 * 1024 * 1
             except TransportError as e:
                 if e.status_code != 429:
                     raise
-
                 retry += 1
             else:
                 if not to_retry:
