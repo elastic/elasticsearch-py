@@ -47,12 +47,13 @@ def expand_action(data):
 
     return action, data.get('_source', data)
 
-def _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer):
+def _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer, include_data=False):
     """
     Split actions into chunks by number or size, serialize them into strings in
     the process.
     """
     bulk_actions = []
+    bulk_data = []
     size, action_count = 0, 0
     for action, data in actions:
         action = serializer.dumps(action)
@@ -64,18 +65,32 @@ def _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer):
 
         # full chunk, send it and start a new one
         if bulk_actions and (size + cur_size > max_chunk_bytes or action_count == chunk_size):
-            yield bulk_actions
+            if include_data:
+                yield bulk_data, bulk_actions
+            else:
+                yield bulk_actions
             bulk_actions = []
+            bulk_data = []
             size, action_count = 0, 0
 
         bulk_actions.append(action)
         if data is not None:
             bulk_actions.append(data)
+
+        if include_data:
+            if data is not None:
+                bulk_data.append((action, data))
+            else:
+                bulk_data.append((action, ))
+
         size += cur_size
         action_count += 1
 
     if bulk_actions:
-        yield bulk_actions
+        if include_data:
+            yield bulk_data, bulk_actions
+        else:
+            yield bulk_actions
 
 def _process_bulk_chunk(client, bulk_actions, raise_on_exception=True, raise_on_error=True, **kwargs):
     """
