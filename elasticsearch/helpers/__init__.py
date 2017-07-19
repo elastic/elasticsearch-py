@@ -120,9 +120,12 @@ def _process_bulk_chunk(client, bulk_actions, bulk_data, raise_on_exception=True
             return
 
     # go through request-reponse pairs and detect failures
-    for op_type, item in map(methodcaller('popitem'), resp['items']):
+    for data, (op_type, item) in zip(bulk_data, map(methodcaller('popitem'), resp['items'])):
         ok = 200 <= item.get('status', 500) < 300
         if not ok and raise_on_error:
+            # include original document source
+            if len(data) > 1:
+                item['data'] = data[1]
             errors.append({op_type: item})
 
         if ok or not errors:
@@ -168,6 +171,7 @@ def streaming_bulk(client, actions, chunk_size=500, max_chunk_bytes=100 * 1024 *
         retry. Any subsequent retries will be powers of ``inittial_backoff *
         2**retry_number``
     :arg max_backoff: maximum number of seconds a retry will wait
+    :arg yield_ok: if set to False will skip successful documents in the output
     """
     actions = map(expand_action_callback, actions)
 
@@ -184,20 +188,20 @@ def streaming_bulk(client, actions, chunk_size=500, max_chunk_bytes=100 * 1024 *
                 for data, (ok, info) in zip(
                             bulk_data,
                             _process_bulk_chunk(client, bulk_actions, bulk_data,
-                                                raise_on_exception=raise_on_exception,
-                                                raise_on_error=raise_on_error, **kwargs)
+                                                raise_on_exception,
+                                                raise_on_error, **kwargs)
                         ):
 
                     if not ok:
                         action, info = info.popitem()
                         # retry if retries enabled, we get 429, and we are not
                         # in the last attempt
-                        if max_retries and info['status'] == 429 and (attempt+1) <= max_retries:
+                        if max_retries \
+                                and info['status'] == 429 \
+                                and (attempt+1) <= max_retries:
                             to_retry.extend(data)
                             to_retry_data.append(data)
                         else:
-                            if action != 'delete':
-                                info['data'] = data[1]
                             yield ok, {action: info}
                     elif yield_ok:
                         yield ok, info
@@ -210,8 +214,7 @@ def streaming_bulk(client, actions, chunk_size=500, max_chunk_bytes=100 * 1024 *
                 if not to_retry:
                     break
                 # retry only subset of documents that didn't succeed
-                bulk_actions = to_retry
-                bulk_data = to_retry_data
+                bulk_actions, bulk_data = to_retry, to_retry_data
 
 
 def bulk(client, actions, stats_only=False, **kwargs):
@@ -225,9 +228,12 @@ def bulk(client, actions, stats_only=False, **kwargs):
     options like ``stats_only`` only apply when ``raise_on_error`` is set to
     ``False``.
 
+    When errors are being collected original document data is included in the
+    error dictionary which can lead to an extra high memory usage. If you need
+    to process a lot of data and want to ignore/collect errors please consider
+    using the :func:`~elasticsearch.helpers.streaming_bulk` helper which will
+    just return the errors and not store them in memory.
 
-    See :func:`~elasticsearch.helpers.streaming_bulk` for more accepted
-    parameters
 
     :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use
     :arg actions: iterator containing the actions
@@ -236,7 +242,8 @@ def bulk(client, actions, stats_only=False, **kwargs):
 
     Any additional keyword arguments will be passed to
     :func:`~elasticsearch.helpers.streaming_bulk` which is used to execute
-    the operation.
+    the operation, see :func:`~elasticsearch.helpers.streaming_bulk` for more
+    accepted parameters.
     """
     success, failed = 0, 0
 
