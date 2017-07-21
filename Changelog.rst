@@ -3,11 +3,117 @@
 Changelog
 =========
 
-1.5.0 (dev)
------------
+5.4.0 (2017-05-18)
+------------------
 
+ * ``bulk`` helpers now extract ``pipeline`` parameter from the action
+   dictionary.
+
+5.3.0 (2017-03-30)
+------------------
+
+Compatibility with elasticsearch 5.3
+
+5.2.0 (2017-02-12)
+------------------
+
+The client now automatically sends ``Content-Type`` http header set to
+``application/json``. If you are explicitly passing in other encoding than
+``json`` you need to set the header manually.
+
+5.1.0 (2017-01-11)
+------------------
+
+ * Fixed sniffing
+
+5.0.1 (2016-11-02)
+------------------
+
+Fixed performance regression in ``scan`` helper
+
+5.0.0 (2016-10-19)
+------------------
+
+Version compatible with elasticsearch 5.0
+
+ * when using SSL certificate validation is now on by default. Install
+   ``certifi`` or supply root certificate bundle.
+ * ``elasticsearch.trace`` logger now also logs failed requests, signature of
+   internal logging method ``log_request_fail`` has changed, all custom
+   connection classes need to be updated
+ * added ``headers`` arg to connections to support custom http headers
+ * passing in a keyword parameter with ``None`` as value will cause that param
+   to be ignored 
+
+2.4.0 (2016-08-17)
+------------------
+
+ * ``ping`` now ignores all ``TransportError`` exceptions and just returns
+   ``False``
+ * expose ``scroll_id`` on ``ScanError``
+ * increase default size for ``scan`` helper to 1000
+
+Internal:
+
+ * changed ``Transport.perform_request`` to just return the body, not status as well.
+
+2.3.0 (2016-02-29)
+------------------
+
+ * added ``client_key`` argument to configure client certificates
+ * debug logging now includes response body even for failed requests
+
+2.2.0 (2016-01-05)
+------------------
+
+Due to change in json encoding the client will no longer mask issues with
+encoding - if you work with non-ascii data in python 2 you must use the
+``unicode`` type or have proper encoding set in your environment.
+
+ * adding additional options for ssh - ``ssl_assert_hostname`` and
+   ``ssl_assert_fingerprint`` to the default connection class
+ * fix sniffing
+
+2.1.0 (2015-10-19)
+------------------
+
+  * move multiprocessing import inside parallel bulk for Google App Engine
+
+2.0.0 (2015-10-14)
+------------------
+
+ * Elasticsearch 2.0 compatibility release
+
+1.8.0 (2015-10-14)
+------------------
+
+ * removed thrift and memcached connections, if you wish to continue using
+   those, extract the classes and use them separately.
+ * added a new, parallel version of the bulk helper using thread pools
+ * In helpers, removed ``bulk_index`` as an alias for ``bulk``. Use ``bulk``
+   instead.
+
+1.7.0 (2015-09-21)
+------------------
+
+ * elasticsearch 2.0 compatibility
+ * thrift now deprecated, to be removed in future version
+ * make sure urllib3 always uses keep-alive
+
+1.6.0 (2015-06-10)
+------------------
+
+ * Add ``indices.flush_synced`` API
+ * ``helpers.reindex`` now supports reindexing parent/child documents
+
+1.5.0 (2015-05-18)
+------------------
+
+ * Add support for ``query_cache`` parameter when searching
  * helpers have been made more secure by changing defaults to raise an
    exception on errors
+ * removed deprecated options ``replication`` and the deprecated benchmark api.
+ * Added ``AddonClient`` class to allow for extending the client from outside
 
 1.4.0 (2015-02-11)
 ------------------
@@ -80,7 +186,7 @@ compatible with 0.90 elasticsearch.
    backwards compatibility, to be removed in future versions)
  * Added ``helpers.streaming_bulk`` to consume an iterator and yield results per
    operation
- * ``helpers.bulk`` and ``helpers.streaming_bulk`` are no longer limitted to just
+ * ``helpers.bulk`` and ``helpers.streaming_bulk`` are no longer limited to just
    index operations.
  * unicode body (for ``incices.analyze`` for example) is now handled correctly
  * changed ``perform_request`` on ``Connection`` classes to return headers as well.
@@ -101,7 +207,7 @@ compatible with 0.90 elasticsearch.
 0.4.2 (2013-10-08)
 ------------------
  
- * ``ignore`` param acceted by all APIs
+ * ``ignore`` param accepted by all APIs
  * Fixes to ``helpers.bulk_index``
 
 0.4.1 (2013-09-24)

@@ -6,50 +6,44 @@ from requests.auth import AuthBase
 
 from elasticsearch.exceptions import TransportError, ConflictError, RequestError, NotFoundError
 from elasticsearch.connection import RequestsHttpConnection, \
-    Urllib3HttpConnection, THRIFT_AVAILABLE, ThriftConnection
+    Urllib3HttpConnection
 
-from .test_cases import TestCase, SkipTest
+from .test_cases import TestCase
 
-class TestThriftConnection(TestCase):
-    def setUp(self):
-        if not THRIFT_AVAILABLE:
-            raise SkipTest('Thrift is not available.')
-        super(TestThriftConnection, self).setUp()
-
-    def test_use_ssl_uses_ssl_socket(self):
-        from thrift.transport import TSSLSocket
-        con = ThriftConnection(use_ssl=True)
-        self.assertIs(con._tsocket_class, TSSLSocket.TSSLSocket)
-
-    def test_use_normal_tsocket_by_default(self):
-        from thrift.transport import TSocket
-        con = ThriftConnection()
-        self.assertIs(con._tsocket_class, TSocket.TSocket)
-
-    def test_timeout_set(self):
-        con = ThriftConnection(timeout=42)
-        self.assertEquals(42, con.timeout)
 
 class TestUrllib3Connection(TestCase):
     def test_timeout_set(self):
         con = Urllib3HttpConnection(timeout=42)
         self.assertEquals(42, con.timeout)
 
+    def test_keep_alive_is_on_by_default(self):
+        con = Urllib3HttpConnection()
+        self.assertEquals({'connection': 'keep-alive',
+            'content-type': 'application/json'}, con.headers)
+
     def test_http_auth(self):
         con = Urllib3HttpConnection(http_auth='username:secret')
-        self.assertEquals({'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0'}, con.headers)
+        self.assertEquals({
+            'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0',
+            'connection': 'keep-alive',
+            'content-type': 'application/json'
+        }, con.headers)
 
     def test_http_auth_tuple(self):
         con = Urllib3HttpConnection(http_auth=('username', 'secret'))
-        self.assertEquals({'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0'}, con.headers)
+        self.assertEquals({'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0',
+            'content-type': 'application/json',
+            'connection': 'keep-alive'}, con.headers)
 
     def test_http_auth_list(self):
         con = Urllib3HttpConnection(http_auth=['username', 'secret'])
-        self.assertEquals({'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0'}, con.headers)
+        self.assertEquals({'authorization': 'Basic dXNlcm5hbWU6c2VjcmV0',
+            'content-type': 'application/json',
+            'connection': 'keep-alive'}, con.headers)
 
-    def test_uses_https_if_specified(self):
+    def test_uses_https_if_verify_certs_is_off(self):
         with warnings.catch_warnings(record=True) as w:
-            con = Urllib3HttpConnection(use_ssl=True)
+            con = Urllib3HttpConnection(use_ssl=True, verify_certs=False)
             self.assertEquals(1, len(w))
             self.assertEquals('Connecting to localhost using SSL with verify_certs=False is insecure.', str(w[0].message))
 
@@ -98,9 +92,9 @@ class TestRequestsConnection(TestCase):
         con = RequestsHttpConnection(timeout=42)
         self.assertEquals(42, con.timeout)
 
-    def test_use_https_if_specified(self):
+    def test_uses_https_if_verify_certs_is_off(self):
         with warnings.catch_warnings(record=True) as w:
-            con = self._get_mock_connection({'use_ssl': True, 'url_prefix': 'url'})
+            con = self._get_mock_connection({'use_ssl': True, 'url_prefix': 'url', 'verify_certs': False})
             self.assertEquals(1, len(w))
             self.assertEquals('Connecting to https://localhost:9200/url using SSL with verify_certs=False is insecure.', str(w[0].message))
 
@@ -138,16 +132,22 @@ class TestRequestsConnection(TestCase):
         con = self._get_mock_connection(status_code=400)
         self.assertRaises(RequestError, con.perform_request, 'GET', '/', {}, '')
 
+    @patch('elasticsearch.connection.base.logger')
+    def test_head_with_404_doesnt_get_logged(self, logger):
+        con = self._get_mock_connection(status_code=404)
+        self.assertRaises(NotFoundError, con.perform_request, 'HEAD', '/', {}, '')
+        self.assertEquals(0, logger.warning.call_count)
+
     @patch('elasticsearch.connection.base.tracer')
     @patch('elasticsearch.connection.base.logger')
     def test_failed_request_logs_and_traces(self, logger, tracer):
         con = self._get_mock_connection(response_body='{"answer": 42}', status_code=500)
         self.assertRaises(TransportError, con.perform_request, 'GET', '/', {'param': 42}, '{}'.encode('utf-8'))
 
-        # no trace request
-        self.assertEquals(0, tracer.info.call_count)
-        # no trace response
-        self.assertEquals(0, tracer.debug.call_count)
+        # trace request
+        self.assertEquals(1, tracer.info.call_count)
+        # trace response
+        self.assertEquals(1, tracer.debug.call_count)
         # log url and duration
         self.assertEquals(1, logger.warning.call_count)
         self.assertTrue(re.match(
@@ -164,7 +164,7 @@ class TestRequestsConnection(TestCase):
         # trace request
         self.assertEquals(1, tracer.info.call_count)
         self.assertEquals(
-            """curl -XGET 'http://localhost:9200/?pretty&param=42' -d '{\n  "question": "what\\u0027s that?"\n}'""",
+            """curl -H 'Content-Type: application/json' -XGET 'http://localhost:9200/?pretty&param=42' -d '{\n  "question": "what\\u0027s that?"\n}'""",
             tracer.info.call_args[0][0] % tracer.info.call_args[0][1:]
         )
         # trace response
@@ -234,6 +234,6 @@ class TestRequestsConnection(TestCase):
         # trace request
         self.assertEquals(1, tracer.info.call_count)
         self.assertEquals(
-            "curl -XGET 'http://localhost:9200/_search?pretty' -d '{\n  \"answer\": 42\n}'",
+            "curl -H 'Content-Type: application/json' -XGET 'http://localhost:9200/_search?pretty' -d '{\n  \"answer\": 42\n}'",
             tracer.info.call_args[0][0] % tracer.info.call_args[0][1:]
         )

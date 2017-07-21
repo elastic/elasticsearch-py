@@ -3,119 +3,112 @@
 from __future__ import print_function
 
 from os.path import dirname, basename, abspath
-from itertools import chain
 from datetime import datetime
 import logging
+import sys
+import argparse
 
 import git
 
 from elasticsearch import Elasticsearch
+from elasticsearch.exceptions import TransportError
 from elasticsearch.helpers import bulk, streaming_bulk
 
 def create_git_index(client, index):
-    # create empty index
-    client.indices.create(
-        index=index,
-        body={
-          'settings': {
-            # just one shard, no replicas for testing
-            'number_of_shards': 1,
-            'number_of_replicas': 0,
-
-            # custom analyzer for analyzing file paths
-            'analysis': {
-              'analyzer': {
-                'file_path': {
-                  'type': 'custom',
-                  'tokenizer': 'path_hierarchy',
-                  'filter': ['lowercase']
-                }
-              }
-            }
-          }
-        },
-        # ignore already existing index
-        ignore=400
-    )
-
     # we will use user on several places
     user_mapping = {
       'properties': {
         'name': {
-          'type': 'multi_field',
+          'type': 'text',
           'fields': {
-            'raw': {'type' : 'string', 'index' : 'not_analyzed'},
-            'name': {'type' : 'string'}
+            'raw': {'type': 'keyword'},
           }
         }
       }
     }
 
-    client.indices.put_mapping(
-        index=index,
-        doc_type='repos',
-        body={
-          'repos': {
-            'properties': {
-              'owner': user_mapping,
-              'created_at': {'type': 'date'},
-              'description': {
-                'type': 'string',
-                'analyzer': 'snowball',
-              },
-              'tags': {
-                'type': 'string',
-                'index': 'not_analyzed'
-              }
+    create_index_body = {
+      'settings': {
+        # just one shard, no replicas for testing
+        'number_of_shards': 1,
+        'number_of_replicas': 0,
+
+        # custom analyzer for analyzing file paths
+        'analysis': {
+          'analyzer': {
+            'file_path': {
+              'type': 'custom',
+              'tokenizer': 'path_hierarchy',
+              'filter': ['lowercase']
             }
           }
         }
-    )
-
-    client.indices.put_mapping(
-        index=index,
-        doc_type='commits',
-        body={
-          'commits': {
-            '_parent': {
-              'type': 'repos'
+      },
+      'mappings': {
+        'commits': {
+          '_parent': {
+            'type': 'repos'
+          },
+          'properties': {
+            'author': user_mapping,
+            'authored_date': {'type': 'date'},
+            'committer': user_mapping,
+            'committed_date': {'type': 'date'},
+            'parent_shas': {'type': 'keyword'},
+            'description': {'type': 'text', 'analyzer': 'snowball'},
+            'files': {'type': 'text', 'analyzer': 'file_path', "fielddata": True}
+          }
+        },
+        'repos': {
+          'properties': {
+            'owner': user_mapping,
+            'created_at': {'type': 'date'},
+            'description': {
+              'type': 'text',
+              'analyzer': 'snowball',
             },
-            'properties': {
-              'author': user_mapping,
-              'authored_date': {'type': 'date'},
-              'committer': user_mapping,
-              'committed_date': {'type': 'date'},
-              'parent_shas': {'type': 'string', 'index' : 'not_analyzed'},
-              'description': {'type': 'string', 'analyzer': 'snowball'},
-              'files': {'type': 'string', 'analyzer': 'file_path'}
-            }
+            'tags': {'type': 'keyword'}
           }
         }
-    )
+      }
+    }
 
-def parse_commits(repo, name):
+    # create empty index
+    try:
+        client.indices.create(
+            index=index,
+            body=create_index_body,
+        )
+    except TransportError as e:
+        # ignore already existing index
+        if e.error == 'index_already_exists_exception':
+            pass
+        else:
+            raise
+
+def parse_commits(head, name):
     """
     Go through the git repository log and generate a document per commit
     containing all the metadata.
     """
-    for commit in repo.log():
+    for commit in head.traverse():
         yield {
-            '_id': commit.id,
+            '_id': commit.hexsha,
             '_parent': name,
-            'committed_date': datetime(*commit.committed_date[:6]),
+            'committed_date': datetime.fromtimestamp(commit.committed_date),
             'committer': {
                 'name': commit.committer.name,
                 'email': commit.committer.email,
             },
-            'authored_date': datetime(*commit.authored_date[:6]),
+            'authored_date': datetime.fromtimestamp(commit.authored_date),
             'author': {
                 'name': commit.author.name,
                 'email': commit.author.email,
             },
             'description': commit.message,
-            'parent_shas': [p.id for p in commit.parents],
+            'parent_shas': [p.hexsha for p in commit.parents],
             # we only care about the filenames, not the per-file stats
-            'files': list(chain(commit.stats.files)),
+            'files': list(commit.stats.files),
             'stats': commit.stats.total,
         }
 
@@ -144,7 +137,7 @@ def load_repo(client, path=None, index='git'):
     # loading all the commits into memory
     for ok, result in streaming_bulk(
             client,
-            parse_commits(repo, repo_name),
+            parse_commits(repo.refs.master.commit, repo_name),
             index=index,
             doc_type='commits',
             chunk_size=50 # keep the batch sizes small for appearances only
@@ -169,7 +162,7 @@ REPO_ACTIONS = [
     },
 
     {'_type': 'repos', '_id': 'elasticsearch-py', '_op_type': 'update', 'doc': {
-        'owner': {'name': 'Honza Král', 'email': 'honza.kral@gmail.com'},
+        'owner': {'name': u'Honza Král', 'email': 'honza.kral@gmail.com'},
         'created_at': datetime(2013, 5, 1, 16, 37, 32),
         'tags': ['elasticsearch', 'search', 'python', 'client'],
         'description': 'For searching snakes.'}
@@ -182,11 +175,25 @@ if __name__ == '__main__':
     tracer.setLevel(logging.INFO)
     tracer.addHandler(logging.FileHandler('/tmp/es_trace.log'))
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-H", "--host",
+        action="store",
+        default="localhost:9200",
+        help="The elasticsearch host you wish to connect too. (Default: localhost:9200)")
+    parser.add_argument(
+        "-p", "--path",
+        action="store",
+        default=None,
+        help="Path to git repo. Commits used as data to load into Elasticsearch. (Default: None")
+
+    args = parser.parse_args()
+
     # instantiate es client, connects to localhost:9200 by default
-    es = Elasticsearch()
+    es = Elasticsearch(args.host)
 
     # we load the repo and all commits
-    load_repo(es)
+    load_repo(es, path=args.path)
 
     # run the bulk operations
     success, _ = bulk(es, REPO_ACTIONS, index='git', raise_on_error=True)
@@ -202,9 +209,11 @@ if __name__ == '__main__':
         doc_type='repos',
         id='elasticsearch',
         body={
-          "script" : "ctx._source.tags += tag",
-          "params" : {
-            "tag" : "java"
+          "script": {
+            "inline" : "ctx._source.tags.add(params.tag)",
+            "params" : {
+              "tag" : "java"
+            }
           }
         }
     )

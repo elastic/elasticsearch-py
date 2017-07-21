@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+import weakref
 from datetime import date, datetime
 from functools import wraps
 from ..compat import string_types, quote_plus
@@ -32,7 +33,7 @@ def _escape(value):
         except UnicodeDecodeError:
             # Python 2 and str, no need to re-encode
             pass
-    
+
     return str(value)
 
 def _make_path(*parts):
@@ -46,7 +47,7 @@ def _make_path(*parts):
         quote_plus(_escape(p), b',*') for p in parts if p not in SKIP_IN_PATH)
 
 # parameters that apply to all methods
-GLOBAL_PARAMS = ('pretty', 'format')
+GLOBAL_PARAMS = ('pretty', 'human', 'error_trace', 'format', 'filter_path')
 
 def query_params(*es_query_params):
     """
@@ -56,10 +57,14 @@ def query_params(*es_query_params):
     def _wrapper(func):
         @wraps(func)
         def _wrapped(*args, **kwargs):
-            params = kwargs.pop('params', {})
+            params = {}
+            if 'params' in kwargs:
+                params = kwargs.pop('params').copy()
             for p in es_query_params + GLOBAL_PARAMS:
                 if p in kwargs:
-                    params[p] = _escape(kwargs.pop(p))
+                    v = kwargs.pop(p)
+                    if v is not None:
+                        params[p] = _escape(v)
 
             # don't treat ignore and request_timeout as other params to avoid escaping
             for p in ('ignore', 'request_timeout'):
@@ -77,3 +82,10 @@ class NamespacedClient(object):
     @property
     def transport(self):
         return self.client.transport
+
+class AddonClient(NamespacedClient):
+    @classmethod
+    def infect_client(cls, client):
+        addon = cls(weakref.proxy(client))
+        setattr(client, cls.namespace, addon)
+        return client

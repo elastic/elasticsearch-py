@@ -13,8 +13,8 @@ class TestNormalizeHosts(TestCase):
 
     def test_strings_are_parsed_for_port_and_user(self):
         self.assertEquals(
-            [{"host": "elastic.co", "port": 42}, {"host": "elastic.co", "http_auth": "user:secret"}],
-            _normalize_hosts(["elastic.co:42", "user:secret@elastic.co"])
+            [{"host": "elastic.co", "port": 42}, {"host": "elastic.co", "http_auth": "user:secre]"}],
+            _normalize_hosts(["elastic.co:42", "user:secre%5D@elastic.co"])
         )
 
     def test_strings_are_parsed_for_scheme(self):
@@ -24,14 +24,12 @@ class TestNormalizeHosts(TestCase):
                     "host": "elastic.co",
                     "port": 42,
                     "use_ssl": True,
-                    'scheme': 'http'
                 },
                 {
                     "host": "elastic.co",
                     "http_auth": "user:secret",
                     "use_ssl": True,
                     "port": 443,
-                    'scheme': 'http',
                     'url_prefix': '/prefix'
                 }
             ],
@@ -53,6 +51,21 @@ class TestClient(ElasticsearchTestCase):
         self.client.ping(request_timeout=.1)
         calls = self.assert_url_called('HEAD', '/')
         self.assertEquals([({'request_timeout': .1}, None)], calls)
+
+    def test_params_is_copied_when(self):
+        rt = object()
+        params = dict(request_timeout=rt)
+        self.client.ping(params=params)
+        self.client.ping(params=params)
+        calls = self.assert_url_called('HEAD', '/', 2)
+        self.assertEquals(
+            [
+                ({'request_timeout': rt}, None),
+                ({'request_timeout': rt}, None)
+            ],
+            calls
+        )
+        self.assertFalse(calls[0][0] is calls[1][0])
 
     def test_from_in_search(self):
         self.client.search(index='i', doc_type='t', from_=10)

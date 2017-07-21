@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 import time
 
 from elasticsearch.transport import Transport, get_host_info
-from elasticsearch.connection import Connection, ThriftConnection
+from elasticsearch.connection import Connection
 from elasticsearch.connection_pool import DummyConnectionPool
 from elasticsearch.exceptions import ConnectionError, ImproperlyConfigured
 
@@ -24,32 +24,41 @@ class DummyConnection(Connection):
         return self.status, self.headers, self.data
 
 CLUSTER_NODES = '''{
-    "ok" : true,
-    "cluster_name" : "super_cluster",
-    "nodes" : {
-        "wE_6OGBNSjGksbONNncIbg" : {
-            "name" : "Nightwind",
-            "transport_address" : "inet[/127.0.0.1:9300]",
-            "hostname" : "wind",
-            "version" : "0.20.4",
-            "http_address" : "inet[/1.1.1.1:123]",
-            "thrift_address" : "/1.1.1.1:9500]"
-        }
+  "_nodes" : {
+    "total" : 1,
+    "successful" : 1,
+    "failed" : 0
+  },
+  "cluster_name" : "elasticsearch",
+  "nodes" : {
+    "SRZpKFZdQguhhvifmN6UVA" : {
+      "name" : "SRZpKFZ",
+      "transport_address" : "127.0.0.1:9300",
+      "host" : "127.0.0.1",
+      "ip" : "127.0.0.1",
+      "version" : "5.0.0",
+      "build_hash" : "253032b",
+      "roles" : [ "master", "data", "ingest" ],
+      "http" : {
+        "bound_address" : [ "[fe80::1]:9200", "[::1]:9200", "127.0.0.1:9200" ],
+        "publish_address" : "1.1.1.1:123",
+        "max_content_length_in_bytes" : 104857600
+      }
     }
+  }
 }'''
 
 class TestHostsInfoCallback(TestCase):
     def test_master_only_nodes_are_ignored(self):
         nodes = [
-            {'attributes': {'data': 'false', 'client': 'true'}},
-            {'attributes': {'data': 'false'}},
-            {'attributes': {'data': 'false', 'master': 'true'}},
-            {'attributes': {'data': 'false', 'master': 'false'}},
-            {'attributes': {}},
+            {'roles': [ "master"]},
+            {'roles': [ "master", "data", "ingest"]},
+            {'roles': [ "data", "ingest"]},
+            {'roles': [ ]},
             {}
         ]
-        chosen = [ i for i, node_info in enumerate(nodes) if get_host_info(node_info, i) is not None]
-        self.assertEquals([0, 3, 4, 5], chosen)
+        chosen = [i for i, node_info in enumerate(nodes) if get_host_info(node_info, i) is not None]
+        self.assertEquals([1, 2, 3, 4], chosen)
 
 
 class TestTransport(TestCase):
@@ -58,10 +67,6 @@ class TestTransport(TestCase):
         self.assertIsInstance(t.connection_pool, DummyConnectionPool)
         t = Transport([{'host': 'localhost'}])
         self.assertIsInstance(t.connection_pool, DummyConnectionPool)
-
-    def test_host_with_scheme_different_from_connection_fails(self):
-        self.assertRaises(ImproperlyConfigured, Transport, [{'host': 'localhost', 'scheme': 'thrift'}])
-        self.assertRaises(ImproperlyConfigured, Transport, [{'host': 'localhost', 'scheme': 'http'}], connection_class=ThriftConnection)
 
     def test_request_timeout_extracted_from_params_and_passed(self):
         t = Transport([{}], connection_class=DummyConnection)
@@ -100,10 +105,17 @@ class TestTransport(TestCase):
         self.assertEquals(1, len(t.get_connection().calls))
         self.assertEquals(('GET', '/', None, body), t.get_connection().calls[0][0])
 
+    def test_body_surrogates_replaced_encoded_into_bytes(self):
+        t = Transport([{}], connection_class=DummyConnection)
+
+        t.perform_request('GET', '/', body='你好\uda6a')
+        self.assertEquals(1, len(t.get_connection().calls))
+        self.assertEquals(('GET', '/', None, b'\xe4\xbd\xa0\xe5\xa5\xbd\xed\xa9\xaa'), t.get_connection().calls[0][0])        
+                
     def test_kwargs_passed_on_to_connections(self):
         t = Transport([{'host': 'google.com'}], port=123)
         self.assertEquals(1, len(t.connection_pool.connections))
-        self.assertEquals('%s://google.com:123' % t.connection_pool.connections[0].transport_schema, t.connection_pool.connections[0].host)
+        self.assertEquals('http://google.com:123', t.connection_pool.connections[0].host)
 
     def test_kwargs_passed_on_to_connection_pool(self):
         dt = object()
@@ -123,7 +135,7 @@ class TestTransport(TestCase):
         t.add_connection({"host": "google.com", "port": 1234})
 
         self.assertEquals(2, len(t.connection_pool.connections))
-        self.assertEquals('%s://google.com:1234' % t.connection_pool.connections[1].transport_schema, t.connection_pool.connections[1].host)
+        self.assertEquals('http://google.com:1234', t.connection_pool.connections[1].host)
 
     def test_request_will_fail_after_X_retries(self):
         t = Transport([{'exception': ConnectionError('abandon ship')}], connection_class=DummyConnection)
@@ -156,13 +168,6 @@ class TestTransport(TestCase):
         self.assertEquals(1, len(t.connection_pool.connections))
         self.assertEquals('http://1.1.1.1:123', t.get_connection().host)
 
-    def test_sniff_on_start_fetches_and_uses_nodes_list_for_its_schema(self):
-        class DummyThriftConnection(DummyConnection):
-            transport_schema = 'thrift'
-        t = Transport([{'data': CLUSTER_NODES}], connection_class=DummyThriftConnection, sniff_on_start=True)
-        self.assertEquals(1, len(t.connection_pool.connections))
-        self.assertEquals('thrift://1.1.1.1:9500', t.get_connection().host)
-
     def test_sniff_on_start_fetches_and_uses_nodes_list(self):
         t = Transport([{'data': CLUSTER_NODES}], connection_class=DummyConnection, sniff_on_start=True)
         self.assertEquals(1, len(t.connection_pool.connections))
@@ -170,12 +175,12 @@ class TestTransport(TestCase):
 
     def test_sniff_on_start_ignores_sniff_timeout(self):
         t = Transport([{'data': CLUSTER_NODES}], connection_class=DummyConnection, sniff_on_start=True, sniff_timeout=12)
-        self.assertEquals((('GET', '/_nodes/_all/clear'), {'timeout': None}), t.seed_connections[0].calls[0])
+        self.assertEquals((('GET', '/_nodes/_all/http'), {'timeout': None}), t.seed_connections[0].calls[0])
 
     def test_sniff_uses_sniff_timeout(self):
         t = Transport([{'data': CLUSTER_NODES}], connection_class=DummyConnection, sniff_timeout=42)
         t.sniff_hosts()
-        self.assertEquals((('GET', '/_nodes/_all/clear'), {'timeout': 42}), t.seed_connections[0].calls[0])
+        self.assertEquals((('GET', '/_nodes/_all/http'), {'timeout': 42}), t.seed_connections[0].calls[0])
 
 
     def test_sniff_reuses_connection_instances_if_possible(self):

@@ -9,13 +9,14 @@ except ImportError:
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import ConnectionError
 
-def get_test_client(nowait=False):
+def get_test_client(nowait=False, **kwargs):
     # construct kwargs from the environment
-    kw = {}
+    kw = {'timeout': 30}
     if 'TEST_ES_CONNECTION' in os.environ:
         from elasticsearch import connection
         kw['connection_class'] = getattr(connection, os.environ['TEST_ES_CONNECTION'])
 
+    kw.update(kwargs)
     client = Elasticsearch([os.environ.get('TEST_ES_SERVER', {})], **kw)
 
     # wait for yellow status
@@ -30,6 +31,8 @@ def get_test_client(nowait=False):
         raise SkipTest("Elasticsearch failed to start.")
 
 def _get_version(version_string):
+    if '.' not in version_string:
+        return ()
     version = version_string.strip().split('.')
     return tuple(int(v) if v.isdigit() else 999 for v in version)
 
@@ -45,7 +48,7 @@ class ElasticsearchTestCase(TestCase):
 
     def tearDown(self):
         super(ElasticsearchTestCase, self).tearDown()
-        self.client.indices.delete(index='*')
+        self.client.indices.delete(index='*', ignore=404)
         self.client.indices.delete_template(name='*', ignore=404)
 
     @property

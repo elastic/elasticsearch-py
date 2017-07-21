@@ -3,16 +3,18 @@ from elasticsearch import helpers, TransportError
 from . import ElasticsearchTestCase
 from ..test_cases import SkipTest
 
+
 class FailingBulkClient(object):
     def __init__(self, client, fail_at=1):
         self.client = client
         self._called = -1
         self._fail_at = fail_at
+        self.transport = client.transport
 
     def bulk(self, *args, **kwargs):
         self._called += 1
         if self._called == self._fail_at:
-            raise TransportError(599, "Error!", "INFO")
+            raise TransportError(599, "Error!", {})
         return  self.client.bulk(*args, **kwargs)
 
 class TestStreamingBulk(ElasticsearchTestCase):
@@ -60,7 +62,7 @@ class TestStreamingBulk(ElasticsearchTestCase):
         for ok, item in helpers.streaming_bulk(self.client, docs):
             self.assertTrue(ok)
 
-        self.assertFalse(self.client.exists(index='i', id=45))
+        self.assertFalse(self.client.exists(index='i', doc_type='t', id=45))
         self.assertEquals({'answer': 42}, self.client.get(index='i', id=42)['_source'])
         self.assertEquals({'f': 'v'}, self.client.get(index='i', id=47)['_source'])
 
@@ -143,7 +145,8 @@ class TestBulk(ElasticsearchTestCase):
         self.assertEquals('42', error['index']['_id'])
         self.assertEquals('t', error['index']['_type'])
         self.assertEquals('i', error['index']['_index'])
-        self.assertIn('MapperParsingException', error['index']['error'])
+        print(error['index']['error'])
+        self.assertTrue('MapperParsingException' in repr(error['index']['error']) or 'mapper_parsing_exception' in repr(error['index']['error']))
 
     def test_error_is_raised(self):
         self.client.indices.create("i",
@@ -188,7 +191,7 @@ class TestScan(ElasticsearchTestCase):
             bulk.append({"answer": x, "correct": x == 42})
         self.client.bulk(bulk, refresh=True)
 
-        docs = list(helpers.scan(self.client, index="test_index", doc_type="answers", size=2, query={"sort": ["answer"]}, preserve_order=True))
+        docs = list(helpers.scan(self.client, index="test_index", doc_type="answers", query={"sort": "answer"}, preserve_order=True))
 
         self.assertEquals(100, len(docs))
         self.assertEquals(list(map(str, range(100))), list(d['_id'] for d in docs))
@@ -226,7 +229,7 @@ class TestReindex(ElasticsearchTestCase):
         self.assertEquals({"answer": 42, "correct": True}, self.client.get(index="prod_index", doc_type="answers", id=42)['_source'])
 
     def test_reindex_accepts_a_query(self):
-        helpers.reindex(self.client, "test_index", "prod_index", query={"query": {"filtered": {"filter": {"term": {"_type": "answers"}}}}})
+        helpers.reindex(self.client, "test_index", "prod_index", query={"query": {"bool": {"filter": {"term": {"_type": "answers"}}}}})
         self.client.indices.refresh()
 
         self.assertTrue(self.client.indices.exists("prod_index"))
@@ -244,3 +247,72 @@ class TestReindex(ElasticsearchTestCase):
         self.assertEquals(50, self.client.count(index='prod_index', doc_type='answers')['count'])
 
         self.assertEquals({"answer": 42, "correct": True}, self.client.get(index="prod_index", doc_type="answers", id=42)['_source'])
+
+class TestParentChildReindex(ElasticsearchTestCase):
+    def setUp(self):
+        super(TestParentChildReindex, self).setUp()
+        body={
+            'settings': {"number_of_shards": 1, "number_of_replicas": 0},
+            'mappings': {
+                'question': {
+                },
+                'answer': {
+                    '_parent': {'type': 'question'},
+                }
+            }
+        }
+        self.client.indices.create(index='test-index', body=body)
+        self.client.indices.create(index='real-index', body=body)
+
+        self.client.index(
+            index='test-index',
+            doc_type='question',
+            id=42,
+            body={},
+        )
+        self.client.index(
+            index='test-index',
+            doc_type='answer',
+            id=47,
+            body={'some': 'data'},
+            parent=42
+        )
+        self.client.indices.refresh(index='test-index')
+
+    def test_children_are_reindexed_correctly(self):
+        helpers.reindex(self.client, 'test-index', 'real-index')
+
+        q = self.client.get(
+            index='real-index',
+            doc_type='question',
+            id=42
+        )
+        self.assertEquals(
+            {
+                '_id': '42',
+                '_index': 'real-index',
+                '_source': {},
+                '_type': 'question',
+                '_version': 1,
+                'found': True
+            }, q
+        )
+        q = self.client.get(
+            index='test-index',
+            doc_type='answer',
+            id=47,
+            parent=42
+        )
+        if '_routing' in q:
+            self.assertEquals(q.pop('_routing'), '42')
+        self.assertEquals(
+            {
+                '_id': '47',
+                '_index': 'test-index',
+                '_source': {'some': 'data'},
+                '_type': 'answer',
+                '_version': 1,
+                '_parent': '42',
+                'found': True
+            }, q
+        )

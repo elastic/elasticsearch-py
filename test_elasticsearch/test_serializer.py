@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
+import uuid
 
 from datetime import datetime
 from decimal import Decimal
@@ -17,6 +18,9 @@ class TestJSONSerializer(TestCase):
         if sys.version_info[:2] == (2, 6):
             raise SkipTest("Float rounding is broken in 2.6.")
         self.assertEquals('{"d": 3.8}', JSONSerializer().dumps({'d': Decimal('3.8')}))
+
+    def test_uuid_serialization(self):
+        self.assertEquals('{"d": "00000000-0000-0000-0000-000000000003"}', JSONSerializer().dumps({'d': uuid.UUID('00000000-0000-0000-0000-000000000003')}))
 
     def test_raises_serialization_error_on_dump_error(self):
         self.assertRaises(SerializationError, JSONSerializer().dumps, object())

@@ -7,6 +7,7 @@ import re
 from os import walk, environ
 from os.path import exists, join, dirname, pardir
 import yaml
+from shutil import rmtree
 
 from elasticsearch import TransportError
 from elasticsearch.compat import string_types
@@ -26,14 +27,16 @@ PARAMS_RENAMES = {
 CATCH_CODES = {
     'missing': 404,
     'conflict': 409,
+    'unauthorized': 401,
 }
 
 # test features we have implemented
-IMPLEMENTED_FEATURES = ('gtelte', 'stash_in_path')
+IMPLEMENTED_FEATURES = ('gtelte', 'stash_in_path', 'headers', 'catch_unauthorized')
 
 # broken YAML tests on some releases
 SKIP_TESTS = {
-    (1, 1, 2): set(('TestCatRecovery10Basic', ))
+    (1, 1, 2): set(('TestCatRecovery10Basic', )),
+    '*': set(('TestSearchExists20QueryString', 'TestSearchExists10Basic'))
 }
 
 class InvalidActionType(Exception):
@@ -46,6 +49,15 @@ class YamlTestCase(ElasticsearchTestCase):
             self.run_code(self._setup_code)
         self.last_response = None
         self._state = {}
+
+    def tearDown(self):
+        if hasattr(self, '_teardown_code'):
+            self.run_code(self._teardown_code)
+        super(YamlTestCase, self).tearDown()
+        for repo, definition in self.client.snapshot.get_repository(repository='_all').items():
+            self.client.snapshot.delete_repository(repository=repo)
+            if definition['type'] == 'fs':
+                rmtree('/tmp/%s' % definition['settings']['location'])
 
     def _resolve(self, value):
         # resolve variables
@@ -94,6 +106,9 @@ class YamlTestCase(ElasticsearchTestCase):
 
     def run_do(self, action):
         """ Perform an api call with given parameters. """
+        api = self.client
+        if 'headers' in action:
+            api = self._get_client(headers=action.pop('headers'))
 
         catch = action.pop('catch', None)
         self.assertEquals(1, len(action))
@@ -101,7 +116,6 @@ class YamlTestCase(ElasticsearchTestCase):
         method, args = list(action.items())[0]
 
         # locate api endpoint
-        api = self.client
         for m in method.split('.'):
             self.assertTrue(hasattr(api, m))
             api = getattr(api, m)
@@ -139,21 +153,27 @@ class YamlTestCase(ElasticsearchTestCase):
 
     def run_skip(self, skip):
         if 'features' in skip:
-            if skip['features'] in IMPLEMENTED_FEATURES:
-                return
-            elif skip['features'] == 'requires_replica':
-                if self._get_data_nodes() > 1:
-                    return
-            elif skip['features'] == 'benchmark':
-                if self._get_benchmark_nodes():
-                    return
-            raise SkipTest(skip.get('reason', 'Feature %s is not supported' % skip['features']))
+            features = skip['features']
+            if not isinstance(features, (tuple, list)):
+                features = [features]
+            for feature in features:
+                if feature in IMPLEMENTED_FEATURES:
+                    continue
+                elif feature == 'requires_replica':
+                    if self._get_data_nodes() > 1:
+                        continue
+                elif feature == 'benchmark':
+                    if self._get_benchmark_nodes():
+                        continue
+                raise SkipTest(skip.get('reason', 'Feature %s is not supported' % feature))
 
         if 'version' in skip:
             version, reason = skip['version'], skip['reason']
+            if version == 'all':
+                raise SkipTest(reason)
             min_version, max_version = version.split('-')
-            min_version = _get_version(min_version)
-            max_version = _get_version(max_version)
+            min_version = _get_version(min_version) or (0, )
+            max_version = _get_version(max_version) or (999, )
             if  min_version <= self.es_version <= max_version:
                 raise SkipTest(reason)
 
@@ -166,7 +186,8 @@ class YamlTestCase(ElasticsearchTestCase):
         if catch in CATCH_CODES:
             self.assertEquals(CATCH_CODES[catch], exception.status_code)
         elif catch[0] == '/' and catch[-1] == '/':
-            self.assertTrue(re.search(catch[1:-1], exception.error))
+            self.assertTrue(re.search(catch[1:-1], exception.error + ' ' + repr(exception.info)), '%s not in %r' % (catch, exception.info))
+        self.last_response = exception.info
 
     def run_gt(self, action):
         for key, value in action.items():
@@ -226,7 +247,7 @@ def construct_case(filename, name):
     """
     def make_test(test_name, definition, i):
         def m(self):
-            if name in SKIP_TESTS.get(self.es_version, ()):
+            if name in SKIP_TESTS.get(self.es_version, ()) or name in SKIP_TESTS.get('*', ()):
                 raise SkipTest()
             self.run_code(definition)
         m.__doc__ = '%s:%s.test_from_yaml_%d (%s): %s' % (
@@ -243,8 +264,8 @@ def construct_case(filename, name):
     i = 0
     for test in tests:
         for test_name, definition in test.items():
-            if test_name == 'setup':
-                attrs['_setup_code'] = definition
+            if test_name in ('setup', 'teardown'):
+                attrs['_%s_code' % test_name] = definition
                 continue
 
             attrs['test_from_yaml_%d' % i] = make_test(test_name, definition, i)
@@ -256,15 +277,16 @@ YAML_DIR = environ.get(
     'TEST_ES_YAML_DIR',
     join(
         dirname(__file__), pardir, pardir, pardir,
-        'elasticsearch', 'rest-api-spec', 'test'
+        'elasticsearch', 'rest-api-spec', 'src', 'main', 'resources', 'rest-api-spec', 'test'
     )
 )
+
 
 if exists(YAML_DIR):
 # find all the test definitions in yaml files ...
     for (path, dirs, files) in walk(YAML_DIR):
         for filename in files:
-            if not filename.endswith('.yaml'):
+            if not filename.endswith(('.yaml', '.yml')):
                 continue
             # ... parse them
             name = ('Test' + ''.join(s.title() for s in path[len(YAML_DIR) + 1:].split('/')) + filename.rsplit('.', 1)[0].title()).replace('_', '').replace('.', '')

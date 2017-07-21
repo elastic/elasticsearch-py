@@ -3,24 +3,37 @@ language: python
 python:
   - "2.6"
   - "2.7"
-  - "3.2"
   - "3.3"
   - "3.4"
-  - "pypy"
+  - "3.5"
+  - "3.6"
+
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
 
 env:
   # different connection classes to test
   - TEST_ES_CONNECTION=Urllib3HttpConnection
   - TEST_ES_CONNECTION=RequestsHttpConnection
 
-install:
-  - mkdir /tmp/elasticsearch
-  - wget -O - http://s3-eu-west-1.amazonaws.com/build-eu.elasticsearch.org/origin/master/nightly/JDK7/elasticsearch-latest-SNAPSHOT.tar.gz | tar xz --directory=/tmp/elasticsearch --strip-components=1
-  - git clone https://github.com/elasticsearch/elasticsearch.git ../elasticsearch
-  - pip install .
+before_install:
+  - sudo update-java-alternatives -s java-8-oracle
+  - export JAVA_HOME=/usr/lib/jvm/java-8-oracle/jre
+  - java -version
 
-before_script:
-  - /tmp/elasticsearch/bin/elasticsearch -d --path.data /tmp --discovery.zen.ping.multicast.enabled false --node.bench true --script.disable_dynamic false
+install:
+  - curl -L -o /tmp/es-snap.zip https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.4.1.zip
+  - unzip /tmp/es-snap.zip -d /tmp/
+  - /tmp/elasticsearch-*/bin/elasticsearch -E script.inline=true -E path.repo=/tmp -E repositories.url.allowed_urls='http://*' -E node.attr.testattr=test -d
+  - git clone https://github.com/elastic/elasticsearch.git ../elasticsearch
+  - pip install .
 
 script:
   - python setup.py test
+
+notifications:
+  email:
+    recipients:
+      - honza.kral@gmail.com

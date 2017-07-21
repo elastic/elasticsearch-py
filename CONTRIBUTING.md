@@ -23,7 +23,7 @@ The process for contributing to any of the Elasticsearch repositories is similar
     python setup.py test
     ````
 
-   See the README file in `test_elasticsearch` dirctory for more information on
+   See the README file in `test_elasticsearch` directory for more information on
    running the test suite.
 
 3. Rebase your changes.
@@ -37,7 +37,7 @@ The process for contributing to any of the Elasticsearch repositories is similar
    place, eg “Closes #123″.  Please consider adding or modifying tests related to
    your changes.
 
-Then sit back and wait. There will probably be discussion about the pull
+Then sit back and wait. There will probably be a discussion about the pull
 request and, if any changes are needed, we would love to work with you to get
 your pull request merged into elasticsearch-py.
 

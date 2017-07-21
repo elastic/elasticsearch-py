@@ -21,4 +21,3 @@ Exceptions
 .. autoclass:: NotFoundError(TransportError)
 .. autoclass:: ConflictError(TransportError)
 .. autoclass:: RequestError(TransportError)
-.. autoclass:: ConnectionError(TransportError)

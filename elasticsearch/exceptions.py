@@ -1,7 +1,7 @@
 __all__ = [
     'ImproperlyConfigured', 'ElasticsearchException', 'SerializationError',
     'TransportError', 'NotFoundError', 'ConflictError', 'RequestError', 'ConnectionError',
-    'SSLError', 'ConnectionTimeout'
+    'SSLError', 'ConnectionTimeout', 'AuthenticationException', 'AuthorizationException'
 ]
 
 class ImproperlyConfigured(Exception):
@@ -49,7 +49,13 @@ class TransportError(ElasticsearchException):
         return self.args[2]
 
     def __str__(self):
-        return 'TransportError(%s, %r)' % (self.status_code, self.error)
+        cause = ''
+        try:
+            if self.info:
+                cause = ', %r' % self.info['error']['root_cause'][0]['reason']
+        except LookupError:
+            pass
+        return 'TransportError(%s, %r%s)' % (self.status_code, self.error, cause)
 
 
 class ConnectionError(TransportError):

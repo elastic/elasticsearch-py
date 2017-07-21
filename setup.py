@@ -2,9 +2,8 @@
 from os.path import join, dirname
 from setuptools import setup, find_packages
 import sys
-import os
 
-VERSION = (1, 5, 0, 'dev')
+VERSION = (5, 4, 0)
 __version__ = VERSION
 __versionstr__ = '.'.join(map(str, VERSION))
 
@@ -16,7 +15,7 @@ install_requires = [
     'urllib3>=1.8, <2.0',
 ]
 tests_require = [
-    'requests>=1.0.0, <3.0.0',
+    'requests>=2.0.0, <3.0.0',
     'nose',
     'coverage',
     'mock',
@@ -28,17 +27,11 @@ tests_require = [
 if sys.version_info[:2] == (2, 6):
     install_requires.append('unittest2')
 
-if sys.version_info[0] == 2:
-    # only require thrift if we are going to use it
-    if os.environ.get('TEST_ES_CONNECTION', None) == 'ThriftConnection':
-        tests_require.append('thrift==0.9.1')
-    tests_require.append('pylibmc==1.4.1')
-
 setup(
     name = 'elasticsearch',
     description = "Python client for Elasticsearch",
     license="Apache License, Version 2.0",
-    url = "https://github.com/elasticsearch/elasticsearch-py",
+    url = "https://github.com/elastic/elasticsearch-py",
     long_description = long_description,
     version = __versionstr__,
     author = "Honza Král",
@@ -48,7 +41,7 @@ setup(
         exclude=('test_elasticsearch*', )
     ),
     classifiers = [
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "License :: OSI Approved :: Apache Software License",
         "Intended Audience :: Developers",
         "Operating System :: OS Independent",
@@ -60,6 +53,8 @@ setup(
         "Programming Language :: Python :: 3.2",
         "Programming Language :: Python :: 3.3",
         "Programming Language :: Python :: 3.4",
+        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: Implementation :: CPython",
         "Programming Language :: Python :: Implementation :: PyPy",
     ],
@@ -67,4 +62,8 @@ setup(
 
     test_suite='test_elasticsearch.run_tests.run_all',
     tests_require=tests_require,
+
+    extras_require={
+        'develop': tests_require + ["sphinx", "sphinx_rtd_theme"]
+    },
 )

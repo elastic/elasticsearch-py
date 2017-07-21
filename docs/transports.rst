@@ -5,16 +5,19 @@ Transport classes
 
 List of transport classes that can be used, simply import your choice and pass
 it to the constructor of :class:`~elasticsearch.Elasticsearch` as
-`connection_class`. Note that Thrift and Memcached protocols are experimental
-and require a plugin to be installed in your cluster as well as additional
-dependencies (`thrift==0.9` and `pylibmc==1.2`).
+`connection_class`. Note that the
+:class:`~elasticsearch.connection.RequestsHttpConnection` requires ``requests``
+to be installed.
 
-For example to use the thrift connection just import it and use it. The
-connection classes are aware of their respective default ports (9500 for
-thrift) so there is no need to specify them unless modified::
+For example to use the ``requests``-based connection just import it and use it::
 
-    from elasticsearch import Elasticsearch, ThriftConnection
-    es = Elasticsearch(connection_class=ThriftConnection)
+    from elasticsearch import Elasticsearch, RequestsHttpConnection
+    es = Elasticsearch(connection_class=RequestsHttpConnection)
+
+The default connection class is based on ``urllib3`` which is more performant
+and lightweight than the optional ``requests``-based class. Only use
+``RequestsHttpConnection`` if you have need of any of ``requests`` advanced
+features like custom auth plugins etc.
 
 
 .. py:module:: elasticsearch.connection
@@ -34,16 +37,4 @@ RequestsHttpConnection
 ----------------------
 
 .. autoclass:: RequestsHttpConnection
-
-
-ThriftConnection
-----------------
-
-.. autoclass:: ThriftConnection
-
-
-MemcachedConnection
--------------------
-
-.. autoclass:: MemcachedConnection
 
