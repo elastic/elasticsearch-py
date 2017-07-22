@@ -92,7 +92,7 @@ def _process_bulk_chunk(client, bulk_actions, bulk_data, raise_on_exception=True
 
     try:
         # send the actual request
-        resp = client.bulk('\n'.join(map(client.transport.serializer.dumps, bulk_actions)) + '\n', **kwargs)
+        resp = client.bulk('\n'.join(bulk_actions) + '\n', **kwargs)
     except TransportError as e:
         # default behavior - just propagate exception
         if raise_on_exception:
@@ -104,7 +104,7 @@ def _process_bulk_chunk(client, bulk_actions, bulk_data, raise_on_exception=True
 
         for data in bulk_data:
             # collect all the information about failed actions
-            op_type, action = data[0].popitem()
+            op_type, action = data[0].copy().popitem()
             info = {"error": err_message, "status": e.status_code, "exception": e}
             if op_type != 'delete':
                 info['data'] = data[1]
@@ -199,7 +199,9 @@ def streaming_bulk(client, actions, chunk_size=500, max_chunk_bytes=100 * 1024 *
                         if max_retries \
                                 and info['status'] == 429 \
                                 and (attempt+1) <= max_retries:
-                            to_retry.extend(data)
+                            # _process_bulk_chunk expects strings so we need to
+                            # re-serialize the data
+                            to_retry.extend(map(client.transport.serializer.dumps, data))
                             to_retry_data.append(data)
                         else:
                             yield ok, {action: info}
