@@ -92,7 +92,7 @@ def _process_bulk_chunk(client, bulk_actions, bulk_data, raise_on_exception=True
 
     try:
         # send the actual request
-        resp = client.bulk('\n'.join(bulk_actions) + '\n', **kwargs)
+        resp = client.bulk('\n'.join(map(client.transport.serializer.dumps, bulk_actions)) + '\n', **kwargs)
     except TransportError as e:
         # default behavior - just propagate exception
         if raise_on_exception:
