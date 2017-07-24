@@ -5,16 +5,17 @@ from ..test_cases import SkipTest
 
 
 class FailingBulkClient(object):
-    def __init__(self, client, fail_at=1):
+    def __init__(self, client, fail_at=(2, ), fail_with=TransportError(599, "Error!", {})):
         self.client = client
-        self._called = -1
+        self._called = 0
         self._fail_at = fail_at
         self.transport = client.transport
+        self._fail_with = fail_with
 
     def bulk(self, *args, **kwargs):
         self._called += 1
-        if self._called == self._fail_at:
-            raise TransportError(599, "Error!", {})
+        if self._called in self._fail_at:
+            raise self._fail_with
         return  self.client.bulk(*args, **kwargs)
 
 class TestStreamingBulk(ElasticsearchTestCase):
@@ -87,7 +88,6 @@ class TestStreamingBulk(ElasticsearchTestCase):
                     '_index': 'i',
                     '_type': 't',
                     '_id': 45,
-
                     'data': {'f': 'v'},
                     'error': "TransportError(599, 'Error!')",
                     'status': 599
@@ -95,6 +95,46 @@ class TestStreamingBulk(ElasticsearchTestCase):
             },
             results[1][1]
         )
+
+    def test_rejected_documents_are_retried(self):
+        failing_client = FailingBulkClient(self.client, fail_with=TransportError(429, 'Rejected!', {}))
+        docs = [
+            {'_index': 'i', '_type': 't', '_id': 47, 'f': 'v'},
+            {'_index': 'i', '_type': 't', '_id': 45, 'f': 'v'},
+            {'_index': 'i', '_type': 't', '_id': 42, 'f': 'v'},
+        ]
+        results = list(helpers.streaming_bulk(failing_client, docs,
+                                              raise_on_exception=False,
+                                              raise_on_error=False,
+                                              chunk_size=1, max_retries=1,
+                                              initial_backoff=0))
+        self.assertEquals(3, len(results))
+        self.assertEquals([True, True, True], [r[0] for r in results])
+        self.client.indices.refresh(index='i')
+        res = self.client.search(index='i')
+        self.assertEquals(3, res['hits']['total'])
+        self.assertEquals(4, failing_client._called)
+
+    def test_rejected_documents_are_retried_at_most_max_retries_times(self):
+        failing_client = FailingBulkClient(self.client, fail_at=(1, 2, ),
+                                           fail_with=TransportError(429, 'Rejected!', {}))
+
+        docs = [
+            {'_index': 'i', '_type': 't', '_id': 47, 'f': 'v'},
+            {'_index': 'i', '_type': 't', '_id': 45, 'f': 'v'},
+            {'_index': 'i', '_type': 't', '_id': 42, 'f': 'v'},
+        ]
+        results = list(helpers.streaming_bulk(failing_client, docs,
+                                              raise_on_exception=False,
+                                              raise_on_error=False,
+                                              chunk_size=1, max_retries=1,
+                                              initial_backoff=0))
+        self.assertEquals(3, len(results))
+        self.assertEquals([False, True, True], [r[0] for r in results])
+        self.client.indices.refresh(index='i')
+        res = self.client.search(index='i')
+        self.assertEquals(2, res['hits']['total'])
+        self.assertEquals(4, failing_client._called)
 
 
 class TestBulk(ElasticsearchTestCase):
