@@ -65,7 +65,7 @@ action (``_op_type`` defaults to ``index``):
         '_index': 'index-name',
         '_type': 'document',
         '_id': 42,
-        'doc': {'question': 'The life, universe and everything.'}
+        '_source': {'doc': {'question': 'The life, universe and everything.'} }
     }
 
 
