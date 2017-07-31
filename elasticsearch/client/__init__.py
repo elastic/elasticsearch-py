@@ -238,15 +238,15 @@ class Elasticsearch(object):
         :arg refresh: If `true` then refresh the affected shards to make this
             operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default)
-            then do nothing with refreshes., valid choices are: u'true',
-            u'false', u'wait_for'
+            then do nothing with refreshes., valid choices are: 'true', 'false',
+            'wait_for'
         :arg routing: Specific routing value
         :arg timeout: Explicit operation timeout
         :arg timestamp: Explicit timestamp for the document
         :arg ttl: Expiration time for the document
         :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type, valid choices are:
-            u'internal', u'external', u'external_gte', u'force'
+        :arg version_type: Specific version type, valid choices are: 'internal',
+            'external', 'external_gte', 'force'
         :arg wait_for_active_shards: Sets the number of shard copies that must
             be active before proceeding with the index operation. Defaults to 1,
             meaning the primary shard only. Set to `all` for all shard copies,
@@ -278,8 +278,8 @@ class Elasticsearch(object):
         :arg refresh: If `true` then refresh the affected shards to make this
             operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default)
-            then do nothing with refreshes., valid choices are: u'true',
-            u'false', u'wait_for'
+            then do nothing with refreshes., valid choices are: 'true', 'false',
+            'wait_for'
         :arg routing: Specific routing value
         :arg timeout: Explicit operation timeout
         :arg timestamp: Explicit timestamp for the document
@@ -375,15 +375,15 @@ class Elasticsearch(object):
     @query_params('_source', '_source_exclude', '_source_include', 'parent',
         'preference', 'realtime', 'refresh', 'routing', 'stored_fields',
         'version', 'version_type')
-    def get(self, index, id, doc_type='_all', params=None):
+    def get(self, index, doc_type, id, params=None):
         """
         Get a typed JSON document from the index based on its id.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/docs-get.html>`_
 
         :arg index: The name of the index
-        :arg id: The document ID
         :arg doc_type: The type of the document (use `_all` to fetch the first
             document matching the ID across all types)
+        :arg id: The document ID
         :arg _source: True or false to return the _source field or not, or a
             list of fields to return
         :arg _source_exclude: A list of fields to exclude from the returned
@@ -447,7 +447,7 @@ class Elasticsearch(object):
             doc_type, id, '_source'), params=params)
 
     @query_params('_source', '_source_exclude', '_source_include', 'preference',
-        'realtime', 'refresh', 'stored_fields')
+        'realtime', 'refresh', 'routing', 'stored_fields')
     def mget(self, body, index=None, doc_type=None, params=None):
         """
         Get multiple documents based on an index, type (optional) and ids.
@@ -470,6 +470,7 @@ class Elasticsearch(object):
             search mode
         :arg refresh: Refresh the shard containing the document before
             performing the operation
+        :arg routing: Specific routing value
         :arg stored_fields: A comma-separated list of stored fields to return in
             the response
         """
@@ -529,12 +530,12 @@ class Elasticsearch(object):
     @query_params('_source', '_source_exclude', '_source_include',
         'allow_no_indices', 'analyze_wildcard', 'analyzer',
         'batched_reduce_size', 'default_operator', 'df', 'docvalue_fields',
-        'expand_wildcards', 'explain', 'fielddata_fields', 'from_',
-        'ignore_unavailable', 'lenient', 'lowercase_expanded_terms',
-        'preference', 'q', 'request_cache', 'routing', 'scroll',
-        'search_type', 'size', 'sort', 'stats', 'stored_fields',
-        'suggest_field', 'suggest_mode', 'suggest_size', 'suggest_text',
-        'terminate_after', 'timeout', 'track_scores', 'typed_keys', 'version')
+        'expand_wildcards', 'explain', 'from_', 'ignore_unavailable', 'lenient',
+        'max_concurrent_shard_requests', 'pre_filter_shard_size', 'preference',
+        'q', 'request_cache', 'routing', 'scroll', 'search_type', 'size',
+        'sort', 'stats', 'stored_fields', 'suggest_field', 'suggest_mode',
+        'suggest_size', 'suggest_text', 'terminate_after', 'timeout',
+        'track_scores', 'track_total_hits', 'typed_keys', 'version')
     def search(self, index=None, doc_type=None, body=None, params=None):
         """
         Execute a search query and get back search hits that match the query.
@@ -573,15 +574,23 @@ class Elasticsearch(object):
             choices are: 'open', 'closed', 'none', 'all'
         :arg explain: Specify whether to return detailed information about score
             computation as part of a hit
-        :arg fielddata_fields: A comma-separated list of fields to return as the
-            docvalue representation of a field for each hit
         :arg from\_: Starting offset (default: 0)
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
         :arg lenient: Specify whether format-based query failures (such as
             providing text to a numeric field) should be ignored
-        :arg lowercase_expanded_terms: Specify whether query terms should be
-            lowercased
+        :arg max_concurrent_shard_requests: The number of concurrent shard
+            requests this search executes concurrently. This value should be
+            used to limit the impact of the search on the cluster in order to
+            limit the number of concurrent shard requests, default 'The default
+            grows with the number of nodes in the cluster but is at most 256.'
+        :arg pre_filter_shard_size: A threshold that enforces a pre-filter
+            roundtrip to prefilter search shards based on query rewriting if
+            the number of shards the search request expands to exceeds the
+            threshold. This filter roundtrip can limit the number of shards
+            significantly if for instance a shard can not match any documents
+            based on it's rewrite method ie. if date filters are mandatory to
+            match but the shard bounds and the query are disjoint., default 128
         :arg preference: Specify the node or shard the operation should be
             performed on (default: random)
         :arg q: Query in the Lucene query string syntax
@@ -610,6 +619,8 @@ class Elasticsearch(object):
         :arg timeout: Explicit operation timeout
         :arg track_scores: Whether to calculate and return scores even if they
             are not used for sorting
+        :arg track_total_hits: Indicate if the number of documents that match
+            the query should be tracked
         :arg typed_keys: Specify whether aggregation and suggester names should
             be prefixed by their respective types in the response
         :arg version: Specify whether to return document version as part of a
@@ -626,13 +637,11 @@ class Elasticsearch(object):
 
     @query_params('_source', '_source_exclude', '_source_include',
         'allow_no_indices', 'analyze_wildcard', 'analyzer', 'conflicts',
-        'default_operator', 'df', 'docvalue_fields', 'expand_wildcards',
-        'explain', 'fielddata_fields', 'from_', 'ignore_unavailable', 'lenient',
-        'lowercase_expanded_terms', 'pipeline', 'preference', 'q', 'refresh',
-        'request_cache', 'requests_per_second', 'routing', 'scroll',
-        'scroll_size', 'search_timeout', 'search_type', 'size', 'sort', 'stats',
-        'stored_fields', 'suggest_field', 'suggest_mode', 'suggest_size',
-        'suggest_text', 'terminate_after', 'timeout', 'track_scores', 'version',
+        'default_operator', 'df', 'expand_wildcards', 'from_',
+        'ignore_unavailable', 'lenient', 'pipeline', 'preference', 'q',
+        'refresh', 'request_cache', 'requests_per_second', 'routing', 'scroll',
+        'scroll_size', 'search_timeout', 'search_type', 'size', 'slices',
+        'sort', 'stats', 'terminate_after', 'timeout', 'version',
         'version_type', 'wait_for_active_shards', 'wait_for_completion')
     def update_by_query(self, index, doc_type=None, body=None, params=None):
         """
@@ -656,28 +665,20 @@ class Elasticsearch(object):
         :arg analyze_wildcard: Specify whether wildcard and prefix queries
             should be analyzed (default: false)
         :arg analyzer: The analyzer to use for the query string
-        :arg conflicts: What to do when the reindex hits version conflicts?,
-            default 'abort', valid choices are: 'abort', 'proceed'
+        :arg conflicts: What to do when the update by query hits version
+            conflicts?, default 'abort', valid choices are: 'abort', 'proceed'
         :arg default_operator: The default operator for query string query (AND
             or OR), default 'OR', valid choices are: 'AND', 'OR'
         :arg df: The field to use as default where no field prefix is given in
             the query string
-        :arg docvalue_fields: A comma-separated list of fields to return as the
-            docvalue representation of a field for each hit
         :arg expand_wildcards: Whether to expand wildcard expression to concrete
             indices that are open, closed or both., default 'open', valid
             choices are: 'open', 'closed', 'none', 'all'
-        :arg explain: Specify whether to return detailed information about score
-            computation as part of a hit
-        :arg fielddata_fields: A comma-separated list of fields to return as the
-            docvalue representation of a field for each hit
         :arg from\_: Starting offset (default: 0)
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
         :arg lenient: Specify whether format-based query failures (such as
             providing text to a numeric field) should be ignored
-        :arg lowercase_expanded_terms: Specify whether query terms should be
-            lowercased
         :arg pipeline: Ingest pipeline to set on index requests made by this
             action. (default: none)
         :arg preference: Specify the node or shard the operation should be
@@ -687,8 +688,7 @@ class Elasticsearch(object):
         :arg request_cache: Specify if request cache should be used for this
             request or not, defaults to index level setting
         :arg requests_per_second: The throttle to set on this request in sub-
-            requests per second. -1 means set no throttle as does "unlimited"
-            which is the only non-float this accepts., default 0
+            requests per second. -1 means no throttle., default 0
         :arg routing: A comma-separated list of specific routing values
         :arg scroll: Specify how long a consistent view of the index should be
             maintained for scrolled search
@@ -705,21 +705,11 @@ class Elasticsearch(object):
         :arg sort: A comma-separated list of <field>:<direction> pairs
         :arg stats: Specific 'tag' of the request for logging and statistical
             purposes
-        :arg stored_fields: A comma-separated list of stored fields to return as
-            part of a hit
-        :arg suggest_field: Specify which field to use for suggestions
-        :arg suggest_mode: Specify suggest mode, default 'missing', valid
-            choices are: 'missing', 'popular', 'always'
-        :arg suggest_size: How many suggestions to return in response
-        :arg suggest_text: The source text for which the suggestions should be
-            returned
         :arg terminate_after: The maximum number of documents to collect for
             each shard, upon reaching which the query execution will terminate
             early.
         :arg timeout: Time each individual bulk request should wait for shards
             that are unavailable., default '1m'
-        :arg track_scores: Whether to calculate and return scores even if they
-            are not used for sorting
         :arg version: Specify whether to return document version as part of a
             hit
         :arg version_type: Should the document increment the version number
@@ -731,7 +721,7 @@ class Elasticsearch(object):
             equal to the total number of copies for the shard (number of
             replicas + 1)
         :arg wait_for_completion: Should the request should block until the
-            reindex is complete., default True
+            update by query operation is complete., default True
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
@@ -749,8 +739,7 @@ class Elasticsearch(object):
             for the index request.
         :arg refresh: Should the effected indexes be refreshed?
         :arg requests_per_second: The throttle to set on this request in sub-
-            requests per second. -1 means set no throttle as does "unlimited"
-            which is the only non-float this accepts., default 0
+            requests per second. -1 means no throttle., default 0
         :arg slices: The number of slices this task should be divided into.
             Defaults to 1 meaning the task isn't sliced into subtasks., default
             1
@@ -784,13 +773,11 @@ class Elasticsearch(object):
 
     @query_params('_source', '_source_exclude', '_source_include',
         'allow_no_indices', 'analyze_wildcard', 'analyzer', 'conflicts',
-        'default_operator', 'df', 'docvalue_fields', 'expand_wildcards',
-        'explain', 'from_', 'ignore_unavailable', 'lenient',
-        'lowercase_expanded_terms', 'preference', 'q', 'refresh',
-        'request_cache', 'requests_per_second', 'routing', 'scroll', 'slices',
-        'scroll_size', 'search_timeout', 'search_type', 'size', 'sort', 'stats',
-        'stored_fields', 'suggest_field', 'suggest_mode', 'suggest_size',
-        'suggest_text', 'terminate_after', 'timeout', 'track_scores', 'version',
+        'default_operator', 'df', 'expand_wildcards', 'from_',
+        'ignore_unavailable', 'lenient', 'preference', 'q', 'refresh',
+        'request_cache', 'requests_per_second', 'routing', 'scroll',
+        'scroll_size', 'search_timeout', 'search_type', 'size', 'slices',
+        'sort', 'stats', 'terminate_after', 'timeout', 'version',
         'wait_for_active_shards', 'wait_for_completion')
     def delete_by_query(self, index, body, doc_type=None, params=None):
         """
@@ -820,20 +807,14 @@ class Elasticsearch(object):
             or OR), default 'OR', valid choices are: 'AND', 'OR'
         :arg df: The field to use as default where no field prefix is given in
             the query string
-        :arg docvalue_fields: A comma-separated list of fields to return as the
-            docvalue representation of a field for each hit
         :arg expand_wildcards: Whether to expand wildcard expression to concrete
             indices that are open, closed or both., default 'open', valid
             choices are: 'open', 'closed', 'none', 'all'
-        :arg explain: Specify whether to return detailed information about score
-            computation as part of a hit
         :arg from\_: Starting offset (default: 0)
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
         :arg lenient: Specify whether format-based query failures (such as
             providing text to a numeric field) should be ignored
-        :arg lowercase_expanded_terms: Specify whether query terms should be
-            lowercased
         :arg preference: Specify the node or shard the operation should be
             performed on (default: random)
         :arg q: Query in the Lucene query string syntax
@@ -858,21 +839,11 @@ class Elasticsearch(object):
         :arg sort: A comma-separated list of <field>:<direction> pairs
         :arg stats: Specific 'tag' of the request for logging and statistical
             purposes
-        :arg stored_fields: A comma-separated list of stored fields to return as
-            part of a hit
-        :arg suggest_field: Specify which field to use for suggestions
-        :arg suggest_mode: Specify suggest mode, default 'missing', valid
-            choices are: 'missing', 'popular', 'always'
-        :arg suggest_size: How many suggestions to return in response
-        :arg suggest_text: The source text for which the suggestions should be
-            returned
         :arg terminate_after: The maximum number of documents to collect for
             each shard, upon reaching which the query execution will terminate
             early.
         :arg timeout: Time each individual bulk request should wait for shards
             that are unavailable., default '1m'
-        :arg track_scores: Whether to calculate and return scores even if they
-            are not used for sorting
         :arg version: Specify whether to return document version as part of a
             hit
         :arg wait_for_active_shards: Sets the number of shard copies that must
@@ -901,8 +872,6 @@ class Elasticsearch(object):
 
         :arg index: A comma-separated list of index names to search; use `_all`
             or empty string to perform the operation on all indices
-        :arg doc_type: A comma-separated list of document types to search; leave
-            empty to perform the operation on all types
         :arg allow_no_indices: Whether to ignore if a wildcard indices
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
@@ -961,8 +930,7 @@ class Elasticsearch(object):
 
     @query_params('_source', '_source_exclude', '_source_include',
         'analyze_wildcard', 'analyzer', 'default_operator', 'df', 'lenient',
-        'lowercase_expanded_terms', 'parent', 'preference', 'q', 'routing',
-        'stored_fields')
+        'parent', 'preference', 'q', 'routing', 'stored_fields')
     def explain(self, index, doc_type, id, body=None, params=None):
         """
         The explain api computes a score explanation for a query and a specific
@@ -988,8 +956,6 @@ class Elasticsearch(object):
         :arg df: The default field for query string query (default: _all)
         :arg lenient: Specify whether format-based query failures (such as
             providing text to a numeric field) should be ignored
-        :arg lowercase_expanded_terms: Specify whether query terms should be
-            lowercased
         :arg parent: The ID of the parent document
         :arg preference: Specify the node or shard the operation should be
             performed on (default: random)
@@ -1081,8 +1047,7 @@ class Elasticsearch(object):
 
     @query_params('allow_no_indices', 'analyze_wildcard', 'analyzer',
         'default_operator', 'df', 'expand_wildcards', 'ignore_unavailable',
-        'lenient', 'lowercase_expanded_terms', 'min_score', 'preference', 'q',
-        'routing')
+        'lenient', 'min_score', 'preference', 'q', 'routing')
     def count(self, index=None, doc_type=None, body=None, params=None):
         """
         Execute a query and get the number of matches for that query.
@@ -1109,8 +1074,6 @@ class Elasticsearch(object):
             ignored when unavailable (missing or closed)
         :arg lenient: Specify whether format-based query failures (such as
             providing text to a numeric field) should be ignored
-        :arg lowercase_expanded_terms: Specify whether query terms should be
-            lowercased
         :arg min_score: Include only documents with a specific `_score` value in
             the result
         :arg preference: Specify the node or shard the operation should be
@@ -1166,7 +1129,8 @@ class Elasticsearch(object):
         return self.transport.perform_request('POST', _make_path(index,
             doc_type, '_bulk'), params=params, body=self._bulk_body(body))
 
-    @query_params('max_concurrent_searches', 'search_type', 'typed_keys')
+    @query_params('max_concurrent_searches', 'pre_filter_shard_size',
+        'search_type', 'typed_keys')
     def msearch(self, body, index=None, doc_type=None, params=None):
         """
         Execute several search requests within the same API.
@@ -1179,6 +1143,13 @@ class Elasticsearch(object):
             default
         :arg max_concurrent_searches: Controls the maximum number of concurrent
             searches the multi search api will execute
+        :arg pre_filter_shard_size: A threshold that enforces a pre-filter
+            roundtrip to prefilter search shards based on query rewriting if
+            the number of shards the search request expands to exceeds the
+            threshold. This filter roundtrip can limit the number of shards
+            significantly if for instance a shard can not match any documents
+            based on it's rewrite method ie. if date filters are mandatory to
+            match but the shard bounds and the query are disjoint., default 128
         :arg search_type: Search operation type, valid choices are:
             'query_then_fetch', 'query_and_fetch', 'dfs_query_then_fetch',
             'dfs_query_and_fetch'
@@ -1189,155 +1160,6 @@ class Elasticsearch(object):
             raise ValueError("Empty value passed for a required argument 'body'.")
         return self.transport.perform_request('GET', _make_path(index,
             doc_type, '_msearch'), params=params, body=self._bulk_body(body))
-
-    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
-        'preference', 'routing')
-    def suggest(self, body, index=None, params=None):
-        """
-        The suggest feature suggests similar looking terms based on a provided
-        text by using a suggester.
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters.html>`_
-
-        :arg body: The request definition
-        :arg index: A comma-separated list of index names to restrict the
-            operation; use `_all` or empty string to perform the operation on
-            all indices
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to concrete
-            indices that are open, closed or both., default 'open', valid
-            choices are: 'open', 'closed', 'none', 'all'
-        :arg ignore_unavailable: Whether specified concrete indices should be
-            ignored when unavailable (missing or closed)
-        :arg preference: Specify the node or shard the operation should be
-            performed on (default: random)
-        :arg routing: Specific routing value
-        """
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
-        return self.transport.perform_request('POST', _make_path(index,
-            '_suggest'), params=params, body=body)
-
-    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
-        'percolate_format', 'percolate_index', 'percolate_preference',
-        'percolate_routing', 'percolate_type', 'preference', 'routing',
-        'version', 'version_type')
-    def percolate(self, index, doc_type, id=None, body=None, params=None):
-        """
-        The percolator allows to register queries against an index, and then
-        send percolate requests which include a doc, and getting back the
-        queries that match on that doc out of the set of registered queries.
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-percolate.html>`_
-
-        :arg index: The index of the document being percolated.
-        :arg doc_type: The type of the document being percolated.
-        :arg id: Substitute the document in the request body with a document
-            that is known by the specified id. On top of the id, the index and
-            type parameter will be used to retrieve the document from within the
-            cluster.
-        :arg body: The percolator request definition using the percolate DSL
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to concrete
-            indices that are open, closed or both., default 'open', valid
-            choices are: 'open', 'closed', 'none', 'all'
-        :arg ignore_unavailable: Whether specified concrete indices should be
-            ignored when unavailable (missing or closed)
-        :arg percolate_format: Return an array of matching query IDs instead of
-            objects, valid choices are: 'ids'
-        :arg percolate_index: The index to percolate the document into. Defaults
-            to index.
-        :arg percolate_preference: Which shard to prefer when executing the
-            percolate request.
-        :arg percolate_routing: The routing value to use when percolating the
-            existing document.
-        :arg percolate_type: The type to percolate document into. Defaults to
-            type.
-        :arg preference: Specify the node or shard the operation should be
-            performed on (default: random)
-        :arg routing: A comma-separated list of specific routing values
-        :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type, valid choices are: 'internal',
-            'external', 'external_gte', 'force'
-        """
-        for param in (index, doc_type):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('GET', _make_path(index,
-            doc_type, id, '_percolate'), params=params, body=body)
-
-    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable')
-    def mpercolate(self, body, index=None, doc_type=None, params=None):
-        """
-        The percolator allows to register queries against an index, and then
-        send percolate requests which include a doc, and getting back the
-        queries that match on that doc out of the set of registered queries.
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-percolate.html>`_
-
-        :arg body: The percolate request definitions (header & body pair),
-            separated by newlines
-        :arg index: The index of the document being count percolated to use as
-            default
-        :arg doc_type: The type of the document being percolated to use as
-            default.
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to concrete
-            indices that are open, closed or both., default 'open', valid
-            choices are: 'open', 'closed', 'none', 'all'
-        :arg ignore_unavailable: Whether specified concrete indices should be
-            ignored when unavailable (missing or closed)
-        """
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
-        return self.transport.perform_request('GET', _make_path(index,
-            doc_type, '_mpercolate'), params=params, body=self._bulk_body(body))
-
-    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
-        'percolate_index', 'percolate_type', 'preference', 'routing', 'version',
-        'version_type')
-    def count_percolate(self, index, doc_type, id=None, body=None, params=None):
-        """
-        The percolator allows to register queries against an index, and then
-        send percolate requests which include a doc, and getting back the
-        queries that match on that doc out of the set of registered queries.
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-percolate.html>`_
-
-        :arg index: The index of the document being count percolated.
-        :arg doc_type: The type of the document being count percolated.
-        :arg id: Substitute the document in the request body with a document
-            that is known by the specified id. On top of the id, the index and
-            type parameter will be used to retrieve the document from within the
-            cluster.
-        :arg body: The count percolator request definition using the percolate
-            DSL
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to concrete
-            indices that are open, closed or both., default 'open', valid
-            choices are: 'open', 'closed', 'none', 'all'
-        :arg ignore_unavailable: Whether specified concrete indices should be
-            ignored when unavailable (missing or closed)
-        :arg percolate_index: The index to count percolate the document into.
-            Defaults to index.
-        :arg percolate_type: The type to count percolate document into. Defaults
-            to type.
-        :arg preference: Specify the node or shard the operation should be
-            performed on (default: random)
-        :arg routing: A comma-separated list of specific routing values
-        :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type, valid choices are: 'internal',
-            'external', 'external_gte', 'force'
-        """
-        for param in (index, doc_type):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('GET', _make_path(index,
-            doc_type, id, '_percolate', 'count'), params=params, body=body)
 
     @query_params('field_statistics', 'fields', 'offsets', 'parent', 'payloads',
         'positions', 'preference', 'realtime', 'routing', 'term_statistics',
@@ -1438,50 +1260,32 @@ class Elasticsearch(object):
             doc_type, '_mtermvectors'), params=params, body=body)
 
     @query_params()
-    def put_script(self, lang, id, body, params=None):
+    def put_script(self, id, body, context=None, params=None):
         """
         Create a script in given language with specified ID.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/modules-scripting.html>`_
 
-        :arg lang: Script language
         :arg id: Script ID
         :arg body: The document
         """
-        for param in (lang, id, body):
+        for param in (id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('PUT', _make_path('_scripts',
-            lang, id), params=params, body=body)
+        return self.transport.perform_request('PUT', _make_path('_scripts', id,
+            context), params=params, body=body)
 
     @query_params()
-    def get_script(self, lang, id, params=None):
+    def get_script(self, id, params=None):
         """
         Retrieve a script from the API.
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/modules-scripting.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
 
-        :arg lang: Script language
         :arg id: Script ID
         """
-        for param in (lang, id):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('GET', _make_path('_scripts',
-            lang, id), params=params)
-
-    @query_params()
-    def delete_script(self, lang, id, params=None):
-        """
-        Remove a stored script from elasticsearch.
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/modules-scripting.html>`_
-
-        :arg lang: Script language
-        :arg id: Script ID
-        """
-        for param in (lang, id):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('DELETE',
-            _make_path('_scripts', lang, id), params=params)
+        if id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'id'.")
+        return self.transport.perform_request('GET', _make_path('_scripts', id),
+            params=params)
 
     @query_params()
     def put_template(self, id, body, params=None):
@@ -1512,48 +1316,17 @@ class Elasticsearch(object):
             'template', id), params=params)
 
     @query_params()
-    def delete_template(self, id, params=None):
+    def delete_script(self, id, params=None):
         """
-        Delete a search template.
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html>`_
+        Remove a stored script from elasticsearch.
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
 
-        :arg id: Template ID
+        :arg id: Script ID
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
-        return self.transport.perform_request('DELETE', _make_path('_search',
-            'template', id), params=params)
-
-    @query_params('allow_no_indices', 'expand_wildcards', 'fields',
-        'ignore_unavailable', 'level')
-    def field_stats(self, index=None, body=None, params=None):
-        """
-        The field stats api allows one to find statistical properties of a
-        field without executing a search, but looking up measurements that are
-        natively available in the Lucene index.
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-field-stats.html>`_
-
-        :arg index: A comma-separated list of index names; use `_all` or empty
-            string to perform the operation on all indices
-        :arg body: Field json objects containing the name and optionally a range
-            to filter out indices result, that have results outside the defined
-            bounds
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to concrete
-            indices that are open, closed or both., default 'open', valid
-            choices are: 'open', 'closed', 'none', 'all'
-        :arg fields: A comma-separated list of fields for to get field
-            statistics for (min value, max value, and more)
-        :arg ignore_unavailable: Whether specified concrete indices should be
-            ignored when unavailable (missing or closed)
-        :arg level: Defines if field stats should be returned on a per index
-            level or on a cluster wide level, default 'cluster', valid choices
-            are: 'indices', 'cluster'
-        """
-        return self.transport.perform_request('GET', _make_path(index,
-            '_field_stats'), params=params, body=body)
+        return self.transport.perform_request('DELETE', _make_path('_scripts',
+            id), params=params)
 
     @query_params()
     def render_search_template(self, id=None, body=None, params=None):
@@ -1566,7 +1339,7 @@ class Elasticsearch(object):
         return self.transport.perform_request('GET', _make_path('_render',
             'template', id), params=params, body=body)
 
-    @query_params('search_type')
+    @query_params('max_concurrent_searches', 'search_type', 'typed_keys')
     def msearch_template(self, body, index=None, doc_type=None, params=None):
         """
         The /_search/template endpoint allows to use the mustache language to
@@ -1579,9 +1352,13 @@ class Elasticsearch(object):
         :arg index: A comma-separated list of index names to use as default
         :arg doc_type: A comma-separated list of document types to use as
             default
+        :arg max_concurrent_searches: Controls the maximum number of concurrent
+            searches the multi search api will execute
         :arg search_type: Search operation type, valid choices are:
             'query_then_fetch', 'query_and_fetch', 'dfs_query_then_fetch',
             'dfs_query_and_fetch'
+        :arg typed_keys: Specify whether aggregation and suggester names should
+            be prefixed by their respective types in the response
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")

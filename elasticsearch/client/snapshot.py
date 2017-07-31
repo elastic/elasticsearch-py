@@ -38,7 +38,7 @@ class SnapshotClient(NamespacedClient):
         return self.transport.perform_request('DELETE',
             _make_path('_snapshot', repository, snapshot), params=params)
 
-    @query_params('ignore_unavailable', 'master_timeout')
+    @query_params('ignore_unavailable', 'master_timeout', 'verbose')
     def get(self, repository, snapshot, params=None):
         """
         Retrieve information about a snapshot.
@@ -50,6 +50,8 @@ class SnapshotClient(NamespacedClient):
             defaults to false which means a SnapshotMissingException is thrown
         :arg master_timeout: Explicit operation timeout for connection to master
             node
+        :arg verbose: Whether to show verbose snapshot info or only show the
+            basic info found in the repository index blob
         """
         for param in (repository, snapshot):
             if param in SKIP_IN_PATH:
