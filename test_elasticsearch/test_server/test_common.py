@@ -35,8 +35,13 @@ IMPLEMENTED_FEATURES = ('gtelte', 'stash_in_path', 'headers', 'catch_unauthorize
 
 # broken YAML tests on some releases
 SKIP_TESTS = {
-    (1, 1, 2): set(('TestCatRecovery10Basic', )),
-    '*': set(('TestSearchExists20QueryString', 'TestSearchExists10Basic'))
+    # wait for https://github.com/elastic/elasticsearch/issues/25694 to be fixed
+    # upstream
+    '*': set(('TestBulk10Basic', 'TestCatSnapshots10Basic',
+              'TestClusterPutSettings10Basic', 'TestIndex10WithId',
+              'TestClusterPutScript10Basic', 'TestIndicesPutMapping10Basic',
+              'TestIndicesPutTemplate10Basic', 'TestMsearch10Basic'))
+
 }
 
 class InvalidActionType(Exception):
@@ -57,7 +62,7 @@ class YamlTestCase(ElasticsearchTestCase):
         for repo, definition in self.client.snapshot.get_repository(repository='_all').items():
             self.client.snapshot.delete_repository(repository=repo)
             if definition['type'] == 'fs':
-                rmtree('/tmp/%s' % definition['settings']['location'])
+                rmtree('/tmp/%s' % definition['settings']['location'], ignore_errors=True)
 
     def _resolve(self, value):
         # resolve variables
