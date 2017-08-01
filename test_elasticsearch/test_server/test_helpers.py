@@ -64,8 +64,8 @@ class TestStreamingBulk(ElasticsearchTestCase):
             self.assertTrue(ok)
 
         self.assertFalse(self.client.exists(index='i', doc_type='t', id=45))
-        self.assertEquals({'answer': 42}, self.client.get(index='i', id=42)['_source'])
-        self.assertEquals({'f': 'v'}, self.client.get(index='i', id=47)['_source'])
+        self.assertEquals({'answer': 42}, self.client.get(index='i', doc_type='t', id=42)['_source'])
+        self.assertEquals({'f': 'v'}, self.client.get(index='i', doc_type='t', id=47)['_source'])
 
     def test_transport_error_can_becaught(self):
         failing_client = FailingBulkClient(self.client)
@@ -255,38 +255,36 @@ class TestReindex(ElasticsearchTestCase):
         super(TestReindex, self).setUp()
         bulk = []
         for x in range(100):
-            bulk.append({"index": {"_index": "test_index", "_type": "answers" if x % 2 == 0 else "questions", "_id": x}})
-            bulk.append({"answer": x, "correct": x == 42})
+            bulk.append({"index": {"_index": "test_index", "_type": "post", "_id": x}})
+            bulk.append({"answer": x, "correct": x == 42, "type": "answers" if x % 2 == 0 else "questions"})
         self.client.bulk(bulk, refresh=True)
 
     def test_reindex_passes_kwargs_to_scan_and_bulk(self):
-        helpers.reindex(self.client, "test_index", "prod_index", scan_kwargs={'doc_type': 'answers'}, bulk_kwargs={'refresh': True})
+        helpers.reindex(self.client, "test_index", "prod_index", scan_kwargs={'q': 'type:answers'}, bulk_kwargs={'refresh': True})
 
         self.assertTrue(self.client.indices.exists("prod_index"))
-        self.assertFalse(self.client.indices.exists_type(index='prod_index', doc_type='questions'))
-        self.assertEquals(50, self.client.count(index='prod_index', doc_type='answers')['count'])
+        self.assertEquals(50, self.client.count(index='prod_index', q='type:answers')['count'])
 
-        self.assertEquals({"answer": 42, "correct": True}, self.client.get(index="prod_index", doc_type="answers", id=42)['_source'])
+        self.assertEquals({"answer": 42, "correct": True, "type": "answers"}, self.client.get(index="prod_index", doc_type="post", id=42)['_source'])
 
     def test_reindex_accepts_a_query(self):
-        helpers.reindex(self.client, "test_index", "prod_index", query={"query": {"bool": {"filter": {"term": {"_type": "answers"}}}}})
+        helpers.reindex(self.client, "test_index", "prod_index", query={"query": {"bool": {"filter": {"term": {"type": "answers"}}}}})
         self.client.indices.refresh()
 
         self.assertTrue(self.client.indices.exists("prod_index"))
-        self.assertFalse(self.client.indices.exists_type(index='prod_index', doc_type='questions'))
-        self.assertEquals(50, self.client.count(index='prod_index', doc_type='answers')['count'])
+        self.assertEquals(50, self.client.count(index='prod_index', q='type:answers')['count'])
 
-        self.assertEquals({"answer": 42, "correct": True}, self.client.get(index="prod_index", doc_type="answers", id=42)['_source'])
+        self.assertEquals({"answer": 42, "correct": True, "type": "answers"}, self.client.get(index="prod_index", doc_type="post", id=42)['_source'])
 
     def test_all_documents_get_moved(self):
         helpers.reindex(self.client, "test_index", "prod_index")
         self.client.indices.refresh()
 
         self.assertTrue(self.client.indices.exists("prod_index"))
-        self.assertEquals(50, self.client.count(index='prod_index', doc_type='questions')['count'])
-        self.assertEquals(50, self.client.count(index='prod_index', doc_type='answers')['count'])
+        self.assertEquals(50, self.client.count(index='prod_index', q='type:questions')['count'])
+        self.assertEquals(50, self.client.count(index='prod_index', q='type:answers')['count'])
 
-        self.assertEquals({"answer": 42, "correct": True}, self.client.get(index="prod_index", doc_type="answers", id=42)['_source'])
+        self.assertEquals({"answer": 42, "correct": True, "type": "answers"}, self.client.get(index="prod_index", doc_type="post", id=42)['_source'])
 
 class TestParentChildReindex(ElasticsearchTestCase):
     def setUp(self):
@@ -294,10 +292,13 @@ class TestParentChildReindex(ElasticsearchTestCase):
         body={
             'settings': {"number_of_shards": 1, "number_of_replicas": 0},
             'mappings': {
-                'question': {
-                },
-                'answer': {
-                    '_parent': {'type': 'question'},
+                'post': {
+                    'properties': {
+                        'question_answer': {
+                            'type': 'join',
+                            'relations': {'question': 'answer'}
+                        }
+                    }
                 }
             }
         }
@@ -306,16 +307,16 @@ class TestParentChildReindex(ElasticsearchTestCase):
 
         self.client.index(
             index='test-index',
-            doc_type='question',
+            doc_type='post',
             id=42,
-            body={},
+            body={'question_answer': 'question'},
         )
         self.client.index(
             index='test-index',
-            doc_type='answer',
+            doc_type='post',
             id=47,
-            body={'some': 'data'},
-            parent=42
+            routing=42,
+            body={'some': 'data', 'question_answer': {'name': 'answer', 'parent': 42}},
         )
         self.client.indices.refresh(index='test-index')
 
@@ -324,35 +325,33 @@ class TestParentChildReindex(ElasticsearchTestCase):
 
         q = self.client.get(
             index='real-index',
-            doc_type='question',
+            doc_type='post',
             id=42
         )
         self.assertEquals(
             {
                 '_id': '42',
                 '_index': 'real-index',
-                '_source': {},
-                '_type': 'question',
+                '_source': {'question_answer': 'question'},
+                '_type': 'post',
                 '_version': 1,
                 'found': True
             }, q
         )
         q = self.client.get(
             index='test-index',
-            doc_type='answer',
+            doc_type='post',
             id=47,
-            parent=42
+            routing=42
         )
-        if '_routing' in q:
-            self.assertEquals(q.pop('_routing'), '42')
         self.assertEquals(
             {
+                '_routing': '42',
                 '_id': '47',
                 '_index': 'test-index',
-                '_source': {'some': 'data'},
-                '_type': 'answer',
+                '_source': {'some': 'data', 'question_answer': {'name': 'answer', 'parent': 42}},
+                '_type': 'post',
                 '_version': 1,
-                '_parent': '42',
                 'found': True
             }, q
         )
