@@ -76,7 +76,7 @@ class Connection(object):
         # body has already been serialized to utf-8, deserialize it for logging
         # TODO: find a better way to avoid (de)encoding the body back and forth
         if body:
-            body = body.decode('utf-8')
+            body = body.decode('utf-8', 'ignore')
 
         logger.info(
             '%s %s [status:%s request:%.3fs]', method, full_url,
@@ -100,7 +100,7 @@ class Connection(object):
         # body has already been serialized to utf-8, deserialize it for logging
         # TODO: find a better way to avoid (de)encoding the body back and forth
         if body:
-            body = body.decode('utf-8')
+            body = body.decode('utf-8', 'ignore')
 
         logger.debug('> %s', body)
 
