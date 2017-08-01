@@ -84,3 +84,22 @@ class NodesClient(NamespacedClient):
             params['type'] = params.pop('type_')
         return self.transport.perform_request('GET', _make_path('_cluster',
             'nodes', node_id, 'hotthreads'), params=params)
+
+    @query_params('human', 'timeout')
+    def usage(self, node_id=None, metric=None, params=None):
+        """
+        The cluster nodes usage API allows to retrieve information on the usage
+        of features for each node.
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-usage.html>`_
+
+        :arg node_id: A comma-separated list of node IDs or names to limit the
+            returned information; use `_local` to return information from the
+            node you're connecting to, leave empty to get information from all
+            nodes
+        :arg metric: Limit the information returned to the specified metrics
+        :arg human: Whether to return time and byte values in human-readable
+            format., default False
+        :arg timeout: Explicit operation timeout
+        """
+        return self.transport.perform_request('GET', _make_path('_nodes',
+            node_id, 'usage', metric), params=params)

@@ -3,11 +3,10 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 class TasksClient(NamespacedClient):
     @query_params('actions', 'detailed', 'group_by', 'node_id', 'parent_node',
         'parent_task', 'wait_for_completion')
-    def list(self, task_id=None, params=None):
+    def list(self, params=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/tasks.html>`_
 
-        :arg task_id: Return the task with specified id (node_id:task_number)
         :arg actions: A comma-separated list of actions that should be returned.
             Leave empty to return all.
         :arg detailed: Return detailed task information (default: false)
@@ -23,8 +22,7 @@ class TasksClient(NamespacedClient):
         :arg wait_for_completion: Wait for the matching tasks to complete
             (default: false)
         """
-        return self.transport.perform_request('GET', _make_path('_tasks',
-            task_id), params=params)
+        return self.transport.perform_request('GET', '/_tasks', params=params)
 
     @query_params('actions', 'node_id', 'parent_node', 'parent_task')
     def cancel(self, task_id=None, params=None):

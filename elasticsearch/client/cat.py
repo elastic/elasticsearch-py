@@ -375,7 +375,7 @@ class CatClient(NamespacedClient):
 
     @query_params('format', 'h', 'help', 'ignore_unavailable', 'master_timeout',
         's', 'v')
-    def snapshots(self, repository=None, params=None):
+    def snapshots(self, repository, params=None):
         """
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-snapshots.html>`_
@@ -393,6 +393,8 @@ class CatClient(NamespacedClient):
             by
         :arg v: Verbose mode. Display column headers, default False
         """
+        if repository in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'repository'.")
         return self.transport.perform_request('GET', _make_path('_cat',
             'snapshots', repository), params=params)
 

@@ -191,22 +191,27 @@ class YamlTestCase(ElasticsearchTestCase):
 
     def run_gt(self, action):
         for key, value in action.items():
+            value = self._resolve(value)
             self.assertGreater(self._lookup(key), value)
 
     def run_gte(self, action):
         for key, value in action.items():
+            value = self._resolve(value)
             self.assertGreaterEqual(self._lookup(key), value)
 
     def run_lt(self, action):
         for key, value in action.items():
+            value = self._resolve(value)
             self.assertLess(self._lookup(key), value)
 
     def run_lte(self, action):
         for key, value in action.items():
+            value = self._resolve(value)
             self.assertLessEqual(self._lookup(key), value)
 
     def run_set(self, action):
         for key, value in action.items():
+            value = self._resolve(value)
             self._state[value] = self._lookup(key)
 
     def run_is_false(self, action):

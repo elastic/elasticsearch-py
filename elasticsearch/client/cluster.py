@@ -20,7 +20,7 @@ class ClusterClient(NamespacedClient):
         :arg wait_for_active_shards: Wait until the specified number of shards
             is active
         :arg wait_for_events: Wait until all currently queued events with the
-            given priorty are processed, valid choices are: 'immediate',
+            given priority are processed, valid choices are: 'immediate',
             'urgent', 'high', 'normal', 'low', 'languid'
         :arg wait_for_no_relocating_shards: Whether to wait until there are no
             relocating shards in the cluster
@@ -75,7 +75,7 @@ class ClusterClient(NamespacedClient):
         return self.transport.perform_request('GET', _make_path('_cluster',
             'state', metric, index), params=params)
 
-    @query_params('flat_settings', 'human', 'timeout')
+    @query_params('flat_settings', 'timeout')
     def stats(self, node_id=None, params=None):
         """
         The Cluster Stats API allows to retrieve statistics from a cluster wide
@@ -88,8 +88,6 @@ class ClusterClient(NamespacedClient):
             node you're connecting to, leave empty to get information from all
             nodes
         :arg flat_settings: Return settings in flat format (default: false)
-        :arg human: Whether to return time and byte values in human-readable
-            format., default False
         :arg timeout: Explicit operation timeout
         """
         url = '/_cluster/stats'
@@ -168,5 +166,4 @@ class ClusterClient(NamespacedClient):
         """
         return self.transport.perform_request('GET',
             '/_cluster/allocation/explain', params=params, body=body)
-
 
