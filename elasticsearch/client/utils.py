@@ -26,13 +26,13 @@ def _escape(value):
     elif isinstance(value, bool):
         value = str(value).lower()
 
+    # don't decode bytestrings
+    elif isinstance(value, bytes):
+        return value
+
     # encode strings to utf-8
     if isinstance(value, string_types):
-        try:
-            return value.encode('utf-8')
-        except UnicodeDecodeError:
-            # Python 2 and str, no need to re-encode
-            pass
+        return value.encode('utf-8')
 
     return str(value)
 
