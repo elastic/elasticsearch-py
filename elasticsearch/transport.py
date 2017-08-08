@@ -270,7 +270,7 @@ class Transport(object):
         :arg method: HTTP method to use
         :arg url: absolute url (without host) to target
         :arg headers: dictionary of headers, will be handed over to the
-            underlying :class:`~elasticsearch.Connection` class for serialization
+            underlying :class:`~elasticsearch.Connection` class
         :arg params: dictionary of query parameters, will be handed over to the
             underlying :class:`~elasticsearch.Connection` class for serialization
         :arg body: body of the request, will be serializes using serializer and
@@ -294,7 +294,7 @@ class Transport(object):
 
         if body is not None:
             try:
-                body = body.encode('utf-8', 'surrogatepass')
+                body = body.encode('utf-8', 'surrogatepass')            
             except (UnicodeDecodeError, AttributeError):
                 # bytes/str - no need to re-encode
                 pass

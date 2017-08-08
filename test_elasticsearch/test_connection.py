@@ -104,6 +104,13 @@ class TestRequestsConnection(TestCase):
         self.assertEquals('GET', request.method)
         self.assertEquals(None, request.body)
 
+    def test_merge_headers(self):
+        con = self._get_mock_connection(connection_params={'headers': {'h1': 'v1', 'h2': 'v2'}})
+        req = self._get_request(con, 'GET', '/', headers={'h2': 'v2p', 'h3': 'v3'})
+        self.assertEquals(req.headers['h1'], 'v1')
+        self.assertEquals(req.headers['h2'], 'v2p')
+        self.assertEquals(req.headers['h3'], 'v3')
+
     def test_http_auth(self):
         con = RequestsHttpConnection(http_auth='username:secret')
         self.assertEquals(('username', 'secret'), con.session.auth)
