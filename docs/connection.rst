@@ -45,5 +45,15 @@ Connection Selector
 Urllib3HttpConnection (default connection_class)
 ------------------------------------------------
 
+Deprecation Notice: `use_ssl`, `verify_certs`, `ca_certs` and `ssl_version` are being
+deprecated in favor of using a `SSLContext` (https://docs.python.org/3/library/ssl.html#ssl.SSLContext) object.
+
+You can continue to use the deprecated parameters and an `SSLContext` will be created for you.
+
+If you want to create your own `SSLContext` object you can create one natively using the
+python SSL library with the `create_default_context` (https://docs.python.org/3/library/ssl.html#ssl.create_default_context) method
+or you can use the wrapper function :function:`~elasticsearch.connection.http_urllib3.create_ssl_context`.
+
+
 .. autoclass:: Urllib3HttpConnection
    :members:

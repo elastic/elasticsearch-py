@@ -1,4 +1,5 @@
 import time
+import ssl
 import urllib3
 from urllib3.exceptions import ReadTimeoutError, SSLError as UrllibSSLError
 import warnings
@@ -14,6 +15,19 @@ except ImportError:
 from .base import Connection
 from ..exceptions import ConnectionError, ImproperlyConfigured, ConnectionTimeout, SSLError
 from ..compat import urlencode
+
+
+def create_ssl_context(**kwargs):
+    """
+    A helper function around creating an SSL context
+
+    https://docs.python.org/3/library/ssl.html#context-creation
+
+    Accepts kwargs in the same manner as `create_default_context`.
+    """
+    ctx = ssl.create_default_context(**kwargs)
+    return ctx
+
 
 class Urllib3HttpConnection(Connection):
     """
@@ -47,7 +61,7 @@ class Urllib3HttpConnection(Connection):
     def __init__(self, host='localhost', port=9200, http_auth=None,
             use_ssl=False, verify_certs=True, ca_certs=None, client_cert=None,
             client_key=None, ssl_version=None, ssl_assert_hostname=None,
-            ssl_assert_fingerprint=None, maxsize=10, headers=None, **kwargs):
+            ssl_assert_fingerprint=None, maxsize=10, headers=None, ssl_context=None, **kwargs):
 
         super(Urllib3HttpConnection, self).__init__(host=host, port=port, use_ssl=use_ssl, **kwargs)
         self.headers = urllib3.make_headers(keep_alive=True)
@@ -62,33 +76,49 @@ class Urllib3HttpConnection(Connection):
                 self.headers[k.lower()] = headers[k]
 
         self.headers.setdefault('content-type', 'application/json')
-        ca_certs = CA_CERTS if ca_certs is None else ca_certs
         pool_class = urllib3.HTTPConnectionPool
         kw = {}
-        if use_ssl:
+
+        # if providing an SSL context, raise error if any other SSL related flag is used
+        if ssl_context and (verify_certs or ca_certs or ssl_version):
+            raise ImproperlyConfigured("When using `ssl_context`, `use_ssl`, `verify_certs`, `ca_certs` and `ssl_version` are not permitted")
+
+        # if ssl_context provided use SSL by default
+        if use_ssl or ssl_context:
+            if not ca_certs and not ssl_context and verify_certs:
+                # If no ca_certs and no sslcontext passed and asking to verify certs
+                # raise error
+                raise ImproperlyConfigured("Root certificates are missing for certificate "
+                    "validation. Either pass them in using the ca_certs parameter or "
+                    "install certifi to use it automatically.")
+            if verify_certs or ca_certs or ssl_version:
+                warnings.warn('Use of `verify_certs`, `ca_certs`, `ssl_version` have been deprecated in favor of using SSLContext`', DeprecationWarning)
             pool_class = urllib3.HTTPSConnectionPool
+
+            if not ssl_context:
+                # if SSLContext hasn't been passed in, create one.
+                cafile = CA_CERTS if ca_certs is None else ca_certs
+                # need to skip if sslContext isn't avail
+                try:
+                    ssl_context = create_ssl_context(cafile=cafile)
+                except AttributeError:
+                    ssl_context = None
+
+                if not verify_certs and ssl_context is not None:
+                    ssl_context.check_hostname = False
+                    ssl_context.verify_mode = ssl.CERT_NONE
+                    warnings.warn(
+                        'Connecting to %s using SSL with verify_certs=False is insecure.' % host)
+
             kw.update({
                 'ssl_version': ssl_version,
                 'assert_hostname': ssl_assert_hostname,
                 'assert_fingerprint': ssl_assert_fingerprint,
+                'ssl_context': ssl_context,
+                'cert_file': client_cert,
+                'ca_certs': ca_certs,
+                'key_file': client_key,
             })
-
-            if verify_certs:
-                if not ca_certs:
-                    raise ImproperlyConfigured("Root certificates are missing for certificate "
-                        "validation. Either pass them in using the ca_certs parameter or "
-                        "install certifi to use it automatically.")
-
-                kw.update({
-                    'cert_reqs': 'CERT_REQUIRED',
-                    'ca_certs': ca_certs,
-                    'cert_file': client_cert,
-                    'key_file': client_key,
-                })
-            else:
-                warnings.warn(
-                    'Connecting to %s using SSL with verify_certs=False is insecure.' % host)
-
         self.pool = pool_class(host, port=port, timeout=self.timeout, maxsize=maxsize, **kw)
 
     def perform_request(self, method, url, params=None, body=None, timeout=None, ignore=()):
