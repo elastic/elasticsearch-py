@@ -132,4 +132,4 @@ Build status
 ------------
 
 .. image:: https://secure.travis-ci.org/elastic/elasticsearch-py.png
-   :target: http://travis-ci.org/#!/elastic/elasticsearch-py
+   :target: https://travis-ci.org/elastic/elasticsearch-py
