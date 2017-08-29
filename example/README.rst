@@ -7,6 +7,9 @@ To run this example make sure you have elasticsearch running on port 9200,
 install additional dependencies (on top of `elasticsearch-py`)::
 
     pip install python-dateutil GitPython
+or
+
+    pip install -r requirements.txt
 
 And now you can load the index (the index will be called `git`)::
 
@@ -22,4 +25,3 @@ Look at the `queries.py` file for querying example and `load.py` on examples on
 loading data into elasticsearch. Both `load` and `queries` set up logging so in
 `/tmp/es_trace.log` you will have a transcript of the commands being run in the
 curl format.
-
