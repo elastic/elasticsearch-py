@@ -586,7 +586,7 @@ class Elasticsearch(object):
             grows with the number of nodes in the cluster but is at most 256.'
         :arg pre_filter_shard_size: A threshold that enforces a pre-filter
             roundtrip to prefilter search shards based on query rewriting if
-            the number of shards the search request expands to exceeds the
+            the number of shards the search request expands to exceeds the
             threshold. This filter roundtrip can limit the number of shards
             significantly if for instance a shard can not match any documents
             based on it's rewrite method ie. if date filters are mandatory to
@@ -1145,7 +1145,7 @@ class Elasticsearch(object):
             searches the multi search api will execute
         :arg pre_filter_shard_size: A threshold that enforces a pre-filter
             roundtrip to prefilter search shards based on query rewriting if
-            the number of shards the search request expands to exceeds the
+            the number of shards the search request expands to exceeds the
             threshold. This filter roundtrip can limit the number of shards
             significantly if for instance a shard can not match any documents
             based on it's rewrite method ie. if date filters are mandatory to
