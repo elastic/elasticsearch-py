@@ -15,7 +15,7 @@ def get_host_info(node_info, host):
     `None` is returned this node will be skipped.
 
     Useful for filtering nodes (by proximity for example) or if additional
-    information needs to be provided for the :class:`~elasticsearch.Connection`
+    information needs to be provided for the :class:`~elasticsearch5.Connection`
     class. By default master only nodes are filtered out since they shouldn't
     typically be used for API operations.
 
@@ -43,8 +43,8 @@ class Transport(object):
         """
         :arg hosts: list of dictionaries, each containing keyword arguments to
             create a `connection_class` instance
-        :arg connection_class: subclass of :class:`~elasticsearch.Connection` to use
-        :arg connection_pool_class: subclass of :class:`~elasticsearch.ConnectionPool` to use
+        :arg connection_class: subclass of :class:`~elasticsearch5.Connection` to use
+        :arg connection_pool_class: subclass of :class:`~elasticsearch5.ConnectionPool` to use
         :arg host_info_callback: callback responsible for taking the node information from
             `/_cluser/nodes`, along with already extracted information, and
             producing a list of arguments (same as `hosts` parameter)
@@ -123,7 +123,7 @@ class Transport(object):
 
     def add_connection(self, host):
         """
-        Create a new :class:`~elasticsearch.Connection` instance and add it to the pool.
+        Create a new :class:`~elasticsearch5.Connection` instance and add it to the pool.
 
         :arg host: kwargs that will be used to create the instance
         """
@@ -134,7 +134,7 @@ class Transport(object):
         """
         Instantiate all the connections and crate new connection pool to hold
         them. Tries to identify unchanged hosts and re-use existing
-        :class:`~elasticsearch.Connection` instances.
+        :class:`~elasticsearch5.Connection` instances.
 
         :arg hosts: same as `__init__`
         """
@@ -163,8 +163,8 @@ class Transport(object):
 
     def get_connection(self):
         """
-        Retreive a :class:`~elasticsearch.Connection` instance from the
-        :class:`~elasticsearch.ConnectionPool` instance.
+        Retreive a :class:`~elasticsearch5.Connection` instance from the
+        :class:`~elasticsearch5.ConnectionPool` instance.
         """
         if self.sniffer_timeout:
             if time.time() >= self.last_sniff + self.sniffer_timeout:
@@ -248,7 +248,7 @@ class Transport(object):
         Mark a connection as dead (failed) in the connection pool. If sniffing
         on failure is enabled this will initiate the sniffing process.
 
-        :arg connection: instance of :class:`~elasticsearch.Connection` that failed
+        :arg connection: instance of :class:`~elasticsearch5.Connection` that failed
         """
         # mark as dead even when sniffing to avoid hitting this host during the sniff process
         self.connection_pool.mark_dead(connection)
@@ -270,7 +270,7 @@ class Transport(object):
         :arg method: HTTP method to use
         :arg url: absolute url (without host) to target
         :arg params: dictionary of query parameters, will be handed over to the
-            underlying :class:`~elasticsearch.Connection` class for serialization
+            underlying :class:`~elasticsearch5.Connection` class for serialization
         :arg body: body of the request, will be serializes using serializer and
             passed to the connection
         """
