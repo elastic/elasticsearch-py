@@ -13,7 +13,7 @@ class ImproperlyConfigured(Exception):
 class ElasticsearchException(Exception):
     """
     Base class for all exceptions raised by this package's operations (doesn't
-    apply to :class:`~elasticsearch.ImproperlyConfigured`).
+    apply to :class:`~elasticsearch5.ImproperlyConfigured`).
     """
 
 
@@ -61,7 +61,7 @@ class TransportError(ElasticsearchException):
 class ConnectionError(TransportError):
     """
     Error raised when there was an exception while talking to ES. Original
-    exception from the underlying :class:`~elasticsearch.Connection`
+    exception from the underlying :class:`~elasticsearch5.Connection`
     implementation is available as ``.info.``
     """
     def __str__(self):

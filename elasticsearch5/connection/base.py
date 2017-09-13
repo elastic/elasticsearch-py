@@ -6,12 +6,12 @@ except ImportError:
 
 from ..exceptions import TransportError, HTTP_EXCEPTIONS
 
-logger = logging.getLogger('elasticsearch')
+logger = logging.getLogger('elasticsearch5')
 
-# create the elasticsearch.trace logger, but only set propagate to False if the
+# create the elasticsearch5.trace logger, but only set propagate to False if the
 # logger hasn't already been configured
-_tracer_already_configured = 'elasticsearch.trace' in logging.Logger.manager.loggerDict
-tracer = logging.getLogger('elasticsearch.trace')
+_tracer_already_configured = 'elasticsearch5.trace' in logging.Logger.manager.loggerDict
+tracer = logging.getLogger('elasticsearch5.trace')
 if not _tracer_already_configured:
     tracer.propagate = False
 
@@ -123,5 +123,3 @@ class Connection(object):
             logger.warning('Undecodable raw error response from server: %s', err)
 
         raise HTTP_EXCEPTIONS.get(status_code, TransportError)(status_code, error_message, additional_info)
-
-

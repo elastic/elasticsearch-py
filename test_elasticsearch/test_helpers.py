@@ -2,13 +2,13 @@ import mock
 import time
 import threading
 
-from elasticsearch import helpers, Elasticsearch
-from elasticsearch.serializer import JSONSerializer
+from elasticsearch5 import helpers, Elasticsearch
+from elasticsearch5.serializer import JSONSerializer
 
 from .test_cases import TestCase
 
 class TestParallelBulk(TestCase):
-    @mock.patch('elasticsearch.helpers._process_bulk_chunk', return_value=[])
+    @mock.patch('elasticsearch5.helpers._process_bulk_chunk', return_value=[])
     def test_all_chunks_sent(self, _process_bulk_chunk):
         actions = ({'x': i} for i in range(100))
         list(helpers.parallel_bulk(Elasticsearch(), actions, chunk_size=2))
@@ -16,7 +16,7 @@ class TestParallelBulk(TestCase):
         self.assertEquals(50, _process_bulk_chunk.call_count)
 
     @mock.patch(
-        'elasticsearch.helpers._process_bulk_chunk',
+        'elasticsearch5.helpers._process_bulk_chunk',
         # make sure we spend some time in the thread
         side_effect=lambda *a: [(True, time.sleep(.001) or threading.current_thread().ident)]
     )

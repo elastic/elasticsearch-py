@@ -8,7 +8,7 @@ from ..exceptions import ElasticsearchException, TransportError
 from ..compat import map, string_types, Queue
 
 
-logger = logging.getLogger('elasticsearch.helpers')
+logger = logging.getLogger('elasticsearch5.helpers')
 
 class BulkIndexError(ElasticsearchException):
     @property
@@ -26,7 +26,7 @@ def expand_action(data):
     """
     From one document or action definition passed in by the user extract the
     action/data lines needed for elasticsearch's
-    :meth:`~elasticsearch.Elasticsearch.bulk` api.
+    :meth:`~elasticsearch5.Elasticsearch.bulk` api.
     """
     # when given a string, assume user wants to index raw json
     if isinstance(data, string_types):
@@ -144,7 +144,7 @@ def streaming_bulk(client, actions, chunk_size=500, max_chunk_bytes=100 * 1024 *
     """
     Streaming bulk consumes actions from the iterable passed in and yields
     results per action. For non-streaming usecases use
-    :func:`~elasticsearch.helpers.bulk` which is a wrapper around streaming
+    :func:`~elasticsearch5.helpers.bulk` which is a wrapper around streaming
     bulk that returns summary information about the bulk operation once the
     entire input is consumed and sent.
 
@@ -154,7 +154,7 @@ def streaming_bulk(client, actions, chunk_size=500, max_chunk_bytes=100 * 1024 *
     every subsequent rejection for the same chunk, for double the time every
     time up to ``max_backoff`` seconds.
 
-    :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use
+    :arg client: instance of :class:`~elasticsearch5.Elasticsearch` to use
     :arg actions: iterable containing the actions to be executed
     :arg chunk_size: number of docs in one chunk sent to es (default: 500)
     :arg max_chunk_bytes: the maximum size of the request in bytes (default: 100MB)
@@ -221,7 +221,7 @@ def streaming_bulk(client, actions, chunk_size=500, max_chunk_bytes=100 * 1024 *
 
 def bulk(client, actions, stats_only=False, **kwargs):
     """
-    Helper for the :meth:`~elasticsearch.Elasticsearch.bulk` api that provides
+    Helper for the :meth:`~elasticsearch5.Elasticsearch.bulk` api that provides
     a more human friendly interface - it consumes an iterator of actions and
     sends them to elasticsearch in chunks. It returns a tuple with summary
     information - number of successfully executed actions and either list of
@@ -233,18 +233,18 @@ def bulk(client, actions, stats_only=False, **kwargs):
     When errors are being collected original document data is included in the
     error dictionary which can lead to an extra high memory usage. If you need
     to process a lot of data and want to ignore/collect errors please consider
-    using the :func:`~elasticsearch.helpers.streaming_bulk` helper which will
+    using the :func:`~elasticsearch5.helpers.streaming_bulk` helper which will
     just return the errors and not store them in memory.
 
 
-    :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use
+    :arg client: instance of :class:`~elasticsearch5.Elasticsearch` to use
     :arg actions: iterator containing the actions
     :arg stats_only: if `True` only report number of successful/failed
         operations instead of just number of successful and a list of error responses
 
     Any additional keyword arguments will be passed to
-    :func:`~elasticsearch.helpers.streaming_bulk` which is used to execute
-    the operation, see :func:`~elasticsearch.helpers.streaming_bulk` for more
+    :func:`~elasticsearch5.helpers.streaming_bulk` which is used to execute
+    the operation, see :func:`~elasticsearch5.helpers.streaming_bulk` for more
     accepted parameters.
     """
     success, failed = 0, 0
@@ -271,7 +271,7 @@ def parallel_bulk(client, actions, thread_count=4, chunk_size=500,
     """
     Parallel version of the bulk helper run in multiple threads at once.
 
-    :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use
+    :arg client: instance of :class:`~elasticsearch5.Elasticsearch` to use
     :arg actions: iterator containing the actions
     :arg thread_count: size of the threadpool to use for the bulk requests
     :arg chunk_size: number of docs in one chunk sent to es (default: 500)
@@ -316,7 +316,7 @@ def scan(client, query=None, scroll='5m', raise_on_error=True,
          preserve_order=False, size=1000, request_timeout=None, clear_scroll=True, **kwargs):
     """
     Simple abstraction on top of the
-    :meth:`~elasticsearch.Elasticsearch.scroll` api - a simple iterator that
+    :meth:`~elasticsearch5.Elasticsearch.scroll` api - a simple iterator that
     yields all hits as returned by underlining scroll requests.
 
     By default scan does not return results in any pre-determined order. To
@@ -325,8 +325,8 @@ def scan(client, query=None, scroll='5m', raise_on_error=True,
     may be an expensive operation and will negate the performance benefits of
     using ``scan``.
 
-    :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use
-    :arg query: body for the :meth:`~elasticsearch.Elasticsearch.search` api
+    :arg client: instance of :class:`~elasticsearch5.Elasticsearch` to use
+    :arg query: body for the :meth:`~elasticsearch5.Elasticsearch.search` api
     :arg scroll: Specify how long a consistent view of the index should be
         maintained for scrolled search
     :arg raise_on_error: raises an exception (``ScanError``) if an error is
@@ -342,7 +342,7 @@ def scan(client, query=None, scroll='5m', raise_on_error=True,
         to true.
 
     Any additional keyword arguments will be passed to the initial
-    :meth:`~elasticsearch.Elasticsearch.search` call::
+    :meth:`~elasticsearch5.Elasticsearch.search` call::
 
         scan(es,
             query={"query": {"match": {"title": "python"}}},
@@ -403,7 +403,7 @@ def reindex(client, source_index, target_index, query=None, target_client=None,
     to another, potentially (if `target_client` is specified) on a different cluster.
     If you don't specify the query you will reindex all the documents.
 
-    Since ``2.3`` a :meth:`~elasticsearch.Elasticsearch.reindex` api is
+    Since ``2.3`` a :meth:`~elasticsearch5.Elasticsearch.reindex` api is
     available as part of elasticsearch itself. It is recommended to use the api
     instead of this helper wherever possible. The helper is here mostly for
     backwards compatibility and for situations where more flexibility is
@@ -413,20 +413,20 @@ def reindex(client, source_index, target_index, query=None, target_client=None,
 
         This helper doesn't transfer mappings, just the data.
 
-    :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use (for
+    :arg client: instance of :class:`~elasticsearch5.Elasticsearch` to use (for
         read if `target_client` is specified as well)
     :arg source_index: index (or list of indices) to read documents from
     :arg target_index: name of the index in the target cluster to populate
-    :arg query: body for the :meth:`~elasticsearch.Elasticsearch.search` api
+    :arg query: body for the :meth:`~elasticsearch5.Elasticsearch.search` api
     :arg target_client: optional, is specified will be used for writing (thus
         enabling reindex between clusters)
     :arg chunk_size: number of docs in one chunk sent to es (default: 500)
     :arg scroll: Specify how long a consistent view of the index should be
         maintained for scrolled search
     :arg scan_kwargs: additional kwargs to be passed to
-        :func:`~elasticsearch.helpers.scan`
+        :func:`~elasticsearch5.helpers.scan`
     :arg bulk_kwargs: additional kwargs to be passed to
-        :func:`~elasticsearch.helpers.bulk`
+        :func:`~elasticsearch5.helpers.bulk`
     """
     target_client = client if target_client is None else target_client
 
