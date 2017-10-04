@@ -91,7 +91,7 @@ class Urllib3HttpConnection(Connection):
 
         self.pool = pool_class(host, port=port, timeout=self.timeout, maxsize=maxsize, **kw)
 
-    def perform_request(self, method, url, params=None, body=None, timeout=None, ignore=()):
+    def perform_request(self, method, url, params=None, body=None, timeout=None, ignore=(), headers=None):
         url = self.url_prefix + url
         if params:
             url = '%s?%s' % (url, urlencode(params))
@@ -111,6 +111,9 @@ class Urllib3HttpConnection(Connection):
             if not isinstance(method, str):
                 method = method.encode('utf-8')
 
+            if headers:
+                request_headers = dict(self.headers)
+                request_headers.update(headers or {})
             response = self.pool.urlopen(method, url, body, retries=False, headers=self.headers, **kw)
             duration = time.time() - start
             raw_data = response.data.decode('utf-8')

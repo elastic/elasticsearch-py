@@ -61,13 +61,13 @@ class RequestsHttpConnection(Connection):
             warnings.warn(
                 'Connecting to %s using SSL with verify_certs=False is insecure.' % self.base_url)
 
-    def perform_request(self, method, url, params=None, body=None, timeout=None, ignore=()):
+    def perform_request(self, method, url, params=None, body=None, timeout=None, ignore=(), headers=None):
         url = self.base_url + url
         if params:
             url = '%s?%s' % (url, urlencode(params or {}))
 
         start = time.time()
-        request = requests.Request(method=method, url=url, data=body)
+        request = requests.Request(method=method, headers=headers, url=url, data=body)
         prepared_request = self.session.prepare_request(request)
         settings = self.session.merge_environment_settings(prepared_request.url, {}, None, None, None)
         send_kwargs = {'timeout': timeout or self.timeout}

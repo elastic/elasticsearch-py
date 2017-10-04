@@ -74,7 +74,7 @@ class TestTransport(TestCase):
         t.perform_request('GET', '/', params={'request_timeout': 42})
         self.assertEquals(1, len(t.get_connection().calls))
         self.assertEquals(('GET', '/', {}, None), t.get_connection().calls[0][0])
-        self.assertEquals({'timeout': 42, 'ignore': ()}, t.get_connection().calls[0][1])
+        self.assertEquals({'timeout': 42, 'ignore': (), 'headers': None}, t.get_connection().calls[0][1])
 
     def test_send_get_body_as_source(self):
         t = Transport([{}], send_get_body_as='source', connection_class=DummyConnection)

@@ -1127,7 +1127,8 @@ class Elasticsearch(object):
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
         return self.transport.perform_request('POST', _make_path(index,
-            doc_type, '_bulk'), params=params, body=self._bulk_body(body))
+            doc_type, '_bulk'), params=params, body=self._bulk_body(body),
+            headers={'content-type': 'application/x-ndjson'})
 
     @query_params('max_concurrent_searches', 'pre_filter_shard_size',
         'search_type', 'typed_keys')
@@ -1159,7 +1160,8 @@ class Elasticsearch(object):
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
         return self.transport.perform_request('GET', _make_path(index,
-            doc_type, '_msearch'), params=params, body=self._bulk_body(body))
+            doc_type, '_msearch'), params=params, body=self._bulk_body(body),
+            headers={'content-type': 'application/x-ndjson'})
 
     @query_params('field_statistics', 'fields', 'offsets', 'parent', 'payloads',
         'positions', 'preference', 'realtime', 'routing', 'term_statistics',
@@ -1363,7 +1365,8 @@ class Elasticsearch(object):
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
         return self.transport.perform_request('GET', _make_path(index, doc_type,
-            '_msearch', 'template'), params=params, body=self._bulk_body(body))
+            '_msearch', 'template'), params=params, body=self._bulk_body(body),
+            headers={'content-type': 'application/x-ndjson'})
 
     @query_params('allow_no_indices', 'expand_wildcards', 'fields',
         'ignore_unavailable')
@@ -1387,3 +1390,4 @@ class Elasticsearch(object):
         """
         return self.transport.perform_request('GET', _make_path(index,
             '_field_caps'), params=params, body=body)
+
