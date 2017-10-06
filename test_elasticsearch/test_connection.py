@@ -1,4 +1,6 @@
+import sys
 import re
+import ssl
 from mock import Mock, patch
 import urllib3
 import warnings
@@ -7,8 +9,9 @@ from requests.auth import AuthBase
 from elasticsearch.exceptions import TransportError, ConflictError, RequestError, NotFoundError
 from elasticsearch.connection import RequestsHttpConnection, \
     Urllib3HttpConnection
-
-from .test_cases import TestCase
+from elasticsearch.exceptions import ImproperlyConfigured
+from elasticsearch.connection.http_urllib3 import create_ssl_context
+from .test_cases import TestCase, SkipTest
 
 
 class TestUrllib3Connection(TestCase):
@@ -42,6 +45,12 @@ class TestUrllib3Connection(TestCase):
             'connection': 'keep-alive'}, con.headers)
 
     def test_uses_https_if_verify_certs_is_off(self):
+        if (
+            sys.version_info >= (3,0) and sys.version_info <= (3,4)
+            ) or (
+            sys.version_info >= (2,6) and sys.version_info <= (2,7)
+        ):
+            raise SkipTest("SSL Context not supported in this version of python")
         with warnings.catch_warnings(record=True) as w:
             con = Urllib3HttpConnection(use_ssl=True, verify_certs=False)
             self.assertEquals(1, len(w))
@@ -52,6 +61,16 @@ class TestUrllib3Connection(TestCase):
     def test_doesnt_use_https_if_not_specified(self):
         con = Urllib3HttpConnection()
         self.assertIsInstance(con.pool, urllib3.HTTPConnectionPool)
+
+    def test_ssl_context_and_depreicated_values(self):
+        try:
+            ctx = create_ssl_context()
+        except AttributeError:
+            raise SkipTest("SSL Context not supported in this version of python")
+        self.assertRaises(ImproperlyConfigured, Urllib3HttpConnection, ssl_context=ctx, use_ssl=True)
+        self.assertRaises(ImproperlyConfigured, Urllib3HttpConnection, ssl_context=ctx, verify_certs=True)
+        self.assertRaises(ImproperlyConfigured, Urllib3HttpConnection, ssl_context=ctx, ca_certs="/some/path/to/cert.crt")
+        self.assertRaises(ImproperlyConfigured, Urllib3HttpConnection, ssl_context=ctx, ssl_version=ssl.PROTOCOL_SSLv23)
 
 class TestRequestsConnection(TestCase):
     def _get_mock_connection(self, connection_params={}, status_code=200, response_body='{}'):
