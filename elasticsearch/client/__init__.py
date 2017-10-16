@@ -223,7 +223,7 @@ class Elasticsearch(object):
 
     @query_params('parent', 'pipeline', 'refresh', 'routing', 'timeout',
         'timestamp', 'ttl', 'version', 'version_type', 'wait_for_active_shards')
-    def create(self, index, doc_type, id, body, params=None):
+    def create(self, index, doc_type, body, id=None, params=None):
         """
         Adds a typed JSON document in a specific index, making it searchable.
         Behind the scenes this method calls index(..., op_type='create')
@@ -231,7 +231,7 @@ class Elasticsearch(object):
 
         :arg index: The name of the index
         :arg doc_type: The type of the document
-        :arg id: Document ID
+        :arg id: Document ID,if id is None,an id will be generated automatically.
         :arg body: The document
         :arg parent: ID of the parent document
         :arg pipeline: The pipeline id to preprocess incoming documents with
@@ -256,8 +256,12 @@ class Elasticsearch(object):
         for param in (index, doc_type, id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('PUT', _make_path(index, doc_type,
-            id, '_create'), params=params, body=body)
+        if id:
+            return self.transport.perform_request('PUT', _make_path(index, doc_type,
+                id, '_create'), params=params, body=body)
+        else:
+            return self.transport.perform_request('POST', _make_path(index, doc_type)
+                                                  , params=params, body=body)
 
     @query_params('op_type', 'parent', 'pipeline', 'refresh', 'routing',
         'timeout', 'timestamp', 'ttl', 'version', 'version_type',
