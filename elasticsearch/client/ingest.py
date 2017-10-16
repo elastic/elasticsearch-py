@@ -46,16 +46,16 @@ class IngestClient(NamespacedClient):
             'pipeline', id), params=params)
 
     @query_params('verbose')
-    def simulate(self, body, id=None, params=None):
+    def simulate(self, body, pipelineID=None, params=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/plugins/current/ingest.html>`_
 
         :arg body: The simulate definition
-        :arg id: Pipeline ID
+        :arg pipelineID: Pipeline ID
         :arg verbose: Verbose mode. Display data output for each processor in
             executed pipeline, default False
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
         return self.transport.perform_request('GET', _make_path('_ingest',
-            'pipeline', id, '_simulate'), params=params, body=body)
+            'pipeline', pipelineID, '_simulate'), params=params, body=body)
