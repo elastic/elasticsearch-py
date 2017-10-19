@@ -6,7 +6,7 @@ __versionstr__ = '.'.join(map(str, VERSION))
 
 import sys
 
-if sys.version_info == (2, 7):
+if sys.version_info[:2] == (2, 7):
     # On Python 2.7, install no-op handler to silence
     # `No handlers could be found for logger "elasticsearch"` message per
     # <https://docs.python.org/2/howto/logging.html#configuring-logging-for-a-library>
