@@ -1,9 +1,5 @@
 from collections import defaultdict
-try:
-    # python 2.6
-    from unittest2 import TestCase, SkipTest
-except ImportError:
-    from unittest import TestCase, SkipTest
+from unittest import TestCase, SkipTest
 
 from elasticsearch import Elasticsearch
 
