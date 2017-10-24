@@ -45,7 +45,12 @@ class JSONSerializer(object):
             return data
 
         try:
-            return json.dumps(data, default=self.default, ensure_ascii=False)
+            return json.dumps(
+                data,
+                default=self.default,
+                ensure_ascii=False,
+                separators=(',', ':'),
+            )
         except (ValueError, TypeError) as e:
             raise SerializationError(data, e)
 
