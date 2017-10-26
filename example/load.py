@@ -50,6 +50,7 @@ def create_git_index(client, index):
             'type': 'repos'
           },
           'properties': {
+            'repository': {'type': 'keyword'},
             'author': user_mapping,
             'authored_date': {'type': 'date'},
             'committer': user_mapping,
@@ -95,6 +96,7 @@ def parse_commits(head, name):
         yield {
             '_id': commit.hexsha,
             '_parent': name,
+            'repository': name,
             'committed_date': datetime.fromtimestamp(commit.committed_date),
             'committer': {
                 'name': commit.committer.name,
