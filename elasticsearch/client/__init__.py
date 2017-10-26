@@ -531,8 +531,8 @@ class Elasticsearch(object):
         'batched_reduce_size', 'default_operator', 'df', 'docvalue_fields',
         'expand_wildcards', 'explain', 'fielddata_fields', 'from_',
         'ignore_unavailable', 'lenient', 'lowercase_expanded_terms',
-        'preference', 'q', 'request_cache', 'routing', 'scroll',
-        'search_type', 'size', 'sort', 'stats', 'stored_fields',
+        'pre_filter_shard_size', 'preference', 'q', 'request_cache', 'routing',
+        'scroll', 'search_type', 'size', 'sort', 'stats', 'stored_fields',
         'suggest_field', 'suggest_mode', 'suggest_size', 'suggest_text',
         'terminate_after', 'timeout', 'track_scores', 'typed_keys', 'version')
     def search(self, index=None, doc_type=None, body=None, params=None):
@@ -582,6 +582,13 @@ class Elasticsearch(object):
             providing text to a numeric field) should be ignored
         :arg lowercase_expanded_terms: Specify whether query terms should be
             lowercased
+        :arg pre_filter_shard_size: A threshold that enforces a pre-filter
+            roundtrip to prefilter search shards based on query rewriting if
+            the number of shards the search request expands to exceeds the
+            threshold. This filter roundtrip can limit the number of shards
+            significantly if for instance a shard can not match any documents based
+            on it's rewrite method ie. if date filters are mandatory to match
+            but the shard bounds and the query are disjoint. (default: 128)
         :arg preference: Specify the node or shard the operation should be
             performed on (default: random)
         :arg q: Query in the Lucene query string syntax
