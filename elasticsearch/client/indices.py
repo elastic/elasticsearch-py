@@ -817,8 +817,6 @@ class IndicesClient(NamespacedClient):
         :arg only_expunge_deletes: Specify whether the operation should only
             expunge deleted documents
         :arg operation_threading: TODO: ?
-        :arg wait_for_merge: Specify whether the request should block until the
-            merge process is finished (default: true)
         """
         return self.transport.perform_request('POST', _make_path(index,
             '_forcemerge'), params=params)
