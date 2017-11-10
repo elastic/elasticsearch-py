@@ -3,6 +3,15 @@
 Changelog
 =========
 
+5.5.0 (2017-11-10)
+------------------
+
+ * ``streaming_bulk`` helper now supports retries with incremental backoff
+ * ``scan`` helper properly checks for successful shards instead of just
+   checking ``failed``
+ * compatible release with elasticsearch ``5.6.4``
+ * fix handling of UTF-8 surrogates
+
 5.4.0 (2017-05-18)
 ------------------
 
