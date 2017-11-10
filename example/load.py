@@ -21,7 +21,7 @@ def create_git_index(client, index):
         'name': {
           'type': 'text',
           'fields': {
-            'raw': {'type': 'keyword'},
+            'keyword': {'type': 'keyword'},
           }
         }
       }
