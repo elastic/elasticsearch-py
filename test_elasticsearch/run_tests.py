@@ -59,7 +59,7 @@ def run_all(argv=None):
     if argv is None:
         argv = [
             'nosetests', '--with-xunit',
-            '--with-xcoverage', '--cover-package=elasticsearch', '--cover-erase',
+            '--with-xcoverage', '--cover-package=elasticsearch5', '--cover-erase',
             '--logging-filter=elasticsearch', '--logging-level=DEBUG',
             '--verbose', '--with-id',
         ]

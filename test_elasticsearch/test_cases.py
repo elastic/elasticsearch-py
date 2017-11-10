@@ -5,7 +5,7 @@ try:
 except ImportError:
     from unittest import TestCase, SkipTest
 
-from elasticsearch import Elasticsearch
+from elasticsearch5 import Elasticsearch
 
 class DummyTransport(object):
     def __init__(self, hosts, responses=None, **kwargs):

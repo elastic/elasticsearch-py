@@ -4,7 +4,7 @@ from __future__ import print_function
 import logging
 from dateutil.parser import parse as parse_date
 
-from elasticsearch import Elasticsearch
+from elasticsearch5 import Elasticsearch
 
 def print_search_stats(results):
     print('=' * 80)

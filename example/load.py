@@ -10,9 +10,9 @@ import argparse
 
 import git
 
-from elasticsearch import Elasticsearch
-from elasticsearch.exceptions import TransportError
-from elasticsearch.helpers import bulk, streaming_bulk
+from elasticsearch5 import Elasticsearch
+from elasticsearch5.exceptions import TransportError
+from elasticsearch5.helpers import bulk, streaming_bulk
 
 def create_git_index(client, index):
     # we will use user on several places
