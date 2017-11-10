@@ -313,7 +313,8 @@ def parallel_bulk(client, actions, thread_count=4, chunk_size=500,
         pool.join()
 
 def scan(client, query=None, scroll='5m', raise_on_error=True,
-         preserve_order=False, size=1000, request_timeout=None, clear_scroll=True, **kwargs):
+         preserve_order=False, size=1000, request_timeout=None, clear_scroll=True,
+         scroll_kwargs=None, **kwargs):
     """
     Simple abstraction on top of the
     :meth:`~elasticsearch.Elasticsearch.scroll` api - a simple iterator that
@@ -340,6 +341,8 @@ def scan(client, query=None, scroll='5m', raise_on_error=True,
     :arg clear_scroll: explicitly calls delete on the scroll id via the clear
         scroll API at the end of the method on completion or error, defaults
         to true.
+    :arg scroll_kwargs: additional kwargs to be passed to
+        :meth:`~elasticsearch.Elasticsearch.scroll`
 
     Any additional keyword arguments will be passed to the initial
     :meth:`~elasticsearch.Elasticsearch.search` call::
@@ -351,6 +354,8 @@ def scan(client, query=None, scroll='5m', raise_on_error=True,
         )
 
     """
+    scroll_kwargs = scroll_kwargs or {}
+
     if not preserve_order:
         query = query.copy() if query else {}
         query["sort"] = "_doc"
@@ -369,7 +374,9 @@ def scan(client, query=None, scroll='5m', raise_on_error=True,
             if first_run:
                 first_run = False
             else:
-                resp = client.scroll(scroll_id, scroll=scroll, request_timeout=request_timeout)
+                resp = client.scroll(scroll_id, scroll=scroll,
+                                     request_timeout=request_timeout,
+                                     **scroll_kwargs)
 
             for hit in resp['hits']['hits']:
                 yield hit
