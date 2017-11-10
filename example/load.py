@@ -45,10 +45,7 @@ def create_git_index(client, index):
         }
       },
       'mappings': {
-        'commits': {
-          '_parent': {
-            'type': 'repos'
-          },
+        'doc': {
           'properties': {
             'repository': {'type': 'keyword'},
             'author': user_mapping,
@@ -58,17 +55,6 @@ def create_git_index(client, index):
             'parent_shas': {'type': 'keyword'},
             'description': {'type': 'text', 'analyzer': 'snowball'},
             'files': {'type': 'text', 'analyzer': 'file_path', "fielddata": True}
-          }
-        },
-        'repos': {
-          'properties': {
-            'owner': user_mapping,
-            'created_at': {'type': 'date'},
-            'description': {
-              'type': 'text',
-              'analyzer': 'snowball',
-            },
-            'tags': {'type': 'keyword'}
           }
         }
       }
@@ -95,7 +81,6 @@ def parse_commits(head, name):
     for commit in head.traverse():
         yield {
             '_id': commit.hexsha,
-            '_parent': name,
             'repository': name,
             'committed_date': datetime.fromtimestamp(commit.committed_date),
             'committer': {
@@ -125,15 +110,6 @@ def load_repo(client, path=None, index='git'):
 
     create_git_index(client, index)
 
-    # create the parent document in case it doesn't exist
-    client.create(
-        index=index,
-        doc_type='repos',
-        id=repo_name,
-        body={},
-        ignore=409 # 409 - conflict - would be returned if the document is already there
-    )
-
     # we let the streaming bulk continuously process the commits as they come
     # in - since the `parse_commits` function is a generator this will avoid
     # loading all the commits into memory
@@ -141,11 +117,11 @@ def load_repo(client, path=None, index='git'):
             client,
             parse_commits(repo.refs.master.commit, repo_name),
             index=index,
-            doc_type='commits',
+            doc_type='doc',
             chunk_size=50 # keep the batch sizes small for appearances only
         ):
         action, result = result.popitem()
-        doc_id = '/%s/commits/%s' % (index, result['_id'])
+        doc_id = '/%s/doc/%s' % (index, result['_id'])
         # process the information from ES whether the document has been
         # successfully indexed
         if not ok:
@@ -154,20 +130,19 @@ def load_repo(client, path=None, index='git'):
             print(doc_id)
 
 
-# we manually create es repo document and update elasticsearch-py to include metadata
-REPO_ACTIONS = [
-    {'_type': 'repos', '_id': 'elasticsearch', '_source': {
-        'owner': {'name': 'Shay Bannon', 'email': 'kimchy@gmail.com'},
-        'created_at': datetime(2010, 2, 8, 15, 22, 27),
-        'tags': ['search', 'distributed', 'lucene'],
-        'description': 'You know, for search.'}
+# we manually update some documents to add additional information
+UPDATES = [
+    {
+        '_type': 'doc',
+        '_id': '20fbba1230cabbc0f4644f917c6c2be52b8a63e8',
+        '_op_type': 'update',
+        'doc': {'initial_commit': True}
     },
-
-    {'_type': 'repos', '_id': 'elasticsearch-py', '_op_type': 'update', 'doc': {
-        'owner': {'name': u'Honza Král', 'email': 'honza.kral@gmail.com'},
-        'created_at': datetime(2013, 5, 1, 16, 37, 32),
-        'tags': ['elasticsearch', 'search', 'python', 'client'],
-        'description': 'For searching snakes.'}
+    {
+        '_type': 'doc',
+        '_id': 'ae0073c8ca7e24d237ffd56fba495ed409081bf4',
+        '_op_type': 'update',
+        'doc': {'release': '5.0.0'}
     },
 ]
 
@@ -198,27 +173,16 @@ if __name__ == '__main__':
     load_repo(es, path=args.path)
 
     # run the bulk operations
-    success, _ = bulk(es, REPO_ACTIONS, index='git', raise_on_error=True)
+    success, _ = bulk(es, UPDATES, index='git')
     print('Performed %d actions' % success)
 
-    # now we can retrieve the documents
-    es_repo = es.get(index='git', doc_type='repos', id='elasticsearch')
-    print('%s: %s' % (es_repo['_id'], es_repo['_source']['description']))
+    # we can now make docs visible for searching
+    es.indices.refresh(index='git')
 
-    # update - add java to es tags
-    es.update(
-        index='git',
-        doc_type='repos',
-        id='elasticsearch',
-        body={
-          "script": {
-            "inline" : "ctx._source.tags.add(params.tag)",
-            "params" : {
-              "tag" : "java"
-            }
-          }
-        }
-    )
+    # now we can retrieve the documents
+    initial_commit = es.get(index='git', doc_type='doc', id='20fbba1230cabbc0f4644f917c6c2be52b8a63e8')
+    print('%s: %s' % (initial_commit['_id'], initial_commit['_source']['committed_date']))
+
 
     # refresh to make the documents available for search
     es.indices.refresh(index='git')

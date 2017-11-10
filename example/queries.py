@@ -20,7 +20,7 @@ def print_hits(results):
         print('/%s/%s/%s (%s): %s' % (
                 hit['_index'], hit['_type'], hit['_id'],
                 created_at.strftime('%Y-%m-%d'),
-                hit['_source']['description'].replace('\n', ' ')))
+                hit['_source']['description'].split('\n')[0]))
 
     print('=' * 80)
     print()
@@ -38,7 +38,7 @@ print_hits(es.search(index='git'))
 print('Find commits that says "fix" without touching tests:')
 result = es.search(
     index='git',
-    doc_type='commits',
+    doc_type='doc',
     body={
       'query': {
         'bool': {
@@ -57,11 +57,11 @@ print_hits(result)
 print('Last 8 Commits for elasticsearch-py:')
 result = es.search(
     index='git',
-    doc_type='commits',
+    doc_type='doc',
     body={
       'query': {
-        'parent_id': {
-            'type': 'commits', 'id': 'elasticsearch-py'
+        'term': {
+            'repository': 'elasticsearch-py'
         }
       },
       'sort': [
@@ -72,26 +72,16 @@ result = es.search(
 )
 print_hits(result)
 
-print('Stats for top 10 python committers:')
+print('Stats for top 10 committers:')
 result = es.search(
     index='git',
-    doc_type='commits',
+    doc_type='doc',
     body={
       'size': 0,
-      'query': {
-        'has_parent': {
-          'parent_type': 'repos',
-          'query': {
-            'term': {
-              'tags': 'python'
-            }
-          }
-        }
-      },
       'aggs': {
         'committers': {
           'terms': {
-            'field': 'committer.name.raw',
+            'field': 'committer.name.keyword',
           },
           'aggs': {
             'line_stats': {
