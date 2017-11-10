@@ -17,20 +17,20 @@ Compatibility
 The library is compatible with all Elasticsearch versions since ``0.90.x`` but you
 **have to use a matching major version**:
 
+For **Elasticsearch 6.0** and later, use the major version 6 (``6.x.y``) of the
+library.
+
 For **Elasticsearch 5.0** and later, use the major version 5 (``5.x.y``) of the
 library.
 
 For **Elasticsearch 2.0** and later, use the major version 2 (``2.x.y``) of the
-library.
-
-For **Elasticsearch 1.0** and later, use the major version 1 (``1.x.y``) of the
-library.
-
-For **Elasticsearch 0.90.x**, use a version from ``0.4.x`` releases of the
-library.
+library, and so on.
 
 The recommended way to set your requirements in your `setup.py` or
 `requirements.txt` is::
+
+    # Elasticsearch 6.x
+    elasticsearch>=6.0.0,<7.0.0
 
     # Elasticsearch 5.x
     elasticsearch>=5.0.0,<6.0.0
@@ -38,13 +38,16 @@ The recommended way to set your requirements in your `setup.py` or
     # Elasticsearch 2.x
     elasticsearch>=2.0.0,<3.0.0
 
-    # Elasticsearch 1.x
-    elasticsearch>=1.0.0,<2.0.0
+If you have a need to have multiple versions installed at the same time older
+versions are also released as ``elasticsearch2`` and ``elasticsearch5``.
 
-    # Elasticsearch 0.90.x
-    elasticsearch<1.0.0
+Installation
+------------
 
-The development is happening on ``master`` and ``2.x`` branches respectively.
+Install the ``elasticsearch`` package with `pip
+<https://pypi.python.org/pypi/elasticsearch>`_::
+
+    pip install elasticsearch
 
 Example Usage
 -------------
