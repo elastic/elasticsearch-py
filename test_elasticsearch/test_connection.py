@@ -46,9 +46,9 @@ class TestUrllib3Connection(TestCase):
 
     def test_uses_https_if_verify_certs_is_off(self):
         if (
-            sys.version_info >= (3,0) and sys.version_info <= (3,4)
+            sys.version_info[:2] == (3, 4)
             ) or (
-            sys.version_info >= (2,6) and sys.version_info <= (2,7)
+            sys.version_info[:2] == (2, 7)
         ):
             raise SkipTest("SSL Context not supported in this version of python")
         with warnings.catch_warnings(record=True) as w:

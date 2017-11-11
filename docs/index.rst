@@ -59,8 +59,8 @@ Example Usage
     es = Elasticsearch()
 
     doc = {
-        'author': 'kimchy', 
-        'text': 'Elasticsearch: cool. bonsai cool.', 
+        'author': 'kimchy',
+        'text': 'Elasticsearch: cool. bonsai cool.',
         'timestamp': datetime.now(),
     }
     res = es.index(index="test-index", doc_type='tweet', id=1, body=doc)
@@ -239,7 +239,7 @@ an issue) it also just uses ``localhost:9200`` as the address instead of the
 actual address of the host. If the trace logger has not been configured
 already it is set to `propagate=False` so it needs to be activated separately.
 
-.. _logging library: http://docs.python.org/3.3/library/logging.html
+.. _logging library: http://docs.python.org/3.6/library/logging.html
 
 Environment considerations
 --------------------------
