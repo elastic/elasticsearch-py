@@ -3,8 +3,11 @@
 Changelog
 =========
 
-6.0.0 (dev)
+6.1.0 (dev)
 -----------
+
+6.0.0 (2017-11-14)
+------------------
 
  * compatibility with Elasticsearch 6.0.0
 
