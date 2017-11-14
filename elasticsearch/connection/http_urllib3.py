@@ -85,7 +85,8 @@ class Urllib3HttpConnection(Connection):
 
         # if ssl_context provided use SSL by default
         if use_ssl or ssl_context:
-            if not ca_certs and not ssl_context and verify_certs:
+            cafile = CA_CERTS if ca_certs is None else ca_certs
+            if not cafile and not ssl_context and verify_certs:
                 # If no ca_certs and no sslcontext passed and asking to verify certs
                 # raise error
                 raise ImproperlyConfigured("Root certificates are missing for certificate "
@@ -97,7 +98,6 @@ class Urllib3HttpConnection(Connection):
 
             if not ssl_context:
                 # if SSLContext hasn't been passed in, create one.
-                cafile = CA_CERTS if ca_certs is None else ca_certs
                 # need to skip if sslContext isn't avail
                 try:
                     ssl_context = create_ssl_context(cafile=cafile)
@@ -116,7 +116,7 @@ class Urllib3HttpConnection(Connection):
                 'assert_fingerprint': ssl_assert_fingerprint,
                 'ssl_context': ssl_context,
                 'cert_file': client_cert,
-                'ca_certs': ca_certs,
+                'ca_certs': cafile,
                 'key_file': client_key,
             })
         self.pool = pool_class(host, port=port, timeout=self.timeout, maxsize=maxsize, **kw)
