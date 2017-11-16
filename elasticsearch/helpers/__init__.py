@@ -166,9 +166,9 @@ def streaming_bulk(client, actions, chunk_size=500, max_chunk_bytes=100 * 1024 *
         should return a tuple containing the action line and the data line
         (`None` if data line should be omitted).
     :arg max_retries: maximum number of times a document will be retried when
-        ``429`` is received, set to 0 (default) for no retires on ``429``
+        ``429`` is received, set to 0 (default) for no retries on ``429``
     :arg initial_backoff: number of seconds we should wait before the first
-        retry. Any subsequent retries will be powers of ``inittial_backoff *
+        retry. Any subsequent retries will be powers of ``initial_backoff *
         2**retry_number``
     :arg max_backoff: maximum number of seconds a retry will wait
     :arg yield_ok: if set to False will skip successful documents in the output
