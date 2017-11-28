@@ -10,7 +10,7 @@ API.
 Bulk helpers
 ------------
 
-There are several helpers for the ``bulk`` API since it's requirement for
+There are several helpers for the ``bulk`` API since its requirement for
 specific formatting and other considerations can make it cumbersome if used directly.
 
 All bulk helpers accept an instance of ``Elasticsearch`` class and an iterable
