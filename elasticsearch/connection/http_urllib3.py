@@ -80,8 +80,8 @@ class Urllib3HttpConnection(Connection):
         kw = {}
 
         # if providing an SSL context, raise error if any other SSL related flag is used
-        if ssl_context and (verify_certs or ca_certs or ssl_version):
-            raise ImproperlyConfigured("When using `ssl_context`, `use_ssl`, `verify_certs`, `ca_certs` and `ssl_version` are not permitted")
+        if ssl_context and (ca_certs or ssl_version or use_ssl):
+            raise ImproperlyConfigured("When using `ssl_context`, `use_ssl`, `ca_certs` and `ssl_version` are not permitted")
 
         # if ssl_context provided use SSL by default
         if use_ssl or ssl_context:
