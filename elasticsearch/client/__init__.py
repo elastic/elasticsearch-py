@@ -181,7 +181,7 @@ class Elasticsearch(object):
 
     def __repr__(self):
         try:
-            # get a lost of all connections
+            # get a list of all connections
             cons = self.transport.hosts
             # truncate to 10 if there are too many
             if len(cons) > 5:
