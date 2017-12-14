@@ -142,8 +142,7 @@ class Urllib3HttpConnection(Connection):
                 method = method.encode('utf-8')
 
             request_headers = dict(self.headers)
-            if headers:
-                request_headers.update(headers or {})
+            request_headers.update(headers or {})
             response = self.pool.urlopen(method, url, body, retries=False, headers=request_headers, **kw)
             duration = time.time() - start
             raw_data = response.data.decode('utf-8')
