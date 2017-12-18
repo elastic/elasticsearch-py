@@ -22,6 +22,9 @@ before_install:
   - sudo update-java-alternatives -s java-8-oracle
   - export JAVA_HOME=/usr/lib/jvm/java-8-oracle/jre
   - java -version
+  - mkdir -p $HOME/bin
+  - curl -fsSL https://testspace-client.s3.amazonaws.com/testspace-linux.tgz | tar -zxvf- -C $HOME/bin
+  - testspace config url $TS_ORG.testspace.com
 
 install:
   - curl -L -o /tmp/es-snap.zip https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.0.0.zip
@@ -33,6 +36,9 @@ install:
 script:
   - python setup.py test
 
+after_script:
+  - testspace [Python-${TRAVIS_PYTHON_VERSION}/${TEST_ES_CONNECTION}]nosetests.xml{test_elasticsearch}
+ 
 notifications:
   email:
     recipients:
