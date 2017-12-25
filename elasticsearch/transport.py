@@ -335,11 +335,13 @@ class Transport(object):
                     raise
 
             else:
+                if 100 <= status < 500:
+                    # connection didn't fail, confirm it's live status
+                    self.connection_pool.mark_live(connection)
+
                 if method == 'HEAD':
                     return 200 <= status < 300
 
-                # connection didn't fail, confirm it's live status
-                self.connection_pool.mark_live(connection)
                 if data:
                     data = self.deserializer.loads(data, headers.get('content-type'))
                 return data
