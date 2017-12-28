@@ -88,6 +88,22 @@ Simple use-case::
 
 .. _Full documentation: https://elasticsearch-py.readthedocs.io/
 
+Elastic Cloud (and SSL) use-case::
+
+    >>> from elasticsearch import Elasticsearch
+    >>> es = Elasticsearch("https://elasticsearch.url:port", http_auth=('elastic','yourpassword'))
+    >>> es.info()
+
+Using SSL Context with a self-signed cert use-case::
+
+    >>> from elasticsearch import Elasticsearch
+    >>> from elasticsearch.connection import create_ssl_context
+
+    >>> context = create_ssl_context(cafile="path/to/cafile.pem")
+    >>> es = Elasticsearch("https://elasticsearch.url:port", ssl_context=context, http_auth=('elastic','yourpassword'))
+    >>> es.info()
+
+
 
 Features
 --------

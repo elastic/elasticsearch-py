@@ -54,6 +54,14 @@ If you want to create your own `SSLContext` object you can create one natively u
 python SSL library with the `create_default_context` (https://docs.python.org/3/library/ssl.html#ssl.create_default_context) method
 or you can use the wrapper function :function:`~elasticsearch.connection.http_urllib3.create_ssl_context`.
 
+To create an `SSLContext` object you only need to use one of cafile, capath or cadata::
+
+    >>> from elasticsearch.connection import create_ssl_context
+    >>> context = create_ssl_context(cafile=None, capath=None, cadata=None)
+
+* `cafile` is the path to your CA File
+* `capath` is the directory of a collection of CA's
+* `cadata` is either an ASCII string of one or more PEM-encoded certificates or a bytes-like object of DER-encoded certificates.
 
 .. autoclass:: Urllib3HttpConnection
    :members:
