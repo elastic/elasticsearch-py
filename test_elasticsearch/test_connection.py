@@ -67,7 +67,6 @@ class TestUrllib3Connection(TestCase):
             ctx = create_ssl_context()
         except AttributeError:
             raise SkipTest("SSL Context not supported in this version of python")
-        self.assertRaises(ImproperlyConfigured, Urllib3HttpConnection, ssl_context=ctx, use_ssl=True)
         self.assertRaises(ImproperlyConfigured, Urllib3HttpConnection, ssl_context=ctx, ca_certs="/some/path/to/cert.crt")
         self.assertRaises(ImproperlyConfigured, Urllib3HttpConnection, ssl_context=ctx, ssl_version=ssl.PROTOCOL_SSLv23)
 

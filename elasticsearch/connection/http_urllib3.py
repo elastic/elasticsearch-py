@@ -80,13 +80,14 @@ class Urllib3HttpConnection(Connection):
         kw = {}
 
         # if providing an SSL context, raise error if any other SSL related flag is used
-        if ssl_context and (ca_certs or ssl_version or use_ssl):
-            raise ImproperlyConfigured("When using `ssl_context`, `use_ssl`, `ca_certs` and `ssl_version` are not permitted")
+        if ssl_context and (ca_certs or ssl_version):
+            raise ImproperlyConfigured("When using `ssl_context`, `use_ssl`, `verify_certs`, `ca_certs` and `ssl_version` are not permitted")
 
         # if ssl_context provided use SSL by default
         if use_ssl or ssl_context:
-            cafile = CA_CERTS if ca_certs is None else ca_certs
-            if not cafile and not ssl_context and verify_certs:
+            ca_certs = CA_CERTS if ca_certs is None else ca_certs
+
+            if not ca_certs and not ssl_context and verify_certs:
                 # If no ca_certs and no sslcontext passed and asking to verify certs
                 # raise error
                 raise ImproperlyConfigured("Root certificates are missing for certificate "
@@ -100,7 +101,7 @@ class Urllib3HttpConnection(Connection):
                 # if SSLContext hasn't been passed in, create one.
                 # need to skip if sslContext isn't avail
                 try:
-                    ssl_context = create_ssl_context(cafile=cafile)
+                    ssl_context = create_ssl_context(cafile=ca_certs)
                 except AttributeError:
                     ssl_context = None
 
@@ -116,7 +117,7 @@ class Urllib3HttpConnection(Connection):
                 'assert_fingerprint': ssl_assert_fingerprint,
                 'ssl_context': ssl_context,
                 'cert_file': client_cert,
-                'ca_certs': cafile,
+                'ca_certs': ca_certs,
                 'key_file': client_key,
             })
         self.pool = pool_class(host, port=port, timeout=self.timeout, maxsize=maxsize, **kw)
