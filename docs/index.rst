@@ -59,8 +59,8 @@ Example Usage
     es = Elasticsearch()
 
     doc = {
-        'author': 'kimchy', 
-        'text': 'Elasticsearch: cool. bonsai cool.', 
+        'author': 'kimchy',
+        'text': 'Elasticsearch: cool. bonsai cool.',
         'timestamp': datetime.now(),
     }
     res = es.index(index="test-index", doc_type='tweet', id=1, body=doc)
@@ -191,34 +191,32 @@ elasticsearch cluster, including certificate verification and http auth::
 
     # ... or specify common parameters as kwargs
 
-    # use certifi for CA certificates
-    import certifi
-
     es = Elasticsearch(
         ['localhost', 'otherhost'],
         http_auth=('user', 'secret'),
+        scheme="https",
         port=443,
-        use_ssl=True
     )
 
     # SSL client authentication using client_cert and client_key
 
+    from elasticsearch.connection.http_urllib3 import create_ssl_context
+
+    context = create_ssl_context(cafile="path/to/cert.pem")
     es = Elasticsearch(
         ['localhost', 'otherhost'],
         http_auth=('user', 'secret'),
+        scheme="https",
         port=443,
-        use_ssl=True,
-        ca_certs='/path/to/cacert.pem',
-        client_cert='/path/to/client_cert.pem',
-        client_key='/path/to/client_key.pem',
+        ssl_context=context,
     )
 
 ..  warning::
 
     ``elasticsearch-py`` doesn't ship with default set of root certificates. To
     have working SSL certificate validation you need to either specify your own
-    as ``ca_certs`` or install `certifi`_ which will be picked up
-    automatically.
+    as ``cafile`` or ``capath`` or ``cadata``  or install `certifi`_ which will
+    be picked up automatically.
 
 
 See class :class:`~elasticsearch.Urllib3HttpConnection` for detailed
