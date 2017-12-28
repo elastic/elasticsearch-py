@@ -200,7 +200,7 @@ elasticsearch cluster, including certificate verification and http auth::
 
     # SSL client authentication using client_cert and client_key
 
-    from elasticsearch.connection.http_urllib3 import create_ssl_context
+    from elasticsearch.connection import create_ssl_context
 
     context = create_ssl_context(cafile="path/to/cert.pem")
     es = Elasticsearch(

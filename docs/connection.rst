@@ -56,7 +56,7 @@ or you can use the wrapper function :function:`~elasticsearch.connection.http_ur
 
 To create an `SSLContext` object you only need to use one of cafile, capath or cadata::
 
-    >>> from elasticsearch.connection.http_urllib3 import create_ssl_context
+    >>> from elasticsearch.connection import create_ssl_context
     >>> context = create_ssl_context(cafile=None, capath=None, cadata=None)
 
 * `cafile` is the path to your CA File
