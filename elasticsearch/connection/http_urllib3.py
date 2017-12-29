@@ -142,10 +142,9 @@ class Urllib3HttpConnection(Connection):
             if not isinstance(method, str):
                 method = method.encode('utf-8')
 
-            if headers:
-                request_headers = dict(self.headers)
-                request_headers.update(headers or {})
-            response = self.pool.urlopen(method, url, body, retries=False, headers=self.headers, **kw)
+            request_headers = dict(self.headers)
+            request_headers.update(headers or {})
+            response = self.pool.urlopen(method, url, body, retries=False, headers=request_headers, **kw)
             duration = time.time() - start
             raw_data = response.data.decode('utf-8')
         except Exception as e:
