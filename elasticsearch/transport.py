@@ -311,7 +311,7 @@ class Transport(object):
             connection = self.get_connection()
 
             try:
-                status, headers, data = connection.perform_request(method, url, params, body, headers=headers, ignore=ignore, timeout=timeout)
+                status, headers_response, data = connection.perform_request(method, url, params, body, headers=headers, ignore=ignore, timeout=timeout)
 
             except TransportError as e:
                 if method == 'HEAD' and e.status_code == 404:
@@ -342,7 +342,7 @@ class Transport(object):
                     return 200 <= status < 300
 
                 if data:
-                    data = self.deserializer.loads(data, headers.get('content-type'))
+                    data = self.deserializer.loads(data, headers_response.get('content-type'))
                 return data
 
     def close(self):
