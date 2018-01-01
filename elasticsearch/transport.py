@@ -347,6 +347,6 @@ class Transport(object):
 
     def close(self):
         """
-        Explcitly closes connections
+        Explicitly closes connections
         """
         self.connection_pool.close()
