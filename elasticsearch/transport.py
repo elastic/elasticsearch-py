@@ -5,7 +5,7 @@ from .connection import Urllib3HttpConnection
 from .connection_pool import ConnectionPool, DummyConnectionPool
 from .serializer import JSONSerializer, Deserializer, DEFAULT_SERIALIZERS
 from .exceptions import ConnectionError, TransportError, SerializationError, \
-                        ConnectionTimeout, ImproperlyConfigured
+                        ConnectionTimeout
 
 
 def get_host_info(node_info, host):
