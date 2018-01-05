@@ -132,7 +132,7 @@ class Transport(object):
 
     def set_connections(self, hosts):
         """
-        Instantiate all the connections and crate new connection pool to hold
+        Instantiate all the connections and create new connection pool to hold
         them. Tries to identify unchanged hosts and re-use existing
         :class:`~elasticsearch.Connection` instances.
 
