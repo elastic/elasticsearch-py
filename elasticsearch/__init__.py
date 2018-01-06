@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 
-VERSION = (6, 1, 0, 'dev')
+VERSION = (6, 1, 1)
 __version__ = VERSION
 __versionstr__ = '.'.join(map(str, VERSION))
 
