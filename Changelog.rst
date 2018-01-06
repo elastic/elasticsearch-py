@@ -3,13 +3,19 @@
 Changelog
 =========
 
-6.1.0 (dev)
+6.2.0 (dev)
 -----------
 
-6.1.1 (2017-01-05)
+6.1.1 (2018-01-05)
 ------------------
+
  * Updates to SSLContext logic to make it easier to use and have saner defaults.
  * Doc updates
+
+6.1.0 (2018-01-05)
+------------------
+
+  * bad release
 
 6.0.0 (2017-11-14)
 ------------------
