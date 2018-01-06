@@ -3,6 +3,7 @@ import ssl
 import urllib3
 from urllib3.exceptions import ReadTimeoutError, SSLError as UrllibSSLError
 import warnings
+import gzip
 
 # sentinal value for `verify_certs`.
 # This is used to detect if a user is passing in a value for `verify_certs`
@@ -62,13 +63,15 @@ class Urllib3HttpConnection(Connection):
         host. See https://urllib3.readthedocs.io/en/1.4/pools.html#api for more
         information.
     :arg headers: any custom http headers to be add to requests
+    :arg http_compress: Use gzip compression
     """
     def __init__(self, host='localhost', port=9200, http_auth=None,
             use_ssl=False, verify_certs=VERIFY_CERTS_DEFAULT, ca_certs=None, client_cert=None,
             client_key=None, ssl_version=None, ssl_assert_hostname=None,
-            ssl_assert_fingerprint=None, maxsize=10, headers=None, ssl_context=None, **kwargs):
+            ssl_assert_fingerprint=None, maxsize=10, headers=None, ssl_context=None, http_compress=False, **kwargs):
 
         super(Urllib3HttpConnection, self).__init__(host=host, port=port, use_ssl=use_ssl, **kwargs)
+        self.http_compress = http_compress
         self.headers = urllib3.make_headers(keep_alive=True)
         if http_auth is not None:
             if isinstance(http_auth, (tuple, list)):
@@ -152,6 +155,10 @@ class Urllib3HttpConnection(Connection):
 
             request_headers = self.headers
             if headers:
+                if self.http_compress == True:
+                    headers.update(urllib3.make_headers(accept_encoding=True))
+                    headers.update({'Content-Encoding': 'gzip'})
+                    body = gzip.compress(body)
                 request_headers = request_headers.copy()
                 request_headers.update(headers)
             response = self.pool.urlopen(method, url, body, retries=False, headers=request_headers, **kw)
