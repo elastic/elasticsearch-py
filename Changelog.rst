@@ -6,6 +6,12 @@ Changelog
 6.1.0 (dev)
 -----------
 
+6.0.1 (2018-01-05)
+------------------
+
+ * Updates to SSLContext logic to make it easier to use and have saner defaults.
+ * Doc updates
+
 6.0.0 (2017-11-14)
 ------------------
 
@@ -60,7 +66,7 @@ Version compatible with elasticsearch 5.0
    connection classes need to be updated
  * added ``headers`` arg to connections to support custom http headers
  * passing in a keyword parameter with ``None`` as value will cause that param
-   to be ignored 
+   to be ignored
 
 2.4.0 (2016-08-17)
 ------------------
@@ -223,7 +229,7 @@ compatible with 0.90 elasticsearch.
 
 0.4.2 (2013-10-08)
 ------------------
- 
+
  * ``ignore`` param accepted by all APIs
  * Fixes to ``helpers.bulk_index``
 
