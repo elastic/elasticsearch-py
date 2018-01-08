@@ -13,6 +13,7 @@ f.close()
 
 install_requires = [
     'urllib3<1.23,>=1.21.1',
+    'boto==2.48.0',
 ]
 tests_require = [
     'requests>=2.0.0, <3.0.0',
