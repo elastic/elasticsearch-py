@@ -41,9 +41,9 @@ SKIP_TESTS = {
               'TestClusterPutSettings10Basic', 'TestIndex10WithId',
               'TestClusterPutScript10Basic', 'TestIndicesPutMapping10Basic',
               'TestIndicesPutTemplate10Basic', 'TestMsearch10Basic',
-              # skip these two till https://github.com/elastic/elasticsearch/pull/26905 has been merged
-              'TestSearchAggregation190PercentilesHdrMetric',
-              'TestSearchAggregation180PercentilesTdigestMetric',
+              # Skipping some broken integration tests:
+              'TestIndicesOpen10Basic', 'TestClusterRemoteInfo10Info',
+              'TestIndicesSplit10Basic', 'TestIndicesSplit20SourceMapping'
               ))
 
 }

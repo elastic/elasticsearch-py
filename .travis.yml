@@ -24,7 +24,7 @@ before_install:
   - java -version
 
 install:
-  - curl -L -o /tmp/es-snap.zip https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.0.0.zip
+  - curl -L -o /tmp/es-snap.zip https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.1.1.zip
   - unzip /tmp/es-snap.zip -d /tmp/
   - /tmp/elasticsearch-*/bin/elasticsearch -E path.repo=/tmp -E repositories.url.allowed_urls='http://*' -E node.attr.testattr=test -d
   - git clone https://github.com/elastic/elasticsearch.git ../elasticsearch
