@@ -3,6 +3,12 @@
 Changelog
 =========
 
+5.5.2 (2018-01-12)
+------------------
+
+ * Allow connection to SSL ES instances without verifying certs using
+   client key and client cert.
+
 5.5.1 (2017-11-10)
 ------------------
 
@@ -57,7 +63,7 @@ Version compatible with elasticsearch 5.0
    connection classes need to be updated
  * added ``headers`` arg to connections to support custom http headers
  * passing in a keyword parameter with ``None`` as value will cause that param
-   to be ignored 
+   to be ignored
 
 2.4.0 (2016-08-17)
 ------------------
@@ -220,7 +226,7 @@ compatible with 0.90 elasticsearch.
 
 0.4.2 (2013-10-08)
 ------------------
- 
+
  * ``ignore`` param accepted by all APIs
  * Fixes to ``helpers.bulk_index``
 
