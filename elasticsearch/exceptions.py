@@ -45,7 +45,10 @@ class TransportError(ElasticsearchException):
 
     @property
     def info(self):
-        """ Dict of returned error info from ES, where available. """
+        """
+        Dict of returned error info from ES, where available, underlying
+        exception when not.
+        """
         return self.args[2]
 
     def __str__(self):
