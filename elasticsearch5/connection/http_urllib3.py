@@ -71,23 +71,24 @@ class Urllib3HttpConnection(Connection):
                 'ssl_version': ssl_version,
                 'assert_hostname': ssl_assert_hostname,
                 'assert_fingerprint': ssl_assert_fingerprint,
+                'ca_certs': ca_certs,
+                'cert_file': client_cert,
+                'key_file': client_key,
             })
-
             if verify_certs:
                 if not ca_certs:
                     raise ImproperlyConfigured("Root certificates are missing for certificate "
                         "validation. Either pass them in using the ca_certs parameter or "
                         "install certifi to use it automatically.")
-
                 kw.update({
                     'cert_reqs': 'CERT_REQUIRED',
-                    'ca_certs': ca_certs,
-                    'cert_file': client_cert,
-                    'key_file': client_key,
                 })
             else:
                 warnings.warn(
                     'Connecting to %s using SSL with verify_certs=False is insecure.' % host)
+                kw.update({
+                    'cert_reqs': 'CERT_NONE',
+                })
 
         self.pool = pool_class(host, port=port, timeout=self.timeout, maxsize=maxsize, **kw)
 
