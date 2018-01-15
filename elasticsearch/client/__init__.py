@@ -183,10 +183,10 @@ class Elasticsearch(object):
         try:
             # get a list of all connections
             cons = self.transport.hosts
-            # truncate to 10 if there are too many
+            # truncate to 5 if there are too many
             if len(cons) > 5:
                 cons = cons[:5] + ['...']
-            return '<Elasticsearch(%r)>' % cons
+            return '<{cls}({cons})>'.format(cls=self.__class__.__name__, cons=cons)
         except:
             # probably operating on custom transport and connection_pool, ignore
             return super(Elasticsearch, self).__repr__()
