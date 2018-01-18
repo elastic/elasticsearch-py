@@ -84,7 +84,7 @@ class Urllib3HttpConnection(Connection):
             raise ImproperlyConfigured("When using `ssl_context`, `use_ssl`, `verify_certs`, `ca_certs` and `ssl_version` are not permitted")
 
         # if ssl_context provided use SSL by default
-        if use_ssl or ssl_context:
+        if self.use_ssl or ssl_context:
             ca_certs = CA_CERTS if ca_certs is None else ca_certs
 
             if not ca_certs and not ssl_context and verify_certs:
