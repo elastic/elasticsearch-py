@@ -97,9 +97,9 @@ Elastic Cloud (and SSL) use-case::
 Using SSL Context with a self-signed cert use-case::
 
     >>> from elasticsearch import Elasticsearch
-    >>> from elasticsearch.connection import create_ssl_context
+    >>> from ssl import create_default_context
 
-    >>> context = create_ssl_context(cafile="path/to/cafile.pem")
+    >>> context = create_default_context(cafile="path/to/cafile.pem")
     >>> es = Elasticsearch("https://elasticsearch.url:port", ssl_context=context, http_auth=('elastic','yourpassword'))
     >>> es.info()
 
