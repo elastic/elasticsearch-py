@@ -75,12 +75,18 @@ class TestClient(ElasticsearchTestCase):
     def test_repr_contains_hosts(self):
         self.assertEquals('<Elasticsearch([{}])>', repr(self.client))
 
+    def test_repr_subclass(self):
+        class OtherElasticsearch(Elasticsearch): pass
+        self.assertEqual('<OtherElasticsearch([{}])>', repr(OtherElasticsearch()))
+
     def test_repr_contains_hosts_passed_in(self):
         self.assertIn("es.org", repr(Elasticsearch(['es.org:123'])))
 
-    def test_repr_truncates_host_to_10(self):
-        hosts = [{"host": "es" + str(i)} for i in range(20)]
-        self.assertNotIn("es5", repr(Elasticsearch(hosts)))
+    def test_repr_truncates_host_to_5(self):
+        hosts = [{"host": "es" + str(i)} for i in range(10)]
+        es = Elasticsearch(hosts)
+        self.assertNotIn("es5", repr(es))
+        self.assertIn('...', repr(es))
 
     def test_index_uses_post_if_id_is_empty(self):
         self.client.index(index='my-index', doc_type='test-doc', id='', body={})
