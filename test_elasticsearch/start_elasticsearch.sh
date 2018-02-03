@@ -2,7 +2,7 @@
 
 # Start elasticsearch in a docker container
 
-ES_VERSION=${ES_VERSION:-"latest"}
+ES_VERSION=${ES_VERSION:-"6.1.3"}
 ES_TEST_SERVER=${ES_TEST_SERVER:-"http://localhost:9200"}
 
 exec docker run -d \
