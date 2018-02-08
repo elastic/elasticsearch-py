@@ -40,3 +40,26 @@ class TestChunkActions(TestCase):
 class TestExpandActions(TestCase):
     def test_string_actions_are_marked_as_simple_inserts(self):
         self.assertEquals(('{"index":{}}', "whatever"), helpers.expand_action('whatever'))
+
+    def test_script_actions(self):
+        action = {
+            '_op_type': 'script',
+            '_script': {
+                "id": "test",
+                "source": "ctx._source.counter += params.param1",
+                "lang": "painless",
+                "params": {
+                    "param1": 1
+                }
+            },
+            "scripted_upsert": True,
+            "upsert": {
+                "counter": 1
+            }
+        }
+        expected = {
+            'script': action['_script'],
+            'upsert': action['upsert'],
+            'scripted_upsert': action['scripted_upsert'],
+        }
+        self.assertEquals(helpers.expand_action(action), (expected, None))
