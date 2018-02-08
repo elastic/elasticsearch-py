@@ -36,6 +36,14 @@ def expand_action(data):
     data = data.copy()
     op_type = data.pop('_op_type', 'index')
     action = {op_type: {}}
+
+    if op_type == 'script':
+        for key in ('scripted_upsert', 'upsert'):
+            if key in data:
+                action[key] = data.pop(key)
+        action[op_type] = data.pop('_script', {})
+        return action, None
+
     for key in ('_index', '_parent', '_percolate', '_routing', '_timestamp',
                 '_type', '_version', '_version_type', '_id',
                 '_retry_on_conflict', 'pipeline'):
