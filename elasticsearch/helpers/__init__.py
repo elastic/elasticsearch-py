@@ -38,7 +38,7 @@ def expand_action(data):
     action = {op_type: {}}
     for key in ('_index', '_parent', '_percolate', '_routing', '_timestamp',
                 '_type', '_version', '_version_type', '_id',
-                '_retry_on_conflict', 'pipeline'):
+                'retry_on_conflict', 'pipeline'):
         if key in data:
             action[op_type][key] = data.pop(key)
 
