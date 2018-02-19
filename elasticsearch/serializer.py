@@ -72,7 +72,7 @@ class Deserializer(object):
             deserializer = self.default
         else:
             # split out charset
-            mimetype = mimetype.split(';', 1)[0]
+            mimetype, _, _ = mimetype.partition(';')
             try:
                 deserializer = self.serializers[mimetype]
             except KeyError:
