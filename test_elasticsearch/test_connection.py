@@ -30,7 +30,7 @@ class TestUrllib3Connection(TestCase):
             con.pool.conn_kw['ssl_context'],
             ssl.SSLContext
         )
-        self.assertFalse(con.use_ssl)
+        self.assertTrue(con.use_ssl)
 
     def test_timeout_set(self):
         con = Urllib3HttpConnection(timeout=42)
