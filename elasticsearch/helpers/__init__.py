@@ -36,7 +36,7 @@ def expand_action(data):
     data = data.copy()
     op_type = data.pop('_op_type', 'index')
     action = {op_type: {}}
-    for key in ('_index', '_parent', '_percolate', '_routing', '_timestamp',
+    for key in ('_index', '_parent', '_percolate', '_routing', '_timestamp', 'routing',
                 '_type', '_version', '_version_type', '_id',
                 'retry_on_conflict', 'pipeline'):
         if key in data:
