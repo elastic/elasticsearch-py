@@ -5,6 +5,8 @@ Changelog
 
 6.2.0 (dev)
 -----------
+  * ``_routing`` in bulk action has been deprecated in ES. Introduces a breaking change
+    if you use ``routing`` as a field in your documents.
 
 6.1.1 (2018-01-05)
 ------------------
