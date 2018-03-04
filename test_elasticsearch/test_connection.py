@@ -24,7 +24,7 @@ class TestUrllib3Connection(TestCase):
             raise SkipTest(
                 "Test test_ssl_context is skipped cause SSLContext is not available for this version of ptyhon")
 
-        con = Urllib3HttpConnection(ssl_context=context)
+        con = Urllib3HttpConnection(use_ssl=True, ssl_context=context)
         self.assertEqual(len(con.pool.conn_kw.keys()), 1)
         self.assertIsInstance(
             con.pool.conn_kw['ssl_context'],
