@@ -85,13 +85,12 @@ class Urllib3HttpConnection(Connection):
         kw = {}
 
         # if providing an SSL context, raise error if any other SSL related flag is used
-        if ssl_context and ( (verify_certs != VERIFY_CERTS_DEFAULT) or use_ssl or ca_certs
-                             or client_cert or client_key or ssl_version or
-                             ssl_assert_hostname or ssl_assert_fingerprint ):
+        if ssl_context and ( (verify_certs is not VERIFY_CERTS_DEFAULT) or ca_certs
+                             or client_cert or client_key or ssl_version):
             warnings.warn("When using `ssl_context`, all other SSL related kwargs are ignored")
 
         # if ssl_context provided use SSL by default
-        if ssl_context:
+        if ssl_context and self.use_ssl:
             pool_class = urllib3.HTTPSConnectionPool
             kw.update({
                 'assert_fingerprint': ssl_assert_fingerprint,
@@ -108,7 +107,7 @@ class Urllib3HttpConnection(Connection):
             })
 
             # If `verify_certs` is sentinal value, default `verify_certs` to `True`
-            if verify_certs == VERIFY_CERTS_DEFAULT:
+            if verify_certs is VERIFY_CERTS_DEFAULT:
                 verify_certs = True
 
             ca_certs = CA_CERTS if ca_certs is None else ca_certs

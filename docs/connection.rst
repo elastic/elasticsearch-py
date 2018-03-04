@@ -58,5 +58,7 @@ To create an `SSLContext` object you only need to use one of cafile, capath or c
 * `capath` is the directory of a collection of CA's
 * `cadata` is either an ASCII string of one or more PEM-encoded certificates or a bytes-like object of DER-encoded certificates.
 
+Please note that the use of SSLContext is only available for Urllib3.
+
 .. autoclass:: Urllib3HttpConnection
    :members:
