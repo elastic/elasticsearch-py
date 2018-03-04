@@ -10,11 +10,28 @@ from elasticsearch.exceptions import TransportError, ConflictError, RequestError
 from elasticsearch.connection import RequestsHttpConnection, \
     Urllib3HttpConnection
 from elasticsearch.exceptions import ImproperlyConfigured
-from elasticsearch.connection.http_urllib3 import create_ssl_context
 from .test_cases import TestCase, SkipTest
 
 
 class TestUrllib3Connection(TestCase):
+    def test_ssl_context(self):
+        try:
+            context = ssl.create_default_context()
+        except AttributeError:
+            # if create_default_context raises an AttributeError Exception
+            # it means SSLContext is not available for that version of python
+            # and we should skip this test.
+            raise SkipTest(
+                "Test test_ssl_context is skipped cause SSLContext is not available for this version of ptyhon")
+
+        con = Urllib3HttpConnection(use_ssl=True, ssl_context=context)
+        self.assertEqual(len(con.pool.conn_kw.keys()), 1)
+        self.assertIsInstance(
+            con.pool.conn_kw['ssl_context'],
+            ssl.SSLContext
+        )
+        self.assertTrue(con.use_ssl)
+
     def test_timeout_set(self):
         con = Urllib3HttpConnection(timeout=42)
         self.assertEquals(42, con.timeout)
@@ -45,12 +62,6 @@ class TestUrllib3Connection(TestCase):
             'connection': 'keep-alive'}, con.headers)
 
     def test_uses_https_if_verify_certs_is_off(self):
-        if (
-            sys.version_info >= (3,0) and sys.version_info <= (3,4)
-            ) or (
-            sys.version_info >= (2,6) and sys.version_info <= (2,7)
-        ):
-            raise SkipTest("SSL Context not supported in this version of python")
         with warnings.catch_warnings(record=True) as w:
             con = Urllib3HttpConnection(use_ssl=True, verify_certs=False)
             self.assertEquals(1, len(w))
@@ -61,14 +72,6 @@ class TestUrllib3Connection(TestCase):
     def test_doesnt_use_https_if_not_specified(self):
         con = Urllib3HttpConnection()
         self.assertIsInstance(con.pool, urllib3.HTTPConnectionPool)
-
-    def test_ssl_context_and_depreicated_values(self):
-        try:
-            ctx = create_ssl_context()
-        except AttributeError:
-            raise SkipTest("SSL Context not supported in this version of python")
-        self.assertRaises(ImproperlyConfigured, Urllib3HttpConnection, ssl_context=ctx, ca_certs="/some/path/to/cert.crt")
-        self.assertRaises(ImproperlyConfigured, Urllib3HttpConnection, ssl_context=ctx, ssl_version=ssl.PROTOCOL_SSLv23)
 
 class TestRequestsConnection(TestCase):
     def _get_mock_connection(self, connection_params={}, status_code=200, response_body='{}'):
