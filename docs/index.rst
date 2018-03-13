@@ -258,6 +258,17 @@ bodies via post::
     from elasticsearch import Elasticsearch
     es = Elasticsearch(send_get_body_as='POST')
 
+Compression
+~~~~~~~~~~~
+When using capacity constrained networks (low throughput), it may be handy to enable
+compression. This is especially useful when doing bulk loads or inserting large
+documents. This will configure compression on the *request*.
+::
+
+   from elasticsearch import Elasticsearch
+   es = Elasticsearch(hosts, http_compress = True)
+
+
 Running on AWS with IAM
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
