@@ -157,7 +157,7 @@ class Urllib3HttpConnection(Connection):
             if headers:
                 if self.http_compress == True:
                     headers.update(urllib3.make_headers(accept_encoding=True))
-                    headers.update({'Content-Encoding': 'gzip'})
+                    headers.update({'content-encoding': 'gzip'})
                     body = gzip.compress(body)
                 request_headers = request_headers.copy()
                 request_headers.update(headers)
