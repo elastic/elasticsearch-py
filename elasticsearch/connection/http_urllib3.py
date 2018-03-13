@@ -159,10 +159,10 @@ class Urllib3HttpConnection(Connection):
 
             request_headers = self.headers
             if headers:
-                if self.http_compress == True:
-                    body = gzip.compress(body)
                 request_headers = request_headers.copy()
                 request_headers.update(headers)
+            if self.http_compress == True:
+                body = gzip.compress(body)
             response = self.pool.urlopen(method, url, body, retries=False, headers=request_headers, **kw)
             duration = time.time() - start
             raw_data = response.data.decode('utf-8')
