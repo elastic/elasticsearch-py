@@ -32,6 +32,11 @@ class TestUrllib3Connection(TestCase):
         )
         self.assertTrue(con.use_ssl)
 
+    def test_http_compression(self):
+        con = Urllib3HttpConnection(http_compress=True)
+        self.assertTrue(con.http_compress)
+        self.assertEquals(con.headers['content-encoding'], 'gzip')
+
     def test_timeout_set(self):
         con = Urllib3HttpConnection(timeout=42)
         self.assertEquals(42, con.timeout)
