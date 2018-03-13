@@ -5,6 +5,7 @@ Changelog
 
 6.2.0 (dev)
 -----------
+  * Adding Gzip support for capacity constrained networks
   * ``_routing`` in bulk action has been deprecated in ES. Introduces a breaking change
     if you use ``routing`` as a field in your documents.
 
