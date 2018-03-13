@@ -83,6 +83,10 @@ class Urllib3HttpConnection(Connection):
             for k in headers:
                 self.headers[k.lower()] = headers[k]
 
+        if self.http_compress == True:
+            self.headers.update(urllib3.make_headers(accept_encoding=True))
+            self.headers.update({'content-encoding': 'gzip'})
+
         self.headers.setdefault('content-type', 'application/json')
         pool_class = urllib3.HTTPConnectionPool
         kw = {}
@@ -156,8 +160,6 @@ class Urllib3HttpConnection(Connection):
             request_headers = self.headers
             if headers:
                 if self.http_compress == True:
-                    headers.update(urllib3.make_headers(accept_encoding=True))
-                    headers.update({'content-encoding': 'gzip'})
                     body = gzip.compress(body)
                 request_headers = request_headers.copy()
                 request_headers.update(headers)
