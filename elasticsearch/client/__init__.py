@@ -1301,8 +1301,9 @@ class Elasticsearch(object):
         for param in (id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('PUT', _make_path('_search',
-            'template', id), params=params, body=body)
+        return self.transport.perform_request(
+            'PUT', _make_path('_template', id), params=params, body=body
+        )
 
     @query_params()
     def get_template(self, id, params=None):
@@ -1314,8 +1315,8 @@ class Elasticsearch(object):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
-        return self.transport.perform_request('GET', _make_path('_search',
-            'template', id), params=params)
+        return self.transport.perform_request(
+            'GET', _make_path('_template', id), params=params)
 
     @query_params()
     def delete_script(self, id, params=None):
