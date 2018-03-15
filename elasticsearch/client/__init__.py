@@ -150,6 +150,23 @@ class Elasticsearch(object):
             ],
             verify_certs=True
         )
+    
+    By default, `JSONSerializer
+    <https://github.com/elastic/elasticsearch-py/blob/master/elasticsearch/serializer.py#L24>`_ 
+    is used to encode all outgoing requests.
+    However, you can implement your own custom serializer::
+    
+        from elasticsearch.serializer import JSONSerializer
+
+        class SetEncoder(JSONSerializer):
+            def default(self, obj):
+                if isinstance(obj, set):
+                    return list(obj)
+                if isinstance(obj, Something):
+                    return 'CustomSomethingRepresentation'
+                return JSONSerializer.default(self, obj)
+        
+        es = Elasticsearch(serializer=SetEncoder())
 
     """
     def __init__(self, hosts=None, transport_class=Transport, **kwargs):
