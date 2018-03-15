@@ -292,6 +292,29 @@ the `requests-aws4auth`_ package::
 
 .. _requests-aws4auth: https://pypi.python.org/pypi/requests-aws4auth
 
+Customization
+-------------
+
+Custom serializers
+~~~~~~~~~~~~~~~~~~
+
+By default, `JSONSerializer`_ is used to encode all outgoing requests.
+However, you can implement your own custom serializer::
+
+   from elasticsearch.serializer import JSONSerializer
+
+   class SetEncoder(JSONSerializer):
+       def default(self, obj):
+           if isinstance(obj, set):
+               return list(obj)
+           if isinstance(obj, Something):
+               return 'CustomSomethingRepresentation'
+           return JSONSerializer.default(self, obj)
+
+   es = Elasticsearch(serializer=SetEncoder())
+
+.. _JSONSerializer: https://github.com/elastic/elasticsearch-py/blob/master/elasticsearch/serializer.py#L24
+
 Contents
 --------
 
