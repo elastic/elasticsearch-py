@@ -3,8 +3,15 @@
 Changelog
 =========
 
-6.2.0 (dev)
+6.3.0 (dev)
 -----------
+
+
+6.2.0 (2018-03-20)
+------------------
+
+  * cleanup for SSL Context
+  * Add X-Pack clients to -py
   * Adding Gzip support for capacity constrained networks
   * ``_routing`` in bulk action has been deprecated in ES. Introduces a breaking change
     if you use ``routing`` as a field in your documents.
