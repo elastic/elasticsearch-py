@@ -12,6 +12,7 @@ from .nodes import NodesClient
 from .remote import RemoteClient
 from .snapshot import SnapshotClient
 from .tasks import TasksClient
+from .xpack import XPackClient
 from .utils import query_params, _make_path, SKIP_IN_PATH
 
 logger = logging.getLogger('elasticsearch')
@@ -195,6 +196,7 @@ class Elasticsearch(object):
         self.remote = RemoteClient(self)
         self.snapshot = SnapshotClient(self)
         self.tasks = TasksClient(self)
+        self.xpack = XPackClient(self)
 
     def __repr__(self):
         try:
