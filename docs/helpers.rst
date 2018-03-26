@@ -28,7 +28,7 @@ in several formats. The most common one is the same  as returned by
         '_index': 'index-name',
         '_type': 'document',
         '_id': 42,
-        'routing': 5,
+        '_routing': 5,
         'pipeline': 'my-ingest-pipeline',
         '_source': {
             "title": "Hello World!",
@@ -43,7 +43,7 @@ from the doc and use the rest as the document data:
 
     {
         "_id": 42,
-        "routing": 5,
+        "_routing": 5,
         "title": "Hello World!",
         "body": "..."
     }
