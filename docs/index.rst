@@ -322,6 +322,7 @@ Contents
    :maxdepth: 2
 
    api
+   xpack
    exceptions
    connection
    transports
@@ -331,7 +332,7 @@ Contents
 License
 -------
 
-Copyright 2013 Elasticsearch
+Copyright 2018 Elasticsearch
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
