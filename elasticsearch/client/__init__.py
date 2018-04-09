@@ -1066,7 +1066,7 @@ class Elasticsearch(object):
 
     @query_params('allow_no_indices', 'analyze_wildcard', 'analyzer',
         'default_operator', 'df', 'expand_wildcards', 'ignore_unavailable',
-        'lenient', 'min_score', 'preference', 'q', 'routing')
+        'lenient', 'min_score', 'preference', 'q', 'routing', 'terminate_after')
     def count(self, index=None, doc_type=None, body=None, params=None):
         """
         Execute a query and get the number of matches for that query.
