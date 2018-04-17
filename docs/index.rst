@@ -64,7 +64,7 @@ Example Usage
         'timestamp': datetime.now(),
     }
     res = es.index(index="test-index", doc_type='tweet', id=1, body=doc)
-    print(res['created'])
+    print(res['result'])
 
     res = es.get(index="test-index", doc_type='tweet', id=1)
     print(res['_source'])
