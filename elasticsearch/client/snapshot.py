@@ -47,7 +47,7 @@ class SnapshotClient(NamespacedClient):
         :arg repository: A repository name
         :arg snapshot: A comma-separated list of snapshot names
         :arg ignore_unavailable: Whether to ignore unavailable snapshots,
-            defaults to false which means a SnapshotMissingException is thrown
+            defaults to false which means a NotFoundError `snapshot_missing_exception` is thrown
         :arg master_timeout: Explicit operation timeout for connection to master
             node
         :arg verbose: Whether to show verbose snapshot info or only show the
@@ -140,7 +140,7 @@ class SnapshotClient(NamespacedClient):
         :arg repository: A repository name
         :arg snapshot: A comma-separated list of snapshot names
         :arg ignore_unavailable: Whether to ignore unavailable snapshots,
-            defaults to false which means a SnapshotMissingException is thrown
+            defaults to false which means a NotFoundError `snapshot_missing_exception` is thrown
         :arg master_timeout: Explicit operation timeout for connection to master
             node
         """

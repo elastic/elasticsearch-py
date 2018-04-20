@@ -83,7 +83,7 @@ def _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer):
     if bulk_actions:
         yield bulk_data, bulk_actions
 
-def _process_bulk_chunk(client, bulk_actions, bulk_data, raise_on_exception=True, raise_on_error=True, **kwargs):
+def _process_bulk_chunk(client, bulk_actions, bulk_data, raise_on_exception=True, raise_on_error=True, *args, **kwargs):
     """
     Send a bulk request to elasticsearch and process the output.
     """
@@ -92,7 +92,7 @@ def _process_bulk_chunk(client, bulk_actions, bulk_data, raise_on_exception=True
 
     try:
         # send the actual request
-        resp = client.bulk('\n'.join(bulk_actions) + '\n', **kwargs)
+        resp = client.bulk('\n'.join(bulk_actions) + '\n', *args, **kwargs)
     except TransportError as e:
         # default behavior - just propagate exception
         if raise_on_exception:
@@ -139,7 +139,7 @@ def _process_bulk_chunk(client, bulk_actions, bulk_data, raise_on_exception=True
 def streaming_bulk(client, actions, chunk_size=500, max_chunk_bytes=100 * 1024 * 1024,
                    raise_on_error=True, expand_action_callback=expand_action,
                    raise_on_exception=True, max_retries=0, initial_backoff=2,
-                   max_backoff=600, yield_ok=True, **kwargs):
+                   max_backoff=600, yield_ok=True, *args, **kwargs):
 
     """
     Streaming bulk consumes actions from the iterable passed in and yields
@@ -189,7 +189,7 @@ def streaming_bulk(client, actions, chunk_size=500, max_chunk_bytes=100 * 1024 *
                             bulk_data,
                             _process_bulk_chunk(client, bulk_actions, bulk_data,
                                                 raise_on_exception,
-                                                raise_on_error, **kwargs)
+                                                raise_on_error, *args, **kwargs)
                         ):
 
                     if not ok:
@@ -219,7 +219,7 @@ def streaming_bulk(client, actions, chunk_size=500, max_chunk_bytes=100 * 1024 *
                 bulk_actions, bulk_data = to_retry, to_retry_data
 
 
-def bulk(client, actions, stats_only=False, **kwargs):
+def bulk(client, actions, stats_only=False, *args, **kwargs):
     """
     Helper for the :meth:`~elasticsearch.Elasticsearch.bulk` api that provides
     a more human friendly interface - it consumes an iterator of actions and
@@ -254,7 +254,7 @@ def bulk(client, actions, stats_only=False, **kwargs):
 
     # make streaming_bulk yield successful results so we can count them
     kwargs['yield_ok'] = True
-    for ok, item in streaming_bulk(client, actions, **kwargs):
+    for ok, item in streaming_bulk(client, actions, *args, **kwargs):
         # go through request-reponse pairs and detect failures
         if not ok:
             if not stats_only:
@@ -267,7 +267,7 @@ def bulk(client, actions, stats_only=False, **kwargs):
 
 def parallel_bulk(client, actions, thread_count=4, chunk_size=500,
         max_chunk_bytes=100 * 1024 * 1024, queue_size=4,
-        expand_action_callback=expand_action, **kwargs):
+        expand_action_callback=expand_action, *args, **kwargs):
     """
     Parallel version of the bulk helper run in multiple threads at once.
 
@@ -302,7 +302,7 @@ def parallel_bulk(client, actions, thread_count=4, chunk_size=500,
 
     try:
         for result in pool.imap(
-            lambda bulk_chunk: list(_process_bulk_chunk(client, bulk_chunk[1], bulk_chunk[0], **kwargs)),
+            lambda bulk_chunk: list(_process_bulk_chunk(client, bulk_chunk[1], bulk_chunk[0], *args, **kwargs)),
             _chunk_actions(actions, chunk_size, max_chunk_bytes, client.transport.serializer)
             ):
             for item in result:
