@@ -307,6 +307,21 @@ class MlClient(NamespacedClient):
         return self.transport.perform_request('DELETE', _make_path('_xpack',
             'ml', 'anomaly_detectors', job_id), params=params)
 
+    @query_params('duration', 'expires_in')
+    def forecast_job(self, job_id, params=None):
+        """
+
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-forecast.html>`_
+
+        :arg job_id: The name of the job to close
+        :arg duration: A period of time that indicates how far into the future to forecast
+        :arg expires_in: The period of time that forecast results are retained.
+        """
+        if job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'job_id'.")
+        return self.transport.perform_request('POST', _make_path('_xpack', 'ml',
+            'anomaly_detectors', job_id, '_forecast'), params=params)
+
     @query_params()
     def update_model_snapshot(self, job_id, snapshot_id, body, params=None):
         """
