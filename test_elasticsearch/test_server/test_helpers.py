@@ -136,6 +136,23 @@ class TestStreamingBulk(ElasticsearchTestCase):
         self.assertEquals(2, res['hits']['total'])
         self.assertEquals(4, failing_client._called)
 
+    def test_transport_error_is_raised_with_max_retries(self):
+        failing_client = FailingBulkClient(self.client, fail_at=(1, 2, 3, 4, ),
+                                           fail_with=TransportError(429, 'Rejected!', {}))
+
+        def streaming_bulk():
+            results = list(helpers.streaming_bulk(
+                failing_client,
+                [{"a": 42}, {"a": 39}],
+                raise_on_exception=True,
+                max_retries=3,
+                initial_backoff=0
+            ))
+            return results
+
+        self.assertRaises(TransportError, streaming_bulk)
+        self.assertEquals(4, failing_client._called)
+
 
 class TestBulk(ElasticsearchTestCase):
     def test_bulk_works_with_single_item(self):
