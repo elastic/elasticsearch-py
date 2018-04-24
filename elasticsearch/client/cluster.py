@@ -3,7 +3,8 @@ from .utils import NamespacedClient, query_params, _make_path
 class ClusterClient(NamespacedClient):
     @query_params('level', 'local', 'master_timeout', 'timeout',
         'wait_for_active_shards', 'wait_for_events',
-        'wait_for_no_relocating_shards', 'wait_for_nodes', 'wait_for_status')
+        'wait_for_no_relocating_shards', 'wait_for_nodes',
+        'wait_for_status', 'wait_for_no_initializing_shards')
     def health(self, index=None, params=None):
         """
         Get a very simple status on the health of the cluster.
