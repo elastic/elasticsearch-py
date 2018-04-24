@@ -210,7 +210,7 @@ def streaming_bulk(client, actions, chunk_size=500, max_chunk_bytes=100 * 1024 *
 
             except TransportError as e:
                 # suppress 429 errors since we will retry them
-                if not max_retries or e.status_code != 429:
+                if attempt == max_retries or e.status_code != 429:
                     raise
             else:
                 if not to_retry:
