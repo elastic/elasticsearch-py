@@ -103,7 +103,6 @@ class Urllib3HttpConnection(Connection):
                 'assert_fingerprint': ssl_assert_fingerprint,
                 'ssl_context': ssl_context,
             })
-            self.pool = pool_class(host, port=port, timeout=self.timeout, maxsize=maxsize, **kw)
 
         elif self.use_ssl:
             pool_class = urllib3.HTTPSConnectionPool
