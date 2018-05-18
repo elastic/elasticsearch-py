@@ -161,7 +161,13 @@ class Urllib3HttpConnection(Connection):
                 request_headers = request_headers.copy()
                 request_headers.update(headers)
             if self.http_compress and body:
-                body = gzip.compress(body)
+                try:
+                    body = gzip.compress(body)
+                except AttributeError:
+                    # oops, Python2.7 doesn't have `gzip.compress` let's try
+                    # again
+                    body = gzip.zlib.compress(body)
+
             response = self.pool.urlopen(method, url, body, retries=False, headers=request_headers, **kw)
             duration = time.time() - start
             raw_data = response.data.decode('utf-8')
