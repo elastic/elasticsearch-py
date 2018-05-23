@@ -157,7 +157,7 @@ if __name__ == '__main__':
         "-H", "--host",
         action="store",
         default="localhost:9200",
-        help="The elasticsearch host you wish to connect too. (Default: localhost:9200)")
+        help="The elasticsearch host you wish to connect to. (Default: localhost:9200)")
     parser.add_argument(
         "-p", "--path",
         action="store",
