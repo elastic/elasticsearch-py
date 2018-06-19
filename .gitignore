@@ -8,6 +8,7 @@ test_elasticsearch/local.py
 docs/_build
 elasticsearch5.egg-info
 .tox
+.noseids
 dist
 *.egg
 coverage.xml

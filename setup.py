@@ -12,7 +12,7 @@ long_description = f.read().strip()
 f.close()
 
 install_requires = [
-    'urllib3<1.23,>=1.21.1',
+    'urllib3>=1.21.1',
 ]
 tests_require = [
     'requests>=2.0.0, <3.0.0',
@@ -34,8 +34,8 @@ setup(
     url = "https://github.com/elastic/elasticsearch-py",
     long_description = long_description,
     version = __versionstr__,
-    author = "Honza Král",
-    author_email = "honza.kral@gmail.com",
+    author = "Honza Král, Nick Lang",
+    author_email = "honza.kral@gmail.com, nick@nicklang.com",
     packages=find_packages(
         where='.',
         exclude=('test_elasticsearch*', )
