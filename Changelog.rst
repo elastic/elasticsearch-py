@@ -3,9 +3,16 @@
 Changelog
 =========
 
-6.3.0 (dev)
+6.4.0 (dev)
 -----------
 
+6.3.0 (2018-06-20)
+-----------
+
+  * Add an exponential wait on delays
+  * Fix issues with dependencies
+  * Adding X-pack Docs
+  * Adding forecast to x-pack ML client
 
 6.2.0 (2018-03-20)
 ------------------
