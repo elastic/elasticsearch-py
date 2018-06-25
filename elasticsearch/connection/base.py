@@ -78,7 +78,7 @@ class Connection(object):
         if body and ( logger.isEnabledFor(logging.DEBUG) or tracer.isEnabledFor(logging.DEBUG) ):
             body = body.decode('utf-8', 'ignore')
             logger.debug('> %s', body)
-            logger.debug('< %s', response)
+        logger.debug('< %s', response)
 
         logger.info(
             '%s %s [status:%s request:%.3fs]', method, full_url,
