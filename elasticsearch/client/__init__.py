@@ -117,7 +117,7 @@ class Elasticsearch(object):
             ['localhost:443', 'other_host:443'],
             # turn on SSL
             use_ssl=True,
-            # make sure we verify SSL certificates (off by default)
+            # make sure we verify SSL certificates
             verify_certs=True,
             # provide a path to CA certs on disk
             ca_certs='/path/to/CA_certs'
@@ -131,7 +131,7 @@ class Elasticsearch(object):
             ['localhost:443', 'other_host:443'],
             # turn on SSL
             use_ssl=True,
-            # make sure we verify SSL certificates (off by default)
+            # make sure we verify SSL certificates
             verify_certs=True,
             # provide a path to CA certs on disk
             ca_certs='/path/to/CA_certs',
@@ -151,12 +151,12 @@ class Elasticsearch(object):
             ],
             verify_certs=True
         )
-    
+
     By default, `JSONSerializer
-    <https://github.com/elastic/elasticsearch-py/blob/master/elasticsearch/serializer.py#L24>`_ 
+    <https://github.com/elastic/elasticsearch-py/blob/master/elasticsearch/serializer.py#L24>`_
     is used to encode all outgoing requests.
     However, you can implement your own custom serializer::
-    
+
         from elasticsearch.serializer import JSONSerializer
 
         class SetEncoder(JSONSerializer):
@@ -166,7 +166,7 @@ class Elasticsearch(object):
                 if isinstance(obj, Something):
                     return 'CustomSomethingRepresentation'
                 return JSONSerializer.default(self, obj)
-        
+
         es = Elasticsearch(serializer=SetEncoder())
 
     """
