@@ -73,17 +73,17 @@ class Connection(object):
         """ Log a successful API call.  """
         #  TODO: optionally pass in params instead of full_url and do urlencode only when needed
 
-        # body has already been serialized to utf-8, deserialize it for logging
-        # TODO: find a better way to avoid (de)encoding the body back and forth
-        if body:
+        # if body and logging.DEBUG enabled for either logger, decode the body.
+        # else skip decoding the body.
+        if body and ( logger.isEnabledFor(logging.DEBUG) or tracer.isEnabledFor(logging.DEBUG) ):
             body = body.decode('utf-8', 'ignore')
+            logger.debug('> %s', body)
+            logger.debug('< %s', response)
 
         logger.info(
             '%s %s [status:%s request:%.3fs]', method, full_url,
             status_code, duration
         )
-        logger.debug('> %s', body)
-        logger.debug('< %s', response)
 
         self._log_trace(method, path, body, status_code, response, duration)
 
@@ -97,12 +97,11 @@ class Connection(object):
             status_code or 'N/A', duration, exc_info=exception is not None
         )
 
-        # body has already been serialized to utf-8, deserialize it for logging
-        # TODO: find a better way to avoid (de)encoding the body back and forth
-        if body:
+        # if body and logging.DEBUG enabled for either logger, decode the body.
+        # else skip decoding the body.
+        if body and ( logger.isEnabledFor(logging.DEBUG) or tracer.isEnabledFor(logging.DEBUG) ):
             body = body.decode('utf-8', 'ignore')
-
-        logger.debug('> %s', body)
+            logger.debug('> %s', body)
 
         self._log_trace(method, path, body, status_code, response, duration)
 
