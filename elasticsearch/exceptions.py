@@ -58,7 +58,7 @@ class TransportError(ElasticsearchException):
                 cause = ', %r' % self.info['error']['root_cause'][0]['reason']
         except LookupError:
             pass
-        return 'TransportError(%s, %r%s)' % (self.status_code, self.error, cause)
+        return '%s(%s, %r%s)' % (self.__class__.__name__, self.status_code, self.error, cause)
 
 
 class ConnectionError(TransportError):
