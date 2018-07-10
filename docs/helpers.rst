@@ -69,6 +69,29 @@ action (``_op_type`` defaults to ``index``):
     }
 
 
+Example:
+~~~~~~~~
+
+Lets say we have an iterable of data. Lets say a list of words called ``mywords``
+and we want to index those words into individual documents where the structure of the
+document is like ``{"word": "<myword>"}``.
+
+.. code:: python
+
+    def gendata():
+        mywords = ['foo', 'bar', 'baz']
+        for word in mywords:
+            yield {
+                "_index": "mywords",
+                "doc": {"word": myword},
+            }
+
+    bulk(es, gendata)
+
+
+For a more complete and complex example please take a look at
+https://github.com/elastic/elasticsearch-py/blob/master/example/load.py#L76-L130
+
 .. note::
 
     When reading raw json strings from a file, you can also pass them in
