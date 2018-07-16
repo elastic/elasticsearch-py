@@ -547,14 +547,15 @@ class Elasticsearch(object):
             doc_type, id, '_update'), params=params, body=body)
 
     @query_params('_source', '_source_exclude', '_source_include',
-        'allow_no_indices', 'analyze_wildcard', 'analyzer',
-        'batched_reduce_size', 'default_operator', 'df', 'docvalue_fields',
-        'expand_wildcards', 'explain', 'from_', 'ignore_unavailable', 'lenient',
-        'max_concurrent_shard_requests', 'pre_filter_shard_size', 'preference',
-        'q', 'request_cache', 'routing', 'scroll', 'search_type', 'size',
-        'sort', 'stats', 'stored_fields', 'suggest_field', 'suggest_mode',
-        'suggest_size', 'suggest_text', 'terminate_after', 'timeout',
-        'track_scores', 'track_total_hits', 'typed_keys', 'version')
+        'allow_no_indices', 'allow_partial_search_results', 'analyze_wildcard',
+        'analyzer', 'batched_reduce_size', 'default_operator', 'df',
+        'docvalue_fields', 'expand_wildcards', 'explain', 'from_',
+        'ignore_unavailable', 'lenient', 'max_concurrent_shard_requests',
+        'pre_filter_shard_size', 'preference', 'q', 'request_cache', 'routing',
+        'scroll', 'search_type', 'size', 'sort', 'stats', 'stored_fields',
+        'suggest_field', 'suggest_mode', 'suggest_size', 'suggest_text',
+        'terminate_after', 'timeout', 'track_scores', 'track_total_hits',
+        'typed_keys', 'version')
     def search(self, index=None, doc_type=None, body=None, params=None):
         """
         Execute a search query and get back search hits that match the query.
@@ -574,6 +575,10 @@ class Elasticsearch(object):
         :arg allow_no_indices: Whether to ignore if a wildcard indices
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
+        :arg allow_partial_search_results: Set to false to return an overall
+            failure if the request would produce partial results. Defaults to
+            True, which will allow partial results in the case of timeouts or
+            partial failures
         :arg analyze_wildcard: Specify whether wildcard and prefix queries
             should be analyzed (default: false)
         :arg analyzer: The analyzer to use for the query string
