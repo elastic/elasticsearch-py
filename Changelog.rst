@@ -5,6 +5,7 @@ Changelog
 
 6.4.0 (dev)
 -----------
+  * Removed deprecated option ``update_all_types``.
 
 6.3.0 (2018-06-20)
 -----------

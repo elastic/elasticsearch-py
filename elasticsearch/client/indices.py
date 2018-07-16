@@ -69,8 +69,7 @@ class IndicesClient(NamespacedClient):
         return self.transport.perform_request('POST', _make_path(index,
             '_flush'), params=params)
 
-    @query_params('master_timeout', 'timeout', 'update_all_types',
-        'wait_for_active_shards')
+    @query_params('master_timeout', 'timeout', 'wait_for_active_shards')
     def create(self, index, body=None, params=None):
         """
         Create an index in Elasticsearch.
@@ -80,8 +79,6 @@ class IndicesClient(NamespacedClient):
         :arg body: The configuration for the index (`settings` and `mappings`)
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
-        :arg update_all_types: Whether to update the mapping for all fields with
-            the same name across all types or not
         :arg wait_for_active_shards: Set the number of active shards to wait for
             before the operation returns.
         """
@@ -240,7 +237,7 @@ class IndicesClient(NamespacedClient):
             '_mapping', doc_type), params=params)
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
-        'master_timeout', 'timeout', 'update_all_types')
+        'master_timeout', 'timeout')
     def put_mapping(self, doc_type, body, index=None, params=None):
         """
         Register specific mapping definition for a specific type.
@@ -261,8 +258,6 @@ class IndicesClient(NamespacedClient):
             ignored when unavailable (missing or closed)
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
-        :arg update_all_types: Whether to update the mapping for all fields with
-            the same name across all types or not
         """
         for param in (doc_type, body):
             if param in SKIP_IN_PATH:
