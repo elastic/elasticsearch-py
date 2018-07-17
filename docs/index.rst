@@ -222,7 +222,7 @@ elasticsearch cluster, including certificate verification and http auth::
 See class :class:`~elasticsearch.Urllib3HttpConnection` for detailed
 description of the options.
 
-.. _certifi: http://certifi.io/
+.. _certifi: http://certifiio.readthedocs.io/en/latest/
 
 Logging
 ~~~~~~~
