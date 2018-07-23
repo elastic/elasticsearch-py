@@ -2,6 +2,7 @@ import time
 import ssl
 import urllib3
 from urllib3.exceptions import ReadTimeoutError, SSLError as UrllibSSLError
+from urllib3.util.retry import Retry
 import warnings
 import gzip
 
@@ -168,7 +169,7 @@ class Urllib3HttpConnection(Connection):
                     # again
                     body = gzip.zlib.compress(body)
 
-            response = self.pool.urlopen(method, url, body, retries=False, headers=request_headers, **kw)
+            response = self.pool.urlopen(method, url, body, retries=Retry(False), headers=request_headers, **kw)
             duration = time.time() - start
             raw_data = response.data.decode('utf-8')
         except Exception as e:
