@@ -1,6 +1,7 @@
 import time
 import urllib3
 from urllib3.exceptions import ReadTimeoutError, SSLError as UrllibSSLError
+from urllib3.util.retry import Retry
 import warnings
 
 CA_CERTS = None
@@ -112,7 +113,19 @@ class Urllib3HttpConnection(Connection):
             if not isinstance(method, str):
                 method = method.encode('utf-8')
 
-            response = self.pool.urlopen(method, url, body, retries=False, headers=self.headers, **kw)
+            request_headers = self.headers
+            if headers:
+                request_headers = request_headers.copy()
+                request_headers.update(headers)
+            if self.http_compress and body:
+                try:
+                    body = gzip.compress(body)
+                except AttributeError:
+                    # oops, Python2.7 doesn't have `gzip.compress` let's try
+                    # again
+                    body = gzip.zlib.compress(body)
+
+            response = self.pool.urlopen(method, url, body, retries=Retry(False), headers=request_headers, **kw)
             duration = time.time() - start
             raw_data = response.data.decode('utf-8')
         except Exception as e:

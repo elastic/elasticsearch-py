@@ -3,6 +3,10 @@
 Changelog
 =========
 
+5.5.4 (2018-06-20)
+------------------
+  * Pass retry object instead of False to urllib3
+
 5.5.3 (2018-06-20)
 ------------------
 
