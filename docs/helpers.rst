@@ -83,10 +83,11 @@ document is like ``{"word": "<myword>"}``.
         for word in mywords:
             yield {
                 "_index": "mywords",
-                "doc": {"word": myword},
+                "_type": "document",
+                "doc": {"word": word},
             }
 
-    bulk(es, gendata)
+    bulk(es, gendata())
 
 
 For a more complete and complex example please take a look at
