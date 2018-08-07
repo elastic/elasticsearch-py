@@ -54,8 +54,11 @@ class TransportError(ElasticsearchException):
     def __str__(self):
         cause = ''
         try:
-            if self.info:
-                cause = ', %r' % self.info['error']['root_cause'][0]['reason']
+            if self.info and 'error' in self.info:
+                if isinstance(self.info['error'], dict):
+                    cause = ', %r' % self.info['error']['root_cause'][0]['reason']
+                else:
+                    cause = ', %r' % self.info['error']
         except LookupError:
             pass
         return '%s(%s, %r%s)' % (self.__class__.__name__, self.status_code, self.error, cause)
