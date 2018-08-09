@@ -3,7 +3,7 @@ from os.path import join, dirname
 from setuptools import setup, find_packages
 import sys
 
-VERSION = (6, 3, 0)
+VERSION = (6, 3, 1)
 __version__ = VERSION
 __versionstr__ = '.'.join(map(str, VERSION))
 

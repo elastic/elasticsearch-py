@@ -5,7 +5,13 @@ Changelog
 
 6.4.0 (dev)
 -----------
+
+6.3.1 (2018-08-09)
+------------------
   * Removed deprecated option ``update_all_types``.
+  * Pass retry object instead of False in urllib3
+  * Add support for `allow_partial_search_results`
+  * Deprecate `update_all_types`
 
 6.3.0 (2018-06-20)
 -----------
