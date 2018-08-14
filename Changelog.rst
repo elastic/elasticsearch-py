@@ -3,6 +3,10 @@
 Changelog
 =========
 
+5.5.5 (2018-06-20)
+------------------
+  * fix error wrt to http_compress not being merged cleanly
+
 5.5.4 (2018-06-20)
 ------------------
   * Pass retry object instead of False to urllib3
