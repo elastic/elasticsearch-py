@@ -4,6 +4,11 @@ from urllib3.exceptions import ReadTimeoutError, SSLError as UrllibSSLError
 from urllib3.util.retry import Retry
 import warnings
 
+try:
+    import gzip
+except ImportError:
+    pass
+
 CA_CERTS = None
 
 try:
@@ -44,13 +49,15 @@ class Urllib3HttpConnection(Connection):
         host. See https://urllib3.readthedocs.io/en/1.4/pools.html#api for more
         information.
     :arg headers: any custom http headers to be add to requests
+    :arg http_compress: Use gzip compression
     """
     def __init__(self, host='localhost', port=9200, http_auth=None,
             use_ssl=False, verify_certs=True, ca_certs=None, client_cert=None,
             client_key=None, ssl_version=None, ssl_assert_hostname=None,
-            ssl_assert_fingerprint=None, maxsize=10, headers=None, **kwargs):
+            ssl_assert_fingerprint=None, maxsize=10, headers=None, http_compress=False, **kwargs):
 
         super(Urllib3HttpConnection, self).__init__(host=host, port=port, use_ssl=use_ssl, **kwargs)
+        self.http_compress = http_compress
         self.headers = urllib3.make_headers(keep_alive=True)
         if http_auth is not None:
             if isinstance(http_auth, (tuple, list)):
@@ -93,7 +100,7 @@ class Urllib3HttpConnection(Connection):
 
         self.pool = pool_class(host, port=port, timeout=self.timeout, maxsize=maxsize, **kw)
 
-    def perform_request(self, method, url, params=None, body=None, timeout=None, ignore=()):
+    def perform_request(self, method, url, params=None, body=None, timeout=None, ignore=(), headers=None):
         url = self.url_prefix + url
         if params:
             url = '%s?%s' % (url, urlencode(params))
