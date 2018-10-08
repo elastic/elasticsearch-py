@@ -182,7 +182,7 @@ SSL and Authentication
 ~~~~~~~~~~~~~~~~~~~~~~
 
 You can configure the client to use ``SSL`` for connecting to your
-elasticsearch cluster, including certificate verification and http auth::
+elasticsearch cluster, including certificate verification and HTTP auth::
 
     from elasticsearch import Elasticsearch
 
@@ -245,12 +245,12 @@ Environment considerations
 When using the client there are several limitations of your environment that
 could come into play.
 
-When using an http load balancer you cannot use the :ref:`sniffing`
+When using an HTTP load balancer you cannot use the :ref:`sniffing`
 functionality - the cluster would supply the client with IP addresses to
 directly connect to the cluster, circumventing the load balancer. Depending on
 your configuration this might be something you don't want or break completely.
 
-In some environments (notably on Google App Engine) your http requests might be
+In some environments (notably on Google App Engine) your HTTP requests might be
 restricted so that ``GET`` requests won't accept body. In that case use the
 ``send_get_body_as`` parameter of :class:`~elasticsearch.Transport` to send all
 bodies via post::
@@ -260,13 +260,13 @@ bodies via post::
 
 Compression
 ~~~~~~~~~~~
-When using capacity constrained networks (low throughput), it may be handy to enable
+When using capacity-constrained networks (low throughput), it may be handy to enable
 compression. This is especially useful when doing bulk loads or inserting large
 documents. This will configure compression on the *request*.
 ::
 
    from elasticsearch import Elasticsearch
-   es = Elasticsearch(hosts, http_compress = True)
+   es = Elasticsearch(hosts, http_compress=True)
 
 
 Running on AWS with IAM
