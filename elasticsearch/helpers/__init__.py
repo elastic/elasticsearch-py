@@ -119,7 +119,7 @@ def _process_bulk_chunk(client, bulk_actions, bulk_data, raise_on_exception=True
                 yield False, err
             return
 
-    # go through request-reponse pairs and detect failures
+    # go through request-response pairs and detect failures
     for data, (op_type, item) in zip(bulk_data, map(methodcaller('popitem'), resp['items'])):
         ok = 200 <= item.get('status', 500) < 300
         if not ok and raise_on_error:
@@ -255,7 +255,7 @@ def bulk(client, actions, stats_only=False, *args, **kwargs):
     # make streaming_bulk yield successful results so we can count them
     kwargs['yield_ok'] = True
     for ok, item in streaming_bulk(client, actions, *args, **kwargs):
-        # go through request-reponse pairs and detect failures
+        # go through request-response pairs and detect failures
         if not ok:
             if not stats_only:
                 errors.append(item)
