@@ -2,7 +2,7 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 class TasksClient(NamespacedClient):
     @query_params('actions', 'detailed', 'group_by', 'nodes',
-        'parent_task_id', 'wait_for_completion')
+        'parent_task_id', 'wait_for_completion', 'timeout')
     def list(self, params=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/tasks.html>`_
@@ -20,6 +20,7 @@ class TasksClient(NamespacedClient):
             (node_id:task_number). Set to -1 to return all.
         :arg wait_for_completion: Wait for the matching tasks to complete
             (default: false)
+        :arg timeout: Maximum waiting time for `wait_for_completion`
         """
         return self.transport.perform_request('GET', '/_tasks', params=params)
 
@@ -43,7 +44,7 @@ class TasksClient(NamespacedClient):
         return self.transport.perform_request('POST', _make_path('_tasks',
             task_id, '_cancel'), params=params)
 
-    @query_params('wait_for_completion')
+    @query_params('wait_for_completion', 'timeout')
     def get(self, task_id=None, params=None):
         """
         Retrieve information for a particular task.
@@ -52,6 +53,7 @@ class TasksClient(NamespacedClient):
         :arg task_id: Return the task with specified id (node_id:task_number)
         :arg wait_for_completion: Wait for the matching tasks to complete
             (default: false)
+        :arg timeout: Maximum waiting time for `wait_for_completion`
         """
         return self.transport.perform_request('GET', _make_path('_tasks',
             task_id), params=params)
