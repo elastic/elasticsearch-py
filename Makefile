@@ -4,7 +4,11 @@ clean:
 build:
 	PYTHON_VERSION=${PYTHON_VERSION} docker-compose build client
 
+pull:
+	ELASTIC_VERSION=${ELASTIC_VERSION} PYTHON_VERSION=${PYTHON_VERSION} docker-compose pull
+
 push:
+	# requires authentication.
 	PYTHON_VERSION=${PYTHON_VERSION} docker-compose push client
 
 run_tests:
