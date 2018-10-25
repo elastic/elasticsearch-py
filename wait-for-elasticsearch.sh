@@ -17,7 +17,7 @@ response=$(curl $host)
 
 until [ "$response" = "200" ]; do
     response=$(curl --write-out %{http_code} --silent --output /dev/null "$host")
-    >&2 echo "Elastic Search is unavailable - sleeping"
+    >&2 echo "Elasticsearch is unavailable - sleeping"
     sleep 1
 done
 
@@ -33,5 +33,5 @@ until [ "$health" = 'green' ]; do
     sleep 1
 done
 
->&2 echo "Elastic Search is up"
+>&2 echo "Elasticsearch is up"
 exec $cmd
