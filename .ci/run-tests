@@ -11,5 +11,4 @@
 #
 
 # TODO: implement the docker-based testing
-cd ..
-make run_tests
+cd .. && make run_tests
