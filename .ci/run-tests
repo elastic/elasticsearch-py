@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+#
+# Runs the client tests via Docker with the expectation that the required
+# environment variables have already been exported before running this script.
+#
+# The required environment variables include:
+#
+#   - $ELASTICSEARCH_VERSION
+#   - $PYTHON_VERSION
+#
+
+# TODO: implement the docker-based testing
+cd ..
+make run_tests
