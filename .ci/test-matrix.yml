@@ -13,5 +13,6 @@ PYTHON_VERSION:
   - 2.6
 
 exclude:
+  # since a base image for python2.6 doens't exist i need to create one.
   - PYTHON_VERSION: 2.6
 
