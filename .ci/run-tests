@@ -11,4 +11,5 @@
 #
 
 # TODO: implement the docker-based testing
-echo docker-compose [...]
+cd ..
+make run_tests

@@ -1,15 +1,17 @@
 ---
 ELASTICSEARCH_VERSION:
-- 6.4.2
-- 6.3.2
-- 6.1.4
-- 6.0.1
+  - 6.4.2
+  - 6.3.2
+  - 6.1.4
+  - 6.0.1
 
 
 
 PYTHON_VERSION:
-- 3
-- 2.7
-- 2.6
+  - 3
+  - 2.7
+  - 2.6
 
 exclude:
+  - PYTHON_VERSION: 2.6
+
