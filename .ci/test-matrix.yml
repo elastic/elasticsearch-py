@@ -8,11 +8,16 @@ ELASTICSEARCH_VERSION:
 
 
 PYTHON_VERSION:
-- 3
+- 3.3
+- 3.4
+- 3.5
+- 3.6
+- 3.7
 - 2.7
 - 2.6
 
 exclude:
 # since a base image for python2.6 doens't exist i need to create one.
 - PYTHON_VERSION: 2.6
+- PYTHON_VERSION: 2.7
 
