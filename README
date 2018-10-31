@@ -141,6 +141,8 @@ limitations under the License.
 
 Build status
 ------------
+.. image:: https://readthedocs.org/projects/elasticsearch-py/badge/?version=latest&style=flat
+   :target: https://elasticsearch-py.readthedocs.io/en/master/
 
-.. image:: https://secure.travis-ci.org/elastic/elasticsearch-py.png
-   :target: https://travis-ci.org/elastic/elasticsearch-py
+.. image:: https://clients-ci.elastic.co/job/elastic+elasticsearch-py+master/badge/icon
+   :target: https://clients-ci.elastic.co/job/elastic+elasticsearch-py+master/
