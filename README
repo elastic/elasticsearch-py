@@ -1,3 +1,5 @@
+[![Build Status](https://clients-ci.elastic.co/job/elastic+elasticsearch-py+master/badge/icon)](https://clients-ci.elastic.co/job/elastic+elasticsearch-py+master/)
+
 Python Elasticsearch Client
 ===========================
 
