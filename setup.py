@@ -64,7 +64,7 @@ setup(
     tests_require=tests_require,
 
     extras_require={
-        'develop': tests_require + ["sphinx", "sphinx_rtd_theme"],
+        'develop': tests_require + ["sphinx<1.7", "sphinx_rtd_theme"],
         'requests': ['requests>=2.4.0, <3.0.0']
     },
 )
