@@ -12,7 +12,7 @@ push:
 	PYTHON_VERSION=${PYTHON_VERSION} docker-compose push client
 
 run_tests:
-	ELASTICSEARCH_VERSION=${ELASTICSEARCH_VERSION} PYTHON_VERSION=${PYTHON_VERSION} docker-compose run client python setup.py test
+	ELASTICSEARCH_VERSION=${ELASTICSEARCH_VERSION} PYTHON_VERSION=${PYTHON_VERSION} docker-compose -p "${ELASTIC_VERSION}-${PYTHON_VERSION}" run client python setup.py test
 
 start_elasticsearch:
 	ELASTICSEARCH_VERSION=${ELASTICSEARCH_VERSION} docker-compose up -d elasticsearch
