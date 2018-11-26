@@ -7,13 +7,15 @@ from elasticsearch.serializer import JSONSerializer
 
 from .test_cases import TestCase
 
+lock_side_effect = threading.Lock()
+
 def mock_process_bulk_chunk(*args, **kwargs):
     """
     Threadsafe way of mocking process bulk chunk:
     https://stackoverflow.com/questions/39332139/thread-safe-version-of-mock-call-count
     """
 
-    with threading.Lock():
+    with lock_side_effect:
         mock_process_bulk_chunk.call_count += 1
     time.sleep(0.1)
     return []
