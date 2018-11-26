@@ -58,11 +58,12 @@ def _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer):
     for action, data in actions:
         raw_data, raw_action = data, action
         action = serializer.dumps(action)
-        cur_size = len(action) + 1
+        # +1 to account for the trailing new line character
+        cur_size = len(action.encode('utf-8')) + 1
 
         if data is not None:
             data = serializer.dumps(data)
-            cur_size += len(data) + 1
+            cur_size += len(data.encode('utf-8')) + 1
 
         # full chunk, send it and start a new one
         if bulk_actions and (size + cur_size > max_chunk_bytes or action_count == chunk_size):

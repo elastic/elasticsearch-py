@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import mock
 import time
 import threading
@@ -46,13 +47,22 @@ class TestParallelBulk(TestCase):
 class TestChunkActions(TestCase):
     def setUp(self):
         super(TestChunkActions, self).setUp()
-        self.actions = [({'index': {}}, {'some': 'data', 'i': i}) for i in range(100)]
+        self.actions = [({'index': {}}, {'some': u'datá', 'i': i}) for i in range(100)]
 
     def test_chunks_are_chopped_by_byte_size(self):
         self.assertEquals(100, len(list(helpers._chunk_actions(self.actions, 100000, 1, JSONSerializer()))))
 
     def test_chunks_are_chopped_by_chunk_size(self):
         self.assertEquals(10, len(list(helpers._chunk_actions(self.actions, 10, 99999999, JSONSerializer()))))
+
+    def test_chunks_are_chopped_by_byte_size_properly(self):
+        max_byte_size = 170
+        chunks = list(helpers._chunk_actions(self.actions, 100000, max_byte_size, JSONSerializer()))
+        self.assertEquals(25, len(chunks))
+        for chunk_data, chunk_actions in chunks:
+            chunk = u''.join(chunk_actions)
+            chunk = chunk if isinstance(chunk, str) else chunk.encode('utf-8')
+            self.assertLessEqual(len(chunk), max_byte_size)
 
 class TestExpandActions(TestCase):
     def test_string_actions_are_marked_as_simple_inserts(self):
