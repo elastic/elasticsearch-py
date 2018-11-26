@@ -7,8 +7,25 @@ from elasticsearch.serializer import JSONSerializer
 
 from .test_cases import TestCase
 
+lock_side_effect = threading.Lock()
+
+def mock_process_bulk_chunk(*args, **kwargs):
+    """
+    Threadsafe way of mocking process bulk chunk:
+    https://stackoverflow.com/questions/39332139/thread-safe-version-of-mock-call-count
+    """
+
+    with lock_side_effect:
+        mock_process_bulk_chunk.call_count += 1
+    time.sleep(0.1)
+    return []
+
+
+mock_process_bulk_chunk.call_count = 0
+
+
 class TestParallelBulk(TestCase):
-    @mock.patch('elasticsearch.helpers._process_bulk_chunk', return_value=[])
+    @mock.patch('elasticsearch.helpers._process_bulk_chunk', side_effect=mock_process_bulk_chunk)
     def test_all_chunks_sent(self, _process_bulk_chunk):
         actions = ({'x': i} for i in range(100))
         list(helpers.parallel_bulk(Elasticsearch(), actions, chunk_size=2))
