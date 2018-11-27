@@ -183,9 +183,5 @@ if __name__ == '__main__':
     initial_commit = es.get(index='git', doc_type='doc', id='20fbba1230cabbc0f4644f917c6c2be52b8a63e8')
     print('%s: %s' % (initial_commit['_id'], initial_commit['_source']['committed_date']))
 
-
-    # refresh to make the documents available for search
-    es.indices.refresh(index='git')
-
     # and now we can count the documents
     print(es.count(index='git')['count'], 'documents in index')
