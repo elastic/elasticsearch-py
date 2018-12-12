@@ -22,7 +22,7 @@ class CatClient(NamespacedClient):
         return self.transport.perform_request('GET', _make_path('_cat',
             'aliases', name), params=params)
 
-    @query_params('bytes', 'format', 'h', 'help', 'local', 'master_timeout',
+    @query_params('bytes', 'size', 'format', 'h', 'help', 'local', 'master_timeout',
         's', 'v')
     def allocation(self, node_id=None, params=None):
         """
@@ -48,7 +48,7 @@ class CatClient(NamespacedClient):
         return self.transport.perform_request('GET', _make_path('_cat',
             'allocation', node_id), params=params)
 
-    @query_params('format', 'h', 'help', 'local', 'master_timeout', 's', 'v')
+    @query_params('size', 'format', 'h', 'help', 'local', 'master_timeout', 's', 'v')
     def count(self, index=None, params=None):
         """
         Count provides quick access to the document count of the entire cluster,
@@ -106,7 +106,7 @@ class CatClient(NamespacedClient):
         """
         return self.transport.perform_request('GET', '/_cat', params=params)
 
-    @query_params('bytes', 'format', 'h', 'health', 'help', 'local',
+    @query_params('bytes', 'time', 'size', 'format', 'h', 'health', 'help', 'local',
         'master_timeout', 'pri', 's', 'v')
     def indices(self, index=None, params=None):
         """
@@ -179,7 +179,7 @@ class CatClient(NamespacedClient):
         return self.transport.perform_request('GET', '/_cat/nodes',
             params=params)
 
-    @query_params('bytes', 'format', 'h', 'help', 'master_timeout', 's', 'v')
+    @query_params('bytes', 'time', 'size', 'format', 'h', 'help', 'master_timeout', 's', 'v')
     def recovery(self, index=None, params=None):
         """
         recovery is a view of shard replication.
@@ -201,7 +201,7 @@ class CatClient(NamespacedClient):
         return self.transport.perform_request('GET', _make_path('_cat',
             'recovery', index), params=params)
 
-    @query_params('bytes', 'format', 'h', 'help', 'local', 'master_timeout', 's', 'v')
+    @query_params('bytes', 'time', 'size', 'format', 'h', 'help', 'local', 'master_timeout', 's', 'v')
     def shards(self, index=None, params=None):
         """
         The shards command is the detailed view of what nodes contain which shards.
@@ -225,7 +225,7 @@ class CatClient(NamespacedClient):
         return self.transport.perform_request('GET', _make_path('_cat',
             'shards', index), params=params)
 
-    @query_params('bytes', 'format', 'h', 'help', 's', 'v')
+    @query_params('bytes', 'size', 'format', 'h', 'help', 's', 'v')
     def segments(self, index=None, params=None):
         """
         The segments command is the detailed view of Lucene segments per index.
