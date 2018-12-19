@@ -1,0 +1,60 @@
+---
+
+##### GLOBAL METADATA
+
+- meta:
+    cluster: clients-ci
+
+##### JOB DEFAULTS
+
+- job:
+    project-type: matrix
+    logrotate:
+      daysToKeep: 30
+      numToKeep: 100
+    properties:
+    - github:
+        url: https://github.com/elastic/elasticsearch-py/
+    - inject:
+        properties-content: HOME=$JENKINS_HOME
+    concurrent: true
+    node: flyweight
+    scm:
+    - git:
+        name: origin
+        credentials-id: f6c7695a-671e-4f4f-a331-acdce44ff9ba
+        reference-repo: /var/lib/jenkins/.git-references/elasticsearch-py.git
+        url: git@github.com:elastic/elasticsearch-py.git
+        wipe-workspace: 'True'
+    axes:
+    - axis:
+        type: slave
+        name: label
+        values:
+        - linux
+    - axis:
+        type: yaml
+        filename: .ci/test-matrix.yml
+        name: ELASTICSEARCH_VERSION
+    - axis:
+        type: yaml
+        filename: .ci/test-matrix.yml
+        name: PYTHON_VERSION
+    yaml-strategy:
+      exclude-key: exclude
+      filename: .ci/test-matrix.yml
+    wrappers:
+    - ansicolor
+    - timeout:
+        type: absolute
+        timeout: 120
+        fail: true
+    - timestamps
+    - workspace-cleanup
+    builders:
+    - shell: |-
+        #!/usr/local/bin/runbld
+        .ci/run-tests
+    publishers:
+    - email:
+        recipients: infra-root+build@elastic.co
