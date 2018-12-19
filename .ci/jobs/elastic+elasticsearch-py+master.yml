@@ -1,0 +1,18 @@
+---
+- job:
+    name: elastic+elasticsearch-py+master
+    display-name: 'elastic / elasticsearch-py # master'
+    description: Testing the elasticsearch-py master branch.
+    parameters:
+    - string:
+        name: branch_specifier
+        default: refs/heads/master
+        description: the Git branch specifier to build (&lt;branchName&gt;, &lt;tagName&gt;,
+          &lt;commitId&gt;, etc.)
+    scm:
+    - git:
+        branches:
+        - ${branch_specifier}
+    triggers:
+    - github
+    - timed: '@daily'
