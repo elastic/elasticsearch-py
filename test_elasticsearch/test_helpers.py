@@ -40,9 +40,7 @@ class TestParallelBulk(TestCase):
     )
     def test_chunk_sent_from_different_threads(self, _process_bulk_chunk):
         actions = ({'x': i} for i in range(100))
-        print('spawning...')
         results = list(helpers.actions.parallel_bulk(Elasticsearch(), actions, thread_count=10, chunk_size=2))
-        print('got promises')
         self.assertTrue(len(set([r[1] for r in results])) > 1)
 
 class TestChunkActions(TestCase):
