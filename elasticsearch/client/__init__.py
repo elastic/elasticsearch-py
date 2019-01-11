@@ -1007,8 +1007,6 @@ class Elasticsearch(object):
         """
         if scroll_id in SKIP_IN_PATH and body in SKIP_IN_PATH:
             raise ValueError("You need to supply scroll_id or body.")
-        elif scroll_id and not body:
-            body = {'scroll_id':scroll_id}
         elif scroll_id:
             params['scroll_id'] = scroll_id
 
