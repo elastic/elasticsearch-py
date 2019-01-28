@@ -292,7 +292,9 @@ def parallel_bulk(client, actions, thread_count=4, chunk_size=500,
     class BlockingPool(ThreadPool):
         def _setup_queues(self):
             super(BlockingPool, self)._setup_queues()
-            self._inqueue = Queue(queue_size)
+            # The queue must be at least the size of the number of threads to 
+            # prevent hanging when inserting sentinel values during teardown.
+            self._inqueue = Queue(max(queue_size, thread_count))
             self._quick_put = self._inqueue.put
 
     pool = BlockingPool(thread_count)
