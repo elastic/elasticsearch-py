@@ -1,4 +1,4 @@
-from elasticsearch.client.utils import NamespacedClient, query_params, _make_path
+from ..utils import NamespacedClient, query_params, _make_path
 
 class GraphClient(NamespacedClient):
     @query_params('routing', 'timeout')

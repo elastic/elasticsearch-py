@@ -1,4 +1,4 @@
-from elasticsearch.client.utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
+from ..utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 class WatcherClient(NamespacedClient):
     @query_params()
