@@ -69,7 +69,7 @@ class IndicesClient(NamespacedClient):
         return self.transport.perform_request('POST', _make_path(index,
             '_flush'), params=params)
 
-    @query_params('master_timeout', 'timeout', 'wait_for_active_shards')
+    @query_params('master_timeout', 'timeout', 'wait_for_active_shards', 'include_type_name')
     def create(self, index, body=None, params=None):
         """
         Create an index in Elasticsearch.
@@ -81,6 +81,8 @@ class IndicesClient(NamespacedClient):
         :arg timeout: Explicit operation timeout
         :arg wait_for_active_shards: Set the number of active shards to wait for
             before the operation returns.
+        :arg include_type_name: Specify whether requests and responses should include a
+            type name (default: depends on Elasticsearch version).
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
@@ -88,7 +90,7 @@ class IndicesClient(NamespacedClient):
             params=params, body=body)
 
     @query_params('allow_no_indices', 'expand_wildcards', 'flat_settings',
-        'ignore_unavailable', 'include_defaults', 'local')
+        'ignore_unavailable', 'include_defaults', 'local', 'include_type_name')
     def get(self, index, feature=None, params=None):
         """
         The get index API allows to retrieve information about one or more indexes.
@@ -106,6 +108,8 @@ class IndicesClient(NamespacedClient):
             the indices., default False
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
+        :arg include_type_name: Specify whether requests and responses should include a
+            type name (default: depends on Elasticsearch version).
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
@@ -237,7 +241,7 @@ class IndicesClient(NamespacedClient):
             '_mapping', doc_type), params=params)
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
-        'master_timeout', 'timeout')
+        'master_timeout', 'timeout','include_type_name')
     def put_mapping(self, doc_type, body, index=None, params=None):
         """
         Register specific mapping definition for a specific type.
@@ -258,6 +262,8 @@ class IndicesClient(NamespacedClient):
             ignored when unavailable (missing or closed)
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
+        :arg include_type_name: Specify whether requests and responses should include a
+            type name (default: depends on Elasticsearch version).
         """
         for param in (doc_type, body):
             if param in SKIP_IN_PATH:
@@ -266,7 +272,7 @@ class IndicesClient(NamespacedClient):
             '_mapping', doc_type), params=params, body=body)
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
-        'local')
+        'local','include_type_name')
     def get_mapping(self, index=None, doc_type=None, params=None):
         """
         Retrieve mapping definition of index or index/type.
@@ -284,12 +290,14 @@ class IndicesClient(NamespacedClient):
             ignored when unavailable (missing or closed)
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
+        :arg include_type_name: Specify whether requests and responses should include a
+            type name (default: depends on Elasticsearch version).
         """
         return self.transport.perform_request('GET', _make_path(index,
             '_mapping', doc_type), params=params)
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
-        'include_defaults', 'local')
+        'include_defaults', 'local', 'include_type_name')
     def get_field_mapping(self, fields, index=None, doc_type=None, params=None):
         """
         Retrieve mapping definition of a specific field.
@@ -310,6 +318,8 @@ class IndicesClient(NamespacedClient):
             returned as well
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
+        :arg include_type_name: Specify whether requests and responses should include a
+            type name (default: depends on Elasticsearch version).
         """
         if fields in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'fields'.")
@@ -418,7 +428,7 @@ class IndicesClient(NamespacedClient):
             '_alias', name), params=params)
 
     @query_params('create', 'flat_settings', 'master_timeout', 'order',
-        'timeout')
+        'timeout', 'include_type_name')
     def put_template(self, name, body, params=None):
         """
         Create an index template that will automatically be applied to new
@@ -434,6 +444,8 @@ class IndicesClient(NamespacedClient):
         :arg order: The order for this template when merging multiple matching
             ones (higher numbers are merged later, overriding the lower numbers)
         :arg timeout: Explicit operation timeout
+        :arg include_type_name: Specify whether requests and responses should include a
+            type name (default: depends on Elasticsearch version).
         """
         for param in (name, body):
             if param in SKIP_IN_PATH:
@@ -459,7 +471,7 @@ class IndicesClient(NamespacedClient):
         return self.transport.perform_request('HEAD', _make_path('_template',
                 name), params=params)
 
-    @query_params('flat_settings', 'local', 'master_timeout')
+    @query_params('flat_settings', 'local', 'master_timeout', 'include_type_name')
     def get_template(self, name=None, params=None):
         """
         Retrieve an index template by its name.
@@ -471,6 +483,8 @@ class IndicesClient(NamespacedClient):
             master node (default: false)
         :arg master_timeout: Explicit operation timeout for connection to master
             node
+        :arg include_type_name: Specify whether requests and responses should include a
+            type name (default: depends on Elasticsearch version).
         """
         return self.transport.perform_request('GET', _make_path('_template',
             name), params=params)
@@ -846,7 +860,7 @@ class IndicesClient(NamespacedClient):
             '_shrink', target), params=params, body=body)
 
     @query_params('dry_run', 'master_timeout', 'timeout',
-        'wait_for_active_shards')
+        'wait_for_active_shards', 'include_type_name')
     def rollover(self, alias, new_index=None, body=None, params=None):
         """
         The rollover index API rolls an alias over to a new index when the
@@ -868,6 +882,8 @@ class IndicesClient(NamespacedClient):
         :arg timeout: Explicit operation timeout
         :arg wait_for_active_shards: Set the number of active shards to wait for
             on the newly created rollover index before the operation returns.
+        :arg include_type_name: Specify whether requests and responses should include a
+            type name (default: depends on Elasticsearch version).
         """
         if alias in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'alias'.")
