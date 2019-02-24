@@ -69,7 +69,7 @@ class IndicesClient(NamespacedClient):
         return self.transport.perform_request('POST', _make_path(index,
             '_flush'), params=params)
 
-    @query_params('master_timeout', 'timeout', 'wait_for_active_shards', 'include_type_name')
+    @query_params('master_timeout', 'request_timeout', 'wait_for_active_shards', 'include_type_name')
     def create(self, index, body=None, params=None):
         """
         Create an index in Elasticsearch.
@@ -117,7 +117,7 @@ class IndicesClient(NamespacedClient):
             feature), params=params)
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
-        'master_timeout', 'timeout')
+        'master_timeout', 'request_timeout')
     def open(self, index, params=None):
         """
         Open a closed index to make it available for search.
@@ -141,7 +141,7 @@ class IndicesClient(NamespacedClient):
             '_open'), params=params)
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
-        'master_timeout', 'timeout')
+        'master_timeout', 'request_timeout')
     def close(self, index, params=None):
         """
         Close an index to remove it's overhead from the cluster. Closed index
@@ -166,7 +166,7 @@ class IndicesClient(NamespacedClient):
             '_close'), params=params)
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
-        'master_timeout', 'timeout')
+        'master_timeout', 'request_timeout')
     def delete(self, index, params=None):
         """
         Delete an index in Elasticsearch
@@ -241,7 +241,7 @@ class IndicesClient(NamespacedClient):
             '_mapping', doc_type), params=params)
 
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
-        'master_timeout', 'timeout','include_type_name')
+        'master_timeout', 'request_timeout','include_type_name')
     def put_mapping(self, doc_type, body, index=None, params=None):
         """
         Register specific mapping definition for a specific type.
@@ -326,7 +326,7 @@ class IndicesClient(NamespacedClient):
         return self.transport.perform_request('GET', _make_path(index,
             '_mapping', doc_type, 'field', fields), params=params)
 
-    @query_params('master_timeout', 'timeout')
+    @query_params('master_timeout', 'request_timeout')
     def put_alias(self, index, name, body=None, params=None):
         """
         Create an alias for a specific index/indices.
@@ -392,7 +392,7 @@ class IndicesClient(NamespacedClient):
         return self.transport.perform_request('GET', _make_path(index,
             '_alias', name), params=params)
 
-    @query_params('master_timeout', 'timeout')
+    @query_params('master_timeout', 'request_timeout')
     def update_aliases(self, body, params=None):
         """
         Update specified aliases.
@@ -407,7 +407,7 @@ class IndicesClient(NamespacedClient):
         return self.transport.perform_request('POST', '/_aliases',
             params=params, body=body)
 
-    @query_params('master_timeout', 'timeout')
+    @query_params('master_timeout', 'request_timeout')
     def delete_alias(self, index, name, params=None):
         """
         Delete specific alias.
@@ -428,7 +428,7 @@ class IndicesClient(NamespacedClient):
             '_alias', name), params=params)
 
     @query_params('create', 'flat_settings', 'master_timeout', 'order',
-        'timeout', 'include_type_name')
+        'request_timeout', 'include_type_name')
     def put_template(self, name, body, params=None):
         """
         Create an index template that will automatically be applied to new
@@ -489,7 +489,7 @@ class IndicesClient(NamespacedClient):
         return self.transport.perform_request('GET', _make_path('_template',
             name), params=params)
 
-    @query_params('master_timeout', 'timeout')
+    @query_params('master_timeout', 'request_timeout')
     def delete_template(self, name, params=None):
         """
         Delete an index template by its name.
@@ -830,7 +830,7 @@ class IndicesClient(NamespacedClient):
         return self.transport.perform_request('POST', _make_path(index,
             '_forcemerge'), params=params)
 
-    @query_params('master_timeout', 'timeout', 'wait_for_active_shards')
+    @query_params('master_timeout', 'request_timeout', 'wait_for_active_shards')
     def shrink(self, index, target, body=None, params=None):
         """
         The shrink index API allows you to shrink an existing index into a new
@@ -859,7 +859,7 @@ class IndicesClient(NamespacedClient):
         return self.transport.perform_request('PUT', _make_path(index,
             '_shrink', target), params=params, body=body)
 
-    @query_params('dry_run', 'master_timeout', 'timeout',
+    @query_params('dry_run', 'master_timeout', 'request_timeout',
         'wait_for_active_shards', 'include_type_name')
     def rollover(self, alias, new_index=None, body=None, params=None):
         """
