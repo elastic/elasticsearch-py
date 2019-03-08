@@ -1,7 +1,19 @@
 from .utils import NamespacedClient, query_params, _make_path
 
+
 class NodesClient(NamespacedClient):
-    @query_params('flat_settings', 'timeout')
+    @query_params()
+    def reload_secure_settings(self, params=None):
+        """
+        Reload any settings that have been marked as "reloadable"
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/secure-settings.html#reloadable-secure-settings>`_
+
+        """
+        return self.transport.perform_request(
+            "POST", _make_path("_nodes", "reload_secure_settings"), params=params
+        )
+
+    @query_params("flat_settings", "timeout")
     def info(self, node_id=None, metric=None, params=None):
         """
         The cluster nodes info API allows to retrieve one or more (or all) of
@@ -17,11 +29,20 @@ class NodesClient(NamespacedClient):
         :arg flat_settings: Return settings in flat format (default: false)
         :arg timeout: Explicit operation timeout
         """
-        return self.transport.perform_request('GET', _make_path('_nodes',
-            node_id, metric), params=params)
+        return self.transport.perform_request(
+            "GET", _make_path("_nodes", node_id, metric), params=params
+        )
 
-    @query_params('completion_fields', 'fielddata_fields', 'fields', 'groups',
-        'include_segment_file_sizes', 'level', 'timeout', 'types')
+    @query_params(
+        "completion_fields",
+        "fielddata_fields",
+        "fields",
+        "groups",
+        "include_segment_file_sizes",
+        "level",
+        "timeout",
+        "types",
+    )
     def stats(self, node_id=None, metric=None, index_metric=None, params=None):
         """
         The cluster nodes stats API allows to retrieve one or more (or all) of
@@ -54,11 +75,15 @@ class NodesClient(NamespacedClient):
         :arg types: A comma-separated list of document types for the `indexing`
             index metric
         """
-        return self.transport.perform_request('GET', _make_path('_nodes',
-            node_id, 'stats', metric, index_metric), params=params)
+        return self.transport.perform_request(
+            "GET",
+            _make_path("_nodes", node_id, "stats", metric, index_metric),
+            params=params,
+        )
 
-    @query_params('type', 'ignore_idle_threads', 'interval', 'snapshots',
-        'threads', 'timeout')
+    @query_params(
+        "type", "ignore_idle_threads", "interval", "snapshots", "threads", "timeout"
+    )
     def hot_threads(self, node_id=None, params=None):
         """
         An API allowing to get the current hot threads on each node in the cluster.
@@ -80,12 +105,13 @@ class NodesClient(NamespacedClient):
         :arg timeout: Explicit operation timeout
         """
         # avoid python reserved words
-        if params and 'type_' in params:
-            params['type'] = params.pop('type_')
-        return self.transport.perform_request('GET', _make_path('_cluster',
-            'nodes', node_id, 'hotthreads'), params=params)
+        if params and "type_" in params:
+            params["type"] = params.pop("type_")
+        return self.transport.perform_request(
+            "GET", _make_path("_cluster", "nodes", node_id, "hotthreads"), params=params
+        )
 
-    @query_params('human', 'timeout')
+    @query_params("human", "timeout")
     def usage(self, node_id=None, metric=None, params=None):
         """
         The cluster nodes usage API allows to retrieve information on the usage
@@ -101,5 +127,6 @@ class NodesClient(NamespacedClient):
             format., default False
         :arg timeout: Explicit operation timeout
         """
-        return self.transport.perform_request('GET', _make_path('_nodes',
-            node_id, 'usage', metric), params=params)
+        return self.transport.perform_request(
+            "GET", _make_path("_nodes", node_id, "usage", metric), params=params
+        )
