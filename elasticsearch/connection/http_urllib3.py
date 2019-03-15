@@ -48,7 +48,7 @@ class Urllib3HttpConnection(Connection):
         string or a tuple
     :arg use_ssl: use ssl for the connection if `True`
     :arg verify_certs: whether to verify SSL certificates
-    :arg ssl_show_warn: show warnning when verify certs is disabled
+    :arg ssl_show_warn: show warning when verify certs is disabled
     :arg ca_certs: optional path to CA bundle.
         See https://urllib3.readthedocs.io/en/latest/security.html#using-certifi-with-urllib3
         for instructions how to get default set
