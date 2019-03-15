@@ -74,6 +74,13 @@ class TestUrllib3Connection(TestCase):
 
         self.assertIsInstance(con.pool, urllib3.HTTPSConnectionPool)
 
+    def nowarn_when_test_uses_https_if_verify_certs_is_off(self):
+        with warnings.catch_warnings(record=True) as w:
+            con = Urllib3HttpConnection(use_ssl=True, verify_certs=False, ssl_show_warn=False)
+            self.assertEquals(0, len(w))
+
+        self.assertIsInstance(con.pool, urllib3.HTTPSConnectionPool)
+
     def test_doesnt_use_https_if_not_specified(self):
         con = Urllib3HttpConnection()
         self.assertIsInstance(con.pool, urllib3.HTTPConnectionPool)
@@ -122,6 +129,17 @@ class TestRequestsConnection(TestCase):
             con = self._get_mock_connection({'use_ssl': True, 'url_prefix': 'url', 'verify_certs': False})
             self.assertEquals(1, len(w))
             self.assertEquals('Connecting to https://localhost:9200/url using SSL with verify_certs=False is insecure.', str(w[0].message))
+
+        request = self._get_request(con, 'GET', '/')
+
+        self.assertEquals('https://localhost:9200/url/', request.url)
+        self.assertEquals('GET', request.method)
+        self.assertEquals(None, request.body)
+
+    def nowarn_when_test_uses_https_if_verify_certs_is_off(self):
+        with warnings.catch_warnings(record=True) as w:
+            con = self._get_mock_connection({'use_ssl': True, 'url_prefix': 'url', 'verify_certs': False, 'ssl_show_warn': False})
+            self.assertEquals(0, len(w))
 
         request = self._get_request(con, 'GET', '/')
 
