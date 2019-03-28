@@ -1,4 +1,4 @@
-from elasticsearch.client.utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
+from ..utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 class MigrationClient(NamespacedClient):
     @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable')

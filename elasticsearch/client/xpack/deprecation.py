@@ -1,4 +1,4 @@
-from elasticsearch.client.utils import NamespacedClient, query_params, _make_path
+from ..utils import NamespacedClient, query_params, _make_path
 
 class DeprecationClient(NamespacedClient):
     @query_params()
