@@ -123,6 +123,20 @@ class Elasticsearch(object):
             ca_certs='/path/to/CA_certs'
         )
 
+    If using SSL, but don't verify the certs, a warning message is showed
+    optionally (see :class:`~elasticsearch.Urllib3HttpConnection` for
+    detailed description of the options)::
+
+        es = Elasticsearch(
+            ['localhost:443', 'other_host:443'],
+            # turn on SSL
+            use_ssl=True,
+            # no verify SSL certificates
+            verify_certs=False,
+            # don't show warnings about ssl certs verification
+            ssl_show_warn=False
+        )
+
     SSL client authentication is supported
     (see :class:`~elasticsearch.Urllib3HttpConnection` for
     detailed description of the options)::

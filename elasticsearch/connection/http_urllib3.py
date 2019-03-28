@@ -48,6 +48,7 @@ class Urllib3HttpConnection(Connection):
         string or a tuple
     :arg use_ssl: use ssl for the connection if `True`
     :arg verify_certs: whether to verify SSL certificates
+    :arg ssl_show_warn: show warning when verify certs is disabled
     :arg ca_certs: optional path to CA bundle.
         See https://urllib3.readthedocs.io/en/latest/security.html#using-certifi-with-urllib3
         for instructions how to get default set
@@ -67,7 +68,7 @@ class Urllib3HttpConnection(Connection):
     :arg http_compress: Use gzip compression
     """
     def __init__(self, host='localhost', port=9200, http_auth=None,
-            use_ssl=False, verify_certs=VERIFY_CERTS_DEFAULT, ca_certs=None, client_cert=None,
+            use_ssl=False, verify_certs=VERIFY_CERTS_DEFAULT, ssl_show_warn=True, ca_certs=None, client_cert=None,
             client_key=None, ssl_version=None, ssl_assert_hostname=None,
             ssl_assert_fingerprint=None, maxsize=10, headers=None, ssl_context=None, http_compress=False, **kwargs):
 
@@ -131,8 +132,9 @@ class Urllib3HttpConnection(Connection):
                     'key_file': client_key,
                 })
             else:
-                warnings.warn(
-                    'Connecting to %s using SSL with verify_certs=False is insecure.' % host)
+                if ssl_show_warn:
+                    warnings.warn(
+                        'Connecting to %s using SSL with verify_certs=False is insecure.' % host)
 
         self.pool = pool_class(host, port=port, timeout=self.timeout, maxsize=maxsize, **kw)
 

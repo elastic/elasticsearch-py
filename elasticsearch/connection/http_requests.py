@@ -18,6 +18,7 @@ class RequestsHttpConnection(Connection):
         string or a tuple. Any value will be passed into requests as `auth`.
     :arg use_ssl: use ssl for the connection if `True`
     :arg verify_certs: whether to verify SSL certificates
+    :arg ssl_show_warn: show warning when verify certs is disabled
     :arg ca_certs: optional path to CA bundle. By default standard requests'
         bundle will be used.
     :arg client_cert: path to the file containing the private key and the
@@ -27,7 +28,7 @@ class RequestsHttpConnection(Connection):
     :arg headers: any custom http headers to be add to requests
     """
     def __init__(self, host='localhost', port=9200, http_auth=None,
-        use_ssl=False, verify_certs=True, ca_certs=None, client_cert=None,
+        use_ssl=False, verify_certs=True, ssl_show_warn=True, ca_certs=None, client_cert=None,
         client_key=None, headers=None, **kwargs):
         if not REQUESTS_AVAILABLE:
             raise ImproperlyConfigured("Please install requests to use RequestsHttpConnection.")
@@ -57,7 +58,7 @@ class RequestsHttpConnection(Connection):
                 raise ImproperlyConfigured("You cannot pass CA certificates when verify SSL is off.")
             self.session.verify = ca_certs
 
-        if self.use_ssl and not verify_certs:
+        if self.use_ssl and not verify_certs and ssl_show_warn:
             warnings.warn(
                 'Connecting to %s using SSL with verify_certs=False is insecure.' % self.base_url)
 
