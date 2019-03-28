@@ -4,6 +4,7 @@ __all__ = [
     'SSLError', 'ConnectionTimeout', 'AuthenticationException', 'AuthorizationException'
 ]
 
+
 class ImproperlyConfigured(Exception):
     """
     Exception raised when the config passed to the client is inconsistent or invalid.
@@ -56,12 +57,16 @@ class TransportError(ElasticsearchException):
         try:
             if self.info and 'error' in self.info:
                 if isinstance(self.info['error'], dict):
-                    cause = ', %r' % self.info['error']['root_cause'][0]['reason']
+                    root_cause = self.info['error']['root_cause'][0]
+                    cause = ', '.join(filter(None, [repr(root_cause['reason']), root_cause.get('resource.id'),
+                                                    root_cause.get('resource.type')]))
+
                 else:
-                    cause = ', %r' % self.info['error']
+                    cause = repr(self.info['error'])
         except LookupError:
             pass
-        return '%s(%s, %r%s)' % (self.__class__.__name__, self.status_code, self.error, cause)
+        msg = ', '.join(filter(None, [str(self.status_code), repr(self.error), cause]))
+        return '%s(%s)' % (self.__class__.__name__, msg)
 
 
 class ConnectionError(TransportError):
@@ -70,6 +75,7 @@ class ConnectionError(TransportError):
     exception from the underlying :class:`~elasticsearch.Connection`
     implementation is available as ``.info.``
     """
+
     def __str__(self):
         return 'ConnectionError(%s) caused by: %s(%s)' % (
             self.error, self.info.__class__.__name__, self.info)
@@ -81,6 +87,7 @@ class SSLError(ConnectionError):
 
 class ConnectionTimeout(ConnectionError):
     """ A network timeout. Doesn't cause a node retry by default. """
+
     def __str__(self):
         return 'ConnectionTimeout caused by - %s(%s)' % (
             self.info.__class__.__name__, self.info)
@@ -104,6 +111,7 @@ class AuthenticationException(TransportError):
 
 class AuthorizationException(TransportError):
     """ Exception representing a 403 status code. """
+
 
 # more generic mappings from status_code to python exceptions
 HTTP_EXCEPTIONS = {
