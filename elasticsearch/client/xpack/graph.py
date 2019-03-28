@@ -1,7 +1,8 @@
-from ..utils import NamespacedClient, query_params, _make_path
+from ..utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
+
 
 class GraphClient(NamespacedClient):
-    @query_params('routing', 'timeout')
+    @query_params("routing", "timeout")
     def explore(self, index=None, doc_type=None, body=None, params=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/graph-explore-api.html>`_
@@ -14,5 +15,9 @@ class GraphClient(NamespacedClient):
         :arg routing: Specific routing value
         :arg timeout: Explicit operation timeout
         """
-        return self.transport.perform_request('GET', _make_path(index, doc_type,
-            '_xpack', 'graph', '_explore'), params=params, body=body)
+        return self.transport.perform_request(
+            "GET",
+            _make_path(index, doc_type, "_graph", "explore"),
+            params=params,
+            body=body,
+        )
