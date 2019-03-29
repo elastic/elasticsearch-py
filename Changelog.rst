@@ -3,12 +3,12 @@
 Changelog
 =========
 
-6.4.0 (dev)
+7.0.0 (dev)
 -----------
   * Removed deprecated option ``update_all_types``.
   * Using insecure SSL configuration (``verify_cert=False``) raises a warning, this can
     be not showed with ``ssl_show_warn=False``
-
+  * Add support for 7.x api's in Elasticsearch both xpack and oss flavors
 6.3.0 (2018-06-20)
 -----------
 
