@@ -1,28 +1,14 @@
 ---
 ELASTICSEARCH_VERSION:
-- 6.4.2
-- 6.3.2
-- 6.1.4
-- 6.0.1
-
+- 7.0.0-beta1
+- 6.6.2
 
 
 PYTHON_VERSION:
-- 2.6
 - 2.7
-- 3.3
 - 3.4
 - 3.5
 - 3.6
 - 3.7
 
 exclude:
-# since a base image for python2.6 doens't exist i need to create one.
-- PYTHON_VERSION: 2.6
-# Something is wrong with the way 3.7 and the es-client handle multiprocessing.
-# https://github.com/elastic/elasticsearch-py/issues/865
-- PYTHON_VERSION: 3.7
-# new feature in 6.4.2 which is causing a test failure.
-# https://github.com/elastic/elasticsearch-py/issues/866
-- ELASTICSEARCH_VERSION: 6.4.2
-

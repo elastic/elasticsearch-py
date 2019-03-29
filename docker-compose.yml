@@ -28,6 +28,8 @@ services:
       - "repositories.url.allowed_urls=http://*"
       - node.attr.testattr=test
       - bootstrap.memory_lock=false
+      - "node.name=test"
+      - "cluster.initial_master_nodes=test"
       - "discovery.zen.ping.unicast.hosts=elasticsearch"
       - "http.max_content_length=5mb"
 networks:

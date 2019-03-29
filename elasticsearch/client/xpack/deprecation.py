@@ -1,5 +1,6 @@
 from ..utils import NamespacedClient, query_params, _make_path
 
+
 class DeprecationClient(NamespacedClient):
     @query_params()
     def info(self, index=None, params=None):
@@ -8,6 +9,8 @@ class DeprecationClient(NamespacedClient):
 
         :arg index: Index pattern
         """
-        return self.transport.perform_request('GET', _make_path(index, '_xpack',
-            'migration', 'deprecations'), params=params)
-
+        return self.transport.perform_request(
+            "GET",
+            _make_path(index, "_xpack", "migration", "deprecations"),
+            params=params,
+        )

@@ -1,7 +1,8 @@
 from ..utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
+
 class MonitoringClient(NamespacedClient):
-    @query_params('interval', 'system_api_version', 'system_id')
+    @query_params("interval", "system_api_version", "system_id")
     def bulk(self, body, doc_type=None, params=None):
         """
         `<http://www.elastic.co/guide/en/monitoring/current/appendix-api-bulk.html>`_
@@ -16,6 +17,9 @@ class MonitoringClient(NamespacedClient):
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
-        return self.transport.perform_request('POST', _make_path('_xpack',
-            'monitoring', doc_type, '_bulk'), params=params,
-            body=self.client._bulk_body(body))
+        return self.transport.perform_request(
+            "POST",
+            _make_path("_monitoring", doc_type, "bulk"),
+            params=params,
+            body=self._bulk_body(body),
+        )
