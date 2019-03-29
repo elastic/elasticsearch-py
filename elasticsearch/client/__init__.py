@@ -710,7 +710,8 @@ class Elasticsearch(object):
         Execute a search query and get back search hits that match the query.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-search.html>`_
 
-        :arg index: A comma-separated list of index names to search; use `_all`
+        :arg index: A list of index names to search, or a string containing a
+            comma-separated list of index names to search; use `_all`
             or empty string to perform the operation on all indices
         :arg body: The search definition using the Query DSL
         :arg _source: True or false to return the _source field or not, or a
@@ -853,8 +854,9 @@ class Elasticsearch(object):
         Perform an update on all documents matching a query.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update-by-query.html>`_
 
-        :arg index: A comma-separated list of index names to search; use `_all`
-            or empty string to perform the operation on all indices
+        :arg index: A list of index names to search, or a string containing a
+            comma-separated list of index names to search; use `_all` or the
+            empty string to perform the operation on all indices
         :arg body: The search definition using the Query DSL
         :arg _source: True or false to return the _source field or not, or a
             list of fields to return
@@ -1024,8 +1026,9 @@ class Elasticsearch(object):
         Delete all documents matching a query.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-delete-by-query.html>`_
 
-        :arg index: A comma-separated list of index names to search; use `_all`
-            or empty string to perform the operation on all indices
+        :arg index: A list of index names to search, or a string containing a
+            comma-separated list of index names to search; use `_all` or the
+            empty string to perform the operation on all indices
         :arg body: The search definition using the Query DSL
         :arg _source: True or false to return the _source field or not, or a
             list of fields to return
@@ -1115,8 +1118,9 @@ class Elasticsearch(object):
         out issues or planning optimizations with routing and shard preferences.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-shards.html>`_
 
-        :arg index: A comma-separated list of index names to search; use `_all`
-            or empty string to perform the operation on all indices
+        :arg index: A list of index names to search, or a string containing a
+            comma-separated list of index names to search; use `_all` or the
+            empty string to perform the operation on all indices
         :arg allow_no_indices: Whether to ignore if a wildcard indices
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
@@ -1153,8 +1157,9 @@ class Elasticsearch(object):
         fill in template parameters.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html>`_
 
-        :arg index: A comma-separated list of index names to search; use `_all`
-            or empty string to perform the operation on all indices
+        :arg index: A list of index names to search, or a string containing a
+            comma-separated list of index names to search; use `_all` or the
+            empty string to perform the operation on all indices
         :arg body: The search definition template and its params
         :arg allow_no_indices: Whether to ignore if a wildcard indices
             expression resolves into no concrete indices. (This includes `_all`
@@ -1347,7 +1352,8 @@ class Elasticsearch(object):
         Execute a query and get the number of matches for that query.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-count.html>`_
 
-        :arg index: A comma-separated list of indices to restrict the results
+        :arg index: A list of index names or a string containing a
+            comma-separated list of index names to restrict the results to
         :arg body: A query to restrict the results specified with the Query DSL
             (optional)
         :arg allow_no_indices: Whether to ignore if a wildcard indices
@@ -1453,7 +1459,8 @@ class Elasticsearch(object):
 
         :arg body: The request definitions (metadata-search request definition
             pairs), separated by newlines
-        :arg index: A comma-separated list of index names to use as default
+        :arg index: A list of index names, or a string containing a
+            comma-separated list of index names, to use as the default
         :arg max_concurrent_searches: Controls the maximum number of concurrent
             searches the multi search api will execute
         :arg pre_filter_shard_size: A threshold that enforces a pre-filter
@@ -1672,7 +1679,8 @@ class Elasticsearch(object):
 
         :arg body: The request definitions (metadata-search request definition
             pairs), separated by newlines
-        :arg index: A comma-separated list of index names to use as default
+        :arg index: A list of index names, or a string containing a
+            comma-separated list of index names, to use as the default
         :arg max_concurrent_searches: Controls the maximum number of concurrent
             searches the multi search api will execute
         :arg search_type: Search operation type, valid choices are:
@@ -1699,8 +1707,9 @@ class Elasticsearch(object):
         The field capabilities API allows to retrieve the capabilities of fields among multiple indices.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-field-caps.html>`_
 
-        :arg index: A comma-separated list of index names; use `_all` or empty
-            string to perform the operation on all indices
+        :arg index: A list of index names, or a string containing a
+            comma-separated list of index names; use `_all` or the empty string
+            to perform the operation on all indices
         :arg body: Field json objects containing an array of field names
         :arg allow_no_indices: Whether to ignore if a wildcard indices
             expression resolves into no concrete indices. (This includes `_all`
