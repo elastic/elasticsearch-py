@@ -1,4 +1,7 @@
+from mock import patch
+
 from elasticsearch import helpers, TransportError
+from elasticsearch.helpers import ScanError
 
 from . import ElasticsearchTestCase
 from ..test_cases import SkipTest
@@ -338,6 +341,29 @@ class TestScan(ElasticsearchTestCase):
         self.assertEquals(set(map(str, range(100))), set(d["_id"] for d in docs))
         self.assertEquals(set(range(100)), set(d["_source"]["answer"] for d in docs))
 
+    def test_scroll_error(self):
+        bulk = []
+        for x in range(10):
+            bulk.append({"index": {"_index": "test_index", "_type": "_doc"}})
+            bulk.append({"value": x})
+        self.client.bulk(bulk, refresh=True)
+
+        with patch.object(self.client, 'scroll') as scroll_mock:
+            scroll_mock.return_value = {
+                '_shards': {'successful': 4, 'total': 5},
+                'hits': {'hits': [{'dummy': 42}]},
+            }
+
+            data = list(helpers.scan(self.client, index='test_index', size=2, raise_on_error=False))
+            self.assertEqual(len(data), 3)
+            self.assertEqual(data[-1], {'dummy': 42})
+
+            with self.assertRaises(ScanError):
+                data = list(
+                    helpers.scan(self.client, index='test_index', size=2, raise_on_error=True)
+                )
+            self.assertEqual(len(data), 3)
+            self.assertEqual(data[-1], {'dummy': 42})
 
 class TestReindex(ElasticsearchTestCase):
     def setUp(self):
