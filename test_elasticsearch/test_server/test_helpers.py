@@ -365,6 +365,35 @@ class TestScan(ElasticsearchTestCase):
             self.assertEqual(len(data), 3)
             self.assertEqual(data[-1], {'dummy': 42})
 
+    def test_initial_search_error(self):
+        with patch.object(self, 'client') as client_mock:
+            client_mock.search.return_value = {
+                '_scroll_id': 'dummy_id',
+                '_shards': {'successful': 4, 'total': 5},
+                'hits': {'hits': [{'search_data': 1}]},
+            }
+            client_mock.scroll.return_value = {
+                '_shards': {'successful': 4, 'total': 5},
+                'hits': {'hits': [{'scroll_data': 2}]},
+            }
+
+            data = list(helpers.scan(self.client, index='test_index', size=2, raise_on_error=False))
+            self.assertEqual(data, [{'search_data': 1}, {'scroll_data': 2}])
+
+            with self.assertRaises(ScanError):
+                data = list(
+                    helpers.scan(self.client, index='test_index', size=2, raise_on_error=True)
+                )
+                self.assertEqual(data, [{'search_data': 1}])
+
+    def test_no_scroll_id_fast_route(self):
+        with patch.object(self.client, 'search') as search_mock:
+            search_mock.return_value = {'no': '_scroll_id'}
+            data = list(helpers.scan(self.client, index='test_index'))
+
+            self.assertEqual(data, [])
+
+
 class TestReindex(ElasticsearchTestCase):
     def setUp(self):
         super(TestReindex, self).setUp()
