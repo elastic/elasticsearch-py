@@ -361,7 +361,7 @@ class TestScan(ElasticsearchTestCase):
 
     def test_scroll_error(self):
         bulk = []
-        for x in range(10):
+        for x in range(4):
             bulk.append({"index": {"_index": "test_index", "_type": "_doc"}})
             bulk.append({"value": x})
         self.client.bulk(bulk, refresh=True)
@@ -418,6 +418,57 @@ class TestScan(ElasticsearchTestCase):
             self.assertEqual(data, [])
             client_mock.scroll.assert_not_called()
             client_mock.clear_scroll.assert_not_called()
+
+    @patch('elasticsearch.helpers.actions.logger')
+    def test_logger(self, logger_mock):
+        bulk = []
+        for x in range(4):
+            bulk.append({'index': {'_index': 'test_index', '_type': '_doc'}})
+            bulk.append({'value': x})
+        self.client.bulk(bulk, refresh=True)
+
+        with patch.object(self.client, 'scroll') as scroll_mock:
+            scroll_mock.side_effect = self.mock_scroll_responses
+            list(helpers.scan(
+                self.client,
+                index='test_index',
+                size=2,
+                raise_on_error=False,
+                clear_scroll=False
+            ))
+            logger_mock.warning.assert_called()
+
+            scroll_mock.side_effect = self.mock_scroll_responses
+            try:
+                list(helpers.scan(
+                    self.client,
+                    index='test_index',
+                    size=2,
+                    raise_on_error=True,
+                    clear_scroll=False
+                ))
+            except ScanError:
+                pass
+            logger_mock.warning.assert_called()
+
+    def test_clear_scroll(self):
+        bulk = []
+        for x in range(4):
+            bulk.append({'index': {'_index': 'test_index', '_type': '_doc'}})
+            bulk.append({'value': x})
+        self.client.bulk(bulk, refresh=True)
+
+        with patch.object(self.client, 'clear_scroll', wraps=self.client.clear_scroll) as spy:
+            list(helpers.scan(self.client, index='test_index', size=2))
+            spy.assert_called_once()
+
+            spy.reset_mock()
+            list(helpers.scan(self.client, index='test_index', size=2, clear_scroll=True))
+            spy.assert_called_once()
+
+            spy.reset_mock()
+            list(helpers.scan(self.client, index='test_index', size=2, clear_scroll=False))
+            spy.assert_not_called()
 
 
 class TestReindex(ElasticsearchTestCase):
