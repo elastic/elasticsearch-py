@@ -427,33 +427,19 @@ def scan(
     if not preserve_order:
         query = query.copy() if query else {}
         query["sort"] = "_doc"
+
     # initial search
     resp = client.search(
         body=query, scroll=scroll, size=size, request_timeout=request_timeout, **kwargs
     )
-
     scroll_id = resp.get("_scroll_id")
-    if scroll_id is None:
-        return
 
     try:
-        first_run = True
-        while True:
-            # if we didn't set search_type to scan initial search contains data
-            if first_run:
-                first_run = False
-            else:
-                resp = client.scroll(
-                    scroll_id,
-                    scroll=scroll,
-                    request_timeout=request_timeout,
-                    **scroll_kwargs
-                )
-
+        while scroll_id and resp['hits']['hits']:
             for hit in resp["hits"]["hits"]:
                 yield hit
 
-            # check if we have any errrors
+            # check if we have any errors
             if resp["_shards"]["successful"] < resp["_shards"]["total"]:
                 logger.warning(
                     "Scroll request has only succeeded on %d shards out of %d.",
@@ -467,10 +453,14 @@ def scan(
                         % (resp["_shards"]["successful"], resp["_shards"]["total"]),
                     )
 
+            resp = client.scroll(
+                scroll_id,
+                scroll=scroll,
+                request_timeout=request_timeout,
+                **scroll_kwargs
+            )
             scroll_id = resp.get("_scroll_id")
-            # end of scroll
-            if scroll_id is None or not resp["hits"]["hits"]:
-                break
+
     finally:
         if scroll_id and clear_scroll:
             client.clear_scroll(body={"scroll_id": [scroll_id]}, ignore=(404,))
