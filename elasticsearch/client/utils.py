@@ -44,7 +44,7 @@ def _escape(value):
 def _make_path(*parts):
     """
     Create a URL string from parts, omit all `None` values and empty strings.
-    Convert lists nad tuples to comma separated values.
+    Convert lists and tuples to comma separated values.
     """
     # TODO: maybe only allow some parts to be lists/tuples ?
     return "/" + "/".join(
