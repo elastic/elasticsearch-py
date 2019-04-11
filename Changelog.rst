@@ -3,13 +3,22 @@
 Changelog
 =========
 
-7.0.0 (dev)
------------
+7.1.0 (dev)
+----------
+
+7.0.0 (2019-04-11)
+------------------
+
   * Removed deprecated option ``update_all_types``.
   * Using insecure SSL configuration (``verify_cert=False``) raises a warning, this can
     be not showed with ``ssl_show_warn=False``
   * Add support for 7.x api's in Elasticsearch both xpack and oss flavors
-6.3.0 (2018-06-20)
+  * relative import for x-pack.
+  * include_type_name to pertinent indices operations
+  * fix python 3.x string decode exception
+  * better unicode chunking
+
+  6.3.0 (2018-06-20)
 -----------
 
   * Add an exponential wait on delays
