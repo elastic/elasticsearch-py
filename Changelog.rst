@@ -3,9 +3,14 @@
 Changelog
 =========
 
-6.4.0 (dev)
+6.5.0 (dev)
+-----------
+
+6.4.0 (2019-04-12)
 -----------
   * Removed deprecated option ``update_all_types``.
+  * add included_type_name in pertinet indices operations
+  * better logic to handle unicode and chunking
 
 6.3.0 (2018-06-20)
 -----------
