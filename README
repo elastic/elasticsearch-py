@@ -28,6 +28,9 @@ Compatibility
 The library is compatible with all Elasticsearch versions since ``0.90.x`` but you
 **have to use a matching major version**:
 
+For **Elasticsearch 7.0** and later, use the major version 7 (``7.x.y``) of the
+library.
+
 For **Elasticsearch 6.0** and later, use the major version 6 (``6.x.y``) of the
 library.
 
@@ -40,8 +43,11 @@ library, and so on.
 The recommended way to set your requirements in your `setup.py` or
 `requirements.txt` is::
 
+    # Elasticsearch 7.x
+    elasticsearch>=7.0.0,<8.0.0
+
     # Elasticsearch 6.x
-    elasticsearch>=6.0.0,<7.0.0
+    elasticsearch6>=6.0.0,<7.0.0
 
     # Elasticsearch 5.x
     elasticsearch>=5.0.0,<6.0.0
@@ -77,11 +83,11 @@ Simple use-case::
     {u'acknowledged': True}
 
     # datetimes will be serialized
-    >>> es.index(index="my-index", doc_type="test-type", id=42, body={"any": "data", "timestamp": datetime.now()})
+    >>> es.index(index="my-index", id=42, body={"any": "data", "timestamp": datetime.now()})
     {u'_id': u'42', u'_index': u'my-index', u'_type': u'test-type', u'_version': 1, u'ok': True}
 
     # but not deserialized
-    >>> es.get(index="my-index", doc_type="test-type", id=42)['_source']
+    >>> es.get(index="my-index", id=42)['_source']
     {u'any': u'data', u'timestamp': u'2013-05-12T19:45:31.804229'}
 
 `Full documentation`_.
@@ -125,7 +131,7 @@ The client's features include:
 License
 -------
 
-Copyright 2017 Elasticsearch
+Copyright 2019 Elasticsearch
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
