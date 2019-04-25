@@ -678,6 +678,7 @@ class Elasticsearch(object):
         "expand_wildcards",
         "explain",
         "from_",
+        "ignore_throttled",
         "ignore_unavailable",
         "lenient",
         "max_concurrent_shard_requests",
