@@ -143,15 +143,17 @@ def _process_bulk_chunk(
         bulk_data, map(methodcaller("popitem"), resp["items"])
     ):
         ok = 200 <= item.get("status", 500) < 300
-        if not ok and raise_on_error:
+        if not ok:
             # include original document source
-            if len(data) > 1:
+            if op_type != "delete":
                 item["data"] = data[1]
-            errors.append({op_type: item})
-
-        if ok or not errors:
-            # if we are not just recording all errors to be able to raise
-            # them all at once, yield items individually
+            if raise_on_error:
+                errors.append({op_type: item})
+            else:
+                # if we are not just recording all errors to be able to raise
+                # them all at once, yield items individually
+                yield ok, {op_type: item}
+        else:
             yield ok, {op_type: item}
 
     if errors:
