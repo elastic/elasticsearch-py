@@ -6,10 +6,13 @@ Changelog
 6.5.0 (dev)
 -----------
 
-6.4.0 (2019-05-09)
+6.4.1 (2019-05-09)
+-----------
+  * Update API's to be current with ES 6.7
+
+6.4.0 (2019-04-12)
 -----------
   * Removed deprecated option ``update_all_types``.
-  * Update API's to be current with ES 6.7
 
 6.3.0 (2018-06-20)
 -----------
