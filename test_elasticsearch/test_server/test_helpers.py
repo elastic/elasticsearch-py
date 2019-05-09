@@ -486,6 +486,8 @@ class TestParentChildReindex(ElasticsearchTestCase):
             {
                 "_id": "42",
                 "_index": "real-index",
+                "_primary_term": 1,
+                "_seq_no": 0,
                 "_source": {"question_answer": "question"},
                 "_type": "post",
                 "_version": 1,
