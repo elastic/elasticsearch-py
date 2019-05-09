@@ -1,12 +1,11 @@
 ---
 ELASTICSEARCH_VERSION:
-- 7.0.0-beta1
-- 6.6.2
+- 7.0.0
+- 7.0.1
 
 
 PYTHON_VERSION:
 - 2.7
-- 3.4
 - 3.5
 - 3.6
 - 3.7
