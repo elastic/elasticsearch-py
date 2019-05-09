@@ -1,5 +1,3 @@
-
-
 from ..exceptions import ElasticsearchException
 
 

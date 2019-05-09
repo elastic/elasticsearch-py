@@ -15,7 +15,8 @@ from .tasks import TasksClient
 from .xpack import XPackClient
 from .utils import query_params, _make_path, SKIP_IN_PATH
 
-logger = logging.getLogger('elasticsearch')
+logger = logging.getLogger("elasticsearch")
+
 
 def _normalize_hosts(hosts):
     """
@@ -34,7 +35,7 @@ def _normalize_hosts(hosts):
     # normalize hosts to dicts
     for host in hosts:
         if isinstance(host, string_types):
-            if '://' not in host:
+            if "://" not in host:
                 host = "//%s" % host
 
             parsed_url = urlparse(host)
@@ -44,15 +45,17 @@ def _normalize_hosts(hosts):
                 h["port"] = parsed_url.port
 
             if parsed_url.scheme == "https":
-                h['port'] = parsed_url.port or 443
-                h['use_ssl'] = True
+                h["port"] = parsed_url.port or 443
+                h["use_ssl"] = True
 
             if parsed_url.username or parsed_url.password:
-                h['http_auth'] = '%s:%s' % (unquote(parsed_url.username),
-                                            unquote(parsed_url.password))
+                h["http_auth"] = "%s:%s" % (
+                    unquote(parsed_url.username),
+                    unquote(parsed_url.password),
+                )
 
-            if parsed_url.path and parsed_url.path != '/':
-                h['url_prefix'] = parsed_url.path
+            if parsed_url.path and parsed_url.path != "/":
+                h["url_prefix"] = parsed_url.path
 
             out.append(h)
         else:
@@ -170,6 +173,7 @@ class Elasticsearch(object):
         es = Elasticsearch(serializer=SetEncoder())
 
     """
+
     def __init__(self, hosts=None, transport_class=Transport, **kwargs):
         """
         :arg hosts: list of nodes we should connect to. Node should be a
@@ -204,8 +208,8 @@ class Elasticsearch(object):
             cons = self.transport.hosts
             # truncate to 5 if there are too many
             if len(cons) > 5:
-                cons = cons[:5] + ['...']
-            return '<{cls}({cons})>'.format(cls=self.__class__.__name__, cons=cons)
+                cons = cons[:5] + ["..."]
+            return "<{cls}({cons})>".format(cls=self.__class__.__name__, cons=cons)
         except:
             # probably operating on custom transport and connection_pool, ignore
             return super(Elasticsearch, self).__repr__()
@@ -213,11 +217,11 @@ class Elasticsearch(object):
     def _bulk_body(self, body):
         # if not passed in a string, serialize items and join by newline
         if not isinstance(body, string_types):
-            body = '\n'.join(map(self.transport.serializer.dumps, body))
+            body = "\n".join(map(self.transport.serializer.dumps, body))
 
         # bulk body must end with a newline
-        if not body.endswith('\n'):
-            body += '\n'
+        if not body.endswith("\n"):
+            body += "\n"
 
         return body
 
@@ -228,7 +232,7 @@ class Elasticsearch(object):
         `<http://www.elastic.co/guide/>`_
         """
         try:
-            return self.transport.perform_request('HEAD', '/', params=params)
+            return self.transport.perform_request("HEAD", "/", params=params)
         except TransportError:
             return False
 
@@ -238,10 +242,20 @@ class Elasticsearch(object):
         Get the basic info from the current cluster.
         `<http://www.elastic.co/guide/>`_
         """
-        return self.transport.perform_request('GET', '/', params=params)
+        return self.transport.perform_request("GET", "/", params=params)
 
-    @query_params('parent', 'pipeline', 'refresh', 'routing', 'timeout',
-        'timestamp', 'ttl', 'version', 'version_type', 'wait_for_active_shards')
+    @query_params(
+        "parent",
+        "pipeline",
+        "refresh",
+        "routing",
+        "timeout",
+        "timestamp",
+        "ttl",
+        "version",
+        "version_type",
+        "wait_for_active_shards",
+    )
     def create(self, index, doc_type, id, body, params=None):
         """
         Adds a typed JSON document in a specific index, making it searchable.
@@ -275,12 +289,25 @@ class Elasticsearch(object):
         for param in (index, doc_type, id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('PUT', _make_path(index, doc_type,
-            id, '_create'), params=params, body=body)
+        return self.transport.perform_request(
+            "PUT", _make_path(index, doc_type, id, "_create"), params=params, body=body
+        )
 
-    @query_params('op_type', 'parent', 'pipeline', 'refresh', 'routing',
-        'timeout', 'timestamp', 'ttl', 'version', 'version_type',
-        'wait_for_active_shards')
+    @query_params(
+        "op_type",
+        "parent",
+        "pipeline",
+        "refresh",
+        "routing",
+        "timeout",
+        "timestamp",
+        "ttl",
+        "version",
+        "version_type",
+        "wait_for_active_shards",
+        "if_primary_term",
+        "if_seq_no",
+    )
     def index(self, index, doc_type, body, id=None, params=None):
         """
         Adds or updates a typed JSON document in a specific index, making it searchable.
@@ -311,16 +338,37 @@ class Elasticsearch(object):
             meaning the primary shard only. Set to `all` for all shard copies,
             otherwise set to any non-negative value less than or equal to the
             total number of copies for the shard (number of replicas + 1)
+        :arg if_primary_term: only perform the index operation if the last
+	    operation that has changed the document has the specified primary
+	    term
+	:arg if_seq_no: only perform the index operation if the last operation
+	    that has changed the document has the specified sequence number
         """
         for param in (index, doc_type, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('POST' if id in SKIP_IN_PATH else 'PUT',
-            _make_path(index, doc_type, id), params=params, body=body)
+        return self.transport.perform_request(
+            "POST" if id in SKIP_IN_PATH else "PUT",
+            _make_path(index, doc_type, id),
+            params=params,
+            body=body,
+        )
 
-    @query_params('_source', '_source_exclude', '_source_include', 'parent',
-        'preference', 'realtime', 'refresh', 'routing', 'stored_fields',
-        'version', 'version_type')
+    @query_params(
+        "_source",
+        "_source_exclude",
+        "_source_include",
+        "_source_excludes",
+        "_source_includes",
+        "parent",
+        "preference",
+        "realtime",
+        "refresh",
+        "routing",
+        "stored_fields",
+        "version",
+        "version_type",
+    )
     def exists(self, index, doc_type, id, params=None):
         """
         Returns a boolean indicating whether or not given document exists in Elasticsearch.
@@ -336,6 +384,10 @@ class Elasticsearch(object):
             _source field
         :arg _source_include: A list of fields to extract and return from the
             _source field
+        :arg _source_excludes: A list of fields to exclude from the returned
+            _source field
+        :arg _source_includes: A list of fields to extract and return from the
+            _source field
         :arg parent: The ID of the parent document
         :arg preference: Specify the node or shard the operation should be
             performed on (default: random)
@@ -353,12 +405,24 @@ class Elasticsearch(object):
         for param in (index, doc_type, id):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('HEAD', _make_path(index,
-            doc_type, id), params=params)
+        return self.transport.perform_request(
+            "HEAD", _make_path(index, doc_type, id), params=params
+        )
 
-    @query_params('_source', '_source_exclude', '_source_include', 'parent',
-        'preference', 'realtime', 'refresh', 'routing', 'version',
-        'version_type')
+    @query_params(
+        "_source",
+        "_source_exclude",
+        "_source_include",
+        "_source_excludes",
+        "_source_includes",
+        "parent",
+        "preference",
+        "realtime",
+        "refresh",
+        "routing",
+        "version",
+        "version_type",
+    )
     def exists_source(self, index, doc_type, id, params=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/master/docs-get.html>`_
@@ -372,6 +436,10 @@ class Elasticsearch(object):
         :arg _source_exclude: A list of fields to exclude from the returned
             _source field
         :arg _source_include: A list of fields to extract and return from the
+            _source field
+        :arg _source_excludes: A list of fields to exclude from the returned
+            _source field
+        :arg _source_includes: A list of fields to extract and return from the
             _source field
         :arg parent: The ID of the parent document
         :arg preference: Specify the node or shard the operation should be
@@ -388,12 +456,25 @@ class Elasticsearch(object):
         for param in (index, doc_type, id):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('HEAD', _make_path(index,
-            doc_type, id, '_source'), params=params)
+        return self.transport.perform_request(
+            "HEAD", _make_path(index, doc_type, id, "_source"), params=params
+        )
 
-    @query_params('_source', '_source_exclude', '_source_include', 'parent',
-        'preference', 'realtime', 'refresh', 'routing', 'stored_fields',
-        'version', 'version_type')
+    @query_params(
+        "_source",
+        "_source_exclude",
+        "_source_include",
+        "_source_excludes",
+        "_source_includes",
+        "parent",
+        "preference",
+        "realtime",
+        "refresh",
+        "routing",
+        "stored_fields",
+        "version",
+        "version_type",
+    )
     def get(self, index, doc_type, id, params=None):
         """
         Get a typed JSON document from the index based on its id.
@@ -409,6 +490,10 @@ class Elasticsearch(object):
             _source field
         :arg _source_include: A list of fields to extract and return from the
             _source field
+        :arg _source_excludes: A list of fields to exclude from the returned
+            _source field
+        :arg _source_includes: A list of fields to extract and return from the
+            _source field
         :arg parent: The ID of the parent document
         :arg preference: Specify the node or shard the operation should be
             performed on (default: random)
@@ -426,12 +511,24 @@ class Elasticsearch(object):
         for param in (index, doc_type, id):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('GET', _make_path(index,
-            doc_type, id), params=params)
+        return self.transport.perform_request(
+            "GET", _make_path(index, doc_type, id), params=params
+        )
 
-    @query_params('_source', '_source_exclude', '_source_include', 'parent',
-        'preference', 'realtime', 'refresh', 'routing', 'version',
-        'version_type')
+    @query_params(
+        "_source",
+        "_source_exclude",
+        "_source_include",
+        "_source_excludes",
+        "_source_includes",
+        "parent",
+        "preference",
+        "realtime",
+        "refresh",
+        "routing",
+        "version",
+        "version_type",
+    )
     def get_source(self, index, doc_type, id, params=None):
         """
         Get the source of a document by it's index, type and id.
@@ -446,6 +543,10 @@ class Elasticsearch(object):
         :arg _source_exclude: A list of fields to exclude from the returned
             _source field
         :arg _source_include: A list of fields to extract and return from the
+            _source field
+        :arg _source_excludes: A list of fields to exclude from the returned
+            _source field
+        :arg _source_includes: A list of fields to extract and return from the
             _source field
         :arg parent: The ID of the parent document
         :arg preference: Specify the node or shard the operation should be
@@ -462,11 +563,22 @@ class Elasticsearch(object):
         for param in (index, doc_type, id):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('GET', _make_path(index,
-            doc_type, id, '_source'), params=params)
+        return self.transport.perform_request(
+            "GET", _make_path(index, doc_type, id, "_source"), params=params
+        )
 
-    @query_params('_source', '_source_exclude', '_source_include', 'preference',
-        'realtime', 'refresh', 'routing', 'stored_fields')
+    @query_params(
+        "_source",
+        "_source_exclude",
+        "_source_include",
+        "_source_excludes",
+        "_source_includes",
+        "preference",
+        "realtime",
+        "refresh",
+        "routing",
+        "stored_fields",
+    )
     def mget(self, body, index=None, doc_type=None, params=None):
         """
         Get multiple documents based on an index, type (optional) and ids.
@@ -483,6 +595,10 @@ class Elasticsearch(object):
             _source field
         :arg _source_include: A list of fields to extract and return from the
             _source field
+        :arg _source_excludes: A list of fields to exclude from the returned
+            _source field
+        :arg _source_includes: A list of fields to extract and return from the
+            _source field
         :arg preference: Specify the node or shard the operation should be
             performed on (default: random)
         :arg realtime: Specify whether to perform the operation in realtime or
@@ -495,12 +611,31 @@ class Elasticsearch(object):
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
-        return self.transport.perform_request('GET', _make_path(index,
-            doc_type, '_mget'), params=params, body=body)
+        return self.transport.perform_request(
+            "GET", _make_path(index, doc_type, "_mget"), params=params, body=body
+        )
 
-    @query_params('_source', '_source_exclude', '_source_include', 'fields',
-        'lang', 'parent', 'refresh', 'retry_on_conflict', 'routing', 'timeout',
-        'timestamp', 'ttl', 'version', 'version_type', 'wait_for_active_shards')
+    @query_params(
+        "_source",
+        "_source_exclude",
+        "_source_include",
+        "_source_excludes",
+        "_source_includes",
+        "fields",
+        "if_primary_term",
+        "if_seq_no",
+        "lang",
+        "parent",
+        "refresh",
+        "retry_on_conflict",
+        "routing",
+        "timeout",
+        "timestamp",
+        "ttl",
+        "version",
+        "version_type",
+        "wait_for_active_shards",
+    )
     def update(self, index, doc_type, id, body=None, params=None):
         """
         Update a document based on a script or partial data provided.
@@ -516,7 +651,16 @@ class Elasticsearch(object):
             _source field
         :arg _source_include: A list of fields to extract and return from the
             _source field
+        :arg _source_excludes: A list of fields to exclude from the returned
+            _source field
+        :arg _source_includes: A list of fields to extract and return from the
+            _source field
         :arg fields: A comma-separated list of fields to return in the response
+        :arg if_primary_term: only perform the update operation if the last
+            operation that has changed the document has the specified primary
+            term
+        :arg if_seq_no: only perform the update operation if the last operation
+            that has changed the document has the specified sequence number
         :arg lang: The script language (default: painless)
         :arg parent: ID of the parent document. Is is only used for routing and
             when for the upsert request
@@ -543,19 +687,55 @@ class Elasticsearch(object):
         for param in (index, doc_type, id):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('POST', _make_path(index,
-            doc_type, id, '_update'), params=params, body=body)
+        return self.transport.perform_request(
+            "POST", _make_path(index, doc_type, id, "_update"), params=params, body=body
+        )
 
-    @query_params('_source', '_source_exclude', '_source_include',
-        'allow_no_indices', 'allow_partial_search_results', 'analyze_wildcard',
-        'analyzer', 'batched_reduce_size', 'default_operator', 'df',
-        'docvalue_fields', 'expand_wildcards', 'explain', 'from_',
-        'ignore_unavailable', 'lenient', 'max_concurrent_shard_requests',
-        'pre_filter_shard_size', 'preference', 'q', 'request_cache', 'routing',
-        'scroll', 'search_type', 'size', 'sort', 'stats', 'stored_fields',
-        'suggest_field', 'suggest_mode', 'suggest_size', 'suggest_text',
-        'terminate_after', 'timeout', 'track_scores', 'track_total_hits',
-        'typed_keys', 'version')
+    @query_params(
+        "_source",
+        "_source_exclude",
+        "_source_include",
+        "_source_excludes",
+        "_source_includes",
+        "allow_no_indices",
+        "allow_partial_search_results",
+        "analyze_wildcard",
+        "analyzer",
+        "batched_reduce_size",
+        "default_operator",
+        "df",
+        "docvalue_fields",
+        "expand_wildcards",
+        "explain",
+        "from_",
+        "ignore_throttled",
+        "ignore_unavailable",
+        "lenient",
+        "max_concurrent_shard_requests",
+        "pre_filter_shard_size",
+        "preference",
+        "q",
+        "request_cache",
+        "rest_total_hits_as_int",
+        "routing",
+        "scroll",
+        "search_type",
+        "seq_no_primary_term",
+        "size",
+        "sort",
+        "stats",
+        "stored_fields",
+        "suggest_field",
+        "suggest_mode",
+        "suggest_size",
+        "suggest_text",
+        "terminate_after",
+        "timeout",
+        "track_scores",
+        "track_total_hits",
+        "typed_keys",
+        "version",
+    )
     def search(self, index=None, doc_type=None, body=None, params=None):
         """
         Execute a search query and get back search hits that match the query.
@@ -571,6 +751,10 @@ class Elasticsearch(object):
         :arg _source_exclude: A list of fields to exclude from the returned
             _source field
         :arg _source_include: A list of fields to extract and return from the
+            _source field
+        :arg _source_excludes: A list of fields to exclude from the returned
+            _source field
+        :arg _source_includes: A list of fields to extract and return from the
             _source field
         :arg allow_no_indices: Whether to ignore if a wildcard indices
             expression resolves into no concrete indices. (This includes `_all`
@@ -599,6 +783,8 @@ class Elasticsearch(object):
         :arg explain: Specify whether to return detailed information about score
             computation as part of a hit
         :arg from\\_: Starting offset (default: 0)
+        :arg ignore_throttled: Whether specified concrete, expanded or aliased
+            indices should be ignored when throttled
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
         :arg lenient: Specify whether format-based query failures (such as
@@ -620,11 +806,17 @@ class Elasticsearch(object):
         :arg q: Query in the Lucene query string syntax
         :arg request_cache: Specify if request cache should be used for this
             request or not, defaults to index level setting
+        :arg rest_total_hits_as_int: This parameter is ignored in this version.
+            It is used in the next major version to control whether the rest
+            response should render the total.hits as an object or a number,
+            default False
         :arg routing: A comma-separated list of specific routing values
         :arg scroll: Specify how long a consistent view of the index should be
             maintained for scrolled search
         :arg search_type: Search operation type, valid choices are:
             'query_then_fetch', 'dfs_query_then_fetch'
+        :arg seq_no_primary_term: Specify whether to return sequence number and
+            primary term of the last modification of each hit
         :arg size: Number of hits to return (default: 10)
         :arg sort: A comma-separated list of <field>:<direction> pairs
         :arg stats: Specific 'tag' of the request for logging and statistical
@@ -651,22 +843,53 @@ class Elasticsearch(object):
             hit
         """
         # from is a reserved word so it cannot be used, use from_ instead
-        if 'from_' in params:
-            params['from'] = params.pop('from_')
+        if "from_" in params:
+            params["from"] = params.pop("from_")
 
         if doc_type and not index:
-            index = '_all'
-        return self.transport.perform_request('GET', _make_path(index,
-            doc_type, '_search'), params=params, body=body)
+            index = "_all"
+        return self.transport.perform_request(
+            "GET", _make_path(index, doc_type, "_search"), params=params, body=body
+        )
 
-    @query_params('_source', '_source_exclude', '_source_include',
-        'allow_no_indices', 'analyze_wildcard', 'analyzer', 'conflicts',
-        'default_operator', 'df', 'expand_wildcards', 'from_',
-        'ignore_unavailable', 'lenient', 'pipeline', 'preference', 'q',
-        'refresh', 'request_cache', 'requests_per_second', 'routing', 'scroll',
-        'scroll_size', 'search_timeout', 'search_type', 'size', 'slices',
-        'sort', 'stats', 'terminate_after', 'timeout', 'version',
-        'version_type', 'wait_for_active_shards', 'wait_for_completion')
+    @query_params(
+        "_source",
+        "_source_exclude",
+        "_source_include",
+        "_source_excludes",
+        "_source_includes",
+        "allow_no_indices",
+        "analyze_wildcard",
+        "analyzer",
+        "conflicts",
+        "default_operator",
+        "df",
+        "expand_wildcards",
+        "from_",
+        "ignore_unavailable",
+        "lenient",
+        "pipeline",
+        "preference",
+        "q",
+        "refresh",
+        "request_cache",
+        "requests_per_second",
+        "routing",
+        "scroll",
+        "scroll_size",
+        "search_timeout",
+        "search_type",
+        "size",
+        "slices",
+        "sort",
+        "stats",
+        "terminate_after",
+        "timeout",
+        "version",
+        "version_type",
+        "wait_for_active_shards",
+        "wait_for_completion",
+    )
     def update_by_query(self, index, doc_type=None, body=None, params=None):
         """
         Perform an update on all documents matching a query.
@@ -683,6 +906,10 @@ class Elasticsearch(object):
             _source field
         :arg _source_include: A list of fields to extract and return from the
             _source field
+        :arg _source_excludes: A list of fields to exclude from the returned
+            _source field
+        :arg _source_includes: A list of fields to extract and return from the
+            _source field
         :arg allow_no_indices: Whether to ignore if a wildcard indices
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
@@ -698,7 +925,7 @@ class Elasticsearch(object):
         :arg expand_wildcards: Whether to expand wildcard expression to concrete
             indices that are open, closed or both., default 'open', valid
             choices are: 'open', 'closed', 'none', 'all'
-        :arg from\\_: Starting offset (default: 0)
+        :arg from_: Starting offset (default: 0)
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
         :arg lenient: Specify whether format-based query failures (such as
@@ -716,8 +943,8 @@ class Elasticsearch(object):
         :arg routing: A comma-separated list of specific routing values
         :arg scroll: Specify how long a consistent view of the index should be
             maintained for scrolled search
-        :arg scroll_size: Size on the scroll request powering the
-            update_by_query
+        :arg scroll_size: Size on the scroll request powering the update by
+            query
         :arg search_timeout: Explicit timeout for each search request. Defaults
             to no timeout.
         :arg search_type: Search operation type, valid choices are:
@@ -749,11 +976,38 @@ class Elasticsearch(object):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
-        return self.transport.perform_request('POST', _make_path(index,
-            doc_type, '_update_by_query'), params=params, body=body)
+        return self.transport.perform_request(
+            "POST",
+            _make_path(index, doc_type, "_update_by_query"),
+            params=params,
+            body=body,
+        )
 
-    @query_params('refresh', 'requests_per_second', 'slices', 'timeout',
-        'wait_for_active_shards', 'wait_for_completion')
+    @query_params("requests_per_second")
+    def update_by_query_rethrottle(self, task_id, params=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update-by-query.html>`_
+
+        :arg task_id: The task id to rethrottle
+        :arg requests_per_second: The throttle to set on this request in
+            floating sub-requests per second. -1 means set no throttle.
+        """
+        if task_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'task_id'.")
+        return self.transport.perform_request(
+            "POST",
+            _make_path("_update_by_query", task_id, "_rethrottle"),
+            params=params,
+        )
+
+    @query_params(
+        "refresh",
+        "requests_per_second",
+        "slices",
+        "timeout",
+        "wait_for_active_shards",
+        "wait_for_completion",
+    )
     def reindex(self, body, params=None):
         """
         Reindex all documents from one index to another.
@@ -779,10 +1033,11 @@ class Elasticsearch(object):
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
-        return self.transport.perform_request('POST', '/_reindex',
-            params=params, body=body)
+        return self.transport.perform_request(
+            "POST", "/_reindex", params=params, body=body
+        )
 
-    @query_params('requests_per_second')
+    @query_params("requests_per_second")
     def reindex_rethrottle(self, task_id=None, params=None):
         """
         Change the value of ``requests_per_second`` of a running ``reindex`` task.
@@ -792,17 +1047,46 @@ class Elasticsearch(object):
         :arg requests_per_second: The throttle to set on this request in
             floating sub-requests per second. -1 means set no throttle.
         """
-        return self.transport.perform_request('POST', _make_path('_reindex',
-            task_id, '_rethrottle'), params=params)
+        return self.transport.perform_request(
+            "POST", _make_path("_reindex", task_id, "_rethrottle"), params=params
+        )
 
-    @query_params('_source', '_source_exclude', '_source_include',
-        'allow_no_indices', 'analyze_wildcard', 'analyzer', 'conflicts',
-        'default_operator', 'df', 'expand_wildcards', 'from_',
-        'ignore_unavailable', 'lenient', 'preference', 'q', 'refresh',
-        'request_cache', 'requests_per_second', 'routing', 'scroll',
-        'scroll_size', 'search_timeout', 'search_type', 'size', 'slices',
-        'sort', 'stats', 'terminate_after', 'timeout', 'version',
-        'wait_for_active_shards', 'wait_for_completion')
+    @query_params(
+        "_source",
+        "_source_exclude",
+        "_source_include",
+        "_source_excludes",
+        "_source_includes",
+        "allow_no_indices",
+        "analyze_wildcard",
+        "analyzer",
+        "conflicts",
+        "default_operator",
+        "df",
+        "expand_wildcards",
+        "from_",
+        "ignore_unavailable",
+        "lenient",
+        "preference",
+        "q",
+        "refresh",
+        "request_cache",
+        "requests_per_second",
+        "routing",
+        "scroll",
+        "scroll_size",
+        "search_timeout",
+        "search_type",
+        "size",
+        "slices",
+        "sort",
+        "stats",
+        "terminate_after",
+        "timeout",
+        "version",
+        "wait_for_active_shards",
+        "wait_for_completion",
+    )
     def delete_by_query(self, index, body, doc_type=None, params=None):
         """
         Delete all documents matching a query.
@@ -819,6 +1103,10 @@ class Elasticsearch(object):
             _source field
         :arg _source_include: A list of fields to extract and return from the
             _source field
+	:arg _source_excludes: A list of fields to exclude from the returned
+	    _source field
+	:arg _source_includes: A list of fields to extract and return from the
+	    _source field
         :arg allow_no_indices: Whether to ignore if a wildcard indices
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
@@ -882,11 +1170,38 @@ class Elasticsearch(object):
         for param in (index, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('POST', _make_path(index,
-            doc_type, '_delete_by_query'), params=params, body=body)
+        return self.transport.perform_request(
+            "POST",
+            _make_path(index, doc_type, "_delete_by_query"),
+            params=params,
+            body=body,
+        )
 
-    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable',
-        'local', 'preference', 'routing')
+    @query_params("requests_per_second")
+    def delete_by_query_rethrottle(self, task_id, params=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-delete-by-query.html>`_
+
+        :arg task_id: The task id to rethrottle
+        :arg requests_per_second: The throttle to set on this request in
+            floating sub-requests per second. -1 means set no throttle.
+        """
+        if task_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'task_id'.")
+        return self.transport.perform_request(
+            "POST",
+            _make_path("_delete_by_query", task_id, "_rethrottle"),
+            params=params,
+        )
+
+    @query_params(
+        "allow_no_indices",
+        "expand_wildcards",
+        "ignore_unavailable",
+        "local",
+        "preference",
+        "routing",
+    )
     def search_shards(self, index=None, doc_type=None, params=None):
         """
         The search shards api returns the indices and shards that a search
@@ -910,12 +1225,24 @@ class Elasticsearch(object):
             performed on (default: random)
         :arg routing: Specific routing value
         """
-        return self.transport.perform_request('GET', _make_path(index,
-            doc_type, '_search_shards'), params=params)
+        return self.transport.perform_request(
+            "GET", _make_path(index, doc_type, "_search_shards"), params=params
+        )
 
-    @query_params('allow_no_indices', 'expand_wildcards', 'explain',
-        'ignore_unavailable', 'preference', 'profile', 'routing', 'scroll',
-        'search_type', 'typed_keys')
+    @query_params(
+        "allow_no_indices",
+        "expand_wildcards",
+        "explain",
+        "ignore_throttled",
+        "ignore_unavailable",
+        "preference",
+        "profile",
+        "rest_total_hits_as_int",
+        "routing",
+        "scroll",
+        "search_type",
+        "typed_keys",
+    )
     def search_template(self, index=None, doc_type=None, body=None, params=None):
         """
         A query that accepts a query template and a map of key/value pairs to
@@ -926,7 +1253,6 @@ class Elasticsearch(object):
             or empty string to perform the operation on all indices
         :arg doc_type: A comma-separated list of document types to search; leave
             empty to perform the operation on all types
-        :arg body: The search definition template and its params
         :arg allow_no_indices: Whether to ignore if a wildcard indices
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
@@ -935,11 +1261,17 @@ class Elasticsearch(object):
             choices are: 'open', 'closed', 'none', 'all'
         :arg explain: Specify whether to return detailed information about score
             computation as part of a hit
+        :arg ignore_throttled: Whether specified concrete, expanded or aliased
+            indices should be ignored when throttled
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
         :arg preference: Specify the node or shard the operation should be
             performed on (default: random)
         :arg profile: Specify whether to profile the query execution
+        :arg rest_total_hits_as_int: This parameter is ignored in this version.
+            It is used in the next major version to control whether the rest
+            response should render the total.hits as an object or a number,
+            default False
         :arg routing: A comma-separated list of specific routing values
         :arg scroll: Specify how long a consistent view of the index should be
             maintained for scrolled search
@@ -949,12 +1281,30 @@ class Elasticsearch(object):
         :arg typed_keys: Specify whether aggregation and suggester names should
             be prefixed by their respective types in the response
         """
-        return self.transport.perform_request('GET', _make_path(index,
-            doc_type, '_search', 'template'), params=params, body=body)
+        return self.transport.perform_request(
+            "GET",
+            _make_path(index, doc_type, "_search", "template"),
+            params=params,
+            body=body,
+        )
 
-    @query_params('_source', '_source_exclude', '_source_include',
-        'analyze_wildcard', 'analyzer', 'default_operator', 'df', 'lenient',
-        'parent', 'preference', 'q', 'routing', 'stored_fields')
+    @query_params(
+        "_source",
+        "_source_exclude",
+        "_source_include",
+        "_source_excludes",
+        "_source_includes",
+        "analyze_wildcard",
+        "analyzer",
+        "default_operator",
+        "df",
+        "lenient",
+        "parent",
+        "preference",
+        "q",
+        "routing",
+        "stored_fields",
+    )
     def explain(self, index, doc_type, id, body=None, params=None):
         """
         The explain api computes a score explanation for a query and a specific
@@ -971,6 +1321,10 @@ class Elasticsearch(object):
         :arg _source_exclude: A list of fields to exclude from the returned
             _source field
         :arg _source_include: A list of fields to extract and return from the
+            _source field
+        :arg _source_excludes: A list of fields to exclude from the returned
+            _source field
+        :arg _source_includes: A list of fields to extract and return from the
             _source field
         :arg analyze_wildcard: Specify whether wildcards and prefix queries in
             the query string query should be analyzed (default: false)
@@ -991,10 +1345,11 @@ class Elasticsearch(object):
         for param in (index, doc_type, id):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('GET', _make_path(index,
-            doc_type, id, '_explain'), params=params, body=body)
+        return self.transport.perform_request(
+            "GET", _make_path(index, doc_type, id, "_explain"), params=params, body=body
+        )
 
-    @query_params('scroll')
+    @query_params("rest_total_hits_as_int", "scroll")
     def scroll(self, scroll_id=None, body=None, params=None):
         """
         Scroll a search request created by specifying the scroll parameter.
@@ -1002,18 +1357,23 @@ class Elasticsearch(object):
 
         :arg scroll_id: The scroll ID
         :arg body: The scroll ID if not passed by URL or query parameter.
+        :arg rest_total_hits_as_int: This parameter is ignored in this version.
+            It is used in the next major version to control whether the rest
+            response should render the total.hits as an object or a number,
+            default False
         :arg scroll: Specify how long a consistent view of the index should be
             maintained for scrolled search
         """
         if scroll_id in SKIP_IN_PATH and body in SKIP_IN_PATH:
             raise ValueError("You need to supply scroll_id or body.")
         elif scroll_id and not body:
-            body = {'scroll_id':scroll_id}
+            body = {"scroll_id": scroll_id}
         elif scroll_id:
-            params['scroll_id'] = scroll_id
+            params["scroll_id"] = scroll_id
 
-        return self.transport.perform_request('GET', '/_search/scroll',
-            params=params, body=body)
+        return self.transport.perform_request(
+            "GET", "/_search/scroll", params=params, body=body
+        )
 
     @query_params()
     def clear_scroll(self, scroll_id=None, body=None, params=None):
@@ -1029,15 +1389,25 @@ class Elasticsearch(object):
         if scroll_id in SKIP_IN_PATH and body in SKIP_IN_PATH:
             raise ValueError("You need to supply scroll_id or body.")
         elif scroll_id and not body:
-            body = {'scroll_id':[scroll_id]}
+            body = {"scroll_id": [scroll_id]}
         elif scroll_id:
-            params['scroll_id'] = scroll_id
+            params["scroll_id"] = scroll_id
 
-        return self.transport.perform_request('DELETE', '/_search/scroll',
-            params=params, body=body)
+        return self.transport.perform_request(
+            "DELETE", "/_search/scroll", params=params, body=body
+        )
 
-    @query_params('parent', 'refresh', 'routing', 'timeout', 'version',
-        'version_type', 'wait_for_active_shards')
+    @query_params(
+        "parent",
+        "refresh",
+        "routing",
+        "timeout",
+        "version",
+        "version_type",
+        "wait_for_active_shards",
+        "if_primary_term",
+        "if_seq_no",
+    )
     def delete(self, index, doc_type, id, params=None):
         """
         Delete a typed JSON document from a specific index based on its id.
@@ -1062,16 +1432,34 @@ class Elasticsearch(object):
             1, meaning the primary shard only. Set to `all` for all shard
             copies, otherwise set to any non-negative value less than or equal
             to the total number of copies for the shard (number of replicas + 1)
+	:arg if_primary_term: only perform the delete operation if the last
+            operation that has changed the document has the specified primary
+            term
+	:arg if_seq_no: only perform the delete operation if the last operation
+	    that has changed the document has the specified sequence number
         """
         for param in (index, doc_type, id):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('DELETE', _make_path(index,
-            doc_type, id), params=params)
+        return self.transport.perform_request(
+            "DELETE", _make_path(index, doc_type, id), params=params
+        )
 
-    @query_params('allow_no_indices', 'analyze_wildcard', 'analyzer',
-        'default_operator', 'df', 'expand_wildcards', 'ignore_unavailable',
-        'lenient', 'min_score', 'preference', 'q', 'routing', 'terminate_after')
+    @query_params(
+        "allow_no_indices",
+        "analyze_wildcard",
+        "analyzer",
+        "default_operator",
+        "df",
+        "expand_wildcards",
+        "ignore_unavailable",
+        "lenient",
+        "min_score",
+        "preference",
+        "q",
+        "routing",
+        "terminate_after",
+    )
     def count(self, index=None, doc_type=None, body=None, params=None):
         """
         Execute a query and get the number of matches for that query.
@@ -1106,13 +1494,25 @@ class Elasticsearch(object):
         :arg routing: Specific routing value
         """
         if doc_type and not index:
-            index = '_all'
+            index = "_all"
 
-        return self.transport.perform_request('GET', _make_path(index,
-            doc_type, '_count'), params=params, body=body)
+        return self.transport.perform_request(
+            "GET", _make_path(index, doc_type, "_count"), params=params, body=body
+        )
 
-    @query_params('_source', '_source_exclude', '_source_include', 'fields',
-        'pipeline', 'refresh', 'routing', 'timeout', 'wait_for_active_shards')
+    @query_params(
+        "_source",
+        "_source_exclude",
+        "_source_excludes",
+        "_source_include",
+        "_source_includes",
+        "fields",
+        "pipeline",
+        "refresh",
+        "routing",
+        "timeout",
+        "wait_for_active_shards",
+    )
     def bulk(self, body, index=None, doc_type=None, params=None):
         """
         Perform many index/delete operations in a single API call.
@@ -1132,6 +1532,10 @@ class Elasticsearch(object):
             returned _source field, can be overridden on each sub-request
         :arg _source_include: Default list of fields to extract and return from
             the _source field, can be overridden on each sub-request
+        :arg _source_excludes: Default list of fields to exclude from the
+            returned _source field, can be overridden on each sub-request
+        :arg _source_includes: Default list of fields to extract and return from
+            the _source field, can be overridden on each sub-request
         :arg fields: Default comma-separated list of fields to return in the
             response for updates, can be overridden on each sub-request
         :arg pipeline: The pipeline id to preprocess incoming documents with
@@ -1150,12 +1554,22 @@ class Elasticsearch(object):
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
-        return self.transport.perform_request('POST', _make_path(index,
-            doc_type, '_bulk'), params=params, body=self._bulk_body(body),
-            headers={'content-type': 'application/x-ndjson'})
+        return self.transport.perform_request(
+            "POST",
+            _make_path(index, doc_type, "_bulk"),
+            params=params,
+            body=self._bulk_body(body),
+            headers={"content-type": "application/x-ndjson"},
+        )
 
-    @query_params('max_concurrent_searches', 'pre_filter_shard_size',
-        'search_type', 'typed_keys')
+    @query_params(
+        "max_concurrent_searches",
+        "max_concurrent_shard_requests",
+        "pre_filter_shard_size",
+        "rest_total_hits_as_int",
+        "search_type",
+        "typed_keys",
+    )
     def msearch(self, body, index=None, doc_type=None, params=None):
         """
         Execute several search requests within the same API.
@@ -1168,6 +1582,8 @@ class Elasticsearch(object):
             default
         :arg max_concurrent_searches: Controls the maximum number of concurrent
             searches the multi search api will execute
+	:arg max_concurrent_searches: Controls the maximum number of concurrent
+            searches the multi search api will execute
         :arg pre_filter_shard_size: A threshold that enforces a pre-filter
             roundtrip to prefilter search shards based on query rewriting if
             the number of shards the search request expands to exceeds the
@@ -1175,7 +1591,11 @@ class Elasticsearch(object):
             significantly if for instance a shard can not match any documents
             based on it's rewrite method ie. if date filters are mandatory to
             match but the shard bounds and the query are disjoint., default 128
-        :arg search_type: Search operation type, valid choices are:
+        :arg rest_total_hits_as_int: This parameter is ignored in this version.
+	    It is used in the next major version to control whether the rest
+	    response should render the total.hits as an object or a number,
+	    default False
+	:arg search_type: Search operation type, valid choices are:
             'query_then_fetch', 'query_and_fetch', 'dfs_query_then_fetch',
             'dfs_query_and_fetch'
         :arg typed_keys: Specify whether aggregation and suggester names should
@@ -1183,13 +1603,28 @@ class Elasticsearch(object):
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
-        return self.transport.perform_request('GET', _make_path(index,
-            doc_type, '_msearch'), params=params, body=self._bulk_body(body),
-            headers={'content-type': 'application/x-ndjson'})
+        return self.transport.perform_request(
+            "GET",
+            _make_path(index, doc_type, "_msearch"),
+            params=params,
+            body=self._bulk_body(body),
+            headers={"content-type": "application/x-ndjson"},
+        )
 
-    @query_params('field_statistics', 'fields', 'offsets', 'parent', 'payloads',
-        'positions', 'preference', 'realtime', 'routing', 'term_statistics',
-        'version', 'version_type')
+    @query_params(
+        "field_statistics",
+        "fields",
+        "offsets",
+        "parent",
+        "payloads",
+        "positions",
+        "preference",
+        "realtime",
+        "routing",
+        "term_statistics",
+        "version",
+        "version_type",
+    )
     def termvectors(self, index, doc_type, id=None, body=None, params=None):
         """
         Returns information and statistics on terms in the fields of a
@@ -1230,12 +1665,28 @@ class Elasticsearch(object):
         for param in (index, doc_type):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('GET', _make_path(index,
-            doc_type, id, '_termvectors'), params=params, body=body)
+        return self.transport.perform_request(
+            "GET",
+            _make_path(index, doc_type, id, "_termvectors"),
+            params=params,
+            body=body,
+        )
 
-    @query_params('field_statistics', 'fields', 'ids', 'offsets', 'parent',
-        'payloads', 'positions', 'preference', 'realtime', 'routing',
-        'term_statistics', 'version', 'version_type')
+    @query_params(
+        "field_statistics",
+        "fields",
+        "ids",
+        "offsets",
+        "parent",
+        "payloads",
+        "positions",
+        "preference",
+        "realtime",
+        "routing",
+        "term_statistics",
+        "version",
+        "version_type",
+    )
     def mtermvectors(self, index=None, doc_type=None, body=None, params=None):
         """
         Multi termvectors API allows to get multiple termvectors based on an
@@ -1282,10 +1733,14 @@ class Elasticsearch(object):
         :arg version_type: Specific version type, valid choices are: 'internal',
             'external', 'external_gte', 'force'
         """
-        return self.transport.perform_request('GET', _make_path(index,
-            doc_type, '_mtermvectors'), params=params, body=body)
+        return self.transport.perform_request(
+            "GET",
+            _make_path(index, doc_type, "_mtermvectors"),
+            params=params,
+            body=body,
+        )
 
-    @query_params()
+    @query_params("master_timeout", "timeout")
     def put_script(self, id, body, context=None, params=None):
         """
         Create a script in given language with specified ID.
@@ -1293,38 +1748,70 @@ class Elasticsearch(object):
 
         :arg id: Script ID
         :arg body: The document
+        :arg master_timeout: Specify timeout for connection to master
+	:arg timeout: Explicit operation timeout
         """
         for param in (id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('PUT', _make_path('_scripts', id,
-            context), params=params, body=body)
+        return self.transport.perform_request(
+            "PUT", _make_path("_scripts", id, context), params=params, body=body
+        )
 
-    @query_params()
+    @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable")
+    def rank_eval(self, body, index=None, params=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-rank-eval.html>`_
+
+        :arg body: The ranking evaluation search definition, including search
+            requests, document ratings and ranking metric definition.
+        :arg index: A comma-separated list of index names to search; use `_all`
+            or empty string to perform the operation on all indices
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+            expression resolves into no concrete indices. (This includes `_all`
+            string or when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete
+            indices that are open, closed or both., default 'open', valid
+            choices are: 'open', 'closed', 'none', 'all'
+        :arg ignore_unavailable: Whether specified concrete indices should be
+            ignored when unavailable (missing or closed)
+        """
+        if body in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'body'.")
+        return self.transport.perform_request(
+            "GET", _make_path(index, "_rank_eval"), params=params, body=body
+        )
+
+    @query_params("master_timeout")
     def get_script(self, id, params=None):
         """
         Retrieve a script from the API.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
 
         :arg id: Script ID
+        :arg master_timeout: Specify timeout for connection to master<Paste>
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
-        return self.transport.perform_request('GET', _make_path('_scripts', id),
-            params=params)
+        return self.transport.perform_request(
+            "GET", _make_path("_scripts", id), params=params
+        )
 
-    @query_params()
+    @query_params("master_timeout", "timeout")
     def delete_script(self, id, params=None):
         """
         Remove a stored script from elasticsearch.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
 
         :arg id: Script ID
+	:arg master_timeout: Specify timeout for connection to master
+        :arg timeout: Explicit operation timeout
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
-        return self.transport.perform_request('DELETE', _make_path('_scripts',
-            id), params=params)
+        return self.transport.perform_request(
+            "DELETE", _make_path("_scripts", id), params=params
+        )
 
     @query_params()
     def render_search_template(self, id=None, body=None, params=None):
@@ -1334,10 +1821,24 @@ class Elasticsearch(object):
         :arg id: The id of the stored search template
         :arg body: The search definition template and its params
         """
-        return self.transport.perform_request('GET', _make_path('_render',
-            'template', id), params=params, body=body)
+        return self.transport.perform_request(
+            "GET", _make_path("_render", "template", id), params=params, body=body
+        )
 
-    @query_params('max_concurrent_searches', 'search_type', 'typed_keys')
+    @query_params()
+    def scripts_painless_execute(self, body=None, params=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/painless/master/painless-execute-api.html>`_
+
+        :arg body: The script to execute
+        """
+        return self.transport.perform_request(
+            "GET", "/_scripts/painless/_execute", params=params, body=body
+        )
+
+    @query_params(
+        "max_concurrent_searches", "rest_total_hits_as_int", "search_type", "typed_keys"
+    )
     def msearch_template(self, body, index=None, doc_type=None, params=None):
         """
         The /_search/template endpoint allows to use the mustache language to
@@ -1348,11 +1849,13 @@ class Elasticsearch(object):
         :arg body: The request definitions (metadata-search request definition
             pairs), separated by newlines
         :arg index: A comma-separated list of index names to use as default
-        :arg doc_type: A comma-separated list of document types to use as
-            default
         :arg max_concurrent_searches: Controls the maximum number of concurrent
             searches the multi search api will execute
-        :arg search_type: Search operation type, valid choices are:
+        :arg rest_total_hits_as_int: This parameter is ignored in this version.
+	    It is used in the next major version to control whether the rest
+	    response should render the total.hits as an object or a number,
+	    default False
+	:arg search_type: Search operation type, valid choices are:
             'query_then_fetch', 'query_and_fetch', 'dfs_query_then_fetch',
             'dfs_query_and_fetch'
         :arg typed_keys: Specify whether aggregation and suggester names should
@@ -1360,12 +1863,17 @@ class Elasticsearch(object):
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
-        return self.transport.perform_request('GET', _make_path(index, doc_type,
-            '_msearch', 'template'), params=params, body=self._bulk_body(body),
-            headers={'content-type': 'application/x-ndjson'})
+        return self.transport.perform_request(
+            "GET",
+            _make_path(index, doc_type, "_msearch", "template"),
+            params=params,
+            body=self._bulk_body(body),
+            headers={"content-type": "application/x-ndjson"},
+        )
 
-    @query_params('allow_no_indices', 'expand_wildcards', 'fields',
-        'ignore_unavailable')
+    @query_params(
+        "allow_no_indices", "expand_wildcards", "fields", "ignore_unavailable"
+    )
     def field_caps(self, index=None, body=None, params=None):
         """
         The field capabilities API allows to retrieve the capabilities of fields among multiple indices.
@@ -1384,6 +1892,6 @@ class Elasticsearch(object):
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
         """
-        return self.transport.perform_request('GET', _make_path(index,
-            '_field_caps'), params=params, body=body)
-
+        return self.transport.perform_request(
+            "GET", _make_path(index, "_field_caps"), params=params, body=body
+        )

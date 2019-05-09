@@ -1,4 +1,10 @@
-from elasticsearch.client.utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
+from elasticsearch.client.utils import (
+    NamespacedClient,
+    query_params,
+    _make_path,
+    SKIP_IN_PATH,
+)
+
 
 class WatcherClient(NamespacedClient):
     @query_params()
@@ -7,10 +13,11 @@ class WatcherClient(NamespacedClient):
 
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-stop.html>`_
         """
-        return self.transport.perform_request('POST', '/_xpack/watcher/_stop',
-            params=params)
+        return self.transport.perform_request(
+            "POST", "/_xpack/watcher/_stop", params=params
+        )
 
-    @query_params('master_timeout')
+    @query_params("master_timeout")
     def ack_watch(self, watch_id, action_id=None, params=None):
         """
 
@@ -23,10 +30,13 @@ class WatcherClient(NamespacedClient):
         """
         if watch_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'watch_id'.")
-        return self.transport.perform_request('PUT', _make_path('_xpack',
-            'watcher', 'watch', watch_id, '_ack', action_id), params=params)
+        return self.transport.perform_request(
+            "PUT",
+            _make_path("_xpack", "watcher", "watch", watch_id, "_ack", action_id),
+            params=params,
+        )
 
-    @query_params('debug')
+    @query_params("debug")
     def execute_watch(self, id=None, body=None, params=None):
         """
 
@@ -36,8 +46,12 @@ class WatcherClient(NamespacedClient):
         :arg body: Execution control
         :arg debug: indicates whether the watch should execute in debug mode
         """
-        return self.transport.perform_request('PUT', _make_path('_xpack',
-            'watcher', 'watch', id, '_execute'), params=params, body=body)
+        return self.transport.perform_request(
+            "PUT",
+            _make_path("_xpack", "watcher", "watch", id, "_execute"),
+            params=params,
+            body=body,
+        )
 
     @query_params()
     def start(self, params=None):
@@ -45,10 +59,11 @@ class WatcherClient(NamespacedClient):
 
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-start.html>`_
         """
-        return self.transport.perform_request('POST', '/_xpack/watcher/_start',
-            params=params)
+        return self.transport.perform_request(
+            "POST", "/_xpack/watcher/_start", params=params
+        )
 
-    @query_params('master_timeout')
+    @query_params("master_timeout")
     def activate_watch(self, watch_id, params=None):
         """
 
@@ -60,10 +75,13 @@ class WatcherClient(NamespacedClient):
         """
         if watch_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'watch_id'.")
-        return self.transport.perform_request('PUT', _make_path('_xpack',
-            'watcher', 'watch', watch_id, '_activate'), params=params)
+        return self.transport.perform_request(
+            "PUT",
+            _make_path("_xpack", "watcher", "watch", watch_id, "_activate"),
+            params=params,
+        )
 
-    @query_params('master_timeout')
+    @query_params("master_timeout")
     def deactivate_watch(self, watch_id, params=None):
         """
 
@@ -75,10 +93,13 @@ class WatcherClient(NamespacedClient):
         """
         if watch_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'watch_id'.")
-        return self.transport.perform_request('PUT', _make_path('_xpack',
-            'watcher', 'watch', watch_id, '_deactivate'), params=params)
+        return self.transport.perform_request(
+            "PUT",
+            _make_path("_xpack", "watcher", "watch", watch_id, "_deactivate"),
+            params=params,
+        )
 
-    @query_params('active', 'master_timeout')
+    @query_params("active", "master_timeout")
     def put_watch(self, id, body, params=None):
         """
 
@@ -93,10 +114,14 @@ class WatcherClient(NamespacedClient):
         for param in (id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('PUT', _make_path('_xpack',
-            'watcher', 'watch', id), params=params, body=body)
+        return self.transport.perform_request(
+            "PUT",
+            _make_path("_xpack", "watcher", "watch", id),
+            params=params,
+            body=body,
+        )
 
-    @query_params('master_timeout')
+    @query_params("master_timeout")
     def delete_watch(self, id, params=None):
         """
 
@@ -108,8 +133,9 @@ class WatcherClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
-        return self.transport.perform_request('DELETE', _make_path('_xpack',
-            'watcher', 'watch', id), params=params)
+        return self.transport.perform_request(
+            "DELETE", _make_path("_xpack", "watcher", "watch", id), params=params
+        )
 
     @query_params()
     def get_watch(self, id, params=None):
@@ -121,10 +147,11 @@ class WatcherClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
-        return self.transport.perform_request('GET', _make_path('_xpack',
-            'watcher', 'watch', id), params=params)
+        return self.transport.perform_request(
+            "GET", _make_path("_xpack", "watcher", "watch", id), params=params
+        )
 
-    @query_params('emit_stacktraces')
+    @query_params("emit_stacktraces")
     def stats(self, metric=None, params=None):
         """
 
@@ -134,8 +161,9 @@ class WatcherClient(NamespacedClient):
             the response
         :arg emit_stacktraces: Emits stack traces of currently running watches
         """
-        return self.transport.perform_request('GET', _make_path('_xpack',
-            'watcher', 'stats', metric), params=params)
+        return self.transport.perform_request(
+            "GET", _make_path("_xpack", "watcher", "stats", metric), params=params
+        )
 
     @query_params()
     def restart(self, params=None):
@@ -143,6 +171,6 @@ class WatcherClient(NamespacedClient):
 
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-restart.html>`_
         """
-        return self.transport.perform_request('POST',
-            '/_xpack/watcher/_restart', params=params)
-
+        return self.transport.perform_request(
+            "POST", "/_xpack/watcher/_restart", params=params
+        )

@@ -1,8 +1,18 @@
 __all__ = [
-    'ImproperlyConfigured', 'ElasticsearchException', 'SerializationError',
-    'TransportError', 'NotFoundError', 'ConflictError', 'RequestError', 'ConnectionError',
-    'SSLError', 'ConnectionTimeout', 'AuthenticationException', 'AuthorizationException'
+    "ImproperlyConfigured",
+    "ElasticsearchException",
+    "SerializationError",
+    "TransportError",
+    "NotFoundError",
+    "ConflictError",
+    "RequestError",
+    "ConnectionError",
+    "SSLError",
+    "ConnectionTimeout",
+    "AuthenticationException",
+    "AuthorizationException",
 ]
+
 
 class ImproperlyConfigured(Exception):
     """
@@ -30,6 +40,7 @@ class TransportError(ElasticsearchException):
     an actual connection error happens; in that case the ``status_code`` will
     be set to ``'N/A'``.
     """
+
     @property
     def status_code(self):
         """
@@ -52,16 +63,21 @@ class TransportError(ElasticsearchException):
         return self.args[2]
 
     def __str__(self):
-        cause = ''
+        cause = ""
         try:
-            if self.info and 'error' in self.info:
-                if isinstance(self.info['error'], dict):
-                    cause = ', %r' % self.info['error']['root_cause'][0]['reason']
+            if self.info and "error" in self.info:
+                if isinstance(self.info["error"], dict):
+                    cause = ", %r" % self.info["error"]["root_cause"][0]["reason"]
                 else:
-                    cause = ', %r' % self.info['error']
+                    cause = ", %r" % self.info["error"]
         except LookupError:
             pass
-        return '%s(%s, %r%s)' % (self.__class__.__name__, self.status_code, self.error, cause)
+        return "%s(%s, %r%s)" % (
+            self.__class__.__name__,
+            self.status_code,
+            self.error,
+            cause,
+        )
 
 
 class ConnectionError(TransportError):
@@ -70,9 +86,13 @@ class ConnectionError(TransportError):
     exception from the underlying :class:`~elasticsearch.Connection`
     implementation is available as ``.info.``
     """
+
     def __str__(self):
-        return 'ConnectionError(%s) caused by: %s(%s)' % (
-            self.error, self.info.__class__.__name__, self.info)
+        return "ConnectionError(%s) caused by: %s(%s)" % (
+            self.error,
+            self.info.__class__.__name__,
+            self.info,
+        )
 
 
 class SSLError(ConnectionError):
@@ -81,9 +101,12 @@ class SSLError(ConnectionError):
 
 class ConnectionTimeout(ConnectionError):
     """ A network timeout. Doesn't cause a node retry by default. """
+
     def __str__(self):
-        return 'ConnectionTimeout caused by - %s(%s)' % (
-            self.info.__class__.__name__, self.info)
+        return "ConnectionTimeout caused by - %s(%s)" % (
+            self.info.__class__.__name__,
+            self.info,
+        )
 
 
 class NotFoundError(TransportError):
@@ -104,6 +127,7 @@ class AuthenticationException(TransportError):
 
 class AuthorizationException(TransportError):
     """ Exception representing a 403 status code. """
+
 
 # more generic mappings from status_code to python exceptions
 HTTP_EXCEPTIONS = {
