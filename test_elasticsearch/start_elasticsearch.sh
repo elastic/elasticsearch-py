@@ -2,7 +2,7 @@
 
 # Start elasticsearch in a docker container
 
-ES_VERSION=${ES_VERSION:-"6.1.3"}
+ES_VERSION=${ES_VERSION:-"6.7.2"}
 ES_TEST_SERVER=${ES_TEST_SERVER:-"http://localhost:9200"}
 
 SOURCE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
