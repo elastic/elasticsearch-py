@@ -501,6 +501,8 @@ class TestParentChildReindex(ElasticsearchTestCase):
                 "_routing": "42",
                 "_id": "47",
                 "_index": "test-index",
+                "_primary_term": 1,
+                "_seq_no": 1,
                 "_source": {
                     "some": "data",
                     "question_answer": {"name": "answer", "parent": 42},

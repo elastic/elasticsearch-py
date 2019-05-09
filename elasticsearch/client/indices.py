@@ -303,7 +303,7 @@ class IndicesClient(NamespacedClient):
         "include_type_name",
         "update_all_types",
     )
-    def put_mapping(self, doc_type, body, index=None, params=None):
+    def put_mapping(self, body, doc_type=None, index=None, params=None):
         """
         Register specific mapping definition for a specific type.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/indices-put-mapping.html>`_
@@ -328,7 +328,7 @@ class IndicesClient(NamespacedClient):
         :arg update_all_types: Whether to update the mapping for all fields with
             the same name across all types or not
         """
-        for param in (doc_type, body):
+        for param in (body,):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
         return self.transport.perform_request(
