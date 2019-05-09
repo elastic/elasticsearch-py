@@ -1,7 +1,13 @@
-from elasticsearch.client.utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
+from elasticsearch.client.utils import (
+    NamespacedClient,
+    query_params,
+    _make_path,
+    SKIP_IN_PATH,
+)
+
 
 class MlClient(NamespacedClient):
-    @query_params('from_', 'size')
+    @query_params("from_", "size")
     def get_filters(self, filter_id=None, params=None):
         """
 
@@ -9,8 +15,9 @@ class MlClient(NamespacedClient):
         :arg from_: skips a number of filters
         :arg size: specifies a max number of filters to get
         """
-        return self.transport.perform_request('GET', _make_path('_xpack', 'ml',
-            'filters', filter_id), params=params)
+        return self.transport.perform_request(
+            "GET", _make_path("_xpack", "ml", "filters", filter_id), params=params
+        )
 
     @query_params()
     def get_datafeeds(self, datafeed_id=None, params=None):
@@ -20,8 +27,9 @@ class MlClient(NamespacedClient):
 
         :arg datafeed_id: The ID of the datafeeds to fetch
         """
-        return self.transport.perform_request('GET', _make_path('_xpack', 'ml',
-            'datafeeds', datafeed_id), params=params)
+        return self.transport.perform_request(
+            "GET", _make_path("_xpack", "ml", "datafeeds", datafeed_id), params=params
+        )
 
     @query_params()
     def get_datafeed_stats(self, datafeed_id=None, params=None):
@@ -31,11 +39,23 @@ class MlClient(NamespacedClient):
 
         :arg datafeed_id: The ID of the datafeeds stats to fetch
         """
-        return self.transport.perform_request('GET', _make_path('_xpack', 'ml',
-            'datafeeds', datafeed_id, '_stats'), params=params)
+        return self.transport.perform_request(
+            "GET",
+            _make_path("_xpack", "ml", "datafeeds", datafeed_id, "_stats"),
+            params=params,
+        )
 
-    @query_params('anomaly_score', 'desc', 'end', 'exclude_interim', 'expand',
-        'from_', 'size', 'sort', 'start')
+    @query_params(
+        "anomaly_score",
+        "desc",
+        "end",
+        "exclude_interim",
+        "expand",
+        "from_",
+        "size",
+        "sort",
+        "start",
+    )
     def get_buckets(self, job_id, timestamp=None, body=None, params=None):
         """
 
@@ -56,11 +76,22 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
-        return self.transport.perform_request('GET', _make_path('_xpack', 'ml',
-            'anomaly_detectors', job_id, 'results', 'buckets', timestamp),
-            params=params, body=body)
+        return self.transport.perform_request(
+            "GET",
+            _make_path(
+                "_xpack",
+                "ml",
+                "anomaly_detectors",
+                job_id,
+                "results",
+                "buckets",
+                timestamp,
+            ),
+            params=params,
+            body=body,
+        )
 
-    @query_params('reset_end', 'reset_start')
+    @query_params("reset_end", "reset_start")
     def post_data(self, job_id, body, params=None):
         """
 
@@ -76,11 +107,14 @@ class MlClient(NamespacedClient):
         for param in (job_id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('POST', _make_path('_xpack', 'ml',
-            'anomaly_detectors', job_id, '_data'), params=params,
-            body=self._bulk_body(body))
+        return self.transport.perform_request(
+            "POST",
+            _make_path("_xpack", "ml", "anomaly_detectors", job_id, "_data"),
+            params=params,
+            body=self._bulk_body(body),
+        )
 
-    @query_params('force', 'timeout')
+    @query_params("force", "timeout")
     def stop_datafeed(self, datafeed_id, params=None):
         """
 
@@ -92,9 +126,14 @@ class MlClient(NamespacedClient):
             Default to 20 seconds
         """
         if datafeed_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'datafeed_id'.")
-        return self.transport.perform_request('POST', _make_path('_xpack', 'ml',
-            'datafeeds', datafeed_id, '_stop'), params=params)
+            raise ValueError(
+                "Empty value passed for a required argument 'datafeed_id'."
+            )
+        return self.transport.perform_request(
+            "POST",
+            _make_path("_xpack", "ml", "datafeeds", datafeed_id, "_stop"),
+            params=params,
+        )
 
     @query_params()
     def get_jobs(self, job_id=None, params=None):
@@ -104,15 +143,19 @@ class MlClient(NamespacedClient):
 
         :arg job_id: The ID of the jobs to fetch
         """
-        return self.transport.perform_request('GET', _make_path('_xpack', 'ml',
-            'anomaly_detectors', job_id), params=params)
+        return self.transport.perform_request(
+            "GET",
+            _make_path("_xpack", "ml", "anomaly_detectors", job_id),
+            params=params,
+        )
 
     @query_params()
     def delete_expired_data(self, params=None):
         """
         """
-        return self.transport.perform_request('DELETE',
-            '/_xpack/ml/_delete_expired_data', params=params)
+        return self.transport.perform_request(
+            "DELETE", "/_xpack/ml/_delete_expired_data", params=params
+        )
 
     @query_params()
     def put_job(self, job_id, body, params=None):
@@ -126,8 +169,12 @@ class MlClient(NamespacedClient):
         for param in (job_id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('PUT', _make_path('_xpack', 'ml',
-            'anomaly_detectors', job_id), params=params, body=body)
+        return self.transport.perform_request(
+            "PUT",
+            _make_path("_xpack", "ml", "anomaly_detectors", job_id),
+            params=params,
+            body=body,
+        )
 
     @query_params()
     def validate_detector(self, body, params=None):
@@ -137,11 +184,14 @@ class MlClient(NamespacedClient):
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
-        return self.transport.perform_request('POST',
-            '/_xpack/ml/anomaly_detectors/_validate/detector', params=params,
-            body=body)
+        return self.transport.perform_request(
+            "POST",
+            "/_xpack/ml/anomaly_detectors/_validate/detector",
+            params=params,
+            body=body,
+        )
 
-    @query_params('end', 'start', 'timeout')
+    @query_params("end", "start", "timeout")
     def start_datafeed(self, datafeed_id, body=None, params=None):
         """
 
@@ -156,12 +206,26 @@ class MlClient(NamespacedClient):
             Default to 20 seconds
         """
         if datafeed_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'datafeed_id'.")
-        return self.transport.perform_request('POST', _make_path('_xpack', 'ml',
-            'datafeeds', datafeed_id, '_start'), params=params, body=body)
+            raise ValueError(
+                "Empty value passed for a required argument 'datafeed_id'."
+            )
+        return self.transport.perform_request(
+            "POST",
+            _make_path("_xpack", "ml", "datafeeds", datafeed_id, "_start"),
+            params=params,
+            body=body,
+        )
 
-    @query_params('desc', 'end', 'exclude_interim', 'from_', 'record_score',
-        'size', 'sort', 'start')
+    @query_params(
+        "desc",
+        "end",
+        "exclude_interim",
+        "from_",
+        "record_score",
+        "size",
+        "sort",
+        "start",
+    )
     def get_records(self, job_id, body=None, params=None):
         """
 
@@ -180,9 +244,14 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
-        return self.transport.perform_request('GET', _make_path('_xpack', 'ml',
-            'anomaly_detectors', job_id, 'results', 'records'), params=params,
-            body=body)
+        return self.transport.perform_request(
+            "GET",
+            _make_path(
+                "_xpack", "ml", "anomaly_detectors", job_id, "results", "records"
+            ),
+            params=params,
+            body=body,
+        )
 
     @query_params()
     def update_job(self, job_id, body, params=None):
@@ -196,8 +265,12 @@ class MlClient(NamespacedClient):
         for param in (job_id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('POST', _make_path('_xpack', 'ml',
-            'anomaly_detectors', job_id, '_update'), params=params, body=body)
+        return self.transport.perform_request(
+            "POST",
+            _make_path("_xpack", "ml", "anomaly_detectors", job_id, "_update"),
+            params=params,
+            body=body,
+        )
 
     @query_params()
     def put_filter(self, filter_id, body, params=None):
@@ -209,8 +282,12 @@ class MlClient(NamespacedClient):
         for param in (filter_id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('PUT', _make_path('_xpack', 'ml',
-            'filters', filter_id), params=params, body=body)
+        return self.transport.perform_request(
+            "PUT",
+            _make_path("_xpack", "ml", "filters", filter_id),
+            params=params,
+            body=body,
+        )
 
     @query_params()
     def update_datafeed(self, datafeed_id, body, params=None):
@@ -224,8 +301,12 @@ class MlClient(NamespacedClient):
         for param in (datafeed_id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('POST', _make_path('_xpack', 'ml',
-            'datafeeds', datafeed_id, '_update'), params=params, body=body)
+        return self.transport.perform_request(
+            "POST",
+            _make_path("_xpack", "ml", "datafeeds", datafeed_id, "_update"),
+            params=params,
+            body=body,
+        )
 
     @query_params()
     def preview_datafeed(self, datafeed_id, params=None):
@@ -236,11 +317,16 @@ class MlClient(NamespacedClient):
         :arg datafeed_id: The ID of the datafeed to preview
         """
         if datafeed_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'datafeed_id'.")
-        return self.transport.perform_request('GET', _make_path('_xpack', 'ml',
-            'datafeeds', datafeed_id, '_preview'), params=params)
+            raise ValueError(
+                "Empty value passed for a required argument 'datafeed_id'."
+            )
+        return self.transport.perform_request(
+            "GET",
+            _make_path("_xpack", "ml", "datafeeds", datafeed_id, "_preview"),
+            params=params,
+        )
 
-    @query_params('advance_time', 'calc_interim', 'end', 'skip_time', 'start')
+    @query_params("advance_time", "calc_interim", "end", "skip_time", "start")
     def flush_job(self, job_id, body=None, params=None):
         """
 
@@ -261,10 +347,14 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
-        return self.transport.perform_request('POST', _make_path('_xpack', 'ml',
-            'anomaly_detectors', job_id, '_flush'), params=params, body=body)
+        return self.transport.perform_request(
+            "POST",
+            _make_path("_xpack", "ml", "anomaly_detectors", job_id, "_flush"),
+            params=params,
+            body=body,
+        )
 
-    @query_params('force', 'timeout')
+    @query_params("force", "timeout")
     def close_job(self, job_id, params=None):
         """
 
@@ -277,8 +367,11 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
-        return self.transport.perform_request('POST', _make_path('_xpack', 'ml',
-            'anomaly_detectors', job_id, '_close'), params=params)
+        return self.transport.perform_request(
+            "POST",
+            _make_path("_xpack", "ml", "anomaly_detectors", job_id, "_close"),
+            params=params,
+        )
 
     @query_params()
     def open_job(self, job_id, params=None):
@@ -290,10 +383,13 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
-        return self.transport.perform_request('POST', _make_path('_xpack', 'ml',
-            'anomaly_detectors', job_id, '_open'), params=params)
+        return self.transport.perform_request(
+            "POST",
+            _make_path("_xpack", "ml", "anomaly_detectors", job_id, "_open"),
+            params=params,
+        )
 
-    @query_params('force')
+    @query_params("force")
     def delete_job(self, job_id, params=None):
         """
 
@@ -304,10 +400,13 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
-        return self.transport.perform_request('DELETE', _make_path('_xpack',
-            'ml', 'anomaly_detectors', job_id), params=params)
+        return self.transport.perform_request(
+            "DELETE",
+            _make_path("_xpack", "ml", "anomaly_detectors", job_id),
+            params=params,
+        )
 
-    @query_params('duration', 'expires_in')
+    @query_params("duration", "expires_in")
     def forecast_job(self, job_id, params=None):
         """
 
@@ -319,8 +418,11 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
-        return self.transport.perform_request('POST', _make_path('_xpack', 'ml',
-            'anomaly_detectors', job_id, '_forecast'), params=params)
+        return self.transport.perform_request(
+            "POST",
+            _make_path("_xpack", "ml", "anomaly_detectors", job_id, "_forecast"),
+            params=params,
+        )
 
     @query_params()
     def update_model_snapshot(self, job_id, snapshot_id, body, params=None):
@@ -335,9 +437,20 @@ class MlClient(NamespacedClient):
         for param in (job_id, snapshot_id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('POST', _make_path('_xpack', 'ml',
-            'anomaly_detectors', job_id, 'model_snapshots', snapshot_id,
-            '_update'), params=params, body=body)
+        return self.transport.perform_request(
+            "POST",
+            _make_path(
+                "_xpack",
+                "ml",
+                "anomaly_detectors",
+                job_id,
+                "model_snapshots",
+                snapshot_id,
+                "_update",
+            ),
+            params=params,
+            body=body,
+        )
 
     @query_params()
     def delete_filter(self, filter_id, params=None):
@@ -347,8 +460,9 @@ class MlClient(NamespacedClient):
         """
         if filter_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'filter_id'.")
-        return self.transport.perform_request('DELETE', _make_path('_xpack',
-            'ml', 'filters', filter_id), params=params)
+        return self.transport.perform_request(
+            "DELETE", _make_path("_xpack", "ml", "filters", filter_id), params=params
+        )
 
     @query_params()
     def validate(self, body, params=None):
@@ -358,10 +472,11 @@ class MlClient(NamespacedClient):
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
-        return self.transport.perform_request('POST',
-            '/_xpack/ml/anomaly_detectors/_validate', params=params, body=body)
+        return self.transport.perform_request(
+            "POST", "/_xpack/ml/anomaly_detectors/_validate", params=params, body=body
+        )
 
-    @query_params('from_', 'size')
+    @query_params("from_", "size")
     def get_categories(self, job_id, category_id=None, body=None, params=None):
         """
 
@@ -375,12 +490,31 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
-        return self.transport.perform_request('GET', _make_path('_xpack', 'ml',
-            'anomaly_detectors', job_id, 'results', 'categories', category_id),
-            params=params, body=body)
+        return self.transport.perform_request(
+            "GET",
+            _make_path(
+                "_xpack",
+                "ml",
+                "anomaly_detectors",
+                job_id,
+                "results",
+                "categories",
+                category_id,
+            ),
+            params=params,
+            body=body,
+        )
 
-    @query_params('desc', 'end', 'exclude_interim', 'from_', 'influencer_score',
-        'size', 'sort', 'start')
+    @query_params(
+        "desc",
+        "end",
+        "exclude_interim",
+        "from_",
+        "influencer_score",
+        "size",
+        "sort",
+        "start",
+    )
     def get_influencers(self, job_id, body=None, params=None):
         """
 
@@ -400,9 +534,14 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
-        return self.transport.perform_request('GET', _make_path('_xpack', 'ml',
-            'anomaly_detectors', job_id, 'results', 'influencers'),
-            params=params, body=body)
+        return self.transport.perform_request(
+            "GET",
+            _make_path(
+                "_xpack", "ml", "anomaly_detectors", job_id, "results", "influencers"
+            ),
+            params=params,
+            body=body,
+        )
 
     @query_params()
     def put_datafeed(self, datafeed_id, body, params=None):
@@ -416,10 +555,14 @@ class MlClient(NamespacedClient):
         for param in (datafeed_id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('PUT', _make_path('_xpack', 'ml',
-            'datafeeds', datafeed_id), params=params, body=body)
+        return self.transport.perform_request(
+            "PUT",
+            _make_path("_xpack", "ml", "datafeeds", datafeed_id),
+            params=params,
+            body=body,
+        )
 
-    @query_params('force')
+    @query_params("force")
     def delete_datafeed(self, datafeed_id, params=None):
         """
 
@@ -429,9 +572,14 @@ class MlClient(NamespacedClient):
         :arg force: True if the datafeed should be forcefully deleted
         """
         if datafeed_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'datafeed_id'.")
-        return self.transport.perform_request('DELETE', _make_path('_xpack',
-            'ml', 'datafeeds', datafeed_id), params=params)
+            raise ValueError(
+                "Empty value passed for a required argument 'datafeed_id'."
+            )
+        return self.transport.perform_request(
+            "DELETE",
+            _make_path("_xpack", "ml", "datafeeds", datafeed_id),
+            params=params,
+        )
 
     @query_params()
     def get_job_stats(self, job_id=None, params=None):
@@ -441,10 +589,13 @@ class MlClient(NamespacedClient):
 
         :arg job_id: The ID of the jobs stats to fetch
         """
-        return self.transport.perform_request('GET', _make_path('_xpack', 'ml',
-            'anomaly_detectors', job_id, '_stats'), params=params)
+        return self.transport.perform_request(
+            "GET",
+            _make_path("_xpack", "ml", "anomaly_detectors", job_id, "_stats"),
+            params=params,
+        )
 
-    @query_params('delete_intervening_results')
+    @query_params("delete_intervening_results")
     def revert_model_snapshot(self, job_id, snapshot_id, body=None, params=None):
         """
 
@@ -459,11 +610,22 @@ class MlClient(NamespacedClient):
         for param in (job_id, snapshot_id):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('POST', _make_path('_xpack', 'ml',
-            'anomaly_detectors', job_id, 'model_snapshots', snapshot_id,
-            '_revert'), params=params, body=body)
+        return self.transport.perform_request(
+            "POST",
+            _make_path(
+                "_xpack",
+                "ml",
+                "anomaly_detectors",
+                job_id,
+                "model_snapshots",
+                snapshot_id,
+                "_revert",
+            ),
+            params=params,
+            body=body,
+        )
 
-    @query_params('desc', 'end', 'from_', 'size', 'sort', 'start')
+    @query_params("desc", "end", "from_", "size", "sort", "start")
     def get_model_snapshots(self, job_id, snapshot_id=None, body=None, params=None):
         """
 
@@ -482,9 +644,19 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
-        return self.transport.perform_request('GET', _make_path('_xpack', 'ml',
-            'anomaly_detectors', job_id, 'model_snapshots', snapshot_id),
-            params=params, body=body)
+        return self.transport.perform_request(
+            "GET",
+            _make_path(
+                "_xpack",
+                "ml",
+                "anomaly_detectors",
+                job_id,
+                "model_snapshots",
+                snapshot_id,
+            ),
+            params=params,
+            body=body,
+        )
 
     @query_params()
     def delete_model_snapshot(self, job_id, snapshot_id, params=None):
@@ -498,7 +670,15 @@ class MlClient(NamespacedClient):
         for param in (job_id, snapshot_id):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
-        return self.transport.perform_request('DELETE', _make_path('_xpack',
-            'ml', 'anomaly_detectors', job_id, 'model_snapshots', snapshot_id),
-            params=params)
-
+        return self.transport.perform_request(
+            "DELETE",
+            _make_path(
+                "_xpack",
+                "ml",
+                "anomaly_detectors",
+                job_id,
+                "model_snapshots",
+                snapshot_id,
+            ),
+            params=params,
+        )

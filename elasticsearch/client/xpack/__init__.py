@@ -9,8 +9,9 @@ from .ml import MlClient
 from .migration import MigrationClient
 from .deprecation import DeprecationClient
 
+
 class XPackClient(NamespacedClient):
-    namespace = 'xpack'
+    namespace = "xpack"
 
     def __init__(self, *args, **kwargs):
         super(XPackClient, self).__init__(*args, **kwargs)
@@ -23,7 +24,7 @@ class XPackClient(NamespacedClient):
         self.migration = MigrationClient(self.client)
         self.deprecation = DeprecationClient(self.client)
 
-    @query_params('categories', 'human')
+    @query_params("categories", "human")
     def info(self, params=None):
         """
         Retrieve information about xpack, including build number/timestamp and license status
@@ -34,14 +35,13 @@ class XPackClient(NamespacedClient):
         :arg human: Presents additional info for humans (feature descriptions
             and X-Pack tagline)
         """
-        return self.transport.perform_request('GET', '/_xpack', params=params)
+        return self.transport.perform_request("GET", "/_xpack", params=params)
 
-    @query_params('master_timeout')
+    @query_params("master_timeout")
     def usage(self, params=None):
         """
         Retrieve information about xpack features usage
 
         :arg master_timeout: Specify timeout for watch write operation
         """
-        return self.transport.perform_request('GET', '/_xpack/usage',
-            params=params)
+        return self.transport.perform_request("GET", "/_xpack/usage", params=params)
