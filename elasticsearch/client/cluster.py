@@ -1,10 +1,19 @@
 from .utils import NamespacedClient, query_params, _make_path
 
+
 class ClusterClient(NamespacedClient):
-    @query_params('level', 'local', 'master_timeout', 'timeout',
-        'wait_for_active_shards', 'wait_for_events',
-        'wait_for_no_relocating_shards', 'wait_for_nodes',
-        'wait_for_status', 'wait_for_no_initializing_shards')
+    @query_params(
+        "level",
+        "local",
+        "master_timeout",
+        "timeout",
+        "wait_for_active_shards",
+        "wait_for_events",
+        "wait_for_no_relocating_shards",
+        "wait_for_nodes",
+        "wait_for_status",
+        "wait_for_no_initializing_shards",
+    )
     def health(self, index=None, params=None):
         """
         Get a very simple status on the health of the cluster.
@@ -30,10 +39,11 @@ class ClusterClient(NamespacedClient):
         :arg wait_for_status: Wait until cluster is in a specific state, default
             None, valid choices are: 'green', 'yellow', 'red'
         """
-        return self.transport.perform_request('GET', _make_path('_cluster',
-            'health', index), params=params)
+        return self.transport.perform_request(
+            "GET", _make_path("_cluster", "health", index), params=params
+        )
 
-    @query_params('local', 'master_timeout')
+    @query_params("local", "master_timeout")
     def pending_tasks(self, params=None):
         """
         The pending cluster tasks API returns a list of any cluster-level
@@ -45,11 +55,18 @@ class ClusterClient(NamespacedClient):
             master node (default: false)
         :arg master_timeout: Specify timeout for connection to master
         """
-        return self.transport.perform_request('GET',
-            '/_cluster/pending_tasks', params=params)
+        return self.transport.perform_request(
+            "GET", "/_cluster/pending_tasks", params=params
+        )
 
-    @query_params('allow_no_indices', 'expand_wildcards', 'flat_settings',
-        'ignore_unavailable', 'local', 'master_timeout')
+    @query_params(
+        "allow_no_indices",
+        "expand_wildcards",
+        "flat_settings",
+        "ignore_unavailable",
+        "local",
+        "master_timeout",
+    )
     def state(self, metric=None, index=None, params=None):
         """
         Get a comprehensive state information of the whole cluster.
@@ -72,11 +89,12 @@ class ClusterClient(NamespacedClient):
         :arg master_timeout: Specify timeout for connection to master
         """
         if index and not metric:
-            metric = '_all'
-        return self.transport.perform_request('GET', _make_path('_cluster',
-            'state', metric, index), params=params)
+            metric = "_all"
+        return self.transport.perform_request(
+            "GET", _make_path("_cluster", "state", metric, index), params=params
+        )
 
-    @query_params('flat_settings', 'timeout')
+    @query_params("flat_settings", "timeout")
     def stats(self, node_id=None, params=None):
         """
         The Cluster Stats API allows to retrieve statistics from a cluster wide
@@ -91,13 +109,14 @@ class ClusterClient(NamespacedClient):
         :arg flat_settings: Return settings in flat format (default: false)
         :arg timeout: Explicit operation timeout
         """
-        url = '/_cluster/stats'
+        url = "/_cluster/stats"
         if node_id:
-            url = _make_path('_cluster/stats/nodes', node_id)
-        return self.transport.perform_request('GET', url, params=params)
+            url = _make_path("_cluster/stats/nodes", node_id)
+        return self.transport.perform_request("GET", url, params=params)
 
-    @query_params('dry_run', 'explain', 'master_timeout', 'metric',
-        'retry_failed', 'timeout')
+    @query_params(
+        "dry_run", "explain", "master_timeout", "metric", "retry_failed", "timeout"
+    )
     def reroute(self, body=None, params=None):
         """
         Explicitly execute a cluster reroute allocation command including specific commands.
@@ -117,11 +136,11 @@ class ClusterClient(NamespacedClient):
             too many subsequent allocation failures
         :arg timeout: Explicit operation timeout
         """
-        return self.transport.perform_request('POST', '/_cluster/reroute',
-            params=params, body=body)
+        return self.transport.perform_request(
+            "POST", "/_cluster/reroute", params=params, body=body
+        )
 
-    @query_params('flat_settings', 'include_defaults', 'master_timeout',
-        'timeout')
+    @query_params("flat_settings", "include_defaults", "master_timeout", "timeout")
     def get_settings(self, params=None):
         """
         Get cluster settings.
@@ -134,10 +153,11 @@ class ClusterClient(NamespacedClient):
             node
         :arg timeout: Explicit operation timeout
         """
-        return self.transport.perform_request('GET', '/_cluster/settings',
-            params=params)
+        return self.transport.perform_request(
+            "GET", "/_cluster/settings", params=params
+        )
 
-    @query_params('flat_settings', 'master_timeout', 'timeout')
+    @query_params("flat_settings", "master_timeout", "timeout")
     def put_settings(self, body=None, params=None):
         """
         Update cluster wide specific settings.
@@ -150,10 +170,11 @@ class ClusterClient(NamespacedClient):
             node
         :arg timeout: Explicit operation timeout
         """
-        return self.transport.perform_request('PUT', '/_cluster/settings',
-            params=params, body=body)
+        return self.transport.perform_request(
+            "PUT", "/_cluster/settings", params=params, body=body
+        )
 
-    @query_params('include_disk_info', 'include_yes_decisions')
+    @query_params("include_disk_info", "include_yes_decisions")
     def allocation_explain(self, body=None, params=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-allocation-explain.html>`_
@@ -165,6 +186,6 @@ class ClusterClient(NamespacedClient):
         :arg include_yes_decisions: Return 'YES' decisions in explanation
             (default: false)
         """
-        return self.transport.perform_request('GET',
-            '/_cluster/allocation/explain', params=params, body=body)
-
+        return self.transport.perform_request(
+            "GET", "/_cluster/allocation/explain", params=params, body=body
+        )

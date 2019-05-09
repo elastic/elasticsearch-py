@@ -1,5 +1,6 @@
 import time
 import os
+
 try:
     # python 2.6
     from unittest2 import TestCase, SkipTest
@@ -9,32 +10,36 @@ except ImportError:
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import ConnectionError
 
+
 def get_test_client(nowait=False, **kwargs):
     # construct kwargs from the environment
-    kw = {'timeout': 30}
-    if 'TEST_ES_CONNECTION' in os.environ:
+    kw = {"timeout": 30}
+    if "TEST_ES_CONNECTION" in os.environ:
         from elasticsearch import connection
-        kw['connection_class'] = getattr(connection, os.environ['TEST_ES_CONNECTION'])
+
+        kw["connection_class"] = getattr(connection, os.environ["TEST_ES_CONNECTION"])
 
     kw.update(kwargs)
-    client = Elasticsearch([os.environ.get('TEST_ES_SERVER', {})], **kw)
+    client = Elasticsearch([os.environ.get("TEST_ES_SERVER", {})], **kw)
 
     # wait for yellow status
     for _ in range(1 if nowait else 100):
         try:
-            client.cluster.health(wait_for_status='yellow')
+            client.cluster.health(wait_for_status="yellow")
             return client
         except ConnectionError:
-            time.sleep(.1)
+            time.sleep(0.1)
     else:
         # timeout
         raise SkipTest("Elasticsearch failed to start.")
 
+
 def _get_version(version_string):
-    if '.' not in version_string:
+    if "." not in version_string:
         return ()
-    version = version_string.strip().split('.')
+    version = version_string.strip().split(".")
     return tuple(int(v) if v.isdigit() else 999 for v in version)
+
 
 class ElasticsearchTestCase(TestCase):
     @staticmethod
@@ -48,13 +53,12 @@ class ElasticsearchTestCase(TestCase):
 
     def tearDown(self):
         super(ElasticsearchTestCase, self).tearDown()
-        self.client.indices.delete(index='*', ignore=404)
-        self.client.indices.delete_template(name='*', ignore=404)
+        self.client.indices.delete(index="*", ignore=404)
+        self.client.indices.delete_template(name="*", ignore=404)
 
     @property
     def es_version(self):
-        if not hasattr(self, '_es_version'):
-            version_string = self.client.info()['version']['number']
+        if not hasattr(self, "_es_version"):
+            version_string = self.client.info()["version"]["number"]
             self._es_version = _get_version(version_string)
         return self._es_version
-

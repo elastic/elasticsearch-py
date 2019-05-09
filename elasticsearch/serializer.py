@@ -9,8 +9,9 @@ from decimal import Decimal
 from .exceptions import SerializationError, ImproperlyConfigured
 from .compat import string_types
 
+
 class TextSerializer(object):
-    mimetype = 'text/plain'
+    mimetype = "text/plain"
 
     def loads(self, s):
         return s
@@ -19,10 +20,11 @@ class TextSerializer(object):
         if isinstance(data, string_types):
             return data
 
-        raise SerializationError('Cannot serialize %r into text.' % data)
+        raise SerializationError("Cannot serialize %r into text." % data)
+
 
 class JSONSerializer(object):
-    mimetype = 'application/json'
+    mimetype = "application/json"
 
     def default(self, data):
         if isinstance(data, (date, datetime)):
@@ -46,25 +48,26 @@ class JSONSerializer(object):
 
         try:
             return json.dumps(
-                data,
-                default=self.default,
-                ensure_ascii=False,
-                separators=(',', ':'),
+                data, default=self.default, ensure_ascii=False, separators=(",", ":")
             )
         except (ValueError, TypeError) as e:
             raise SerializationError(data, e)
+
 
 DEFAULT_SERIALIZERS = {
     JSONSerializer.mimetype: JSONSerializer(),
     TextSerializer.mimetype: TextSerializer(),
 }
 
+
 class Deserializer(object):
-    def __init__(self, serializers, default_mimetype='application/json'):
+    def __init__(self, serializers, default_mimetype="application/json"):
         try:
             self.default = serializers[default_mimetype]
         except KeyError:
-            raise ImproperlyConfigured('Cannot find default serializer (%s)' % default_mimetype)
+            raise ImproperlyConfigured(
+                "Cannot find default serializer (%s)" % default_mimetype
+            )
         self.serializers = serializers
 
     def loads(self, s, mimetype=None):
@@ -72,11 +75,12 @@ class Deserializer(object):
             deserializer = self.default
         else:
             # split out charset
-            mimetype, _, _ = mimetype.partition(';')
+            mimetype, _, _ = mimetype.partition(";")
             try:
                 deserializer = self.serializers[mimetype]
             except KeyError:
-                raise SerializationError('Unknown mimetype, unable to deserialize: %s' % mimetype)
+                raise SerializationError(
+                    "Unknown mimetype, unable to deserialize: %s" % mimetype
+                )
 
         return deserializer.loads(s)
-
