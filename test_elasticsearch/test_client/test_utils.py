@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from elasticsearch.client.utils import _make_path, _escape
-from elasticsearch.compat import PY2
+from elasticsearch6.client.utils import _make_path, _escape
+from elasticsearch6.compat import PY2
 
 from ..test_cases import TestCase, SkipTest
 

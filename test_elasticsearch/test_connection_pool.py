@@ -1,11 +1,11 @@
 import time
 
-from elasticsearch.connection_pool import (
+from elasticsearch6.connection_pool import (
     ConnectionPool,
     RoundRobinSelector,
     DummyConnectionPool,
 )
-from elasticsearch.exceptions import ImproperlyConfigured
+from elasticsearch6.exceptions import ImproperlyConfigured
 
 from .test_cases import TestCase
 

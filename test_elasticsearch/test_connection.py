@@ -6,14 +6,14 @@ import urllib3
 import warnings
 from requests.auth import AuthBase
 
-from elasticsearch.exceptions import (
+from elasticsearch6.exceptions import (
     TransportError,
     ConflictError,
     RequestError,
     NotFoundError,
 )
-from elasticsearch.connection import RequestsHttpConnection, Urllib3HttpConnection
-from elasticsearch.exceptions import ImproperlyConfigured
+from elasticsearch6.connection import RequestsHttpConnection, Urllib3HttpConnection
+from elasticsearch6.exceptions import ImproperlyConfigured
 from .test_cases import TestCase, SkipTest
 
 
@@ -198,14 +198,14 @@ class TestRequestsConnection(TestCase):
         con = self._get_mock_connection(status_code=400)
         self.assertRaises(RequestError, con.perform_request, "GET", "/", {}, "")
 
-    @patch("elasticsearch.connection.base.logger")
+    @patch("elasticsearch6.connection.base.logger")
     def test_head_with_404_doesnt_get_logged(self, logger):
         con = self._get_mock_connection(status_code=404)
         self.assertRaises(NotFoundError, con.perform_request, "HEAD", "/", {}, "")
         self.assertEquals(0, logger.warning.call_count)
 
-    @patch("elasticsearch.connection.base.tracer")
-    @patch("elasticsearch.connection.base.logger")
+    @patch("elasticsearch6.connection.base.tracer")
+    @patch("elasticsearch6.connection.base.logger")
     def test_failed_request_logs_and_traces(self, logger, tracer):
         con = self._get_mock_connection(response_body='{"answer": 42}', status_code=500)
         self.assertRaises(
@@ -230,8 +230,8 @@ class TestRequestsConnection(TestCase):
             )
         )
 
-    @patch("elasticsearch.connection.base.tracer")
-    @patch("elasticsearch.connection.base.logger")
+    @patch("elasticsearch6.connection.base.tracer")
+    @patch("elasticsearch6.connection.base.logger")
     def test_success_logs_and_traces(self, logger, tracer):
         con = self._get_mock_connection(response_body="""{"answer": "that's it!"}""")
         status, headers, data = con.perform_request(
@@ -304,7 +304,7 @@ class TestRequestsConnection(TestCase):
             request.headers["authorization"], "Basic dXNlcm5hbWU6c2VjcmV0"
         )
 
-    @patch("elasticsearch.connection.base.tracer")
+    @patch("elasticsearch6.connection.base.tracer")
     def test_url_prefix(self, tracer):
         con = self._get_mock_connection({"url_prefix": "/some-prefix/"})
         request = self._get_request(

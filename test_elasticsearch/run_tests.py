@@ -69,7 +69,7 @@ def run_all(argv=None):
             "nosetests",
             "--with-xunit",
             "--with-xcoverage",
-            "--cover-package=elasticsearch",
+            "--cover-package=elasticsearch6",
             "--cover-erase",
             "--logging-filter=elasticsearch",
             "--logging-level=DEBUG",

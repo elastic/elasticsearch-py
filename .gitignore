@@ -6,7 +6,7 @@
 test_elasticsearch/cover
 test_elasticsearch/local.py
 docs/_build
-elasticsearch.egg-info
+elasticsearch6.egg-info
 .tox
 .noseids
 dist
