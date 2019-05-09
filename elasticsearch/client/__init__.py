@@ -305,6 +305,8 @@ class Elasticsearch(object):
         "version",
         "version_type",
         "wait_for_active_shards",
+        "if_primary_term",
+        "if_seq_no",
     )
     def index(self, index, doc_type, body, id=None, params=None):
         """
@@ -336,6 +338,11 @@ class Elasticsearch(object):
             meaning the primary shard only. Set to `all` for all shard copies,
             otherwise set to any non-negative value less than or equal to the
             total number of copies for the shard (number of replicas + 1)
+        :arg if_primary_term: only perform the index operation if the last
+	    operation that has changed the document has the specified primary
+	    term
+	:arg if_seq_no: only perform the index operation if the last operation
+	    that has changed the document has the specified sequence number
         """
         for param in (index, doc_type, body):
             if param in SKIP_IN_PATH:
@@ -351,6 +358,8 @@ class Elasticsearch(object):
         "_source",
         "_source_exclude",
         "_source_include",
+        "_source_excludes",
+        "_source_includes",
         "parent",
         "preference",
         "realtime",
@@ -374,6 +383,10 @@ class Elasticsearch(object):
         :arg _source_exclude: A list of fields to exclude from the returned
             _source field
         :arg _source_include: A list of fields to extract and return from the
+            _source field
+        :arg _source_excludes: A list of fields to exclude from the returned
+            _source field
+        :arg _source_includes: A list of fields to extract and return from the
             _source field
         :arg parent: The ID of the parent document
         :arg preference: Specify the node or shard the operation should be
@@ -400,6 +413,8 @@ class Elasticsearch(object):
         "_source",
         "_source_exclude",
         "_source_include",
+        "_source_excludes",
+        "_source_includes",
         "parent",
         "preference",
         "realtime",
@@ -421,6 +436,10 @@ class Elasticsearch(object):
         :arg _source_exclude: A list of fields to exclude from the returned
             _source field
         :arg _source_include: A list of fields to extract and return from the
+            _source field
+        :arg _source_excludes: A list of fields to exclude from the returned
+            _source field
+        :arg _source_includes: A list of fields to extract and return from the
             _source field
         :arg parent: The ID of the parent document
         :arg preference: Specify the node or shard the operation should be
@@ -445,6 +464,8 @@ class Elasticsearch(object):
         "_source",
         "_source_exclude",
         "_source_include",
+        "_source_excludes",
+        "_source_includes",
         "parent",
         "preference",
         "realtime",
@@ -468,6 +489,10 @@ class Elasticsearch(object):
         :arg _source_exclude: A list of fields to exclude from the returned
             _source field
         :arg _source_include: A list of fields to extract and return from the
+            _source field
+        :arg _source_excludes: A list of fields to exclude from the returned
+            _source field
+        :arg _source_includes: A list of fields to extract and return from the
             _source field
         :arg parent: The ID of the parent document
         :arg preference: Specify the node or shard the operation should be
@@ -494,6 +519,8 @@ class Elasticsearch(object):
         "_source",
         "_source_exclude",
         "_source_include",
+        "_source_excludes",
+        "_source_includes",
         "parent",
         "preference",
         "realtime",
@@ -516,6 +543,10 @@ class Elasticsearch(object):
         :arg _source_exclude: A list of fields to exclude from the returned
             _source field
         :arg _source_include: A list of fields to extract and return from the
+            _source field
+        :arg _source_excludes: A list of fields to exclude from the returned
+            _source field
+        :arg _source_includes: A list of fields to extract and return from the
             _source field
         :arg parent: The ID of the parent document
         :arg preference: Specify the node or shard the operation should be
@@ -540,6 +571,8 @@ class Elasticsearch(object):
         "_source",
         "_source_exclude",
         "_source_include",
+        "_source_excludes",
+        "_source_includes",
         "preference",
         "realtime",
         "refresh",
@@ -562,6 +595,10 @@ class Elasticsearch(object):
             _source field
         :arg _source_include: A list of fields to extract and return from the
             _source field
+        :arg _source_excludes: A list of fields to exclude from the returned
+            _source field
+        :arg _source_includes: A list of fields to extract and return from the
+            _source field
         :arg preference: Specify the node or shard the operation should be
             performed on (default: random)
         :arg realtime: Specify whether to perform the operation in realtime or
@@ -582,7 +619,11 @@ class Elasticsearch(object):
         "_source",
         "_source_exclude",
         "_source_include",
+        "_source_excludes",
+        "_source_includes",
         "fields",
+        "if_primary_term",
+        "if_seq_no",
         "lang",
         "parent",
         "refresh",
@@ -610,7 +651,16 @@ class Elasticsearch(object):
             _source field
         :arg _source_include: A list of fields to extract and return from the
             _source field
+        :arg _source_excludes: A list of fields to exclude from the returned
+            _source field
+        :arg _source_includes: A list of fields to extract and return from the
+            _source field
         :arg fields: A comma-separated list of fields to return in the response
+        :arg if_primary_term: only perform the update operation if the last
+            operation that has changed the document has the specified primary
+            term
+        :arg if_seq_no: only perform the update operation if the last operation
+            that has changed the document has the specified sequence number
         :arg lang: The script language (default: painless)
         :arg parent: ID of the parent document. Is is only used for routing and
             when for the upsert request
@@ -645,6 +695,8 @@ class Elasticsearch(object):
         "_source",
         "_source_exclude",
         "_source_include",
+        "_source_excludes",
+        "_source_includes",
         "allow_no_indices",
         "allow_partial_search_results",
         "analyze_wildcard",
@@ -656,6 +708,7 @@ class Elasticsearch(object):
         "expand_wildcards",
         "explain",
         "from_",
+        "ignore_throttled",
         "ignore_unavailable",
         "lenient",
         "max_concurrent_shard_requests",
@@ -663,9 +716,11 @@ class Elasticsearch(object):
         "preference",
         "q",
         "request_cache",
+        "rest_total_hits_as_int",
         "routing",
         "scroll",
         "search_type",
+        "seq_no_primary_term",
         "size",
         "sort",
         "stats",
@@ -697,6 +752,10 @@ class Elasticsearch(object):
             _source field
         :arg _source_include: A list of fields to extract and return from the
             _source field
+        :arg _source_excludes: A list of fields to exclude from the returned
+            _source field
+        :arg _source_includes: A list of fields to extract and return from the
+            _source field
         :arg allow_no_indices: Whether to ignore if a wildcard indices
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
@@ -724,6 +783,8 @@ class Elasticsearch(object):
         :arg explain: Specify whether to return detailed information about score
             computation as part of a hit
         :arg from\\_: Starting offset (default: 0)
+        :arg ignore_throttled: Whether specified concrete, expanded or aliased
+            indices should be ignored when throttled
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
         :arg lenient: Specify whether format-based query failures (such as
@@ -745,11 +806,17 @@ class Elasticsearch(object):
         :arg q: Query in the Lucene query string syntax
         :arg request_cache: Specify if request cache should be used for this
             request or not, defaults to index level setting
+        :arg rest_total_hits_as_int: This parameter is ignored in this version.
+            It is used in the next major version to control whether the rest
+            response should render the total.hits as an object or a number,
+            default False
         :arg routing: A comma-separated list of specific routing values
         :arg scroll: Specify how long a consistent view of the index should be
             maintained for scrolled search
         :arg search_type: Search operation type, valid choices are:
             'query_then_fetch', 'dfs_query_then_fetch'
+        :arg seq_no_primary_term: Specify whether to return sequence number and
+            primary term of the last modification of each hit
         :arg size: Number of hits to return (default: 10)
         :arg sort: A comma-separated list of <field>:<direction> pairs
         :arg stats: Specific 'tag' of the request for logging and statistical
@@ -789,6 +856,8 @@ class Elasticsearch(object):
         "_source",
         "_source_exclude",
         "_source_include",
+        "_source_excludes",
+        "_source_includes",
         "allow_no_indices",
         "analyze_wildcard",
         "analyzer",
@@ -837,6 +906,10 @@ class Elasticsearch(object):
             _source field
         :arg _source_include: A list of fields to extract and return from the
             _source field
+        :arg _source_excludes: A list of fields to exclude from the returned
+            _source field
+        :arg _source_includes: A list of fields to extract and return from the
+            _source field
         :arg allow_no_indices: Whether to ignore if a wildcard indices
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
@@ -852,7 +925,7 @@ class Elasticsearch(object):
         :arg expand_wildcards: Whether to expand wildcard expression to concrete
             indices that are open, closed or both., default 'open', valid
             choices are: 'open', 'closed', 'none', 'all'
-        :arg from\\_: Starting offset (default: 0)
+        :arg from_: Starting offset (default: 0)
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
         :arg lenient: Specify whether format-based query failures (such as
@@ -870,8 +943,8 @@ class Elasticsearch(object):
         :arg routing: A comma-separated list of specific routing values
         :arg scroll: Specify how long a consistent view of the index should be
             maintained for scrolled search
-        :arg scroll_size: Size on the scroll request powering the
-            update_by_query
+        :arg scroll_size: Size on the scroll request powering the update by
+            query
         :arg search_timeout: Explicit timeout for each search request. Defaults
             to no timeout.
         :arg search_type: Search operation type, valid choices are:
@@ -908,6 +981,23 @@ class Elasticsearch(object):
             _make_path(index, doc_type, "_update_by_query"),
             params=params,
             body=body,
+        )
+
+    @query_params("requests_per_second")
+    def update_by_query_rethrottle(self, task_id, params=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update-by-query.html>`_
+
+        :arg task_id: The task id to rethrottle
+        :arg requests_per_second: The throttle to set on this request in
+            floating sub-requests per second. -1 means set no throttle.
+        """
+        if task_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'task_id'.")
+        return self.transport.perform_request(
+            "POST",
+            _make_path("_update_by_query", task_id, "_rethrottle"),
+            params=params,
         )
 
     @query_params(
@@ -965,6 +1055,8 @@ class Elasticsearch(object):
         "_source",
         "_source_exclude",
         "_source_include",
+        "_source_excludes",
+        "_source_includes",
         "allow_no_indices",
         "analyze_wildcard",
         "analyzer",
@@ -1011,6 +1103,10 @@ class Elasticsearch(object):
             _source field
         :arg _source_include: A list of fields to extract and return from the
             _source field
+	:arg _source_excludes: A list of fields to exclude from the returned
+	    _source field
+	:arg _source_includes: A list of fields to extract and return from the
+	    _source field
         :arg allow_no_indices: Whether to ignore if a wildcard indices
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
@@ -1081,6 +1177,23 @@ class Elasticsearch(object):
             body=body,
         )
 
+    @query_params("requests_per_second")
+    def delete_by_query_rethrottle(self, task_id, params=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-delete-by-query.html>`_
+
+        :arg task_id: The task id to rethrottle
+        :arg requests_per_second: The throttle to set on this request in
+            floating sub-requests per second. -1 means set no throttle.
+        """
+        if task_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'task_id'.")
+        return self.transport.perform_request(
+            "POST",
+            _make_path("_delete_by_query", task_id, "_rethrottle"),
+            params=params,
+        )
+
     @query_params(
         "allow_no_indices",
         "expand_wildcards",
@@ -1120,9 +1233,11 @@ class Elasticsearch(object):
         "allow_no_indices",
         "expand_wildcards",
         "explain",
+        "ignore_throttled",
         "ignore_unavailable",
         "preference",
         "profile",
+        "rest_total_hits_as_int",
         "routing",
         "scroll",
         "search_type",
@@ -1138,7 +1253,6 @@ class Elasticsearch(object):
             or empty string to perform the operation on all indices
         :arg doc_type: A comma-separated list of document types to search; leave
             empty to perform the operation on all types
-        :arg body: The search definition template and its params
         :arg allow_no_indices: Whether to ignore if a wildcard indices
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
@@ -1147,11 +1261,17 @@ class Elasticsearch(object):
             choices are: 'open', 'closed', 'none', 'all'
         :arg explain: Specify whether to return detailed information about score
             computation as part of a hit
+        :arg ignore_throttled: Whether specified concrete, expanded or aliased
+            indices should be ignored when throttled
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
         :arg preference: Specify the node or shard the operation should be
             performed on (default: random)
         :arg profile: Specify whether to profile the query execution
+        :arg rest_total_hits_as_int: This parameter is ignored in this version.
+            It is used in the next major version to control whether the rest
+            response should render the total.hits as an object or a number,
+            default False
         :arg routing: A comma-separated list of specific routing values
         :arg scroll: Specify how long a consistent view of the index should be
             maintained for scrolled search
@@ -1172,6 +1292,8 @@ class Elasticsearch(object):
         "_source",
         "_source_exclude",
         "_source_include",
+        "_source_excludes",
+        "_source_includes",
         "analyze_wildcard",
         "analyzer",
         "default_operator",
@@ -1200,6 +1322,10 @@ class Elasticsearch(object):
             _source field
         :arg _source_include: A list of fields to extract and return from the
             _source field
+        :arg _source_excludes: A list of fields to exclude from the returned
+            _source field
+        :arg _source_includes: A list of fields to extract and return from the
+            _source field
         :arg analyze_wildcard: Specify whether wildcards and prefix queries in
             the query string query should be analyzed (default: false)
         :arg analyzer: The analyzer for the query string query
@@ -1223,7 +1349,7 @@ class Elasticsearch(object):
             "GET", _make_path(index, doc_type, id, "_explain"), params=params, body=body
         )
 
-    @query_params("scroll")
+    @query_params("rest_total_hits_as_int", "scroll")
     def scroll(self, scroll_id=None, body=None, params=None):
         """
         Scroll a search request created by specifying the scroll parameter.
@@ -1231,6 +1357,10 @@ class Elasticsearch(object):
 
         :arg scroll_id: The scroll ID
         :arg body: The scroll ID if not passed by URL or query parameter.
+        :arg rest_total_hits_as_int: This parameter is ignored in this version.
+            It is used in the next major version to control whether the rest
+            response should render the total.hits as an object or a number,
+            default False
         :arg scroll: Specify how long a consistent view of the index should be
             maintained for scrolled search
         """
@@ -1275,6 +1405,8 @@ class Elasticsearch(object):
         "version",
         "version_type",
         "wait_for_active_shards",
+        "if_primary_term",
+        "if_seq_no",
     )
     def delete(self, index, doc_type, id, params=None):
         """
@@ -1300,6 +1432,11 @@ class Elasticsearch(object):
             1, meaning the primary shard only. Set to `all` for all shard
             copies, otherwise set to any non-negative value less than or equal
             to the total number of copies for the shard (number of replicas + 1)
+	:arg if_primary_term: only perform the delete operation if the last
+            operation that has changed the document has the specified primary
+            term
+	:arg if_seq_no: only perform the delete operation if the last operation
+	    that has changed the document has the specified sequence number
         """
         for param in (index, doc_type, id):
             if param in SKIP_IN_PATH:
@@ -1366,7 +1503,9 @@ class Elasticsearch(object):
     @query_params(
         "_source",
         "_source_exclude",
+        "_source_excludes",
         "_source_include",
+        "_source_includes",
         "fields",
         "pipeline",
         "refresh",
@@ -1392,6 +1531,10 @@ class Elasticsearch(object):
         :arg _source_exclude: Default list of fields to exclude from the
             returned _source field, can be overridden on each sub-request
         :arg _source_include: Default list of fields to extract and return from
+            the _source field, can be overridden on each sub-request
+        :arg _source_excludes: Default list of fields to exclude from the
+            returned _source field, can be overridden on each sub-request
+        :arg _source_includes: Default list of fields to extract and return from
             the _source field, can be overridden on each sub-request
         :arg fields: Default comma-separated list of fields to return in the
             response for updates, can be overridden on each sub-request
@@ -1420,7 +1563,12 @@ class Elasticsearch(object):
         )
 
     @query_params(
-        "max_concurrent_searches", "pre_filter_shard_size", "search_type", "typed_keys"
+        "max_concurrent_searches",
+        "max_concurrent_shard_requests",
+        "pre_filter_shard_size",
+        "rest_total_hits_as_int",
+        "search_type",
+        "typed_keys",
     )
     def msearch(self, body, index=None, doc_type=None, params=None):
         """
@@ -1434,6 +1582,8 @@ class Elasticsearch(object):
             default
         :arg max_concurrent_searches: Controls the maximum number of concurrent
             searches the multi search api will execute
+	:arg max_concurrent_searches: Controls the maximum number of concurrent
+            searches the multi search api will execute
         :arg pre_filter_shard_size: A threshold that enforces a pre-filter
             roundtrip to prefilter search shards based on query rewriting if
             the number of shards the search request expands to exceeds the
@@ -1441,7 +1591,11 @@ class Elasticsearch(object):
             significantly if for instance a shard can not match any documents
             based on it's rewrite method ie. if date filters are mandatory to
             match but the shard bounds and the query are disjoint., default 128
-        :arg search_type: Search operation type, valid choices are:
+        :arg rest_total_hits_as_int: This parameter is ignored in this version.
+	    It is used in the next major version to control whether the rest
+	    response should render the total.hits as an object or a number,
+	    default False
+	:arg search_type: Search operation type, valid choices are:
             'query_then_fetch', 'query_and_fetch', 'dfs_query_then_fetch',
             'dfs_query_and_fetch'
         :arg typed_keys: Specify whether aggregation and suggester names should
@@ -1586,7 +1740,7 @@ class Elasticsearch(object):
             body=body,
         )
 
-    @query_params()
+    @query_params("master_timeout", "timeout")
     def put_script(self, id, body, context=None, params=None):
         """
         Create a script in given language with specified ID.
@@ -1594,6 +1748,8 @@ class Elasticsearch(object):
 
         :arg id: Script ID
         :arg body: The document
+        :arg master_timeout: Specify timeout for connection to master
+	:arg timeout: Explicit operation timeout
         """
         for param in (id, body):
             if param in SKIP_IN_PATH:
@@ -1602,13 +1758,38 @@ class Elasticsearch(object):
             "PUT", _make_path("_scripts", id, context), params=params, body=body
         )
 
-    @query_params()
+    @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable")
+    def rank_eval(self, body, index=None, params=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-rank-eval.html>`_
+
+        :arg body: The ranking evaluation search definition, including search
+            requests, document ratings and ranking metric definition.
+        :arg index: A comma-separated list of index names to search; use `_all`
+            or empty string to perform the operation on all indices
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+            expression resolves into no concrete indices. (This includes `_all`
+            string or when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete
+            indices that are open, closed or both., default 'open', valid
+            choices are: 'open', 'closed', 'none', 'all'
+        :arg ignore_unavailable: Whether specified concrete indices should be
+            ignored when unavailable (missing or closed)
+        """
+        if body in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'body'.")
+        return self.transport.perform_request(
+            "GET", _make_path(index, "_rank_eval"), params=params, body=body
+        )
+
+    @query_params("master_timeout")
     def get_script(self, id, params=None):
         """
         Retrieve a script from the API.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
 
         :arg id: Script ID
+        :arg master_timeout: Specify timeout for connection to master<Paste>
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
@@ -1616,13 +1797,15 @@ class Elasticsearch(object):
             "GET", _make_path("_scripts", id), params=params
         )
 
-    @query_params()
+    @query_params("master_timeout", "timeout")
     def delete_script(self, id, params=None):
         """
         Remove a stored script from elasticsearch.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
 
         :arg id: Script ID
+	:arg master_timeout: Specify timeout for connection to master
+        :arg timeout: Explicit operation timeout
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
@@ -1642,7 +1825,20 @@ class Elasticsearch(object):
             "GET", _make_path("_render", "template", id), params=params, body=body
         )
 
-    @query_params("max_concurrent_searches", "search_type", "typed_keys")
+    @query_params()
+    def scripts_painless_execute(self, body=None, params=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/painless/master/painless-execute-api.html>`_
+
+        :arg body: The script to execute
+        """
+        return self.transport.perform_request(
+            "GET", "/_scripts/painless/_execute", params=params, body=body
+        )
+
+    @query_params(
+        "max_concurrent_searches", "rest_total_hits_as_int", "search_type", "typed_keys"
+    )
     def msearch_template(self, body, index=None, doc_type=None, params=None):
         """
         The /_search/template endpoint allows to use the mustache language to
@@ -1653,11 +1849,13 @@ class Elasticsearch(object):
         :arg body: The request definitions (metadata-search request definition
             pairs), separated by newlines
         :arg index: A comma-separated list of index names to use as default
-        :arg doc_type: A comma-separated list of document types to use as
-            default
         :arg max_concurrent_searches: Controls the maximum number of concurrent
             searches the multi search api will execute
-        :arg search_type: Search operation type, valid choices are:
+        :arg rest_total_hits_as_int: This parameter is ignored in this version.
+	    It is used in the next major version to control whether the rest
+	    response should render the total.hits as an object or a number,
+	    default False
+	:arg search_type: Search operation type, valid choices are:
             'query_then_fetch', 'query_and_fetch', 'dfs_query_then_fetch',
             'dfs_query_and_fetch'
         :arg typed_keys: Specify whether aggregation and suggester names should
