@@ -1,8 +1,16 @@
 from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
+
 class TasksClient(NamespacedClient):
-    @query_params('actions', 'detailed', 'group_by', 'nodes',
-        'parent_task_id', 'wait_for_completion', 'timeout')
+    @query_params(
+        "actions",
+        "detailed",
+        "group_by",
+        "nodes",
+        "parent_task_id",
+        "wait_for_completion",
+        "timeout",
+    )
     def list(self, params=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/tasks.html>`_
@@ -22,9 +30,9 @@ class TasksClient(NamespacedClient):
             (default: false)
         :arg timeout: Maximum waiting time for `wait_for_completion`
         """
-        return self.transport.perform_request('GET', '/_tasks', params=params)
+        return self.transport.perform_request("GET", "/_tasks", params=params)
 
-    @query_params('actions', 'nodes', 'parent_task_id')
+    @query_params("actions", "nodes", "parent_task_id")
     def cancel(self, task_id=None, params=None):
         """
 
@@ -41,10 +49,11 @@ class TasksClient(NamespacedClient):
         :arg parent_task_id: Cancel tasks with specified parent task id
             (node_id:task_number). Set to -1 to cancel all.
         """
-        return self.transport.perform_request('POST', _make_path('_tasks',
-            task_id, '_cancel'), params=params)
+        return self.transport.perform_request(
+            "POST", _make_path("_tasks", task_id, "_cancel"), params=params
+        )
 
-    @query_params('wait_for_completion', 'timeout')
+    @query_params("wait_for_completion", "timeout")
     def get(self, task_id=None, params=None):
         """
         Retrieve information for a particular task.
@@ -55,5 +64,6 @@ class TasksClient(NamespacedClient):
             (default: false)
         :arg timeout: Maximum waiting time for `wait_for_completion`
         """
-        return self.transport.perform_request('GET', _make_path('_tasks',
-            task_id), params=params)
+        return self.transport.perform_request(
+            "GET", _make_path("_tasks", task_id), params=params
+        )

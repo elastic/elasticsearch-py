@@ -1,7 +1,8 @@
 from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
+
 class CatClient(NamespacedClient):
-    @query_params('format', 'h', 'help', 'local', 'master_timeout', 's', 'v')
+    @query_params("format", "h", "help", "local", "master_timeout", "s", "v")
     def aliases(self, name=None, params=None):
         """
 
@@ -19,11 +20,13 @@ class CatClient(NamespacedClient):
             by
         :arg v: Verbose mode. Display column headers, default False
         """
-        return self.transport.perform_request('GET', _make_path('_cat',
-            'aliases', name), params=params)
+        return self.transport.perform_request(
+            "GET", _make_path("_cat", "aliases", name), params=params
+        )
 
-    @query_params('bytes', 'size', 'format', 'h', 'help', 'local', 'master_timeout',
-        's', 'v')
+    @query_params(
+        "bytes", "size", "format", "h", "help", "local", "master_timeout", "s", "v"
+    )
     def allocation(self, node_id=None, params=None):
         """
         Allocation provides a snapshot of how shards have located around the
@@ -45,10 +48,11 @@ class CatClient(NamespacedClient):
             by
         :arg v: Verbose mode. Display column headers, default False
         """
-        return self.transport.perform_request('GET', _make_path('_cat',
-            'allocation', node_id), params=params)
+        return self.transport.perform_request(
+            "GET", _make_path("_cat", "allocation", node_id), params=params
+        )
 
-    @query_params('size', 'format', 'h', 'help', 'local', 'master_timeout', 's', 'v')
+    @query_params("size", "format", "h", "help", "local", "master_timeout", "s", "v")
     def count(self, index=None, params=None):
         """
         Count provides quick access to the document count of the entire cluster,
@@ -68,11 +72,11 @@ class CatClient(NamespacedClient):
             by
         :arg v: Verbose mode. Display column headers, default False
         """
-        return self.transport.perform_request('GET', _make_path('_cat', 'count',
-            index), params=params)
+        return self.transport.perform_request(
+            "GET", _make_path("_cat", "count", index), params=params
+        )
 
-    @query_params('format', 'h', 'help', 'local', 'master_timeout', 's', 'ts',
-        'v')
+    @query_params("format", "h", "help", "local", "master_timeout", "s", "ts", "v")
     def health(self, params=None):
         """
         health is a terse, one-line representation of the same information from
@@ -91,10 +95,9 @@ class CatClient(NamespacedClient):
         :arg ts: Set to false to disable timestamping, default True
         :arg v: Verbose mode. Display column headers, default False
         """
-        return self.transport.perform_request('GET', '/_cat/health',
-            params=params)
+        return self.transport.perform_request("GET", "/_cat/health", params=params)
 
-    @query_params('help', 's')
+    @query_params("help", "s")
     def help(self, params=None):
         """
         A simple help for the cat api.
@@ -104,10 +107,22 @@ class CatClient(NamespacedClient):
         :arg s: Comma-separated list of column names or column aliases to sort
             by
         """
-        return self.transport.perform_request('GET', '/_cat', params=params)
+        return self.transport.perform_request("GET", "/_cat", params=params)
 
-    @query_params('bytes', 'time', 'size', 'format', 'h', 'health', 'help', 'local',
-        'master_timeout', 'pri', 's', 'v')
+    @query_params(
+        "bytes",
+        "time",
+        "size",
+        "format",
+        "h",
+        "health",
+        "help",
+        "local",
+        "master_timeout",
+        "pri",
+        "s",
+        "v",
+    )
     def indices(self, index=None, params=None):
         """
         The indices command provides a cross-section of each index.
@@ -133,10 +148,11 @@ class CatClient(NamespacedClient):
             by
         :arg v: Verbose mode. Display column headers, default False
         """
-        return self.transport.perform_request('GET', _make_path('_cat',
-            'indices', index), params=params)
+        return self.transport.perform_request(
+            "GET", _make_path("_cat", "indices", index), params=params
+        )
 
-    @query_params('format', 'h', 'help', 'local', 'master_timeout', 's', 'v')
+    @query_params("format", "h", "help", "local", "master_timeout", "s", "v")
     def master(self, params=None):
         """
         Displays the master's node ID, bound IP address, and node name.
@@ -153,11 +169,9 @@ class CatClient(NamespacedClient):
             by
         :arg v: Verbose mode. Display column headers, default False
         """
-        return self.transport.perform_request('GET', '/_cat/master',
-            params=params)
+        return self.transport.perform_request("GET", "/_cat/master", params=params)
 
-    @query_params('format', 'full_id', 'h', 'help', 'local', 'master_timeout',
-        's', 'v')
+    @query_params("format", "full_id", "h", "help", "local", "master_timeout", "s", "v")
     def nodes(self, params=None):
         """
         The nodes command shows the cluster topology.
@@ -176,10 +190,11 @@ class CatClient(NamespacedClient):
             by
         :arg v: Verbose mode. Display column headers, default False
         """
-        return self.transport.perform_request('GET', '/_cat/nodes',
-            params=params)
+        return self.transport.perform_request("GET", "/_cat/nodes", params=params)
 
-    @query_params('bytes', 'time', 'size', 'format', 'h', 'help', 'master_timeout', 's', 'v')
+    @query_params(
+        "bytes", "time", "size", "format", "h", "help", "master_timeout", "s", "v"
+    )
     def recovery(self, index=None, params=None):
         """
         recovery is a view of shard replication.
@@ -198,10 +213,22 @@ class CatClient(NamespacedClient):
             by
         :arg v: Verbose mode. Display column headers, default False
         """
-        return self.transport.perform_request('GET', _make_path('_cat',
-            'recovery', index), params=params)
+        return self.transport.perform_request(
+            "GET", _make_path("_cat", "recovery", index), params=params
+        )
 
-    @query_params('bytes', 'time', 'size', 'format', 'h', 'help', 'local', 'master_timeout', 's', 'v')
+    @query_params(
+        "bytes",
+        "time",
+        "size",
+        "format",
+        "h",
+        "help",
+        "local",
+        "master_timeout",
+        "s",
+        "v",
+    )
     def shards(self, index=None, params=None):
         """
         The shards command is the detailed view of what nodes contain which shards.
@@ -222,10 +249,11 @@ class CatClient(NamespacedClient):
             by
         :arg v: Verbose mode. Display column headers, default False
         """
-        return self.transport.perform_request('GET', _make_path('_cat',
-            'shards', index), params=params)
+        return self.transport.perform_request(
+            "GET", _make_path("_cat", "shards", index), params=params
+        )
 
-    @query_params('bytes', 'size', 'format', 'h', 'help', 's', 'v')
+    @query_params("bytes", "size", "format", "h", "help", "s", "v")
     def segments(self, index=None, params=None):
         """
         The segments command is the detailed view of Lucene segments per index.
@@ -242,10 +270,11 @@ class CatClient(NamespacedClient):
             by
         :arg v: Verbose mode. Display column headers, default False
         """
-        return self.transport.perform_request('GET', _make_path('_cat',
-            'segments', index), params=params)
+        return self.transport.perform_request(
+            "GET", _make_path("_cat", "segments", index), params=params
+        )
 
-    @query_params('format', 'h', 'help', 'local', 'master_timeout', 's', 'v')
+    @query_params("format", "h", "help", "local", "master_timeout", "s", "v")
     def pending_tasks(self, params=None):
         """
         pending_tasks provides the same information as the
@@ -264,11 +293,11 @@ class CatClient(NamespacedClient):
             by
         :arg v: Verbose mode. Display column headers, default False
         """
-        return self.transport.perform_request('GET', '/_cat/pending_tasks',
-            params=params)
+        return self.transport.perform_request(
+            "GET", "/_cat/pending_tasks", params=params
+        )
 
-    @query_params('format', 'h', 'help', 'local', 'master_timeout', 's', 'size',
-        'v')
+    @query_params("format", "h", "help", "local", "master_timeout", "s", "size", "v")
     def thread_pool(self, thread_pool_patterns=None, params=None):
         """
         Get information about thread pools.
@@ -289,11 +318,13 @@ class CatClient(NamespacedClient):
             '', 'k', 'm', 'g', 't', 'p'
         :arg v: Verbose mode. Display column headers, default False
         """
-        return self.transport.perform_request('GET', _make_path('_cat',
-            'thread_pool', thread_pool_patterns), params=params)
+        return self.transport.perform_request(
+            "GET",
+            _make_path("_cat", "thread_pool", thread_pool_patterns),
+            params=params,
+        )
 
-    @query_params('bytes', 'format', 'h', 'help', 'local', 'master_timeout',
-        's', 'v')
+    @query_params("bytes", "format", "h", "help", "local", "master_timeout", "s", "v")
     def fielddata(self, fields=None, params=None):
         """
         Shows information about currently loaded fielddata on a per-node basis.
@@ -314,10 +345,11 @@ class CatClient(NamespacedClient):
             by
         :arg v: Verbose mode. Display column headers, default False
         """
-        return self.transport.perform_request('GET', _make_path('_cat',
-            'fielddata', fields), params=params)
+        return self.transport.perform_request(
+            "GET", _make_path("_cat", "fielddata", fields), params=params
+        )
 
-    @query_params('format', 'h', 'help', 'local', 'master_timeout', 's', 'v')
+    @query_params("format", "h", "help", "local", "master_timeout", "s", "v")
     def plugins(self, params=None):
         """
 
@@ -334,10 +366,9 @@ class CatClient(NamespacedClient):
             by
         :arg v: Verbose mode. Display column headers, default False
         """
-        return self.transport.perform_request('GET', '/_cat/plugins',
-            params=params)
+        return self.transport.perform_request("GET", "/_cat/plugins", params=params)
 
-    @query_params('format', 'h', 'help', 'local', 'master_timeout', 's', 'v')
+    @query_params("format", "h", "help", "local", "master_timeout", "s", "v")
     def nodeattrs(self, params=None):
         """
 
@@ -354,10 +385,9 @@ class CatClient(NamespacedClient):
             by
         :arg v: Verbose mode. Display column headers, default False
         """
-        return self.transport.perform_request('GET', '/_cat/nodeattrs',
-            params=params)
+        return self.transport.perform_request("GET", "/_cat/nodeattrs", params=params)
 
-    @query_params('format', 'h', 'help', 'local', 'master_timeout', 's', 'v')
+    @query_params("format", "h", "help", "local", "master_timeout", "s", "v")
     def repositories(self, params=None):
         """
 
@@ -374,11 +404,13 @@ class CatClient(NamespacedClient):
             by
         :arg v: Verbose mode. Display column headers, default False
         """
-        return self.transport.perform_request('GET', '/_cat/repositories',
-            params=params)
+        return self.transport.perform_request(
+            "GET", "/_cat/repositories", params=params
+        )
 
-    @query_params('format', 'h', 'help', 'ignore_unavailable', 'master_timeout',
-        's', 'v')
+    @query_params(
+        "format", "h", "help", "ignore_unavailable", "master_timeout", "s", "v"
+    )
     def snapshots(self, repository, params=None):
         """
 
@@ -399,11 +431,21 @@ class CatClient(NamespacedClient):
         """
         if repository in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'repository'.")
-        return self.transport.perform_request('GET', _make_path('_cat',
-            'snapshots', repository), params=params)
+        return self.transport.perform_request(
+            "GET", _make_path("_cat", "snapshots", repository), params=params
+        )
 
-    @query_params('actions', 'detailed', 'format', 'h', 'help', 'nodes',
-        'parent_task_id', 's', 'v')
+    @query_params(
+        "actions",
+        "detailed",
+        "format",
+        "h",
+        "help",
+        "nodes",
+        "parent_task_id",
+        "s",
+        "v",
+    )
     def tasks(self, params=None):
         """
 
@@ -425,10 +467,9 @@ class CatClient(NamespacedClient):
             by
         :arg v: Verbose mode. Display column headers, default False
         """
-        return self.transport.perform_request('GET', '/_cat/tasks',
-            params=params)
+        return self.transport.perform_request("GET", "/_cat/tasks", params=params)
 
-    @query_params('format', 'h', 'help', 'local', 'master_timeout', 's', 'v')
+    @query_params("format", "h", "help", "local", "master_timeout", "s", "v")
     def templates(self, name=None, params=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-templates.html>`_
@@ -445,6 +486,6 @@ class CatClient(NamespacedClient):
             by
         :arg v: Verbose mode. Display column headers, default False
         """
-        return self.transport.perform_request('GET', _make_path('_cat',
-            'templates', name), params=params)
-
+        return self.transport.perform_request(
+            "GET", _make_path("_cat", "templates", name), params=params
+        )

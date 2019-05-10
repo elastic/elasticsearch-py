@@ -79,7 +79,10 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params(
-        "master_timeout", "request_timeout", "wait_for_active_shards", "include_type_name"
+        "master_timeout",
+        "request_timeout",
+        "wait_for_active_shards",
+        "include_type_name",
     )
     def create(self, index, body=None, params=None):
         """

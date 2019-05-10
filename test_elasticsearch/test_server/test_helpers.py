@@ -310,20 +310,20 @@ class TestBulk(ElasticsearchTestCase):
 class TestScan(ElasticsearchTestCase):
     mock_scroll_responses = [
         {
-            '_scroll_id': 'dummy_id',
-            '_shards': {'successful': 4, 'total': 5},
-            'hits': {'hits': [{'scroll_data': 42}]},
+            "_scroll_id": "dummy_id",
+            "_shards": {"successful": 4, "total": 5},
+            "hits": {"hits": [{"scroll_data": 42}]},
         },
         {
-            '_scroll_id': 'dummy_id',
-            '_shards': {'successful': 4, 'total': 5},
-            'hits': {'hits': []},
+            "_scroll_id": "dummy_id",
+            "_shards": {"successful": 4, "total": 5},
+            "hits": {"hits": []},
         },
     ]
 
     @classmethod
     def tearDownClass(cls):
-        cls.client.transport.perform_request('DELETE', '/_search/scroll/_all')
+        cls.client.transport.perform_request("DELETE", "/_search/scroll/_all")
         super(TestScan, cls).tearDownClass()
 
     def test_order_can_be_preserved(self):
@@ -366,87 +366,101 @@ class TestScan(ElasticsearchTestCase):
             bulk.append({"value": x})
         self.client.bulk(bulk, refresh=True)
 
-        with patch.object(self.client, 'scroll') as scroll_mock:
+        with patch.object(self.client, "scroll") as scroll_mock:
             scroll_mock.side_effect = self.mock_scroll_responses
-            data = list(helpers.scan(
-                self.client,
-                index='test_index',
-                size=2,
-                raise_on_error=False,
-                clear_scroll=False
-            ))
+            data = list(
+                helpers.scan(
+                    self.client,
+                    index="test_index",
+                    size=2,
+                    raise_on_error=False,
+                    clear_scroll=False,
+                )
+            )
             self.assertEqual(len(data), 3)
-            self.assertEqual(data[-1], {'scroll_data': 42})
+            self.assertEqual(data[-1], {"scroll_data": 42})
 
             scroll_mock.side_effect = self.mock_scroll_responses
             with self.assertRaises(ScanError):
-                data = list(helpers.scan(
-                    self.client,
-                    index='test_index',
-                    size=2,
-                    raise_on_error=True,
-                    clear_scroll=False
-                ))
+                data = list(
+                    helpers.scan(
+                        self.client,
+                        index="test_index",
+                        size=2,
+                        raise_on_error=True,
+                        clear_scroll=False,
+                    )
+                )
             self.assertEqual(len(data), 3)
-            self.assertEqual(data[-1], {'scroll_data': 42})
+            self.assertEqual(data[-1], {"scroll_data": 42})
 
     def test_initial_search_error(self):
-        with patch.object(self, 'client') as client_mock:
+        with patch.object(self, "client") as client_mock:
             client_mock.search.return_value = {
-                '_scroll_id': 'dummy_id',
-                '_shards': {'successful': 4, 'total': 5},
-                'hits': {'hits': [{'search_data': 1}]},
+                "_scroll_id": "dummy_id",
+                "_shards": {"successful": 4, "total": 5},
+                "hits": {"hits": [{"search_data": 1}]},
             }
             client_mock.scroll.side_effect = self.mock_scroll_responses
 
-            data = list(helpers.scan(self.client, index='test_index', size=2, raise_on_error=False))
-            self.assertEqual(data, [{'search_data': 1}, {'scroll_data': 42}])
+            data = list(
+                helpers.scan(
+                    self.client, index="test_index", size=2, raise_on_error=False
+                )
+            )
+            self.assertEqual(data, [{"search_data": 1}, {"scroll_data": 42}])
 
             client_mock.scroll.side_effect = self.mock_scroll_responses
             with self.assertRaises(ScanError):
                 data = list(
-                    helpers.scan(self.client, index='test_index', size=2, raise_on_error=True)
+                    helpers.scan(
+                        self.client, index="test_index", size=2, raise_on_error=True
+                    )
                 )
-                self.assertEqual(data, [{'search_data': 1}])
+                self.assertEqual(data, [{"search_data": 1}])
                 client_mock.scroll.assert_not_called()
 
     def test_no_scroll_id_fast_route(self):
-        with patch.object(self, 'client') as client_mock:
-            client_mock.search.return_value = {'no': '_scroll_id'}
-            data = list(helpers.scan(self.client, index='test_index'))
+        with patch.object(self, "client") as client_mock:
+            client_mock.search.return_value = {"no": "_scroll_id"}
+            data = list(helpers.scan(self.client, index="test_index"))
 
             self.assertEqual(data, [])
             client_mock.scroll.assert_not_called()
             client_mock.clear_scroll.assert_not_called()
 
-    @patch('elasticsearch.helpers.actions.logger')
+    @patch("elasticsearch.helpers.actions.logger")
     def test_logger(self, logger_mock):
         bulk = []
         for x in range(4):
-            bulk.append({'index': {'_index': 'test_index', '_type': '_doc'}})
-            bulk.append({'value': x})
+            bulk.append({"index": {"_index": "test_index", "_type": "_doc"}})
+            bulk.append({"value": x})
         self.client.bulk(bulk, refresh=True)
 
-        with patch.object(self.client, 'scroll') as scroll_mock:
+        with patch.object(self.client, "scroll") as scroll_mock:
             scroll_mock.side_effect = self.mock_scroll_responses
-            list(helpers.scan(
-                self.client,
-                index='test_index',
-                size=2,
-                raise_on_error=False,
-                clear_scroll=False
-            ))
+            list(
+                helpers.scan(
+                    self.client,
+                    index="test_index",
+                    size=2,
+                    raise_on_error=False,
+                    clear_scroll=False,
+                )
+            )
             logger_mock.warning.assert_called()
 
             scroll_mock.side_effect = self.mock_scroll_responses
             try:
-                list(helpers.scan(
-                    self.client,
-                    index='test_index',
-                    size=2,
-                    raise_on_error=True,
-                    clear_scroll=False
-                ))
+                list(
+                    helpers.scan(
+                        self.client,
+                        index="test_index",
+                        size=2,
+                        raise_on_error=True,
+                        clear_scroll=False,
+                    )
+                )
             except ScanError:
                 pass
             logger_mock.warning.assert_called()
@@ -454,20 +468,28 @@ class TestScan(ElasticsearchTestCase):
     def test_clear_scroll(self):
         bulk = []
         for x in range(4):
-            bulk.append({'index': {'_index': 'test_index', '_type': '_doc'}})
-            bulk.append({'value': x})
+            bulk.append({"index": {"_index": "test_index", "_type": "_doc"}})
+            bulk.append({"value": x})
         self.client.bulk(bulk, refresh=True)
 
-        with patch.object(self.client, 'clear_scroll', wraps=self.client.clear_scroll) as spy:
-            list(helpers.scan(self.client, index='test_index', size=2))
+        with patch.object(
+            self.client, "clear_scroll", wraps=self.client.clear_scroll
+        ) as spy:
+            list(helpers.scan(self.client, index="test_index", size=2))
             spy.assert_called_once()
 
             spy.reset_mock()
-            list(helpers.scan(self.client, index='test_index', size=2, clear_scroll=True))
+            list(
+                helpers.scan(self.client, index="test_index", size=2, clear_scroll=True)
+            )
             spy.assert_called_once()
 
             spy.reset_mock()
-            list(helpers.scan(self.client, index='test_index', size=2, clear_scroll=False))
+            list(
+                helpers.scan(
+                    self.client, index="test_index", size=2, clear_scroll=False
+                )
+            )
             spy.assert_not_called()
 
 

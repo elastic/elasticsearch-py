@@ -12,6 +12,7 @@ class PoolingConnection(Connection):
     ``_make_connection`` method that constructs a new connection and returns
     it.
     """
+
     def __init__(self, *args, **kwargs):
         self._free_connections = queue.Queue()
         super(PoolingConnection, self).__init__(*args, **kwargs)
@@ -30,4 +31,3 @@ class PoolingConnection(Connection):
         Explicitly close connection
         """
         pass
-

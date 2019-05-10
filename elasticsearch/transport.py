@@ -4,8 +4,12 @@ from itertools import chain
 from .connection import Urllib3HttpConnection
 from .connection_pool import ConnectionPool, DummyConnectionPool
 from .serializer import JSONSerializer, Deserializer, DEFAULT_SERIALIZERS
-from .exceptions import ConnectionError, TransportError, SerializationError, \
-                        ConnectionTimeout
+from .exceptions import (
+    ConnectionError,
+    TransportError,
+    SerializationError,
+    ConnectionTimeout,
+)
 
 
 def get_host_info(node_info, host):
@@ -23,9 +27,10 @@ def get_host_info(node_info, host):
     :arg host: connection information (host, port) extracted from the node info
     """
     # ignore master only nodes
-    if node_info.get('roles', []) == ['master']:
+    if node_info.get("roles", []) == ["master"]:
         return None
     return host
+
 
 class Transport(object):
     """
@@ -34,12 +39,26 @@ class Transport(object):
 
     Main interface is the `perform_request` method.
     """
-    def __init__(self, hosts, connection_class=Urllib3HttpConnection,
-        connection_pool_class=ConnectionPool, host_info_callback=get_host_info,
-        sniff_on_start=False, sniffer_timeout=None, sniff_timeout=.1,
-        sniff_on_connection_fail=False, serializer=JSONSerializer(), serializers=None,
-        default_mimetype='application/json', max_retries=3, retry_on_status=(502, 503, 504, ),
-        retry_on_timeout=False, send_get_body_as='GET', **kwargs):
+
+    def __init__(
+        self,
+        hosts,
+        connection_class=Urllib3HttpConnection,
+        connection_pool_class=ConnectionPool,
+        host_info_callback=get_host_info,
+        sniff_on_start=False,
+        sniffer_timeout=None,
+        sniff_timeout=0.1,
+        sniff_on_connection_fail=False,
+        serializer=JSONSerializer(),
+        serializers=None,
+        default_mimetype="application/json",
+        max_retries=3,
+        retry_on_status=(502, 503, 504),
+        retry_on_timeout=False,
+        send_get_body_as="GET",
+        **kwargs
+    ):
         """
         :arg hosts: list of dictionaries, each containing keyword arguments to
             create a `connection_class` instance
@@ -143,7 +162,7 @@ class Transport(object):
             # if this is not the initial setup look at the existing connection
             # options and identify connections that haven't changed and can be
             # kept around.
-            if hasattr(self, 'connection_pool'):
+            if hasattr(self, "connection_pool"):
                 for (connection, old_host) in self.connection_pool.connection_opts:
                     if old_host == host:
                         return connection
@@ -152,6 +171,7 @@ class Transport(object):
             kwargs = self.kwargs.copy()
             kwargs.update(host)
             return self.connection_class(**kwargs)
+
         connections = map(_create_connection, hosts)
 
         connections = list(zip(connections, hosts))
@@ -159,7 +179,9 @@ class Transport(object):
             self.connection_pool = DummyConnectionPool(connections)
         else:
             # pass the hosts dicts to the connection pool to optionally extract parameters from
-            self.connection_pool = self.connection_pool_class(connections, **self.kwargs)
+            self.connection_pool = self.connection_pool_class(
+                connections, **self.kwargs
+            )
 
     def get_connection(self):
         """
@@ -194,9 +216,13 @@ class Transport(object):
                 try:
                     # use small timeout for the sniffing request, should be a fast api call
                     _, headers, node_info = c.perform_request(
-                        'GET', '/_nodes/_all/http',
-                        timeout=self.sniff_timeout if not initial else None)
-                    node_info = self.deserializer.loads(node_info, headers.get('content-type'))
+                        "GET",
+                        "/_nodes/_all/http",
+                        timeout=self.sniff_timeout if not initial else None,
+                    )
+                    node_info = self.deserializer.loads(
+                        node_info, headers.get("content-type")
+                    )
                     break
                 except (ConnectionError, SerializationError):
                     pass
@@ -207,18 +233,18 @@ class Transport(object):
             self.last_sniff = previous_sniff
             raise
 
-        return list(node_info['nodes'].values())
+        return list(node_info["nodes"].values())
 
     def _get_host_info(self, host_info):
         host = {}
-        address = host_info.get('http', {}).get('publish_address')
+        address = host_info.get("http", {}).get("publish_address")
 
         # malformed or no address given
-        if not address or ':' not in address:
+        if not address or ":" not in address:
             return None
 
-        host['host'], host['port'] = address.rsplit(':', 1)
-        host['port'] = int(host['port'])
+        host["host"], host["port"] = address.rsplit(":", 1)
+        host["port"] = int(host["port"])
 
         return self.host_info_callback(host_info, host)
 
@@ -239,7 +265,9 @@ class Transport(object):
         # we weren't able to get any nodes or host_info_callback blocked all -
         # raise error.
         if not hosts:
-            raise TransportError("N/A", "Unable to sniff hosts - no viable hosts found.")
+            raise TransportError(
+                "N/A", "Unable to sniff hosts - no viable hosts found."
+            )
 
         self.set_connections(hosts)
 
@@ -280,21 +308,21 @@ class Transport(object):
             body = self.serializer.dumps(body)
 
             # some clients or environments don't support sending GET with body
-            if method in ('HEAD', 'GET') and self.send_get_body_as != 'GET':
+            if method in ("HEAD", "GET") and self.send_get_body_as != "GET":
                 # send it as post instead
-                if self.send_get_body_as == 'POST':
-                    method = 'POST'
+                if self.send_get_body_as == "POST":
+                    method = "POST"
 
                 # or as source parameter
-                elif self.send_get_body_as == 'source':
+                elif self.send_get_body_as == "source":
                     if params is None:
                         params = {}
-                    params['source'] = body
+                    params["source"] = body
                     body = None
 
         if body is not None:
             try:
-                body = body.encode('utf-8', 'surrogatepass')
+                body = body.encode("utf-8", "surrogatepass")
             except (UnicodeDecodeError, AttributeError):
                 # bytes/str - no need to re-encode
                 pass
@@ -302,10 +330,10 @@ class Transport(object):
         ignore = ()
         timeout = None
         if params:
-            timeout = params.pop('request_timeout', None)
-            ignore = params.pop('ignore', ())
+            timeout = params.pop("request_timeout", None)
+            ignore = params.pop("ignore", ())
             if isinstance(ignore, int):
-                ignore = (ignore, )
+                ignore = (ignore,)
 
         for attempt in range(self.max_retries + 1):
             connection = self.get_connection()
@@ -313,12 +341,20 @@ class Transport(object):
             try:
                 # add a delay before attempting the next retry
                 # 0, 1, 3, 7, etc...
-                delay = 2**attempt - 1
+                delay = 2 ** attempt - 1
                 time.sleep(delay)
-                status, headers_response, data = connection.perform_request(method, url, params, body, headers=headers, ignore=ignore, timeout=timeout)
+                status, headers_response, data = connection.perform_request(
+                    method,
+                    url,
+                    params,
+                    body,
+                    headers=headers,
+                    ignore=ignore,
+                    timeout=timeout,
+                )
 
             except TransportError as e:
-                if method == 'HEAD' and e.status_code == 404:
+                if method == "HEAD" and e.status_code == 404:
                     return False
 
                 retry = False
@@ -342,11 +378,13 @@ class Transport(object):
                 # connection didn't fail, confirm it's live status
                 self.connection_pool.mark_live(connection)
 
-                if method == 'HEAD':
+                if method == "HEAD":
                     return 200 <= status < 300
 
                 if data:
-                    data = self.deserializer.loads(data, headers_response.get('content-type'))
+                    data = self.deserializer.loads(
+                        data, headers_response.get("content-type")
+                    )
                 return data
 
     def close(self):

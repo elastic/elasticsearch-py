@@ -347,7 +347,7 @@ def parallel_bulk(
     class BlockingPool(ThreadPool):
         def _setup_queues(self):
             super(BlockingPool, self)._setup_queues()
-            # The queue must be at least the size of the number of threads to 
+            # The queue must be at least the size of the number of threads to
             # prevent hanging when inserting sentinel values during teardown.
             self._inqueue = Queue(max(queue_size, thread_count))
             self._quick_put = self._inqueue.put
@@ -437,7 +437,7 @@ def scan(
     scroll_id = resp.get("_scroll_id")
 
     try:
-        while scroll_id and resp['hits']['hits']:
+        while scroll_id and resp["hits"]["hits"]:
             for hit in resp["hits"]["hits"]:
                 yield hit
 
