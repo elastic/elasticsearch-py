@@ -67,3 +67,12 @@ class IngestClient(NamespacedClient):
             params=params,
             body=body,
         )
+
+    @query_params()
+    def processor_grok(self, params=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/grok-processor.html#grok-processor-rest-get>`_
+        """
+        return self.transport.perform_request(
+            "GET", "/_ingest/processor/grok", params=params
+        )

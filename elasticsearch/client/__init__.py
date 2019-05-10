@@ -329,6 +329,11 @@ class Elasticsearch(object):
         :arg index: The name of the index
         :arg body: The document
         :arg id: Document ID
+        :arg if_primary_term: only perform the index operation if the last
+            operation that has changed the document has the specified primary
+            term
+        :arg if_seq_no: only perform the index operation if the last operation
+            that has changed the document has the specified sequence number
         :arg doc_type: Document type, defaults to `_doc`. Not used on ES 7 clusters.
         :arg op_type: Explicit operation type, default 'index', valid choices
             are: 'index', 'create'
@@ -356,10 +361,7 @@ class Elasticsearch(object):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
         return self.transport.perform_request(
-            "POST" if id in SKIP_IN_PATH else "PUT",
-            _make_path(index, doc_type, id),
-            params=params,
-            body=body,
+            "POST", _make_path(index, doc_type, id), params=params, body=body
         )
 
     @query_params(
@@ -672,6 +674,7 @@ class Elasticsearch(object):
         "analyze_wildcard",
         "analyzer",
         "batched_reduce_size",
+        "ccs_minimize_roundtrips",
         "default_operator",
         "df",
         "docvalue_fields",
@@ -736,6 +739,9 @@ class Elasticsearch(object):
             as a protection mechanism to reduce the memory overhead per search
             request if the potential number of shards in the request can be
             large., default 512
+        :arg ccs_minimize_roundtrips: Indicates whether network round-trips
+            should be minimized as part of cross-cluster search requests
+            execution, default 'true'
         :arg default_operator: The default operator for query string query (AND
             or OR), default 'OR', valid choices are: 'AND', 'OR'
         :arg df: The field to use as default where no field prefix is given in
@@ -935,10 +941,28 @@ class Elasticsearch(object):
             "POST", _make_path(index, "_update_by_query"), params=params, body=body
         )
 
+    @query_params("requests_per_second")
+    def update_by_query_rethrottle(self, task_id, params=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update-by-query.html>`_
+
+        :arg task_id: The task id to rethrottle
+        :arg requests_per_second: The throttle to set on this request in
+            floating sub-requests per second. -1 means set no throttle.
+        """
+        if task_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'task_id'.")
+        return self.transport.perform_request(
+            "POST",
+            _make_path("_update_by_query", task_id, "_rethrottle"),
+            params=params,
+        )
+
     @query_params(
         "refresh",
         "requests_per_second",
         "slices",
+        "scroll",
         "timeout",
         "wait_for_active_shards",
         "wait_for_completion",
@@ -956,6 +980,8 @@ class Elasticsearch(object):
         :arg slices: The number of slices this task should be divided into.
             Defaults to 1 meaning the task isn't sliced into subtasks., default
             1
+        :arg scroll: Control how long to keep the search context alive, default
+            '5m'
         :arg timeout: Time each individual bulk request should wait for shards
             that are unavailable., default '1m'
         :arg wait_for_active_shards: Sets the number of shard copies that must
@@ -1104,6 +1130,23 @@ class Elasticsearch(object):
             "POST", _make_path(index, "_delete_by_query"), params=params, body=body
         )
 
+    @query_params("requests_per_second")
+    def delete_by_query_rethrottle(self, task_id, params=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-delete-by-query.html>`_
+
+        :arg task_id: The task id to rethrottle
+        :arg requests_per_second: The throttle to set on this request in
+            floating sub-requests per second. -1 means set no throttle.
+        """
+        if task_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'task_id'.")
+        return self.transport.perform_request(
+            "POST",
+            _make_path("_delete_by_query", task_id, "_rethrottle"),
+            params=params,
+        )
+
     @query_params(
         "allow_no_indices",
         "expand_wildcards",
@@ -1142,12 +1185,14 @@ class Elasticsearch(object):
 
     @query_params(
         "allow_no_indices",
+        "ccs_minimize_roundtrips",
         "expand_wildcards",
         "explain",
         "ignore_unavailable",
         "preference",
         "profile",
         "routing",
+        "rest_total_hits_as_int",
         "scroll",
         "search_type",
         "typed_keys",
@@ -1165,6 +1210,9 @@ class Elasticsearch(object):
         :arg allow_no_indices: Whether to ignore if a wildcard indices
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
+        :arg ccs_minimize_roundtrips: Indicates whether network round-trips
+            should be minimized as part of cross-cluster search requests
+            execution, default 'true'
         :arg expand_wildcards: Whether to expand wildcard expression to concrete
             indices that are open, closed or both., default 'open', valid
             choices are: 'open', 'closed', 'none', 'all'
@@ -1176,6 +1224,9 @@ class Elasticsearch(object):
             performed on (default: random)
         :arg profile: Specify whether to profile the query execution
         :arg routing: A comma-separated list of specific routing values
+        :arg rest_total_hits_as_int: Indicates whether hits.total should be
+            rendered as an integer or an object in the rest search response,
+            default False
         :arg scroll: Specify how long a consistent view of the index should be
             maintained for scrolled search
         :arg search_type: Search operation type, valid choices are:
@@ -1244,8 +1295,8 @@ class Elasticsearch(object):
             "GET", _make_path(index, doc_type, id, "_explain"), params=params, body=body
         )
 
-    @query_params("scroll", "rest_total_hits_as_int")
-    def scroll(self, scroll_id=None, body=None, params=None):
+    @query_params("scroll", "rest_total_hits_as_int", "scroll_id")
+    def scroll(self, body=None, params=None):
         """
         Scroll a search request created by specifying the scroll parameter.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-scroll.html>`_
@@ -1258,12 +1309,6 @@ class Elasticsearch(object):
             in the response. This param is added version 6.x to handle mixed cluster queries where nodes
             are in multiple versions (7.0 and 6.latest)
         """
-        if scroll_id in SKIP_IN_PATH and body in SKIP_IN_PATH:
-            raise ValueError("You need to supply scroll_id or body.")
-        elif scroll_id and not body:
-            body = {"scroll_id": scroll_id}
-        elif scroll_id:
-            params["scroll_id"] = scroll_id
 
         return self.transport.perform_request(
             "GET", "/_search/scroll", params=params, body=body
@@ -1309,6 +1354,11 @@ class Elasticsearch(object):
 
         :arg index: The name of the index
         :arg id: The document ID
+        :arg if_primary_term: only perform the delete operation if the last
+            operation that has changed the document has the specified primary
+            term
+        :arg if_seq_no: only perform the delete operation if the last operation
+            that has changed the document has the specified sequence number
         :arg parent: ID of parent document
         :arg refresh: If `true` then refresh the effected shards to make this
             operation visible to search, if `wait_for` then wait for a refresh
@@ -1341,6 +1391,7 @@ class Elasticsearch(object):
         "df",
         "expand_wildcards",
         "ignore_unavailable",
+        "ignore_throttled",
         "lenient",
         "min_score",
         "preference",
@@ -1372,6 +1423,8 @@ class Elasticsearch(object):
             choices are: 'open', 'closed', 'none', 'all'
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
+        :arg ignore_throttled: Whether specified concrete, expanded or aliased
+            indices should be ignored when throttled
         :arg lenient: Specify whether format-based query failures (such as
             providing text to a numeric field) should be ignored
         :arg min_score: Include only documents with a specific `_score` value in
@@ -1446,6 +1499,7 @@ class Elasticsearch(object):
         )
 
     @query_params(
+        "ccs_minimize_roundtrips",
         "max_concurrent_searches",
         "max_concurrent_shard_requests",
         "pre_filter_shard_size",
@@ -1462,6 +1516,9 @@ class Elasticsearch(object):
             pairs), separated by newlines
         :arg index: A list of index names, or a string containing a
             comma-separated list of index names, to use as the default
+        :arg ccs_minimize_roundtrips: Indicates whether network round-trips
+            should be minimized as part of cross-cluster search requests
+            execution, default 'true'
         :arg max_concurrent_searches: Controls the maximum number of concurrent
             searches the multi search api will execute
         :arg pre_filter_shard_size: A threshold that enforces a pre-filter
@@ -1614,7 +1671,7 @@ class Elasticsearch(object):
             body=body,
         )
 
-    @query_params()
+    @query_params("master_timeout", "timeout")
     def put_script(self, id, body, context=None, params=None):
         """
         Create a script in given language with specified ID.
@@ -1622,7 +1679,9 @@ class Elasticsearch(object):
 
         :arg id: Script ID
         :arg body: The document
-        """
+        :arg master_timeout: Specify timeout for connection to master
+	:arg timeout: Explicit operation timeout
+	"""
         for param in (id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
@@ -1630,13 +1689,38 @@ class Elasticsearch(object):
             "PUT", _make_path("_scripts", id, context), params=params, body=body
         )
 
-    @query_params()
+    @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable")
+    def rank_eval(self, body, index=None, params=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-rank-eval.html>`_
+
+        :arg body: The ranking evaluation search definition, including search
+            requests, document ratings and ranking metric definition.
+        :arg index: A comma-separated list of index names to search; use `_all`
+            or empty string to perform the operation on all indices
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+            expression resolves into no concrete indices. (This includes `_all`
+            string or when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete
+            indices that are open, closed or both., default 'open', valid
+            choices are: 'open', 'closed', 'none', 'all'
+        :arg ignore_unavailable: Whether specified concrete indices should be
+            ignored when unavailable (missing or closed)
+        """
+        if body in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'body'.")
+        return self.transport.perform_request(
+            "GET", _make_path(index, "_rank_eval"), params=params, body=body
+        )
+
+    @query_params("master_timeout")
     def get_script(self, id, params=None):
         """
         Retrieve a script from the API.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
 
         :arg id: Script ID
+        :arg master_timeout: Specify timeout for connection to master
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
@@ -1644,14 +1728,15 @@ class Elasticsearch(object):
             "GET", _make_path("_scripts", id), params=params
         )
 
-    @query_params()
+    @query_params("master_timeout", "timeout")
     def delete_script(self, id, params=None):
         """
         Remove a stored script from elasticsearch.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
 
         :arg id: Script ID
-        """
+        :arg master_timeout: Specify timeout for connection to master
+        :arg timeout: Explicit operation timeout        """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
         return self.transport.perform_request(
@@ -1670,7 +1755,35 @@ class Elasticsearch(object):
             "GET", _make_path("_render", "template", id), params=params, body=body
         )
 
-    @query_params("max_concurrent_searches", "search_type", "typed_keys")
+    @query_params("context")
+    def scripts_painless_context(self, params=None):
+        """
+        `<>`_
+
+        :arg context: Select a specific context to retrieve API information
+            about
+        """
+        return self.transport.perform_request(
+            "GET", "/_scripts/painless/_context", params=params
+        )
+
+    @query_params()
+    def scripts_painless_execute(self, body=None, params=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/painless/master/painless-execute-api.html>`_
+
+        :arg body: The script to execute
+        """
+        return self.transport.perform_request(
+            "GET", "/_scripts/painless/_execute", params=params, body=body
+        )
+
+    @query_params(
+        "ccs_minimize_roundtrips",
+        "max_concurrent_searches",
+        "search_type",
+        "typed_keys",
+    )
     def msearch_template(self, body, index=None, params=None):
         """
         The /_search/template endpoint allows to use the mustache language to
@@ -1682,6 +1795,9 @@ class Elasticsearch(object):
             pairs), separated by newlines
         :arg index: A list of index names, or a string containing a
             comma-separated list of index names, to use as the default
+        :arg ccs_minimize_roundtrips: Indicates whether network round-trips
+            should be minimized as part of cross-cluster search requests
+            execution, default 'true'
         :arg max_concurrent_searches: Controls the maximum number of concurrent
             searches the multi search api will execute
         :arg search_type: Search operation type, valid choices are:
@@ -1701,7 +1817,11 @@ class Elasticsearch(object):
         )
 
     @query_params(
-        "allow_no_indices", "expand_wildcards", "fields", "ignore_unavailable"
+        "allow_no_indices",
+        "expand_wildcards",
+        "fields",
+        "ignore_unavailable",
+        "include_unmapped",
     )
     def field_caps(self, index=None, body=None, params=None):
         """
@@ -1721,6 +1841,8 @@ class Elasticsearch(object):
         :arg fields: A comma-separated list of field names
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
+        :arg include_unmapped: Indicates whether unmapped fields should be
+            included in the response., default False
         """
         return self.transport.perform_request(
             "GET", _make_path(index, "_field_caps"), params=params, body=body

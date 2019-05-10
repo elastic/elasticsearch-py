@@ -2,12 +2,16 @@ from .utils import NamespacedClient, query_params, _make_path
 
 
 class NodesClient(NamespacedClient):
-    @query_params()
-    def reload_secure_settings(self, params=None):
+    @query_params("timeout")
+    def reload_secure_settings(self, node_id=None, params=None):
         """
         Reload any settings that have been marked as "reloadable"
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/secure-settings.html#reloadable-secure-settings>`_
 
+        :arg node_id: A comma-separated list of node IDs to span the
+            reload/reinit call. Should stay empty because reloading usually
+            involves all cluster nodes.
+        :arg timeout: Explicit operation timeout
         """
         return self.transport.perform_request(
             "POST", _make_path("_nodes", "reload_secure_settings"), params=params
@@ -82,7 +86,7 @@ class NodesClient(NamespacedClient):
         )
 
     @query_params(
-        "type", "ignore_idle_threads", "interval", "snapshots", "threads", "timeout"
+        "doc_type", "ignore_idle_threads", "interval", "snapshots", "threads", "timeout"
     )
     def hot_threads(self, node_id=None, params=None):
         """

@@ -80,7 +80,7 @@ class IndicesClient(NamespacedClient):
 
     @query_params(
         "master_timeout",
-        "request_timeout",
+        "timeout" "request_timeout",
         "wait_for_active_shards",
         "include_type_name",
     )
@@ -92,6 +92,7 @@ class IndicesClient(NamespacedClient):
         :arg index: The name of the index
         :arg body: The configuration for the index (`settings` and `mappings`)
         :arg master_timeout: Specify timeout for connection to master
+        :arg timeout: Explicit operation timeout
         :arg request_timeout: Explicit operation timeout
         :arg wait_for_active_shards: Set the number of active shards to wait for
             before the operation returns.
@@ -112,6 +113,7 @@ class IndicesClient(NamespacedClient):
         "include_defaults",
         "local",
         "include_type_name",
+        "master_timeout",
     )
     def get(self, index, feature=None, params=None):
         """
@@ -132,6 +134,7 @@ class IndicesClient(NamespacedClient):
             master node (default: false)
         :arg include_type_name: Specify whether requests and responses should include a
             type name (default: depends on Elasticsearch version).
+        :arg master_timeout: Specify timeout for connection to master
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
@@ -144,7 +147,9 @@ class IndicesClient(NamespacedClient):
         "expand_wildcards",
         "ignore_unavailable",
         "master_timeout",
+        "timeout",
         "request_timeout",
+        "wait_for_active_shards",
     )
     def open(self, index, params=None):
         """
@@ -161,7 +166,10 @@ class IndicesClient(NamespacedClient):
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
         :arg master_timeout: Specify timeout for connection to master
+        :arg timeout: Explicit operation timeout
         :arg request_timeout: Explicit operation timeout
+        :arg wait_for_active_shards: Sets the number of active shards to wait
+            for before the operation returns.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
@@ -175,6 +183,7 @@ class IndicesClient(NamespacedClient):
         "ignore_unavailable",
         "master_timeout",
         "request_timeout",
+        "wait_for_active_shards",
     )
     def close(self, index, params=None):
         """
@@ -193,6 +202,8 @@ class IndicesClient(NamespacedClient):
             ignored when unavailable (missing or closed)
         :arg master_timeout: Specify timeout for connection to master
         :arg request_timeout: Explicit operation timeout
+        :arg wait_for_active_shards: Sets the number of active shards to wait
+            for before the operation returns.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
@@ -204,6 +215,7 @@ class IndicesClient(NamespacedClient):
         "allow_no_indices",
         "expand_wildcards",
         "ignore_unavailable",
+        "timeout",
         "master_timeout",
         "request_timeout",
     )
@@ -221,6 +233,7 @@ class IndicesClient(NamespacedClient):
             choices are: 'open', 'closed', 'none', 'all'
         :arg ignore_unavailable: Ignore unavailable indexes (default: false)
         :arg master_timeout: Specify timeout for connection to master
+        :arg timeout: Explicit operation timeout
         :arg request_timeout: Explicit operation timeout
         """
         if index in SKIP_IN_PATH:
@@ -291,6 +304,7 @@ class IndicesClient(NamespacedClient):
         "expand_wildcards",
         "ignore_unavailable",
         "master_timeout",
+        "timeout",
         "request_timeout",
         "include_type_name",
     )
@@ -313,7 +327,8 @@ class IndicesClient(NamespacedClient):
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
         :arg master_timeout: Specify timeout for connection to master
-        :arg request_timeout: Explicit operation timeout
+        :arg timeout: Explicit operation timeout
+        :arg request_timeout: Explicit operation timeout (For pre 7.x ES Clusters)
         :arg include_type_name: Specify whether requests and responses should include a
             type name (default: depends on Elasticsearch version).
         """
@@ -330,6 +345,7 @@ class IndicesClient(NamespacedClient):
         "ignore_unavailable",
         "local",
         "include_type_name",
+        "master_timeout",
     )
     def get_mapping(self, index=None, doc_type=None, params=None):
         """
@@ -350,6 +366,7 @@ class IndicesClient(NamespacedClient):
             master node (default: false)
         :arg include_type_name: Specify whether requests and responses should include a
             type name (default: depends on Elasticsearch version).
+        :arg master_timeout: Specify timeout for connection to master
         """
         return self.transport.perform_request(
             "GET", _make_path(index, "_mapping", doc_type), params=params
@@ -461,7 +478,7 @@ class IndicesClient(NamespacedClient):
             "GET", _make_path(index, "_alias", name), params=params
         )
 
-    @query_params("master_timeout", "request_timeout")
+    @query_params("master_timeout", "request_timeout", "timeout")
     def update_aliases(self, body, params=None):
         """
         Update specified aliases.
@@ -469,7 +486,8 @@ class IndicesClient(NamespacedClient):
 
         :arg body: The definition of `actions` to perform
         :arg master_timeout: Specify timeout for connection to master
-        :arg request_timeout: Request timeout
+        :arg request_timeout: Request timeout (For pre 7.x ES Clusters)
+        :arg timeout: Request timeout
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
@@ -477,7 +495,7 @@ class IndicesClient(NamespacedClient):
             "POST", "/_aliases", params=params, body=body
         )
 
-    @query_params("master_timeout", "request_timeout")
+    @query_params("master_timeout", "request_timeout", "timeout")
     def delete_alias(self, index, name, params=None):
         """
         Delete specific alias.
@@ -489,7 +507,8 @@ class IndicesClient(NamespacedClient):
             wildcards); use `_all` to delete all aliases for the specified
             indices.
         :arg master_timeout: Specify timeout for connection to master
-        :arg request_timeout: Explicit timeout for the operation
+        :arg request_timeout: Explicit timeout for the operation (for pre 7.x ES clusters)
+        :arg timeout: Explicit timeout for the operation
         """
         for param in (index, name):
             if param in SKIP_IN_PATH:
@@ -504,6 +523,7 @@ class IndicesClient(NamespacedClient):
         "master_timeout",
         "order",
         "request_timeout",
+        "timeout",
         "include_type_name",
     )
     def put_template(self, name, body, params=None):
@@ -520,7 +540,8 @@ class IndicesClient(NamespacedClient):
         :arg master_timeout: Specify timeout for connection to master
         :arg order: The order for this template when merging multiple matching
             ones (higher numbers are merged later, overriding the lower numbers)
-        :arg request_timeout: Explicit operation timeout
+        :arg request_timeout: Explicit operation timeout (For pre ES 6 clusters)
+        :arg timeout: Explicit operation timeout
         :arg include_type_name: Specify whether requests and responses should include a
             type name (default: depends on Elasticsearch version).
         """
@@ -569,7 +590,7 @@ class IndicesClient(NamespacedClient):
             "GET", _make_path("_template", name), params=params
         )
 
-    @query_params("master_timeout", "request_timeout")
+    @query_params("master_timeout", "request_timeout", "timeout")
     def delete_template(self, name, params=None):
         """
         Delete an index template by its name.
@@ -577,7 +598,8 @@ class IndicesClient(NamespacedClient):
 
         :arg name: The name of the template
         :arg master_timeout: Specify timeout for connection to master
-        :arg request_timeout: Explicit operation timeout
+        :arg request_timeout: Explicit operation timeout (for pre 7.x clusters)
+        :arg timeout: Explicit operation timeout
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
@@ -592,6 +614,7 @@ class IndicesClient(NamespacedClient):
         "ignore_unavailable",
         "include_defaults",
         "local",
+        "master_timeout",
     )
     def get_settings(self, index=None, name=None, params=None):
         """
@@ -614,6 +637,7 @@ class IndicesClient(NamespacedClient):
             the indices., default False
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
+        :arg master_timeout: Specify timeout for connection to master
         """
         return self.transport.perform_request(
             "GET", _make_path(index, "_settings", name), params=params
@@ -625,6 +649,7 @@ class IndicesClient(NamespacedClient):
         "flat_settings",
         "ignore_unavailable",
         "master_timeout",
+        "timeout",
         "preserve_existing",
     )
     def put_settings(self, body, index=None, params=None):
@@ -648,6 +673,7 @@ class IndicesClient(NamespacedClient):
         :arg preserve_existing: Whether to update existing settings. If set to
             `true` existing settings on an index remain unchanged, the default
             is `false`
+        :arg timeout: Explicit operation timeout
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
@@ -657,10 +683,13 @@ class IndicesClient(NamespacedClient):
 
     @query_params(
         "completion_fields",
+        "expand_wildcards",
         "fielddata_fields",
         "fields",
+        "forbid_closed_indices",
         "groups",
         "include_segment_file_sizes",
+        "include_unloaded_segments",
         "level",
         "types",
     )
@@ -674,15 +703,24 @@ class IndicesClient(NamespacedClient):
         :arg metric: Limit the information returned the specific metrics.
         :arg completion_fields: A comma-separated list of fields for `fielddata`
             and `suggest` index metric (supports wildcards)
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete
+            indices that are open, closed or both., default 'open', valid
+            choices are: 'open', 'closed', 'none', 'all'
         :arg fielddata_fields: A comma-separated list of fields for `fielddata`
             index metric (supports wildcards)
         :arg fields: A comma-separated list of fields for `fielddata` and
             `completion` index metric (supports wildcards)
+        :arg forbid_closed_indices: If set to false stats will also collected
+            from closed indices if explicitly specified or if expand_wildcards
+            expands to closed indices, default True
         :arg groups: A comma-separated list of search groups for `search` index
             metric
         :arg include_segment_file_sizes: Whether to report the aggregated disk
             usage of each one of the Lucene index files (only applies if segment
             stats are requested), default False
+        :arg include_unloaded_segments: If set to true segment stats will
+            include stats for segments that are not currently loaded into
+            memory, default False
         :arg level: Return stats aggregated at cluster, index or shard level,
             default 'indices', valid choices are: 'cluster', 'indices', 'shards'
         :arg types: A comma-separated list of document types for the `indexing`
@@ -980,14 +1018,15 @@ class IndicesClient(NamespacedClient):
         :arg max_num_segments: The number of segments the index should be merged
             into (default: dynamic)
         :arg only_expunge_deletes: Specify whether the operation should only
-            expunge deleted documents
-        :arg operation_threading: TODO: ?
+            expunge deleted documents (for pre 7.x ES clusters)
         """
         return self.transport.perform_request(
             "POST", _make_path(index, "_forcemerge"), params=params
         )
 
-    @query_params("master_timeout", "request_timeout", "wait_for_active_shards")
+    @query_params(
+        "master_timeout", "timeout", "request_timeout", "wait_for_active_shards"
+    )
     def shrink(self, index, target, body=None, params=None):
         """
         The shrink index API allows you to shrink an existing index into a new
@@ -1006,7 +1045,8 @@ class IndicesClient(NamespacedClient):
         :arg body: The configuration for the target index (`settings` and
             `aliases`)
         :arg master_timeout: Specify timeout for connection to master
-        :arg request_timeout: Explicit operation timeout
+        :arg request_timeout: Explicit operation timeout (For pre 7.x ES clusters)
+        :arg timeout: Explicit operation timeout
         :arg wait_for_active_shards: Set the number of active shards to wait for
             on the shrunken index before the operation returns.
         """
@@ -1017,10 +1057,32 @@ class IndicesClient(NamespacedClient):
             "PUT", _make_path(index, "_shrink", target), params=params, body=body
         )
 
+    @query_params("master_timeout", "timeout", "wait_for_active_shards")
+    def split(self, index, target, body=None, params=None):
+        """
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/master/indices-split-index.html>`_
+
+        :arg index: The name of the source index to split
+        :arg target: The name of the target index to split into
+        :arg body: The configuration for the target index (`settings` and
+            `aliases`)
+        :arg master_timeout: Specify timeout for connection to master
+        :arg timeout: Explicit operation timeout
+        :arg wait_for_active_shards: Set the number of active shards to wait for
+            on the shrunken index before the operation returns.
+        """
+        for param in (index, target):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
+        return self.transport.perform_request(
+            "PUT", _make_path(index, "_split", target), params=params, body=body
+        )
+
     @query_params(
         "dry_run",
         "master_timeout",
         "request_timeout",
+        "timeout",
         "wait_for_active_shards",
         "include_type_name",
     )
@@ -1042,7 +1104,8 @@ class IndicesClient(NamespacedClient):
             but not actually performed even if a condition matches. The default
             is false
         :arg master_timeout: Specify timeout for connection to master
-        :arg request_timeout: Explicit operation timeout
+        :arg request_timeout: Explicit operation timeout (for pre 7.x ES clusters)
+        :arg timeout: Explicit operation timeout
         :arg wait_for_active_shards: Set the number of active shards to wait for
             on the newly created rollover index before the operation returns.
         :arg include_type_name: Specify whether requests and responses should include a
