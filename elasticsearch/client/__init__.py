@@ -321,7 +321,7 @@ class Elasticsearch(object):
         "version_type",
         "wait_for_active_shards",
     )
-    def index(self, index, body, doc_type=None, id=None, params=None):
+    def index(self, index, body, doc_type="_doc", id=None, params=None):
         """
         Adds or updates a typed JSON document in a specific index, making it searchable.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/docs-index_.html>`_
@@ -361,10 +361,7 @@ class Elasticsearch(object):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
         return self.transport.perform_request(
-            "POST" if id in SKIP_IN_PATH else "PUT",
-            _make_path(index, doc_type, id),
-            params=params,
-            body=body,
+            "POST", _make_path(index, doc_type, id), params=params, body=body
         )
 
     @query_params(
@@ -524,7 +521,7 @@ class Elasticsearch(object):
         "version",
         "version_type",
     )
-    def get_source(self, index, id, doc_type=None, params=None):
+    def get_source(self, index, id, doc_type="_doc", params=None):
         """
         Get the source of a document by it's index, type and id.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/docs-get.html>`_
@@ -1299,7 +1296,7 @@ class Elasticsearch(object):
         )
 
     @query_params("scroll", "rest_total_hits_as_int", "scroll_id")
-    def scroll(self, scroll_id=None, body=None, params=None):
+    def scroll(self, body=None, params=None):
         """
         Scroll a search request created by specifying the scroll parameter.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-scroll.html>`_
@@ -1312,12 +1309,6 @@ class Elasticsearch(object):
             in the response. This param is added version 6.x to handle mixed cluster queries where nodes
             are in multiple versions (7.0 and 6.latest)
         """
-        if scroll_id in SKIP_IN_PATH and body in SKIP_IN_PATH:
-            raise ValueError("You need to supply scroll_id or body.")
-        elif scroll_id and not body:
-            body = {"scroll_id": scroll_id}
-        elif scroll_id:
-            params["scroll_id"] = scroll_id
 
         return self.transport.perform_request(
             "GET", "/_search/scroll", params=params, body=body
