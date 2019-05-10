@@ -2,8 +2,17 @@
 
 Changelog
 =========
+7.1.0 (dev)
+-----------
 
-7.0.0 (dev)
+7.0.1 (2019-05019)
+-----------
+  * Use black to format the code.
+  * Update the test matrix to only use current pythons and 7.x ES
+  * Blocking pool must fit thread_count
+  * Update client to support missing ES 7 API's and query params.
+
+7.0.0 (2019-04-11)
 -----------
   * Removed deprecated option ``update_all_types``.
   * Using insecure SSL configuration (``verify_cert=False``) raises a warning, this can
