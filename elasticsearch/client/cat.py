@@ -24,9 +24,7 @@ class CatClient(NamespacedClient):
             "GET", _make_path("_cat", "aliases", name), params=params
         )
 
-    @query_params(
-        "bytes", "size", "format", "h", "help", "local", "master_timeout", "s", "v"
-    )
+    @query_params("bytes", "format", "h", "help", "local", "master_timeout", "s", "v")
     def allocation(self, node_id=None, params=None):
         """
         Allocation provides a snapshot of how shards have located around the
@@ -52,7 +50,7 @@ class CatClient(NamespacedClient):
             "GET", _make_path("_cat", "allocation", node_id), params=params
         )
 
-    @query_params("size", "format", "h", "help", "local", "master_timeout", "s", "v")
+    @query_params("format", "h", "help", "local", "master_timeout", "s", "v")
     def count(self, index=None, params=None):
         """
         Count provides quick access to the document count of the entire cluster,
@@ -111,7 +109,6 @@ class CatClient(NamespacedClient):
 
     @query_params(
         "bytes",
-        "time",
         "size",
         "format",
         "h",
@@ -218,16 +215,7 @@ class CatClient(NamespacedClient):
         )
 
     @query_params(
-        "bytes",
-        "time",
-        "size",
-        "format",
-        "h",
-        "help",
-        "local",
-        "master_timeout",
-        "s",
-        "v",
+        "bytes", "size", "format", "h", "help", "local", "master_timeout", "s", "v"
     )
     def shards(self, index=None, params=None):
         """
@@ -442,6 +430,7 @@ class CatClient(NamespacedClient):
         "h",
         "help",
         "nodes",
+        "node_id",
         "parent_task_id",
         "s",
         "v",
@@ -458,6 +447,10 @@ class CatClient(NamespacedClient):
         :arg h: Comma-separated list of column names to display
         :arg help: Return help information, default False
         :arg nodes: A comma-separated list of node IDs or names to limit the
+            returned information; use `_local` to return information from the
+            node you're connecting to, leave empty to get information from all
+            nodes (used for older version of Elasticsearch)
+        :arg node_id: A comma-separated list of node IDs or names to limit the
             returned information; use `_local` to return information from the
             node you're connecting to, leave empty to get information from all
             nodes
