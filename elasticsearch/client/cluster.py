@@ -3,16 +3,17 @@ from .utils import NamespacedClient, query_params, _make_path
 
 class ClusterClient(NamespacedClient):
     @query_params(
+        "expand_wildcards",
         "level",
         "local",
         "master_timeout",
         "timeout",
         "wait_for_active_shards",
         "wait_for_events",
+        "wait_for_no_initializing_shards",
         "wait_for_no_relocating_shards",
         "wait_for_nodes",
         "wait_for_status",
-        "wait_for_no_initializing_shards",
     )
     def health(self, index=None, params=None):
         """
@@ -20,6 +21,9 @@ class ClusterClient(NamespacedClient):
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-health.html>`_
 
         :arg index: Limit the information returned to a specific index
+        :arg expand_wildcards: Whether to expand wildcard expression to concrete
+            indices that are open, closed or both., default 'all', valid choices
+            are: 'open', 'closed', 'none', 'all'
         :arg level: Specify the level of detail for returned information,
             default 'cluster', valid choices are: 'cluster', 'indices', 'shards'
         :arg local: Return local information, do not retrieve the state from
@@ -66,6 +70,8 @@ class ClusterClient(NamespacedClient):
         "ignore_unavailable",
         "local",
         "master_timeout",
+        "wait_for_metadata_version",
+        "wait_for_timeout",
     )
     def state(self, metric=None, index=None, params=None):
         """
@@ -87,6 +93,10 @@ class ClusterClient(NamespacedClient):
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
         :arg master_timeout: Specify timeout for connection to master
+        :arg wait_for_metadata_version: Wait for the metadata version to be
+            equal or greater than the specified metadata version
+        :arg wait_for_timeout: The maximum time to wait for
+            wait_for_metadata_version before timing out
         """
         if index and not metric:
             metric = "_all"
@@ -173,6 +183,13 @@ class ClusterClient(NamespacedClient):
         return self.transport.perform_request(
             "PUT", "/_cluster/settings", params=params, body=body
         )
+
+    @query_params()
+    def remote_info(self, params=None):
+        """
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-remote-info.html>`_
+        """
+        return self.transport.perform_request("GET", "/_remote/info", params=params)
 
     @query_params("include_disk_info", "include_yes_decisions")
     def allocation_explain(self, body=None, params=None):
