@@ -40,21 +40,15 @@ def create_git_index(client, index):
             },
         },
         "mappings": {
-            "doc": {
-                "properties": {
-                    "repository": {"type": "keyword"},
-                    "author": user_mapping,
-                    "authored_date": {"type": "date"},
-                    "committer": user_mapping,
-                    "committed_date": {"type": "date"},
-                    "parent_shas": {"type": "keyword"},
-                    "description": {"type": "text", "analyzer": "snowball"},
-                    "files": {
-                        "type": "text",
-                        "analyzer": "file_path",
-                        "fielddata": True,
-                    },
-                }
+            "properties": {
+                "repository": {"type": "keyword"},
+                "author": user_mapping,
+                "authored_date": {"type": "date"},
+                "committer": user_mapping,
+                "committed_date": {"type": "date"},
+                "parent_shas": {"type": "keyword"},
+                "description": {"type": "text", "analyzer": "snowball"},
+                "files": {"type": "text", "analyzer": "file_path", "fielddata": True},
             }
         },
     }
@@ -64,7 +58,7 @@ def create_git_index(client, index):
         client.indices.create(index=index, body=create_index_body)
     except TransportError as e:
         # ignore already existing index
-        if e.error == "index_already_exists_exception":
+        if e.error == "resource_already_exists_exception":
             pass
         else:
             raise
@@ -112,7 +106,6 @@ def load_repo(client, path=None, index="git"):
         client,
         parse_commits(repo.refs.master.commit, repo_name),
         index=index,
-        doc_type="doc",
         chunk_size=50,  # keep the batch sizes small for appearances only
     ):
         action, result = result.popitem()
@@ -128,13 +121,13 @@ def load_repo(client, path=None, index="git"):
 # we manually update some documents to add additional information
 UPDATES = [
     {
-        "_type": "doc",
+        "_type": "_doc",
         "_id": "20fbba1230cabbc0f4644f917c6c2be52b8a63e8",
         "_op_type": "update",
         "doc": {"initial_commit": True},
     },
     {
-        "_type": "doc",
+        "_type": "_doc",
         "_id": "ae0073c8ca7e24d237ffd56fba495ed409081bf4",
         "_op_type": "update",
         "doc": {"release": "5.0.0"},
@@ -179,9 +172,7 @@ if __name__ == "__main__":
     es.indices.refresh(index="git")
 
     # now we can retrieve the documents
-    initial_commit = es.get(
-        index="git", doc_type="doc", id="20fbba1230cabbc0f4644f917c6c2be52b8a63e8"
-    )
+    initial_commit = es.get(index="git", id="20fbba1230cabbc0f4644f917c6c2be52b8a63e8")
     print(
         "%s: %s" % (initial_commit["_id"], initial_commit["_source"]["committed_date"])
     )

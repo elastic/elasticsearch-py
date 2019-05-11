@@ -9,7 +9,9 @@ from elasticsearch import Elasticsearch
 
 def print_search_stats(results):
     print("=" * 80)
-    print("Total %d found in %dms" % (results["hits"]["total"], results["took"]))
+    print(
+        "Total %d found in %dms" % (results["hits"]["total"]["value"], results["took"])
+    )
     print("-" * 80)
 
 
@@ -49,7 +51,6 @@ print_hits(es.search(index="git"))
 print('Find commits that says "fix" without touching tests:')
 result = es.search(
     index="git",
-    doc_type="doc",
     body={
         "query": {
             "bool": {
@@ -64,7 +65,6 @@ print_hits(result)
 print("Last 8 Commits for elasticsearch-py:")
 result = es.search(
     index="git",
-    doc_type="doc",
     body={
         "query": {"term": {"repository": "elasticsearch-py"}},
         "sort": [{"committed_date": {"order": "desc"}}],
@@ -76,7 +76,6 @@ print_hits(result)
 print("Stats for top 10 committers:")
 result = es.search(
     index="git",
-    doc_type="doc",
     body={
         "size": 0,
         "aggs": {
