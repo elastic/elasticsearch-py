@@ -53,6 +53,9 @@ class Connection(object):
             )
         return True
 
+    def __hash__(self):
+        return id(self)
+
     def _pretty_json(self, data):
         # pretty JSON in tracer curl logs
         try:
