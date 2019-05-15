@@ -1,4 +1,4 @@
-from elasticsearch.client.utils import NamespacedClient, query_params
+from ..utils import NamespacedClient, query_params
 
 from .graph import GraphClient
 from .license import LicenseClient
