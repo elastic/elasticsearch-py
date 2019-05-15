@@ -56,6 +56,16 @@ class Connection(object):
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.host)
 
+    def __eq__(self, other):
+        if not isinstance(other, Connection):
+            raise TypeError(
+                "Unsupported equality check for %s and %s" % (self, other)
+            )
+        return True
+
+    def __hash__(self):
+        return id(self)
+
     def _pretty_json(self, data):
         # pretty JSON in tracer curl logs
         try:
