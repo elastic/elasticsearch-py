@@ -641,7 +641,8 @@ class Elasticsearch(object):
             operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default)
             then do nothing with refreshes., valid choices are: 'true', 'false',
-            'wait_forarg retry_on_conflict: Specify how many times should the operation be
+            'wait_for'
+	:arg retry_on_conflict: Specify how many times should the operation be
             retried when a conflict occurs (default: 0)
         :arg routing: Specific routing value
         :arg timeout: Explicit operation timeout
