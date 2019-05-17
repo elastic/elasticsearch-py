@@ -1,4 +1,4 @@
-from elasticsearch.exceptions import TransportError
+from elasticsearch6.exceptions import TransportError
 
 from .test_cases import TestCase
 

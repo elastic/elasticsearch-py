@@ -1,4 +1,4 @@
-from elasticsearch.client.utils import (
+from ..utils import (
     NamespacedClient,
     query_params,
     _make_path,
