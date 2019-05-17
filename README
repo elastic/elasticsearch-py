@@ -80,15 +80,22 @@ Simple use-case::
 
     # create an index in elasticsearch, ignore status code 400 (index already exists)
     >>> es.indices.create(index='my-index', ignore=400)
-    {u'acknowledged': True}
+    {'acknowledged': True, 'shards_acknowledged': True, 'index': 'my-index'}
 
     # datetimes will be serialized
     >>> es.index(index="my-index", id=42, body={"any": "data", "timestamp": datetime.now()})
-    {u'_id': u'42', u'_index': u'my-index', u'_type': u'test-type', u'_version': 1, u'ok': True}
+    {'_index': 'my-index',
+     '_type': '_doc',
+     '_id': '42',
+     '_version': 1,
+     'result': 'created',
+     '_shards': {'total': 2, 'successful': 1, 'failed': 0},
+     '_seq_no': 0,
+     '_primary_term': 1}
 
     # but not deserialized
     >>> es.get(index="my-index", id=42)['_source']
-    {u'any': u'data', u'timestamp': u'2013-05-12T19:45:31.804229'}
+    {'any': 'data', 'timestamp': '2019-05-17T17:28:10.329598'}
 
 `Full documentation`_.
 
@@ -97,7 +104,7 @@ Simple use-case::
 Elastic Cloud (and SSL) use-case::
 
     >>> from elasticsearch import Elasticsearch
-    >>> es = Elasticsearch("https://elasticsearch.url:port", http_auth=('elastic','yourpassword'))
+    >>> es = Elasticsearch(cloud_id="<some_long_cloud_id>", http_auth=('elastic','yourpassword'))
     >>> es.info()
 
 Using SSL Context with a self-signed cert use-case::
