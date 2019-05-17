@@ -1,5 +1,6 @@
 import time
 import warnings
+from base64 import decodestring
 
 try:
     import requests
@@ -48,12 +49,21 @@ class RequestsHttpConnection(Connection):
         client_cert=None,
         client_key=None,
         headers=None,
+        cloud_id=None,
         **kwargs
     ):
         if not REQUESTS_AVAILABLE:
             raise ImproperlyConfigured(
                 "Please install requests to use RequestsHttpConnection."
             )
+        if cloud_id:
+            cluster_name, cloud_id = cloud_id.split(":")
+            url, es_uuid, kibana_uuid = (
+                decodestring(cloud_id.encode("utf-8")).decode("utf-8").split("$")
+            )
+            host = "%s.%s" % (es_uuid, url)
+            port = "9243"
+            use_ssl = True
 
         super(RequestsHttpConnection, self).__init__(
             host=host, port=port, use_ssl=use_ssl, **kwargs
