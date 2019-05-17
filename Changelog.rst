@@ -4,6 +4,7 @@ Changelog
 =========
 7.1.0 (dev)
 -----------
+  * Add connection parameter for Elastic Cloud cloud_id.
 
 7.0.1 (2019-05019)
 -----------
