@@ -262,7 +262,7 @@ Compression
 ~~~~~~~~~~~
 When using capacity-constrained networks (low throughput), it may be handy to enable
 compression. This is especially useful when doing bulk loads or inserting large
-documents. This will configure compression on the *request*.
+documents. This will configure compression.
 ::
 
    from elasticsearch import Elasticsearch
