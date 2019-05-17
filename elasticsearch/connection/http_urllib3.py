@@ -73,6 +73,8 @@ class Urllib3HttpConnection(Connection):
         information.
     :arg headers: any custom http headers to be add to requests
     :arg http_compress: Use gzip compression
+    :arg cloud_id: The Cloud ID from ElasticCloud. Convient way to connect to cloud instances.
+        Other host connection params will be ignored.
     """
 
     def __init__(

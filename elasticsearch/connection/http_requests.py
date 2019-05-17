@@ -35,6 +35,8 @@ class RequestsHttpConnection(Connection):
     :arg client_key: path to the file containing the private key if using
         separate cert and key files (client_cert will contain only the cert)
     :arg headers: any custom http headers to be add to requests
+    :arg cloud_id: The Cloud ID from ElasticCloud. Convient way to connect to cloud instances.
+        Other host connection params will be ignored.
     """
 
     def __init__(
