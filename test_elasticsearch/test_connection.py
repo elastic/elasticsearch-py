@@ -34,6 +34,15 @@ class TestUrllib3Connection(TestCase):
         self.assertIsInstance(con.pool.conn_kw["ssl_context"], ssl.SSLContext)
         self.assertTrue(con.use_ssl)
 
+    def test_http_cloud_id(self):
+        con = Urllib3HttpConnection(
+            cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n"
+        )
+        self.assertTrue(con.use_ssl)
+        self.assertEquals(
+            con.host, "https://0fd50f62320ed6539f6cb48e1b68.example.cloud.com:9243"
+        )
+
     def test_http_compression(self):
         con = Urllib3HttpConnection(http_compress=True)
         self.assertTrue(con.http_compress)
@@ -150,6 +159,15 @@ class TestRequestsConnection(TestCase):
     def test_timeout_set(self):
         con = RequestsHttpConnection(timeout=42)
         self.assertEquals(42, con.timeout)
+
+    def test_http_cloud_id(self):
+        con = RequestsHttpConnection(
+            cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n"
+        )
+        self.assertTrue(con.use_ssl)
+        self.assertEquals(
+            con.host, "https://0fd50f62320ed6539f6cb48e1b68.example.cloud.com:9243"
+        )
 
     def test_uses_https_if_verify_certs_is_off(self):
         with warnings.catch_warnings(record=True) as w:

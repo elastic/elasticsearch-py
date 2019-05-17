@@ -64,7 +64,7 @@ class RequestsHttpConnection(Connection):
                 decodestring(cloud_id.encode("utf-8")).decode("utf-8").split("$")
             )
             host = "%s.%s" % (es_uuid, url)
-            port = "9243"
+            port = 9243
             use_ssl = True
 
         super(RequestsHttpConnection, self).__init__(
