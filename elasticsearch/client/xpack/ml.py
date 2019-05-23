@@ -224,7 +224,7 @@ class MlClient(NamespacedClient):
             "POST",
             "/_ml/find_file_structure",
             params=params,
-            body=self._bulk_body(body),
+            body=self.client._bulk_body(body),
         )
 
     @query_params("advance_time", "calc_interim", "end", "skip_time", "start")
@@ -634,7 +634,7 @@ class MlClient(NamespacedClient):
             "POST",
             _make_path("_ml", "anomaly_detectors", job_id, "_data"),
             params=params,
-            body=self._bulk_body(body),
+            body=self.client._bulk_body(body),
         )
 
     @query_params()
