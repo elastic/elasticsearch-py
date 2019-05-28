@@ -1,9 +1,4 @@
-from ..utils import (
-    NamespacedClient,
-    query_params,
-    _make_path,
-    SKIP_IN_PATH,
-)
+from ..utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 
 class MlClient(NamespacedClient):
@@ -111,7 +106,7 @@ class MlClient(NamespacedClient):
             "POST",
             _make_path("_xpack", "ml", "anomaly_detectors", job_id, "_data"),
             params=params,
-            body=self._bulk_body(body),
+            body=self.client._bulk_body(body),
         )
 
     @query_params("force", "timeout")
