@@ -3,8 +3,13 @@
 Changelog
 =========
 
-6.4.0 (dev)
+6.5.0 (dev)
 -----------
+
+6.4.0 (2019-05-28)
+------------------
+
+  * update missing apis and xpack and query params for 6
 
 6.3.1 (2018-08-09)
 ------------------
