@@ -15,6 +15,15 @@ class IngestClient(NamespacedClient):
             "GET", _make_path("_ingest", "pipeline", id), params=params
         )
 
+    @query_params()
+    def processor_grok(self, params=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/grok-processor.html#grok-processor-rest-get>`_
+        """
+        return self.transport.perform_request(
+            "GET", "/_ingest/processor/grok", params=params
+        )
+
     @query_params("master_timeout", "timeout")
     def put_pipeline(self, id, body, params=None):
         """
