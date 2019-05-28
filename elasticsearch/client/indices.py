@@ -78,7 +78,13 @@ class IndicesClient(NamespacedClient):
             "POST", _make_path(index, "_flush"), params=params
         )
 
-    @query_params("master_timeout", "timeout", "wait_for_active_shards")
+    @query_params(
+        "include_type_name",
+        "master_timeout",
+        "timeout",
+        "update_all_types",
+        "wait_for_active_shards",
+    )
     def create(self, index, body=None, params=None):
         """
         Create an index in Elasticsearch.
@@ -86,8 +92,12 @@ class IndicesClient(NamespacedClient):
 
         :arg index: The name of the index
         :arg body: The configuration for the index (`settings` and `mappings`)
+        :arg include_type_name: Whether a type should be expected in the body of
+            the mappings.
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
+        :arg update_all_types: Whether to update the mapping for all fields with
+            the same name across all types or not
         :arg wait_for_active_shards: Set the number of active shards to wait for
             before the operation returns.
         """
@@ -103,7 +113,9 @@ class IndicesClient(NamespacedClient):
         "flat_settings",
         "ignore_unavailable",
         "include_defaults",
+        "include_type_name",
         "local",
+        "master_timeout",
     )
     def get(self, index, feature=None, params=None):
         """
@@ -120,8 +132,11 @@ class IndicesClient(NamespacedClient):
         :arg ignore_unavailable: Ignore unavailable indexes (default: false)
         :arg include_defaults: Whether to return all default setting for each of
             the indices., default False
+        :arg include_type_name: Whether to add the type name to the response
+            (default: true)
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
+        :arg master_timeout: Specify timeout for connection to master
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
@@ -135,6 +150,7 @@ class IndicesClient(NamespacedClient):
         "ignore_unavailable",
         "master_timeout",
         "timeout",
+        "wait_for_active_shards",
     )
     def open(self, index, params=None):
         """
@@ -152,6 +168,8 @@ class IndicesClient(NamespacedClient):
             ignored when unavailable (missing or closed)
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
+        :arg wait_for_active_shards: Sets the number of active shards to wait
+            for before the operation returns.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
@@ -280,8 +298,10 @@ class IndicesClient(NamespacedClient):
         "allow_no_indices",
         "expand_wildcards",
         "ignore_unavailable",
+        "include_type_name",
         "master_timeout",
         "timeout",
+        "update_all_types",
     )
     def put_mapping(self, doc_type, body, index=None, params=None):
         """
@@ -301,8 +321,12 @@ class IndicesClient(NamespacedClient):
             choices are: 'open', 'closed', 'none', 'all'
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
+        :arg include_type_name: Whether a type should be expected in the body of
+            the mappings.
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
+        :arg update_all_types: Whether to update the mapping for all fields with
+            the same name across all types or not
         """
         for param in (doc_type, body):
             if param in SKIP_IN_PATH:
@@ -311,7 +335,14 @@ class IndicesClient(NamespacedClient):
             "PUT", _make_path(index, "_mapping", doc_type), params=params, body=body
         )
 
-    @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable", "local")
+    @query_params(
+        "allow_no_indices",
+        "expand_wildcards",
+        "ignore_unavailable",
+        "include_type_name",
+        "local",
+        "master_timeout",
+    )
     def get_mapping(self, index=None, doc_type=None, params=None):
         """
         Retrieve mapping definition of index or index/type.
@@ -327,8 +358,11 @@ class IndicesClient(NamespacedClient):
             choices are: 'open', 'closed', 'none', 'all'
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
+        :arg include_type_name: Whether a type should be returned in the body of
+            the mappings.
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
+        :arg master_timeout: Specify timeout for connection to master
         """
         return self.transport.perform_request(
             "GET", _make_path(index, "_mapping", doc_type), params=params
@@ -339,6 +373,7 @@ class IndicesClient(NamespacedClient):
         "expand_wildcards",
         "ignore_unavailable",
         "include_defaults",
+        "include_type_name",
         "local",
     )
     def get_field_mapping(self, fields, index=None, doc_type=None, params=None):
@@ -359,6 +394,8 @@ class IndicesClient(NamespacedClient):
             ignored when unavailable (missing or closed)
         :arg include_defaults: Whether the default mapping values should be
             returned as well
+        :arg include_type_name: Whether a type should be returned in the body of
+            the mappings.
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
         """
@@ -474,7 +511,14 @@ class IndicesClient(NamespacedClient):
             "DELETE", _make_path(index, "_alias", name), params=params
         )
 
-    @query_params("create", "flat_settings", "master_timeout", "order", "timeout")
+    @query_params(
+        "create",
+        "flat_settings",
+        "include_type_name",
+        "master_timeout",
+        "order",
+        "timeout",
+    )
     def put_template(self, name, body, params=None):
         """
         Create an index template that will automatically be applied to new
@@ -486,6 +530,8 @@ class IndicesClient(NamespacedClient):
         :arg create: Whether the index template should only be added if new or
             can also replace an existing one, default False
         :arg flat_settings: Return settings in flat format (default: false)
+        :arg include_type_name: Whether a type should be returned in the body of
+            the mappings.
         :arg master_timeout: Specify timeout for connection to master
         :arg order: The order for this template when merging multiple matching
             ones (higher numbers are merged later, overriding the lower numbers)
@@ -517,7 +563,7 @@ class IndicesClient(NamespacedClient):
             "HEAD", _make_path("_template", name), params=params
         )
 
-    @query_params("flat_settings", "local", "master_timeout")
+    @query_params("flat_settings", "include_type_name", "local", "master_timeout")
     def get_template(self, name=None, params=None):
         """
         Retrieve an index template by its name.
@@ -525,6 +571,8 @@ class IndicesClient(NamespacedClient):
 
         :arg name: The name of the template
         :arg flat_settings: Return settings in flat format (default: false)
+        :arg include_type_name: Whether a type should be returned in the body of
+            the mappings.
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
         :arg master_timeout: Explicit operation timeout for connection to master
@@ -557,6 +605,7 @@ class IndicesClient(NamespacedClient):
         "ignore_unavailable",
         "include_defaults",
         "local",
+        "master_timeout",
     )
     def get_settings(self, index=None, name=None, params=None):
         """
@@ -579,6 +628,7 @@ class IndicesClient(NamespacedClient):
             the indices., default False
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
+        :arg master_timeout: Specify timeout for connection to master
         """
         return self.transport.perform_request(
             "GET", _make_path(index, "_settings", name), params=params
@@ -591,6 +641,7 @@ class IndicesClient(NamespacedClient):
         "ignore_unavailable",
         "master_timeout",
         "preserve_existing",
+        "timeout",
     )
     def put_settings(self, body, index=None, params=None):
         """
@@ -613,6 +664,7 @@ class IndicesClient(NamespacedClient):
         :arg preserve_existing: Whether to update existing settings. If set to
             `true` existing settings on an index remain unchanged, the default
             is `false`
+        :arg timeout: Explicit operation timeout
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
@@ -754,6 +806,7 @@ class IndicesClient(NamespacedClient):
         "query",
         "recycler",
         "request",
+        "request_cache",
     )
     def clear_cache(self, index=None, params=None):
         """
@@ -952,7 +1005,9 @@ class IndicesClient(NamespacedClient):
             "POST", _make_path(index, "_forcemerge"), params=params
         )
 
-    @query_params("master_timeout", "timeout", "wait_for_active_shards")
+    @query_params(
+        "copy_settings", "master_timeout", "timeout", "wait_for_active_shards"
+    )
     def shrink(self, index, target, body=None, params=None):
         """
         The shrink index API allows you to shrink an existing index into a new
@@ -970,6 +1025,8 @@ class IndicesClient(NamespacedClient):
         :arg target: The name of the target index to shrink into
         :arg body: The configuration for the target index (`settings` and
             `aliases`)
+        :arg copy_settings: whether or not to copy settings from the source
+            index (defaults to false)
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         :arg wait_for_active_shards: Set the number of active shards to wait for
@@ -982,7 +1039,38 @@ class IndicesClient(NamespacedClient):
             "PUT", _make_path(index, "_shrink", target), params=params, body=body
         )
 
-    @query_params("dry_run", "master_timeout", "timeout", "wait_for_active_shards")
+    @query_params(
+        "copy_settings", "master_timeout", "timeout", "wait_for_active_shards"
+    )
+    def split(self, index, target, body=None, params=None):
+        """
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/master/indices-split-index.html>`_
+
+        :arg index: The name of the source index to split
+        :arg target: The name of the target index to split into
+        :arg body: The configuration for the target index (`settings` and
+            `aliases`)
+        :arg copy_settings: whether or not to copy settings from the source
+            index (defaults to false)
+        :arg master_timeout: Specify timeout for connection to master
+        :arg timeout: Explicit operation timeout
+        :arg wait_for_active_shards: Set the number of active shards to wait for
+            on the shrunken index before the operation returns.
+        """
+        for param in (index, target):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
+        return self.transport.perform_request(
+            "PUT", _make_path(index, "_split", target), params=params, body=body
+        )
+
+    @query_params(
+        "dry_run",
+        "include_type_name",
+        "master_timeout",
+        "timeout",
+        "wait_for_active_shards",
+    )
     def rollover(self, alias, new_index=None, body=None, params=None):
         """
         The rollover index API rolls an alias over to a new index when the
@@ -1000,6 +1088,8 @@ class IndicesClient(NamespacedClient):
         :arg dry_run: If set to true the rollover action will only be validated
             but not actually performed even if a condition matches. The default
             is false
+        :arg include_type_name: Whether a type should be included in the body of
+            the mappings.
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         :arg wait_for_active_shards: Set the number of active shards to wait for
