@@ -3,6 +3,9 @@
 Changelog
 =========
 
+5.5.5 (2019-05-28)
+  * repackage without extra code
+
 5.5.4 (2018-06-20)
 ------------------
   * Pass retry object instead of False to urllib3
