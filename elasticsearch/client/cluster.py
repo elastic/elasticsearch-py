@@ -66,6 +66,8 @@ class ClusterClient(NamespacedClient):
         "ignore_unavailable",
         "local",
         "master_timeout",
+        "wait_for_metadata_version",
+        "wait_for_timeout",
     )
     def state(self, metric=None, index=None, params=None):
         """
@@ -87,6 +89,10 @@ class ClusterClient(NamespacedClient):
         :arg local: Return local information, do not retrieve the state from
             master node (default: false)
         :arg master_timeout: Specify timeout for connection to master
+        :arg wait_for_metadata_version: Wait for the metadata version to be
+            equal or greater than the specified metadata version
+        :arg wait_for_timeout: The maximum time to wait for
+            wait_for_metadata_version before timing out
         """
         if index and not metric:
             metric = "_all"
@@ -173,6 +179,13 @@ class ClusterClient(NamespacedClient):
         return self.transport.perform_request(
             "PUT", "/_cluster/settings", params=params, body=body
         )
+
+    @query_params()
+    def remote_info(self, params=None):
+        """
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-remote-info.html>`_
+        """
+        return self.transport.perform_request("GET", "/_remote/info", params=params)
 
     @query_params("include_disk_info", "include_yes_decisions")
     def allocation_explain(self, body=None, params=None):
