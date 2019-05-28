@@ -1,7 +1,13 @@
-from elasticsearch.client.utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
+from elasticsearch.client.utils import (
+    NamespacedClient,
+    query_params,
+    _make_path,
+    SKIP_IN_PATH,
+)
+
 
 class MigrationClient(NamespacedClient):
-    @query_params('allow_no_indices', 'expand_wildcards', 'ignore_unavailable')
+    @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable")
     def get_assistance(self, index=None, params=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/migration-api-assistance.html>`_
@@ -17,10 +23,11 @@ class MigrationClient(NamespacedClient):
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
         """
-        return self.transport.perform_request('GET', _make_path('_xpack',
-            'migration', 'assistance', index), params=params)
+        return self.transport.perform_request(
+            "GET", _make_path("_xpack", "migration", "assistance", index), params=params
+        )
 
-    @query_params('wait_for_completion')
+    @query_params("wait_for_completion")
     def upgrade(self, index, params=None):
         """
 
@@ -32,5 +39,6 @@ class MigrationClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
-        return self.transport.perform_request('POST', _make_path('_xpack',
-            'migration', 'upgrade', index), params=params)
+        return self.transport.perform_request(
+            "POST", _make_path("_xpack", "migration", "upgrade", index), params=params
+        )

@@ -8,7 +8,8 @@ from ..exceptions import ElasticsearchException, TransportError
 from ..compat import map, string_types, Queue
 
 
-logger = logging.getLogger('elasticsearch.helpers')
+logger = logging.getLogger("elasticsearch.helpers")
+
 
 class BulkIndexError(ElasticsearchException):
     @property
@@ -22,6 +23,7 @@ class ScanError(ElasticsearchException):
         super(ScanError, self).__init__(*args, **kwargs)
         self.scroll_id = scroll_id
 
+
 def expand_action(data):
     """
     From one document or action definition passed in by the user extract the
@@ -34,19 +36,31 @@ def expand_action(data):
 
     # make sure we don't alter the action
     data = data.copy()
-    op_type = data.pop('_op_type', 'index')
+    op_type = data.pop("_op_type", "index")
     action = {op_type: {}}
-    for key in ('_index', '_parent', '_percolate', '_routing', '_timestamp', 'routing',
-                '_type', '_version', '_version_type', '_id',
-                'retry_on_conflict', 'pipeline'):
+    for key in (
+        "_index",
+        "_parent",
+        "_percolate",
+        "_routing",
+        "_timestamp",
+        "routing",
+        "_type",
+        "_version",
+        "_version_type",
+        "_id",
+        "retry_on_conflict",
+        "pipeline",
+    ):
         if key in data:
             action[op_type][key] = data.pop(key)
 
     # no data payload for delete
-    if op_type == 'delete':
+    if op_type == "delete":
         return action, None
 
-    return action, data.get('_source', data)
+    return action, data.get("_source", data)
+
 
 def _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer):
     """
@@ -65,7 +79,9 @@ def _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer):
             cur_size += len(data) + 1
 
         # full chunk, send it and start a new one
-        if bulk_actions and (size + cur_size > max_chunk_bytes or action_count == chunk_size):
+        if bulk_actions and (
+            size + cur_size > max_chunk_bytes or action_count == chunk_size
+        ):
             yield bulk_data, bulk_actions
             bulk_actions, bulk_data = [], []
             size, action_count = 0, 0
@@ -75,7 +91,7 @@ def _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer):
             bulk_actions.append(data)
             bulk_data.append((raw_action, raw_data))
         else:
-            bulk_data.append((raw_action, ))
+            bulk_data.append((raw_action,))
 
         size += cur_size
         action_count += 1
@@ -83,7 +99,16 @@ def _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer):
     if bulk_actions:
         yield bulk_data, bulk_actions
 
-def _process_bulk_chunk(client, bulk_actions, bulk_data, raise_on_exception=True, raise_on_error=True, *args, **kwargs):
+
+def _process_bulk_chunk(
+    client,
+    bulk_actions,
+    bulk_data,
+    raise_on_exception=True,
+    raise_on_error=True,
+    *args,
+    **kwargs
+):
     """
     Send a bulk request to elasticsearch and process the output.
     """
@@ -92,7 +117,7 @@ def _process_bulk_chunk(client, bulk_actions, bulk_data, raise_on_exception=True
 
     try:
         # send the actual request
-        resp = client.bulk('\n'.join(bulk_actions) + '\n', *args, **kwargs)
+        resp = client.bulk("\n".join(bulk_actions) + "\n", *args, **kwargs)
     except TransportError as e:
         # default behavior - just propagate exception
         if raise_on_exception:
@@ -106,26 +131,30 @@ def _process_bulk_chunk(client, bulk_actions, bulk_data, raise_on_exception=True
             # collect all the information about failed actions
             op_type, action = data[0].copy().popitem()
             info = {"error": err_message, "status": e.status_code, "exception": e}
-            if op_type != 'delete':
-                info['data'] = data[1]
+            if op_type != "delete":
+                info["data"] = data[1]
             info.update(action)
             exc_errors.append({op_type: info})
 
         # emulate standard behavior for failed actions
         if raise_on_error:
-            raise BulkIndexError('%i document(s) failed to index.' % len(exc_errors), exc_errors)
+            raise BulkIndexError(
+                "%i document(s) failed to index." % len(exc_errors), exc_errors
+            )
         else:
             for err in exc_errors:
                 yield False, err
             return
 
     # go through request-reponse pairs and detect failures
-    for data, (op_type, item) in zip(bulk_data, map(methodcaller('popitem'), resp['items'])):
-        ok = 200 <= item.get('status', 500) < 300
+    for data, (op_type, item) in zip(
+        bulk_data, map(methodcaller("popitem"), resp["items"])
+    ):
+        ok = 200 <= item.get("status", 500) < 300
         if not ok and raise_on_error:
             # include original document source
             if len(data) > 1:
-                item['data'] = data[1]
+                item["data"] = data[1]
             errors.append({op_type: item})
 
         if ok or not errors:
@@ -134,12 +163,24 @@ def _process_bulk_chunk(client, bulk_actions, bulk_data, raise_on_exception=True
             yield ok, {op_type: item}
 
     if errors:
-        raise BulkIndexError('%i document(s) failed to index.' % len(errors), errors)
+        raise BulkIndexError("%i document(s) failed to index." % len(errors), errors)
 
-def streaming_bulk(client, actions, chunk_size=500, max_chunk_bytes=100 * 1024 * 1024,
-                   raise_on_error=True, expand_action_callback=expand_action,
-                   raise_on_exception=True, max_retries=0, initial_backoff=2,
-                   max_backoff=600, yield_ok=True, *args, **kwargs):
+
+def streaming_bulk(
+    client,
+    actions,
+    chunk_size=500,
+    max_chunk_bytes=100 * 1024 * 1024,
+    raise_on_error=True,
+    expand_action_callback=expand_action,
+    raise_on_exception=True,
+    max_retries=0,
+    initial_backoff=2,
+    max_backoff=600,
+    yield_ok=True,
+    *args,
+    **kwargs
+):
 
     """
     Streaming bulk consumes actions from the iterable passed in and yields
@@ -175,33 +216,43 @@ def streaming_bulk(client, actions, chunk_size=500, max_chunk_bytes=100 * 1024 *
     """
     actions = map(expand_action_callback, actions)
 
-    for bulk_data, bulk_actions in _chunk_actions(actions, chunk_size,
-                                                  max_chunk_bytes,
-                                                  client.transport.serializer):
+    for bulk_data, bulk_actions in _chunk_actions(
+        actions, chunk_size, max_chunk_bytes, client.transport.serializer
+    ):
 
         for attempt in range(max_retries + 1):
             to_retry, to_retry_data = [], []
             if attempt:
-                time.sleep(min(max_backoff, initial_backoff * 2**(attempt-1)))
+                time.sleep(min(max_backoff, initial_backoff * 2 ** (attempt - 1)))
 
             try:
                 for data, (ok, info) in zip(
-                            bulk_data,
-                            _process_bulk_chunk(client, bulk_actions, bulk_data,
-                                                raise_on_exception,
-                                                raise_on_error, *args, **kwargs)
-                        ):
+                    bulk_data,
+                    _process_bulk_chunk(
+                        client,
+                        bulk_actions,
+                        bulk_data,
+                        raise_on_exception,
+                        raise_on_error,
+                        *args,
+                        **kwargs
+                    ),
+                ):
 
                     if not ok:
                         action, info = info.popitem()
                         # retry if retries enabled, we get 429, and we are not
                         # in the last attempt
-                        if max_retries \
-                                and info['status'] == 429 \
-                                and (attempt+1) <= max_retries:
+                        if (
+                            max_retries
+                            and info["status"] == 429
+                            and (attempt + 1) <= max_retries
+                        ):
                             # _process_bulk_chunk expects strings so we need to
                             # re-serialize the data
-                            to_retry.extend(map(client.transport.serializer.dumps, data))
+                            to_retry.extend(
+                                map(client.transport.serializer.dumps, data)
+                            )
                             to_retry_data.append(data)
                         else:
                             yield ok, {action: info}
@@ -253,7 +304,7 @@ def bulk(client, actions, stats_only=False, *args, **kwargs):
     errors = []
 
     # make streaming_bulk yield successful results so we can count them
-    kwargs['yield_ok'] = True
+    kwargs["yield_ok"] = True
     for ok, item in streaming_bulk(client, actions, *args, **kwargs):
         # go through request-reponse pairs and detect failures
         if not ok:
@@ -265,9 +316,18 @@ def bulk(client, actions, stats_only=False, *args, **kwargs):
 
     return success, failed if stats_only else errors
 
-def parallel_bulk(client, actions, thread_count=4, chunk_size=500,
-        max_chunk_bytes=100 * 1024 * 1024, queue_size=4,
-        expand_action_callback=expand_action, *args, **kwargs):
+
+def parallel_bulk(
+    client,
+    actions,
+    thread_count=4,
+    chunk_size=500,
+    max_chunk_bytes=100 * 1024 * 1024,
+    queue_size=4,
+    expand_action_callback=expand_action,
+    *args,
+    **kwargs
+):
     """
     Parallel version of the bulk helper run in multiple threads at once.
 
@@ -302,9 +362,15 @@ def parallel_bulk(client, actions, thread_count=4, chunk_size=500,
 
     try:
         for result in pool.imap(
-            lambda bulk_chunk: list(_process_bulk_chunk(client, bulk_chunk[1], bulk_chunk[0], *args, **kwargs)),
-            _chunk_actions(actions, chunk_size, max_chunk_bytes, client.transport.serializer)
-            ):
+            lambda bulk_chunk: list(
+                _process_bulk_chunk(
+                    client, bulk_chunk[1], bulk_chunk[0], *args, **kwargs
+                )
+            ),
+            _chunk_actions(
+                actions, chunk_size, max_chunk_bytes, client.transport.serializer
+            ),
+        ):
             for item in result:
                 yield item
 
@@ -312,9 +378,19 @@ def parallel_bulk(client, actions, thread_count=4, chunk_size=500,
         pool.close()
         pool.join()
 
-def scan(client, query=None, scroll='5m', raise_on_error=True,
-         preserve_order=False, size=1000, request_timeout=None, clear_scroll=True,
-         scroll_kwargs=None, **kwargs):
+
+def scan(
+    client,
+    query=None,
+    scroll="5m",
+    raise_on_error=True,
+    preserve_order=False,
+    size=1000,
+    request_timeout=None,
+    clear_scroll=True,
+    scroll_kwargs=None,
+    **kwargs
+):
     """
     Simple abstraction on top of the
     :meth:`~elasticsearch.Elasticsearch.scroll` api - a simple iterator that
@@ -360,10 +436,11 @@ def scan(client, query=None, scroll='5m', raise_on_error=True,
         query = query.copy() if query else {}
         query["sort"] = "_doc"
     # initial search
-    resp = client.search(body=query, scroll=scroll, size=size,
-                         request_timeout=request_timeout, **kwargs)
+    resp = client.search(
+        body=query, scroll=scroll, size=size, request_timeout=request_timeout, **kwargs
+    )
 
-    scroll_id = resp.get('_scroll_id')
+    scroll_id = resp.get("_scroll_id")
     if scroll_id is None:
         return
 
@@ -374,36 +451,50 @@ def scan(client, query=None, scroll='5m', raise_on_error=True,
             if first_run:
                 first_run = False
             else:
-                resp = client.scroll(scroll_id, scroll=scroll,
-                                     request_timeout=request_timeout,
-                                     **scroll_kwargs)
+                resp = client.scroll(
+                    scroll_id,
+                    scroll=scroll,
+                    request_timeout=request_timeout,
+                    **scroll_kwargs
+                )
 
-            for hit in resp['hits']['hits']:
+            for hit in resp["hits"]["hits"]:
                 yield hit
 
             # check if we have any errrors
             if resp["_shards"]["successful"] < resp["_shards"]["total"]:
                 logger.warning(
-                    'Scroll request has only succeeded on %d shards out of %d.',
-                    resp['_shards']['successful'], resp['_shards']['total']
+                    "Scroll request has only succeeded on %d shards out of %d.",
+                    resp["_shards"]["successful"],
+                    resp["_shards"]["total"],
                 )
                 if raise_on_error:
                     raise ScanError(
                         scroll_id,
-                        'Scroll request has only succeeded on %d shards out of %d.' %
-                            (resp['_shards']['successful'], resp['_shards']['total'])
+                        "Scroll request has only succeeded on %d shards out of %d."
+                        % (resp["_shards"]["successful"], resp["_shards"]["total"]),
                     )
 
-            scroll_id = resp.get('_scroll_id')
+            scroll_id = resp.get("_scroll_id")
             # end of scroll
-            if scroll_id is None or not resp['hits']['hits']:
+            if scroll_id is None or not resp["hits"]["hits"]:
                 break
     finally:
         if scroll_id and clear_scroll:
-            client.clear_scroll(body={'scroll_id': [scroll_id]}, ignore=(404, ))
+            client.clear_scroll(body={"scroll_id": [scroll_id]}, ignore=(404,))
 
-def reindex(client, source_index, target_index, query=None, target_client=None,
-        chunk_size=500, scroll='5m', scan_kwargs={}, bulk_kwargs={}):
+
+def reindex(
+    client,
+    source_index,
+    target_index,
+    query=None,
+    target_client=None,
+    chunk_size=500,
+    scroll="5m",
+    scan_kwargs={},
+    bulk_kwargs={},
+):
 
     """
     Reindex all documents from one index that satisfy a given query
@@ -437,22 +528,20 @@ def reindex(client, source_index, target_index, query=None, target_client=None,
     """
     target_client = client if target_client is None else target_client
 
-    docs = scan(client,
-        query=query,
-        index=source_index,
-        scroll=scroll,
-        **scan_kwargs
-    )
+    docs = scan(client, query=query, index=source_index, scroll=scroll, **scan_kwargs)
+
     def _change_doc_index(hits, index):
         for h in hits:
-            h['_index'] = index
-            if 'fields' in h:
-                h.update(h.pop('fields'))
+            h["_index"] = index
+            if "fields" in h:
+                h.update(h.pop("fields"))
             yield h
 
-    kwargs = {
-        'stats_only': True,
-    }
+    kwargs = {"stats_only": True}
     kwargs.update(bulk_kwargs)
-    return bulk(target_client, _change_doc_index(docs, target_index),
-        chunk_size=chunk_size, **kwargs)
+    return bulk(
+        target_client,
+        _change_doc_index(docs, target_index),
+        chunk_size=chunk_size,
+        **kwargs
+    )

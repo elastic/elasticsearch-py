@@ -10,7 +10,8 @@ except ImportError:
 
 from .exceptions import ImproperlyConfigured
 
-logger = logging.getLogger('elasticsearch')
+logger = logging.getLogger("elasticsearch")
+
 
 class ConnectionSelector(object):
     """
@@ -30,6 +31,7 @@ class ConnectionSelector(object):
     only select connections from it's own zones and only fall back to other
     connections where there would be none in it's zones.
     """
+
     def __init__(self, opts):
         """
         :arg opts: dictionary of connection instances and their options
@@ -49,6 +51,7 @@ class RandomSelector(ConnectionSelector):
     """
     Select a connection at random
     """
+
     def select(self, connections):
         return random.choice(connections)
 
@@ -57,14 +60,16 @@ class RoundRobinSelector(ConnectionSelector):
     """
     Selector using round-robin.
     """
+
     def __init__(self, opts):
         super(RoundRobinSelector, self).__init__(opts)
         self.data = threading.local()
 
     def select(self, connections):
-        self.data.rr = getattr(self.data, 'rr', -1) + 1
+        self.data.rr = getattr(self.data, "rr", -1) + 1
         self.data.rr %= len(connections)
         return connections[self.data.rr]
+
 
 class ConnectionPool(object):
     """
@@ -88,8 +93,16 @@ class ConnectionPool(object):
     live pool. A connection that has been previously marked as dead and
     succeeds will be marked as live (its fail count will be deleted).
     """
-    def __init__(self, connections, dead_timeout=60, timeout_cutoff=5,
-        selector_class=RoundRobinSelector, randomize_hosts=True, **kwargs):
+
+    def __init__(
+        self,
+        connections,
+        dead_timeout=60,
+        timeout_cutoff=5,
+        selector_class=RoundRobinSelector,
+        randomize_hosts=True,
+        **kwargs
+    ):
         """
         :arg connections: list of tuples containing the
             :class:`~elasticsearch.Connection` instance and it's options
@@ -103,8 +116,9 @@ class ConnectionPool(object):
             avoid dog piling effect across processes
         """
         if not connections:
-            raise ImproperlyConfigured("No defined connections, you need to "
-                    "specify at least one host.")
+            raise ImproperlyConfigured(
+                "No defined connections, you need to " "specify at least one host."
+            )
         self.connection_opts = connections
         self.connections = [c for (c, opts) in connections]
         # remember original connection list for resurrect(force=True)
@@ -144,8 +158,10 @@ class ConnectionPool(object):
             timeout = self.dead_timeout * 2 ** min(dead_count - 1, self.timeout_cutoff)
             self.dead.put((now + timeout, connection))
             logger.warning(
-                'Connection %r has failed for %i times in a row, putting on %i second timeout.',
-                connection, dead_count, timeout
+                "Connection %r has failed for %i times in a row, putting on %i second timeout.",
+                connection,
+                dead_count,
+                timeout,
             )
 
     def mark_live(self, connection):
@@ -200,7 +216,7 @@ class ConnectionPool(object):
 
         # either we were forced or the connection is elligible to be retried
         self.connections.append(connection)
-        logger.info('Resurrecting connection %r (force=%s).', connection, force)
+        logger.info("Resurrecting connection %r (force=%s).", connection, force)
         return connection
 
     def get_connection(self):
@@ -235,15 +251,17 @@ class ConnectionPool(object):
         for conn in self.orig_connections:
             conn.close()
 
+
 class DummyConnectionPool(ConnectionPool):
     def __init__(self, connections, **kwargs):
         if len(connections) != 1:
-            raise ImproperlyConfigured("DummyConnectionPool needs exactly one "
-                    "connection defined.")
+            raise ImproperlyConfigured(
+                "DummyConnectionPool needs exactly one " "connection defined."
+            )
         # we need connection opts for sniffing logic
         self.connection_opts = connections
         self.connection = connections[0][0]
-        self.connections = (self.connection, )
+        self.connections = (self.connection,)
 
     def get_connection(self):
         return self.connection
@@ -256,6 +274,5 @@ class DummyConnectionPool(ConnectionPool):
 
     def _noop(self, *args, **kwargs):
         pass
+
     mark_dead = mark_live = resurrect = _noop
-
-
