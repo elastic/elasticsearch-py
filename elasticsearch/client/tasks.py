@@ -8,6 +8,7 @@ class TasksClient(NamespacedClient):
         "group_by",
         "nodes",
         "parent_task_id",
+        "timeout",
         "wait_for_completion",
     )
     def list(self, params=None):
@@ -25,6 +26,7 @@ class TasksClient(NamespacedClient):
             nodes
         :arg parent_task_id: Return tasks with specified parent task id
             (node_id:task_number). Set to -1 to return all.
+        :arg timeout: Explicit operation timeout
         :arg wait_for_completion: Wait for the matching tasks to complete
             (default: false)
         """
