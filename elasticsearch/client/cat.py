@@ -419,15 +419,7 @@ class CatClient(NamespacedClient):
         )
 
     @query_params(
-        "actions",
-        "detailed",
-        "format",
-        "h",
-        "help",
-        "nodes",
-        "parent_task_id",
-        "s",
-        "v",
+        "actions", "detailed", "format", "h", "help", "node_id", "parent_task", "s", "v"
     )
     def tasks(self, params=None):
         """
@@ -440,11 +432,11 @@ class CatClient(NamespacedClient):
         :arg format: a short version of the Accept header, e.g. json, yaml
         :arg h: Comma-separated list of column names to display
         :arg help: Return help information, default False
-        :arg nodes: A comma-separated list of node IDs or names to limit the
+        :arg node_id: A comma-separated list of node IDs or names to limit the
             returned information; use `_local` to return information from the
             node you're connecting to, leave empty to get information from all
             nodes
-        :arg parent_task_id: Return tasks with specified parent task id. Set to -1
+        :arg parent_task: Return tasks with specified parent task id. Set to -1
             to return all.
         :arg s: Comma-separated list of column names or column aliases to sort
             by
