@@ -4,10 +4,13 @@ Changelog
 =========
 7.1.0 (dev)
 -----------
+
+7.0.2 (2019-05-29)
+-----------
   * Add connection parameter for Elastic Cloud cloud_id.
   * ML client uses client object for _bulk_body requests
 
-7.0.1 (2019-05019)
+7.0.1 (2019-05-19)
 -----------
   * Use black to format the code.
   * Update the test matrix to only use current pythons and 7.x ES
