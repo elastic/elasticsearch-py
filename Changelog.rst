@@ -3,10 +3,13 @@
 Changelog
 =========
 
-2.5.0 (dev)
+2.6.0 (dev)
 -----------
 
-``elasticsearch-py`` ``2.x`` is now available as ``elasticsearch2`` from PyPI
+2.5.1 (dev)
+-----------
+  * repackage to remove extra code
+  * ``elasticsearch-py`` ``2.x`` is now available as ``elasticsearch2`` from PyPI
 
 2.4.1 (2017-01-03)
 ------------------
@@ -174,7 +177,7 @@ compatible with 0.90 elasticsearch.
 
 0.4.2 (2013-10-08)
 ------------------
- 
+
  * ``ignore`` param acceted by all APIs
  * Fixes to ``helpers.bulk_index``
 
