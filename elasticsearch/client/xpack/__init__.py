@@ -1,12 +1,15 @@
-from elasticsearch.client.utils import NamespacedClient, query_params
+from ..utils import NamespacedClient, query_params
 
 from .graph import GraphClient
 from .license import LicenseClient
-from .monitoring import MonitoringClient
-from .security import SecurityClient
-from .watcher import WatcherClient
-from .ml import MlClient
 from .migration import MigrationClient
+from .ml import MlClient
+from .monitoring import MonitoringClient
+from .rollup import RollupClient
+from .security import SecurityClient
+from .sql import SqlClient
+from .ssl import SslClient
+from .watcher import WatcherClient
 from .deprecation import DeprecationClient
 
 
@@ -17,11 +20,14 @@ class XPackClient(NamespacedClient):
         super(XPackClient, self).__init__(*args, **kwargs)
         self.graph = GraphClient(self.client)
         self.license = LicenseClient(self.client)
-        self.monitoring = MonitoringClient(self.client)
-        self.security = SecurityClient(self.client)
-        self.watcher = WatcherClient(self.client)
-        self.ml = MlClient(self.client)
         self.migration = MigrationClient(self.client)
+        self.ml = MlClient(self.client)
+        self.monitoring = MonitoringClient(self.client)
+        self.rollup = RollupClient(self.client)
+        self.security = SecurityClient(self.client)
+        self.sql = SqlClient(self.client)
+        self.ssl = SslClient(self.client)
+        self.watcher = WatcherClient(self.client)
         self.deprecation = DeprecationClient(self.client)
 
     @query_params("categories", "human")

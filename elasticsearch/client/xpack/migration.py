@@ -1,12 +1,20 @@
-from elasticsearch.client.utils import (
-    NamespacedClient,
-    query_params,
-    _make_path,
-    SKIP_IN_PATH,
-)
+from ..utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 
 class MigrationClient(NamespacedClient):
+    @query_params()
+    def deprecations(self, index=None, params=None):
+        """
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/6.7/migration-api-deprecation.html>`_
+
+        :arg index: Index pattern
+        """
+        return self.transport.perform_request(
+            "GET",
+            _make_path(index, "_xpack", "migration", "deprecations"),
+            params=params,
+        )
+
     @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable")
     def get_assistance(self, index=None, params=None):
         """

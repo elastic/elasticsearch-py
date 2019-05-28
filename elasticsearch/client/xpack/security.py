@@ -1,12 +1,54 @@
-from elasticsearch.client.utils import (
-    NamespacedClient,
-    query_params,
-    _make_path,
-    SKIP_IN_PATH,
-)
+from ..utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 
 class SecurityClient(NamespacedClient):
+    @query_params("refresh")
+    def create_api_key(self, body, params=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-create-api-key.html>`_
+
+        :arg body: The api key request to create an API key
+        :arg refresh: If `true` (the default) then refresh the affected shards
+            to make this operation visible to search, if `wait_for` then wait
+            for a refresh to make this operation visible to search, if `false`
+            then do nothing with refreshes., valid choices are: 'true', 'false',
+            'wait_for'
+        """
+        if body in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'body'.")
+        return self.transport.perform_request(
+            "PUT", "/_security/api_key", params=params, body=body
+        )
+
+    @query_params("id", "name", "realm_name", "username")
+    def get_api_key(self, params=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-api-key.html>`_
+
+        :arg id: API key id of the API key to be retrieved
+        :arg name: API key name of the API key to be retrieved
+        :arg realm_name: realm name of the user who created this API key to be
+            retrieved
+        :arg username: user name of the user who created this API key to be
+            retrieved
+        """
+        return self.transport.perform_request(
+            "GET", "/_security/api_key", params=params
+        )
+
+    @query_params()
+    def invalidate_api_key(self, body, params=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-invalidate-api-key.html>`_
+
+        :arg body: The api key request to invalidate API key(s)
+        """
+        if body in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'body'.")
+        return self.transport.perform_request(
+            "DELETE", "/_security/api_key", params=params, body=body
+        )
+
     @query_params("refresh")
     def delete_user(self, username, params=None):
         """

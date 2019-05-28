@@ -1,9 +1,4 @@
-from elasticsearch.client.utils import (
-    NamespacedClient,
-    query_params,
-    _make_path,
-    SKIP_IN_PATH,
-)
+from ..utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 
 class WatcherClient(NamespacedClient):
@@ -99,21 +94,24 @@ class WatcherClient(NamespacedClient):
             params=params,
         )
 
-    @query_params("active", "master_timeout")
-    def put_watch(self, id, body, params=None):
+    @query_params("active", "if_primary_term", "if_seq_no", "master_timeout", "version")
+    def put_watch(self, id, body=None, params=None):
         """
-
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-put-watch.html>`_
 
         :arg id: Watch ID
         :arg body: The watch
         :arg active: Specify whether the watch is in/active by default
+        :arg if_primary_term: only update the watch if the last operation that
+            has changed the watch has the specified primary term
+        :arg if_seq_no: only update the watch if the last operation that has
+            changed the watch has the specified sequence number
         :arg master_timeout: Explicit operation timeout for connection to master
             node
+        :arg version: Explicit version number for concurrency control
         """
-        for param in (id, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
+        if id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'id'.")
         return self.transport.perform_request(
             "PUT",
             _make_path("_xpack", "watcher", "watch", id),
