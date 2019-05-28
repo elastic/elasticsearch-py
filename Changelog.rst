@@ -6,6 +6,11 @@ Changelog
 6.5.0 (dev)
 -----------
 
+6.4.2 (2019-05-28)
+-----------
+  * Bug fix for ML client that use _bulk_body
+  * Add support for cloud_id
+
 6.4.1 (2019-05-09)
 -----------
   * Update API's to be current with ES 6.7
