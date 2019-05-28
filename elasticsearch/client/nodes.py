@@ -22,6 +22,22 @@ class NodesClient(NamespacedClient):
             "GET", _make_path("_nodes", node_id, metric), params=params
         )
 
+    @query_params("timeout")
+    def reload_secure_settings(self, node_id=None, params=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/6.x/secure-settings.html#reloadable-secure-settings>`_
+
+        :arg node_id: A comma-separated list of node IDs to span the
+            reload/reinit call. Should stay empty because reloading usually
+            involves all cluster nodes.
+        :arg timeout: Explicit operation timeout
+        """
+        return self.transport.perform_request(
+            "POST",
+            _make_path("_nodes", node_id, "reload_secure_settings"),
+            params=params,
+        )
+
     @query_params(
         "completion_fields",
         "fielddata_fields",
@@ -71,7 +87,13 @@ class NodesClient(NamespacedClient):
         )
 
     @query_params(
-        "type", "ignore_idle_threads", "interval", "snapshots", "threads", "timeout"
+        "doc_type",
+        "type",
+        "ignore_idle_threads",
+        "interval",
+        "snapshots",
+        "threads",
+        "timeout",
     )
     def hot_threads(self, node_id=None, params=None):
         """
@@ -82,6 +104,8 @@ class NodesClient(NamespacedClient):
             returned information; use `_local` to return information from the
             node you're connecting to, leave empty to get information from all
             nodes
+        :arg doc_type: The type to sample (default: cpu), valid choices are:
+            'cpu', 'wait', 'block'
         :arg type: The type to sample (default: cpu), valid choices are:
             'cpu', 'wait', 'block'
         :arg ignore_idle_threads: Don't show threads that are in known-idle
