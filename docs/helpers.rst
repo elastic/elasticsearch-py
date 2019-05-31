@@ -93,6 +93,23 @@ document is like ``{"word": "<myword>"}``.
 For a more complete and complex example please take a look at
 https://github.com/elastic/elasticsearch-py/blob/master/example/load.py#L76-L130
 
+The :meth:`~elasticsearch.Elasticsearch.parallel_bulk` api is a wrapper around the :meth:`~elasticsearch.Elasticsearch.bulk` api to provide threading. :meth:`~elasticsearch.Elasticsearch.parallel_bulk` returns a generator which must be consumed to produce results.
+
+To see the results use:
+
+.. code:: python
+
+    for success, info in parallel_bulk(...):
+    if not success:
+        print('A document failed:', info)
+        
+If you don't care about the results, you can use deque from collections:
+
+.. code:: python
+
+    from collections import deque
+    deque(parallel_bulk(...), maxlen=0)
+
 .. note::
 
     When reading raw json strings from a file, you can also pass them in
