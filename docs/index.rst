@@ -17,6 +17,9 @@ Compatibility
 The library is compatible with all Elasticsearch versions since ``0.90.x`` but you
 **have to use a matching major version**:
 
+For **Elasticsearch 7.0** and later, use the major version 7 (``7.x.y``) of the
+library.
+
 For **Elasticsearch 6.0** and later, use the major version 6 (``6.x.y``) of the
 library.
 
@@ -29,6 +32,9 @@ library, and so on.
 The recommended way to set your requirements in your `setup.py` or
 `requirements.txt` is::
 
+    # Elasticsearch 7.x
+    elasticsearch>=7.0.0,<8.0.0
+
     # Elasticsearch 6.x
     elasticsearch>=6.0.0,<7.0.0
 
@@ -39,7 +45,7 @@ The recommended way to set your requirements in your `setup.py` or
     elasticsearch>=2.0.0,<3.0.0
 
 If you have a need to have multiple versions installed at the same time older
-versions are also released as ``elasticsearch2`` and ``elasticsearch5``.
+versions are also released as ``elasticsearch2``, ``elasticsearch5`` and ``elasticsearch6``.
 
 Installation
 ------------
@@ -63,10 +69,10 @@ Example Usage
         'text': 'Elasticsearch: cool. bonsai cool.',
         'timestamp': datetime.now(),
     }
-    res = es.index(index="test-index", doc_type='tweet', id=1, body=doc)
+    res = es.index(index="test-index", id=1, body=doc)
     print(res['result'])
 
-    res = es.get(index="test-index", doc_type='tweet', id=1)
+    res = es.get(index="test-index", id=1)
     print(res['_source'])
 
     es.indices.refresh(index="test-index")
