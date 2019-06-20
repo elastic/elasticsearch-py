@@ -454,8 +454,9 @@ def scan(
                         "Scroll request has only succeeded on %d shards out of %d."
                         % (resp["_shards"]["successful"], resp["_shards"]["total"]),
                     )
-            scroll_kwargs.update({"scroll_id": scroll_id, "scroll": scroll})
-            resp = client.scroll(**scroll_kwargs)
+            resp = client.scroll(
+                body={"scroll_id": scroll_id, "scroll": scroll}, **scroll_kwargs
+            )
             scroll_id = resp.get("_scroll_id")
 
     finally:
