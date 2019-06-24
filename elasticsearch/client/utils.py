@@ -71,16 +71,16 @@ def query_params(*es_query_params):
             params = {}
             if "params" in kwargs:
                 params = kwargs.pop("params").copy()
-            for p in es_query_params + GLOBAL_PARAMS:
-                if p in kwargs:
-                    v = kwargs.pop(p)
-                    if v is not None:
-                        params[p] = _escape(v)
 
             # don't treat ignore and request_timeout as other params to avoid escaping
             for p in ("ignore", "request_timeout"):
                 if p in kwargs:
                     params[p] = kwargs.pop(p)
+            for p in es_query_params + GLOBAL_PARAMS:
+                if p in kwargs:
+                    v = kwargs.pop(p)
+                    if v is not None:
+                        params[p] = _escape(v)
             return func(*args, params=params, **kwargs)
 
         return _wrapped

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from elasticsearch.client.utils import _make_path, _escape
+from elasticsearch.client.utils import _make_path, _escape, query_params
 from elasticsearch.compat import PY2
 
 from ..test_cases import TestCase, SkipTest
@@ -35,3 +35,21 @@ class TestEscape(TestCase):
     def test_handles_bytestring(self):
         string = b"celery-task-meta-c4f1201f-eb7b-41d5-9318-a75a8cfbdaa0"
         self.assertEquals(string, _escape(string))
+
+class TestQueryParams(TestCase):
+    @query_params("request_timeout", "ignore", "some_param")
+    def decorated_func(index, body=None, params=None):
+        return params
+
+    def test_handle_escape_unicode(self):
+        string = "中文"
+        ret=TestQueryParams.decorated_func(index='foo',
+                                           body=None,
+                                           some_param=string)
+        self.assertEquals(b"\xe4\xb8\xad\xe6\x96\x87", ret['some_param'])
+
+    def test_handle_type_of_request_timeout(self):
+        ret=TestQueryParams.decorated_func(index='foo',
+                                           body=None,
+                                           request_timeout=60)
+        self.assertEquals(int, type(ret['request_timeout']))
