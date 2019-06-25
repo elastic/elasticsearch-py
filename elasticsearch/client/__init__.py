@@ -1296,8 +1296,8 @@ class Elasticsearch(object):
             "GET", _make_path(index, doc_type, id, "_explain"), params=params, body=body
         )
 
-    @query_params("scroll", "rest_total_hits_as_int", "scroll_id")
-    def scroll(self, body=None, params=None):
+    @query_params("rest_total_hits_as_int")
+    def scroll(self, scroll=None, scroll_id=None, body=None, params=None):
         """
         Scroll a search request created by specifying the scroll parameter.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-scroll.html>`_
@@ -1311,8 +1311,20 @@ class Elasticsearch(object):
             are in multiple versions (7.0 and 6.latest)
         """
 
+        if scroll in SKIP_IN_PATH and body in SKIP_IN_PATH or \
+                scroll_id in SKIP_IN_PATH and body in SKIP_IN_PATH:
+            raise ValueError("You need to supply (scroll and scroll_id) or body.")
+
+        if body:
+            if scroll:
+                params["scroll"] = scroll
+            if scroll_id:
+                params["scroll_id"] = scroll_id
+        else:
+            body = {"scroll": scroll, "scroll_id": scroll_id}
+
         return self.transport.perform_request(
-            "GET", "/_search/scroll", params=params, body=body
+            "POST", "/_search/scroll", params=params, body=body
         )
 
     @query_params()
