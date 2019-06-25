@@ -38,18 +38,14 @@ class TestEscape(TestCase):
 
 class TestQueryParams(TestCase):
     @query_params("request_timeout", "ignore", "some_param")
-    def decorated_func(index, body=None, params=None):
+    def decorated_func(self, index, body=None, params=None):
         return params
 
     def test_handle_escape_unicode(self):
         string = "中文"
-        ret=TestQueryParams.decorated_func(index='foo',
-                                           body=None,
-                                           some_param=string)
+        ret=self.decorated_func(index='foo', body=None, some_param=string)
         self.assertEquals(b"\xe4\xb8\xad\xe6\x96\x87", ret['some_param'])
 
     def test_handle_type_of_request_timeout(self):
-        ret=TestQueryParams.decorated_func(index='foo',
-                                           body=None,
-                                           request_timeout=60)
+        ret=self.decorated_func(index='foo', body=None, request_timeout=60)
         self.assertEquals(int, type(ret['request_timeout']))
