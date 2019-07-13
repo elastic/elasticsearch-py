@@ -56,10 +56,13 @@ class TestStreamingBulk(ElasticsearchTestCase):
         self.client.cluster.health(wait_for_status="yellow")
 
         try:
-            for ok, item in helpers.streaming_bulk(
-                self.client, [{"a": "b"}, {"a": "c"}], index="i", raise_on_error=True
-            ):
+            docs = [{"a": "b"}, {"a": "c"}]
+            for i, (ok, item) in enumerate(helpers.streaming_bulk(
+                self.client, docs, index="i", raise_on_error=True
+            )):
                 self.assertTrue(ok)
+                op_type, info = item.popitem()
+                self.assertEquals(info["action"], docs[i])
         except helpers.BulkIndexError as e:
             self.assertEquals(2, len(e.errors))
         else:
@@ -81,8 +84,10 @@ class TestStreamingBulk(ElasticsearchTestCase):
                 "doc": {"answer": 42},
             },
         ]
-        for ok, item in helpers.streaming_bulk(self.client, docs):
+        for i, (ok, item) in enumerate(helpers.streaming_bulk(self.client, docs)):
             self.assertTrue(ok)
+            op_type, info = item.popitem()
+            self.assertEquals(info["action"], docs[i])
 
         self.assertFalse(self.client.exists(index="i", id=45))
         self.assertEquals({"answer": 42}, self.client.get(index="i", id=42)["_source"])
@@ -117,6 +122,7 @@ class TestStreamingBulk(ElasticsearchTestCase):
                     "_index": "i",
                     "_type": "_doc",
                     "_id": 45,
+                    "action": docs[1],
                     "data": {"f": "v"},
                     "error": "TransportError(599, 'Error!')",
                     "status": 599,
@@ -147,6 +153,7 @@ class TestStreamingBulk(ElasticsearchTestCase):
         )
         self.assertEquals(3, len(results))
         self.assertEquals([True, True, True], [r[0] for r in results])
+        self.assertEquals(results[1][1]["index"]["action"], docs[1])
         self.client.indices.refresh(index="i")
         res = self.client.search(index="i")
         self.assertEquals({"value": 3, "relation": "eq"}, res["hits"]["total"])
@@ -175,6 +182,7 @@ class TestStreamingBulk(ElasticsearchTestCase):
         )
         self.assertEquals(3, len(results))
         self.assertEquals([False, True, True], [r[0] for r in results])
+        self.assertEquals(results[0][1]["index"]["action"], docs[0])
         self.client.indices.refresh(index="i")
         res = self.client.search(index="i")
         self.assertEquals({"value": 2, "relation": "eq"}, res["hits"]["total"])

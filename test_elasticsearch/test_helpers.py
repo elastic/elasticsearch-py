@@ -58,7 +58,7 @@ class TestParallelBulk(TestCase):
 class TestChunkActions(TestCase):
     def setUp(self):
         super(TestChunkActions, self).setUp()
-        self.actions = [({"index": {}}, {"some": u"datá", "i": i}) for i in range(100)]
+        self.actions = [{"_op_type": "index", "some": u"datá", "i": i} for i in range(100)]
 
     def test_chunks_are_chopped_by_byte_size(self):
         self.assertEquals(
