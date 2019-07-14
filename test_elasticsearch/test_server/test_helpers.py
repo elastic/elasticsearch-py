@@ -1,4 +1,4 @@
-from mock import patch
+from mock import patch, MagicMock
 
 from elasticsearch import helpers, TransportError
 from elasticsearch.helpers import ScanError
@@ -209,6 +209,39 @@ class TestStreamingBulk(ElasticsearchTestCase):
 
         self.assertRaises(TransportError, streaming_bulk)
         self.assertEquals(4, failing_client._called)
+
+
+class TestStreamingChunks(ElasticsearchTestCase):
+    def simple_chunker(self, actions):
+        for item in actions:
+            raw_action = {
+                "index": {
+                    "_id": item["id"]
+                }
+            }
+            data = {
+                "x": item["x"]
+            }
+            action_lines = list(map(
+                self.client.transport.serializer.dumps, (raw_action, data)
+            ))
+            yield [(item, raw_action, data)], action_lines
+
+    def test_actions_chunker(self):
+        actions = [{"id": 1, "x": "A"}, {"id": 2, "x": "B"}]
+        actions_gen = (action for action in actions)
+
+        mock_chunker = MagicMock()
+        mock_chunker.side_effect = self.simple_chunker
+
+        for i, (ok, item) in enumerate(helpers.streaming_chunks(
+            self.client, actions_gen, mock_chunker, index="test-index"
+        )):
+            self.assertTrue(ok)
+            self.assertEquals(item["index"]["_id"], str(actions[i]["id"]))
+            self.assertEquals(item["index"]["action"], actions[i])
+
+        mock_chunker.assert_called_once_with(actions_gen)
 
 
 class TestBulk(ElasticsearchTestCase):
