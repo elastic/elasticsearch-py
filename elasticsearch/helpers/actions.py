@@ -218,7 +218,11 @@ def streaming_bulk(
     :arg yield_ok: if set to False will skip successful documents in the output
     """
     chunker = partial(
-        _chunk_actions, chunk_size=chunk_size, max_chunk_bytes=max_chunk_bytes
+        _chunk_actions,
+        chunk_size=chunk_size,
+        max_chunk_bytes=max_chunk_bytes,
+        serializer=client.transport.serializer,
+        expand_action_callback=expand_action_callback
     )
 
     for item in streaming_chunks(
@@ -226,7 +230,6 @@ def streaming_bulk(
         actions,
         chunker,
         raise_on_error=raise_on_error,
-        expand_action_callback=expand_action_callback,
         raise_on_exception=raise_on_exception,
         max_retries=max_retries,
         initial_backoff=initial_backoff,
@@ -242,10 +245,7 @@ def streaming_chunks(
     client,
     actions,
     chunker,
-    # chunk_size=500,
-    # max_chunk_bytes=100 * 1024 * 1024,
     raise_on_error=True,
-    expand_action_callback=expand_action,
     raise_on_exception=True,
     max_retries=0,
     initial_backoff=2,
@@ -266,9 +266,6 @@ def streaming_chunks(
         from the execution of the last chunk when some occur. By default we raise.
     :arg raise_on_exception: if ``False`` then don't propagate exceptions from
         call to ``bulk`` and just report the items that failed as failed.
-    :arg expand_action_callback: callback executed on each action passed in,
-        should return a tuple containing the action line and the data line
-        (`None` if data line should be omitted).
     :arg max_retries: maximum number of times a document will be retried when
         ``429`` is received, set to 0 (default) for no retries on ``429``
     :arg initial_backoff: number of seconds we should wait before the first
@@ -277,11 +274,7 @@ def streaming_chunks(
     :arg max_backoff: maximum number of seconds a retry will wait
     :arg yield_ok: if set to False will skip successful documents in the output
     """
-    for bulk_data, bulk_actions in chunker(
-        actions,
-        serializer=client.transport.serializer,
-        expand_action_callback=expand_action_callback
-    ):
+    for bulk_data, bulk_actions in chunker(actions):
 
         for attempt in range(max_retries + 1):
             to_retry, to_retry_data = [], []
@@ -410,7 +403,11 @@ def parallel_bulk(
         chunks to send) and the processing threads.
     """
     chunker = partial(
-        _chunk_actions, chunk_size=chunk_size, max_chunk_bytes=max_chunk_bytes
+        _chunk_actions,
+        chunk_size=chunk_size,
+        max_chunk_bytes=max_chunk_bytes,
+        serializer=client.transport.serializer,
+        expand_action_callback=expand_action_callback
     )
 
     for item in parallel_chunks(
@@ -419,7 +416,6 @@ def parallel_bulk(
         chunker,
         thread_count=thread_count,
         queue_size=queue_size,
-        expand_action_callback=expand_action_callback,
         *args,
         **kwargs
     ):
@@ -432,7 +428,6 @@ def parallel_chunks(
     chunker,
     thread_count=4,
     queue_size=4,
-    expand_action_callback=expand_action,
     *args,
     **kwargs
 ):
@@ -449,9 +444,6 @@ def parallel_chunks(
         from the execution of the last chunk when some occur. By default we raise.
     :arg raise_on_exception: if ``False`` then don't propagate exceptions from
         call to ``bulk`` and just report the items that failed as failed.
-    :arg expand_action_callback: callback executed on each action passed in,
-        should return a tuple containing the action line and the data line
-        (`None` if data line should be omitted).
     :arg queue_size: size of the task queue between the main thread (producing
         chunks to send) and the processing threads.
     """
@@ -476,11 +468,7 @@ def parallel_chunks(
                     client, bulk_chunk[1], bulk_chunk[0], *args, **kwargs
                 )
             ),
-            chunker(
-                actions,
-                serializer=client.transport.serializer,
-                expand_action_callback=expand_action_callback
-            )
+            chunker(actions)
         ):
             for item in result:
                 yield item
