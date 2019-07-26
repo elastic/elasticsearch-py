@@ -1,4 +1,3 @@
-import time
 from itertools import chain
 
 from .connection import Urllib3HttpConnection
@@ -339,10 +338,6 @@ class Transport(object):
             connection = self.get_connection()
 
             try:
-                # add a delay before attempting the next retry
-                # 0, 1, 3, 7, etc...
-                delay = 2 ** attempt - 1
-                time.sleep(delay)
                 status, headers_response, data = connection.perform_request(
                     method,
                     url,
