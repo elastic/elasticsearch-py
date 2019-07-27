@@ -1,3 +1,4 @@
+import time
 from itertools import chain
 
 from .connection import Urllib3HttpConnection
