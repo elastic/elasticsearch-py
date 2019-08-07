@@ -78,13 +78,12 @@ class TestTransport(TestCase):
 
     def test_request_timeout_extracted_from_params_and_passed(self):
         t = Transport([{}], connection_class=DummyConnection)
-        user_agent = "elasticsearch-py/%s" % __versionstr__
 
         t.perform_request("GET", "/", params={"request_timeout": 42})
         self.assertEquals(1, len(t.get_connection().calls))
         self.assertEquals(("GET", "/", {}, None), t.get_connection().calls[0][0])
         self.assertEquals(
-            {"timeout": 42, "ignore": (), "headers": {'user-agent': user_agent}},
+            {"timeout": 42, "ignore": (), "headers": {'user-agent': "elasticsearch-py/%s" % __versionstr__}},
             t.get_connection().calls[0][1],
         )
 
