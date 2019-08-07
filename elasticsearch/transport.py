@@ -4,6 +4,7 @@ from itertools import chain
 from .connection import Urllib3HttpConnection
 from .connection_pool import ConnectionPool, DummyConnectionPool
 from .serializer import JSONSerializer, Deserializer, DEFAULT_SERIALIZERS
+from . import __versionstr__
 from .exceptions import (
     ConnectionError,
     TransportError,
@@ -334,6 +335,10 @@ class Transport(object):
             ignore = params.pop("ignore", ())
             if isinstance(ignore, int):
                 ignore = (ignore,)
+
+        if headers is None:
+            headers = {}
+        headers["user-agent"] = "elasticsearch-py/%s" % __versionstr__
 
         for attempt in range(self.max_retries + 1):
             connection = self.get_connection()
