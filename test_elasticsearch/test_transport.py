@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import time
+from platform import python_version
 
 from elasticsearch.transport import Transport, get_host_info
 from elasticsearch.connection import Connection
@@ -83,7 +84,9 @@ class TestTransport(TestCase):
         self.assertEquals(1, len(t.get_connection().calls))
         self.assertEquals(("GET", "/", {}, None), t.get_connection().calls[0][0])
         self.assertEquals(
-            {"timeout": 42, "ignore": (), "headers": {'user-agent': "elasticsearch-py/%s" % __versionstr__}},
+            {"timeout": 42, "ignore": (), "headers": {
+                'user-agent':"elasticsearch-py/%s (Python %s)" % (__versionstr__, python_version())}
+            },
             t.get_connection().calls[0][1],
         )
 

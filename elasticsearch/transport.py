@@ -1,5 +1,6 @@
 import time
 from itertools import chain
+from platform import python_version
 
 from .connection import Urllib3HttpConnection
 from .connection_pool import ConnectionPool, DummyConnectionPool
@@ -338,7 +339,7 @@ class Transport(object):
 
         if headers is None:
             headers = {}
-        headers["user-agent"] = "elasticsearch-py/%s" % __versionstr__
+        headers["user-agent"] = "elasticsearch-py/%s (Python %s)" % (__versionstr__, python_version())
 
         for attempt in range(self.max_retries + 1):
             connection = self.get_connection()
