@@ -85,7 +85,18 @@ class TestTransport(TestCase):
         self.assertEquals(("GET", "/", {}, None), t.get_connection().calls[0][0])
         self.assertEquals(
             {"timeout": 42, "ignore": (), "headers": {
-                'user-agent':"elasticsearch-py/%s (Python %s)" % (__versionstr__, python_version())}
+                "user-agent": "elasticsearch-py/%s (Python %s)" % (__versionstr__, python_version())}
+            },
+            t.get_connection().calls[0][1],
+        )
+
+    def test_request_with_custom_user_agent_header(self):
+        t = Transport([{}], connection_class=DummyConnection)
+
+        t.perform_request("GET", "/", headers={"user-agent": "my-custom-value/1.2.3"})
+        self.assertEquals(1, len(t.get_connection().calls))
+        self.assertEquals(
+            {"timeout": None, "ignore": (), "headers": {"user-agent": "my-custom-value/1.2.3"}
             },
             t.get_connection().calls[0][1],
         )

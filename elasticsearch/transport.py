@@ -339,7 +339,8 @@ class Transport(object):
 
         if headers is None:
             headers = {}
-        headers["user-agent"] = "elasticsearch-py/%s (Python %s)" % (__versionstr__, python_version())
+        if "user-agent" not in headers:
+            headers["user-agent"] = "elasticsearch-py/%s (Python %s)" % (__versionstr__, python_version())
 
         for attempt in range(self.max_retries + 1):
             connection = self.get_connection()
