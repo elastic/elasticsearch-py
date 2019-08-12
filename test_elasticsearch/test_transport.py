@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import time
-from platform import python_version
 
 from elasticsearch.transport import Transport, get_host_info
 from elasticsearch.connection import Connection
 from elasticsearch.connection_pool import DummyConnectionPool
 from elasticsearch.exceptions import ConnectionError, ImproperlyConfigured
-from elasticsearch import __versionstr__
 
 from .test_cases import TestCase
 
@@ -84,8 +82,21 @@ class TestTransport(TestCase):
         self.assertEquals(1, len(t.get_connection().calls))
         self.assertEquals(("GET", "/", {}, None), t.get_connection().calls[0][0])
         self.assertEquals(
-            {"timeout": 42, "ignore": (), "headers": {
-                'user-agent':"elasticsearch-py/%s (Python %s)" % (__versionstr__, python_version())}
+            {
+                "timeout": 42,
+                "ignore": (),
+                "headers": None,
+            },
+            t.get_connection().calls[0][1],
+        )
+
+    def test_request_with_custom_user_agent_header(self):
+        t = Transport([{}], connection_class=DummyConnection)
+
+        t.perform_request("GET", "/", headers={"user-agent": "my-custom-value/1.2.3"})
+        self.assertEquals(1, len(t.get_connection().calls))
+        self.assertEquals(
+            {"timeout": None, "ignore": (), "headers": {"user-agent": "my-custom-value/1.2.3"}
             },
             t.get_connection().calls[0][1],
         )

@@ -5,6 +5,7 @@ from mock import Mock, patch
 import urllib3
 import warnings
 from requests.auth import AuthBase
+from platform import python_version
 
 from elasticsearch.exceptions import (
     TransportError,
@@ -14,8 +15,8 @@ from elasticsearch.exceptions import (
 )
 from elasticsearch.connection import RequestsHttpConnection, Urllib3HttpConnection
 from elasticsearch.exceptions import ImproperlyConfigured
+from elasticsearch import __versionstr__
 from .test_cases import TestCase, SkipTest
-
 
 class TestUrllib3Connection(TestCase):
     def test_ssl_context(self):
@@ -48,6 +49,10 @@ class TestUrllib3Connection(TestCase):
         self.assertTrue(con.http_compress)
         self.assertEquals(con.headers["content-encoding"], "gzip")
 
+    def test_default_user_agent(self):
+        con = Urllib3HttpConnection()
+        self.assertEquals(con._get_default_user_agent(), "elasticsearch-py/%s (Python %s)" % (__versionstr__, python_version()))
+
     def test_timeout_set(self):
         con = Urllib3HttpConnection(timeout=42)
         self.assertEquals(42, con.timeout)
@@ -55,7 +60,11 @@ class TestUrllib3Connection(TestCase):
     def test_keep_alive_is_on_by_default(self):
         con = Urllib3HttpConnection()
         self.assertEquals(
-            {"connection": "keep-alive", "content-type": "application/json"},
+            {
+                "connection": "keep-alive",
+                "content-type": "application/json",
+                "user-agent": con._get_default_user_agent(),
+            },
             con.headers,
         )
 
@@ -66,6 +75,7 @@ class TestUrllib3Connection(TestCase):
                 "authorization": "Basic dXNlcm5hbWU6c2VjcmV0",
                 "connection": "keep-alive",
                 "content-type": "application/json",
+                "user-agent": con._get_default_user_agent(),
             },
             con.headers,
         )
@@ -77,6 +87,7 @@ class TestUrllib3Connection(TestCase):
                 "authorization": "Basic dXNlcm5hbWU6c2VjcmV0",
                 "content-type": "application/json",
                 "connection": "keep-alive",
+                "user-agent": con._get_default_user_agent(),
             },
             con.headers,
         )
@@ -88,6 +99,7 @@ class TestUrllib3Connection(TestCase):
                 "authorization": "Basic dXNlcm5hbWU6c2VjcmV0",
                 "content-type": "application/json",
                 "connection": "keep-alive",
+                "user-agent": con._get_default_user_agent(),
             },
             con.headers,
         )
@@ -212,6 +224,21 @@ class TestRequestsConnection(TestCase):
         self.assertEquals(req.headers["h1"], "v1")
         self.assertEquals(req.headers["h2"], "v2p")
         self.assertEquals(req.headers["h3"], "v3")
+
+    def test_default_headers(self):
+        con = self._get_mock_connection()
+        req = self._get_request(con, "GET", "/")
+        self.assertEquals(req.headers["content-type"], "application/json")
+        self.assertEquals(req.headers["user-agent"], con._get_default_user_agent())
+
+    def test_custom_headers(self):
+        con = self._get_mock_connection()
+        req = self._get_request(con, "GET", "/", headers={
+            "content-type": "application/x-ndjson",
+            "user-agent": "custom-agent/1.2.3",
+        })
+        self.assertEquals(req.headers["content-type"], "application/x-ndjson")
+        self.assertEquals(req.headers["user-agent"], "custom-agent/1.2.3")
 
     def test_http_auth(self):
         con = RequestsHttpConnection(http_auth="username:secret")

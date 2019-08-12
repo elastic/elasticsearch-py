@@ -127,6 +127,7 @@ class Urllib3HttpConnection(Connection):
             self.headers.update({"content-encoding": "gzip"})
 
         self.headers.setdefault("content-type", "application/json")
+        self.headers.setdefault("user-agent", self._get_default_user_agent())
         pool_class = urllib3.HTTPConnectionPool
         kw = {}
 

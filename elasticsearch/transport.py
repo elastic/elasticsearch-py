@@ -336,11 +336,6 @@ class Transport(object):
             ignore = params.pop("ignore", ())
             if isinstance(ignore, int):
                 ignore = (ignore,)
-
-        if headers is None:
-            headers = {}
-        headers["user-agent"] = "elasticsearch-py/%s (Python %s)" % (__versionstr__, python_version())
-
         for attempt in range(self.max_retries + 1):
             connection = self.get_connection()
 

@@ -73,6 +73,7 @@ class RequestsHttpConnection(Connection):
         self.session = requests.Session()
         self.session.headers = headers or {}
         self.session.headers.setdefault("content-type", "application/json")
+        self.session.headers.setdefault("user-agent", self._get_default_user_agent())
         if http_auth is not None:
             if isinstance(http_auth, (tuple, list)):
                 http_auth = tuple(http_auth)
