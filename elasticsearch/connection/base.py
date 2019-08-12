@@ -1,11 +1,14 @@
 import logging
 
+from platform import python_version
+
 try:
     import simplejson as json
 except ImportError:
     import json
 
 from ..exceptions import TransportError, HTTP_EXCEPTIONS
+from .. import __versionstr__
 
 logger = logging.getLogger("elasticsearch")
 
@@ -177,3 +180,6 @@ class Connection(object):
         raise HTTP_EXCEPTIONS.get(status_code, TransportError)(
             status_code, error_message, additional_info
         )
+
+    def _get_default_user_agent(self):
+        return "elasticsearch-py/%s (Python %s)" % (__versionstr__, python_version())
