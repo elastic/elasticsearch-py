@@ -1296,8 +1296,8 @@ class Elasticsearch(object):
             "GET", _make_path(index, doc_type, id, "_explain"), params=params, body=body
         )
 
-    @query_params("scroll", "rest_total_hits_as_int", "scroll_id")
-    def scroll(self, body=None, params=None):
+    @query_params("scroll", "rest_total_hits_as_int")
+    def scroll(self, body=None, scroll_id=None, params=None):
         """
         Scroll a search request created by specifying the scroll parameter.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-scroll.html>`_
@@ -1310,6 +1310,12 @@ class Elasticsearch(object):
             in the response. This param is added version 6.x to handle mixed cluster queries where nodes
             are in multiple versions (7.0 and 6.latest)
         """
+        if scroll_id in SKIP_IN_PATH and body in SKIP_IN_PATH:
+            raise ValueError("You need to supply scroll_id or body.")
+        elif scroll_id and not body:
+            body = {"scroll_id": [scroll_id]}
+        elif scroll_id:
+            params["scroll_id"] = scroll_id
 
         return self.transport.perform_request(
             "GET", "/_search/scroll", params=params, body=body
