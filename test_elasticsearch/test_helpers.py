@@ -32,10 +32,12 @@ class TestParallelBulk(TestCase):
         side_effect=mock_process_bulk_chunk,
     )
     def test_all_chunks_sent(self, _process_bulk_chunk):
-        actions = ({"x": i} for i in range(100))
-        list(helpers.parallel_bulk(Elasticsearch(), actions, chunk_size=2))
+        n = 100
+        s = 4
+        actions = ({"x": i} for i in range(n))
+        list(helpers.parallel_bulk(Elasticsearch(), actions, chunk_size=s))
 
-        self.assertEquals(50, _process_bulk_chunk.call_count)
+        self.assertEquals(n/s, _process_bulk_chunk.call_count)
 
     @SkipTest
     @mock.patch(
