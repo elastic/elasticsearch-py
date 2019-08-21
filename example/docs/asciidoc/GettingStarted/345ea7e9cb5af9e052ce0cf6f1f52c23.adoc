@@ -1,4 +1,4 @@
-[source,php]
+[source,python]
 ----
 include::./../../src/Examples/Docs/GettingStarted.py[tag=345ea7e9cb5af9e052ce0cf6f1f52c23,indent=0]
 ----

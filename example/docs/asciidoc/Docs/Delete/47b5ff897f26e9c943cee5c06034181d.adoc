@@ -1,4 +1,4 @@
-[source,php]
+[source,python]
 ----
 include::./../../../src/Examples/Docs/Docs/Delete.py[tag=47b5ff897f26e9c943cee5c06034181d,indent=0]
 ----

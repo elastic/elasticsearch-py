@@ -1,4 +1,4 @@
-[source,php]
+[source,python]
 ----
 include::./../../../src/Examples/Docs/Docs/Index.py[tag=b918d6b798da673a33e49b94f61dcdc0,indent=0]
 ----
