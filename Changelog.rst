@@ -5,6 +5,12 @@ Changelog
 7.1.0 (dev)
 -----------
 
+7.0.3 (2019-08-21)
+-----------
+  * remove sleep in retries
+  * pass ``scroll_id`` through body in ``scroll``
+  * add ``user-agent``
+
 7.0.2 (2019-05-29)
 -----------
   * Add connection parameter for Elastic Cloud cloud_id.
