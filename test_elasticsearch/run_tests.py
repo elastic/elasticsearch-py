@@ -54,7 +54,7 @@ def fetch_es_repo():
         shell=True,
     )
     # reset to the version fron info()
-    subprocess.check_call("cd %s && git pull" % repo_path, shell=True)
+    subprocess.check_call("cd %s && git fetch" % repo_path, shell=True)
     subprocess.check_call("cd %s && git reset --hard %s" % (repo_path, sha), shell=True)
 
 
