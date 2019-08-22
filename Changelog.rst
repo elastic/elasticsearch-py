@@ -5,6 +5,10 @@ Changelog
 7.1.0 (dev)
 -----------
 
+7.0.4 (2019-08-22)
+-----------
+  * Fix wheel distribution
+
 7.0.3 (2019-08-21)
 -----------
   * remove sleep in retries
