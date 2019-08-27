@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 import weakref
 from datetime import date, datetime
 from functools import wraps
-from ..compat import string_types, quote_plus, PY2
+from ..compat import string_types, quote_plus, text_type
 
 # parts of URL to be omitted
 SKIP_IN_PATH = (None, "", b"", [], ())
@@ -32,11 +32,8 @@ def _escape(value):
         return value
 
     # encode strings to utf-8
-    if isinstance(value, string_types):
-        if PY2 and isinstance(value, unicode):
-            return value.encode("utf-8")
-        if not PY2 and isinstance(value, str):
-            return value.encode("utf-8")
+    if isinstance(value, text_type):
+        return value.encode("utf-8")
 
     return str(value)
 
