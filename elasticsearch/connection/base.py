@@ -194,5 +194,5 @@ class Connection(object):
         """
         if isinstance(api_key, (tuple, list)):
             s = "{0}:{1}".format(api_key[0], api_key[1]).encode('utf-8')
-            return "ApiKey %s" % str(base64.b64encode(s), 'utf-8')
+            return "ApiKey " + base64.b64encode(s).decode('utf-8')
         return "ApiKey " + api_key
