@@ -80,7 +80,8 @@ class IndicesClient(NamespacedClient):
 
     @query_params(
         "master_timeout",
-        "timeout", "request_timeout",
+        "timeout",
+        "request_timeout",
         "wait_for_active_shards",
         "include_type_name",
     )
