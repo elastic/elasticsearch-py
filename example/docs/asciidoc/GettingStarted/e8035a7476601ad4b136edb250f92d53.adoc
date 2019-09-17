@@ -1,0 +1,4 @@
+[source,python]
+----
+include::./../../src/Examples/Docs/GettingStarted.py[tag=e8035a7476601ad4b136edb250f92d53,indent=0]
+----
