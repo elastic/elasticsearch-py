@@ -10,7 +10,6 @@ except ImportError:
 
 from ..exceptions import TransportError, HTTP_EXCEPTIONS
 from .. import __versionstr__
-from ..compat import string_types
 
 logger = logging.getLogger("elasticsearch")
 
