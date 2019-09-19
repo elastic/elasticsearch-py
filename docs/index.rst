@@ -247,7 +247,7 @@ Please note this authentication method has been introduced with release of Elast
     # or you pass the base 64 encoded token
     es = Elasticsearch(
         ['node-1', 'node-2', 'node-3'],
-        api_key=('base64encoded tuple'),
+        api_key='base64encoded tuple',
     )
 
 .. _API Key: https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-create-api-key.html
