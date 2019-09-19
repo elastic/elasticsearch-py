@@ -83,7 +83,7 @@ class RequestsHttpConnection(Connection):
                 http_auth = tuple(http_auth.split(":", 1))
             self.session.auth = http_auth
         if api_key is not None:
-            self.session.headers.setdefault('authorization', self._get_api_key_header_val(api_key))
+            self.session.headers['authorization'] = self._get_api_key_header_val(api_key)
         self.base_url = "http%s://%s:%d%s" % (
             "s" if self.use_ssl else "",
             host,
