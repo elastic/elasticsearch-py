@@ -44,6 +44,21 @@ class TestUrllib3Connection(TestCase):
             con.host, "https://0fd50f62320ed6539f6cb48e1b68.example.cloud.com:9243"
         )
 
+    def test_api_key_auth(self):
+        # test with tuple
+        con = Urllib3HttpConnection(
+            cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
+            api_key=("elastic", "changeme1"),
+        )
+        self.assertEquals(con.headers["authorization"], "ApiKey ZWxhc3RpYzpjaGFuZ2VtZTE=")
+
+        # test with base64 encoded string
+        con = Urllib3HttpConnection(
+            cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
+            api_key="ZWxhc3RpYzpjaGFuZ2VtZTI=",
+        )
+        self.assertEquals(con.headers["authorization"], "ApiKey ZWxhc3RpYzpjaGFuZ2VtZTI=")
+
     def test_http_compression(self):
         con = Urllib3HttpConnection(http_compress=True)
         self.assertTrue(con.http_compress)
@@ -180,6 +195,21 @@ class TestRequestsConnection(TestCase):
         self.assertEquals(
             con.host, "https://0fd50f62320ed6539f6cb48e1b68.example.cloud.com:9243"
         )
+
+    def test_api_key_auth(self):
+        # test with tuple
+        con = RequestsHttpConnection(
+            cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
+            api_key=("elastic", "changeme1"),
+        )
+        self.assertEquals(con.session.headers["authorization"], "ApiKey ZWxhc3RpYzpjaGFuZ2VtZTE=")
+
+        # test with base64 encoded string
+        con = RequestsHttpConnection(
+            cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
+            api_key="ZWxhc3RpYzpjaGFuZ2VtZTI=",
+        )
+        self.assertEquals(con.session.headers["authorization"], "ApiKey ZWxhc3RpYzpjaGFuZ2VtZTI=")
 
     def test_uses_https_if_verify_certs_is_off(self):
         with warnings.catch_warnings(record=True) as w:

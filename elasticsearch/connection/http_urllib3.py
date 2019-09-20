@@ -74,6 +74,7 @@ class Urllib3HttpConnection(Connection):
     :arg headers: any custom http headers to be add to requests
     :arg http_compress: Use gzip compression
     :arg cloud_id: The Cloud ID from ElasticCloud. Convient way to connect to cloud instances.
+    :arg api_key: optional API Key authentication as either base64 encoded string or a tuple.
         Other host connection params will be ignored.
     """
 
@@ -96,6 +97,7 @@ class Urllib3HttpConnection(Connection):
         ssl_context=None,
         http_compress=False,
         cloud_id=None,
+        api_key=None,
         **kwargs
     ):
 
@@ -128,6 +130,8 @@ class Urllib3HttpConnection(Connection):
 
         self.headers.setdefault("content-type", "application/json")
         self.headers.setdefault("user-agent", self._get_default_user_agent())
+        if api_key is not None:
+            self.headers.setdefault('authorization', self._get_api_key_header_val(api_key))
         pool_class = urllib3.HTTPConnectionPool
         kw = {}
 

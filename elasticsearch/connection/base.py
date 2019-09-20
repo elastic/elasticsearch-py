@@ -1,4 +1,5 @@
 import logging
+import base64
 
 from platform import python_version
 
@@ -183,3 +184,14 @@ class Connection(object):
 
     def _get_default_user_agent(self):
         return "elasticsearch-py/%s (Python %s)" % (__versionstr__, python_version())
+
+    def _get_api_key_header_val(self, api_key):
+        """
+        Check the type of the passed api_key and return the correct header value
+        for the `API Key authentication <https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-create-api-key.html>`
+        :arg api_key, either a tuple or a base64 encoded string
+        """
+        if isinstance(api_key, (tuple, list)):
+            s = "{0}:{1}".format(api_key[0], api_key[1]).encode('utf-8')
+            return "ApiKey " + base64.b64encode(s).decode('utf-8')
+        return "ApiKey " + api_key
