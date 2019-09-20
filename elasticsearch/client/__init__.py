@@ -366,9 +366,7 @@ class Elasticsearch(object):
 
     @query_params(
         "_source",
-        "_source_exclude",
         "_source_excludes",
-        "_source_include",
         "_source_includes",
         "parent",
         "preference",
@@ -388,9 +386,9 @@ class Elasticsearch(object):
         :arg id: The document ID
         :arg _source: True or false to return the _source field or not, or a
             list of fields to return
-        :arg _source_exclude: A list of fields to exclude from the returned
+        :arg _source_excludes: A list of fields to exclude from the returned
             _source field
-        :arg _source_include: A list of fields to extract and return from the
+        :arg _source_includes: A list of fields to extract and return from the
             _source field
         :arg parent: The ID of the parent document
         :arg preference: Specify the node or shard the operation should be
@@ -415,9 +413,7 @@ class Elasticsearch(object):
 
     @query_params(
         "_source",
-        "_source_exclude",
         "_source_excludes",
-        "_source_include",
         "_source_includes",
         "parent",
         "preference",
@@ -435,9 +431,9 @@ class Elasticsearch(object):
         :arg id: The document ID
         :arg _source: True or false to return the _source field or not, or a
             list of fields to return
-        :arg _source_exclude: A list of fields to exclude from the returned
+        :arg _source_excludes: A list of fields to exclude from the returned
             _source field
-        :arg _source_include: A list of fields to extract and return from the
+        :arg _source_includes: A list of fields to extract and return from the
             _source field
         :arg parent: The ID of the parent document
         :arg preference: Specify the node or shard the operation should be
@@ -460,9 +456,7 @@ class Elasticsearch(object):
 
     @query_params(
         "_source",
-        "_source_exclude",
         "_source_excludes",
-        "_source_include",
         "_source_includes",
         "parent",
         "preference",
@@ -482,9 +476,9 @@ class Elasticsearch(object):
         :arg id: The document ID
         :arg _source: True or false to return the _source field or not, or a
             list of fields to return
-        :arg _source_exclude: A list of fields to exclude from the returned
+        :arg _source_excludes: A list of fields to exclude from the returned
             _source field
-        :arg _source_include: A list of fields to extract and return from the
+        :arg _source_includes: A list of fields to extract and return from the
             _source field
         :arg parent: The ID of the parent document
         :arg preference: Specify the node or shard the operation should be
@@ -509,9 +503,7 @@ class Elasticsearch(object):
 
     @query_params(
         "_source",
-        "_source_exclude",
         "_source_excludes",
-        "_source_include",
         "_source_includes",
         "parent",
         "preference",
@@ -530,9 +522,9 @@ class Elasticsearch(object):
         :arg id: The document ID
         :arg _source: True or false to return the _source field or not, or a
             list of fields to return
-        :arg _source_exclude: A list of fields to exclude from the returned
+        :arg _source_excludes: A list of fields to exclude from the returned
             _source field
-        :arg _source_include: A list of fields to extract and return from the
+        :arg _source_includes: A list of fields to extract and return from the
             _source field
         :arg parent: The ID of the parent document
         :arg preference: Specify the node or shard the operation should be
@@ -555,9 +547,7 @@ class Elasticsearch(object):
 
     @query_params(
         "_source",
-        "_source_exclude",
         "_source_excludes",
-        "_source_include",
         "_source_includes",
         "preference",
         "realtime",
@@ -576,9 +566,9 @@ class Elasticsearch(object):
         :arg index: The name of the index
         :arg _source: True or false to return the _source field or not, or a
             list of fields to return
-        :arg _source_exclude: A list of fields to exclude from the returned
+        :arg _source_excludes: A list of fields to exclude from the returned
             _source field
-        :arg _source_include: A list of fields to extract and return from the
+        :arg _source_includes: A list of fields to extract and return from the
             _source field
         :arg preference: Specify the node or shard the operation should be
             performed on (default: random)
@@ -598,9 +588,7 @@ class Elasticsearch(object):
 
     @query_params(
         "_source",
-        "_source_exclude",
         "_source_excludes",
-        "_source_include",
         "_source_includes",
         "fields",
         "if_seq_no",
@@ -627,9 +615,9 @@ class Elasticsearch(object):
         :arg body: The request definition using either `script` or partial `doc`
         :arg _source: True or false to return the _source field or not, or a
             list of fields to return
-        :arg _source_exclude: A list of fields to exclude from the returned
+        :arg _source_excludes: A list of fields to exclude from the returned
             _source field
-        :arg _source_include: A list of fields to extract and return from the
+        :arg _source_includes: A list of fields to extract and return from the
             _source field
         :arg fields: A comma-separated list of fields to return in the response
         :arg if_seq_no:
@@ -666,9 +654,7 @@ class Elasticsearch(object):
 
     @query_params(
         "_source",
-        "_source_exclude",
         "_source_excludes",
-        "_source_include",
         "_source_includes",
         "allow_no_indices",
         "allow_partial_search_results",
@@ -721,9 +707,9 @@ class Elasticsearch(object):
         :arg body: The search definition using the Query DSL
         :arg _source: True or false to return the _source field or not, or a
             list of fields to return
-        :arg _source_exclude: A list of fields to exclude from the returned
+        :arg _source_excludes: A list of fields to exclude from the returned
             _source field
-        :arg _source_include: A list of fields to extract and return from the
+        :arg _source_includes: A list of fields to extract and return from the
             _source field
         :arg allow_no_indices: Whether to ignore if a wildcard indices
             expression resolves into no concrete indices. (This includes `_all`
@@ -821,9 +807,7 @@ class Elasticsearch(object):
 
     @query_params(
         "_source",
-        "_source_exclude",
         "_source_excludes",
-        "_source_include",
         "_source_includes",
         "allow_no_indices",
         "analyze_wildcard",
@@ -868,9 +852,9 @@ class Elasticsearch(object):
         :arg body: The search definition using the Query DSL
         :arg _source: True or false to return the _source field or not, or a
             list of fields to return
-        :arg _source_exclude: A list of fields to exclude from the returned
+        :arg _source_excludes: A list of fields to exclude from the returned
             _source field
-        :arg _source_include: A list of fields to extract and return from the
+        :arg _source_includes: A list of fields to extract and return from the
             _source field
         :arg allow_no_indices: Whether to ignore if a wildcard indices
             expression resolves into no concrete indices. (This includes `_all`
@@ -1015,9 +999,7 @@ class Elasticsearch(object):
 
     @query_params(
         "_source",
-        "_source_exclude",
         "_source_excludes",
-        "_source_include",
         "_source_includes",
         "allow_no_indices",
         "analyze_wildcard",
@@ -1060,9 +1042,9 @@ class Elasticsearch(object):
         :arg body: The search definition using the Query DSL
         :arg _source: True or false to return the _source field or not, or a
             list of fields to return
-        :arg _source_exclude: A list of fields to exclude from the returned
+        :arg _source_excludes: A list of fields to exclude from the returned
             _source field
-        :arg _source_include: A list of fields to extract and return from the
+        :arg _source_includes: A list of fields to extract and return from the
             _source field
         :arg allow_no_indices: Whether to ignore if a wildcard indices
             expression resolves into no concrete indices. (This includes `_all`
@@ -1242,9 +1224,7 @@ class Elasticsearch(object):
 
     @query_params(
         "_source",
-        "_source_exclude",
         "_source_excludes",
-        "_source_include",
         "_source_includes",
         "analyze_wildcard",
         "analyzer",
@@ -1269,9 +1249,9 @@ class Elasticsearch(object):
         :arg body: The query definition using the Query DSL
         :arg _source: True or false to return the _source field or not, or a
             list of fields to return
-        :arg _source_exclude: A list of fields to exclude from the returned
+        :arg _source_excludes: A list of fields to exclude from the returned
             _source field
-        :arg _source_include: A list of fields to extract and return from the
+        :arg _source_includes: A list of fields to extract and return from the
             _source field
         :arg analyze_wildcard: Specify whether wildcards and prefix queries in
             the query string query should be analyzed (default: false)
@@ -1450,9 +1430,7 @@ class Elasticsearch(object):
 
     @query_params(
         "_source",
-        "_source_exclude",
         "_source_excludes",
-        "_source_include",
         "_source_includes",
         "fields",
         "pipeline",
@@ -1475,9 +1453,9 @@ class Elasticsearch(object):
         :arg _source: True or false to return the _source field or not, or
             default list of fields to return, can be overridden on each sub-
             request
-        :arg _source_exclude: Default list of fields to exclude from the
+        :arg _source_excludes: Default list of fields to exclude from the
             returned _source field, can be overridden on each sub-request
-        :arg _source_include: Default list of fields to extract and return from
+        :arg _source_includes: Default list of fields to extract and return from
             the _source field, can be overridden on each sub-request
         :arg fields: Default comma-separated list of fields to return in the
             response for updates, can be overridden on each sub-request
