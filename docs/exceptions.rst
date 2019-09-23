@@ -21,3 +21,5 @@ Exceptions
 .. autoclass:: NotFoundError(TransportError)
 .. autoclass:: ConflictError(TransportError)
 .. autoclass:: RequestError(TransportError)
+.. autoclass:: AuthenticationException(TransportError)
+.. autoclass:: AuthorizationException(TransportError)
