@@ -430,11 +430,14 @@ def scan(
         query = query.copy() if query else {}
         query["sort"] = "_doc"
 
+    scroll_ids = set()
     # initial search
     resp = client.search(
         body=query, scroll=scroll, size=size, request_timeout=request_timeout, **kwargs
     )
     scroll_id = resp.get("_scroll_id")
+    if scroll_id:
+        scroll_ids.add(scroll_id)
 
     try:
         while scroll_id and resp["hits"]["hits"]:
@@ -458,10 +461,12 @@ def scan(
                 body={"scroll_id": scroll_id, "scroll": scroll}, **scroll_kwargs
             )
             scroll_id = resp.get("_scroll_id")
+            if scroll_id:
+                scroll_ids.add(scroll_id)
 
     finally:
-        if scroll_id and clear_scroll:
-            client.clear_scroll(body={"scroll_id": [scroll_id]}, ignore=(404,))
+        if scroll_ids and clear_scroll:
+            client.clear_scroll(body={"scroll_id": list(scroll_ids)}, ignore=(404,))
 
 
 def reindex(
