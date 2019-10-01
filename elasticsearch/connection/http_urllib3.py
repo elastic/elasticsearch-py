@@ -189,6 +189,7 @@ class Urllib3HttpConnection(Connection):
                     }
                 )
             else:
+                kw["cert_reqs"] = "CERT_NONE"
                 if ssl_show_warn:
                     warnings.warn(
                         "Connecting to %s using SSL with verify_certs=False is insecure."
