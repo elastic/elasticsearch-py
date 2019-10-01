@@ -5,6 +5,10 @@ Changelog
 7.1.0 (dev)
 -----------
 
+7.0.5 (2019-10-01)
+-----------
+  * Fix ``verify_certs=False``
+
 7.0.4 (2019-08-22)
 -----------
   * Fix wheel distribution
