@@ -19,7 +19,7 @@ class TestIndices(ElasticsearchTestCase):
         self.assert_url_called("POST", "/test-index,second.index/_freeze")
 
     def test_unfreeze_index(self):
-        self.client.indices.freeze(["test-index", "second.index"])
+        self.client.indices.unfreeze(["test-index", "second.index"])
         self.assert_url_called("POST", "/test-index,second.index/_unfreeze")
 
     def test_passing_empty_value_for_required_param_raises_exception(self):

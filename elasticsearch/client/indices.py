@@ -169,7 +169,7 @@ class IndicesClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
         return self.transport.perform_request(
-            "POST", _make_path(index, "_unfreeze"), params=param
+            "POST", _make_path(index, "_unfreeze"), params=params
         )
 
     @query_params(
