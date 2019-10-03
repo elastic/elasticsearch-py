@@ -147,7 +147,7 @@ class IndicesClient(NamespacedClient):
     def freeze(self, index, params=None):
         """
         Freeze an index to remove it's overhead from the cluster. Frozen index
-        is blocked for write opertarions
+        is blocked for write operations
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/freeze-index-api.html>`_
 
         :arg index: the name of the index
