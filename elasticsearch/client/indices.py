@@ -143,6 +143,35 @@ class IndicesClient(NamespacedClient):
             "GET", _make_path(index, feature), params=params
         )
 
+    @query_params()
+    def freeze(self, index, params=None):
+        """
+        Freeze an index to remove it's overhead from the cluster. Frozen index
+        is blocked for write opertarions
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/freeze-index-api.html>`_
+
+        :arg index: the name of the index
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'index'.")
+        return self.transport.perform_request(
+            "POST", _make_path(index, "_freeze"), params=params
+        )
+
+    @query_params()
+    def unfreeze(self, index, params=None):
+        """
+        Unfreeze a frozen index to make it available for write.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/unfreeze-index-api.html>`_
+
+        :arg index: the name of the index
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'index'.")
+        return self.transport.perform_request(
+            "POST", _make_path(index, "_unfreeze"), params=param
+        )
+
     @query_params(
         "allow_no_indices",
         "expand_wildcards",

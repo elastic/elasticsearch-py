@@ -14,6 +14,14 @@ class TestIndices(ElasticsearchTestCase):
         self.client.indices.exists("second.index,third/index")
         self.assert_url_called("HEAD", "/second.index,third%2Findex")
 
+    def test_freeze_index(self):
+        self.client.indices.freeze(["test-index", "second.index"])
+        self.assert_url_called("POST", "/test-index,second.index/_freeze")
+
+    def test_unfreeze_index(self):
+        self.client.indices.freeze(["test-index", "second.index"])
+        self.assert_url_called("POST", "/test-index,second.index/_unfreeze")
+
     def test_passing_empty_value_for_required_param_raises_exception(self):
         self.assertRaises(ValueError, self.client.indices.exists, index=None)
         self.assertRaises(ValueError, self.client.indices.exists, index=[])
