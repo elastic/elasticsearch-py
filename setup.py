@@ -59,5 +59,6 @@ setup(
     extras_require={
         "develop": tests_require + ["sphinx<1.7", "sphinx_rtd_theme"],
         "requests": ["requests>=2.4.0, <3.0.0"],
+        "simplejson": ["simplejson"],
     },
 )
