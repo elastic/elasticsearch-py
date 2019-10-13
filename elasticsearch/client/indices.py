@@ -122,8 +122,9 @@ class IndicesClient(NamespacedClient):
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/indices-get-index.html>`_
 
         :arg index: A comma-separated list of index names
-        :arg allow_no_indices: Ignore if a wildcard expression resolves to no
-            concrete indices (default: false)
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+            expression resolves into no concrete indices. (This includes `_all`
+            string or when no indices have been specified)
         :arg expand_wildcards: Whether wildcard expressions should get expanded
             to open or closed indices (default: open), default 'open', valid
             choices are: 'open', 'closed', 'none', 'all'
@@ -227,8 +228,9 @@ class IndicesClient(NamespacedClient):
 
         :arg index: A comma-separated list of indices to delete; use `_all` or
             `*` string to delete all indices
-        :arg allow_no_indices: Ignore if a wildcard expression resolves to no
-            concrete indices (default: false)
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+            expression resolves into no concrete indices. (This includes `_all`
+            string or when no indices have been specified)
         :arg expand_wildcards: Whether wildcard expressions should get expanded
             to open or closed indices (default: open), default 'open', valid
             choices are: 'open', 'closed', 'none', 'all'
@@ -257,8 +259,9 @@ class IndicesClient(NamespacedClient):
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/indices-exists.html>`_
 
         :arg index: A comma-separated list of index names
-        :arg allow_no_indices: Ignore if a wildcard expression resolves to no
-            concrete indices (default: false)
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+            expression resolves into no concrete indices. (This includes `_all`
+            string or when no indices have been specified)
         :arg expand_wildcards: Whether wildcard expressions should get expanded
             to open or closed indices (default: open), default 'open', valid
             choices are: 'open', 'closed', 'none', 'all'
