@@ -245,8 +245,16 @@ class Transport(object):
         if not address or ":" not in address:
             return None
 
-        host["host"], host["port"] = address.rsplit(":", 1)
-        host["port"] = int(host["port"])
+        if '/' in address:
+            # Support 7.x host/ip:port behavior where http.publish_host has been set.
+            fqdn, ipaddress = address.split('/', 1)
+            host["host"] = fqdn
+            _, host["port"] = ipaddress.rsplit(':', 1)
+            host["port"] = int(host["port"])
+
+        else:
+            host["host"], host["port"] = address.rsplit(":", 1)
+            host["port"] = int(host["port"])
 
         return self.host_info_callback(host_info, host)
 
