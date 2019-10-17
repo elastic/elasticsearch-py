@@ -114,14 +114,15 @@ class ClusterClient(NamespacedClient):
 
         :arg node_id: A comma-separated list of node IDs or names to limit the
             returned information; use `_local` to return information from the
-            node you're connecting to, leave empty to get information from all
+            node you're connecting to, `_master` to return information from the
+            currently-elected master node or leave empty to get information from all
             nodes
         :arg flat_settings: Return settings in flat format (default: false)
         :arg timeout: Explicit operation timeout
         """
         url = "/_cluster/stats"
         if node_id:
-            url = _make_path("_cluster/stats/nodes", node_id)
+            url = _make_path("_cluster","stats","nodes", node_id)
         return self.transport.perform_request("GET", url, params=params)
 
     @query_params(
