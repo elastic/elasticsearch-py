@@ -10,7 +10,7 @@ if PY2:
     from Queue import Queue
 else:
     string_types = str, bytes
-    from urllib.parse import quote_plus, urlencode, urlparse, unquote
+    from urllib.parse import quote, quote_plus, urlencode, urlparse, unquote
 
     map = map
     from queue import Queue
