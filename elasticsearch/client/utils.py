@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 import weakref
 from datetime import date, datetime
 from functools import wraps
-from ..compat import string_types, quote_plus, PY2
+from ..compat import string_types, quote, PY2
 
 # parts of URL to be omitted
 SKIP_IN_PATH = (None, "", b"", [], ())
@@ -49,7 +49,7 @@ def _make_path(*parts):
     # TODO: maybe only allow some parts to be lists/tuples ?
     return "/" + "/".join(
         # preserve ',' and '*' in url for nicer URLs in logs
-        quote_plus(_escape(p), b",*")
+        quote(_escape(p), b",*")
         for p in parts
         if p not in SKIP_IN_PATH
     )
