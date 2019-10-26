@@ -1,6 +1,8 @@
 import time
 import warnings
 from base64 import decodestring
+import gzip
+import io
 
 try:
     import requests
@@ -38,6 +40,7 @@ class RequestsHttpConnection(Connection):
     :arg cloud_id: The Cloud ID from ElasticCloud. Convient way to connect to cloud instances.
     :arg api_key: optional API Key authentication as either base64 encoded string or a tuple.
         Other host connection params will be ignored.
+    :arg http_compress: Use gzip compression
     """
 
     def __init__(
@@ -54,6 +57,7 @@ class RequestsHttpConnection(Connection):
         headers=None,
         cloud_id=None,
         api_key=None,
+        http_compress=False,
         **kwargs
     ):
         if not REQUESTS_AVAILABLE:
@@ -84,6 +88,9 @@ class RequestsHttpConnection(Connection):
             self.session.auth = http_auth
         if api_key is not None:
             self.session.headers['authorization'] = self._get_api_key_header_val(api_key)
+        self.http_compress = http_compress
+        if self.http_compress == True:
+            self.session.headers.setdefault("content-encoding", "gzip")
         self.base_url = "http%s://%s:%d%s" % (
             "s" if self.use_ssl else "",
             host,
@@ -117,7 +124,18 @@ class RequestsHttpConnection(Connection):
             url = "%s?%s" % (url, urlencode(params or {}))
 
         start = time.time()
-        request = requests.Request(method=method, headers=headers, url=url, data=body)
+        if self.http_compress and body:
+            try:
+                data = gzip.compress(body)
+            except AttributeError:
+                # for Python 2.x compatibility
+                buf = io.BytesIO()
+                with gzip.GzipFile(fileobj=buf, mode='wb') as f:
+                    f.write(body)
+                data = buf.getvalue()
+        else:
+            data = body
+        request = requests.Request(method=method, headers=headers, url=url, data=data)
         prepared_request = self.session.prepare_request(request)
         settings = self.session.merge_environment_settings(
             prepared_request.url, {}, None, None, None

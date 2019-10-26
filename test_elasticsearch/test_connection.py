@@ -211,6 +211,11 @@ class TestRequestsConnection(TestCase):
         )
         self.assertEquals(con.session.headers["authorization"], "ApiKey ZWxhc3RpYzpjaGFuZ2VtZTI=")
 
+    def test_http_compression(self):
+        con = RequestsHttpConnection(http_compress=True)
+        self.assertTrue(con.http_compress)
+        self.assertEquals(con.session.headers["content-encoding"], "gzip")
+
     def test_uses_https_if_verify_certs_is_off(self):
         with warnings.catch_warnings(record=True) as w:
             con = self._get_mock_connection(

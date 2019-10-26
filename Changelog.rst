@@ -4,6 +4,7 @@ Changelog
 =========
 7.1.0 (dev)
 -----------
+  * Added request compression handling to RequestsHttpConnection
 
 7.0.5 (2019-10-01)
 -----------
