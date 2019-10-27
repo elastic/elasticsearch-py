@@ -50,6 +50,31 @@ CLUSTER_NODES = """{
   }
 }"""
 
+CLUSTER_NODES_7x_PUBLISH_HOST = """{
+  "_nodes" : {
+    "total" : 1,
+    "successful" : 1,
+    "failed" : 0
+  },
+  "cluster_name" : "elasticsearch",
+  "nodes" : {
+    "SRZpKFZdQguhhvifmN6UVA" : {
+      "name" : "SRZpKFZ",
+      "transport_address" : "127.0.0.1:9300",
+      "host" : "127.0.0.1",
+      "ip" : "127.0.0.1",
+      "version" : "5.0.0",
+      "build_hash" : "253032b",
+      "roles" : [ "master", "data", "ingest" ],
+      "http" : {
+        "bound_address" : [ "[fe80::1]:9200", "[::1]:9200", "127.0.0.1:9200" ],
+        "publish_address" : "somehost.tld/1.1.1.1:123",
+        "max_content_length_in_bytes" : 104857600
+      }
+    }
+  }
+}"""
+
 
 class TestHostsInfoCallback(TestCase):
     def test_master_only_nodes_are_ignored(self):
@@ -287,3 +312,16 @@ class TestTransport(TestCase):
         self.assertEquals(1, len(t.connection_pool.connections))
         self.assertEquals("http://1.1.1.1:123", t.get_connection().host)
         self.assertTrue(time.time() - 1 < t.last_sniff < time.time() + 0.01)
+
+    def test_sniff_7x_publish_host(self):
+        # Test the response shaped when a 7.x node has publish_host set
+        # and the returend data is shaped in the fqdn/ip:port format.
+        t = Transport(
+            [{"data": CLUSTER_NODES_7x_PUBLISH_HOST}],
+            connection_class=DummyConnection,
+            sniff_timeout=42,
+        )
+        t.sniff_hosts()
+        # Ensure we parsed out the fqdn and port from the fqdn/ip:port string.
+        self.assertEqual(t.connection_pool.connection_opts[0][1],
+                         {'host': 'somehost.tld', 'port': 123})
