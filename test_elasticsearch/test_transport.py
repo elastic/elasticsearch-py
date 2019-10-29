@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals, iteritems
+from __future__ import unicode_literals
 import time
 
 from elasticsearch.transport import Transport, get_host_info
@@ -90,7 +90,7 @@ class TestTransport(TestCase):
             None: None,
         }
         call_count = 0
-        for timeout, expected_timeout in test_cases.iteritems():
+        for timeout, expected_timeout in test_cases.items():
             t.perform_request("GET", "/", params={"request_timeout": timeout})
             self.assertEquals(
                 {
