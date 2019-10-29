@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+from __future__ import unicode_literals, iteritems
 import time
 
 from elasticsearch.transport import Transport, get_host_info
