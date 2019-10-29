@@ -11,7 +11,7 @@ f = open(join(dirname(__file__), "README"))
 long_description = f.read().strip()
 f.close()
 
-install_requires = ["urllib3>=1.21.1"]
+install_requires = ["urllib3==1.21.1"]
 tests_require = [
     "requests>=2.0.0, <3.0.0",
     "nose",

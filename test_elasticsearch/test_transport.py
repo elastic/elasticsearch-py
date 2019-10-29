@@ -78,17 +78,32 @@ class TestTransport(TestCase):
     def test_request_timeout_extracted_from_params_and_passed(self):
         t = Transport([{}], connection_class=DummyConnection)
 
-        t.perform_request("GET", "/", params={"request_timeout": 42})
-        self.assertEquals(1, len(t.get_connection().calls))
-        self.assertEquals(("GET", "/", {}, None), t.get_connection().calls[0][0])
-        self.assertEquals(
-            {
-                "timeout": 42,
-                "ignore": (),
-                "headers": None,
-            },
-            t.get_connection().calls[0][1],
-        )
+        # Test cases for the `reuest_timeout` parameter. In the form of input -> expected output.
+        # Int and Float values will be converted to a float, all others will be converted to None.
+        test_cases = {
+            42: 42,
+            '42': 42,
+            '42.0': 42,
+            '42.00000': 42,
+            '42.1': 42.1,
+            'not a float or int': None,
+            None: None,
+        }
+
+        call_count = 0
+        for timeout, expected_timeout in test_cases.iteritems():
+            t.perform_request("GET", "/", params={"request_timeout": timeout})
+            self.assertEquals(
+                {
+                    "timeout": expected_timeout,
+                    "ignore": (),
+                    "headers": None,
+                },
+                t.get_connection().calls[call_count][1],
+            )
+            self.assertEquals(("GET", "/", {}, None), t.get_connection().calls[call_count][0])
+            call_count += 1
+            self.assertEquals(call_count, len(t.get_connection().calls))
 
     def test_request_with_custom_user_agent_header(self):
         t = Transport([{}], connection_class=DummyConnection)
