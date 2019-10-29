@@ -89,7 +89,6 @@ class TestTransport(TestCase):
             'not a float or int': None,
             None: None,
         }
-
         call_count = 0
         for timeout, expected_timeout in test_cases.iteritems():
             t.perform_request("GET", "/", params={"request_timeout": timeout})
