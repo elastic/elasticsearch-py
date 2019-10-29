@@ -65,7 +65,7 @@ class Connection(object):
             raise TypeError(
                 "Unsupported equality check for %s and %s" % (self, other)
             )
-        return True
+        return self.__hash__() == other.__hash__()
 
     def __hash__(self):
         return id(self)

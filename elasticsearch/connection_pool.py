@@ -150,6 +150,7 @@ class ConnectionPool(object):
         try:
             self.connections.remove(connection)
         except ValueError:
+            logger.info("Attempted to remove %r, but it does not exist in the connection pool.", connection)
             # connection not alive or another thread marked it already, ignore
             return
         else:
