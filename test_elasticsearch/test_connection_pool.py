@@ -5,6 +5,7 @@ from elasticsearch.connection_pool import (
     RoundRobinSelector,
     DummyConnectionPool,
 )
+from elasticsearch.connection import Connection
 from elasticsearch.exceptions import ImproperlyConfigured
 
 from .test_cases import TestCase
@@ -71,6 +72,17 @@ class TestConnectionPool(TestCase):
             [1, 1, 1],
             [pool.get_connection(), pool.get_connection(), pool.get_connection()],
         )
+
+    def test_new_connection_is_not_marked_dead(self):
+        # Create 10 connections
+        pool = ConnectionPool([(Connection(), {}) for _ in range(10)])
+
+        # Pass in a new connection that is not in the pool to mark as dead
+        new_connection = Connection()
+        pool.mark_dead(new_connection)
+
+        # Nothing should be marked dead
+        self.assertEquals(0, len(pool.dead_count))
 
     def test_connection_is_forcibly_resurrected_when_no_live_ones_are_availible(self):
         pool = ConnectionPool([(x, {}) for x in range(2)])
