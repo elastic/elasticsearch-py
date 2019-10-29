@@ -77,7 +77,7 @@ class TestConnectionPool(TestCase):
         # Create 10 connections
         pool = ConnectionPool([(Connection(), {}) for _ in range(10)])
 
-        # Pass in a new connection that is not in the pool to mark as dead
+        # Pass in a new connection that is not in the pool, to mark as dead
         new_connection = Connection()
         pool.mark_dead(new_connection)
 
