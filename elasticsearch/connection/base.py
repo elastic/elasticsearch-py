@@ -1,5 +1,7 @@
 import logging
 import base64
+import gzip
+import io
 
 from platform import python_version
 
@@ -37,6 +39,7 @@ class Connection(object):
         use_ssl=False,
         url_prefix="",
         timeout=10,
+        http_compress=False,
         **kwargs
     ):
         """
@@ -44,6 +47,7 @@ class Connection(object):
         :arg port: port to use (integer, default: 9200)
         :arg url_prefix: optional url prefix for elasticsearch
         :arg timeout: default timeout in seconds (float, default: 10)
+        :arg http_compress: Use gzip compression
         """
         scheme = kwargs.get("scheme", "http")
         if use_ssl or scheme == "https":
@@ -56,6 +60,7 @@ class Connection(object):
             url_prefix = "/" + url_prefix.strip("/")
         self.url_prefix = url_prefix
         self.timeout = timeout
+        self.http_compress = http_compress
 
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.host)
@@ -103,6 +108,21 @@ class Connection(object):
                 duration,
                 self._pretty_json(response).replace("\n", "\n#") if response else "",
             )
+
+    def compress_body(self, body):
+        """ Manages compression of the request body """
+        if self.http_compress and body:
+            try:
+                data = gzip.compress(body)
+            except AttributeError:
+                # for Python 2.x compatibility
+                buf = io.BytesIO()
+                with gzip.GzipFile(fileobj=buf, mode='wb') as f:
+                    f.write(body)
+                data = buf.getvalue()
+        else:
+            data = body
+        return data
 
     def log_request_success(
         self, method, full_url, path, body, status_code, response, duration

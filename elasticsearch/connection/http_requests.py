@@ -1,8 +1,6 @@
 import time
 import warnings
 from base64 import decodestring
-import gzip
-import io
 
 try:
     import requests
@@ -74,7 +72,7 @@ class RequestsHttpConnection(Connection):
             use_ssl = True
 
         super(RequestsHttpConnection, self).__init__(
-            host=host, port=port, use_ssl=use_ssl, **kwargs
+            host=host, port=port, use_ssl=use_ssl, http_compress=http_compress, **kwargs
         )
         self.session = requests.Session()
         self.session.headers = headers or {}
@@ -88,7 +86,6 @@ class RequestsHttpConnection(Connection):
             self.session.auth = http_auth
         if api_key is not None:
             self.session.headers['authorization'] = self._get_api_key_header_val(api_key)
-        self.http_compress = http_compress
         if self.http_compress == True:
             self.session.headers.setdefault("content-encoding", "gzip")
         self.base_url = "http%s://%s:%d%s" % (
@@ -124,17 +121,7 @@ class RequestsHttpConnection(Connection):
             url = "%s?%s" % (url, urlencode(params or {}))
 
         start = time.time()
-        if self.http_compress and body:
-            try:
-                data = gzip.compress(body)
-            except AttributeError:
-                # for Python 2.x compatibility
-                buf = io.BytesIO()
-                with gzip.GzipFile(fileobj=buf, mode='wb') as f:
-                    f.write(body)
-                data = buf.getvalue()
-        else:
-            data = body
+        data = self.compress_body(body)
         request = requests.Request(method=method, headers=headers, url=url, data=data)
         prepared_request = self.session.prepare_request(request)
         settings = self.session.merge_environment_settings(

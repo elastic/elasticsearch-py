@@ -4,7 +4,6 @@ import urllib3
 from urllib3.exceptions import ReadTimeoutError, SSLError as UrllibSSLError
 from urllib3.util.retry import Retry
 import warnings
-import gzip
 from base64 import decodestring
 
 # sentinal value for `verify_certs`.
@@ -110,9 +109,8 @@ class Urllib3HttpConnection(Connection):
             port = "9243"
             use_ssl = True
         super(Urllib3HttpConnection, self).__init__(
-            host=host, port=port, use_ssl=use_ssl, **kwargs
+            host=host, port=port, use_ssl=use_ssl, http_compress=http_compress, **kwargs
         )
-        self.http_compress = http_compress
         self.headers = urllib3.make_headers(keep_alive=True)
         if http_auth is not None:
             if isinstance(http_auth, (tuple, list)):
@@ -226,16 +224,10 @@ class Urllib3HttpConnection(Connection):
             if headers:
                 request_headers = request_headers.copy()
                 request_headers.update(headers)
-            if self.http_compress and body:
-                try:
-                    body = gzip.compress(body)
-                except AttributeError:
-                    # oops, Python2.7 doesn't have `gzip.compress` let's try
-                    # again
-                    body = gzip.zlib.compress(body)
+            data = self.compress_body(body)
 
             response = self.pool.urlopen(
-                method, url, body, retries=Retry(False), headers=request_headers, **kw
+                method, url, data, retries=Retry(False), headers=request_headers, **kw
             )
             duration = time.time() - start
             raw_data = response.data.decode("utf-8")
