@@ -107,6 +107,32 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params(
+        "master_timeout",
+        "timeout",
+        "wait_for_active_shards"
+    )
+    def clone(self, index, target, body=None, params=None):
+        """
+        Clones an index
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-clone-index.html>`_
+
+        :arg index: The name of the source index to clone
+        :arg target: The name of the target index to clone into
+        :arg master_timeout: Specify timeout for connection to master
+        :arg timeout: Explicit operation timeout
+        :arg wait_for_active_shards: Set the number of active shards to wait for
+            before the operation returns.
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'index'.")
+        if target in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'target'.")
+
+        return self.transport.perform_request(
+            "PUT", _make_path(index, '_clone', target), params=params, body=body
+        )
+
+    @query_params(
         "allow_no_indices",
         "expand_wildcards",
         "flat_settings",
