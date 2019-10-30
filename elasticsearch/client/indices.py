@@ -81,7 +81,6 @@ class IndicesClient(NamespacedClient):
     @query_params(
         "master_timeout",
         "timeout",
-        "request_timeout",
         "wait_for_active_shards",
         "include_type_name",
     )
@@ -175,7 +174,6 @@ class IndicesClient(NamespacedClient):
         "ignore_unavailable",
         "master_timeout",
         "timeout",
-        "request_timeout",
         "wait_for_active_shards",
     )
     def open(self, index, params=None):
@@ -209,7 +207,6 @@ class IndicesClient(NamespacedClient):
         "expand_wildcards",
         "ignore_unavailable",
         "master_timeout",
-        "request_timeout",
         "wait_for_active_shards",
     )
     def close(self, index, params=None):
@@ -244,7 +241,6 @@ class IndicesClient(NamespacedClient):
         "ignore_unavailable",
         "timeout",
         "master_timeout",
-        "request_timeout",
     )
     def delete(self, index, params=None):
         """
@@ -332,7 +328,6 @@ class IndicesClient(NamespacedClient):
         "ignore_unavailable",
         "master_timeout",
         "timeout",
-        "request_timeout",
         "include_type_name",
     )
     def put_mapping(self, body, doc_type=None, index=None, params=None):
@@ -438,7 +433,7 @@ class IndicesClient(NamespacedClient):
             params=params,
         )
 
-    @query_params("master_timeout", "request_timeout")
+    @query_params("master_timeout")
     def put_alias(self, index, name, body=None, params=None):
         """
         Create an alias for a specific index/indices.
@@ -505,7 +500,7 @@ class IndicesClient(NamespacedClient):
             "GET", _make_path(index, "_alias", name), params=params
         )
 
-    @query_params("master_timeout", "request_timeout", "timeout")
+    @query_params("master_timeout", "timeout")
     def update_aliases(self, body, params=None):
         """
         Update specified aliases.
@@ -522,7 +517,7 @@ class IndicesClient(NamespacedClient):
             "POST", "/_aliases", params=params, body=body
         )
 
-    @query_params("master_timeout", "request_timeout", "timeout")
+    @query_params("master_timeout", "timeout")
     def delete_alias(self, index, name, params=None):
         """
         Delete specific alias.
@@ -549,7 +544,6 @@ class IndicesClient(NamespacedClient):
         "flat_settings",
         "master_timeout",
         "order",
-        "request_timeout",
         "timeout",
         "include_type_name",
     )
@@ -617,7 +611,7 @@ class IndicesClient(NamespacedClient):
             "GET", _make_path("_template", name), params=params
         )
 
-    @query_params("master_timeout", "request_timeout", "timeout")
+    @query_params("master_timeout", "timeout")
     def delete_template(self, name, params=None):
         """
         Delete an index template by its name.
@@ -1052,7 +1046,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params(
-        "master_timeout", "timeout", "request_timeout", "wait_for_active_shards"
+        "master_timeout", "timeout", "wait_for_active_shards"
     )
     def shrink(self, index, target, body=None, params=None):
         """
@@ -1108,7 +1102,6 @@ class IndicesClient(NamespacedClient):
     @query_params(
         "dry_run",
         "master_timeout",
-        "request_timeout",
         "timeout",
         "wait_for_active_shards",
         "include_type_name",
