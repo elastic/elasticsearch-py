@@ -93,7 +93,6 @@ class IndicesClient(NamespacedClient):
         :arg body: The configuration for the index (`settings` and `mappings`)
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
-        :arg request_timeout: Explicit operation timeout
         :arg wait_for_active_shards: Set the number of active shards to wait for
             before the operation returns.
         :arg include_type_name: Specify whether requests and responses should include a
@@ -166,7 +165,6 @@ class IndicesClient(NamespacedClient):
             ignored when unavailable (missing or closed)
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
-        :arg request_timeout: Explicit operation timeout
         :arg wait_for_active_shards: Sets the number of active shards to wait
             for before the operation returns.
         """
@@ -199,7 +197,6 @@ class IndicesClient(NamespacedClient):
         :arg ignore_unavailable: Whether specified concrete indices should be
             ignored when unavailable (missing or closed)
         :arg master_timeout: Specify timeout for connection to master
-        :arg request_timeout: Explicit operation timeout
         :arg wait_for_active_shards: Sets the number of active shards to wait
             for before the operation returns.
         """
@@ -231,7 +228,6 @@ class IndicesClient(NamespacedClient):
         :arg ignore_unavailable: Ignore unavailable indexes (default: false)
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
-        :arg request_timeout: Explicit operation timeout
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
@@ -324,7 +320,6 @@ class IndicesClient(NamespacedClient):
             ignored when unavailable (missing or closed)
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
-        :arg request_timeout: Explicit operation timeout (For pre 7.x ES Clusters)
         :arg include_type_name: Specify whether requests and responses should include a
             type name (default: depends on Elasticsearch version).
         """
@@ -419,7 +414,6 @@ class IndicesClient(NamespacedClient):
         :arg name: The name of the alias to be created or updated
         :arg body: The settings for the alias, such as `routing` or `filter`
         :arg master_timeout: Specify timeout for connection to master
-        :arg request_timeout: Explicit timeout for the operation
         """
         for param in (index, name):
             if param in SKIP_IN_PATH:
@@ -482,7 +476,6 @@ class IndicesClient(NamespacedClient):
 
         :arg body: The definition of `actions` to perform
         :arg master_timeout: Specify timeout for connection to master
-        :arg request_timeout: Request timeout (For pre 7.x ES Clusters)
         :arg timeout: Request timeout
         """
         if body in SKIP_IN_PATH:
@@ -503,7 +496,6 @@ class IndicesClient(NamespacedClient):
             wildcards); use `_all` to delete all aliases for the specified
             indices.
         :arg master_timeout: Specify timeout for connection to master
-        :arg request_timeout: Explicit timeout for the operation (for pre 7.x ES clusters)
         :arg timeout: Explicit timeout for the operation
         """
         for param in (index, name):
@@ -535,7 +527,6 @@ class IndicesClient(NamespacedClient):
         :arg master_timeout: Specify timeout for connection to master
         :arg order: The order for this template when merging multiple matching
             ones (higher numbers are merged later, overriding the lower numbers)
-        :arg request_timeout: Explicit operation timeout (For pre ES 6 clusters)
         :arg timeout: Explicit operation timeout
         :arg include_type_name: Specify whether requests and responses should include a
             type name (default: depends on Elasticsearch version).
@@ -593,7 +584,6 @@ class IndicesClient(NamespacedClient):
 
         :arg name: The name of the template
         :arg master_timeout: Specify timeout for connection to master
-        :arg request_timeout: Explicit operation timeout (for pre 7.x clusters)
         :arg timeout: Explicit operation timeout
         """
         if name in SKIP_IN_PATH:
@@ -1040,7 +1030,6 @@ class IndicesClient(NamespacedClient):
         :arg body: The configuration for the target index (`settings` and
             `aliases`)
         :arg master_timeout: Specify timeout for connection to master
-        :arg request_timeout: Explicit operation timeout (For pre 7.x ES clusters)
         :arg timeout: Explicit operation timeout
         :arg wait_for_active_shards: Set the number of active shards to wait for
             on the shrunken index before the operation returns.
@@ -1098,7 +1087,6 @@ class IndicesClient(NamespacedClient):
             but not actually performed even if a condition matches. The default
             is false
         :arg master_timeout: Specify timeout for connection to master
-        :arg request_timeout: Explicit operation timeout (for pre 7.x ES clusters)
         :arg timeout: Explicit operation timeout
         :arg wait_for_active_shards: Set the number of active shards to wait for
             on the newly created rollover index before the operation returns.
