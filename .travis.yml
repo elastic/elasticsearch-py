@@ -1,5 +1,8 @@
 language: python
 
+services:
+  - docker
+
 python:
   - "2.6"
   - "2.7"
@@ -8,27 +11,17 @@ python:
   - "3.6"
   - "3.7"
 
-addons:
-  apt:
-    packages:
-      - oracle-java8-installer
-
 env:
   # different connection classes to test
   - TEST_ES_CONNECTION=Urllib3HttpConnection
   - TEST_ES_CONNECTION=RequestsHttpConnection
 
 before_install:
-  - sudo update-java-alternatives -s java-8-oracle
-  - export JAVA_HOME=/usr/lib/jvm/java-8-oracle/jre
-  - java -version
+  - docker run --rm --detach --publish 9200:9200 --env "discovery.type=single-node" -e path.repo=/tmp -e "repositories.url.allowed_urls=http://*" -e node.attr.testattr=test  -e node.name=test  --name elasticsearch docker.elastic.co/elasticsearch/elasticsearch:7.4.0
 
 install:
-  - curl -L -o /tmp/es-snap.zip https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.1.1.zip
-  - unzip /tmp/es-snap.zip -d /tmp/
-  - /tmp/elasticsearch-*/bin/elasticsearch -E path.repo=/tmp -E repositories.url.allowed_urls='http://*' -E node.attr.testattr=test -d
   - git clone https://github.com/elastic/elasticsearch.git ../elasticsearch
-  - pip install .
+  - pip install .[develop]
 
 script:
   - python setup.py test
