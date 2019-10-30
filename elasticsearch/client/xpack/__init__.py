@@ -5,7 +5,7 @@ from .data_frame import Data_FrameClient
 from .deprecation import DeprecationClient
 from .graph import GraphClient
 from .ilm import IlmClient
-from .indices import IndicesClient
+from ..indices import IndicesClient
 from .license import LicenseClient
 from .migration import MigrationClient
 from .ml import MlClient
