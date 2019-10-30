@@ -12,7 +12,7 @@ from .nodes import NodesClient
 from .remote import RemoteClient
 from .snapshot import SnapshotClient
 from .tasks import TasksClient
-from .xpack import XPackClient
+from .xpack import XPackClient, XPACK_NAMESPACES
 from .utils import query_params, _make_path, SKIP_IN_PATH
 
 logger = logging.getLogger("elasticsearch")
@@ -214,6 +214,12 @@ class Elasticsearch(object):
         self.remote = RemoteClient(self)
         self.snapshot = SnapshotClient(self)
         self.tasks = TasksClient(self)
+
+        # new style access to x-pack features without .xpack step
+        for namespace, NamespacedClient in XPACK_NAMESPACES.items():
+            setattr(self, namespace, NamespacedClient(self))
+
+        # old style xpack access
         self.xpack = XPackClient(self)
 
     def __repr__(self):

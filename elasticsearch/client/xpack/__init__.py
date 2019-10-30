@@ -16,27 +16,30 @@ from .sql import SqlClient
 from .ssl import SslClient
 from .watcher import WatcherClient
 
+XPACK_NAMESPACES = {
+    "ccr": CcrClient,
+    "data_frame": Data_FrameClient,
+    "deprecation": DeprecationClient,
+    "graph": GraphClient,
+    "ilm": IlmClient,
+    "indices": IndicesClient,
+    "license": LicenseClient,
+    "migration": MigrationClient,
+    "ml": MlClient,
+    "monitoring": MonitoringClient,
+    "rollup": RollupClient,
+    "security": SecurityClient,
+    "sql": SqlClient,
+    "ssl": SslClient,
+    "watcher": WatcherClient,
+}
 
 class XPackClient(NamespacedClient):
-    namespace = "xpack"
-
     def __init__(self, *args, **kwargs):
         super(XPackClient, self).__init__(*args, **kwargs)
-        self.ccr = CcrClient(self.client)
-        self.data_frame = Data_FrameClient(self.client)
-        self.deprecation = DeprecationClient(self.client)
-        self.graph = GraphClient(self.client)
-        self.ilm = IlmClient(self.client)
-        self.indices = IndicesClient(self.client)
-        self.license = LicenseClient(self.client)
-        self.migration = MigrationClient(self.client)
-        self.ml = MlClient(self.client)
-        self.monitoring = MonitoringClient(self.client)
-        self.rollup = RollupClient(self.client)
-        self.security = SecurityClient(self.client)
-        self.sql = SqlClient(self.client)
-        self.ssl = SslClient(self.client)
-        self.watcher = WatcherClient(self.client)
+
+        for namespace in XPACK_NAMESPACES:
+            setattr(self, namespace, getattr(self.client, namespace))
 
     @query_params("categories", "human")
     def info(self, params=None):
