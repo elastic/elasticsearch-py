@@ -331,8 +331,8 @@ class IndicesClient(NamespacedClient):
         Register specific mapping definition for a specific type.
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/indices-put-mapping.html>`_
 
-        :arg doc_type: The name of the document type
         :arg body: The mapping definition
+        :arg doc_type: The name of the document type
         :arg index: A comma-separated list of index names the mapping should be
             added to (supports wildcards); use `_all` or omit to add the mapping
             on all indices.
