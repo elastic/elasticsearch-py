@@ -1,7 +1,7 @@
 # flake8: noqa
 from __future__ import absolute_import
 
-VERSION = (7, 0, 5)
+VERSION = (7, 1, 0)
 __version__ = VERSION
 __versionstr__ = ".".join(map(str, VERSION))
 
