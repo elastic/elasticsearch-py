@@ -311,7 +311,7 @@ class Transport(object):
             underlying :class:`~elasticsearch.Connection` class
         :arg params: dictionary of query parameters, will be handed over to the
             underlying :class:`~elasticsearch.Connection` class for serialization
-        :arg body: body of the request, will be serializes using serializer and
+        :arg body: body of the request, will be serialized using serializer and
             passed to the connection
         """
         if body is not None:
