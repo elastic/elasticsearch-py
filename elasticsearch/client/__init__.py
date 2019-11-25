@@ -1337,22 +1337,29 @@ class Elasticsearch(object):
             "GET", _make_path(index, doc_type, id, "_explain"), params=params, body=body
         )
 
-    @query_params("rest_total_hits_as_int", "scroll")
-    def scroll(self, scroll_id=None, body=None, params=None):
+    @query_params("scroll", "rest_total_hits_as_int")
+    def scroll(self, body=None, scroll_id=None, params=None):
         """
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/master/search-request-scroll.html>`_
+        Scroll a search request created by specifying the scroll parameter.
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/search-request-scroll.html>`_
 
         :arg scroll_id: The scroll ID
         :arg body: The scroll ID if not passed by URL or query parameter.
-        :arg rest_total_hits_as_int: This parameter is ignored in this version.
-            It is used in the next major version to control whether the rest
-            response should render the total.hits as an object or a number,
-            default False
         :arg scroll: Specify how long a consistent view of the index should be
             maintained for scrolled search
+        :arg rest_total_hits_as_int: This parameter is used to restore the total hits as a number
+            in the response. This param is added version 6.x to handle mixed cluster queries where nodes
+            are in multiple versions (7.0 and 6.latest)
         """
+        if scroll_id in SKIP_IN_PATH and body in SKIP_IN_PATH:
+            raise ValueError("You need to supply scroll_id or body.")
+        elif scroll_id and not body:
+            body = {"scroll_id": scroll_id}
+        elif scroll_id:
+            params["scroll_id"] = scroll_id
+
         return self.transport.perform_request(
-            "GET", _make_path("_search", "scroll", scroll_id), params=params, body=body
+            "GET", "/_search/scroll", params=params, body=body
         )
 
     @query_params()
