@@ -168,7 +168,7 @@ class CatClient(NamespacedClient):
         """
         return self.transport.perform_request("GET", "/_cat/master", params=params)
 
-    @query_params("format", "full_id", "h", "help", "local", "master_timeout", "s", "v")
+    @query_params("bytes", "format", "full_id", "h", "help", "local", "master_timeout", "s", "v")
     def nodes(self, params=None):
         """
         The nodes command shows the cluster topology.
