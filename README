@@ -47,7 +47,7 @@ The recommended way to set your requirements in your `setup.py` or
     elasticsearch>=7.0.0,<8.0.0
 
     # Elasticsearch 6.x
-    elasticsearch6>=6.0.0,<7.0.0
+    elasticsearch>=6.0.0,<7.0.0
 
     # Elasticsearch 5.x
     elasticsearch>=5.0.0,<6.0.0
