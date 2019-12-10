@@ -142,6 +142,7 @@ class Urllib3HttpConnection(Connection):
             or client_cert
             or client_key
             or ssl_version
+            or ssl_show_warn
         ):
             warnings.warn(
                 "When using `ssl_context`, all other SSL related kwargs are ignored"

@@ -103,6 +103,10 @@ class RequestsHttpConnection(Connection):
                 )
             self.session.verify = ca_certs
 
+        if not ssl_show_warn:
+            requests.packages.urllib3.disable_warnings()
+
+        self.ssl_show_warn = ssl_show_warn
         if self.use_ssl and not verify_certs and ssl_show_warn:
             warnings.warn(
                 "Connecting to %s using SSL with verify_certs=False is insecure."
