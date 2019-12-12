@@ -196,6 +196,9 @@ class Urllib3HttpConnection(Connection):
                         "Connecting to %s using SSL with verify_certs=False is insecure."
                         % host
                     )
+                if not ssl_show_warn:
+                    urllib3.disable_warnings()
+
 
         self.pool = pool_class(
             host, port=port, timeout=self.timeout, maxsize=maxsize, **kw
