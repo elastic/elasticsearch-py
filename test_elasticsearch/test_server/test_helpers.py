@@ -306,6 +306,48 @@ class TestBulk(ElasticsearchTestCase):
         self.assertEquals(1, success)
         self.assertEquals(1, failed)
 
+    def test_return_docs_when_not_raising_errors(self):
+        bulk_load_index_name = "test_bulk_load"
+        mappings = {
+            "properties": {
+                "test_field": {"type": "integer"}
+            }
+        }
+        self.client.indices.create(bulk_load_index_name, body={"mappings": mappings})
+        docs = [{"test_field": 1},
+                {"test_field": "string_error"},
+                {"test_field": "second_string_error"},
+                {"test_field": 5},
+                {"test_field": 6}
+                ]
+        success, errors = helpers.bulk(self.client, docs, raise_on_error=False,
+                                       index=bulk_load_index_name)
+        self.assertEqual(success, 3)
+        self.assertEqual(len(errors), 2)
+        self.assertEqual(errors[0]["index"]["data"], {"test_field": "string_error"})
+        self.assertEqual(errors[1]["index"]["data"], {"test_field": "second_string_error"})
+
+    def test_return_docs_when_not_raising_errors_passing_docs_as_strings(self):
+        bulk_load_index_name = "test_bulk_load_string_docs"
+        mappings = {
+            "properties": {
+                "test_field": {"type": "integer"}
+            }
+        }
+        self.client.indices.create(bulk_load_index_name, body={"mappings": mappings})
+        docs = ['{"test_field": 1}',
+                '{"test_field": "string_error"}',
+                '{"test_field": "second_string_error"}',
+                '{"test_field": 5}',
+                '{"test_field": 6}'
+                ]
+        success, errors = helpers.bulk(self.client, docs, raise_on_error=False,
+                                       index=bulk_load_index_name)
+        self.assertEqual(success, 3)
+        self.assertEqual(len(errors), 2)
+        self.assertEqual(errors[0]["index"]["data"], '{"test_field": "string_error"}')
+        self.assertEqual(errors[1]["index"]["data"], '{"test_field": "second_string_error"}')
+
 
 class TestScan(ElasticsearchTestCase):
     mock_scroll_responses = [
