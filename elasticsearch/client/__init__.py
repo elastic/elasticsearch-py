@@ -190,12 +190,12 @@ class Elasticsearch(object):
 
     def __init__(self, hosts=None, transport_class=Transport, **kwargs):
         """
-        :arg hosts: list of nodes we should connect to. Node should be a
-            dictionary ({"host": "localhost", "port": 9200}), the entire dictionary
-            will be passed to the :class:`~elasticsearch.Connection` class as
-            kwargs, or a string in the format of ``host[:port]`` which will be
+        :arg hosts: list of nodes, or a single node, we should connect to.
+            Node should be a dictionary ({"host": "localhost", "port": 9200}),
+            the entire dictionary will be passed to the :class:`~elasticsearch.Connection`
+            class as kwargs, or a string in the format of ``host[:port]`` which will be
             translated to a dictionary automatically.  If no value is given the
-            :class:`~elasticsearch.Urllib3HttpConnection` class defaults will be used.
+            :class:`~elasticsearch.Connection` class defaults will be used.
 
         :arg transport_class: :class:`~elasticsearch.Transport` subclass to use.
 
