@@ -6,6 +6,7 @@ class SecurityClient(NamespacedClient):
     def authenticate(self, params=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-authenticate.html>`_
+
         """
         return self.transport.perform_request(
             "GET", "/_security/_authenticate", params=params
@@ -17,15 +18,16 @@ class SecurityClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-change-password.html>`_
 
         :arg body: the new password for the user
-        :arg username: The username of the user to change the password for
-        :arg refresh: If `true` (the default) then refresh the affected shards
-            to make this operation visible to search, if `wait_for` then wait
-            for a refresh to make this operation visible to search, if `false`
-            then do nothing with refreshes., valid choices are: 'true', 'false',
-            'wait_for'
+        :arg username: The username of the user to change the password
+            for
+        :arg refresh: If `true` (the default) then refresh the affected
+            shards to make this operation visible to search, if `wait_for` then wait
+            for a refresh to make this operation visible to search, if `false` then
+            do nothing with refreshes. Valid choices: true, false, wait_for
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
+
         return self.transport.perform_request(
             "PUT",
             _make_path("_security", "user", username, "_password"),
@@ -39,11 +41,12 @@ class SecurityClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-clear-cache.html>`_
 
         :arg realms: Comma-separated list of realms to clear
-        :arg usernames: Comma-separated list of usernames to clear from the
-            cache
+        :arg usernames: Comma-separated list of usernames to clear from
+            the cache
         """
         if realms in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'realms'.")
+
         return self.transport.perform_request(
             "POST",
             _make_path("_security", "realm", realms, "_clear_cache"),
@@ -59,6 +62,7 @@ class SecurityClient(NamespacedClient):
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
+
         return self.transport.perform_request(
             "POST", _make_path("_security", "role", name, "_clear_cache"), params=params
         )
@@ -69,14 +73,14 @@ class SecurityClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-create-api-key.html>`_
 
         :arg body: The api key request to create an API key
-        :arg refresh: If `true` (the default) then refresh the affected shards
-            to make this operation visible to search, if `wait_for` then wait
-            for a refresh to make this operation visible to search, if `false`
-            then do nothing with refreshes., valid choices are: 'true', 'false',
-            'wait_for'
+        :arg refresh: If `true` (the default) then refresh the affected
+            shards to make this operation visible to search, if `wait_for` then wait
+            for a refresh to make this operation visible to search, if `false` then
+            do nothing with refreshes. Valid choices: true, false, wait_for
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
+
         return self.transport.perform_request(
             "PUT", "/_security/api_key", params=params, body=body
         )
@@ -88,15 +92,15 @@ class SecurityClient(NamespacedClient):
 
         :arg application: Application name
         :arg name: Privilege name
-        :arg refresh: If `true` (the default) then refresh the affected shards
-            to make this operation visible to search, if `wait_for` then wait
-            for a refresh to make this operation visible to search, if `false`
-            then do nothing with refreshes., valid choices are: 'true', 'false',
-            'wait_for'
+        :arg refresh: If `true` (the default) then refresh the affected
+            shards to make this operation visible to search, if `wait_for` then wait
+            for a refresh to make this operation visible to search, if `false` then
+            do nothing with refreshes. Valid choices: true, false, wait_for
         """
         for param in (application, name):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
+
         return self.transport.perform_request(
             "DELETE",
             _make_path("_security", "privilege", application, name),
@@ -109,14 +113,14 @@ class SecurityClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-delete-role.html>`_
 
         :arg name: Role name
-        :arg refresh: If `true` (the default) then refresh the affected shards
-            to make this operation visible to search, if `wait_for` then wait
-            for a refresh to make this operation visible to search, if `false`
-            then do nothing with refreshes., valid choices are: 'true', 'false',
-            'wait_for'
+        :arg refresh: If `true` (the default) then refresh the affected
+            shards to make this operation visible to search, if `wait_for` then wait
+            for a refresh to make this operation visible to search, if `false` then
+            do nothing with refreshes. Valid choices: true, false, wait_for
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
+
         return self.transport.perform_request(
             "DELETE", _make_path("_security", "role", name), params=params
         )
@@ -127,14 +131,14 @@ class SecurityClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-delete-role-mapping.html>`_
 
         :arg name: Role-mapping name
-        :arg refresh: If `true` (the default) then refresh the affected shards
-            to make this operation visible to search, if `wait_for` then wait
-            for a refresh to make this operation visible to search, if `false`
-            then do nothing with refreshes., valid choices are: 'true', 'false',
-            'wait_for'
+        :arg refresh: If `true` (the default) then refresh the affected
+            shards to make this operation visible to search, if `wait_for` then wait
+            for a refresh to make this operation visible to search, if `false` then
+            do nothing with refreshes. Valid choices: true, false, wait_for
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
+
         return self.transport.perform_request(
             "DELETE", _make_path("_security", "role_mapping", name), params=params
         )
@@ -145,14 +149,14 @@ class SecurityClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-delete-user.html>`_
 
         :arg username: username
-        :arg refresh: If `true` (the default) then refresh the affected shards
-            to make this operation visible to search, if `wait_for` then wait
-            for a refresh to make this operation visible to search, if `false`
-            then do nothing with refreshes., valid choices are: 'true', 'false',
-            'wait_for'
+        :arg refresh: If `true` (the default) then refresh the affected
+            shards to make this operation visible to search, if `wait_for` then wait
+            for a refresh to make this operation visible to search, if `false` then
+            do nothing with refreshes. Valid choices: true, false, wait_for
         """
         if username in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'username'.")
+
         return self.transport.perform_request(
             "DELETE", _make_path("_security", "user", username), params=params
         )
@@ -163,14 +167,14 @@ class SecurityClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-disable-user.html>`_
 
         :arg username: The username of the user to disable
-        :arg refresh: If `true` (the default) then refresh the affected shards
-            to make this operation visible to search, if `wait_for` then wait
-            for a refresh to make this operation visible to search, if `false`
-            then do nothing with refreshes., valid choices are: 'true', 'false',
-            'wait_for'
+        :arg refresh: If `true` (the default) then refresh the affected
+            shards to make this operation visible to search, if `wait_for` then wait
+            for a refresh to make this operation visible to search, if `false` then
+            do nothing with refreshes. Valid choices: true, false, wait_for
         """
         if username in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'username'.")
+
         return self.transport.perform_request(
             "PUT", _make_path("_security", "user", username, "_disable"), params=params
         )
@@ -181,29 +185,31 @@ class SecurityClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-enable-user.html>`_
 
         :arg username: The username of the user to enable
-        :arg refresh: If `true` (the default) then refresh the affected shards
-            to make this operation visible to search, if `wait_for` then wait
-            for a refresh to make this operation visible to search, if `false`
-            then do nothing with refreshes., valid choices are: 'true', 'false',
-            'wait_for'
+        :arg refresh: If `true` (the default) then refresh the affected
+            shards to make this operation visible to search, if `wait_for` then wait
+            for a refresh to make this operation visible to search, if `false` then
+            do nothing with refreshes. Valid choices: true, false, wait_for
         """
         if username in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'username'.")
+
         return self.transport.perform_request(
             "PUT", _make_path("_security", "user", username, "_enable"), params=params
         )
 
-    @query_params("id", "name", "realm_name", "username")
+    @query_params("id", "name", "owner", "realm_name", "username")
     def get_api_key(self, params=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-api-key.html>`_
 
         :arg id: API key id of the API key to be retrieved
         :arg name: API key name of the API key to be retrieved
-        :arg realm_name: realm name of the user who created this API key to be
-            retrieved
-        :arg username: user name of the user who created this API key to be
-            retrieved
+        :arg owner: flag to query API keys owned by the currently
+            authenticated user
+        :arg realm_name: realm name of the user who created this API key
+            to be retrieved
+        :arg username: user name of the user who created this API key to
+            be retrieved
         """
         return self.transport.perform_request(
             "GET", "/_security/api_key", params=params
@@ -212,7 +218,7 @@ class SecurityClient(NamespacedClient):
     @query_params()
     def get_privileges(self, application=None, name=None, params=None):
         """
-        `<TODO>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-privileges.html>`_
 
         :arg application: Application name
         :arg name: Privilege name
@@ -254,6 +260,7 @@ class SecurityClient(NamespacedClient):
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
+
         return self.transport.perform_request(
             "POST", "/_security/oauth2/token", params=params, body=body
         )
@@ -272,7 +279,8 @@ class SecurityClient(NamespacedClient):
     @query_params()
     def get_user_privileges(self, params=None):
         """
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-user-privileges.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-privileges.html>`_
+
         """
         return self.transport.perform_request(
             "GET", "/_security/user/_privileges", params=params
@@ -288,6 +296,7 @@ class SecurityClient(NamespacedClient):
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
+
         return self.transport.perform_request(
             "GET",
             _make_path("_security", "user", user, "_has_privileges"),
@@ -304,6 +313,7 @@ class SecurityClient(NamespacedClient):
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
+
         return self.transport.perform_request(
             "DELETE", "/_security/api_key", params=params, body=body
         )
@@ -317,6 +327,7 @@ class SecurityClient(NamespacedClient):
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
+
         return self.transport.perform_request(
             "DELETE", "/_security/oauth2/token", params=params, body=body
         )
@@ -327,14 +338,14 @@ class SecurityClient(NamespacedClient):
         `<TODO>`_
 
         :arg body: The privilege(s) to add
-        :arg refresh: If `true` (the default) then refresh the affected shards
-            to make this operation visible to search, if `wait_for` then wait
-            for a refresh to make this operation visible to search, if `false`
-            then do nothing with refreshes., valid choices are: 'true', 'false',
-            'wait_for'
+        :arg refresh: If `true` (the default) then refresh the affected
+            shards to make this operation visible to search, if `wait_for` then wait
+            for a refresh to make this operation visible to search, if `false` then
+            do nothing with refreshes. Valid choices: true, false, wait_for
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
+
         return self.transport.perform_request(
             "PUT", "/_security/privilege/", params=params, body=body
         )
@@ -346,15 +357,15 @@ class SecurityClient(NamespacedClient):
 
         :arg name: Role name
         :arg body: The role to add
-        :arg refresh: If `true` (the default) then refresh the affected shards
-            to make this operation visible to search, if `wait_for` then wait
-            for a refresh to make this operation visible to search, if `false`
-            then do nothing with refreshes., valid choices are: 'true', 'false',
-            'wait_for'
+        :arg refresh: If `true` (the default) then refresh the affected
+            shards to make this operation visible to search, if `wait_for` then wait
+            for a refresh to make this operation visible to search, if `false` then
+            do nothing with refreshes. Valid choices: true, false, wait_for
         """
         for param in (name, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
+
         return self.transport.perform_request(
             "PUT", _make_path("_security", "role", name), params=params, body=body
         )
@@ -365,16 +376,16 @@ class SecurityClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-put-role-mapping.html>`_
 
         :arg name: Role-mapping name
-        :arg body: The role to add
-        :arg refresh: If `true` (the default) then refresh the affected shards
-            to make this operation visible to search, if `wait_for` then wait
-            for a refresh to make this operation visible to search, if `false`
-            then do nothing with refreshes., valid choices are: 'true', 'false',
-            'wait_for'
+        :arg body: The role mapping to add
+        :arg refresh: If `true` (the default) then refresh the affected
+            shards to make this operation visible to search, if `wait_for` then wait
+            for a refresh to make this operation visible to search, if `false` then
+            do nothing with refreshes. Valid choices: true, false, wait_for
         """
         for param in (name, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
+
         return self.transport.perform_request(
             "PUT",
             _make_path("_security", "role_mapping", name),
@@ -389,15 +400,25 @@ class SecurityClient(NamespacedClient):
 
         :arg username: The username of the User
         :arg body: The user to add
-        :arg refresh: If `true` (the default) then refresh the affected shards
-            to make this operation visible to search, if `wait_for` then wait
-            for a refresh to make this operation visible to search, if `false`
-            then do nothing with refreshes., valid choices are: 'true', 'false',
-            'wait_for'
+        :arg refresh: If `true` (the default) then refresh the affected
+            shards to make this operation visible to search, if `wait_for` then wait
+            for a refresh to make this operation visible to search, if `false` then
+            do nothing with refreshes. Valid choices: true, false, wait_for
         """
         for param in (username, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
+
         return self.transport.perform_request(
             "PUT", _make_path("_security", "user", username), params=params, body=body
+        )
+
+    @query_params()
+    def get_builtin_privileges(self, params=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-builtin-privileges.html>`_
+
+        """
+        return self.transport.perform_request(
+            "GET", "/_security/privilege/_builtin", params=params
         )
