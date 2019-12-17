@@ -79,10 +79,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params(
-        "master_timeout",
-        "timeout",
-        "wait_for_active_shards",
-        "include_type_name",
+        "master_timeout", "timeout", "wait_for_active_shards", "include_type_name",
     )
     def create(self, index, body=None, params=None):
         """
@@ -104,11 +101,7 @@ class IndicesClient(NamespacedClient):
             "PUT", _make_path(index), params=params, body=body
         )
 
-    @query_params(
-        "master_timeout",
-        "timeout",
-        "wait_for_active_shards"
-    )
+    @query_params("master_timeout", "timeout", "wait_for_active_shards")
     def clone(self, index, target, body=None, params=None):
         """
         Clones an index
@@ -127,7 +120,7 @@ class IndicesClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'target'.")
 
         return self.transport.perform_request(
-            "PUT", _make_path(index, '_clone', target), params=params, body=body
+            "PUT", _make_path(index, "_clone", target), params=params, body=body
         )
 
     @query_params(
@@ -1035,9 +1028,7 @@ class IndicesClient(NamespacedClient):
             "POST", _make_path(index, "_forcemerge"), params=params
         )
 
-    @query_params(
-        "master_timeout", "timeout", "wait_for_active_shards"
-    )
+    @query_params("master_timeout", "timeout", "wait_for_active_shards")
     def shrink(self, index, target, body=None, params=None):
         """
         The shrink index API allows you to shrink an existing index into a new

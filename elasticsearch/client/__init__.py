@@ -12,8 +12,25 @@ from .nodes import NodesClient
 from .remote import RemoteClient
 from .snapshot import SnapshotClient
 from .tasks import TasksClient
-from .xpack import XPackClient, XPACK_NAMESPACES
+from .xpack import XPackClient
 from .utils import query_params, _make_path, SKIP_IN_PATH
+
+# xpack APIs
+from .ccr import CcrClient
+from .data_frame import Data_FrameClient
+from .deprecation import DeprecationClient
+from .graph import GraphClient
+from .ilm import IlmClient
+from .license import LicenseClient
+from .migration import MigrationClient
+from .ml import MlClient
+from .monitoring import MonitoringClient
+from .rollup import RollupClient
+from .security import SecurityClient
+from .sql import SqlClient
+from .ssl import SslClient
+from .watcher import WatcherClient
+
 
 logger = logging.getLogger("elasticsearch")
 
@@ -215,12 +232,22 @@ class Elasticsearch(object):
         self.snapshot = SnapshotClient(self)
         self.tasks = TasksClient(self)
 
-        # new style access to x-pack features without .xpack step
-        for namespace, NamespacedClient in XPACK_NAMESPACES.items():
-            setattr(self, namespace, NamespacedClient(self))
-
-        # old style xpack access
         self.xpack = XPackClient(self)
+        self.ccr = CcrClient(self)
+        self.data_frame = Data_FrameClient(self)
+        self.deprecation = DeprecationClient(self)
+        self.graph = GraphClient(self)
+        self.ilm = IlmClient(self)
+        self.indices = IndicesClient(self)
+        self.license = LicenseClient(self)
+        self.migration = MigrationClient(self)
+        self.ml = MlClient(self)
+        self.monitoring = MonitoringClient(self)
+        self.rollup = RollupClient(self)
+        self.security = SecurityClient(self)
+        self.sql = SqlClient(self)
+        self.ssl = SslClient(self)
+        self.watcher = WatcherClient(self)
 
     def __repr__(self):
         try:
@@ -244,6 +271,8 @@ class Elasticsearch(object):
             body += "\n"
 
         return body
+
+    # AUTO-GENERATED-API-DEFINITIONS #
 
     @query_params()
     def ping(self, params=None):
