@@ -1,3 +1,5 @@
+# Python Elasticsearch Client
+
 If you have a bugfix or new feature that you would like to contribute to
 elasticsearch-py, please find or open an issue about it first. Talk about what
 you would like to do. It may be that somebody is already working on it, or that
@@ -7,6 +9,32 @@ change.
 We enjoy working with contributors to get their code accepted. There are many
 approaches to fixing a problem and it is important to find the best approach
 before writing too much code.
+
+## API Code Generation
+
+All the API methods (any method in `elasticsearch.client` classes decorated
+with `@query_params`) are actually auto-generated from the
+[rest-api-spec](https://github.com/elastic/elasticsearch/tree/master/rest-api-spec/src/main/resources/rest-api-spec/api)
+found in the `Elasticsearch` repository. Any changes to those methods should be
+done either by submitting a PR to Elasticsearch itself (in case of adding or
+modifying any of the API methods) or to the [Generate
+Script](https://github.com/elastic/elasticsearch-py/blob/master/generate_api.py).
+
+To run the code generation make sure you have pre-requisites installed:
+
+* by running `pip install -e '.[develop]'`
+* having the [elasticsearch](https://github.com/elastic/elasticsearch) repo
+  cloned on the same level as `elasticsearch-py` and switched to appropriate
+  version
+
+Then you should be able to run the code generation by invoking:
+
+```
+python generate_api.py
+```
+
+
+## Contributing Code Changes
 
 The process for contributing to any of the Elasticsearch repositories is similar.
 

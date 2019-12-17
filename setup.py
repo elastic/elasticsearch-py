@@ -21,6 +21,9 @@ tests_require = [
     "nosexcover",
 ]
 
+docs_require = ["sphinx<1.7", "sphinx_rtd_theme"]
+generate_require = ["black", "jinja2"]
+
 # use external unittest for 2.6
 if sys.version_info[:2] == (2, 6):
     install_requires.append("unittest2")
@@ -56,7 +59,8 @@ setup(
     test_suite="test_elasticsearch.run_tests.run_all",
     tests_require=tests_require,
     extras_require={
-        "develop": tests_require + ["sphinx<1.7", "sphinx_rtd_theme"],
+        "develop": tests_require + docs_require + generate_require,
+        "docs": docs_require,
         "requests": ["requests>=2.4.0, <3.0.0"],
     },
 )
