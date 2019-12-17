@@ -96,4 +96,4 @@ class TestClient(ElasticsearchTestCase):
     def test_index_uses_put_if_id_is_not_empty(self):
         self.client.index(index="my-index", id=0, body={})
 
-        self.assert_url_called("POST", "/my-index/_doc/0")
+        self.assert_url_called("PUT", "/my-index/_doc/0")
