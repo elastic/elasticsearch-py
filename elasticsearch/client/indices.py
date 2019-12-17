@@ -2,7 +2,7 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 
 class IndicesClient(NamespacedClient):
-    @query_params("index")
+    @query_params()
     def analyze(self, body=None, index=None, params=None):
         """
         Performs the analysis process on a text and return the tokens breakdown of the
@@ -355,6 +355,9 @@ class IndicesClient(NamespacedClient):
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
+
+        if doc_type not in SKIP_IN_PATH and index in SKIP_IN_PATH:
+            index = "_all"
 
         return self.transport.perform_request(
             "PUT", _make_path(index, doc_type, "_mapping"), params=params, body=body
@@ -854,7 +857,6 @@ class IndicesClient(NamespacedClient):
         "fielddata",
         "fields",
         "ignore_unavailable",
-        "index",
         "query",
         "request",
     )

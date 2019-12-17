@@ -93,6 +93,12 @@ BASE_TEMPLATES = {
 }
 
 OVERRIDE_TEMPLATES = {
+    "cluster.stats": """
+    {% extends "base" %}
+    {% block request %}
+        return self.transport.perform_request("{{ api.method }}", "/_cluster/stats" if node_id in SKIP_IN_PATH else _make_path("_cluster", "stats", "nodes", node_id), params=params)
+    {% endblock%}
+    """,
     "__init__.ping": """
     {% extends "base" %}
     {% block request %}
@@ -138,13 +144,23 @@ OVERRIDE_TEMPLATES = {
         return self.transport.perform_request("{{ api.method }}", "/_search/scroll", params=params, body=body)
     {% endblock %}
     """,
+    "indices.put_mapping": """
+    {% extends "base" %}
+    {% block request %}
+        if doc_type not in SKIP_IN_PATH and index in SKIP_IN_PATH:
+            index = "_all"
+
+        {{ super()|trim }}
+    {% endblock %}
+    """
+
 }
 
-for op in ("get", "delete", "exists"):
+for op in ("get", "delete", "exists", "update", "create", "explain", "get_source", "termvectors"):
     OVERRIDE_TEMPLATES[f"__init__.{op}"] = """
     {% extends "base" %}
     {% block request %}
-        if doc_type is None:
+        if doc_type in SKIP_IN_PATH:
             doc_type = "_doc"
 
         {{ super()|trim }}
@@ -172,11 +188,8 @@ class Module:
 
     def add(self, api):
         self._apis.append(api)
-        if api.name in self.descriptions and not api.description:
-            api.description = self.descriptions[api.name]
 
     def parse_orig(self):
-        self.descriptions = {}
         self.orders = []
         self.header = "class C:"
         fname = CODE_ROOT / "elasticsearch" / "client" / f"{self.namespace}.py"
@@ -200,9 +213,6 @@ class Module:
                     r'\n    def ([a-z_]+)\([^\n]*\n *"""\n *([\w\W]*?)(?:`<|""")',
                     content,
                     re.MULTILINE,
-                )
-                self.descriptions = dict(
-                    map(lambda i: (i[0], i[1].strip()), defined_apis)
                 )
                 self.orders = list(map(lambda x: x[0], defined_apis))
 
@@ -289,7 +299,7 @@ class API:
 
     @property
     def query_params(self):
-        return sorted(self._def.get("params", {}).keys())
+        return (k for k in sorted(self._def.get("params", {}).keys()) if k not in self._all_parts())
 
     @property
     def path(self):
