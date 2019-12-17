@@ -102,6 +102,16 @@ OVERRIDE_TEMPLATES = {
             return False
     {% endblock %}
     """,
+    "__init__.index": """
+    {% extends "base" %}
+    {% block request %}
+        if doc_type is None:
+            doc_type = "_doc"
+
+
+        return self.transport.perform_request("POST" if id in SKIP_IN_PATH else "PUT", {% include "url" %}, params=params, body=body)
+    {% endblock %}
+    """,
     "__init__.scroll": """
     {% extends "base" %}
     {% block request %}
@@ -129,6 +139,17 @@ OVERRIDE_TEMPLATES = {
     {% endblock %}
     """,
 }
+
+for op in ("get", "delete", "exists"):
+    OVERRIDE_TEMPLATES[f"__init__.{op}"] = """
+    {% extends "base" %}
+    {% block request %}
+        if doc_type is None:
+            doc_type = "_doc"
+
+        {{ super()|trim }}
+    {% endblock %}
+    """
 
 jinja_env = Environment(
     loader=ChoiceLoader((DictLoader(OVERRIDE_TEMPLATES), DictLoader(BASE_TEMPLATES))),
