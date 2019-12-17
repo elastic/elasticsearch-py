@@ -341,6 +341,9 @@ class Elasticsearch(object):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
+        if doc_type in SKIP_IN_PATH:
+            doc_type = "_doc"
+
         return self.transport.perform_request(
             "PUT", _make_path(index, doc_type, id, "_create"), params=params, body=body
         )
@@ -410,7 +413,6 @@ class Elasticsearch(object):
         "_source",
         "_source_excludes",
         "_source_includes",
-        "doc_type",
         "pipeline",
         "refresh",
         "routing",
@@ -581,7 +583,7 @@ class Elasticsearch(object):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        if doc_type is None:
+        if doc_type in SKIP_IN_PATH:
             doc_type = "_doc"
 
         return self.transport.perform_request(
@@ -795,7 +797,7 @@ class Elasticsearch(object):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        if doc_type is None:
+        if doc_type in SKIP_IN_PATH:
             doc_type = "_doc"
 
         return self.transport.perform_request(
@@ -896,6 +898,9 @@ class Elasticsearch(object):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
+        if doc_type in SKIP_IN_PATH:
+            doc_type = "_doc"
+
         return self.transport.perform_request(
             "GET", _make_path(index, doc_type, id, "_explain"), params=params, body=body
         )
@@ -975,7 +980,7 @@ class Elasticsearch(object):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        if doc_type is None:
+        if doc_type in SKIP_IN_PATH:
             doc_type = "_doc"
 
         return self.transport.perform_request(
@@ -1038,6 +1043,9 @@ class Elasticsearch(object):
         for param in (index, id):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
+
+        if doc_type in SKIP_IN_PATH:
+            doc_type = "_doc"
 
         return self.transport.perform_request(
             "GET", _make_path(index, doc_type, id, "_source"), params=params
@@ -1236,7 +1244,7 @@ class Elasticsearch(object):
             body=body,
         )
 
-    @query_params("context", "master_timeout", "timeout")
+    @query_params("master_timeout", "timeout")
     def put_script(self, id, body, context=None, params=None):
         """
         Creates or updates a script.
@@ -1372,7 +1380,7 @@ class Elasticsearch(object):
             "GET", "/_scripts/painless/_execute", params=params, body=body
         )
 
-    @query_params("rest_total_hits_as_int", "scroll", "scroll_id")
+    @query_params("rest_total_hits_as_int", "scroll")
     def scroll(self, body=None, scroll_id=None, params=None):
         """
         Allows to retrieve a large numbers of results from a single search request.
@@ -1694,6 +1702,9 @@ class Elasticsearch(object):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
+        if doc_type in SKIP_IN_PATH:
+            doc_type = "_doc"
+
         return self.transport.perform_request(
             "GET",
             _make_path(index, doc_type, id, "_termvectors"),
@@ -1754,6 +1765,9 @@ class Elasticsearch(object):
         for param in (index, id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
+
+        if doc_type in SKIP_IN_PATH:
+            doc_type = "_doc"
 
         return self.transport.perform_request(
             "POST", _make_path(index, doc_type, id, "_update"), params=params, body=body

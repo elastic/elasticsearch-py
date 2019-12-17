@@ -213,16 +213,7 @@ class CatClient(NamespacedClient):
         return self.transport.perform_request("GET", "/_cat/nodes", params=params)
 
     @query_params(
-        "active_only",
-        "bytes",
-        "detailed",
-        "format",
-        "h",
-        "help",
-        "index",
-        "s",
-        "time",
-        "v",
+        "active_only", "bytes", "detailed", "format", "h", "help", "s", "time", "v"
     )
     def recovery(self, index=None, params=None):
         """
@@ -361,7 +352,7 @@ class CatClient(NamespacedClient):
             params=params,
         )
 
-    @query_params("bytes", "fields", "format", "h", "help", "s", "v")
+    @query_params("bytes", "format", "h", "help", "s", "v")
     def fielddata(self, fields=None, params=None):
         """
         Shows how much heap memory is currently being used by fielddata on every data

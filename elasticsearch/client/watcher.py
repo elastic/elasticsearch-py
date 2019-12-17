@@ -124,7 +124,7 @@ class WatcherClient(NamespacedClient):
         """
         return self.transport.perform_request("POST", "/_watcher/_start", params=params)
 
-    @query_params("emit_stacktraces", "metric")
+    @query_params("emit_stacktraces")
     def stats(self, metric=None, params=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-stats.html>`_

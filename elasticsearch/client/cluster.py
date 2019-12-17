@@ -1,4 +1,4 @@
-from .utils import NamespacedClient, query_params, _make_path
+from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 
 class ClusterClient(NamespacedClient):
@@ -121,7 +121,11 @@ class ClusterClient(NamespacedClient):
         :arg timeout: Explicit operation timeout
         """
         return self.transport.perform_request(
-            "GET", _make_path("_cluster", "stats", "nodes", node_id), params=params
+            "GET",
+            "/_cluster/stats"
+            if node_id in SKIP_IN_PATH
+            else _make_path("_cluster", "stats", "nodes", node_id),
+            params=params,
         )
 
     @query_params(

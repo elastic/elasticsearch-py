@@ -29,10 +29,6 @@ class MlClient(NamespacedClient):
     @query_params()
     def delete_calendar(self, calendar_id, params=None):
         """
-        :arg calendar_id: The ID of the calendar to delete          :arg calendar_id:
-        The ID of the calendar to delete          :arg calendar_id: The ID of the
-        calendar to delete          :arg calendar_id: The ID of the calendar to delete
-        :arg calendar_id: The ID of the calendar to delete
 
         :arg calendar_id: The ID of the calendar to delete
         """
@@ -48,15 +44,6 @@ class MlClient(NamespacedClient):
     @query_params()
     def delete_calendar_event(self, calendar_id, event_id, params=None):
         """
-        :arg calendar_id: The ID of the calendar to modify         :arg event_id: The
-        ID of the event to remove from the calendar          :arg calendar_id: The ID
-        of the calendar to modify         :arg event_id: The ID of the event to remove
-        from the calendar          :arg calendar_id: The ID of the calendar to modify
-        :arg event_id: The ID of the event to remove from the calendar          :arg
-        calendar_id: The ID of the calendar to modify         :arg event_id: The ID of
-        the event to remove from the calendar          :arg calendar_id: The ID of the
-        calendar to modify         :arg event_id: The ID of the event to remove from
-        the calendar
 
         :arg calendar_id: The ID of the calendar to modify
         :arg event_id: The ID of the event to remove from the calendar
@@ -74,15 +61,6 @@ class MlClient(NamespacedClient):
     @query_params()
     def delete_calendar_job(self, calendar_id, job_id, params=None):
         """
-        :arg calendar_id: The ID of the calendar to modify         :arg job_id: The ID
-        of the job to remove from the calendar          :arg calendar_id: The ID of the
-        calendar to modify         :arg job_id: The ID of the job to remove from the
-        calendar          :arg calendar_id: The ID of the calendar to modify
-        :arg job_id: The ID of the job to remove from the calendar          :arg
-        calendar_id: The ID of the calendar to modify         :arg job_id: The ID of
-        the job to remove from the calendar          :arg calendar_id: The ID of the
-        calendar to modify         :arg job_id: The ID of the job to remove from the
-        calendar
 
         :arg calendar_id: The ID of the calendar to modify
         :arg job_id: The ID of the job to remove from the calendar
@@ -126,10 +104,6 @@ class MlClient(NamespacedClient):
     @query_params()
     def delete_filter(self, filter_id, params=None):
         """
-        :arg filter_id: The ID of the filter to delete          :arg filter_id: The ID
-        of the filter to delete          :arg filter_id: The ID of the filter to delete
-        :arg filter_id: The ID of the filter to delete          :arg filter_id: The ID
-        of the filter to delete
 
         :arg filter_id: The ID of the filter to delete
         """
@@ -291,23 +265,6 @@ class MlClient(NamespacedClient):
     @query_params("duration", "expires_in")
     def forecast(self, job_id, params=None):
         """
-        :arg job_id: The ID of the job to forecast for         :arg duration: The
-        duration of the forecast         :arg expires_in: The time interval after which
-        the forecast             expires. Expired forecasts will be deleted at the
-        first opportunity.          :arg job_id: The ID of the job to forecast for
-        :arg duration: The duration of the forecast         :arg expires_in: The time
-        interval after which the forecast             expires. Expired forecasts will
-        be deleted at the first opportunity.          :arg job_id: The ID of the job to
-        forecast for         :arg duration: The duration of the forecast         :arg
-        expires_in: The time interval after which the forecast             expires.
-        Expired forecasts will be deleted at the first opportunity.          :arg
-        job_id: The ID of the job to forecast for         :arg duration: The duration
-        of the forecast         :arg expires_in: The time interval after which the
-        forecast             expires. Expired forecasts will be deleted at the first
-        opportunity.          :arg job_id: The ID of the job to forecast for
-        :arg duration: The duration of the forecast         :arg expires_in: The time
-        interval after which the forecast             expires. Expired forecasts will
-        be deleted at the first opportunity.
 
         :arg job_id: The ID of the job to forecast for
         :arg duration: The duration of the forecast
@@ -371,31 +328,6 @@ class MlClient(NamespacedClient):
     @query_params("end", "from_", "job_id", "size", "start")
     def get_calendar_events(self, calendar_id, params=None):
         """
-        :arg calendar_id: The ID of the calendar containing the events         :arg
-        end: Get events before this time         :arg from_: Skips a number of events
-        :arg job_id: Get events for the job. When this option is used
-        calendar_id must be '_all'         :arg size: Specifies a max number of events
-        to get         :arg start: Get events after this time          :arg
-        calendar_id: The ID of the calendar containing the events         :arg end: Get
-        events before this time         :arg from_: Skips a number of events
-        :arg job_id: Get events for the job. When this option is used
-        calendar_id must be '_all'         :arg size: Specifies a max number of events
-        to get         :arg start: Get events after this time          :arg
-        calendar_id: The ID of the calendar containing the events         :arg end: Get
-        events before this time         :arg from_: Skips a number of events
-        :arg job_id: Get events for the job. When this option is used
-        calendar_id must be '_all'         :arg size: Specifies a max number of events
-        to get         :arg start: Get events after this time          :arg
-        calendar_id: The ID of the calendar containing the events         :arg end: Get
-        events before this time         :arg from_: Skips a number of events
-        :arg job_id: Get events for the job. When this option is used
-        calendar_id must be '_all'         :arg size: Specifies a max number of events
-        to get         :arg start: Get events after this time          :arg
-        calendar_id: The ID of the calendar containing the events         :arg end: Get
-        events before this time         :arg from_: Skips a number of events
-        :arg job_id: Get events for the job. When this option is used
-        calendar_id must be '_all'         :arg size: Specifies a max number of events
-        to get         :arg start: Get events after this time
 
         :arg calendar_id: The ID of the calendar containing the events
         :arg end: Get events before this time
@@ -421,23 +353,6 @@ class MlClient(NamespacedClient):
     @query_params("from_", "size")
     def get_calendars(self, body=None, calendar_id=None, params=None):
         """
-        :arg body: The from and size parameters optionally sent in the             body
-        :arg calendar_id: The ID of the calendar to fetch         :arg from_: skips a
-        number of calendars         :arg size: specifies a max number of calendars to
-        get          :arg body: The from and size parameters optionally sent in the
-        body         :arg calendar_id: The ID of the calendar to fetch         :arg
-        from_: skips a number of calendars         :arg size: specifies a max number of
-        calendars to get          :arg body: The from and size parameters optionally
-        sent in the             body         :arg calendar_id: The ID of the calendar
-        to fetch         :arg from_: skips a number of calendars         :arg size:
-        specifies a max number of calendars to get          :arg body: The from and
-        size parameters optionally sent in the             body         :arg
-        calendar_id: The ID of the calendar to fetch         :arg from_: skips a number
-        of calendars         :arg size: specifies a max number of calendars to get
-        :arg body: The from and size parameters optionally sent in the             body
-        :arg calendar_id: The ID of the calendar to fetch         :arg from_: skips a
-        number of calendars         :arg size: specifies a max number of calendars to
-        get
 
         :arg body: The from and size parameters optionally sent in the
             body
@@ -512,16 +427,6 @@ class MlClient(NamespacedClient):
     @query_params("from_", "size")
     def get_filters(self, filter_id=None, params=None):
         """
-        :arg filter_id: The ID of the filter to fetch         :arg from_: skips a
-        number of filters         :arg size: specifies a max number of filters to get
-        :arg filter_id: The ID of the filter to fetch         :arg from_: skips a
-        number of filters         :arg size: specifies a max number of filters to get
-        :arg filter_id: The ID of the filter to fetch         :arg from_: skips a
-        number of filters         :arg size: specifies a max number of filters to get
-        :arg filter_id: The ID of the filter to fetch         :arg from_: skips a
-        number of filters         :arg size: specifies a max number of filters to get
-        :arg filter_id: The ID of the filter to fetch         :arg from_: skips a
-        number of filters         :arg size: specifies a max number of filters to get
 
         :arg filter_id: The ID of the filter to fetch
         :arg from_: skips a number of filters
@@ -749,13 +654,6 @@ class MlClient(NamespacedClient):
     @query_params()
     def post_calendar_events(self, calendar_id, body, params=None):
         """
-        :arg calendar_id: The ID of the calendar to modify         :arg body: A list of
-        events          :arg calendar_id: The ID of the calendar to modify         :arg
-        body: A list of events          :arg calendar_id: The ID of the calendar to
-        modify         :arg body: A list of events          :arg calendar_id: The ID of
-        the calendar to modify         :arg body: A list of events          :arg
-        calendar_id: The ID of the calendar to modify         :arg body: A list of
-        events
 
         :arg calendar_id: The ID of the calendar to modify
         :arg body: A list of events
@@ -816,13 +714,6 @@ class MlClient(NamespacedClient):
     @query_params()
     def put_calendar(self, calendar_id, body=None, params=None):
         """
-        :arg calendar_id: The ID of the calendar to create         :arg body: The
-        calendar details          :arg calendar_id: The ID of the calendar to create
-        :arg body: The calendar details          :arg calendar_id: The ID of the
-        calendar to create         :arg body: The calendar details          :arg
-        calendar_id: The ID of the calendar to create         :arg body: The calendar
-        details          :arg calendar_id: The ID of the calendar to create
-        :arg body: The calendar details
 
         :arg calendar_id: The ID of the calendar to create
         :arg body: The calendar details
@@ -839,15 +730,6 @@ class MlClient(NamespacedClient):
     @query_params()
     def put_calendar_job(self, calendar_id, job_id, params=None):
         """
-        :arg calendar_id: The ID of the calendar to modify         :arg job_id: The ID
-        of the job to add to the calendar          :arg calendar_id: The ID of the
-        calendar to modify         :arg job_id: The ID of the job to add to the
-        calendar          :arg calendar_id: The ID of the calendar to modify
-        :arg job_id: The ID of the job to add to the calendar          :arg
-        calendar_id: The ID of the calendar to modify         :arg job_id: The ID of
-        the job to add to the calendar          :arg calendar_id: The ID of the
-        calendar to modify         :arg job_id: The ID of the job to add to the
-        calendar
 
         :arg calendar_id: The ID of the calendar to modify
         :arg job_id: The ID of the job to add to the calendar
@@ -881,12 +763,6 @@ class MlClient(NamespacedClient):
     @query_params()
     def put_filter(self, filter_id, body, params=None):
         """
-        :arg filter_id: The ID of the filter to create         :arg body: The filter
-        details          :arg filter_id: The ID of the filter to create         :arg
-        body: The filter details          :arg filter_id: The ID of the filter to
-        create         :arg body: The filter details          :arg filter_id: The ID of
-        the filter to create         :arg body: The filter details          :arg
-        filter_id: The ID of the filter to create         :arg body: The filter details
 
         :arg filter_id: The ID of the filter to create
         :arg body: The filter details
@@ -1030,12 +906,6 @@ class MlClient(NamespacedClient):
     @query_params()
     def update_filter(self, filter_id, body, params=None):
         """
-        :arg filter_id: The ID of the filter to update         :arg body: The filter
-        update          :arg filter_id: The ID of the filter to update         :arg
-        body: The filter update          :arg filter_id: The ID of the filter to update
-        :arg body: The filter update          :arg filter_id: The ID of the filter to
-        update         :arg body: The filter update          :arg filter_id: The ID of
-        the filter to update         :arg body: The filter update
 
         :arg filter_id: The ID of the filter to update
         :arg body: The filter update
@@ -1100,9 +970,6 @@ class MlClient(NamespacedClient):
     @query_params()
     def validate(self, body, params=None):
         """
-        :arg body: The job config          :arg body: The job config          :arg
-        body: The job config          :arg body: The job config          :arg body: The
-        job config
 
         :arg body: The job config
         """
@@ -1116,8 +983,6 @@ class MlClient(NamespacedClient):
     @query_params()
     def validate_detector(self, body, params=None):
         """
-        :arg body: The detector          :arg body: The detector          :arg body:
-        The detector          :arg body: The detector          :arg body: The detector
 
         :arg body: The detector
         """
