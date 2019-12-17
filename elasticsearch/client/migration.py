@@ -5,7 +5,7 @@ class MigrationClient(NamespacedClient):
     @query_params()
     def deprecations(self, index=None, params=None):
         """
-        `<http://www.elastic.co/guide/en/migration/current/migration-api-deprecation.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/migration-api-deprecation.html>`_
 
         :arg index: Index pattern
         """
