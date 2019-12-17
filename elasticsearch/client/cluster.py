@@ -122,7 +122,7 @@ class ClusterClient(NamespacedClient):
         """
         url = "/_cluster/stats"
         if node_id:
-            url = _make_path("_cluster","stats","nodes", node_id)
+            url = _make_path("_cluster", "stats", "nodes", node_id)
         return self.transport.perform_request("GET", url, params=params)
 
     @query_params(
