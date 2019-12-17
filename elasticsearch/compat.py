@@ -13,4 +13,4 @@ else:
     from urllib.parse import quote, quote_plus, urlencode, urlparse, unquote
 
     map = map
-    from queue import Queue
+    from Queue import Queue
