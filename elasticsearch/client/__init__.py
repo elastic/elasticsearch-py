@@ -801,6 +801,8 @@ class Elasticsearch(object):
         :arg version: Specify whether to return document version as part of a
             hit
         """
+        if params is None:
+            params = {}
         # from is a reserved word so it cannot be used, use from_ instead
         if "from_" in params:
             params["from"] = params.pop("from_")
