@@ -1,0 +1,11 @@
+    {% if api.required_parts.1 %}
+        for param in ({{ api.required_parts|join(", ")}}):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
+
+    {% elif api.required_parts %}
+        if {{ api.required_parts.0 }} in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument '{{ api.required_parts.0 }}'.")
+
+    {% endif %}
+

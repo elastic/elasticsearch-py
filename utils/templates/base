@@ -1,0 +1,29 @@
+
+    @query_params({{ api.query_params|map("tojson")|join(", ")}})
+    def {{ api.name }}(self, {{ api.func_params|join(", ") }}):
+        """
+        {% if api.description %}
+        {{ api.description|replace("\n", " ")|wordwrap(wrapstring="\n        ") }}
+        {% endif %}
+        {% if api.doc_url %}
+        `<{{ api.doc_url }}>`_
+        {% endif %}
+        {% if api.params %}
+
+        {% for p, info in api.params %}
+        {% filter wordwrap(72, wrapstring="\n            ") %}
+        :arg {{ p }}: {{ info.description }} {% if info.options %}Valid choices: {{ info.options|join(", ") }}{% endif %} {% if info.default %}Default: {{ info.default }}{% endif %}
+        {% endfilter %}
+
+        {% endfor %}
+        {% endif %}
+        """
+        {% include "substitutions" %}
+        {% include "required" %}
+        {% if api.body.body.serialize == "bulk" %}
+        body = self._bulk_body(body)
+        {% endif %}
+        {% block request %}
+        return self.transport.perform_request("{{ api.method }}", {% include "url" %}, params=params{% if api.body.body %}, body=body{% endif %})
+        {% endblock %}
+

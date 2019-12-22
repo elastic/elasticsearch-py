@@ -279,7 +279,6 @@ class Elasticsearch(object):
         return body
 
     # AUTO-GENERATED-API-DEFINITIONS #
-
     @query_params()
     def ping(self, params=None):
         """

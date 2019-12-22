@@ -1,0 +1,1 @@
+{% if api.url_parts.0 %}_make_path({{ api.url_parts.1|join(", ")}}){% else %}{{ api.url_parts.1|tojson }}{% endif %}
