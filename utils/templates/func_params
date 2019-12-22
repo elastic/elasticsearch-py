@@ -1,0 +1,13 @@
+{% for p, info in api.all_parts.items() %}
+  {% if info.required %}{{ p }}, {% endif %}
+{% endfor %}
+
+{% if api.body.body %}
+  body{% if not api.body.body.required %}=None{% endif %},
+{% endif %}
+
+{% for p, info in api.all_parts.items() %}
+  {% if not info.required %}{{ p }}=None, {% endif %}
+{% endfor %}
+
+params=None
