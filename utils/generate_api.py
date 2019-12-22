@@ -9,7 +9,7 @@ import black
 from click.testing import CliRunner
 from pathlib import Path
 
-from jinja2 import Environment, DictLoader, ChoiceLoader, TemplateNotFound
+from jinja2 import Environment, FileSystemLoader, TemplateNotFound
 
 
 # line to look for in the original source file
@@ -40,135 +40,8 @@ XPACK_PATH = (
     / "api"
 )
 
-
-BASE_TEMPLATES = {
-    "url": """{% if api.url_parts.0 %}_make_path({{ api.url_parts.1|join(", ")}}){% else %}{{ api.url_parts.1|tojson }}{% endif %}""",
-    "required": """{% if api.required_parts.1 %}
-        for param in ({{ api.required_parts|join(", ")}}):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        {% elif api.required_parts %}
-        if {{ api.required_parts.0 }} in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument '{{ api.required_parts.0 }}'.")
-
-        {% endif %}""",
-    "substitutions": """{% for p, info in api.params %}
-        {% if p in substitutions and p not in api.url_parts.1 %}
-        # {{ substitutions[p] }} is a reserved word so it cannot be used, use {{ p }} instead
-        if "{{ p }}" in params:
-            params["{{ substitutions[p] }}"] = params.pop("{{ p }}")
-
-        {% endif %}
-        {% endfor %}""",
-    "base": '''
-    @query_params({{ api.query_params|map("tojson")|join(", ")}})
-    def {{ api.name }}(self, {{ api.func_params|join(", ") }}):
-        """
-        {% if api.description %}
-        {{ api.description|replace("\n", " ")|wordwrap(wrapstring="\n        ") }}
-        {% endif %}
-        {% if api.doc_url %}
-        `<{{ api.doc_url }}>`_
-        {% endif %}
-        {% if api.params %}
-
-        {% for p, info in api.params %}
-        {% filter wordwrap(72, wrapstring="\n            ") %}
-        :arg {{ p }}: {{ info.description }} {% if info.options %}Valid choices: {{ info.options|join(", ") }}{% endif %} {% if info.default %}Default: {{ info.default }}{% endif %}
-        {% endfilter %}
-
-        {% endfor %}
-        {% endif %}
-        """
-        {% include "substitutions" %}
-        {% include "required" %}
-        {% if api.body.body.serialize == "bulk" %}
-        body = self._bulk_body(body)
-        {% endif %}
-        {% block request %}
-        return self.transport.perform_request("{{ api.method }}", {% include "url" %}, params=params{% if api.body.body %}, body=body{% endif %})
-        {% endblock %}
-    ''',
-}
-
-OVERRIDE_TEMPLATES = {
-    "cluster.stats": """
-    {% extends "base" %}
-    {% block request %}
-        return self.transport.perform_request("{{ api.method }}", "/_cluster/stats" if node_id in SKIP_IN_PATH else _make_path("_cluster", "stats", "nodes", node_id), params=params)
-    {% endblock%}
-    """,
-    "__init__.ping": """
-    {% extends "base" %}
-    {% block request %}
-        try:
-            {{ super()|trim }}
-        except TransportError:
-            return False
-    {% endblock %}
-    """,
-    "__init__.index": """
-    {% extends "base" %}
-    {% block request %}
-        if doc_type is None:
-            doc_type = "_doc"
-
-
-        return self.transport.perform_request("POST" if id in SKIP_IN_PATH else "PUT", {% include "url" %}, params=params, body=body)
-    {% endblock %}
-    """,
-    "__init__.scroll": """
-    {% extends "base" %}
-    {% block request %}
-        if scroll_id in SKIP_IN_PATH and body in SKIP_IN_PATH:
-            raise ValueError("You need to supply scroll_id or body.")
-        elif scroll_id and not body:
-            body = {"scroll_id": scroll_id}
-        elif scroll_id:
-            params["scroll_id"] = scroll_id
-
-        return self.transport.perform_request("{{ api.method }}", "/_search/scroll", params=params, body=body)
-    {% endblock %}
-    """,
-    "__init__.clear_scroll": """
-    {% extends "base" %}
-    {% block request %}
-        if scroll_id in SKIP_IN_PATH and body in SKIP_IN_PATH:
-            raise ValueError("You need to supply scroll_id or body.")
-        elif scroll_id and not body:
-            body = {"scroll_id": [scroll_id]}
-        elif scroll_id:
-            params["scroll_id"] = scroll_id
-
-        return self.transport.perform_request("{{ api.method }}", "/_search/scroll", params=params, body=body)
-    {% endblock %}
-    """,
-    "indices.put_mapping": """
-    {% extends "base" %}
-    {% block request %}
-        if doc_type not in SKIP_IN_PATH and index in SKIP_IN_PATH:
-            index = "_all"
-
-        {{ super()|trim }}
-    {% endblock %}
-    """
-
-}
-
-for op in ("get", "delete", "exists", "update", "create", "explain", "get_source", "termvectors"):
-    OVERRIDE_TEMPLATES[f"__init__.{op}"] = """
-    {% extends "base" %}
-    {% block request %}
-        if doc_type in SKIP_IN_PATH:
-            doc_type = "_doc"
-
-        {{ super()|trim }}
-    {% endblock %}
-    """
-
 jinja_env = Environment(
-    loader=ChoiceLoader((DictLoader(OVERRIDE_TEMPLATES), DictLoader(BASE_TEMPLATES))),
+    loader=FileSystemLoader([CODE_ROOT / "utils" / "templates"]),
     trim_blocks=True,
     lstrip_blocks=True,
 )
@@ -206,7 +79,7 @@ class Module:
                     header_lines = []
                     for line in content.split("\n"):
                         header_lines.append(line)
-                        if line.startswith('class'):
+                        if line.startswith("class"):
                             break
                 self.header = "\n".join(header_lines)
                 defined_apis = re.findall(
@@ -299,7 +172,11 @@ class API:
 
     @property
     def query_params(self):
-        return (k for k in sorted(self._def.get("params", {}).keys()) if k not in self._all_parts())
+        return (
+            k
+            for k in sorted(self._def.get("params", {}).keys())
+            if k not in self._all_parts()
+        )
 
     @property
     def path(self):
@@ -353,7 +230,7 @@ class API:
 
     def to_python(self):
         try:
-            t = jinja_env.get_template(f"{self.namespace}.{self.name}")
+            t = jinja_env.get_template(f"overrides/{self.namespace}/{self.name}")
         except TemplateNotFound:
             t = jinja_env.get_template("base")
         return t.render(
