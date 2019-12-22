@@ -30,7 +30,7 @@ To run the code generation make sure you have pre-requisites installed:
 Then you should be able to run the code generation by invoking:
 
 ```
-python generate_api.py
+python utils/generate_api.py
 ```
 
 
