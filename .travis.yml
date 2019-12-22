@@ -21,7 +21,6 @@ before_install:
 
 install:
   - git clone https://github.com/elastic/elasticsearch.git ../elasticsearch
-  - pip install .[develop]
 
 script:
   - python setup.py test
