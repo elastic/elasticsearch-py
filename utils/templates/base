@@ -20,10 +20,10 @@
         """
         {% include "substitutions" %}
         {% include "required" %}
-        {% if api.body.body.serialize == "bulk" %}
+        {% if api.body.serialize == "bulk" %}
         body = self._bulk_body(body)
         {% endif %}
         {% block request %}
-        return self.transport.perform_request("{{ api.method }}", {% include "url" %}, params=params{% if api.body.body %}, body=body{% endif %})
+        return self.transport.perform_request("{{ api.method }}", {% include "url" %}, params=params{% if api.body %}, body=body{% endif %})
         {% endblock %}
 

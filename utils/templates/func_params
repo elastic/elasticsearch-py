@@ -2,8 +2,8 @@
   {% if info.required %}{{ p }}, {% endif %}
 {% endfor %}
 
-{% if api.body.body %}
-  body{% if not api.body.body.required %}=None{% endif %},
+{% if api.body %}
+  body{% if not api.body.required %}=None{% endif %},
 {% endif %}
 
 {% for p, info in api.all_parts.items() %}

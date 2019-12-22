@@ -159,7 +159,7 @@ class API:
         parts = self.all_parts
         return chain(
             ((p, parts[p]) for p in parts if parts[p]["required"]),
-            self.body.items() if self.body["body"] else (),
+            (("body", self.body), ) if self.body else (),
             ((p, parts[p]) for p in parts if not parts[p]["required"]),
             sorted(self._def.get("params", {}).items()),
         )
@@ -169,7 +169,7 @@ class API:
         b = self._def.get("body", {})
         if b:
             b.setdefault("required", False)
-        return {"body": b}
+        return b
 
     @property
     def query_params(self):
@@ -214,9 +214,10 @@ class API:
     @property
     def required_parts(self):
         parts = self.all_parts
-        return [p for p in parts if parts[p]["required"]] + [
-            b for b in self.body if self.body[b].get("required")
-        ]
+        required = [p for p in parts if parts[p]["required"]]
+        if self.body.get("required"):
+            required.append("body")
+        return required
 
     def to_python(self):
         try:
