@@ -128,7 +128,8 @@ class API:
             self.description = definition["documentation"].get("description", "")
             self.doc_url = definition["documentation"].get("url", "")
 
-    def _all_parts(self):
+    @property
+    def all_parts(self):
         parts = {}
         for url in self._def["url"]["paths"]:
             parts.update(url.get("parts", {}))
@@ -155,7 +156,7 @@ class API:
 
     @property
     def params(self):
-        parts = self._all_parts()
+        parts = self.all_parts
         return chain(
             ((p, parts[p]) for p in parts if parts[p]["required"]),
             self.body.items() if self.body["body"] else (),
@@ -175,7 +176,7 @@ class API:
         return (
             k
             for k in sorted(self._def.get("params", {}).keys())
-            if k not in self._all_parts()
+            if k not in self.all_parts
         )
 
     @property
@@ -211,19 +212,8 @@ class API:
         return dynamic, parts
 
     @property
-    def func_params(self):
-        parts = self._all_parts()
-        return chain(
-            (p for p in parts if parts[p]["required"]),
-            (b for b in self.body if self.body[b].get("required")),
-            (f"{b}=None" for b in self.body if not self.body[b].get("required", True)),
-            (f"{p}=None" for p in parts if not parts[p]["required"]),
-            ("params=None",),
-        )
-
-    @property
     def required_parts(self):
-        parts = self._all_parts()
+        parts = self.all_parts
         return [p for p in parts if parts[p]["required"]] + [
             b for b in self.body if self.body[b].get("required")
         ]
