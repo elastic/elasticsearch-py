@@ -17,7 +17,7 @@ SEPARATOR = "    # AUTO-GENERATED-API-DEFINITIONS #"
 # global substitutions for python keywords
 SUBSTITUTIONS = {"type": "doc_type", "from": "from_"}
 # api path(s)
-CODE_ROOT = Path(__file__).absolute().parent
+CODE_ROOT = Path(__file__).absolute().parent.parent
 BASE_PATH = (
     CODE_ROOT.parent
     / "elasticsearch"

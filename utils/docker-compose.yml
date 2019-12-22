@@ -10,7 +10,7 @@ services:
     environment:
       - "TEST_ES_SERVER=http://elasticsearch:9200"
     volumes:
-      - .:/code/elasticsearch-py
+      - ..:/code/elasticsearch-py
       - esvol:/tmp
     networks:
       - esnet
