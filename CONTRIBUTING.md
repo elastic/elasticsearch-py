@@ -18,7 +18,7 @@ with `@query_params`) are actually auto-generated from the
 found in the `Elasticsearch` repository. Any changes to those methods should be
 done either by submitting a PR to Elasticsearch itself (in case of adding or
 modifying any of the API methods) or to the [Generate
-Script](https://github.com/elastic/elasticsearch-py/blob/master/generate_api.py).
+Script](https://github.com/elastic/elasticsearch-py/blob/master/utils/generate_api.py).
 
 To run the code generation make sure you have pre-requisites installed:
 
