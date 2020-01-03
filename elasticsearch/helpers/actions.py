@@ -27,22 +27,26 @@ def expand_action(data):
     op_type = data.pop("_op_type", "index")
     action = {op_type: {}}
     for key in (
+        "_id",
         "_index",
         "_parent",
         "_percolate",
+        "_retry_on_conflict",
         "_routing",
         "_timestamp",
-        "routing",
         "_type",
         "_version",
         "_version_type",
-        "_id",
-        "retry_on_conflict",
+        "parent",
         "pipeline",
+        "retry_on_conflict",
+        "routing",
+        "version",
+        "version_type",
     ):
         if key in data:
-            if key == "_routing":
-                action[op_type]["routing"] = data.pop(key)
+            if key in ["_parent", "_retry_on_conflict", "_routing", "_version", "_version_type"]:
+                action[op_type][key[1:]] = data.pop(key)
             else:
                 action[op_type][key] = data.pop(key)
 
@@ -442,7 +446,9 @@ def scan(
                 yield hit
 
             # check if we have any errors
-            if (resp["_shards"]["successful"] + resp["_shards"]["skipped"]) < resp["_shards"]["total"]:
+            if (resp["_shards"]["successful"] + resp["_shards"]["skipped"]) < resp[
+                "_shards"
+            ]["total"]:
                 logger.warning(
                     "Scroll request has only succeeded on %d (+%d skipped) shards out of %d.",
                     resp["_shards"]["successful"],
@@ -453,7 +459,11 @@ def scan(
                     raise ScanError(
                         scroll_id,
                         "Scroll request has only succeeded on %d (+%d skiped) shards out of %d."
-                        % (resp["_shards"]["successful"], resp["_shards"]["skipped"], resp["_shards"]["total"]),
+                        % (
+                            resp["_shards"]["successful"],
+                            resp["_shards"]["skipped"],
+                            resp["_shards"]["total"],
+                        ),
                     )
             resp = client.scroll(
                 body={"scroll_id": scroll_id, "scroll": scroll}, **scroll_kwargs
