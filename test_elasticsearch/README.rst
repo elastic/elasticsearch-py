@@ -39,6 +39,9 @@ Alternatively, if you wish to control what you are doing you have several additi
  * you can just run your favorite runner in the ``test_elasticsearch`` directory
    (verified to work with nose and py.test) and bypass the fetch logic entirely.
 
+ * to run a specific test, you can use ``python3 setup.py test -s <test_name>``, for example
+   ``python3 setup.py test -s test_elasticsearch.test_helpers.TestParallelBulk.test_all_chunks_sent``
+
 To install all test dependencies you can also run ``pip install -e .[develop]``.
 
 Run Elasticsearch in a Container
