@@ -17,7 +17,7 @@ env:
   - TEST_ES_CONNECTION=RequestsHttpConnection
 
 before_install:
-  - docker run --rm --detach --publish 9200:9200 --env "discovery.type=single-node" -e path.repo=/tmp -e "repositories.url.allowed_urls=http://*" -e node.attr.testattr=test  -e node.name=test  --name elasticsearch docker.elastic.co/elasticsearch/elasticsearch:7.4.0
+  - docker run --rm --detach --publish 9200:9200 --env "discovery.type=single-node" -e path.repo=/tmp -e "repositories.url.allowed_urls=http://*" -e node.attr.testattr=test  -e node.name=test  --name elasticsearch docker.elastic.co/elasticsearch/elasticsearch:7.5.1
 
 install:
   - git clone https://github.com/elastic/elasticsearch.git ../elasticsearch
