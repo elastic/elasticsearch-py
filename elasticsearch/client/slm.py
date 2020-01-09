@@ -76,3 +76,27 @@ class SlmClient(NamespacedClient):
         return self.transport.perform_request(
             "PUT", _make_path("_slm", "policy", policy_id), params=params, body=body
         )
+
+    @query_params()
+    def get_status(self, params=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-get-status.html>`_
+
+        """
+        return self.transport.perform_request("GET", "/_slm/status", params=params)
+
+    @query_params()
+    def start(self, params=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-start.html>`_
+
+        """
+        return self.transport.perform_request("POST", "/_slm/start", params=params)
+
+    @query_params()
+    def stop(self, params=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-stop.html>`_
+
+        """
+        return self.transport.perform_request("POST", "/_slm/stop", params=params)
