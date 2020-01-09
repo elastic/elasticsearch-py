@@ -3,6 +3,10 @@
 Changelog
 =========
 
+7.5.0 (2020-01-09)
+------------------
+  * Update client to support ES 7.5 APIs
+
 7.1.0 (2019-11-14)
 ------------------
   * Fix sniffing with ``http.publish_host``
