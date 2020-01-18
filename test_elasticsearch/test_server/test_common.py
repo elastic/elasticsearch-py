@@ -32,19 +32,6 @@ SKIP_TESTS = {
     # upstream
     "*": set(
         (
-            "TestBulk10Basic",
-            "TestCatSnapshots10Basic",
-            "TestClusterPutSettings10Basic",
-            "TestIndex10WithId",
-            "TestClusterPutScript10Basic",
-            "TestIndicesPutMapping10Basic",
-            "TestIndicesPutTemplate10Basic",
-            "TestMsearch10Basic",
-            # Skipping some broken integration tests:
-            "TestIndicesOpen10Basic",
-            "TestClusterRemoteInfo10Info",
-            "TestIndicesSplit10Basic",
-            "TestIndicesSplit20SourceMapping",
         )
     )
 }
