@@ -88,6 +88,18 @@ def query_params(*es_query_params):
     return _wrapper
 
 
+def _bulk_body(serializer, body):
+    # if not passed in a string, serialize items and join by newline
+    if not isinstance(body, string_types):
+        body = "\n".join(map(serializer.dumps, body))
+
+    # bulk body must end with a newline
+    if not body.endswith("\n"):
+        body += "\n"
+
+    return body
+
+
 class NamespacedClient(object):
     def __init__(self, client):
         self.client = client

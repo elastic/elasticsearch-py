@@ -14,7 +14,7 @@ from .remote import RemoteClient
 from .snapshot import SnapshotClient
 from .tasks import TasksClient
 from .xpack import XPackClient
-from .utils import query_params, _make_path, SKIP_IN_PATH
+from .utils import query_params, _make_path, SKIP_IN_PATH, _bulk_body
 
 # xpack APIs
 from .ccr import CcrClient
@@ -268,17 +268,6 @@ class Elasticsearch(object):
             # probably operating on custom transport and connection_pool, ignore
             return super(Elasticsearch, self).__repr__()
 
-    def _bulk_body(self, body):
-        # if not passed in a string, serialize items and join by newline
-        if not isinstance(body, string_types):
-            body = "\n".join(map(self.transport.serializer.dumps, body))
-
-        # bulk body must end with a newline
-        if not body.endswith("\n"):
-            body += "\n"
-
-        return body
-
     # AUTO-GENERATED-API-DEFINITIONS #
     @query_params()
     def ping(self, params=None):
@@ -455,7 +444,7 @@ class Elasticsearch(object):
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        body = self._bulk_body(body)
+        body = _bulk_body(self.transport.serializer, body)
         return self.transport.perform_request(
             "POST", _make_path(index, doc_type, "_bulk"), params=params, body=body
         )
@@ -1141,7 +1130,7 @@ class Elasticsearch(object):
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        body = self._bulk_body(body)
+        body = _bulk_body(self.transport.serializer, body)
         return self.transport.perform_request(
             "GET", _make_path(index, doc_type, "_msearch"), params=params, body=body
         )
@@ -1173,7 +1162,7 @@ class Elasticsearch(object):
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        body = self._bulk_body(body)
+        body = _bulk_body(self.transport.serializer, body)
         return self.transport.perform_request(
             "GET",
             _make_path(index, doc_type, "_msearch", "template"),

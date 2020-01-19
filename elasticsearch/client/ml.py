@@ -1,4 +1,4 @@
-from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
+from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH, _bulk_body
 
 
 class MlClient(NamespacedClient):
@@ -229,7 +229,7 @@ class MlClient(NamespacedClient):
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        body = self._bulk_body(body)
+        body = _bulk_body(self.transport.serializer, body)
         return self.transport.perform_request(
             "POST", "/_ml/find_file_structure", params=params, body=body
         )
@@ -685,7 +685,7 @@ class MlClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        body = self._bulk_body(body)
+        body = _bulk_body(self.transport.serializer, body)
         return self.transport.perform_request(
             "POST",
             _make_path("_ml", "anomaly_detectors", job_id, "_data"),
