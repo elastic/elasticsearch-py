@@ -28,13 +28,30 @@ IMPLEMENTED_FEATURES = ("gtelte", "stash_in_path", "headers", "catch_unauthorize
 
 # broken YAML tests on some releases
 SKIP_TESTS = {
-    # wait for https://github.com/elastic/elasticsearch/issues/25694 to be fixed
-    # upstream
     "*": set(
         (
+            # missing skip for transform_and_set feature
+            "TestApiKey10Basic",
+            # invalid license
+            "TestLicense20PutLicense",
+            "TestXpack15Basic",
+            # timeouts
+            "TestMlSetUpgradeMode",
+            # doesn't account for security index
+            "TestSnapshot10Basic",
+            # wrong exception, also body should be marked as required
+            "TestWatcherPutWatch10Basic",
+            # weird issue with SET cmd:
+            "TestUsers10Basic",
+            "TestWatcherExecuteWatch60HttpInput",
+            "TestSecurityHidden-Index13Security-TokensRead",
+            "TestSecurityHidden-Index14Security-Tokens-7Read",
+            "TestToken10Basic",
         )
     )
 }
+
+XPACK_FEATURES = None
 
 
 class InvalidActionType(Exception):
@@ -44,6 +61,11 @@ class InvalidActionType(Exception):
 class YamlTestCase(ElasticsearchTestCase):
     def setUp(self):
         super(YamlTestCase, self).setUp()
+        if self._feature_enabled("security"):
+            self.client.security.put_user(
+                username="x_pack_rest_user",
+                body={"password": "x-pack-test-password", "roles": ["superuser"]},
+            )
         if hasattr(self, "_setup_code"):
             self.run_code(self._setup_code)
         self.last_response = None
@@ -52,7 +74,6 @@ class YamlTestCase(ElasticsearchTestCase):
     def tearDown(self):
         if hasattr(self, "_teardown_code"):
             self.run_code(self._teardown_code)
-        super(YamlTestCase, self).tearDown()
         for repo, definition in self.client.snapshot.get_repository(
             repository="_all"
         ).items():
@@ -61,6 +82,37 @@ class YamlTestCase(ElasticsearchTestCase):
                 rmtree(
                     "/tmp/%s" % definition["settings"]["location"], ignore_errors=True
                 )
+
+        # stop and remove all ML stuff
+        if self._feature_enabled("ml"):
+            self.client.ml.stop_datafeed(datafeed_id="*", force=True)
+            for feed in self.client.ml.get_datafeeds(datafeed_id="*")["datafeeds"]:
+                self.client.ml.delete_datafeed(datafeed_id=feed["datafeed_id"])
+
+            self.client.ml.close_job(job_id="*", force=True)
+            for job in self.client.ml.get_jobs(job_id="*")["jobs"]:
+                self.client.ml.delete_job(
+                    job_id=job["job_id"], wait_for_completion=True, force=True
+                )
+
+        # stop and remove all Rollup jobs
+        if self._feature_enabled("rollup"):
+            for rollup in self.client.rollup.get_jobs(id="*")["jobs"]:
+                self.client.rollup.stop_job(
+                    id=rollup["config"]["id"], wait_for_completion=True
+                )
+                self.client.rollup.delete_job(id=rollup["config"]["id"])
+
+        super(YamlTestCase, self).tearDown()
+
+    def _feature_enabled(self, name):
+        global XPACK_FEATURES
+        if XPACK_FEATURES is None:
+            xinfo = self.client.xpack.info()
+            XPACK_FEATURES = set(
+                f for f in xinfo["features"] if xinfo["features"][f]["enabled"]
+            )
+        return name in XPACK_FEATURES
 
     def _resolve(self, value):
         # resolve variables
