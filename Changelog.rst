@@ -3,8 +3,14 @@
 Changelog
 =========
 
-7.5.0 (2020-01-09)
+7.5.1 (2020-01-19)
 ------------------
+  * ``7.5.0`` tag was not released so retagging
+
+7.5.0
+-----
+  * All API is now auto generated
+  * deprecated the ``.xpack`` namespace
   * Update client to support ES 7.5 APIs
 
 7.1.0 (2019-11-14)
