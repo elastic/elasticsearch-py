@@ -27,7 +27,7 @@ Graph Explore
 `X-Pack Graph Explore <https://www.elastic.co/guide/en/elasticsearch/reference/6.2/graph-explore-api.html>`_
 enables you to extract and summarize information about the documents and terms in your Elasticsearch index.
 
-.. py:module:: elasticsearch.client.xpack.graph
+.. py:module:: elasticsearch.client.graph
 
 
 .. autoclass:: GraphClient
@@ -40,7 +40,7 @@ Licensing API
 can be used to manage your licences.
 
 
-.. py:module:: elasticsearch.client.xpack.license
+.. py:module:: elasticsearch.client.license
 
 
 .. autoclass:: LicenseClient
@@ -54,7 +54,7 @@ can be useful for discovering new patterns about your data. For a more detailed 
 about X-Pack's machine learning please refer to the official documentation.
 
 
-.. py:module:: elasticsearch.client.xpack.ml
+.. py:module:: elasticsearch.client.ml
 
 
 .. autoclass:: MlClient
@@ -66,7 +66,7 @@ Security APIs
 `Security API <https://www.elastic.co/guide/en/elasticsearch/reference/6.2/security-api.html>`_
 can be used to help secure your Elasticsearch cluster. Integrating with LDAP and Active Directory.
 
-.. py:module:: elasticsearch.client.xpack.security
+.. py:module:: elasticsearch.client.security
 
 
 .. autoclass:: SecurityClient
@@ -78,7 +78,7 @@ Watcher APIs
 `Watcher API <https://www.elastic.co/guide/en/elasticsearch/reference/6.2/watcher-api.html>`_
 can be used to notify you when certain pre-defined thresholds have happened.
 
-.. py:module:: elasticsearch.client.xpack.watcher
+.. py:module:: elasticsearch.client.watcher
 
 .. autoclass:: WatcherClient
    :members:
@@ -90,7 +90,7 @@ Migration APIs
 `Migration API <https://www.elastic.co/guide/en/elasticsearch/reference/6.2/migration-api.html>`_
 helps simplify upgrading X-Pack indices from one version to another.
 
-.. py:module:: elasticsearch.client.xpack.migration
+.. py:module:: elasticsearch.client.migration
 
 .. autoclass:: MigrationClient
    :members:
