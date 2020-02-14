@@ -26,7 +26,6 @@ in several formats. The most common one is the same  as returned by
 
     {
         '_index': 'index-name',
-        '_type': 'document',
         '_id': 42,
         '_routing': 5,
         'pipeline': 'my-ingest-pipeline',
@@ -57,13 +56,11 @@ action (``_op_type`` defaults to ``index``):
     {
         '_op_type': 'delete',
         '_index': 'index-name',
-        '_type': 'document',
         '_id': 42,
     }
     {
         '_op_type': 'update',
         '_index': 'index-name',
-        '_type': 'document',
         '_id': 42,
         'doc': {'question': 'The life, universe and everything.'}
     }
@@ -83,7 +80,6 @@ document is like ``{"word": "<myword>"}``.
         for word in mywords:
             yield {
                 "_index": "mywords",
-                "_type": "document",
                 "doc": {"word": word},
             }
 
@@ -114,7 +110,7 @@ If you don't care about the results, you can use deque from collections:
 
     When reading raw json strings from a file, you can also pass them in
     directly (without decoding to dicts first). In that case, however, you lose
-    the ability to specify anything (index, type, even id) on a per-record
+    the ability to specify anything (index, op_type and even id) on a per-record
     basis, all documents will just be sent to elasticsearch to be indexed
     as-is.
 
