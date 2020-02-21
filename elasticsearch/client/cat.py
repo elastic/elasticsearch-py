@@ -33,7 +33,7 @@ class CatClient(NamespacedClient):
 
         :arg node_id: A comma-separated list of node IDs or names to
             limit the returned information
-        :arg bytes: The unit in which to display byte values Valid
+        :arg bytes: The unit in which to display byte values  Valid
             choices: b, k, kb, m, mb, g, gb, t, tb, p, pb
         :arg format: a short version of the Accept header, e.g. json,
             yaml
@@ -84,7 +84,7 @@ class CatClient(NamespacedClient):
         :arg help: Return help information
         :arg s: Comma-separated list of column names or column aliases
             to sort by
-        :arg time: The unit in which to display time values Valid
+        :arg time: The unit in which to display time values  Valid
             choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
             (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
         :arg ts: Set to false to disable timestamping  Default: True
@@ -126,13 +126,13 @@ class CatClient(NamespacedClient):
 
         :arg index: A comma-separated list of index names to limit the
             returned information
-        :arg bytes: The unit in which to display byte values Valid
+        :arg bytes: The unit in which to display byte values  Valid
             choices: b, k, m, g
         :arg format: a short version of the Accept header, e.g. json,
             yaml
         :arg h: Comma-separated list of column names to display
         :arg health: A health status ("green", "yellow", or "red" to
-            filter only indices matching the specified health status Valid choices:
+            filter only indices matching the specified health status  Valid choices:
             green, yellow, red
         :arg help: Return help information
         :arg include_unloaded_segments: If set to true segment stats
@@ -145,7 +145,7 @@ class CatClient(NamespacedClient):
         :arg pri: Set to true to return stats only for primary shards
         :arg s: Comma-separated list of column names or column aliases
             to sort by
-        :arg time: The unit in which to display time values Valid
+        :arg time: The unit in which to display time values  Valid
             choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
             (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
         :arg v: Verbose mode. Display column headers
@@ -191,7 +191,7 @@ class CatClient(NamespacedClient):
         Returns basic statistics about performance of cluster nodes.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-nodes.html>`_
 
-        :arg bytes: The unit in which to display byte values Valid
+        :arg bytes: The unit in which to display byte values  Valid
             choices: b, k, kb, m, mb, g, gb, t, tb, p, pb
         :arg format: a short version of the Accept header, e.g. json,
             yaml
@@ -205,7 +205,7 @@ class CatClient(NamespacedClient):
             to master node
         :arg s: Comma-separated list of column names or column aliases
             to sort by
-        :arg time: The unit in which to display time values Valid
+        :arg time: The unit in which to display time values  Valid
             choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
             (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
         :arg v: Verbose mode. Display column headers
@@ -224,7 +224,7 @@ class CatClient(NamespacedClient):
             names to limit the returned information
         :arg active_only: If `true`, the response only includes ongoing
             shard recoveries
-        :arg bytes: The unit in which to display byte values Valid
+        :arg bytes: The unit in which to display byte values  Valid
             choices: b, k, kb, m, mb, g, gb, t, tb, p, pb
         :arg detailed: If `true`, the response includes detailed
             information about shard recoveries
@@ -236,7 +236,7 @@ class CatClient(NamespacedClient):
             names to limit the returned information
         :arg s: Comma-separated list of column names or column aliases
             to sort by
-        :arg time: The unit in which to display time values Valid
+        :arg time: The unit in which to display time values  Valid
             choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
             (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
         :arg v: Verbose mode. Display column headers
@@ -255,7 +255,7 @@ class CatClient(NamespacedClient):
 
         :arg index: A comma-separated list of index names to limit the
             returned information
-        :arg bytes: The unit in which to display byte values Valid
+        :arg bytes: The unit in which to display byte values  Valid
             choices: b, k, kb, m, mb, g, gb, t, tb, p, pb
         :arg format: a short version of the Accept header, e.g. json,
             yaml
@@ -267,7 +267,7 @@ class CatClient(NamespacedClient):
             to master node
         :arg s: Comma-separated list of column names or column aliases
             to sort by
-        :arg time: The unit in which to display time values Valid
+        :arg time: The unit in which to display time values  Valid
             choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
             (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
         :arg v: Verbose mode. Display column headers
@@ -284,7 +284,7 @@ class CatClient(NamespacedClient):
 
         :arg index: A comma-separated list of index names to limit the
             returned information
-        :arg bytes: The unit in which to display byte values Valid
+        :arg bytes: The unit in which to display byte values  Valid
             choices: b, k, kb, m, mb, g, gb, t, tb, p, pb
         :arg format: a short version of the Accept header, e.g. json,
             yaml
@@ -314,7 +314,7 @@ class CatClient(NamespacedClient):
             to master node
         :arg s: Comma-separated list of column names or column aliases
             to sort by
-        :arg time: The unit in which to display time values Valid
+        :arg time: The unit in which to display time values  Valid
             choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
             (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
         :arg v: Verbose mode. Display column headers
@@ -342,7 +342,7 @@ class CatClient(NamespacedClient):
             to master node
         :arg s: Comma-separated list of column names or column aliases
             to sort by
-        :arg size: The multiplier in which to display values Valid
+        :arg size: The multiplier in which to display values  Valid
             choices: , k, m, g, t, p
         :arg v: Verbose mode. Display column headers
         """
@@ -361,7 +361,7 @@ class CatClient(NamespacedClient):
 
         :arg fields: A comma-separated list of fields to return the
             fielddata size
-        :arg bytes: The unit in which to display byte values Valid
+        :arg bytes: The unit in which to display byte values  Valid
             choices: b, k, kb, m, mb, g, gb, t, tb, p, pb
         :arg fields: A comma-separated list of fields to return in the
             output
@@ -459,7 +459,7 @@ class CatClient(NamespacedClient):
             to master node
         :arg s: Comma-separated list of column names or column aliases
             to sort by
-        :arg time: The unit in which to display time values Valid
+        :arg time: The unit in which to display time values  Valid
             choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
             (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
         :arg v: Verbose mode. Display column headers
@@ -501,7 +501,7 @@ class CatClient(NamespacedClient):
             Set to -1 to return all.
         :arg s: Comma-separated list of column names or column aliases
             to sort by
-        :arg time: The unit in which to display time values Valid
+        :arg time: The unit in which to display time values  Valid
             choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
             (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
         :arg v: Verbose mode. Display column headers

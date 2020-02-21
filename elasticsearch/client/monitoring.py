@@ -19,7 +19,7 @@ class MonitoringClient(NamespacedClient):
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        body = self._bulk_body(body)
+        body = _bulk_body(self.transport.serializer, body)
         return self.transport.perform_request(
             "POST",
             _make_path("_monitoring", doc_type, "bulk"),

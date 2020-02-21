@@ -20,7 +20,7 @@ class TasksClient(NamespacedClient):
             returned. Leave empty to return all.
         :arg detailed: Return detailed task information (default: false)
         :arg group_by: Group tasks by nodes or parent/child
-            relationships Valid choices: nodes, parents, none Default: nodes
+            relationships  Valid choices: nodes, parents, none  Default: nodes
         :arg nodes: A comma-separated list of node IDs or names to limit
             the returned information; use `_local` to return information from the
             node you're connecting to, leave empty to get information from all nodes

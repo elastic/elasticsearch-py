@@ -30,7 +30,7 @@ class NodesClient(NamespacedClient):
             the node you're connecting to, leave empty to get information from all
             nodes
         :arg metric: A comma-separated list of metrics you wish
-            returned. Leave empty to return all. Valid choices: settings, os,
+            returned. Leave empty to return all.  Valid choices: settings, os,
             process, jvm, thread_pool, transport, http, plugins, ingest
         :arg flat_settings: Return settings in flat format (default:
             false)
@@ -60,11 +60,11 @@ class NodesClient(NamespacedClient):
             the node you're connecting to, leave empty to get information from all
             nodes
         :arg metric: Limit the information returned to the specified
-            metrics Valid choices: _all, breaker, fs, http, indices, jvm, os,
+            metrics  Valid choices: _all, breaker, fs, http, indices, jvm, os,
             process, thread_pool, transport, discovery
         :arg index_metric: Limit the information returned for `indices`
             metric to the specific index metrics. Isn't used if `indices` (or `all`)
-            metric isn't specified. Valid choices: _all, completion, docs,
+            metric isn't specified.  Valid choices: _all, completion, docs,
             fielddata, query_cache, flush, get, indexing, merge, request_cache,
             refresh, search, segments, store, warmer, suggest
         :arg completion_fields: A comma-separated list of fields for
@@ -79,7 +79,7 @@ class NodesClient(NamespacedClient):
             aggregated disk usage of each one of the Lucene index files (only
             applies if segment stats are requested)
         :arg level: Return indices stats aggregated at index, node or
-            shard level Valid choices: indices, node, shards Default: node
+            shard level  Valid choices: indices, node, shards  Default: node
         :arg timeout: Explicit operation timeout
         :arg types: A comma-separated list of document types for the
             `indexing` index metric
@@ -102,7 +102,7 @@ class NodesClient(NamespacedClient):
             limit the returned information; use `_local` to return information from
             the node you're connecting to, leave empty to get information from all
             nodes
-        :arg doc_type: The type to sample (default: cpu) Valid choices:
+        :arg doc_type: The type to sample (default: cpu)  Valid choices:
             cpu, wait, block
         :arg ignore_idle_threads: Don't show threads that are in known-
             idle places, such as waiting on a socket select or pulling from an empty
@@ -133,7 +133,7 @@ class NodesClient(NamespacedClient):
             the node you're connecting to, leave empty to get information from all
             nodes
         :arg metric: Limit the information returned to the specified
-            metrics Valid choices: _all, rest_actions
+            metrics  Valid choices: _all, rest_actions
         :arg timeout: Explicit operation timeout
         """
         return self.transport.perform_request(

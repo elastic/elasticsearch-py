@@ -314,11 +314,11 @@ class Elasticsearch(object):
         :arg refresh: If `true` then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then
-            do nothing with refreshes. Valid choices: true, false, wait_for
+            do nothing with refreshes.  Valid choices: true, false, wait_for
         :arg routing: Specific routing value
         :arg timeout: Explicit operation timeout
         :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type Valid choices:
+        :arg version_type: Specific version type  Valid choices:
             internal, external, external_gte
         :arg wait_for_active_shards: Sets the number of shard copies
             that must be active before proceeding with the index operation. Defaults
@@ -366,17 +366,17 @@ class Elasticsearch(object):
             number
         :arg op_type: Explicit operation type. Defaults to `index` for
             requests with an explicit document ID, and to `create`for requests
-            without an explicit document ID Valid choices: index, create
+            without an explicit document ID  Valid choices: index, create
         :arg pipeline: The pipeline id to preprocess incoming documents
             with
         :arg refresh: If `true` then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then
-            do nothing with refreshes. Valid choices: true, false, wait_for
+            do nothing with refreshes.  Valid choices: true, false, wait_for
         :arg routing: Specific routing value
         :arg timeout: Explicit operation timeout
         :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type Valid choices:
+        :arg version_type: Specific version type  Valid choices:
             internal, external, external_gte
         :arg wait_for_active_shards: Sets the number of shard copies
             that must be active before proceeding with the index operation. Defaults
@@ -432,7 +432,7 @@ class Elasticsearch(object):
         :arg refresh: If `true` then refresh the effected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then
-            do nothing with refreshes. Valid choices: true, false, wait_for
+            do nothing with refreshes.  Valid choices: true, false, wait_for
         :arg routing: Specific routing value
         :arg timeout: Explicit operation timeout
         :arg wait_for_active_shards: Sets the number of shard copies
@@ -504,12 +504,12 @@ class Elasticsearch(object):
             queries should be analyzed (default: false)
         :arg analyzer: The analyzer to use for the query string
         :arg default_operator: The default operator for query string
-            query (AND or OR) Valid choices: AND, OR Default: OR
+            query (AND or OR)  Valid choices: AND, OR  Default: OR
         :arg df: The field to use as default where no field prefix is
             given in the query string
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both. Valid choices: open,
-            closed, none, all Default: open
+            concrete indices that are open, closed or both.  Valid choices: open,
+            closed, none, all  Default: open
         :arg ignore_throttled: Whether specified concrete, expanded or
             aliased indices should be ignored when throttled
         :arg ignore_unavailable: Whether specified concrete indices
@@ -556,11 +556,11 @@ class Elasticsearch(object):
         :arg refresh: If `true` then refresh the effected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then
-            do nothing with refreshes. Valid choices: true, false, wait_for
+            do nothing with refreshes.  Valid choices: true, false, wait_for
         :arg routing: Specific routing value
         :arg timeout: Explicit operation timeout
         :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type Valid choices:
+        :arg version_type: Specific version type  Valid choices:
             internal, external, external_gte, force
         :arg wait_for_active_shards: Sets the number of shard copies
             that must be active before proceeding with the delete operation.
@@ -635,14 +635,14 @@ class Elasticsearch(object):
         :arg analyze_wildcard: Specify whether wildcard and prefix
             queries should be analyzed (default: false)
         :arg conflicts: What to do when the delete by query hits version
-            conflicts? Valid choices: abort, proceed Default: abort
+            conflicts?  Valid choices: abort, proceed  Default: abort
         :arg default_operator: The default operator for query string
-            query (AND or OR) Valid choices: AND, OR Default: OR
+            query (AND or OR)  Valid choices: AND, OR  Default: OR
         :arg df: The field to use as default where no field prefix is
             given in the query string
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both. Valid choices: open,
-            closed, none, all Default: open
+            concrete indices that are open, closed or both.  Valid choices: open,
+            closed, none, all  Default: open
         :arg from_: Starting offset (default: 0)
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
@@ -665,7 +665,7 @@ class Elasticsearch(object):
             by query
         :arg search_timeout: Explicit timeout for each search request.
             Defaults to no timeout.
-        :arg search_type: Search operation type Valid choices:
+        :arg search_type: Search operation type  Valid choices:
             query_then_fetch, dfs_query_then_fetch
         :arg size: Deprecated, please use `max_docs` instead
         :arg slices: The number of slices this task should be divided
@@ -779,7 +779,7 @@ class Elasticsearch(object):
         :arg stored_fields: A comma-separated list of stored fields to
             return in the response
         :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type Valid choices:
+        :arg version_type: Specific version type  Valid choices:
             internal, external, external_gte, force
         """
         for param in (index, id):
@@ -827,7 +827,7 @@ class Elasticsearch(object):
             performing the operation
         :arg routing: Specific routing value
         :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type Valid choices:
+        :arg version_type: Specific version type  Valid choices:
             internal, external, external_gte, force
         """
         for param in (index, id):
@@ -871,7 +871,7 @@ class Elasticsearch(object):
             queries in the query string query should be analyzed (default: false)
         :arg analyzer: The analyzer for the query string query
         :arg default_operator: The default operator for query string
-            query (AND or OR) Valid choices: AND, OR Default: OR
+            query (AND or OR)  Valid choices: AND, OR  Default: OR
         :arg df: The default field for query string query (default:
             _all)
         :arg lenient: Specify whether format-based query failures (such
@@ -913,8 +913,8 @@ class Elasticsearch(object):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both. Valid choices: open,
-            closed, none, all Default: open
+            concrete indices that are open, closed or both.  Valid choices: open,
+            closed, none, all  Default: open
         :arg fields: A comma-separated list of field names
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
@@ -962,7 +962,7 @@ class Elasticsearch(object):
         :arg stored_fields: A comma-separated list of stored fields to
             return in the response
         :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type Valid choices:
+        :arg version_type: Specific version type  Valid choices:
             internal, external, external_gte, force
         """
         for param in (index, id):
@@ -1026,7 +1026,7 @@ class Elasticsearch(object):
             performing the operation
         :arg routing: Specific routing value
         :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type Valid choices:
+        :arg version_type: Specific version type  Valid choices:
             internal, external, external_gte, force
         """
         for param in (index, id):
@@ -1121,7 +1121,7 @@ class Elasticsearch(object):
             the shard bounds and the query are disjoint.  Default: 128
         :arg rest_total_hits_as_int: Indicates whether hits.total should
             be rendered as an integer or an object in the rest search response
-        :arg search_type: Search operation type Valid choices:
+        :arg search_type: Search operation type  Valid choices:
             query_then_fetch, query_and_fetch, dfs_query_then_fetch,
             dfs_query_and_fetch
         :arg typed_keys: Specify whether aggregation and suggester names
@@ -1153,7 +1153,7 @@ class Elasticsearch(object):
             concurrent searches the multi search api will execute
         :arg rest_total_hits_as_int: Indicates whether hits.total should
             be rendered as an integer or an object in the rest search response
-        :arg search_type: Search operation type Valid choices:
+        :arg search_type: Search operation type  Valid choices:
             query_then_fetch, query_and_fetch, dfs_query_then_fetch,
             dfs_query_and_fetch
         :arg typed_keys: Specify whether aggregation and suggester names
@@ -1223,7 +1223,7 @@ class Elasticsearch(object):
             document frequency should be returned. Applies to all returned documents
             unless otherwise specified in body "params" or "docs".
         :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type Valid choices:
+        :arg version_type: Specific version type  Valid choices:
             internal, external, external_gte, force
         """
         return self.transport.perform_request(
@@ -1269,8 +1269,8 @@ class Elasticsearch(object):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both. Valid choices: open,
-            closed, none, all Default: open
+            concrete indices that are open, closed or both.  Valid choices: open,
+            closed, none, all  Default: open
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         """
@@ -1473,14 +1473,14 @@ class Elasticsearch(object):
             trips should be minimized as part of cross-cluster search requests
             execution  Default: true
         :arg default_operator: The default operator for query string
-            query (AND or OR) Valid choices: AND, OR Default: OR
+            query (AND or OR)  Valid choices: AND, OR  Default: OR
         :arg df: The field to use as default where no field prefix is
             given in the query string
         :arg docvalue_fields: A comma-separated list of fields to return
             as the docvalue representation of a field for each hit
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both. Valid choices: open,
-            closed, none, all Default: open
+            concrete indices that are open, closed or both.  Valid choices: open,
+            closed, none, all  Default: open
         :arg explain: Specify whether to return detailed information
             about score computation as part of a hit
         :arg from_: Starting offset (default: 0)
@@ -1511,7 +1511,7 @@ class Elasticsearch(object):
         :arg routing: A comma-separated list of specific routing values
         :arg scroll: Specify how long a consistent view of the index
             should be maintained for scrolled search
-        :arg search_type: Search operation type Valid choices:
+        :arg search_type: Search operation type  Valid choices:
             query_then_fetch, dfs_query_then_fetch
         :arg seq_no_primary_term: Specify whether to return sequence
             number and primary term of the last modification of each hit
@@ -1522,8 +1522,8 @@ class Elasticsearch(object):
         :arg stored_fields: A comma-separated list of stored fields to
             return as part of a hit
         :arg suggest_field: Specify which field to use for suggestions
-        :arg suggest_mode: Specify suggest mode Valid choices: missing,
-            popular, always Default: missing
+        :arg suggest_mode: Specify suggest mode  Valid choices: missing,
+            popular, always  Default: missing
         :arg suggest_size: How many suggestions to return in response
         :arg suggest_text: The source text for which the suggestions
             should be returned
@@ -1568,8 +1568,8 @@ class Elasticsearch(object):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both. Valid choices: open,
-            closed, none, all Default: open
+            concrete indices that are open, closed or both.  Valid choices: open,
+            closed, none, all  Default: open
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         :arg local: Return local information, do not retrieve the state
@@ -1610,8 +1610,8 @@ class Elasticsearch(object):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both. Valid choices: open,
-            closed, none, all Default: open
+            concrete indices that are open, closed or both.  Valid choices: open,
+            closed, none, all  Default: open
         :arg explain: Specify whether to return detailed information
             about score computation as part of a hit
         :arg ignore_throttled: Whether specified concrete, expanded or
@@ -1626,7 +1626,7 @@ class Elasticsearch(object):
         :arg routing: A comma-separated list of specific routing values
         :arg scroll: Specify how long a consistent view of the index
             should be maintained for scrolled search
-        :arg search_type: Search operation type Valid choices:
+        :arg search_type: Search operation type  Valid choices:
             query_then_fetch, query_and_fetch, dfs_query_then_fetch,
             dfs_query_and_fetch
         :arg typed_keys: Specify whether aggregation and suggester names
@@ -1685,7 +1685,7 @@ class Elasticsearch(object):
         :arg term_statistics: Specifies if total term frequency and
             document frequency should be returned.
         :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type Valid choices:
+        :arg version_type: Specific version type  Valid choices:
             internal, external, external_gte, force
         """
         if index in SKIP_IN_PATH:
@@ -1740,7 +1740,7 @@ class Elasticsearch(object):
         :arg refresh: If `true` then refresh the effected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then
-            do nothing with refreshes. Valid choices: true, false, wait_for
+            do nothing with refreshes.  Valid choices: true, false, wait_for
         :arg retry_on_conflict: Specify how many times should the
             operation be retried when a conflict occurs (default: 0)
         :arg routing: Specific routing value
@@ -1823,14 +1823,14 @@ class Elasticsearch(object):
             queries should be analyzed (default: false)
         :arg analyzer: The analyzer to use for the query string
         :arg conflicts: What to do when the update by query hits version
-            conflicts? Valid choices: abort, proceed Default: abort
+            conflicts?  Valid choices: abort, proceed  Default: abort
         :arg default_operator: The default operator for query string
-            query (AND or OR) Valid choices: AND, OR Default: OR
+            query (AND or OR)  Valid choices: AND, OR  Default: OR
         :arg df: The field to use as default where no field prefix is
             given in the query string
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both. Valid choices: open,
-            closed, none, all Default: open
+            concrete indices that are open, closed or both.  Valid choices: open,
+            closed, none, all  Default: open
         :arg from_: Starting offset (default: 0)
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
@@ -1855,7 +1855,7 @@ class Elasticsearch(object):
             by query
         :arg search_timeout: Explicit timeout for each search request.
             Defaults to no timeout.
-        :arg search_type: Search operation type Valid choices:
+        :arg search_type: Search operation type  Valid choices:
             query_then_fetch, dfs_query_then_fetch
         :arg size: Deprecated, please use `max_docs` instead
         :arg slices: The number of slices this task should be divided

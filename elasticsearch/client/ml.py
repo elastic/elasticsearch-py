@@ -203,7 +203,7 @@ class MlClient(NamespacedClient):
         :arg explain: Whether to include a commentary on how the
             structure was derived
         :arg format: Optional parameter to specify the high level file
-            format Valid choices: ndjson, xml, delimited, semi_structured_text
+            format  Valid choices: ndjson, xml, delimited, semi_structured_text
         :arg grok_pattern: Optional parameter to specify the Grok
             pattern that should be used to extract fields from messages in a semi-
             structured text file
