@@ -12,7 +12,7 @@
 
         {% for p, info in api.params %}
         {% filter wordwrap(72, wrapstring="\n            ") %}
-        :arg {{ p }}: {{ info.description }} {% if info.options %}Valid choices: {{ info.options|join(", ") }}{% endif %} {% if info.default %}Default: {{ info.default }}{% endif %}
+        :arg {{ p }}: {{ info.description }} {% if info.options %}  Valid choices: {{ info.options|join(", ") }}{% endif %} {% if info.default %}  Default: {{ info.default }}{% endif %}
         {% endfilter %}
 
         {% endfor %}
@@ -21,7 +21,7 @@
         {% include "substitutions" %}
         {% include "required" %}
         {% if api.body.serialize == "bulk" %}
-        body = self._bulk_body(body)
+        body = _bulk_body(self.transport.serializer, body)
         {% endif %}
         {% block request %}
         return self.transport.perform_request("{{ api.method }}", {% include "url" %}, params=params{% if api.body %}, body=body{% endif %})
