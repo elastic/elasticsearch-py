@@ -7,7 +7,6 @@ include README.rst
 include README
 include tox.ini
 include setup.py
-include elasticsearch/connection/esthrift/Rest-remote
 recursive-include docs *
 
 prune docs/_build

@@ -17,7 +17,7 @@ tests_require = [
     "nose",
     "coverage",
     "mock",
-    "pyaml",
+    "pyyaml",
     "nosexcover",
 ]
 
@@ -27,13 +27,16 @@ if sys.version_info[:2] == (2, 6):
 
 setup(
     name="elasticsearch6",
-    description="Python client for Elasticsearch 6.x",
-    license="Apache License, Version 2.0",
+    description="Python client for Elasticsearch",
+    license="Apache-2.0",
     url="https://github.com/elastic/elasticsearch-py",
     long_description=long_description,
+    long_description_content_type="text/x-rst",
     version=__versionstr__,
     author="Honza Král, Nick Lang",
     author_email="honza.kral@gmail.com, nick@nicklang.com",
+    maintainer="Seth Michael Larson",
+    maintainer_email="seth.larson@elastic.co",
     packages=find_packages(where=".", exclude=("test_elasticsearch*",)),
     classifiers=[
         "Development Status :: 5 - Production/Stable",
@@ -53,6 +56,7 @@ setup(
         "Programming Language :: Python :: Implementation :: CPython",
         "Programming Language :: Python :: Implementation :: PyPy",
     ],
+    python_requires=">=2.6, !=3.0.*, !=3.1.*, !=3.2.*, <4",
     install_requires=install_requires,
     test_suite="test_elasticsearch.run_tests.run_all",
     tests_require=tests_require,
