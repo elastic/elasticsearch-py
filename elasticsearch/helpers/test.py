@@ -14,13 +14,13 @@ from elasticsearch.exceptions import ConnectionError
 def get_test_client(nowait=False, **kwargs):
     # construct kwargs from the environment
     kw = {"timeout": 30}
-    if "TEST_ES_CONNECTION" in os.environ:
-        from elasticsearch import connection
 
-        kw["connection_class"] = getattr(connection, os.environ["TEST_ES_CONNECTION"])
+    if "PYTHON_CONNECTION_CLASS" in os.environ:
+        from elasticsearch import connection
+        kw["connection_class"] = getattr(connection, os.environ["PYTHON_CONNECTION_CLASS"])
 
     kw.update(kwargs)
-    client = Elasticsearch([os.environ.get("TEST_ES_SERVER", {})], **kw)
+    client = Elasticsearch([os.environ.get("ELASTICSEARCH_HOST", {})], **kw)
 
     # wait for yellow status
     for _ in range(1 if nowait else 100):

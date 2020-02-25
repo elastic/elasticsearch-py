@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+if [[ -z $ELASTICSEARCH_VERSION ]]; then
+  echo -e "\033[31;1mERROR:\033[0m Required environment variable [ELASTICSEARCH_VERSION] not set\033[0m"
+  exit 1
+fi
+set -euxo pipefail
+
+
+PYTHON_VERSION=${PYTHON_VERSION-3.8}
+PYTHON_CONNECTION_CLASS=${PYTHON_CONNECTION_CLASS-Urllib3HttpConnection}
+TEST_SUITE=${TEST_SUITE-oss}
+NODE_NAME=instance
+
+elasticsearch_image=elasticsearch
+elasticsearch_url=https://elastic:changeme@${NODE_NAME}:9200
+if [[ $TEST_SUITE != "xpack" ]]; then
+  elasticsearch_image=elasticsearch-${TEST_SUITE}
+  elasticsearch_url=http://${NODE_NAME}:9200
+fi
+
+function cleanup {
+  status=$?
+  set +x
+  ELASTICSEARCH_VERSION=${elasticsearch_image}:${ELASTICSEARCH_VERSION} \
+    NODE_NAME=${NODE_NAME} \
+    NETWORK_NAME=elasticsearch \
+    CLEANUP=true \
+    bash ./.ci/run-elasticsearch.sh
+  # Report status and exit
+  if [[ "$status" == "0" ]]; then
+    echo -e "\n\033[32;1mSUCCESS run-tests\033[0m"
+    exit 0
+  else
+    echo -e "\n\033[31;1mFAILURE during run-tests\033[0m"
+    exit ${status}
+  fi
+}
+trap cleanup EXIT
+
+echo -e "\033[1m>>>>> Start [$ELASTICSEARCH_VERSION container] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>\033[0m"
+
+ELASTICSEARCH_VERSION=${elasticsearch_image}:${ELASTICSEARCH_VERSION} \
+  NODE_NAME=${NODE_NAME} \
+  NETWORK_NAME=elasticsearch \
+  DETACH=true \
+  bash .ci/run-elasticsearch.sh
+
+echo -e "\033[1m>>>>> Repository specific tests >>>>>>>>>>>>>>>>>>>>>>>>>>>>>\033[0m"
+
+ELASTICSEARCH_CONTAINER=${elasticsearch_image}:${ELASTICSEARCH_VERSION} \
+  NETWORK_NAME=elasticsearch \
+  NODE_NAME=${NODE_NAME} \
+  ELASTICSEARCH_URL=${elasticsearch_url} \
+  PYTHON_VERSION=${PYTHON_VERSION} \
+  PYTHON_CONNECTION_CLASS=${PYTHON_CONNECTION_CLASS} \
+  TEST_SUITE=${TEST_SUITE} \
+  bash .ci/run-repository.sh

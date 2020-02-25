@@ -9,7 +9,7 @@ from os.path import exists, join, dirname, pardir
 import yaml
 from shutil import rmtree
 
-from elasticsearch import TransportError
+from elasticsearch import TransportError, RequestError
 from elasticsearch.compat import string_types
 from elasticsearch.helpers.test import _get_version
 
@@ -108,10 +108,20 @@ class YamlTestCase(ElasticsearchTestCase):
     def _feature_enabled(self, name):
         global XPACK_FEATURES
         if XPACK_FEATURES is None:
-            xinfo = self.client.xpack.info()
-            XPACK_FEATURES = set(
-                f for f in xinfo["features"] if xinfo["features"][f]["enabled"]
-            )
+            try:
+                xinfo = self.client.xpack.info()
+                XPACK_FEATURES = set(
+                    f for f in xinfo["features"] if xinfo["features"][f]["enabled"]
+                )
+            except RequestError as e:
+                # We receive a 'RequestError' here when using 'oss' because the request
+                # for xpack.info() looks like this: 'GET /_xpack' which errors on the
+                # oss container due to having a similar route to 'GET /<index>'.
+                if "invalid_index_name_exception" not in str(e):
+                    raise
+
+                XPACK_FEATURES = set()
+
         return name in XPACK_FEATURES
 
     def _resolve(self, value):
