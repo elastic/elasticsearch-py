@@ -2,22 +2,12 @@ try:
     import simplejson as json
 except ImportError:
     import json
-import sys
 import uuid
 from datetime import date, datetime
 from decimal import Decimal
 
 from .exceptions import SerializationError, ImproperlyConfigured
 from .compat import string_types
-
-
-class _PrettyJSONDict(dict):
-    """A simple class that only modifies the stdlib dict repr
-    to print out as JSON. Used when we detect the user is
-    in a REPL.
-    """
-    def __repr__(self):
-        return json.dumps(self, indent=2)
 
 
 class TextSerializer(object):
@@ -36,9 +26,6 @@ class TextSerializer(object):
 class JSONSerializer(object):
     mimetype = "application/json"
 
-    def __init__(self):
-        self._is_repl = bool(getattr(sys, 'ps1', sys.flags.interactive))
-
     def default(self, data):
         if isinstance(data, (date, datetime)):
             return data.isoformat()
@@ -50,10 +37,7 @@ class JSONSerializer(object):
 
     def loads(self, s):
         try:
-            obj = json.loads(s)
-            if self._is_repl:
-                return _PrettyJSONDict(obj)
-            return obj
+            return json.loads(s)
         except (ValueError, TypeError) as e:
             raise SerializationError(s, e)
 

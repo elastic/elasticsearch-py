@@ -117,7 +117,7 @@ class YamlTestCase(ElasticsearchTestCase):
                 # We receive a 'RequestError' here when using 'oss' because the request
                 # for xpack.info() looks like this: 'GET /_xpack' which errors on the
                 # oss container due to having a similar route to 'GET /<index>'.
-                if "invalid_index_name_exception" not in str(e):
+                if "invalid_index_name_exception" not in e.error:
                     raise
 
                 XPACK_FEATURES = set()
