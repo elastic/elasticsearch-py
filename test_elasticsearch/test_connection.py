@@ -143,6 +143,34 @@ class TestUrllib3Connection(TestCase):
         con = Urllib3HttpConnection()
         self.assertIsInstance(con.pool, urllib3.HTTPConnectionPool)
 
+    def test_no_warning_when_using_ssl_context(self):
+        ctx = ssl.create_default_context()
+        with warnings.catch_warnings(record=True) as w:
+            Urllib3HttpConnection(ssl_context=ctx)
+            self.assertEquals(0, len(w))
+
+    def test_warns_if_using_non_default_ssl_kwargs_with_ssl_context(self):
+        for kwargs in (
+            {"ssl_show_warn": False},
+            {"ssl_show_warn": True},
+            {"verify_certs": True},
+            {"verify_certs": False},
+            {"ca_certs": "/path/to/certs"},
+            {"ssl_show_warn": True, "ca_certs": "/path/to/certs"},
+        ):
+            kwargs["ssl_context"] = ssl.create_default_context()
+
+            with warnings.catch_warnings(record=True) as w:
+                warnings.simplefilter("always")
+
+                Urllib3HttpConnection(**kwargs)
+
+                self.assertEquals(1, len(w))
+                self.assertEquals(
+                    "When using `ssl_context`, all other SSL related kwargs are ignored",
+                    str(w[0].message),
+                )
+
 
 class TestRequestsConnection(TestCase):
     def _get_mock_connection(
