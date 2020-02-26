@@ -3,6 +3,7 @@ FROM python:${PYTHON_VERSION}
 
 WORKDIR /code/elasticsearch-py
 
-COPY . .
+COPY dev-requirements.txt .
+RUN python -m pip install -r dev-requirements.txt
 
-RUN python -m pip install .[requests]
+COPY . .
