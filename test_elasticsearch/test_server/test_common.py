@@ -246,9 +246,7 @@ class YamlTestCase(ElasticsearchTestCase):
                 elif feature == "benchmark":
                     if self._get_benchmark_nodes():
                         continue
-                raise SkipTest(
-                    skip.get("reason", "Feature %s is not supported" % feature)
-                )
+                raise SkipTest("Feature %s is not supported" % feature)
 
         if "version" in skip:
             version, reason = skip["version"], skip["reason"]

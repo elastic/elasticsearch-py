@@ -11,12 +11,12 @@ version that was used to build the server we are running against.
 Running the tests
 -----------------
 
-To simply run the tests just execute the ``run_tests.py`` script or invoke
-``python setup.py test``. The behavior is driven by environmental variables:
+To simply run the tests just execute ``python setup.py test``.
+The behavior is driven by environmental variables:
 
  * ``TEST_ES_SERVER`` - can contain "hostname[:port]" of running es cluster
 
- * ``TEST_ES_CONNECTION`` - name of the connection class to use from
+ * ``PYTHON_CLASS_CONNECTION`` - name of the connection class to use from
     ``elasticsearch.connection`` module. If you want to run completely with your
     own see section on customizing tests.
 
@@ -34,8 +34,6 @@ To simply run the tests just execute the ``run_tests.py`` script or invoke
 
 Alternatively, if you wish to control what you are doing you have several additional options:
 
- * ``run_tests.py`` will pass any parameters specified to ``nosetests``
-
  * you can just run your favorite runner in the ``test_elasticsearch`` directory
    (verified to work with nose and py.test) and bypass the fetch logic entirely.
 
@@ -47,13 +45,16 @@ To install all test dependencies you can also run ``pip install -e .[develop]``.
 Run Elasticsearch in a Container
 --------------------------------
 
-To run elasticsearch in a container, optionally set the ``ES_VERSION``
-environment evariable to either 5.4, 5.3 or 2.4. ``ES_VERSION`` is defaulted to
-``latest``.  Then run ./start_elasticsearch.sh::
+To run elasticsearch in a container  set the ``ELASTICSEARCH_VERSION``
+environment variable to 7.5, 7.5-SNAPSHOT. Then run ./.ci/run_elasticsearch.sh::
 
-    export ES_VERSION=5.4
-    ./start_elasticsearch.sh
+    # Run OSS Elasticsearch v7.5
+    export ELASTICSEARCH_VERSION=elasticsearch-oss:7.5-SNAPSHOT
+    ./.ci/run_elasticsearch.sh
 
+    # Run XPACK Elasticsearch v7.5
+    export ELASTICSEARCH_VERSION=elasticsearch:7.5-SNAPSHOT
+    ./.ci/run_elasticsearch.sh
 
 This will run a version for Elasticsearch in a Docker container suitable for
 running the tests. To check that elasticsearch is running first wait for a
