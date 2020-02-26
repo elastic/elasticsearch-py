@@ -7,10 +7,11 @@ import warnings
 import gzip
 from base64 import decodestring
 
-# sentinal value for `verify_certs`.
-# This is used to detect if a user is passing in a value for `verify_certs`
-# so we can raise a warning if using SSL kwargs AND SSLContext.
-VERIFY_CERTS_DEFAULT = None
+# sentinel value for `verify_certs` and `ssl_show_warn`.
+# This is used to detect if a user is passing in a value
+# for SSL kwargs if also using an SSLContext.
+VERIFY_CERTS_DEFAULT = object()
+SSL_SHOW_WARN_DEFAULT = object()
 
 CA_CERTS = None
 
@@ -85,7 +86,7 @@ class Urllib3HttpConnection(Connection):
         http_auth=None,
         use_ssl=False,
         verify_certs=VERIFY_CERTS_DEFAULT,
-        ssl_show_warn=True,
+        ssl_show_warn=SSL_SHOW_WARN_DEFAULT,
         ca_certs=None,
         client_cert=None,
         client_key=None,
@@ -138,11 +139,11 @@ class Urllib3HttpConnection(Connection):
         # if providing an SSL context, raise error if any other SSL related flag is used
         if ssl_context and (
             (verify_certs is not VERIFY_CERTS_DEFAULT)
+            or (ssl_show_warn is not SSL_SHOW_WARN_DEFAULT)
             or ca_certs
             or client_cert
             or client_key
             or ssl_version
-            or ssl_show_warn
         ):
             warnings.warn(
                 "When using `ssl_context`, all other SSL related kwargs are ignored"
@@ -168,9 +169,12 @@ class Urllib3HttpConnection(Connection):
                 }
             )
 
-            # If `verify_certs` is sentinal value, default `verify_certs` to `True`
+            # Convert all sentinel values to their actual default
+            # values if not using an SSLContext.
             if verify_certs is VERIFY_CERTS_DEFAULT:
                 verify_certs = True
+            if ssl_show_warn is SSL_SHOW_WARN_DEFAULT:
+                ssl_show_warn = True
 
             ca_certs = CA_CERTS if ca_certs is None else ca_certs
             if verify_certs:
