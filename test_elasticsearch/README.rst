@@ -14,7 +14,7 @@ Running the tests
 To simply run the tests just execute ``python setup.py test``.
 The behavior is driven by environmental variables:
 
- * ``TEST_ES_SERVER`` - can contain "hostname[:port]" of running es cluster
+ * ``ELASTICSEARCH_HOST`` - can contain "hostname[:port]" of running es cluster
 
  * ``PYTHON_CLASS_CONNECTION`` - name of the connection class to use from
     ``elasticsearch.connection`` module. If you want to run completely with your
