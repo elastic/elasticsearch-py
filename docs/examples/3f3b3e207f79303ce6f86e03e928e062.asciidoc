@@ -1,0 +1,9 @@
+// getting-started.asciidoc:290
+
+[source, python]
+----
+client.get(
+    index="customer",
+    id="1",
+)
+----
