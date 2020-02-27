@@ -13,7 +13,7 @@ from elasticsearch.exceptions import ConnectionError
 
 def get_test_client(nowait=False, **kwargs):
     # construct kwargs from the environment
-    kw = {"timeout": 30}
+    kw = {"timeout": 30, "ca_certs": ".ci/certs/ca.pem"}
 
     if "PYTHON_CONNECTION_CLASS" in os.environ:
         from elasticsearch import connection
@@ -55,6 +55,7 @@ class ElasticsearchTestCase(TestCase):
         super(ElasticsearchTestCase, self).tearDown()
         self.client.indices.delete(index="*", ignore=404)
         self.client.indices.delete_template(name="*", ignore=404)
+        self.client.indices.delete_alias(index="*", name="*", ignore=404)
 
     @property
     def es_version(self):

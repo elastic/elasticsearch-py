@@ -24,32 +24,10 @@ PARAMS_RENAMES = {"type": "doc_type", "from": "from_"}
 CATCH_CODES = {"missing": 404, "conflict": 409, "unauthorized": 401}
 
 # test features we have implemented
-IMPLEMENTED_FEATURES = ("gtelte", "stash_in_path", "headers", "catch_unauthorized")
+IMPLEMENTED_FEATURES = {"gtelte", "stash_in_path", "headers", "catch_unauthorized", "default_shards"}
 
 # broken YAML tests on some releases
-SKIP_TESTS = {
-    "*": set(
-        (
-            # missing skip for transform_and_set feature
-            "TestApiKey10Basic",
-            # invalid license
-            "TestLicense20PutLicense",
-            "TestXpack15Basic",
-            # timeouts
-            "TestMlSetUpgradeMode",
-            # doesn't account for security index
-            "TestSnapshot10Basic",
-            # wrong exception, also body should be marked as required
-            "TestWatcherPutWatch10Basic",
-            # weird issue with SET cmd:
-            "TestUsers10Basic",
-            "TestWatcherExecuteWatch60HttpInput",
-            "TestSecurityHidden-Index13Security-TokensRead",
-            "TestSecurityHidden-Index14Security-Tokens-7Read",
-            "TestToken10Basic",
-        )
-    )
-}
+SKIP_TESTS = {"*": set()}
 
 XPACK_FEATURES = None
 
@@ -61,11 +39,6 @@ class InvalidActionType(Exception):
 class YamlTestCase(ElasticsearchTestCase):
     def setUp(self):
         super(YamlTestCase, self).setUp()
-        if self._feature_enabled("security"):
-            self.client.security.put_user(
-                username="x_pack_rest_user",
-                body={"password": "x-pack-test-password", "roles": ["superuser"]},
-            )
         if hasattr(self, "_setup_code"):
             self.run_code(self._setup_code)
         self.last_response = None
@@ -106,13 +79,15 @@ class YamlTestCase(ElasticsearchTestCase):
         super(YamlTestCase, self).tearDown()
 
     def _feature_enabled(self, name):
-        global XPACK_FEATURES
+        global XPACK_FEATURES, IMPLEMENTED_FEATURES
+
         if XPACK_FEATURES is None:
             try:
                 xinfo = self.client.xpack.info()
                 XPACK_FEATURES = set(
                     f for f in xinfo["features"] if xinfo["features"][f]["enabled"]
                 )
+                IMPLEMENTED_FEATURES.add("xpack")
             except RequestError as e:
                 # We receive a 'RequestError' here when using 'oss' because the request
                 # for xpack.info() looks like this: 'GET /_xpack' which errors on the
@@ -121,6 +96,7 @@ class YamlTestCase(ElasticsearchTestCase):
                     raise
 
                 XPACK_FEATURES = set()
+                IMPLEMENTED_FEATURES.add("no_xpack")
 
         return name in XPACK_FEATURES
 
