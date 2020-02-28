@@ -1,11 +1,6 @@
 import time
 import os
-
-try:
-    # python 2.6
-    from unittest2 import TestCase, SkipTest
-except ImportError:
-    from unittest import TestCase, SkipTest
+from unittest import TestCase, SkipTest
 
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import ConnectionError
@@ -55,7 +50,7 @@ class ElasticsearchTestCase(TestCase):
         super(ElasticsearchTestCase, self).tearDown()
         self.client.indices.delete(index="*", ignore=404)
         self.client.indices.delete_template(name="*", ignore=404)
-        self.client.indices.delete_alias(index="*", name="*", ignore=404)
+        self.client.indices.delete_alias(index="_all", name="_all", ignore=404)
 
     @property
     def es_version(self):
