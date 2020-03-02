@@ -311,12 +311,12 @@ class TestScan(ElasticsearchTestCase):
     mock_scroll_responses = [
         {
             "_scroll_id": "dummy_id",
-            "_shards": {"successful": 4, "total": 5},
+            "_shards": {"successful": 4, "total": 5, "skipped": 0},
             "hits": {"hits": [{"scroll_data": 42}]},
         },
         {
             "_scroll_id": "dummy_id",
-            "_shards": {"successful": 4, "total": 5},
+            "_shards": {"successful": 4, "total": 5, "skipped": 0},
             "hits": {"hits": []},
         },
     ]
@@ -398,7 +398,7 @@ class TestScan(ElasticsearchTestCase):
         with patch.object(self, "client") as client_mock:
             client_mock.search.return_value = {
                 "_scroll_id": "dummy_id",
-                "_shards": {"successful": 4, "total": 5},
+                "_shards": {"successful": 4, "total": 5, "skipped": 0},
                 "hits": {"hits": [{"search_data": 1}]},
             }
             client_mock.scroll.side_effect = self.mock_scroll_responses

@@ -46,7 +46,7 @@ def _make_path(*parts):
     # TODO: maybe only allow some parts to be lists/tuples ?
     return "/" + "/".join(
         # preserve ',' and '*' in url for nicer URLs in logs
-        quote_plus(_escape(p), b",*")
+        quote(_escape(p), b",*")
         for p in parts
         if p not in SKIP_IN_PATH
     )
@@ -83,6 +83,18 @@ def query_params(*es_query_params):
         return _wrapped
 
     return _wrapper
+
+
+def _bulk_body(serializer, body):
+    # if not passed in a string, serialize items and join by newline
+    if not isinstance(body, string_types):
+        body = "\n".join(map(serializer.dumps, body))
+
+    # bulk body must end with a newline
+    if not body.endswith("\n"):
+        body += "\n"
+
+    return body
 
 
 class NamespacedClient(object):

@@ -1,7 +1,5 @@
-from elasticsearch.helpers.test import (
-    get_test_client,
-    ElasticsearchTestCase as BaseTestCase,
-)
+from elasticsearch.helpers import test
+from elasticsearch.helpers.test import ElasticsearchTestCase as BaseTestCase
 
 client = None
 
@@ -18,7 +16,7 @@ def get_client(**kwargs):
         new_client = local_get_client(**kwargs)
     except ImportError:
         # fallback to using vanilla client
-        new_client = get_test_client(**kwargs)
+        new_client = test.get_test_client(**kwargs)
 
     if not kwargs:
         client = new_client

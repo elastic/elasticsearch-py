@@ -1,0 +1,9 @@
+{% extends "base" %}
+{% block request %}
+        if doc_type is None:
+            doc_type = "_doc"
+
+
+        return self.transport.perform_request("POST" if id in SKIP_IN_PATH else "PUT", {% include "url" %}, params=params, body=body)
+{% endblock %}
+

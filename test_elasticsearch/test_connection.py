@@ -44,6 +44,21 @@ class TestUrllib3Connection(TestCase):
             con.host, "https://0fd50f62320ed6539f6cb48e1b68.example.cloud.com:9243"
         )
 
+    def test_api_key_auth(self):
+        # test with tuple
+        con = Urllib3HttpConnection(
+            cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
+            api_key=("elastic", "changeme1"),
+        )
+        self.assertEquals(con.headers["authorization"], "ApiKey ZWxhc3RpYzpjaGFuZ2VtZTE=")
+
+        # test with base64 encoded string
+        con = Urllib3HttpConnection(
+            cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
+            api_key="ZWxhc3RpYzpjaGFuZ2VtZTI=",
+        )
+        self.assertEquals(con.headers["authorization"], "ApiKey ZWxhc3RpYzpjaGFuZ2VtZTI=")
+
     def test_http_compression(self):
         con = Urllib3HttpConnection(http_compress=True)
         self.assertTrue(con.http_compress)
@@ -128,6 +143,34 @@ class TestUrllib3Connection(TestCase):
         con = Urllib3HttpConnection()
         self.assertIsInstance(con.pool, urllib3.HTTPConnectionPool)
 
+    def test_no_warning_when_using_ssl_context(self):
+        ctx = ssl.create_default_context()
+        with warnings.catch_warnings(record=True) as w:
+            Urllib3HttpConnection(ssl_context=ctx)
+            self.assertEquals(0, len(w))
+
+    def test_warns_if_using_non_default_ssl_kwargs_with_ssl_context(self):
+        for kwargs in (
+            {"ssl_show_warn": False},
+            {"ssl_show_warn": True},
+            {"verify_certs": True},
+            {"verify_certs": False},
+            {"ca_certs": "/path/to/certs"},
+            {"ssl_show_warn": True, "ca_certs": "/path/to/certs"},
+        ):
+            kwargs["ssl_context"] = ssl.create_default_context()
+
+            with warnings.catch_warnings(record=True) as w:
+                warnings.simplefilter("always")
+
+                Urllib3HttpConnection(**kwargs)
+
+                self.assertEquals(1, len(w))
+                self.assertEquals(
+                    "When using `ssl_context`, all other SSL related kwargs are ignored",
+                    str(w[0].message),
+                )
+
 
 class TestRequestsConnection(TestCase):
     def _get_mock_connection(
@@ -180,6 +223,21 @@ class TestRequestsConnection(TestCase):
         self.assertEquals(
             con.host, "https://0fd50f62320ed6539f6cb48e1b68.example.cloud.com:9243"
         )
+
+    def test_api_key_auth(self):
+        # test with tuple
+        con = RequestsHttpConnection(
+            cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
+            api_key=("elastic", "changeme1"),
+        )
+        self.assertEquals(con.session.headers["authorization"], "ApiKey ZWxhc3RpYzpjaGFuZ2VtZTE=")
+
+        # test with base64 encoded string
+        con = RequestsHttpConnection(
+            cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
+            api_key="ZWxhc3RpYzpjaGFuZ2VtZTI=",
+        )
+        self.assertEquals(con.session.headers["authorization"], "ApiKey ZWxhc3RpYzpjaGFuZ2VtZTI=")
 
     def test_uses_https_if_verify_certs_is_off(self):
         with warnings.catch_warnings(record=True) as w:

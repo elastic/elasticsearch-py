@@ -1,0 +1,8 @@
+// getting-started.asciidoc:495
+
+[source, python]
+----
+client.search(
+    index="bank", body={"query": {"match_phrase": {"address": "mill lane"}}},
+)
+----

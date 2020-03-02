@@ -7,10 +7,11 @@ import warnings
 import gzip
 from base64 import decodestring
 
-# sentinal value for `verify_certs`.
-# This is used to detect if a user is passing in a value for `verify_certs`
-# so we can raise a warning if using SSL kwargs AND SSLContext.
-VERIFY_CERTS_DEFAULT = None
+# sentinel value for `verify_certs` and `ssl_show_warn`.
+# This is used to detect if a user is passing in a value
+# for SSL kwargs if also using an SSLContext.
+VERIFY_CERTS_DEFAULT = object()
+SSL_SHOW_WARN_DEFAULT = object()
 
 CA_CERTS = None
 
@@ -74,6 +75,7 @@ class Urllib3HttpConnection(Connection):
     :arg headers: any custom http headers to be add to requests
     :arg http_compress: Use gzip compression
     :arg cloud_id: The Cloud ID from ElasticCloud. Convient way to connect to cloud instances.
+    :arg api_key: optional API Key authentication as either base64 encoded string or a tuple.
         Other host connection params will be ignored.
     """
 
@@ -84,7 +86,7 @@ class Urllib3HttpConnection(Connection):
         http_auth=None,
         use_ssl=False,
         verify_certs=VERIFY_CERTS_DEFAULT,
-        ssl_show_warn=True,
+        ssl_show_warn=SSL_SHOW_WARN_DEFAULT,
         ca_certs=None,
         client_cert=None,
         client_key=None,
@@ -96,6 +98,7 @@ class Urllib3HttpConnection(Connection):
         ssl_context=None,
         http_compress=False,
         cloud_id=None,
+        api_key=None,
         **kwargs
     ):
 
@@ -128,12 +131,15 @@ class Urllib3HttpConnection(Connection):
 
         self.headers.setdefault("content-type", "application/json")
         self.headers.setdefault("user-agent", self._get_default_user_agent())
+        if api_key is not None:
+            self.headers.setdefault('authorization', self._get_api_key_header_val(api_key))
         pool_class = urllib3.HTTPConnectionPool
         kw = {}
 
         # if providing an SSL context, raise error if any other SSL related flag is used
         if ssl_context and (
             (verify_certs is not VERIFY_CERTS_DEFAULT)
+            or (ssl_show_warn is not SSL_SHOW_WARN_DEFAULT)
             or ca_certs
             or client_cert
             or client_key
@@ -163,9 +169,12 @@ class Urllib3HttpConnection(Connection):
                 }
             )
 
-            # If `verify_certs` is sentinal value, default `verify_certs` to `True`
+            # Convert all sentinel values to their actual default
+            # values if not using an SSLContext.
             if verify_certs is VERIFY_CERTS_DEFAULT:
                 verify_certs = True
+            if ssl_show_warn is SSL_SHOW_WARN_DEFAULT:
+                ssl_show_warn = True
 
             ca_certs = CA_CERTS if ca_certs is None else ca_certs
             if verify_certs:
@@ -185,11 +194,15 @@ class Urllib3HttpConnection(Connection):
                     }
                 )
             else:
+                kw["cert_reqs"] = "CERT_NONE"
                 if ssl_show_warn:
                     warnings.warn(
                         "Connecting to %s using SSL with verify_certs=False is insecure."
                         % host
                     )
+                if not ssl_show_warn:
+                    urllib3.disable_warnings()
+
 
         self.pool = pool_class(
             host, port=port, timeout=self.timeout, maxsize=maxsize, **kw

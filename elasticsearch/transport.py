@@ -67,10 +67,10 @@ class Transport(object):
         :arg connection_class: subclass of :class:`~elasticsearch.Connection` to use
         :arg connection_pool_class: subclass of :class:`~elasticsearch.ConnectionPool` to use
         :arg host_info_callback: callback responsible for taking the node information from
-            `/_cluser/nodes`, along with already extracted information, and
+            `/_cluster/nodes`, along with already extracted information, and
             producing a list of arguments (same as `hosts` parameter)
         :arg sniff_on_start: flag indicating whether to obtain a list of nodes
-            from the cluser at startup time
+            from the cluster at startup time
         :arg sniffer_timeout: number of seconds between automatic sniffs
         :arg sniff_on_connection_fail: flag controlling if connection failure triggers a sniff
         :arg sniff_timeout: timeout used for the sniff request - it should be a
@@ -187,7 +187,7 @@ class Transport(object):
 
     def get_connection(self):
         """
-        Retreive a :class:`~elasticsearch.Connection` instance from the
+        Retrieve a :class:`~elasticsearch.Connection` instance from the
         :class:`~elasticsearch.ConnectionPool` instance.
         """
         if self.sniffer_timeout:
@@ -197,7 +197,7 @@ class Transport(object):
 
     def _get_sniff_data(self, initial=False):
         """
-        Perform the request to get sniffins information. Returns a list of
+        Perform the request to get sniffing information. Returns a list of
         dictionaries (one per node) containing all the information from the
         cluster.
 
@@ -245,8 +245,16 @@ class Transport(object):
         if not address or ":" not in address:
             return None
 
-        host["host"], host["port"] = address.rsplit(":", 1)
-        host["port"] = int(host["port"])
+        if '/' in address:
+            # Support 7.x host/ip:port behavior where http.publish_host has been set.
+            fqdn, ipaddress = address.split('/', 1)
+            host["host"] = fqdn
+            _, host["port"] = ipaddress.rsplit(':', 1)
+            host["port"] = int(host["port"])
+
+        else:
+            host["host"], host["port"] = address.rsplit(":", 1)
+            host["port"] = int(host["port"])
 
         return self.host_info_callback(host_info, host)
 
@@ -294,7 +302,7 @@ class Transport(object):
         If an exception was raised, mark the connection as failed and retry (up
         to `max_retries` times).
 
-        If the operation was succesful and the connection used was previously
+        If the operation was successful and the connection used was previously
         marked as dead, mark it as live, resetting it's failure count.
 
         :arg method: HTTP method to use
@@ -303,7 +311,7 @@ class Transport(object):
             underlying :class:`~elasticsearch.Connection` class
         :arg params: dictionary of query parameters, will be handed over to the
             underlying :class:`~elasticsearch.Connection` class for serialization
-        :arg body: body of the request, will be serializes using serializer and
+        :arg body: body of the request, will be serialized using serializer and
             passed to the connection
         """
         if body is not None:

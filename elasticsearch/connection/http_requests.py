@@ -36,6 +36,7 @@ class RequestsHttpConnection(Connection):
         separate cert and key files (client_cert will contain only the cert)
     :arg headers: any custom http headers to be add to requests
     :arg cloud_id: The Cloud ID from ElasticCloud. Convient way to connect to cloud instances.
+    :arg api_key: optional API Key authentication as either base64 encoded string or a tuple.
         Other host connection params will be ignored.
     """
 
@@ -52,6 +53,7 @@ class RequestsHttpConnection(Connection):
         client_key=None,
         headers=None,
         cloud_id=None,
+        api_key=None,
         **kwargs
     ):
         if not REQUESTS_AVAILABLE:
@@ -80,6 +82,8 @@ class RequestsHttpConnection(Connection):
             elif isinstance(http_auth, string_types):
                 http_auth = tuple(http_auth.split(":", 1))
             self.session.auth = http_auth
+        if api_key is not None:
+            self.session.headers['authorization'] = self._get_api_key_header_val(api_key)
         self.base_url = "http%s://%s:%d%s" % (
             "s" if self.use_ssl else "",
             host,
@@ -98,6 +102,9 @@ class RequestsHttpConnection(Connection):
                     "You cannot pass CA certificates when verify SSL is off."
                 )
             self.session.verify = ca_certs
+
+        if not ssl_show_warn:
+            requests.packages.urllib3.disable_warnings()
 
         if self.use_ssl and not verify_certs and ssl_show_warn:
             warnings.warn(

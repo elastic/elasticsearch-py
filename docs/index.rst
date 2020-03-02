@@ -230,6 +230,28 @@ description of the options.
 
 .. _certifi: http://certifiio.readthedocs.io/en/latest/
 
+APIKey Authentication
+~~~~~~~~~~~~~~~~~~~~~~
+
+You can configure the client to use Elasticsearch's `API Key`_ for connecting to your cluster.
+Please note this authentication method has been introduced with release of Elasticsearch ``6.7.0``.
+
+    from elasticsearch import Elasticsearch
+
+    # you can use the api key tuple
+    es = Elasticsearch(
+        ['node-1', 'node-2', 'node-3'],
+        api_key=('id', 'api_key'),
+    )
+
+    # or you pass the base 64 encoded token
+    es = Elasticsearch(
+        ['node-1', 'node-2', 'node-3'],
+        api_key='base64encoded tuple',
+    )
+
+.. _API Key: https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-create-api-key.html
+
 Logging
 ~~~~~~~
 

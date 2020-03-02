@@ -1,0 +1,9 @@
+{% for p, info in api.params %}
+    {% if p in substitutions and p not in api.url_parts.1 %}
+        # {{ substitutions[p] }} is a reserved word so it cannot be used, use {{ p }} instead
+        if "{{ p }}" in params:
+            params["{{ substitutions[p] }}"] = params.pop("{{ p }}")
+
+    {% endif %}
+{% endfor %}
+

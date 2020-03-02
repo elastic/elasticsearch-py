@@ -35,7 +35,7 @@ class TestParallelBulk(TestCase):
         actions = ({"x": i} for i in range(100))
         list(helpers.parallel_bulk(Elasticsearch(), actions, chunk_size=2))
 
-        self.assertEquals(50, _process_bulk_chunk.call_count)
+        self.assertEquals(50, mock_process_bulk_chunk.call_count)
 
     @SkipTest
     @mock.patch(

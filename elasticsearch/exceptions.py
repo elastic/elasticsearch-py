@@ -91,7 +91,7 @@ class ConnectionError(TransportError):
     """
     Error raised when there was an exception while talking to ES. Original
     exception from the underlying :class:`~elasticsearch.Connection`
-    implementation is available as ``.info.``
+    implementation is available as ``.info``.
     """
 
     def __str__(self):

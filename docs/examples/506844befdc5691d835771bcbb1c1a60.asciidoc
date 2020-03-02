@@ -1,0 +1,12 @@
+// getting-started.asciidoc:392
+
+[source, python]
+----
+client.search(
+    index="bank",
+    body={
+        "query": {"match_all": {}},
+        "sort": [{"account_number": "asc"}],
+    },
+)
+----
