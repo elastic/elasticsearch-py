@@ -4,7 +4,6 @@ import urllib3
 from urllib3.exceptions import ReadTimeoutError, SSLError as UrllibSSLError
 from urllib3.util.retry import Retry
 import warnings
-import gzip
 from base64 import decodestring
 
 # sentinel value for `verify_certs` and `ssl_show_warn`.
@@ -110,6 +109,7 @@ class Urllib3HttpConnection(Connection):
             host = "%s.%s" % (es_uuid, url)
             port = "9243"
             use_ssl = True
+            http_compress = True
         super(Urllib3HttpConnection, self).__init__(
             host=host, port=port, use_ssl=use_ssl, **kwargs
         )
@@ -125,9 +125,8 @@ class Urllib3HttpConnection(Connection):
             for k in headers:
                 self.headers[k.lower()] = headers[k]
 
-        if self.http_compress == True:
-            self.headers.update(urllib3.make_headers(accept_encoding=True))
-            self.headers.update({"content-encoding": "gzip"})
+        if self.http_compress:
+            self.headers["accept-encoding"] = "gzip,deflate"
 
         self.headers.setdefault("content-type", "application/json")
         self.headers.setdefault("user-agent", self._get_default_user_agent())
@@ -230,17 +229,12 @@ class Urllib3HttpConnection(Connection):
             if not isinstance(method, str):
                 method = method.encode("utf-8")
 
-            request_headers = self.headers
-            if headers:
-                request_headers = request_headers.copy()
-                request_headers.update(headers)
+            request_headers = self.headers.copy()
+            request_headers.update(headers or ())
+
             if self.http_compress and body:
-                try:
-                    body = gzip.compress(body)
-                except AttributeError:
-                    # oops, Python2.7 doesn't have `gzip.compress` let's try
-                    # again
-                    body = gzip.zlib.compress(body)
+                body = self._gzip_compress(body)
+                request_headers["content-encoding"] = "gzip"
 
             response = self.pool.urlopen(
                 method, url, body, retries=Retry(False), headers=request_headers, **kw
