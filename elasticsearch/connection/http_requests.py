@@ -129,6 +129,7 @@ class RequestsHttpConnection(Connection):
         if params:
             url = "%s?%s" % (url, urlencode(params or {}))
 
+        orig_body = body
         if self.http_compress and body:
             body = self._gzip_compress(body)
             headers["content-encoding"] = "gzip"
@@ -169,7 +170,7 @@ class RequestsHttpConnection(Connection):
                 method,
                 url,
                 response.request.path_url,
-                body,
+                orig_body,
                 duration,
                 response.status_code,
                 raw_data,
@@ -180,7 +181,7 @@ class RequestsHttpConnection(Connection):
             method,
             url,
             response.request.path_url,
-            body,
+            orig_body,
             response.status_code,
             raw_data,
             duration,

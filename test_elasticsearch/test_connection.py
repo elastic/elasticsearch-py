@@ -26,7 +26,7 @@ def gzip_decompress(data):
 
 class TestUrllib3Connection(TestCase):
     def _get_mock_connection(
-        self, connection_params={}
+        self, connection_params={}, response_body=b"{}"
     ):
         con = Urllib3HttpConnection(**connection_params)
 
@@ -34,7 +34,7 @@ class TestUrllib3Connection(TestCase):
             dummy_response = Mock()
             dummy_response.headers = {}
             dummy_response.status = 200
-            dummy_response.data = b""
+            dummy_response.data = response_body
             _dummy_urlopen.call_args = (args, kwargs)
             return dummy_response
 
@@ -225,6 +225,17 @@ class TestUrllib3Connection(TestCase):
                     "When using `ssl_context`, all other SSL related kwargs are ignored",
                     str(w[0].message),
                 )
+
+    @patch("elasticsearch.connection.base.logger")
+    def test_uncompressed_body_logged(self, logger):
+        con = self._get_mock_connection(connection_params={"http_compress": True})
+        con.perform_request("GET", "/", body=b"{\"example\": \"body\"}")
+
+        self.assertEquals(2, logger.debug.call_count)
+        req, resp = logger.debug.call_args_list
+        print(req, resp)
+        self.assertEquals('> {"example": "body"}', req[0][0] % req[0][1:])
+        self.assertEquals('< {}', resp[0][0] % resp[0][1:])
 
 
 class TestRequestsConnection(TestCase):
@@ -489,6 +500,16 @@ class TestRequestsConnection(TestCase):
         req, resp = logger.debug.call_args_list
         self.assertEquals('> {"question": "what\'s that?"}', req[0][0] % req[0][1:])
         self.assertEquals('< {"answer": "that\'s it!"}', resp[0][0] % resp[0][1:])
+
+    @patch("elasticsearch.connection.base.logger")
+    def test_uncompressed_body_logged(self, logger):
+        con = self._get_mock_connection(connection_params={"http_compress": True})
+        con.perform_request("GET", "/", body=b"{\"example\": \"body\"}")
+
+        self.assertEquals(2, logger.debug.call_count)
+        req, resp = logger.debug.call_args_list
+        self.assertEquals('> {"example": "body"}', req[0][0] % req[0][1:])
+        self.assertEquals('< {}', resp[0][0] % resp[0][1:])
 
     def test_defaults(self):
         con = self._get_mock_connection()

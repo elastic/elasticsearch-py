@@ -216,6 +216,7 @@ class Urllib3HttpConnection(Connection):
         full_url = self.host + url
 
         start = time.time()
+        orig_body = body
         try:
             kw = {}
             if timeout:
@@ -243,7 +244,7 @@ class Urllib3HttpConnection(Connection):
             raw_data = response.data.decode("utf-8")
         except Exception as e:
             self.log_request_fail(
-                method, full_url, url, body, time.time() - start, exception=e
+                method, full_url, url, orig_body, time.time() - start, exception=e
             )
             if isinstance(e, UrllibSSLError):
                 raise SSLError("N/A", str(e), e)
@@ -254,12 +255,12 @@ class Urllib3HttpConnection(Connection):
         # raise errors based on http status codes, let the client handle those if needed
         if not (200 <= response.status < 300) and response.status not in ignore:
             self.log_request_fail(
-                method, full_url, url, body, duration, response.status, raw_data
+                method, full_url, url, orig_body, duration, response.status, raw_data
             )
             self._raise_error(response.status, raw_data)
 
         self.log_request_success(
-            method, full_url, url, body, response.status, raw_data, duration
+            method, full_url, url, orig_body, response.status, raw_data, duration
         )
 
         return response.status, response.getheaders(), raw_data
