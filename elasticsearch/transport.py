@@ -59,6 +59,7 @@ class Transport(object):
         retry_on_status=(502, 503, 504),
         retry_on_timeout=False,
         send_get_body_as="GET",
+        opaque_id=None,
         **kwargs
     ):
         """
@@ -93,6 +94,8 @@ class Transport(object):
             don't support passing bodies with GET requests. If you set this to
             'POST' a POST method will be used instead, if to 'source' then the body
             will be serialized and passed as a query parameter `source`.
+        :arg opaque_id: Send this value in the 'X-Opaque-Id' HTTP header
+            For tracing all requests made by this transport.
 
         Any extra keyword arguments will be passed to the `connection_class`
         when creating and instance unless overridden by that connection's
@@ -113,6 +116,7 @@ class Transport(object):
         self.retry_on_timeout = retry_on_timeout
         self.retry_on_status = retry_on_status
         self.send_get_body_as = send_get_body_as
+        self.opaque_id = opaque_id
 
         # data serializer
         self.serializer = serializer
@@ -339,11 +343,17 @@ class Transport(object):
 
         ignore = ()
         timeout = None
+        opaque_id = self.opaque_id
         if params:
             timeout = params.pop("request_timeout", None)
             ignore = params.pop("ignore", ())
+            opaque_id = params.pop("opaque_id", None) or opaque_id
             if isinstance(ignore, int):
                 ignore = (ignore,)
+
+        if opaque_id:
+            headers.setdefault("x-opaque-id", opaque_id)
+
         for attempt in range(self.max_retries + 1):
             connection = self.get_connection()
 

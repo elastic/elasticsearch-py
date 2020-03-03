@@ -77,8 +77,8 @@ def query_params(*es_query_params):
                     if v is not None:
                         params[p] = _escape(v)
 
-            # don't treat ignore and request_timeout as other params to avoid escaping
-            for p in ("ignore", "request_timeout"):
+            # don't treat ignore, request_timeout, and opaque_id as other params to avoid escaping
+            for p in ("ignore", "request_timeout", "opaque_id"):
                 if p in kwargs:
                     params[p] = kwargs.pop(p)
             return func(*args, params=params, **kwargs)
