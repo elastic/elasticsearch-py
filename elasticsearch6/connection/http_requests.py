@@ -48,6 +48,7 @@ class RequestsHttpConnection(Connection):
         client_cert=None,
         client_key=None,
         headers=None,
+        http_compress=False,
         cloud_id=None,
         **kwargs
     ):
@@ -63,13 +64,22 @@ class RequestsHttpConnection(Connection):
             host = "%s.%s" % (es_uuid, url)
             port = 9243
             use_ssl = True
-
+            http_compress = True
         super(RequestsHttpConnection, self).__init__(
             host=host, port=port, use_ssl=use_ssl, **kwargs
         )
+        self.http_compress = http_compress
         self.session = requests.Session()
         self.session.headers = headers or {}
         self.session.headers.setdefault("content-type", "application/json")
+        self.session.headers.setdefault("user-agent", self._get_default_user_agent())
+
+        if self.http_compress:
+            self.session.headers["accept-encoding"] = "gzip,deflate"
+        else:
+            # Need to set this to 'None' otherwise Requests adds its own.
+            self.session.headers["accept-encoding"] = None
+
         if http_auth is not None:
             if isinstance(http_auth, (tuple, list)):
                 http_auth = tuple(http_auth)
@@ -105,8 +115,14 @@ class RequestsHttpConnection(Connection):
         self, method, url, params=None, body=None, timeout=None, ignore=(), headers=None
     ):
         url = self.base_url + url
+        headers = headers or {}
         if params:
             url = "%s?%s" % (url, urlencode(params or {}))
+
+        orig_body = body
+        if self.http_compress and body:
+            body = self._gzip_compress(body)
+            headers["content-encoding"] = "gzip"
 
         start = time.time()
         request = requests.Request(method=method, headers=headers, url=url, data=body)
@@ -144,7 +160,7 @@ class RequestsHttpConnection(Connection):
                 method,
                 url,
                 response.request.path_url,
-                body,
+                orig_body,
                 duration,
                 response.status_code,
                 raw_data,
@@ -155,7 +171,7 @@ class RequestsHttpConnection(Connection):
             method,
             url,
             response.request.path_url,
-            body,
+            orig_body,
             response.status_code,
             raw_data,
             duration,
