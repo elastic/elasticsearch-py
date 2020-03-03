@@ -1,6 +1,7 @@
 import logging
 import base64
-
+import gzip
+import io
 from platform import python_version
 
 try:
@@ -69,6 +70,12 @@ class Connection(object):
 
     def __hash__(self):
         return id(self)
+
+    def _gzip_compress(self, body):
+        buf = io.BytesIO()
+        with gzip.GzipFile(fileobj=buf, mode="wb") as f:
+            f.write(body)
+        return buf.getvalue()
 
     def _pretty_json(self, data):
         # pretty JSON in tracer curl logs
