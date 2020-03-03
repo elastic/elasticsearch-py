@@ -124,6 +124,26 @@ class TestUrllib3Connection(TestCase):
         self.assertEqual(kwargs["headers"]["accept-encoding"], "gzip,deflate")
         self.assertNotIn("content-encoding", kwargs["headers"])
 
+    def test_cloud_id_http_compress_override(self):
+        # 'http_compress' will be 'True' by default for connections with
+        # 'cloud_id' set but should prioritize user-defined values.
+        con = Urllib3HttpConnection(
+            cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
+        )
+        self.assertEquals(con.http_compress, True)
+
+        con = Urllib3HttpConnection(
+            cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
+            http_compress=False
+        )
+        self.assertEquals(con.http_compress, False)
+
+        con = Urllib3HttpConnection(
+            cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
+            http_compress=True
+        )
+        self.assertEquals(con.http_compress, True)
+
     def test_default_user_agent(self):
         con = Urllib3HttpConnection()
         self.assertEquals(con._get_default_user_agent(), "elasticsearch-py/%s (Python %s)" % (__versionstr__, python_version()))
@@ -349,6 +369,26 @@ class TestRequestsConnection(TestCase):
         req = con.session.send.call_args[0][0]
         self.assertNotIn("content-encoding", req.headers)
         self.assertEqual(req.headers["accept-encoding"], "gzip,deflate")
+
+    def test_cloud_id_http_compress_override(self):
+        # 'http_compress' will be 'True' by default for connections with
+        # 'cloud_id' set but should prioritize user-defined values.
+        con = RequestsHttpConnection(
+            cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
+        )
+        self.assertEquals(con.http_compress, True)
+
+        con = RequestsHttpConnection(
+            cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
+            http_compress=False
+        )
+        self.assertEquals(con.http_compress, False)
+
+        con = RequestsHttpConnection(
+            cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
+            http_compress=True
+        )
+        self.assertEquals(con.http_compress, True)
 
     def test_uses_https_if_verify_certs_is_off(self):
         with warnings.catch_warnings(record=True) as w:

@@ -94,7 +94,7 @@ class Urllib3HttpConnection(Connection):
         maxsize=10,
         headers=None,
         ssl_context=None,
-        http_compress=False,
+        http_compress=None,
         cloud_id=None,
         api_key=None,
         **kwargs

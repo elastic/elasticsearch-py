@@ -1,5 +1,4 @@
 import logging
-import base64
 import binascii
 import gzip
 import io
@@ -48,7 +47,7 @@ class Connection(object):
         url_prefix="",
         timeout=10,
         headers=None,
-        http_compress=False,
+        http_compress=None,
         cloud_id=None,
         api_key=None,
         **kwargs
@@ -66,7 +65,8 @@ class Connection(object):
             host = "%s.%s" % (es_uuid, parent_dn)
             port = 9243
             use_ssl = True
-            http_compress = True
+            if http_compress is None:
+                http_compress = True
 
         # Work-around if the implementing class doesn't
         # define the headers property before calling super().__init__()
@@ -91,7 +91,7 @@ class Connection(object):
             scheme = "https"
             use_ssl = True
         self.use_ssl = use_ssl
-        self.http_compress = http_compress
+        self.http_compress = http_compress or False
 
         self.hostname = host
         self.port = port
@@ -243,5 +243,5 @@ class Connection(object):
         """
         if isinstance(api_key, (tuple, list)):
             s = "{0}:{1}".format(api_key[0], api_key[1]).encode('utf-8')
-            return "ApiKey " + base64.b64encode(s).decode('utf-8')
+            return "ApiKey " + binascii.b2a_base64(s).rstrip(b"\r\n").decode('utf-8')
         return "ApiKey " + api_key

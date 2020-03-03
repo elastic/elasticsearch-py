@@ -52,7 +52,7 @@ class RequestsHttpConnection(Connection):
         client_cert=None,
         client_key=None,
         headers=None,
-        http_compress=False,
+        http_compress=None,
         cloud_id=None,
         api_key=None,
         **kwargs
