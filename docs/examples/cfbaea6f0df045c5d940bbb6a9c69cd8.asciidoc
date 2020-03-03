@@ -1,0 +1,21 @@
+// getting-started.asciidoc:665
+
+[source, python]
+----
+client.search(
+    index="bank",
+    body={
+        "size": 0,
+        "aggs": {
+            "group_by_state": {
+                "terms": {"field": "state.keyword"},
+                "aggs": {
+                    "average_balance": {
+                        "avg": {"field": "balance"}
+                    }
+                },
+            }
+        },
+    },
+)
+----

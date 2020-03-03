@@ -1,2 +1,0 @@
-GitPython
-python-dateutil
