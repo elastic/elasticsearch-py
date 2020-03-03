@@ -1,6 +1,7 @@
-import sys
 import re
 import ssl
+import gzip
+import io
 from mock import Mock, patch
 import urllib3
 import warnings
@@ -13,11 +14,31 @@ from elasticsearch6.exceptions import (
     NotFoundError,
 )
 from elasticsearch6.connection import RequestsHttpConnection, Urllib3HttpConnection
-from elasticsearch6.exceptions import ImproperlyConfigured
 from .test_cases import TestCase, SkipTest
 
 
+def gzip_decompress(data):
+    buf = gzip.GzipFile(fileobj=io.BytesIO(data), mode="rb")
+    return buf.read()
+
+
 class TestUrllib3Connection(TestCase):
+    def _get_mock_connection(
+        self, connection_params={}, response_body=b"{}"
+    ):
+        con = Urllib3HttpConnection(**connection_params)
+
+        def _dummy_urlopen(*args, **kwargs):
+            dummy_response = Mock()
+            dummy_response.headers = {}
+            dummy_response.status = 200
+            dummy_response.data = response_body
+            _dummy_urlopen.call_args = (args, kwargs)
+            return dummy_response
+
+        con.pool.urlopen = _dummy_urlopen
+        return con
+
     def test_ssl_context(self):
         try:
             context = ssl.create_default_context()
@@ -34,10 +55,52 @@ class TestUrllib3Connection(TestCase):
         self.assertIsInstance(con.pool.conn_kw["ssl_context"], ssl.SSLContext)
         self.assertTrue(con.use_ssl)
 
+    def test_http_cloud_id(self):
+        con = Urllib3HttpConnection(
+            cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n"
+        )
+        self.assertTrue(con.use_ssl)
+        self.assertEquals(
+            con.host, "https://0fd50f62320ed6539f6cb48e1b68.example.cloud.com:9243"
+        )
+
+    def test_no_http_compression(self):
+        con = self._get_mock_connection()
+        self.assertFalse(con.http_compress)
+        self.assertNotIn("accept-encoding", con.headers)
+
+        con.perform_request("GET", "/")
+
+        (_, _, req_body), kwargs = con.pool.urlopen.call_args
+
+        self.assertFalse(req_body)
+        self.assertNotIn("accept-encoding", kwargs["headers"])
+        self.assertNotIn("content-encoding", kwargs["headers"])
+
     def test_http_compression(self):
-        con = Urllib3HttpConnection(http_compress=True)
+        con = self._get_mock_connection({"http_compress": True})
         self.assertTrue(con.http_compress)
-        self.assertEquals(con.headers["content-encoding"], "gzip")
+        self.assertEqual(con.headers["accept-encoding"], "gzip,deflate")
+
+        # 'content-encoding' shouldn't be set at a connection level.
+        # Should be applied only if the request is sent with a body.
+        self.assertNotIn("content-encoding", con.headers)
+
+        con.perform_request("GET", "/", body=b"{}")
+
+        (_, _, req_body), kwargs = con.pool.urlopen.call_args
+
+        self.assertEqual(gzip_decompress(req_body), b"{}")
+        self.assertEqual(kwargs["headers"]["accept-encoding"], "gzip,deflate")
+        self.assertEqual(kwargs["headers"]["content-encoding"], "gzip")
+
+        con.perform_request("GET", "/")
+
+        (_, _, req_body), kwargs = con.pool.urlopen.call_args
+
+        self.assertFalse(req_body)
+        self.assertEqual(kwargs["headers"]["accept-encoding"], "gzip,deflate")
+        self.assertNotIn("content-encoding", kwargs["headers"])
 
     def test_timeout_set(self):
         con = Urllib3HttpConnection(timeout=42)
@@ -98,6 +161,16 @@ class TestUrllib3Connection(TestCase):
         con = Urllib3HttpConnection()
         self.assertIsInstance(con.pool, urllib3.HTTPConnectionPool)
 
+    @patch("elasticsearch.connection.base.logger")
+    def test_uncompressed_body_logged(self, logger):
+        con = self._get_mock_connection(connection_params={"http_compress": True})
+        con.perform_request("GET", "/", body=b"{\"example\": \"body\"}")
+
+        self.assertEquals(2, logger.debug.call_count)
+        req, resp = logger.debug.call_args_list
+        self.assertEquals('> {"example": "body"}', req[0][0] % req[0][1:])
+        self.assertEquals('< {}', resp[0][0] % resp[0][1:])
+
 
 class TestRequestsConnection(TestCase):
     def _get_mock_connection(
@@ -141,6 +214,50 @@ class TestRequestsConnection(TestCase):
     def test_timeout_set(self):
         con = RequestsHttpConnection(timeout=42)
         self.assertEquals(42, con.timeout)
+
+    def test_http_cloud_id(self):
+        con = RequestsHttpConnection(
+            cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n"
+        )
+        self.assertTrue(con.use_ssl)
+        self.assertEquals(
+            con.host, "https://0fd50f62320ed6539f6cb48e1b68.example.cloud.com:9243"
+        )
+
+    def test_no_http_compression(self):
+        con = self._get_mock_connection()
+
+        self.assertFalse(con.http_compress)
+        self.assertNotIn("content-encoding", con.session.headers)
+
+        con.perform_request("GET", "/")
+
+        req = con.session.send.call_args[0][0]
+        self.assertNotIn("content-encoding", req.headers)
+        self.assertNotIn("accept-encoding", req.headers)
+
+    def test_http_compression(self):
+        con = self._get_mock_connection(
+            {"http_compress": True},
+        )
+
+        self.assertTrue(con.http_compress)
+
+        # 'content-encoding' shouldn't be set at a session level.
+        # Should be applied only if the request is sent with a body.
+        self.assertNotIn("content-encoding", con.session.headers)
+
+        con.perform_request("GET", "/", body=b"{}")
+
+        req = con.session.send.call_args[0][0]
+        self.assertEqual(req.headers["content-encoding"], "gzip")
+        self.assertEqual(req.headers["accept-encoding"], "gzip,deflate")
+
+        con.perform_request("GET", "/")
+
+        req = con.session.send.call_args[0][0]
+        self.assertNotIn("content-encoding", req.headers)
+        self.assertEqual(req.headers["accept-encoding"], "gzip,deflate")
 
     def test_uses_https_if_verify_certs_is_off(self):
         with warnings.catch_warnings(record=True) as w:
@@ -269,6 +386,16 @@ class TestRequestsConnection(TestCase):
         req, resp = logger.debug.call_args_list
         self.assertEquals('> {"question": "what\'s that?"}', req[0][0] % req[0][1:])
         self.assertEquals('< {"answer": "that\'s it!"}', resp[0][0] % resp[0][1:])
+
+    @patch("elasticsearch.connection.base.logger")
+    def test_uncompressed_body_logged(self, logger):
+        con = self._get_mock_connection(connection_params={"http_compress": True})
+        con.perform_request("GET", "/", body=b"{\"example\": \"body\"}")
+
+        self.assertEquals(2, logger.debug.call_count)
+        req, resp = logger.debug.call_args_list
+        self.assertEquals('> {"example": "body"}', req[0][0] % req[0][1:])
+        self.assertEquals('< {}', resp[0][0] % resp[0][1:])
 
     def test_defaults(self):
         con = self._get_mock_connection()

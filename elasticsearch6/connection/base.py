@@ -1,4 +1,8 @@
 import logging
+import base64
+import gzip
+import io
+from platform import python_version
 
 try:
     import simplejson as json
@@ -55,6 +59,12 @@ class Connection(object):
 
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.host)
+
+    def _gzip_compress(self, body):
+        buf = io.BytesIO()
+        with gzip.GzipFile(fileobj=buf, mode="wb") as f:
+            f.write(body)
+        return buf.getvalue()
 
     def _pretty_json(self, data):
         # pretty JSON in tracer curl logs
