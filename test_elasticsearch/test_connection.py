@@ -65,6 +65,9 @@ class TestUrllib3Connection(TestCase):
         self.assertEquals(
             con.host, "https://0fd50f62320ed6539f6cb48e1b68.example.cloud.com:9243"
         )
+        self.assertEquals(con.port, 9243)
+        self.assertEquals(con.hostname, "0fd50f62320ed6539f6cb48e1b68.example.cloud.com")
+        self.assertTrue(con.http_compress)
 
     def test_api_key_auth(self):
         # test with tuple
@@ -73,6 +76,7 @@ class TestUrllib3Connection(TestCase):
             api_key=("elastic", "changeme1"),
         )
         self.assertEquals(con.headers["authorization"], "ApiKey ZWxhc3RpYzpjaGFuZ2VtZTE=")
+        self.assertEquals(con.host, "https://0fd50f62320ed6539f6cb48e1b68.example.cloud.com:9243")
 
         # test with base64 encoded string
         con = Urllib3HttpConnection(
@@ -80,6 +84,7 @@ class TestUrllib3Connection(TestCase):
             api_key="ZWxhc3RpYzpjaGFuZ2VtZTI=",
         )
         self.assertEquals(con.headers["authorization"], "ApiKey ZWxhc3RpYzpjaGFuZ2VtZTI=")
+        self.assertEquals(con.host, "https://0fd50f62320ed6539f6cb48e1b68.example.cloud.com:9243")
 
     def test_no_http_compression(self):
         con = self._get_mock_connection()
@@ -118,6 +123,26 @@ class TestUrllib3Connection(TestCase):
         self.assertFalse(req_body)
         self.assertEqual(kwargs["headers"]["accept-encoding"], "gzip,deflate")
         self.assertNotIn("content-encoding", kwargs["headers"])
+
+    def test_cloud_id_http_compress_override(self):
+        # 'http_compress' will be 'True' by default for connections with
+        # 'cloud_id' set but should prioritize user-defined values.
+        con = Urllib3HttpConnection(
+            cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
+        )
+        self.assertEquals(con.http_compress, True)
+
+        con = Urllib3HttpConnection(
+            cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
+            http_compress=False
+        )
+        self.assertEquals(con.http_compress, False)
+
+        con = Urllib3HttpConnection(
+            cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
+            http_compress=True
+        )
+        self.assertEquals(con.http_compress, True)
 
     def test_default_user_agent(self):
         con = Urllib3HttpConnection()
@@ -289,6 +314,9 @@ class TestRequestsConnection(TestCase):
         self.assertEquals(
             con.host, "https://0fd50f62320ed6539f6cb48e1b68.example.cloud.com:9243"
         )
+        self.assertEquals(con.port, 9243)
+        self.assertEquals(con.hostname, "0fd50f62320ed6539f6cb48e1b68.example.cloud.com")
+        self.assertTrue(con.http_compress)
 
     def test_api_key_auth(self):
         # test with tuple
@@ -297,6 +325,7 @@ class TestRequestsConnection(TestCase):
             api_key=("elastic", "changeme1"),
         )
         self.assertEquals(con.session.headers["authorization"], "ApiKey ZWxhc3RpYzpjaGFuZ2VtZTE=")
+        self.assertEquals(con.host, "https://0fd50f62320ed6539f6cb48e1b68.example.cloud.com:9243")
 
         # test with base64 encoded string
         con = RequestsHttpConnection(
@@ -304,6 +333,7 @@ class TestRequestsConnection(TestCase):
             api_key="ZWxhc3RpYzpjaGFuZ2VtZTI=",
         )
         self.assertEquals(con.session.headers["authorization"], "ApiKey ZWxhc3RpYzpjaGFuZ2VtZTI=")
+        self.assertEquals(con.host, "https://0fd50f62320ed6539f6cb48e1b68.example.cloud.com:9243")
 
     def test_no_http_compression(self):
         con = self._get_mock_connection()
@@ -339,6 +369,26 @@ class TestRequestsConnection(TestCase):
         req = con.session.send.call_args[0][0]
         self.assertNotIn("content-encoding", req.headers)
         self.assertEqual(req.headers["accept-encoding"], "gzip,deflate")
+
+    def test_cloud_id_http_compress_override(self):
+        # 'http_compress' will be 'True' by default for connections with
+        # 'cloud_id' set but should prioritize user-defined values.
+        con = RequestsHttpConnection(
+            cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
+        )
+        self.assertEquals(con.http_compress, True)
+
+        con = RequestsHttpConnection(
+            cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
+            http_compress=False
+        )
+        self.assertEquals(con.http_compress, False)
+
+        con = RequestsHttpConnection(
+            cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
+            http_compress=True
+        )
+        self.assertEquals(con.http_compress, True)
 
     def test_uses_https_if_verify_certs_is_off(self):
         with warnings.catch_warnings(record=True) as w:
