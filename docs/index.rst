@@ -296,6 +296,7 @@ documents. This will configure compression.
    from elasticsearch import Elasticsearch
    es = Elasticsearch(hosts, http_compress=True)
 
+Compression is enabled by default when connecting to Elastic Cloud via ``cloud_id``.
 
 Running on AWS with IAM
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
