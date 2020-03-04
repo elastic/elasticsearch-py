@@ -13,7 +13,7 @@ from elasticsearch6.exceptions import ConnectionError
 
 def get_test_client(nowait=False, **kwargs):
     # construct kwargs from the environment
-    kw = {"timeout": 30}
+    kw = {"timeout": 5}
     if "TEST_ES_CONNECTION" in os.environ:
         from elasticsearch6 import connection
 
@@ -23,7 +23,7 @@ def get_test_client(nowait=False, **kwargs):
     client = Elasticsearch([os.environ.get("TEST_ES_SERVER", {})], **kw)
 
     # wait for yellow status
-    for _ in range(1 if nowait else 100):
+    for _ in range(1 if nowait else 1):
         try:
             client.cluster.health(wait_for_status="yellow")
             return client
