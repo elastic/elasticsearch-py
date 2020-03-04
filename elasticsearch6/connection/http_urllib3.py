@@ -4,9 +4,8 @@ import urllib3
 from urllib3.exceptions import ReadTimeoutError, SSLError as UrllibSSLError
 from urllib3.util.retry import Retry
 import warnings
-from base64 import decodestring
 
-# sentinal value for `verify_certs`.
+# sentinel value for `verify_certs`.
 # This is used to detect if a user is passing in a value for `verify_certs`
 # so we can raise a warning if using SSL kwargs AND SSLContext.
 VERIFY_CERTS_DEFAULT = None
@@ -71,7 +70,7 @@ class Urllib3HttpConnection(Connection):
         information.
     :arg headers: any custom http headers to be add to requests
     :arg http_compress: Use gzip compression
-    :arg cloud_id: The Cloud ID from ElasticCloud. Convient way to connect to cloud instances.
+    :arg cloud_id: The Cloud ID from ElasticCloud. Convenient way to connect to cloud instances.
         Other host connection params will be ignored.
     """
 
@@ -91,38 +90,27 @@ class Urllib3HttpConnection(Connection):
         maxsize=10,
         headers=None,
         ssl_context=None,
-        http_compress=False,
+        http_compress=None,
         cloud_id=None,
         **kwargs
     ):
-        if cloud_id:
-            cluster_name, cloud_id = cloud_id.split(":")
-            url, es_uuid, kibana_uuid = (
-                decodestring(cloud_id.encode("utf-8")).decode("utf-8").split("$")
-            )
-            host = "%s.%s" % (es_uuid, url)
-            port = "9243"
-            use_ssl = True
-            http_compress = True
-        super(Urllib3HttpConnection, self).__init__(
-            host=host, port=port, use_ssl=use_ssl, **kwargs
-        )
-        self.http_compress = http_compress
+        # Initialize headers before calling super().__init__().
         self.headers = urllib3.make_headers(keep_alive=True)
+
+        super(Urllib3HttpConnection, self).__init__(
+            host=host,
+            port=port,
+            use_ssl=use_ssl,
+            headers=headers,
+            http_compress=http_compress,
+            cloud_id=cloud_id,
+            **kwargs
+        )
         if http_auth is not None:
             if isinstance(http_auth, (tuple, list)):
                 http_auth = ":".join(http_auth)
             self.headers.update(urllib3.make_headers(basic_auth=http_auth))
 
-        # update headers in lowercase to allow overriding of auth headers
-        if headers:
-            for k in headers:
-                self.headers[k.lower()] = headers[k]
-
-        if self.http_compress:
-            self.headers["accept-encoding"] = "gzip,deflate"
-
-        self.headers.setdefault("content-type", "application/json")
         pool_class = urllib3.HTTPConnectionPool
         kw = {}
 
@@ -182,11 +170,16 @@ class Urllib3HttpConnection(Connection):
             else:
                 warnings.warn(
                     "Connecting to %s using SSL with verify_certs=False is insecure."
-                    % host
+                    % self.host
                 )
+                kw["cert_reqs"] = "CERT_NONE"
 
         self.pool = pool_class(
-            host, port=port, timeout=self.timeout, maxsize=maxsize, **kw
+            self.hostname,
+            port=self.port,
+            timeout=self.timeout,
+            maxsize=maxsize,
+            **kw
         )
 
     def perform_request(

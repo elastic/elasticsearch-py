@@ -6,7 +6,9 @@ from mock import Mock, patch
 import urllib3
 import warnings
 from requests.auth import AuthBase
+from platform import python_version
 
+from elasticsearch6 import __versionstr__
 from elasticsearch6.exceptions import (
     TransportError,
     ConflictError,
@@ -63,6 +65,9 @@ class TestUrllib3Connection(TestCase):
         self.assertEquals(
             con.host, "https://0fd50f62320ed6539f6cb48e1b68.example.cloud.com:9243"
         )
+        self.assertEquals(con.port, 9243)
+        self.assertEquals(con.hostname, "0fd50f62320ed6539f6cb48e1b68.example.cloud.com")
+        self.assertTrue(con.http_compress)
 
     def test_no_http_compression(self):
         con = self._get_mock_connection()
@@ -102,6 +107,30 @@ class TestUrllib3Connection(TestCase):
         self.assertEqual(kwargs["headers"]["accept-encoding"], "gzip,deflate")
         self.assertNotIn("content-encoding", kwargs["headers"])
 
+    def test_cloud_id_http_compress_override(self):
+        # 'http_compress' will be 'True' by default for connections with
+        # 'cloud_id' set but should prioritize user-defined values.
+        con = Urllib3HttpConnection(
+            cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
+        )
+        self.assertEquals(con.http_compress, True)
+
+        con = Urllib3HttpConnection(
+            cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
+            http_compress=False
+        )
+        self.assertEquals(con.http_compress, False)
+
+        con = Urllib3HttpConnection(
+            cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
+            http_compress=True
+        )
+        self.assertEquals(con.http_compress, True)
+
+    def test_default_user_agent(self):
+        con = Urllib3HttpConnection()
+        self.assertEquals(con._get_default_user_agent(), "elasticsearch-py/%s (Python %s)" % (__versionstr__, python_version()))
+
     def test_timeout_set(self):
         con = Urllib3HttpConnection(timeout=42)
         self.assertEquals(42, con.timeout)
@@ -109,7 +138,11 @@ class TestUrllib3Connection(TestCase):
     def test_keep_alive_is_on_by_default(self):
         con = Urllib3HttpConnection()
         self.assertEquals(
-            {"connection": "keep-alive", "content-type": "application/json"},
+            {
+                "connection": "keep-alive",
+                "content-type": "application/json",
+                "user-agent": con._get_default_user_agent()
+            },
             con.headers,
         )
 
@@ -120,6 +153,7 @@ class TestUrllib3Connection(TestCase):
                 "authorization": "Basic dXNlcm5hbWU6c2VjcmV0",
                 "connection": "keep-alive",
                 "content-type": "application/json",
+                "user-agent": con._get_default_user_agent(),
             },
             con.headers,
         )
@@ -131,6 +165,7 @@ class TestUrllib3Connection(TestCase):
                 "authorization": "Basic dXNlcm5hbWU6c2VjcmV0",
                 "content-type": "application/json",
                 "connection": "keep-alive",
+                "user-agent": con._get_default_user_agent(),
             },
             con.headers,
         )
@@ -142,6 +177,7 @@ class TestUrllib3Connection(TestCase):
                 "authorization": "Basic dXNlcm5hbWU6c2VjcmV0",
                 "content-type": "application/json",
                 "connection": "keep-alive",
+                "user-agent": con._get_default_user_agent(),
             },
             con.headers,
         )
@@ -151,7 +187,7 @@ class TestUrllib3Connection(TestCase):
             con = Urllib3HttpConnection(use_ssl=True, verify_certs=False)
             self.assertEquals(1, len(w))
             self.assertEquals(
-                "Connecting to localhost using SSL with verify_certs=False is insecure.",
+                "Connecting to https://localhost:9200 using SSL with verify_certs=False is insecure.",
                 str(w[0].message),
             )
 
@@ -161,7 +197,7 @@ class TestUrllib3Connection(TestCase):
         con = Urllib3HttpConnection()
         self.assertIsInstance(con.pool, urllib3.HTTPConnectionPool)
 
-    @patch("elasticsearch.connection.base.logger")
+    @patch("elasticsearch6.connection.base.logger")
     def test_uncompressed_body_logged(self, logger):
         con = self._get_mock_connection(connection_params={"http_compress": True})
         con.perform_request("GET", "/", body=b"{\"example\": \"body\"}")
@@ -223,6 +259,9 @@ class TestRequestsConnection(TestCase):
         self.assertEquals(
             con.host, "https://0fd50f62320ed6539f6cb48e1b68.example.cloud.com:9243"
         )
+        self.assertEquals(con.port, 9243)
+        self.assertEquals(con.hostname, "0fd50f62320ed6539f6cb48e1b68.example.cloud.com")
+        self.assertTrue(con.http_compress)
 
     def test_no_http_compression(self):
         con = self._get_mock_connection()
@@ -259,6 +298,26 @@ class TestRequestsConnection(TestCase):
         self.assertNotIn("content-encoding", req.headers)
         self.assertEqual(req.headers["accept-encoding"], "gzip,deflate")
 
+    def test_cloud_id_http_compress_override(self):
+        # 'http_compress' will be 'True' by default for connections with
+        # 'cloud_id' set but should prioritize user-defined values.
+        con = RequestsHttpConnection(
+            cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
+        )
+        self.assertEquals(con.http_compress, True)
+
+        con = RequestsHttpConnection(
+            cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
+            http_compress=False
+        )
+        self.assertEquals(con.http_compress, False)
+
+        con = RequestsHttpConnection(
+            cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
+            http_compress=True
+        )
+        self.assertEquals(con.http_compress, True)
+
     def test_uses_https_if_verify_certs_is_off(self):
         with warnings.catch_warnings(record=True) as w:
             con = self._get_mock_connection(
@@ -266,7 +325,7 @@ class TestRequestsConnection(TestCase):
             )
             self.assertEquals(1, len(w))
             self.assertEquals(
-                "Connecting to https://localhost:9200/url using SSL with verify_certs=False is insecure.",
+                "Connecting to https://localhost:9200 using SSL with verify_certs=False is insecure.",
                 str(w[0].message),
             )
 
@@ -387,7 +446,7 @@ class TestRequestsConnection(TestCase):
         self.assertEquals('> {"question": "what\'s that?"}', req[0][0] % req[0][1:])
         self.assertEquals('< {"answer": "that\'s it!"}', resp[0][0] % resp[0][1:])
 
-    @patch("elasticsearch.connection.base.logger")
+    @patch("elasticsearch6.connection.base.logger")
     def test_uncompressed_body_logged(self, logger):
         con = self._get_mock_connection(connection_params={"http_compress": True})
         con.perform_request("GET", "/", body=b"{\"example\": \"body\"}")

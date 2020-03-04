@@ -40,7 +40,7 @@ def fetch_es_repo():
 
     # find out the sha of the running es
     try:
-        es = get_client()
+        es = get_client(nowait=True)
         sha = es.info()["version"]["build_hash"]
     except (SkipTest, KeyError):
         print("No running elasticsearch >1.X server...")
