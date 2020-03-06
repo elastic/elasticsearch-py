@@ -95,3 +95,104 @@ helps simplify upgrading X-Pack indices from one version to another.
 .. autoclass:: MigrationClient
    :members:
 
+
+Enrich APIs
+------------
+
+`Enrich API <https://www.elastic.co/guide/en/elasticsearch/reference/7.6/enrich-apis.html>`_
+can be used to add data from your existing indices to incoming documents during ingest.
+
+.. py:module:: elasticsearch.client.enrich
+
+.. autoclass:: EnrichClient
+   :members:
+
+SQL APIs
+---------
+
+`SQL API <https://www.elastic.co/guide/en/elasticsearch/reference/current/sql-rest.html>`_
+
+.. py:module:: elasticsearch.client.sql
+
+.. autoclass:: SqlClient
+   :members:
+
+Cross-Cluster Replication APIs
+-------------------------------
+
+`CCR API <https://www.elastic.co/guide/en/elasticsearch/reference/current/ccr-apis.html>`_
+used to perform cross-cluster replication operations
+
+.. py:module:: elasticsearch.client.ccr
+
+.. autoclass:: CcrClient
+   :members:
+
+
+Monitoring APIs
+----------------
+
+`Monitoring API <https://www.elastic.co/guide/en/elasticsearch/reference/master/es-monitoring.html>`_
+
+.. py:module:: elasticsearch.client.monitoring
+
+.. autoclass:: MonitoringClient
+   :members:
+
+
+Rollup APIs
+------------
+
+`Rollup API <https://www.elastic.co/guide/en/elasticsearch/reference/current/rollup-apis.html>`_
+
+.. py:module:: elasticsearch.client.rollup
+
+.. autoclass:: RollupClient
+   :members:
+
+
+Snapshot lifecycle management APIs
+-----------------------------------
+
+`Snapshot lifecycle management API <https://www.elastic.co/guide/en/elasticsearch/reference/current/snapshot-lifecycle-management-api.html>`_
+can be used to set up policies to automatically take snapshots and control how long they are retained.
+
+.. py:module:: elasticsearch.client.slm
+
+.. autoclass:: SlmClient
+   :members:
+
+
+Index lifecycle management APIs
+--------------------------------
+
+`Index lifecycle management API <https://www.elastic.co/guide/en/elasticsearch/reference/current/index-lifecycle-management-api.html>`_
+used to set up policies to automatically manage the index lifecycle.
+
+.. py:module:: elasticsearch.client.ilm
+
+.. autoclass:: IlmClient
+   :members:
+
+
+Transform APIs
+---------------
+
+`Transform API <https://www.elastic.co/guide/en/elasticsearch/reference/current/transform-apis.html>`_
+
+.. py:module:: elasticsearch.client.transform
+
+.. autoclass:: TransformClient
+   :members:
+
+
+Deprecation APIs
+-----------------
+
+`Deprecation API <https://www.elastic.co/guide/en/elasticsearch/reference/master/migration-api-deprecation.html>`_
+used to retrieve information about different cluster, node, and index level settings that use deprecated features that will be removed or changed in the next major version.
+
+.. py:module:: elasticsearch.client.deprecation
+
+.. autoclass:: DeprecationClient
+   :members:
