@@ -269,7 +269,7 @@ class TestUrllib3Connection(TestCase):
 
         self.assertEquals(2, logger.debug.call_count)
         req, resp = logger.debug.call_args_list
-        print(req, resp)
+
         self.assertEquals('> {"example": "body"}', req[0][0] % req[0][1:])
         self.assertEquals("< {}", resp[0][0] % resp[0][1:])
 
@@ -556,7 +556,7 @@ class TestRequestsConnection(TestCase):
         self.assertEquals(1, tracer.debug.call_count)
         self.assertTrue(
             re.match(
-                r'#\[200\] \(0.[0-9]{3}s\)\n#\{\n#  "answer": "that\\\\u0027s it!"\n#\}',
+                r'#\[200\] \(0.[0-9]{3}s\)\n#{\n#  "answer": "that\\u0027s it!"\n#}',
                 tracer.debug.call_args[0][0] % tracer.debug.call_args[0][1:],
             )
         )
