@@ -45,7 +45,13 @@ def expand_action(data):
         "version_type",
     ):
         if key in data:
-            if key in ["_parent", "_retry_on_conflict", "_routing", "_version", "_version_type"]:
+            if key in [
+                "_parent",
+                "_retry_on_conflict",
+                "_routing",
+                "_version",
+                "_version_type",
+            ]:
                 action[op_type][key[1:]] = data.pop(key)
             else:
                 action[op_type][key] = data.pop(key)

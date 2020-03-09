@@ -25,9 +25,7 @@ def gzip_decompress(data):
 
 
 class TestUrllib3Connection(TestCase):
-    def _get_mock_connection(
-        self, connection_params={}, response_body=b"{}"
-    ):
+    def _get_mock_connection(self, connection_params={}, response_body=b"{}"):
         con = Urllib3HttpConnection(**connection_params)
 
         def _dummy_urlopen(*args, **kwargs):
@@ -66,7 +64,9 @@ class TestUrllib3Connection(TestCase):
             con.host, "https://0fd50f62320ed6539f6cb48e1b68.example.cloud.com:9243"
         )
         self.assertEquals(con.port, 9243)
-        self.assertEquals(con.hostname, "0fd50f62320ed6539f6cb48e1b68.example.cloud.com")
+        self.assertEquals(
+            con.hostname, "0fd50f62320ed6539f6cb48e1b68.example.cloud.com"
+        )
         self.assertTrue(con.http_compress)
 
     def test_api_key_auth(self):
@@ -75,16 +75,24 @@ class TestUrllib3Connection(TestCase):
             cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
             api_key=("elastic", "changeme1"),
         )
-        self.assertEquals(con.headers["authorization"], "ApiKey ZWxhc3RpYzpjaGFuZ2VtZTE=")
-        self.assertEquals(con.host, "https://0fd50f62320ed6539f6cb48e1b68.example.cloud.com:9243")
+        self.assertEquals(
+            con.headers["authorization"], "ApiKey ZWxhc3RpYzpjaGFuZ2VtZTE="
+        )
+        self.assertEquals(
+            con.host, "https://0fd50f62320ed6539f6cb48e1b68.example.cloud.com:9243"
+        )
 
         # test with base64 encoded string
         con = Urllib3HttpConnection(
             cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
             api_key="ZWxhc3RpYzpjaGFuZ2VtZTI=",
         )
-        self.assertEquals(con.headers["authorization"], "ApiKey ZWxhc3RpYzpjaGFuZ2VtZTI=")
-        self.assertEquals(con.host, "https://0fd50f62320ed6539f6cb48e1b68.example.cloud.com:9243")
+        self.assertEquals(
+            con.headers["authorization"], "ApiKey ZWxhc3RpYzpjaGFuZ2VtZTI="
+        )
+        self.assertEquals(
+            con.host, "https://0fd50f62320ed6539f6cb48e1b68.example.cloud.com:9243"
+        )
 
     def test_no_http_compression(self):
         con = self._get_mock_connection()
@@ -134,19 +142,22 @@ class TestUrllib3Connection(TestCase):
 
         con = Urllib3HttpConnection(
             cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
-            http_compress=False
+            http_compress=False,
         )
         self.assertEquals(con.http_compress, False)
 
         con = Urllib3HttpConnection(
             cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
-            http_compress=True
+            http_compress=True,
         )
         self.assertEquals(con.http_compress, True)
 
     def test_default_user_agent(self):
         con = Urllib3HttpConnection()
-        self.assertEquals(con._get_default_user_agent(), "elasticsearch-py/%s (Python %s)" % (__versionstr__, python_version()))
+        self.assertEquals(
+            con._get_default_user_agent(),
+            "elasticsearch-py/%s (Python %s)" % (__versionstr__, python_version()),
+        )
 
     def test_timeout_set(self):
         con = Urllib3HttpConnection(timeout=42)
@@ -254,13 +265,13 @@ class TestUrllib3Connection(TestCase):
     @patch("elasticsearch.connection.base.logger")
     def test_uncompressed_body_logged(self, logger):
         con = self._get_mock_connection(connection_params={"http_compress": True})
-        con.perform_request("GET", "/", body=b"{\"example\": \"body\"}")
+        con.perform_request("GET", "/", body=b'{"example": "body"}')
 
         self.assertEquals(2, logger.debug.call_count)
         req, resp = logger.debug.call_args_list
         print(req, resp)
         self.assertEquals('> {"example": "body"}', req[0][0] % req[0][1:])
-        self.assertEquals('< {}', resp[0][0] % resp[0][1:])
+        self.assertEquals("< {}", resp[0][0] % resp[0][1:])
 
 
 class TestRequestsConnection(TestCase):
@@ -315,7 +326,9 @@ class TestRequestsConnection(TestCase):
             con.host, "https://0fd50f62320ed6539f6cb48e1b68.example.cloud.com:9243"
         )
         self.assertEquals(con.port, 9243)
-        self.assertEquals(con.hostname, "0fd50f62320ed6539f6cb48e1b68.example.cloud.com")
+        self.assertEquals(
+            con.hostname, "0fd50f62320ed6539f6cb48e1b68.example.cloud.com"
+        )
         self.assertTrue(con.http_compress)
 
     def test_api_key_auth(self):
@@ -324,16 +337,24 @@ class TestRequestsConnection(TestCase):
             cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
             api_key=("elastic", "changeme1"),
         )
-        self.assertEquals(con.session.headers["authorization"], "ApiKey ZWxhc3RpYzpjaGFuZ2VtZTE=")
-        self.assertEquals(con.host, "https://0fd50f62320ed6539f6cb48e1b68.example.cloud.com:9243")
+        self.assertEquals(
+            con.session.headers["authorization"], "ApiKey ZWxhc3RpYzpjaGFuZ2VtZTE="
+        )
+        self.assertEquals(
+            con.host, "https://0fd50f62320ed6539f6cb48e1b68.example.cloud.com:9243"
+        )
 
         # test with base64 encoded string
         con = RequestsHttpConnection(
             cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
             api_key="ZWxhc3RpYzpjaGFuZ2VtZTI=",
         )
-        self.assertEquals(con.session.headers["authorization"], "ApiKey ZWxhc3RpYzpjaGFuZ2VtZTI=")
-        self.assertEquals(con.host, "https://0fd50f62320ed6539f6cb48e1b68.example.cloud.com:9243")
+        self.assertEquals(
+            con.session.headers["authorization"], "ApiKey ZWxhc3RpYzpjaGFuZ2VtZTI="
+        )
+        self.assertEquals(
+            con.host, "https://0fd50f62320ed6539f6cb48e1b68.example.cloud.com:9243"
+        )
 
     def test_no_http_compression(self):
         con = self._get_mock_connection()
@@ -348,9 +369,7 @@ class TestRequestsConnection(TestCase):
         self.assertNotIn("accept-encoding", req.headers)
 
     def test_http_compression(self):
-        con = self._get_mock_connection(
-            {"http_compress": True},
-        )
+        con = self._get_mock_connection({"http_compress": True},)
 
         self.assertTrue(con.http_compress)
 
@@ -380,13 +399,13 @@ class TestRequestsConnection(TestCase):
 
         con = RequestsHttpConnection(
             cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
-            http_compress=False
+            http_compress=False,
         )
         self.assertEquals(con.http_compress, False)
 
         con = RequestsHttpConnection(
             cloud_id="foobar:ZXhhbXBsZS5jbG91ZC5jb20kMGZkNTBmNjIzMjBlZDY1MzlmNmNiNDhlMWI2OCRhYzUzOTVhODgz\nNDU2NmM5ZjE1Y2Q4ZTQ5MGE=\n",
-            http_compress=True
+            http_compress=True,
         )
         self.assertEquals(con.http_compress, True)
 
@@ -442,10 +461,15 @@ class TestRequestsConnection(TestCase):
 
     def test_custom_headers(self):
         con = self._get_mock_connection()
-        req = self._get_request(con, "GET", "/", headers={
-            "content-type": "application/x-ndjson",
-            "user-agent": "custom-agent/1.2.3",
-        })
+        req = self._get_request(
+            con,
+            "GET",
+            "/",
+            headers={
+                "content-type": "application/x-ndjson",
+                "user-agent": "custom-agent/1.2.3",
+            },
+        )
         self.assertEquals(req.headers["content-type"], "application/x-ndjson")
         self.assertEquals(req.headers["user-agent"], "custom-agent/1.2.3")
 
@@ -506,7 +530,7 @@ class TestRequestsConnection(TestCase):
         self.assertEquals(1, logger.warning.call_count)
         self.assertTrue(
             re.match(
-                "^GET http://localhost:9200/\?param=42 \[status:500 request:0.[0-9]{3}s\]",
+                r"^GET http://localhost:9200/\?param=42 \[status:500 request:0.[0-9]{3}s\]",
                 logger.warning.call_args[0][0] % logger.warning.call_args[0][1:],
             )
         )
@@ -532,7 +556,7 @@ class TestRequestsConnection(TestCase):
         self.assertEquals(1, tracer.debug.call_count)
         self.assertTrue(
             re.match(
-                '#\[200\] \(0.[0-9]{3}s\)\n#\{\n#  "answer": "that\\\\u0027s it!"\n#\}',
+                r'#\[200\] \(0.[0-9]{3}s\)\n#\{\n#  "answer": "that\\\\u0027s it!"\n#\}',
                 tracer.debug.call_args[0][0] % tracer.debug.call_args[0][1:],
             )
         )
@@ -541,7 +565,7 @@ class TestRequestsConnection(TestCase):
         self.assertEquals(1, logger.info.call_count)
         self.assertTrue(
             re.match(
-                "GET http://localhost:9200/\?param=42 \[status:200 request:0.[0-9]{3}s\]",
+                r"GET http://localhost:9200/\?param=42 \[status:200 request:0.[0-9]{3}s\]",
                 logger.info.call_args[0][0] % logger.info.call_args[0][1:],
             )
         )
@@ -554,12 +578,12 @@ class TestRequestsConnection(TestCase):
     @patch("elasticsearch.connection.base.logger")
     def test_uncompressed_body_logged(self, logger):
         con = self._get_mock_connection(connection_params={"http_compress": True})
-        con.perform_request("GET", "/", body=b"{\"example\": \"body\"}")
+        con.perform_request("GET", "/", body=b'{"example": "body"}')
 
         self.assertEquals(2, logger.debug.call_count)
         req, resp = logger.debug.call_args_list
         self.assertEquals('> {"example": "body"}', req[0][0] % req[0][1:])
-        self.assertEquals('< {}', resp[0][0] % resp[0][1:])
+        self.assertEquals("< {}", resp[0][0] % resp[0][1:])
 
     def test_defaults(self):
         con = self._get_mock_connection()
