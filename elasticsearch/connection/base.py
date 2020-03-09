@@ -57,7 +57,9 @@ class Connection(object):
             try:
                 _, cloud_id = cloud_id.split(":")
                 parent_dn, es_uuid, _ = (
-                    binascii.a2b_base64(cloud_id.encode("utf-8")).decode("utf-8").split("$")
+                    binascii.a2b_base64(cloud_id.encode("utf-8"))
+                    .decode("utf-8")
+                    .split("$")
                 )
             except ValueError:
                 raise ImproperlyConfigured("'cloud_id' is not properly formatted")
@@ -106,9 +108,7 @@ class Connection(object):
 
     def __eq__(self, other):
         if not isinstance(other, Connection):
-            raise TypeError(
-                "Unsupported equality check for %s and %s" % (self, other)
-            )
+            raise TypeError("Unsupported equality check for %s and %s" % (self, other))
         return self.__hash__() == other.__hash__()
 
     def __hash__(self):
@@ -242,6 +242,6 @@ class Connection(object):
         :arg api_key, either a tuple or a base64 encoded string
         """
         if isinstance(api_key, (tuple, list)):
-            s = "{0}:{1}".format(api_key[0], api_key[1]).encode('utf-8')
-            return "ApiKey " + binascii.b2a_base64(s).rstrip(b"\r\n").decode('utf-8')
+            s = "{0}:{1}".format(api_key[0], api_key[1]).encode("utf-8")
+            return "ApiKey " + binascii.b2a_base64(s).rstrip(b"\r\n").decode("utf-8")
         return "ApiKey " + api_key
