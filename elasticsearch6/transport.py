@@ -228,7 +228,7 @@ class Transport(object):
                     pass
             else:
                 raise TransportError("N/A", "Unable to sniff hosts.")
-        except:
+        except Exception:
             # keep the previous value on error
             self.last_sniff = previous_sniff
             raise

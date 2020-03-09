@@ -5,6 +5,15 @@ from urllib3.exceptions import ReadTimeoutError, SSLError as UrllibSSLError
 from urllib3.util.retry import Retry
 import warnings
 
+from .base import Connection
+from ..exceptions import (
+    ConnectionError,
+    ImproperlyConfigured,
+    ConnectionTimeout,
+    SSLError,
+)
+from ..compat import urlencode
+
 # sentinel value for `verify_certs`.
 # This is used to detect if a user is passing in a value for `verify_certs`
 # so we can raise a warning if using SSL kwargs AND SSLContext.
@@ -18,15 +27,6 @@ try:
     CA_CERTS = certifi.where()
 except ImportError:
     pass
-
-from .base import Connection
-from ..exceptions import (
-    ConnectionError,
-    ImproperlyConfigured,
-    ConnectionTimeout,
-    SSLError,
-)
-from ..compat import urlencode
 
 
 def create_ssl_context(**kwargs):
@@ -175,11 +175,7 @@ class Urllib3HttpConnection(Connection):
                 kw["cert_reqs"] = "CERT_NONE"
 
         self.pool = pool_class(
-            self.hostname,
-            port=self.port,
-            timeout=self.timeout,
-            maxsize=maxsize,
-            **kw
+            self.hostname, port=self.port, timeout=self.timeout, maxsize=maxsize, **kw
         )
 
     def perform_request(

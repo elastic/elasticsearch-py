@@ -2,9 +2,9 @@ from collections import defaultdict
 
 try:
     # python 2.6
-    from unittest2 import TestCase, SkipTest
+    from unittest2 import TestCase, SkipTest  # noqa: F401
 except ImportError:
-    from unittest import TestCase, SkipTest
+    from unittest import TestCase, SkipTest  # noqa: F401
 
 from elasticsearch6 import Elasticsearch
 

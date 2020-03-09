@@ -5,7 +5,7 @@ import time
 from elasticsearch6.transport import Transport, get_host_info
 from elasticsearch6.connection import Connection
 from elasticsearch6.connection_pool import DummyConnectionPool
-from elasticsearch6.exceptions import ConnectionError, ImproperlyConfigured
+from elasticsearch6.exceptions import ConnectionError
 
 from .test_cases import TestCase
 

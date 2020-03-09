@@ -56,7 +56,9 @@ class Connection(object):
             try:
                 _, cloud_id = cloud_id.split(":")
                 parent_dn, es_uuid, _ = (
-                    binascii.a2b_base64(cloud_id.encode("utf-8")).decode("utf-8").split("$")
+                    binascii.a2b_base64(cloud_id.encode("utf-8"))
+                    .decode("utf-8")
+                    .split("$")
                 )
             except ValueError:
                 raise ImproperlyConfigured("'cloud_id' is not properly formatted")

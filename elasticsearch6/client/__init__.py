@@ -210,7 +210,7 @@ class Elasticsearch(object):
             if len(cons) > 5:
                 cons = cons[:5] + ["..."]
             return "<{cls}({cons})>".format(cls=self.__class__.__name__, cons=cons)
-        except:
+        except Exception:
             # probably operating on custom transport and connection_pool, ignore
             return super(Elasticsearch, self).__repr__()
 
@@ -339,10 +339,10 @@ class Elasticsearch(object):
             otherwise set to any non-negative value less than or equal to the
             total number of copies for the shard (number of replicas + 1)
         :arg if_primary_term: only perform the index operation if the last
-	    operation that has changed the document has the specified primary
-	    term
-	:arg if_seq_no: only perform the index operation if the last operation
-	    that has changed the document has the specified sequence number
+            operation that has changed the document has the specified primary
+            term
+        :arg if_seq_no: only perform the index operation if the last operation
+            that has changed the document has the specified sequence number
         """
         for param in (index, doc_type, body):
             if param in SKIP_IN_PATH:
@@ -1103,10 +1103,10 @@ class Elasticsearch(object):
             _source field
         :arg _source_include: A list of fields to extract and return from the
             _source field
-	:arg _source_excludes: A list of fields to exclude from the returned
-	    _source field
-	:arg _source_includes: A list of fields to extract and return from the
-	    _source field
+        :arg _source_excludes: A list of fields to exclude from the returned
+            _source field
+        :arg _source_includes: A list of fields to extract and return from the
+            _source field
         :arg allow_no_indices: Whether to ignore if a wildcard indices
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
@@ -1431,11 +1431,11 @@ class Elasticsearch(object):
             1, meaning the primary shard only. Set to `all` for all shard
             copies, otherwise set to any non-negative value less than or equal
             to the total number of copies for the shard (number of replicas + 1)
-	:arg if_primary_term: only perform the delete operation if the last
+        :arg if_primary_term: only perform the delete operation if the last
             operation that has changed the document has the specified primary
             term
-	:arg if_seq_no: only perform the delete operation if the last operation
-	    that has changed the document has the specified sequence number
+        :arg if_seq_no: only perform the delete operation if the last operation
+            that has changed the document has the specified sequence number
         """
         for param in (index, doc_type, id):
             if param in SKIP_IN_PATH:
@@ -1581,7 +1581,7 @@ class Elasticsearch(object):
             default
         :arg max_concurrent_searches: Controls the maximum number of concurrent
             searches the multi search api will execute
-	:arg max_concurrent_searches: Controls the maximum number of concurrent
+        :arg max_concurrent_searches: Controls the maximum number of concurrent
             searches the multi search api will execute
         :arg pre_filter_shard_size: A threshold that enforces a pre-filter
             roundtrip to prefilter search shards based on query rewriting if
@@ -1591,10 +1591,10 @@ class Elasticsearch(object):
             based on it's rewrite method ie. if date filters are mandatory to
             match but the shard bounds and the query are disjoint., default 128
         :arg rest_total_hits_as_int: This parameter is ignored in this version.
-	    It is used in the next major version to control whether the rest
-	    response should render the total.hits as an object or a number,
-	    default False
-	:arg search_type: Search operation type, valid choices are:
+            It is used in the next major version to control whether the rest
+            response should render the total.hits as an object or a number,
+            default False
+        :arg search_type: Search operation type, valid choices are:
             'query_then_fetch', 'query_and_fetch', 'dfs_query_then_fetch',
             'dfs_query_and_fetch'
         :arg typed_keys: Specify whether aggregation and suggester names should
@@ -1748,7 +1748,7 @@ class Elasticsearch(object):
         :arg id: Script ID
         :arg body: The document
         :arg master_timeout: Specify timeout for connection to master
-	:arg timeout: Explicit operation timeout
+        :arg timeout: Explicit operation timeout
         """
         for param in (id, body):
             if param in SKIP_IN_PATH:
@@ -1803,7 +1803,7 @@ class Elasticsearch(object):
         `<http://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
 
         :arg id: Script ID
-	:arg master_timeout: Specify timeout for connection to master
+        :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         """
         if id in SKIP_IN_PATH:
@@ -1851,10 +1851,10 @@ class Elasticsearch(object):
         :arg max_concurrent_searches: Controls the maximum number of concurrent
             searches the multi search api will execute
         :arg rest_total_hits_as_int: This parameter is ignored in this version.
-	    It is used in the next major version to control whether the rest
-	    response should render the total.hits as an object or a number,
-	    default False
-	:arg search_type: Search operation type, valid choices are:
+            It is used in the next major version to control whether the rest
+            response should render the total.hits as an object or a number,
+            default False
+        :arg search_type: Search operation type, valid choices are:
             'query_then_fetch', 'query_and_fetch', 'dfs_query_then_fetch',
             'dfs_query_and_fetch'
         :arg typed_keys: Specify whether aggregation and suggester names should
