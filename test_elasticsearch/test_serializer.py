@@ -77,6 +77,6 @@ class TestDeserializer(TestCase):
         self.assertRaises(SerializationError, self.de.loads, "{}", "text/html")
 
     def test_raises_improperly_configured_when_default_mimetype_cannot_be_deserialized(
-        self
+        self,
     ):
         self.assertRaises(ImproperlyConfigured, Deserializer, {})
