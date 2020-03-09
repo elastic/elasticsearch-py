@@ -1,5 +1,6 @@
 from collections import defaultdict
 from unittest import TestCase
+from unittest import SkipTest  # noqa: F401
 from elasticsearch import Elasticsearch
 
 
