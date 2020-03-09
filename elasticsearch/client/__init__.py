@@ -264,7 +264,7 @@ class Elasticsearch(object):
             if len(cons) > 5:
                 cons = cons[:5] + ["..."]
             return "<{cls}({cons})>".format(cls=self.__class__.__name__, cons=cons)
-        except:
+        except Exception:
             # probably operating on custom transport and connection_pool, ignore
             return super(Elasticsearch, self).__repr__()
 

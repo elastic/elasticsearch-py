@@ -12,7 +12,10 @@ def get_test_client(nowait=False, **kwargs):
 
     if "PYTHON_CONNECTION_CLASS" in os.environ:
         from elasticsearch import connection
-        kw["connection_class"] = getattr(connection, os.environ["PYTHON_CONNECTION_CLASS"])
+
+        kw["connection_class"] = getattr(
+            connection, os.environ["PYTHON_CONNECTION_CLASS"]
+        )
 
     kw.update(kwargs)
     client = Elasticsearch([os.environ.get("ELASTICSEARCH_HOST", {})], **kw)
