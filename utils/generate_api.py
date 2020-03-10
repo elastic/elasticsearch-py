@@ -128,6 +128,14 @@ class API:
             self.description = definition["documentation"].get("description", "")
             self.doc_url = definition["documentation"].get("url", "")
 
+        # Filter out bad URL refs like 'TODO'
+        # and serve all docs over HTTPS.
+        if self.doc_url:
+            if not self.doc_url.startswith("http"):
+                self.doc_url = ""
+            if self.doc_url.startswith("http://"):
+                self.doc_url = self.doc_url.replace("http://", "https://")
+
     @property
     def all_parts(self):
         parts = {}
@@ -245,6 +253,10 @@ def read_modules():
             namespace = "__init__"
             if "." in name:
                 namespace, name = name.rsplit(".", 1)
+
+            # The data_frame API has been changed to transform.
+            if namespace == "data_frame_transform_deprecated":
+                continue
 
             if namespace not in modules:
                 modules[namespace] = Module(namespace)
