@@ -1,6 +1,6 @@
 {% extends "base" %}
 {% block request %}
-        if index and not metric:
+        if index and metric in SKIP_IN_PATH:
             metric = "_all"
 
         {{ super()|trim }}

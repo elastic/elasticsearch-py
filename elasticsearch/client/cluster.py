@@ -102,7 +102,7 @@ class ClusterClient(NamespacedClient):
         :arg wait_for_timeout: The maximum time to wait for
             wait_for_metadata_version before timing out
         """
-        if index and not metric:
+        if index and metric in SKIP_IN_PATH:
             metric = "_all"
 
         return self.transport.perform_request(
