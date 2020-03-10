@@ -1,0 +1,8 @@
+{% extends "base" %}
+{% block request %}
+        if index and not metric:
+            metric = "_all"
+
+        {{ super()|trim }}
+{% endblock %}
+
