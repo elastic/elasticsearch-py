@@ -10,11 +10,13 @@ class LicenseClient(NamespacedClient):
         """
         return self.transport.perform_request("DELETE", "/_license", params=params)
 
-    @query_params("local")
+    @query_params("accept_enterprise", "local")
     def get(self, params=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-license.html>`_
 
+        :arg accept_enterprise: If the active license is an enterprise
+            license, return type as 'enterprise' (default: false)
         :arg local: Return local information, do not retrieve the state
             from master node (default: false)
         """

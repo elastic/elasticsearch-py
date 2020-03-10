@@ -5,7 +5,7 @@ class SlmClient(NamespacedClient):
     @query_params()
     def delete_lifecycle(self, policy_id, params=None):
         """
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-api-delete.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-api-delete-policy.html>`_
 
         :arg policy_id: The id of the snapshot lifecycle policy to
             remove
@@ -20,7 +20,7 @@ class SlmClient(NamespacedClient):
     @query_params()
     def execute_lifecycle(self, policy_id, params=None):
         """
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-api-execute.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-api-execute-lifecycle.html>`_
 
         :arg policy_id: The id of the snapshot lifecycle policy to be
             executed
@@ -45,7 +45,7 @@ class SlmClient(NamespacedClient):
     @query_params()
     def get_lifecycle(self, policy_id=None, params=None):
         """
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-api-get.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-api-get-policy.html>`_
 
         :arg policy_id: Comma-separated list of snapshot lifecycle
             policies to retrieve
@@ -57,7 +57,7 @@ class SlmClient(NamespacedClient):
     @query_params()
     def get_stats(self, params=None):
         """
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/slm-get-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/slm-api-get-stats.html>`_
 
         """
         return self.transport.perform_request("GET", "/_slm/stats", params=params)
@@ -65,7 +65,7 @@ class SlmClient(NamespacedClient):
     @query_params()
     def put_lifecycle(self, policy_id, body=None, params=None):
         """
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-api-put.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-api-put-policy.html>`_
 
         :arg policy_id: The id of the snapshot lifecycle policy
         :arg body: The snapshot lifecycle policy definition to register
@@ -80,7 +80,7 @@ class SlmClient(NamespacedClient):
     @query_params()
     def get_status(self, params=None):
         """
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-get-status.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-api-get-status.html>`_
 
         """
         return self.transport.perform_request("GET", "/_slm/status", params=params)
@@ -88,7 +88,7 @@ class SlmClient(NamespacedClient):
     @query_params()
     def start(self, params=None):
         """
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-start.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-api-start.html>`_
 
         """
         return self.transport.perform_request("POST", "/_slm/start", params=params)
@@ -96,7 +96,7 @@ class SlmClient(NamespacedClient):
     @query_params()
     def stop(self, params=None):
         """
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-stop.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-api-stop.html>`_
 
         """
         return self.transport.perform_request("POST", "/_slm/stop", params=params)

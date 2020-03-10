@@ -127,7 +127,7 @@ class CatClient(NamespacedClient):
         :arg index: A comma-separated list of index names to limit the
             returned information
         :arg bytes: The unit in which to display byte values  Valid
-            choices: b, k, m, g
+            choices: b, k, kb, m, mb, g, gb, t, tb, p, pb
         :arg format: a short version of the Accept header, e.g. json,
             yaml
         :arg h: Comma-separated list of column names to display
@@ -199,8 +199,8 @@ class CatClient(NamespacedClient):
             version (default: false)
         :arg h: Comma-separated list of column names to display
         :arg help: Return help information
-        :arg local: Return local information, do not retrieve the state
-            from master node (default: false)
+        :arg local: Calculate the selected nodes using the local cluster
+            state rather than the state from master node (default: false)
         :arg master_timeout: Explicit operation timeout for connection
             to master node
         :arg s: Comma-separated list of column names or column aliases

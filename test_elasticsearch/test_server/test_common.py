@@ -37,9 +37,6 @@ SKIP_TESTS = {
     "*": {
         # Can't figure out the get_alias(expand_wildcards=open) failure.
         "TestIndicesGetAlias10Basic",
-        # Scripts are 7.6+
-        "TestScripts20GetScriptContext",
-        "TestScripts25GetScriptLanguages",
         # Disallowing expensive queries is 7.7+
         "TestSearch320DisallowQueries",
     }

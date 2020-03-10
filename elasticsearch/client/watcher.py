@@ -5,7 +5,7 @@ class WatcherClient(NamespacedClient):
     @query_params()
     def ack_watch(self, watch_id, action_id=None, params=None):
         """
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-ack-watch.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-ack-watch.html>`_
 
         :arg watch_id: Watch ID
         :arg action_id: A comma-separated list of the action ids to be
@@ -53,7 +53,7 @@ class WatcherClient(NamespacedClient):
     @query_params()
     def delete_watch(self, id, params=None):
         """
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-delete-watch.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-delete-watch.html>`_
 
         :arg id: Watch ID
         """
@@ -67,7 +67,7 @@ class WatcherClient(NamespacedClient):
     @query_params("debug")
     def execute_watch(self, body=None, id=None, params=None):
         """
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-execute-watch.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-execute-watch.html>`_
 
         :arg body: Execution control
         :arg id: Watch ID
@@ -84,7 +84,7 @@ class WatcherClient(NamespacedClient):
     @query_params()
     def get_watch(self, id, params=None):
         """
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-get-watch.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-get-watch.html>`_
 
         :arg id: Watch ID
         """
@@ -98,7 +98,7 @@ class WatcherClient(NamespacedClient):
     @query_params("active", "if_primary_term", "if_seq_no", "version")
     def put_watch(self, id, body=None, params=None):
         """
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-put-watch.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-put-watch.html>`_
 
         :arg id: Watch ID
         :arg body: The watch
@@ -119,7 +119,7 @@ class WatcherClient(NamespacedClient):
     @query_params()
     def start(self, params=None):
         """
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-start.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-start.html>`_
 
         """
         return self.transport.perform_request("POST", "/_watcher/_start", params=params)
@@ -127,7 +127,7 @@ class WatcherClient(NamespacedClient):
     @query_params("emit_stacktraces")
     def stats(self, metric=None, params=None):
         """
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-stats.html>`_
 
         :arg metric: Controls what additional stat metrics should be
             include in the response  Valid choices: _all, queued_watches,
@@ -145,7 +145,7 @@ class WatcherClient(NamespacedClient):
     @query_params()
     def stop(self, params=None):
         """
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-stop.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-stop.html>`_
 
         """
         return self.transport.perform_request("POST", "/_watcher/_stop", params=params)

@@ -959,7 +959,8 @@ class IndicesClient(NamespacedClient):
     @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable")
     def flush_synced(self, index=None, params=None):
         """
-        Performs a synced flush operation on one or more indices.
+        Performs a synced flush operation on one or more indices. Synced flush is
+        deprecated and will be removed in 8.0. Use flush instead
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-synced-flush-api.html>`_
 
         :arg index: A comma-separated list of index names; use `_all` or

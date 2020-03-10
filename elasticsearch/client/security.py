@@ -88,7 +88,6 @@ class SecurityClient(NamespacedClient):
     @query_params("refresh")
     def delete_privileges(self, application, name, params=None):
         """
-        `<TODO>`_
 
         :arg application: Application name
         :arg name: Privilege name
@@ -335,7 +334,6 @@ class SecurityClient(NamespacedClient):
     @query_params("refresh")
     def put_privileges(self, body, params=None):
         """
-        `<TODO>`_
 
         :arg body: The privilege(s) to add
         :arg refresh: If `true` (the default) then refresh the affected
