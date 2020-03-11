@@ -37,6 +37,8 @@ class Connection(object):
     :arg timeout: default timeout in seconds (float, default: 10)
     :arg http_compress: Use gzip compression
     :arg cloud_id: The Cloud ID from ElasticCloud. Convenient way to connect to cloud instances.
+    :arg opaque_id: Send this value in the 'X-Opaque-Id' HTTP header
+        For tracing all requests made by this transport.
     """
 
     def __init__(
@@ -50,6 +52,7 @@ class Connection(object):
         http_compress=None,
         cloud_id=None,
         api_key=None,
+        opaque_id=None,
         **kwargs
     ):
 
@@ -78,6 +81,8 @@ class Connection(object):
         headers = headers or {}
         for key in headers:
             self.headers[key.lower()] = headers[key]
+        if opaque_id:
+            self.headers["x-opaque-id"] = opaque_id
 
         self.headers.setdefault("content-type", "application/json")
         self.headers.setdefault("user-agent", self._get_default_user_agent())

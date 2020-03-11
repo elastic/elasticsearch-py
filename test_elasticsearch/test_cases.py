@@ -11,12 +11,12 @@ class DummyTransport(object):
         self.call_count = 0
         self.calls = defaultdict(list)
 
-    def perform_request(self, method, url, params=None, body=None):
+    def perform_request(self, method, url, params=None, headers=None, body=None):
         resp = 200, {}
         if self.responses:
             resp = self.responses[self.call_count]
         self.call_count += 1
-        self.calls[(method, url)].append((params, body))
+        self.calls[(method, url)].append((params, headers, body))
         return resp
 
 
@@ -46,4 +46,6 @@ class TestElasticsearchTestCase(ElasticsearchTestCase):
         self.client.transport.perform_request("GET", "/")
         self.client.transport.perform_request("DELETE", "/42", params={}, body="body")
         self.assert_call_count_equals(2)
-        self.assertEquals([({}, "body")], self.assert_url_called("DELETE", "/42", 1))
+        self.assertEquals(
+            [({}, None, "body")], self.assert_url_called("DELETE", "/42", 1)
+        )
