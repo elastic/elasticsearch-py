@@ -10,4 +10,5 @@
   {% if not info.required %}{{ p }}=None, {% endif %}
 {% endfor %}
 
-params=None
+params=None,
+headers=None

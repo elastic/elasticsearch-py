@@ -69,19 +69,27 @@ def query_params(*es_query_params):
         @wraps(func)
         def _wrapped(*args, **kwargs):
             params = {}
+            headers = {}
             if "params" in kwargs:
                 params = kwargs.pop("params").copy()
+            if "headers" in kwargs:
+                headers = {
+                    k.lower(): v for k, v in (kwargs.pop("headers") or {}).items()
+                }
+            if "opaque_id" in kwargs:
+                headers["x-opaque-id"] = kwargs.pop("opaque_id")
+
             for p in es_query_params + GLOBAL_PARAMS:
                 if p in kwargs:
                     v = kwargs.pop(p)
                     if v is not None:
                         params[p] = _escape(v)
 
-            # don't treat ignore and request_timeout as other params to avoid escaping
+            # don't treat ignore, request_timeout, and opaque_id as other params to avoid escaping
             for p in ("ignore", "request_timeout"):
                 if p in kwargs:
                     params[p] = kwargs.pop(p)
-            return func(*args, params=params, **kwargs)
+            return func(*args, params=params, headers=headers, **kwargs)
 
         return _wrapped
 

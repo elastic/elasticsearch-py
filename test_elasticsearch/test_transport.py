@@ -111,6 +111,26 @@ class TestTransport(TestCase):
             t.get_connection().calls[0][1],
         )
 
+    def test_opaque_id(self):
+        t = Transport([{}], opaque_id="app-1", connection_class=DummyConnection)
+
+        t.perform_request("GET", "/")
+        self.assertEquals(1, len(t.get_connection().calls))
+        self.assertEquals(("GET", "/", None, None), t.get_connection().calls[0][0])
+        self.assertEquals(
+            {"timeout": None, "ignore": (), "headers": None},
+            t.get_connection().calls[0][1],
+        )
+
+        # Now try with an 'x-opaque-id' set on perform_request().
+        t.perform_request("GET", "/", headers={"x-opaque-id": "request-1"})
+        self.assertEquals(2, len(t.get_connection().calls))
+        self.assertEquals(("GET", "/", None, None), t.get_connection().calls[1][0])
+        self.assertEquals(
+            {"timeout": None, "ignore": (), "headers": {"x-opaque-id": "request-1"}},
+            t.get_connection().calls[1][1],
+        )
+
     def test_request_with_custom_user_agent_header(self):
         t = Transport([{}], connection_class=DummyConnection)
 

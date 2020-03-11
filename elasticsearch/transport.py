@@ -342,6 +342,7 @@ class Transport(object):
             ignore = params.pop("ignore", ())
             if isinstance(ignore, int):
                 ignore = (ignore,)
+
         for attempt in range(self.max_retries + 1):
             connection = self.get_connection()
 
