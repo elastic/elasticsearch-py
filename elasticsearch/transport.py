@@ -343,16 +343,15 @@ class Transport(object):
 
         ignore = ()
         timeout = None
-        opaque_id = self.opaque_id
         if params:
             timeout = params.pop("request_timeout", None)
             ignore = params.pop("ignore", ())
-            opaque_id = params.pop("opaque_id", None) or opaque_id
             if isinstance(ignore, int):
                 ignore = (ignore,)
 
-        if opaque_id:
-            headers.setdefault("x-opaque-id", opaque_id)
+        request_headers = (headers or {}).copy()
+        if self.opaque_id:
+            request_headers.setdefault("x-opaque-id", self.opaque_id)
 
         for attempt in range(self.max_retries + 1):
             connection = self.get_connection()
@@ -363,7 +362,7 @@ class Transport(object):
                     url,
                     params,
                     body,
-                    headers=headers,
+                    headers=request_headers,
                     ignore=ignore,
                     timeout=timeout,
                 )
