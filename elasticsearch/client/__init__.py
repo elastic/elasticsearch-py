@@ -236,7 +236,6 @@ class Elasticsearch(object):
         self.snapshot = SnapshotClient(self)
         self.tasks = TasksClient(self)
 
-        self.xpack = XPackClient(self)
         self.ccr = CcrClient(self)
         self.data_frame = Data_FrameClient(self)
         self.deprecation = DeprecationClient(self)
@@ -255,7 +254,9 @@ class Elasticsearch(object):
         self.enrich = EnrichClient(self)
         self.slm = SlmClient(self)
         self.transform = TransformClient(self)
+        self.xpack = XPackClient(self)
 
+        
     def __repr__(self):
         try:
             # get a list of all connections
