@@ -37,6 +37,8 @@ class Connection(object):
     :arg timeout: default timeout in seconds (float, default: 10)
     :arg http_compress: Use gzip compression
     :arg cloud_id: The Cloud ID from ElasticCloud. Convenient way to connect to cloud instances.
+    :arg opaque_id: Send this value in the 'X-Opaque-Id' HTTP header
+        For tracing all requests made by this transport.
     """
 
     def __init__(
@@ -50,13 +52,18 @@ class Connection(object):
         http_compress=None,
         cloud_id=None,
         api_key=None,
+        opaque_id=None,
         **kwargs
     ):
 
         if cloud_id:
             try:
                 _, cloud_id = cloud_id.split(":")
-                parent_dn, es_uuid = binascii.a2b_base64(cloud_id.encode("utf-8")).decode("utf-8").split("$")[:2]
+                parent_dn, es_uuid = (
+                    binascii.a2b_base64(cloud_id.encode("utf-8"))
+                    .decode("utf-8")
+                    .split("$")[:2]
+                )
                 if ":" in parent_dn:
                     parent_dn, _, parent_port = parent_dn.rpartition(":")
                     if port is None and parent_port != "443":
@@ -82,6 +89,8 @@ class Connection(object):
         headers = headers or {}
         for key in headers:
             self.headers[key.lower()] = headers[key]
+        if opaque_id:
+            self.headers["x-opaque-id"] = opaque_id
 
         self.headers.setdefault("content-type", "application/json")
         self.headers.setdefault("user-agent", self._get_default_user_agent())
@@ -114,9 +123,7 @@ class Connection(object):
 
     def __eq__(self, other):
         if not isinstance(other, Connection):
-            raise TypeError(
-                "Unsupported equality check for %s and %s" % (self, other)
-            )
+            raise TypeError("Unsupported equality check for %s and %s" % (self, other))
         return self.__hash__() == other.__hash__()
 
     def __hash__(self):
@@ -250,6 +257,6 @@ class Connection(object):
         :arg api_key, either a tuple or a base64 encoded string
         """
         if isinstance(api_key, (tuple, list)):
-            s = "{0}:{1}".format(api_key[0], api_key[1]).encode('utf-8')
-            return "ApiKey " + binascii.b2a_base64(s).rstrip(b"\r\n").decode('utf-8')
+            s = "{0}:{1}".format(api_key[0], api_key[1]).encode("utf-8")
+            return "ApiKey " + binascii.b2a_base64(s).rstrip(b"\r\n").decode("utf-8")
         return "ApiKey " + api_key

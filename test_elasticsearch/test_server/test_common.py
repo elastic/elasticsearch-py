@@ -9,7 +9,7 @@ from os.path import exists, join, dirname, pardir
 import yaml
 from shutil import rmtree
 
-from elasticsearch import TransportError
+from elasticsearch import TransportError, RequestError
 from elasticsearch.compat import string_types
 from elasticsearch.helpers.test import _get_version
 
@@ -108,10 +108,13 @@ class YamlTestCase(ElasticsearchTestCase):
     def _feature_enabled(self, name):
         global XPACK_FEATURES
         if XPACK_FEATURES is None:
-            xinfo = self.client.xpack.info()
-            XPACK_FEATURES = set(
-                f for f in xinfo["features"] if xinfo["features"][f]["enabled"]
-            )
+            try:
+                xinfo = self.client.xpack.info()
+                XPACK_FEATURES = set(
+                    f for f in xinfo["features"] if xinfo["features"][f]["enabled"]
+                )
+            except RequestError:
+                XPACK_FEATURES = set()
         return name in XPACK_FEATURES
 
     def _resolve(self, value):
@@ -162,13 +165,12 @@ class YamlTestCase(ElasticsearchTestCase):
     def run_do(self, action):
         """ Perform an api call with given parameters. """
         api = self.client
-        if "headers" in action:
-            api = self._get_client(headers=action.pop("headers"))
-
+        headers = action.pop("headers", None)
         catch = action.pop("catch", None)
         self.assertEquals(1, len(action))
 
         method, args = list(action.items())[0]
+        args["headers"] = headers
 
         # locate api endpoint
         for m in method.split("."):

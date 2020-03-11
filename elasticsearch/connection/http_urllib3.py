@@ -5,6 +5,15 @@ from urllib3.exceptions import ReadTimeoutError, SSLError as UrllibSSLError
 from urllib3.util.retry import Retry
 import warnings
 
+from .base import Connection
+from ..exceptions import (
+    ConnectionError,
+    ImproperlyConfigured,
+    ConnectionTimeout,
+    SSLError,
+)
+from ..compat import urlencode
+
 # sentinel value for `verify_certs` and `ssl_show_warn`.
 # This is used to detect if a user is passing in a value
 # for SSL kwargs if also using an SSLContext.
@@ -19,15 +28,6 @@ try:
     CA_CERTS = certifi.where()
 except ImportError:
     pass
-
-from .base import Connection
-from ..exceptions import (
-    ConnectionError,
-    ImproperlyConfigured,
-    ConnectionTimeout,
-    SSLError,
-)
-from ..compat import urlencode
 
 
 def create_ssl_context(**kwargs):
@@ -75,6 +75,8 @@ class Urllib3HttpConnection(Connection):
     :arg cloud_id: The Cloud ID from ElasticCloud. Convenient way to connect to cloud instances.
         Other host connection params will be ignored.
     :arg api_key: optional API Key authentication as either base64 encoded string or a tuple.
+    :arg opaque_id: Send this value in the 'X-Opaque-Id' HTTP header
+        For tracing all requests made by this transport.
     """
 
     def __init__(
@@ -97,6 +99,7 @@ class Urllib3HttpConnection(Connection):
         http_compress=None,
         cloud_id=None,
         api_key=None,
+        opaque_id=None,
         **kwargs
     ):
         # Initialize headers before calling super().__init__().
@@ -110,6 +113,7 @@ class Urllib3HttpConnection(Connection):
             http_compress=http_compress,
             cloud_id=cloud_id,
             api_key=api_key,
+            opaque_id=opaque_id,
             **kwargs
         )
         if http_auth is not None:
@@ -188,11 +192,7 @@ class Urllib3HttpConnection(Connection):
                     urllib3.disable_warnings()
 
         self.pool = pool_class(
-            self.hostname,
-            port=self.port,
-            timeout=self.timeout,
-            maxsize=maxsize,
-            **kw
+            self.hostname, port=self.port, timeout=self.timeout, maxsize=maxsize, **kw
         )
 
     def perform_request(

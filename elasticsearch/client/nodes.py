@@ -3,7 +3,7 @@ from .utils import NamespacedClient, query_params, _make_path
 
 class NodesClient(NamespacedClient):
     @query_params("timeout")
-    def reload_secure_settings(self, node_id=None, params=None):
+    def reload_secure_settings(self, node_id=None, params=None, headers=None):
         """
         Reloads secure settings.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/secure-settings.html#reloadable-secure-settings>`_
@@ -17,10 +17,11 @@ class NodesClient(NamespacedClient):
             "POST",
             _make_path("_nodes", node_id, "reload_secure_settings"),
             params=params,
+            headers=headers,
         )
 
     @query_params("flat_settings", "timeout")
-    def info(self, node_id=None, metric=None, params=None):
+    def info(self, node_id=None, metric=None, params=None, headers=None):
         """
         Returns information about nodes in the cluster.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-info.html>`_
@@ -37,7 +38,7 @@ class NodesClient(NamespacedClient):
         :arg timeout: Explicit operation timeout
         """
         return self.transport.perform_request(
-            "GET", _make_path("_nodes", node_id, metric), params=params
+            "GET", _make_path("_nodes", node_id, metric), params=params, headers=headers
         )
 
     @query_params(
@@ -50,7 +51,9 @@ class NodesClient(NamespacedClient):
         "timeout",
         "types",
     )
-    def stats(self, node_id=None, metric=None, index_metric=None, params=None):
+    def stats(
+        self, node_id=None, metric=None, index_metric=None, params=None, headers=None
+    ):
         """
         Returns statistical information about nodes in the cluster.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-stats.html>`_
@@ -88,12 +91,13 @@ class NodesClient(NamespacedClient):
             "GET",
             _make_path("_nodes", node_id, "stats", metric, index_metric),
             params=params,
+            headers=headers,
         )
 
     @query_params(
         "doc_type", "ignore_idle_threads", "interval", "snapshots", "threads", "timeout"
     )
-    def hot_threads(self, node_id=None, params=None):
+    def hot_threads(self, node_id=None, params=None, headers=None):
         """
         Returns information about hot threads on each node in the cluster.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-hot-threads.html>`_
@@ -119,11 +123,14 @@ class NodesClient(NamespacedClient):
             params["type"] = params.pop("doc_type")
 
         return self.transport.perform_request(
-            "GET", _make_path("_nodes", node_id, "hot_threads"), params=params
+            "GET",
+            _make_path("_nodes", node_id, "hot_threads"),
+            params=params,
+            headers=headers,
         )
 
     @query_params("timeout")
-    def usage(self, node_id=None, metric=None, params=None):
+    def usage(self, node_id=None, metric=None, params=None, headers=None):
         """
         Returns low-level information about REST actions usage on nodes.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-usage.html>`_
@@ -137,5 +144,8 @@ class NodesClient(NamespacedClient):
         :arg timeout: Explicit operation timeout
         """
         return self.transport.perform_request(
-            "GET", _make_path("_nodes", node_id, "usage", metric), params=params
+            "GET",
+            _make_path("_nodes", node_id, "usage", metric),
+            params=params,
+            headers=headers,
         )

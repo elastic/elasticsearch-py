@@ -11,7 +11,7 @@ class TasksClient(NamespacedClient):
         "timeout",
         "wait_for_completion",
     )
-    def list(self, params=None):
+    def list(self, params=None, headers=None):
         """
         Returns a list of tasks.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
@@ -30,10 +30,12 @@ class TasksClient(NamespacedClient):
         :arg wait_for_completion: Wait for the matching tasks to
             complete (default: false)
         """
-        return self.transport.perform_request("GET", "/_tasks", params=params)
+        return self.transport.perform_request(
+            "GET", "/_tasks", params=params, headers=headers
+        )
 
     @query_params("actions", "nodes", "parent_task_id")
-    def cancel(self, task_id=None, params=None):
+    def cancel(self, task_id=None, params=None, headers=None):
         """
         Cancels a task, if it can be cancelled through an API.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
@@ -49,11 +51,14 @@ class TasksClient(NamespacedClient):
             (node_id:task_number). Set to -1 to cancel all.
         """
         return self.transport.perform_request(
-            "POST", _make_path("_tasks", task_id, "_cancel"), params=params
+            "POST",
+            _make_path("_tasks", task_id, "_cancel"),
+            params=params,
+            headers=headers,
         )
 
     @query_params("timeout", "wait_for_completion")
-    def get(self, task_id, params=None):
+    def get(self, task_id, params=None, headers=None):
         """
         Returns information about a task.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
@@ -68,5 +73,5 @@ class TasksClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'task_id'.")
 
         return self.transport.perform_request(
-            "GET", _make_path("_tasks", task_id), params=params
+            "GET", _make_path("_tasks", task_id), params=params, headers=headers
         )

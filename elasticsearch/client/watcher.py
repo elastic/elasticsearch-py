@@ -3,7 +3,7 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 class WatcherClient(NamespacedClient):
     @query_params()
-    def ack_watch(self, watch_id, action_id=None, params=None):
+    def ack_watch(self, watch_id, action_id=None, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-ack-watch.html>`_
 
@@ -18,10 +18,11 @@ class WatcherClient(NamespacedClient):
             "PUT",
             _make_path("_watcher", "watch", watch_id, "_ack", action_id),
             params=params,
+            headers=headers,
         )
 
     @query_params()
-    def activate_watch(self, watch_id, params=None):
+    def activate_watch(self, watch_id, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-activate-watch.html>`_
 
@@ -31,11 +32,14 @@ class WatcherClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'watch_id'.")
 
         return self.transport.perform_request(
-            "PUT", _make_path("_watcher", "watch", watch_id, "_activate"), params=params
+            "PUT",
+            _make_path("_watcher", "watch", watch_id, "_activate"),
+            params=params,
+            headers=headers,
         )
 
     @query_params()
-    def deactivate_watch(self, watch_id, params=None):
+    def deactivate_watch(self, watch_id, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-deactivate-watch.html>`_
 
@@ -48,10 +52,11 @@ class WatcherClient(NamespacedClient):
             "PUT",
             _make_path("_watcher", "watch", watch_id, "_deactivate"),
             params=params,
+            headers=headers,
         )
 
     @query_params()
-    def delete_watch(self, id, params=None):
+    def delete_watch(self, id, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-delete-watch.html>`_
 
@@ -61,11 +66,14 @@ class WatcherClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'id'.")
 
         return self.transport.perform_request(
-            "DELETE", _make_path("_watcher", "watch", id), params=params
+            "DELETE",
+            _make_path("_watcher", "watch", id),
+            params=params,
+            headers=headers,
         )
 
     @query_params("debug")
-    def execute_watch(self, body=None, id=None, params=None):
+    def execute_watch(self, body=None, id=None, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-execute-watch.html>`_
 
@@ -78,11 +86,12 @@ class WatcherClient(NamespacedClient):
             "PUT",
             _make_path("_watcher", "watch", id, "_execute"),
             params=params,
+            headers=headers,
             body=body,
         )
 
     @query_params()
-    def get_watch(self, id, params=None):
+    def get_watch(self, id, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-get-watch.html>`_
 
@@ -92,11 +101,11 @@ class WatcherClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'id'.")
 
         return self.transport.perform_request(
-            "GET", _make_path("_watcher", "watch", id), params=params
+            "GET", _make_path("_watcher", "watch", id), params=params, headers=headers
         )
 
     @query_params("active", "if_primary_term", "if_seq_no", "version")
-    def put_watch(self, id, body=None, params=None):
+    def put_watch(self, id, body=None, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-put-watch.html>`_
 
@@ -113,19 +122,25 @@ class WatcherClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'id'.")
 
         return self.transport.perform_request(
-            "PUT", _make_path("_watcher", "watch", id), params=params, body=body
+            "PUT",
+            _make_path("_watcher", "watch", id),
+            params=params,
+            headers=headers,
+            body=body,
         )
 
     @query_params()
-    def start(self, params=None):
+    def start(self, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-start.html>`_
 
         """
-        return self.transport.perform_request("POST", "/_watcher/_start", params=params)
+        return self.transport.perform_request(
+            "POST", "/_watcher/_start", params=params, headers=headers
+        )
 
     @query_params("emit_stacktraces")
-    def stats(self, metric=None, params=None):
+    def stats(self, metric=None, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-stats.html>`_
 
@@ -139,13 +154,18 @@ class WatcherClient(NamespacedClient):
             current_watches, pending_watches
         """
         return self.transport.perform_request(
-            "GET", _make_path("_watcher", "stats", metric), params=params
+            "GET",
+            _make_path("_watcher", "stats", metric),
+            params=params,
+            headers=headers,
         )
 
     @query_params()
-    def stop(self, params=None):
+    def stop(self, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-stop.html>`_
 
         """
-        return self.transport.perform_request("POST", "/_watcher/_stop", params=params)
+        return self.transport.perform_request(
+            "POST", "/_watcher/_stop", params=params, headers=headers
+        )

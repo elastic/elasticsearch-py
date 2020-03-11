@@ -60,6 +60,24 @@ connection class::
     Elasticsearch server. This timeout is internal and doesn't guarantee that the
     request will end in the specified time.
 
+Tracking Requests with Opaque ID
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+You can enrich your requests against Elasticsearch with an identifier string, that allows you to discover this identifier
+in `deprecation logs <https://www.elastic.co/guide/en/elasticsearch/reference/7.4/logging.html#deprecation-logging>`_, to support you with
+`identifying search slow log origin <https://www.elastic.co/guide/en/elasticsearch/reference/7.4/index-modules-slowlog.html#_identifying_search_slow_log_origin>`_
+or to help with `identifying running tasks <https://www.elastic.co/guide/en/elasticsearch/reference/current/tasks.html#_identifying_running_tasks>`_.
+
+ .. code-block:: python
+
+    import elasticsearch
+
+    # You can add to the client to apply to all requests
+    client = elasticsearch.Elasticsearch(opaque_id="app17@dc06.eu_user1234")
+
+    # Or you can apply per-request for more granularity.
+    resp = client.get(index="test", id="1", opaque_id="app17@dc06.eu_user1234")
+
 
 .. py:module:: elasticsearch
 
