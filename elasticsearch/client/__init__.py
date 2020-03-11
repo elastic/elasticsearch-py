@@ -255,7 +255,6 @@ class Elasticsearch(object):
         self.slm = SlmClient(self)
         self.transform = TransformClient(self)
         self.xpack = XPackClient(self)
-
         
     def __repr__(self):
         try:
