@@ -3,7 +3,7 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 class Data_FrameClient(NamespacedClient):
     @query_params()
-    def delete_data_frame_transform(self, transform_id, params=None, headers=None):
+    def delete_data_frame_transform(self, transform_id, params=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-data-frame-transform.html>`_
 
@@ -17,11 +17,10 @@ class Data_FrameClient(NamespacedClient):
             "DELETE",
             _make_path("_data_frame", "transforms", transform_id),
             params=params,
-            headers=headers,
         )
 
     @query_params("from_", "size")
-    def get_data_frame_transform(self, transform_id=None, params=None, headers=None):
+    def get_data_frame_transform(self, transform_id=None, params=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-data-frame-transform.html>`_
 
@@ -31,16 +30,11 @@ class Data_FrameClient(NamespacedClient):
         :arg size: specifies a max number of transforms to get, defaults to 100
         """
         return self.transport.perform_request(
-            "GET",
-            _make_path("_data_frame", "transforms", transform_id),
-            params=params,
-            headers=headers,
+            "GET", _make_path("_data_frame", "transforms", transform_id), params=params
         )
 
     @query_params()
-    def get_data_frame_transform_stats(
-        self, transform_id=None, params=None, headers=None
-    ):
+    def get_data_frame_transform_stats(self, transform_id=None, params=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-data-frame-transform-stats.html>`_
 
@@ -51,11 +45,10 @@ class Data_FrameClient(NamespacedClient):
             "GET",
             _make_path("_data_frame", "transforms", transform_id, "_stats"),
             params=params,
-            headers=headers,
         )
 
     @query_params()
-    def preview_data_frame_transform(self, body, params=None, headers=None):
+    def preview_data_frame_transform(self, body, params=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/preview-data-frame-transform.html>`_
 
@@ -64,15 +57,11 @@ class Data_FrameClient(NamespacedClient):
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
         return self.transport.perform_request(
-            "POST",
-            "/_data_frame/transforms/_preview",
-            params=params,
-            headers=headers,
-            body=body,
+            "POST", "/_data_frame/transforms/_preview", params=params, body=body
         )
 
     @query_params()
-    def put_data_frame_transform(self, transform_id, body, params=None, headers=None):
+    def put_data_frame_transform(self, transform_id, body, params=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/put-data-frame-transform.html>`_
 
@@ -86,12 +75,11 @@ class Data_FrameClient(NamespacedClient):
             "PUT",
             _make_path("_data_frame", "transforms", transform_id),
             params=params,
-            headers=headers,
             body=body,
         )
 
     @query_params("timeout")
-    def start_data_frame_transform(self, transform_id, params=None, headers=None):
+    def start_data_frame_transform(self, transform_id, params=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/start-data-frame-transform.html>`_
 
@@ -106,11 +94,10 @@ class Data_FrameClient(NamespacedClient):
             "POST",
             _make_path("_data_frame", "transforms", transform_id, "_start"),
             params=params,
-            headers=headers,
         )
 
     @query_params("timeout", "wait_for_completion")
-    def stop_data_frame_transform(self, transform_id, params=None, headers=None):
+    def stop_data_frame_transform(self, transform_id, params=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/stop-data-frame-transform.html>`_
 
@@ -128,5 +115,4 @@ class Data_FrameClient(NamespacedClient):
             "POST",
             _make_path("_data_frame", "transforms", transform_id, "_stop"),
             params=params,
-            headers=headers,
         )

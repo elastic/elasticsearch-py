@@ -418,6 +418,49 @@ class IndicesClient(NamespacedClient):
             headers=headers,
         )
 
+    @query_params(
+        "allow_no_indices",
+        "expand_wildcards",
+        "ignore_unavailable",
+        "include_defaults",
+        "include_type_name",
+        "local",
+    )
+    def get_field_mapping(
+        self, fields, index=None, doc_type=None, params=None, headers=None
+    ):
+        """
+        Returns mapping for one or more fields.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-get-field-mapping.html>`_
+
+        :arg fields: A comma-separated list of fields
+        :arg index: A comma-separated list of index names
+        :arg doc_type: A comma-separated list of document types
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+            expression resolves into no concrete indices. (This includes `_all`
+            string or when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to
+            concrete indices that are open, closed or both.  Valid choices: open,
+            closed, none, all  Default: open
+        :arg ignore_unavailable: Whether specified concrete indices
+            should be ignored when unavailable (missing or closed)
+        :arg include_defaults: Whether the default mapping values should
+            be returned as well
+        :arg include_type_name: Whether a type should be returned in the
+            body of the mappings.
+        :arg local: Return local information, do not retrieve the state
+            from master node (default: false)
+        """
+        if fields in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'fields'.")
+
+        return self.transport.perform_request(
+            "GET",
+            _make_path(index, "_mapping", doc_type, "field", fields),
+            params=params,
+            headers=headers,
+        )
+
     @query_params("master_timeout", "timeout")
     def put_alias(self, index, name, body=None, params=None, headers=None):
         """
@@ -786,6 +829,66 @@ class IndicesClient(NamespacedClient):
         """
         return self.transport.perform_request(
             "GET", _make_path(index, "_segments"), params=params, headers=headers
+        )
+
+    @query_params(
+        "all_shards",
+        "allow_no_indices",
+        "analyze_wildcard",
+        "analyzer",
+        "default_operator",
+        "df",
+        "expand_wildcards",
+        "explain",
+        "ignore_unavailable",
+        "lenient",
+        "q",
+        "rewrite",
+    )
+    def validate_query(
+        self, body=None, index=None, doc_type=None, params=None, headers=None
+    ):
+        """
+        Allows a user to validate a potentially expensive query without executing it.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-validate.html>`_
+
+        :arg body: The query definition specified with the Query DSL
+        :arg index: A comma-separated list of index names to restrict
+            the operation; use `_all` or empty string to perform the operation on
+            all indices
+        :arg doc_type: A comma-separated list of document types to
+            restrict the operation; leave empty to perform the operation on all
+            types
+        :arg all_shards: Execute validation on all shards instead of one
+            random shard per index
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+            expression resolves into no concrete indices. (This includes `_all`
+            string or when no indices have been specified)
+        :arg analyze_wildcard: Specify whether wildcard and prefix
+            queries should be analyzed (default: false)
+        :arg analyzer: The analyzer to use for the query string
+        :arg default_operator: The default operator for query string
+            query (AND or OR)  Valid choices: AND, OR  Default: OR
+        :arg df: The field to use as default where no field prefix is
+            given in the query string
+        :arg expand_wildcards: Whether to expand wildcard expression to
+            concrete indices that are open, closed or both.  Valid choices: open,
+            closed, none, all  Default: open
+        :arg explain: Return detailed information about the error
+        :arg ignore_unavailable: Whether specified concrete indices
+            should be ignored when unavailable (missing or closed)
+        :arg lenient: Specify whether format-based query failures (such
+            as providing text to a numeric field) should be ignored
+        :arg q: Query in the Lucene query string syntax
+        :arg rewrite: Provide a more detailed explanation showing the
+            actual Lucene query that will be executed.
+        """
+        return self.transport.perform_request(
+            "GET",
+            _make_path(index, doc_type, "_validate", "query"),
+            params=params,
+            headers=headers,
+            body=body,
         )
 
     @query_params(
@@ -1169,107 +1272,4 @@ class IndicesClient(NamespacedClient):
             _make_path(index, "_reload_search_analyzers"),
             params=params,
             headers=headers,
-        )
-
-    @query_params(
-        "allow_no_indices",
-        "expand_wildcards",
-        "ignore_unavailable",
-        "include_defaults",
-        "include_type_name",
-        "local",
-    )
-    def get_field_mapping(
-        self, fields, index=None, doc_type=None, params=None, headers=None
-    ):
-        """
-        Returns mapping for one or more fields.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-get-field-mapping.html>`_
-
-        :arg fields: A comma-separated list of fields
-        :arg index: A comma-separated list of index names
-        :arg doc_type: A comma-separated list of document types
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, none, all  Default: open
-        :arg ignore_unavailable: Whether specified concrete indices
-            should be ignored when unavailable (missing or closed)
-        :arg include_defaults: Whether the default mapping values should
-            be returned as well
-        :arg include_type_name: Whether a type should be returned in the
-            body of the mappings.
-        :arg local: Return local information, do not retrieve the state
-            from master node (default: false)
-        """
-        if fields in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'fields'.")
-
-        return self.transport.perform_request(
-            "GET",
-            _make_path(index, "_mapping", doc_type, "field", fields),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params(
-        "all_shards",
-        "allow_no_indices",
-        "analyze_wildcard",
-        "analyzer",
-        "default_operator",
-        "df",
-        "expand_wildcards",
-        "explain",
-        "ignore_unavailable",
-        "lenient",
-        "q",
-        "rewrite",
-    )
-    def validate_query(
-        self, body=None, index=None, doc_type=None, params=None, headers=None
-    ):
-        """
-        Allows a user to validate a potentially expensive query without executing it.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-validate.html>`_
-
-        :arg body: The query definition specified with the Query DSL
-        :arg index: A comma-separated list of index names to restrict
-            the operation; use `_all` or empty string to perform the operation on
-            all indices
-        :arg doc_type: A comma-separated list of document types to
-            restrict the operation; leave empty to perform the operation on all
-            types
-        :arg all_shards: Execute validation on all shards instead of one
-            random shard per index
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg analyze_wildcard: Specify whether wildcard and prefix
-            queries should be analyzed (default: false)
-        :arg analyzer: The analyzer to use for the query string
-        :arg default_operator: The default operator for query string
-            query (AND or OR)  Valid choices: AND, OR  Default: OR
-        :arg df: The field to use as default where no field prefix is
-            given in the query string
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, none, all  Default: open
-        :arg explain: Return detailed information about the error
-        :arg ignore_unavailable: Whether specified concrete indices
-            should be ignored when unavailable (missing or closed)
-        :arg lenient: Specify whether format-based query failures (such
-            as providing text to a numeric field) should be ignored
-        :arg q: Query in the Lucene query string syntax
-        :arg rewrite: Provide a more detailed explanation showing the
-            actual Lucene query that will be executed.
-        """
-        return self.transport.perform_request(
-            "GET",
-            _make_path(index, doc_type, "_validate", "query"),
-            params=params,
-            headers=headers,
-            body=body,
         )
