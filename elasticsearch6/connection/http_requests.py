@@ -33,20 +33,15 @@ class RequestsHttpConnection(Connection):
     :arg client_key: path to the file containing the private key if using
         separate cert and key files (client_cert will contain only the cert)
     :arg headers: any custom http headers to be add to requests
-<<<<<<< HEAD:elasticsearch6/connection/http_requests.py
-    :arg cloud_id: The Cloud ID from ElasticCloud. Convient way to connect to cloud instances.
-=======
     :arg http_compress: Use gzip compression
     :arg cloud_id: The Cloud ID from ElasticCloud. Convenient way to connect to cloud instances.
->>>>>>> 742aadd... Refactor cloud_id, api_key, headers, and http_compress:elasticsearch/connection/http_requests.py
         Other host connection params will be ignored.
-    :arg api_key: optional API Key authentication as either base64 encoded string or a tuple.
     """
 
     def __init__(
         self,
         host="localhost",
-        port=9200,
+        port=None,
         http_auth=None,
         use_ssl=False,
         verify_certs=True,
@@ -89,12 +84,7 @@ class RequestsHttpConnection(Connection):
                 http_auth = tuple(http_auth.split(":", 1))
             self.session.auth = http_auth
 
-        self.base_url = "http%s://%s:%d%s" % (
-            "s" if self.use_ssl else "",
-            self.hostname,
-            self.port,
-            self.url_prefix,
-        )
+        self.base_url = "%s%s" % (self.host, self.url_prefix,)
         self.session.verify = verify_certs
         if not client_key:
             self.session.cert = client_cert
