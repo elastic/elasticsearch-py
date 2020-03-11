@@ -8,7 +8,7 @@ from ..test_cases import TestCase, SkipTest
 
 
 class TestQueryParams(TestCase):
-    def setUp(self) -> None:
+    def setUp(self):
         self.calls = []
 
     @query_params("simple_param")
