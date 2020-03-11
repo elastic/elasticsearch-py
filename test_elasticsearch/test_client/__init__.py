@@ -61,7 +61,8 @@ class TestClient(ElasticsearchTestCase):
         self.client.ping(params=params)
         calls = self.assert_url_called("HEAD", "/", 2)
         self.assertEquals(
-            [({"request_timeout": rt}, {}, None), ({"request_timeout": rt}, {}, None)], calls
+            [({"request_timeout": rt}, {}, None), ({"request_timeout": rt}, {}, None)],
+            calls,
         )
         self.assertFalse(calls[0][0] is calls[1][0])
 
@@ -72,7 +73,8 @@ class TestClient(ElasticsearchTestCase):
         self.client.ping(headers=headers)
         calls = self.assert_url_called("HEAD", "/", 2)
         self.assertEquals(
-            [({}, {"authentication": hv}, None), ({}, {"authentication": hv}, None)], calls
+            [({}, {"authentication": hv}, None), ({}, {"authentication": hv}, None)],
+            calls,
         )
         self.assertFalse(calls[0][0] is calls[1][0])
 

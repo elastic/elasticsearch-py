@@ -43,7 +43,7 @@ class EnrichClient(NamespacedClient):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/enrich-get-policy.html>`_
 
-        :arg name: A comma-separated list of enrich policy names
+        :arg name: The name of the enrich policy
         """
         return self.transport.perform_request(
             "GET", _make_path("_enrich", "policy", name), params=params, headers=headers

@@ -264,7 +264,7 @@ class Elasticsearch(object):
             if len(cons) > 5:
                 cons = cons[:5] + ["..."]
             return "<{cls}({cons})>".format(cls=self.__class__.__name__, cons=cons)
-        except:
+        except Exception:
             # probably operating on custom transport and connection_pool, ignore
             return super(Elasticsearch, self).__repr__()
 
@@ -300,7 +300,7 @@ class Elasticsearch(object):
             provide one
         :arg pipeline: The pipeline id to preprocess incoming documents
             with
-        :arg refresh: If `true` then refresh the affected shards to make
+        :arg refresh: If `true` then refresh the effected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then
             do nothing with refreshes.  Valid choices: true, false, wait_for
@@ -483,7 +483,7 @@ class Elasticsearch(object):
         :arg if_seq_no: only perform the delete operation if the last
             operation that has changed the document has the specified sequence
             number
-        :arg refresh: If `true` then refresh the affected shards to make
+        :arg refresh: If `true` then refresh the effected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then
             do nothing with refreshes.  Valid choices: true, false, wait_for
@@ -515,7 +515,6 @@ class Elasticsearch(object):
         "_source_includes",
         "allow_no_indices",
         "analyze_wildcard",
-        "analyzer",
         "conflicts",
         "default_operator",
         "df",
@@ -565,7 +564,6 @@ class Elasticsearch(object):
             string or when no indices have been specified)
         :arg analyze_wildcard: Specify whether wildcard and prefix
             queries should be analyzed (default: false)
-        :arg analyzer: The analyzer to use for the query string
         :arg conflicts: What to do when the delete by query hits version
             conflicts?  Valid choices: abort, proceed  Default: abort
         :arg default_operator: The default operator for query string
@@ -933,26 +931,6 @@ class Elasticsearch(object):
             "GET", _make_path("_scripts", id), params=params, headers=headers
         )
 
-    @query_params()
-    def get_script_context(self, params=None, headers=None):
-        """
-        Returns all script contexts.
-
-        """
-        return self.transport.perform_request(
-            "GET", "/_script_context", params=params, headers=headers
-        )
-
-    @query_params()
-    def get_script_languages(self, params=None, headers=None):
-        """
-        Returns available script types, languages and contexts
-
-        """
-        return self.transport.perform_request(
-            "GET", "/_script_language", params=params, headers=headers
-        )
-
     @query_params(
         "_source",
         "_source_excludes",
@@ -1219,9 +1197,7 @@ class Elasticsearch(object):
             body=body,
         )
 
-    @query_params(
-        "allow_no_indices", "expand_wildcards", "ignore_unavailable", "search_type"
-    )
+    @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable")
     def rank_eval(self, body, index=None, params=None, headers=None):
         """
         Allows to evaluate the quality of ranked search results over a set of typical
@@ -1240,8 +1216,6 @@ class Elasticsearch(object):
             closed, none, all  Default: open
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
-        :arg search_type: Search operation type  Valid choices:
-            query_then_fetch, dfs_query_then_fetch
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
@@ -1275,7 +1249,7 @@ class Elasticsearch(object):
             prototype for the index request.
         :arg max_docs: Maximum number of documents to process (default:
             all documents)
-        :arg refresh: Should the affected indexes be refreshed?
+        :arg refresh: Should the effected indexes be refreshed?
         :arg requests_per_second: The throttle to set on this request in
             sub-requests per second. -1 means no throttle.
         :arg scroll: Control how long to keep the search context alive
@@ -1606,7 +1580,7 @@ class Elasticsearch(object):
             operation that has changed the document has the specified sequence
             number
         :arg lang: The script language (default: painless)
-        :arg refresh: If `true` then refresh the affected shards to make
+        :arg refresh: If `true` then refresh the effected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then
             do nothing with refreshes.  Valid choices: true, false, wait_for
@@ -1657,11 +1631,7 @@ class Elasticsearch(object):
         )
 
     @query_params(
-        "ccs_minimize_roundtrips",
-        "max_concurrent_searches",
-        "rest_total_hits_as_int",
-        "search_type",
-        "typed_keys",
+        "max_concurrent_searches", "rest_total_hits_as_int", "search_type", "typed_keys"
     )
     def msearch_template(
         self, body, index=None, doc_type=None, params=None, headers=None
@@ -1676,9 +1646,6 @@ class Elasticsearch(object):
             default
         :arg doc_type: A comma-separated list of document types to use
             as default
-        :arg ccs_minimize_roundtrips: Indicates whether network round-
-            trips should be minimized as part of cross-cluster search requests
-            execution  Default: true
         :arg max_concurrent_searches: Controls the maximum number of
             concurrent searches the multi search api will execute
         :arg rest_total_hits_as_int: Indicates whether hits.total should
@@ -1769,7 +1736,6 @@ class Elasticsearch(object):
 
     @query_params(
         "allow_no_indices",
-        "ccs_minimize_roundtrips",
         "expand_wildcards",
         "explain",
         "ignore_throttled",
@@ -1797,9 +1763,6 @@ class Elasticsearch(object):
         :arg allow_no_indices: Whether to ignore if a wildcard indices
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
-        :arg ccs_minimize_roundtrips: Indicates whether network round-
-            trips should be minimized as part of cross-cluster search requests
-            execution  Default: true
         :arg expand_wildcards: Whether to expand wildcard expression to
             concrete indices that are open, closed or both.  Valid choices: open,
             closed, none, all  Default: open
@@ -1979,7 +1942,7 @@ class Elasticsearch(object):
         :arg preference: Specify the node or shard the operation should
             be performed on (default: random)
         :arg q: Query in the Lucene query string syntax
-        :arg refresh: Should the affected indexes be refreshed?
+        :arg refresh: Should the effected indexes be refreshed?
         :arg request_cache: Specify if request cache should be used for
             this request or not, defaults to index level setting
         :arg requests_per_second: The throttle to set on this request in

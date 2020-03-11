@@ -958,13 +958,12 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("force")
+    @query_params()
     def delete_data_frame_analytics(self, id, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/delete-dfanalytics.html>`_
 
         :arg id: The ID of the data frame analytics to delete
-        :arg force: True if the job should be forcefully deleted
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
@@ -1110,115 +1109,18 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    def delete_trained_model(self, model_id, params=None, headers=None):
+    def estimate_memory_usage(self, body, params=None, headers=None):
         """
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-inference.html>`_
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/estimate-memory-usage-dfanalytics.html>`_
 
-        :arg model_id: The ID of the trained model to delete
+        :arg body: Memory usage estimation definition
         """
-        if model_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'model_id'.")
+        if body in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'body'.")
 
         return self.transport.perform_request(
-            "DELETE",
-            _make_path("_ml", "inference", model_id),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params(
-        "allow_no_match",
-        "decompress_definition",
-        "from_",
-        "include_model_definition",
-        "size",
-    )
-    def get_trained_models(self, model_id=None, params=None, headers=None):
-        """
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-inference.html>`_
-
-        :arg model_id: The ID of the trained models to fetch
-        :arg allow_no_match: Whether to ignore if a wildcard expression
-            matches no trained models. (This includes `_all` string or when no
-            trained models have been specified)  Default: True
-        :arg decompress_definition: Should the model definition be
-            decompressed into valid JSON or returned in a custom compressed format.
-            Defaults to true.  Default: True
-        :arg from_: skips a number of trained models
-        :arg include_model_definition: Should the full model definition
-            be included in the results. These definitions can be large. So be
-            cautious when including them. Defaults to false.
-        :arg size: specifies a max number of trained models to get
-            Default: 100
-        """
-        # from is a reserved word so it cannot be used, use from_ instead
-        if "from_" in params:
-            params["from"] = params.pop("from_")
-
-        return self.transport.perform_request(
-            "GET",
-            _make_path("_ml", "inference", model_id),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params("allow_no_match", "from_", "size")
-    def get_trained_models_stats(self, model_id=None, params=None, headers=None):
-        """
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-inference-stats.html>`_
-
-        :arg model_id: The ID of the trained models stats to fetch
-        :arg allow_no_match: Whether to ignore if a wildcard expression
-            matches no trained models. (This includes `_all` string or when no
-            trained models have been specified)  Default: True
-        :arg from_: skips a number of trained models
-        :arg size: specifies a max number of trained models to get
-            Default: 100
-        """
-        # from is a reserved word so it cannot be used, use from_ instead
-        if "from_" in params:
-            params["from"] = params.pop("from_")
-
-        return self.transport.perform_request(
-            "GET",
-            _make_path("_ml", "inference", model_id, "_stats"),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params()
-    def put_trained_model(self, model_id, body, params=None, headers=None):
-        """
-        `<TODO>`_
-
-        :arg model_id: The ID of the trained models to store
-        :arg body: The trained model configuration
-        """
-        for param in (model_id, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return self.transport.perform_request(
-            "PUT",
-            _make_path("_ml", "inference", model_id),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params()
-    def explain_data_frame_analytics(
-        self, body=None, id=None, params=None, headers=None
-    ):
-        """
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/explain-dfanalytics.html>`_
-
-        :arg body: The data frame analytics config to explain
-        :arg id: The ID of the data frame analytics to explain
-        """
-        return self.transport.perform_request(
-            "GET",
-            _make_path("_ml", "data_frame", "analytics", id, "_explain"),
+            "POST",
+            "/_ml/data_frame/analytics/_estimate_memory_usage",
             params=params,
             headers=headers,
             body=body,

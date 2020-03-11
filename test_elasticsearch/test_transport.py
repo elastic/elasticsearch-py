@@ -5,7 +5,7 @@ import time
 from elasticsearch.transport import Transport, get_host_info
 from elasticsearch.connection import Connection
 from elasticsearch.connection_pool import DummyConnectionPool
-from elasticsearch.exceptions import ConnectionError, ImproperlyConfigured
+from elasticsearch.exceptions import ConnectionError
 
 from .test_cases import TestCase
 
@@ -107,11 +107,7 @@ class TestTransport(TestCase):
         self.assertEquals(1, len(t.get_connection().calls))
         self.assertEquals(("GET", "/", {}, None), t.get_connection().calls[0][0])
         self.assertEquals(
-            {
-                "timeout": 42,
-                "ignore": (),
-                "headers": {},
-            },
+            {"timeout": 42, "ignore": (), "headers": {}},
             t.get_connection().calls[0][1],
         )
 
@@ -122,11 +118,7 @@ class TestTransport(TestCase):
         self.assertEquals(1, len(t.get_connection().calls))
         self.assertEquals(("GET", "/", None, None), t.get_connection().calls[0][0])
         self.assertEquals(
-            {
-                "timeout": None,
-                "ignore": (),
-                "headers": {"x-opaque-id": "app-1"},
-            },
+            {"timeout": None, "ignore": (), "headers": {"x-opaque-id": "app-1"}},
             t.get_connection().calls[0][1],
         )
 
@@ -135,11 +127,7 @@ class TestTransport(TestCase):
         self.assertEquals(2, len(t.get_connection().calls))
         self.assertEquals(("GET", "/", None, None), t.get_connection().calls[1][0])
         self.assertEquals(
-            {
-                "timeout": None,
-                "ignore": (),
-                "headers": {"x-opaque-id": "request-1"},
-            },
+            {"timeout": None, "ignore": (), "headers": {"x-opaque-id": "request-1"}},
             t.get_connection().calls[1][1],
         )
 
@@ -149,7 +137,10 @@ class TestTransport(TestCase):
         t.perform_request("GET", "/", headers={"user-agent": "my-custom-value/1.2.3"})
         self.assertEquals(1, len(t.get_connection().calls))
         self.assertEquals(
-            {"timeout": None, "ignore": (), "headers": {"user-agent": "my-custom-value/1.2.3"}
+            {
+                "timeout": None,
+                "ignore": (),
+                "headers": {"user-agent": "my-custom-value/1.2.3"},
             },
             t.get_connection().calls[0][1],
         )
@@ -351,5 +342,7 @@ class TestTransport(TestCase):
         )
         t.sniff_hosts()
         # Ensure we parsed out the fqdn and port from the fqdn/ip:port string.
-        self.assertEqual(t.connection_pool.connection_opts[0][1],
-                         {'host': 'somehost.tld', 'port': 123})
+        self.assertEqual(
+            t.connection_pool.connection_opts[0][1],
+            {"host": "somehost.tld", "port": 123},
+        )

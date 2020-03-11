@@ -17,15 +17,30 @@ class TestQueryParams(TestCase):
 
     def test_handles_params(self):
         self.func_to_wrap(params={"simple_param_2": "2"}, simple_param="3")
-        self.assertEqual(self.calls, [((), {"params":{"simple_param": b"3", "simple_param_2": "2"}, "headers": {}})])
+        self.assertEqual(
+            self.calls,
+            [
+                (
+                    (),
+                    {
+                        "params": {"simple_param": b"3", "simple_param_2": "2"},
+                        "headers": {},
+                    },
+                )
+            ],
+        )
 
     def test_handles_headers(self):
         self.func_to_wrap(headers={"X-Opaque-Id": "app-1"})
-        self.assertEqual(self.calls, [((), {"params":{}, "headers": {"x-opaque-id": "app-1"}})])
+        self.assertEqual(
+            self.calls, [((), {"params": {}, "headers": {"x-opaque-id": "app-1"}})]
+        )
 
     def test_handles_opaque_id(self):
         self.func_to_wrap(opaque_id="request-id")
-        self.assertEqual(self.calls, [((), {"params":{}, "headers": {"x-opaque-id": "request-id"}})])
+        self.assertEqual(
+            self.calls, [((), {"params": {}, "headers": {"x-opaque-id": "request-id"}})]
+        )
 
 
 class TestMakePath(TestCase):

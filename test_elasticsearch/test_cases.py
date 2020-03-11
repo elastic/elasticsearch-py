@@ -1,11 +1,6 @@
 from collections import defaultdict
-
-try:
-    # python 2.6
-    from unittest2 import TestCase, SkipTest
-except ImportError:
-    from unittest import TestCase, SkipTest
-
+from unittest import TestCase
+from unittest import SkipTest  # noqa: F401
 from elasticsearch import Elasticsearch
 
 
@@ -51,4 +46,6 @@ class TestElasticsearchTestCase(ElasticsearchTestCase):
         self.client.transport.perform_request("GET", "/")
         self.client.transport.perform_request("DELETE", "/42", params={}, body="body")
         self.assert_call_count_equals(2)
-        self.assertEquals([({}, None, "body")], self.assert_url_called("DELETE", "/42", 1))
+        self.assertEquals(
+            [({}, None, "body")], self.assert_url_called("DELETE", "/42", 1)
+        )
