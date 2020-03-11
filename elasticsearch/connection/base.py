@@ -44,7 +44,7 @@ class Connection(object):
     def __init__(
         self,
         host="localhost",
-        port=9200,
+        port=None,
         use_ssl=False,
         url_prefix="",
         timeout=10,
@@ -59,19 +59,27 @@ class Connection(object):
         if cloud_id:
             try:
                 _, cloud_id = cloud_id.split(":")
-                parent_dn, es_uuid, _ = (
+                parent_dn, es_uuid = (
                     binascii.a2b_base64(cloud_id.encode("utf-8"))
                     .decode("utf-8")
-                    .split("$")
+                    .split("$")[:2]
                 )
-            except ValueError:
+                if ":" in parent_dn:
+                    parent_dn, _, parent_port = parent_dn.rpartition(":")
+                    if port is None and parent_port != "443":
+                        port = int(parent_port)
+            except (ValueError, IndexError):
                 raise ImproperlyConfigured("'cloud_id' is not properly formatted")
 
             host = "%s.%s" % (es_uuid, parent_dn)
-            port = 9243
             use_ssl = True
             if http_compress is None:
                 http_compress = True
+
+        # If cloud_id isn't set and port is default then use 9200.
+        # Cloud should use '443' by default via the 'https' scheme.
+        elif port is None:
+            port = 9200
 
         # Work-around if the implementing class doesn't
         # define the headers property before calling super().__init__()
@@ -102,7 +110,9 @@ class Connection(object):
 
         self.hostname = host
         self.port = port
-        self.host = "%s://%s:%s" % (scheme, host, port)
+        self.host = "%s://%s" % (scheme, host)
+        if self.port is not None:
+            self.host += ":%s" % self.port
         if url_prefix:
             url_prefix = "/" + url_prefix.strip("/")
         self.url_prefix = url_prefix
