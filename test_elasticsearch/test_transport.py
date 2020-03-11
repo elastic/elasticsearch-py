@@ -107,7 +107,7 @@ class TestTransport(TestCase):
         self.assertEquals(1, len(t.get_connection().calls))
         self.assertEquals(("GET", "/", {}, None), t.get_connection().calls[0][0])
         self.assertEquals(
-            {"timeout": 42, "ignore": (), "headers": {}},
+            {"timeout": 42, "ignore": (), "headers": None},
             t.get_connection().calls[0][1],
         )
 
@@ -118,7 +118,7 @@ class TestTransport(TestCase):
         self.assertEquals(1, len(t.get_connection().calls))
         self.assertEquals(("GET", "/", None, None), t.get_connection().calls[0][0])
         self.assertEquals(
-            {"timeout": None, "ignore": (), "headers": {"x-opaque-id": "app-1"}},
+            {"timeout": None, "ignore": (), "headers": None},
             t.get_connection().calls[0][1],
         )
 
