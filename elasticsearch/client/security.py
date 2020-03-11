@@ -3,17 +3,17 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 class SecurityClient(NamespacedClient):
     @query_params()
-    def authenticate(self, params=None):
+    def authenticate(self, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-authenticate.html>`_
 
         """
         return self.transport.perform_request(
-            "GET", "/_security/_authenticate", params=params
+            "GET", "/_security/_authenticate", params=params, headers=headers
         )
 
     @query_params("refresh")
-    def change_password(self, body, username=None, params=None):
+    def change_password(self, body, username=None, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-change-password.html>`_
 
@@ -32,11 +32,12 @@ class SecurityClient(NamespacedClient):
             "PUT",
             _make_path("_security", "user", username, "_password"),
             params=params,
+            headers=headers,
             body=body,
         )
 
     @query_params("usernames")
-    def clear_cached_realms(self, realms, params=None):
+    def clear_cached_realms(self, realms, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-clear-cache.html>`_
 
@@ -51,10 +52,11 @@ class SecurityClient(NamespacedClient):
             "POST",
             _make_path("_security", "realm", realms, "_clear_cache"),
             params=params,
+            headers=headers,
         )
 
     @query_params()
-    def clear_cached_roles(self, name, params=None):
+    def clear_cached_roles(self, name, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-clear-role-cache.html>`_
 
@@ -64,11 +66,14 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'name'.")
 
         return self.transport.perform_request(
-            "POST", _make_path("_security", "role", name, "_clear_cache"), params=params
+            "POST",
+            _make_path("_security", "role", name, "_clear_cache"),
+            params=params,
+            headers=headers,
         )
 
     @query_params("refresh")
-    def create_api_key(self, body, params=None):
+    def create_api_key(self, body, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-create-api-key.html>`_
 
@@ -82,11 +87,11 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'body'.")
 
         return self.transport.perform_request(
-            "PUT", "/_security/api_key", params=params, body=body
+            "PUT", "/_security/api_key", params=params, headers=headers, body=body
         )
 
     @query_params("refresh")
-    def delete_privileges(self, application, name, params=None):
+    def delete_privileges(self, application, name, params=None, headers=None):
         """
         `<TODO>`_
 
@@ -105,10 +110,11 @@ class SecurityClient(NamespacedClient):
             "DELETE",
             _make_path("_security", "privilege", application, name),
             params=params,
+            headers=headers,
         )
 
     @query_params("refresh")
-    def delete_role(self, name, params=None):
+    def delete_role(self, name, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-delete-role.html>`_
 
@@ -122,11 +128,14 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'name'.")
 
         return self.transport.perform_request(
-            "DELETE", _make_path("_security", "role", name), params=params
+            "DELETE",
+            _make_path("_security", "role", name),
+            params=params,
+            headers=headers,
         )
 
     @query_params("refresh")
-    def delete_role_mapping(self, name, params=None):
+    def delete_role_mapping(self, name, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-delete-role-mapping.html>`_
 
@@ -140,11 +149,14 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'name'.")
 
         return self.transport.perform_request(
-            "DELETE", _make_path("_security", "role_mapping", name), params=params
+            "DELETE",
+            _make_path("_security", "role_mapping", name),
+            params=params,
+            headers=headers,
         )
 
     @query_params("refresh")
-    def delete_user(self, username, params=None):
+    def delete_user(self, username, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-delete-user.html>`_
 
@@ -158,11 +170,14 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'username'.")
 
         return self.transport.perform_request(
-            "DELETE", _make_path("_security", "user", username), params=params
+            "DELETE",
+            _make_path("_security", "user", username),
+            params=params,
+            headers=headers,
         )
 
     @query_params("refresh")
-    def disable_user(self, username, params=None):
+    def disable_user(self, username, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-disable-user.html>`_
 
@@ -176,11 +191,14 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'username'.")
 
         return self.transport.perform_request(
-            "PUT", _make_path("_security", "user", username, "_disable"), params=params
+            "PUT",
+            _make_path("_security", "user", username, "_disable"),
+            params=params,
+            headers=headers,
         )
 
     @query_params("refresh")
-    def enable_user(self, username, params=None):
+    def enable_user(self, username, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-enable-user.html>`_
 
@@ -194,11 +212,14 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'username'.")
 
         return self.transport.perform_request(
-            "PUT", _make_path("_security", "user", username, "_enable"), params=params
+            "PUT",
+            _make_path("_security", "user", username, "_enable"),
+            params=params,
+            headers=headers,
         )
 
     @query_params("id", "name", "owner", "realm_name", "username")
-    def get_api_key(self, params=None):
+    def get_api_key(self, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-api-key.html>`_
 
@@ -212,11 +233,11 @@ class SecurityClient(NamespacedClient):
             be retrieved
         """
         return self.transport.perform_request(
-            "GET", "/_security/api_key", params=params
+            "GET", "/_security/api_key", params=params, headers=headers
         )
 
     @query_params()
-    def get_privileges(self, application=None, name=None, params=None):
+    def get_privileges(self, application=None, name=None, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-privileges.html>`_
 
@@ -227,32 +248,36 @@ class SecurityClient(NamespacedClient):
             "GET",
             _make_path("_security", "privilege", application, name),
             params=params,
+            headers=headers,
         )
 
     @query_params()
-    def get_role(self, name=None, params=None):
+    def get_role(self, name=None, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-role.html>`_
 
         :arg name: Role name
         """
         return self.transport.perform_request(
-            "GET", _make_path("_security", "role", name), params=params
+            "GET", _make_path("_security", "role", name), params=params, headers=headers
         )
 
     @query_params()
-    def get_role_mapping(self, name=None, params=None):
+    def get_role_mapping(self, name=None, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-role-mapping.html>`_
 
         :arg name: Role-Mapping name
         """
         return self.transport.perform_request(
-            "GET", _make_path("_security", "role_mapping", name), params=params
+            "GET",
+            _make_path("_security", "role_mapping", name),
+            params=params,
+            headers=headers,
         )
 
     @query_params()
-    def get_token(self, body, params=None):
+    def get_token(self, body, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-token.html>`_
 
@@ -262,32 +287,35 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'body'.")
 
         return self.transport.perform_request(
-            "POST", "/_security/oauth2/token", params=params, body=body
+            "POST", "/_security/oauth2/token", params=params, headers=headers, body=body
         )
 
     @query_params()
-    def get_user(self, username=None, params=None):
+    def get_user(self, username=None, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-user.html>`_
 
         :arg username: A comma-separated list of usernames
         """
         return self.transport.perform_request(
-            "GET", _make_path("_security", "user", username), params=params
+            "GET",
+            _make_path("_security", "user", username),
+            params=params,
+            headers=headers,
         )
 
     @query_params()
-    def get_user_privileges(self, params=None):
+    def get_user_privileges(self, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-privileges.html>`_
 
         """
         return self.transport.perform_request(
-            "GET", "/_security/user/_privileges", params=params
+            "GET", "/_security/user/_privileges", params=params, headers=headers
         )
 
     @query_params()
-    def has_privileges(self, body, user=None, params=None):
+    def has_privileges(self, body, user=None, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-has-privileges.html>`_
 
@@ -301,11 +329,12 @@ class SecurityClient(NamespacedClient):
             "GET",
             _make_path("_security", "user", user, "_has_privileges"),
             params=params,
+            headers=headers,
             body=body,
         )
 
     @query_params()
-    def invalidate_api_key(self, body, params=None):
+    def invalidate_api_key(self, body, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-invalidate-api-key.html>`_
 
@@ -315,11 +344,11 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'body'.")
 
         return self.transport.perform_request(
-            "DELETE", "/_security/api_key", params=params, body=body
+            "DELETE", "/_security/api_key", params=params, headers=headers, body=body
         )
 
     @query_params()
-    def invalidate_token(self, body, params=None):
+    def invalidate_token(self, body, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-invalidate-token.html>`_
 
@@ -329,11 +358,15 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'body'.")
 
         return self.transport.perform_request(
-            "DELETE", "/_security/oauth2/token", params=params, body=body
+            "DELETE",
+            "/_security/oauth2/token",
+            params=params,
+            headers=headers,
+            body=body,
         )
 
     @query_params("refresh")
-    def put_privileges(self, body, params=None):
+    def put_privileges(self, body, params=None, headers=None):
         """
         `<TODO>`_
 
@@ -347,11 +380,11 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'body'.")
 
         return self.transport.perform_request(
-            "PUT", "/_security/privilege/", params=params, body=body
+            "PUT", "/_security/privilege/", params=params, headers=headers, body=body
         )
 
     @query_params("refresh")
-    def put_role(self, name, body, params=None):
+    def put_role(self, name, body, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-put-role.html>`_
 
@@ -367,11 +400,15 @@ class SecurityClient(NamespacedClient):
                 raise ValueError("Empty value passed for a required argument.")
 
         return self.transport.perform_request(
-            "PUT", _make_path("_security", "role", name), params=params, body=body
+            "PUT",
+            _make_path("_security", "role", name),
+            params=params,
+            headers=headers,
+            body=body,
         )
 
     @query_params("refresh")
-    def put_role_mapping(self, name, body, params=None):
+    def put_role_mapping(self, name, body, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-put-role-mapping.html>`_
 
@@ -390,11 +427,12 @@ class SecurityClient(NamespacedClient):
             "PUT",
             _make_path("_security", "role_mapping", name),
             params=params,
+            headers=headers,
             body=body,
         )
 
     @query_params("refresh")
-    def put_user(self, username, body, params=None):
+    def put_user(self, username, body, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-put-user.html>`_
 
@@ -410,15 +448,19 @@ class SecurityClient(NamespacedClient):
                 raise ValueError("Empty value passed for a required argument.")
 
         return self.transport.perform_request(
-            "PUT", _make_path("_security", "user", username), params=params, body=body
+            "PUT",
+            _make_path("_security", "user", username),
+            params=params,
+            headers=headers,
+            body=body,
         )
 
     @query_params()
-    def get_builtin_privileges(self, params=None):
+    def get_builtin_privileges(self, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-builtin-privileges.html>`_
 
         """
         return self.transport.perform_request(
-            "GET", "/_security/privilege/_builtin", params=params
+            "GET", "/_security/privilege/_builtin", params=params, headers=headers
         )

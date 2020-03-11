@@ -3,7 +3,7 @@ from .utils import NamespacedClient, query_params, _make_path
 
 class NodesClient(NamespacedClient):
     @query_params("timeout")
-    def reload_secure_settings(self, node_id=None, params=None):
+    def reload_secure_settings(self, node_id=None, params=None, headers=None):
         """
         Reloads secure settings.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/secure-settings.html#reloadable-secure-settings>`_
@@ -17,10 +17,11 @@ class NodesClient(NamespacedClient):
             "POST",
             _make_path("_nodes", node_id, "reload_secure_settings"),
             params=params,
+            headers=headers,
         )
 
     @query_params("flat_settings", "timeout")
-    def info(self, node_id=None, metric=None, params=None):
+    def info(self, node_id=None, metric=None, params=None, headers=None):
         """
         Returns information about nodes in the cluster.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-info.html>`_
@@ -37,7 +38,63 @@ class NodesClient(NamespacedClient):
         :arg timeout: Explicit operation timeout
         """
         return self.transport.perform_request(
-            "GET", _make_path("_nodes", node_id, metric), params=params
+            "GET", _make_path("_nodes", node_id, metric), params=params, headers=headers
+        )
+
+    @query_params(
+        "doc_type", "ignore_idle_threads", "interval", "snapshots", "threads", "timeout"
+    )
+    def hot_threads(self, node_id=None, params=None, headers=None):
+        """
+        Returns information about hot threads on each node in the cluster.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-hot-threads.html>`_
+
+        :arg node_id: A comma-separated list of node IDs or names to
+            limit the returned information; use `_local` to return information from
+            the node you're connecting to, leave empty to get information from all
+            nodes
+        :arg doc_type: The type to sample (default: cpu)  Valid choices:
+            cpu, wait, block
+        :arg ignore_idle_threads: Don't show threads that are in known-
+            idle places, such as waiting on a socket select or pulling from an empty
+            task queue (default: true)
+        :arg interval: The interval for the second sampling of threads
+        :arg snapshots: Number of samples of thread stacktrace (default:
+            10)
+        :arg threads: Specify the number of threads to provide
+            information for (default: 3)
+        :arg timeout: Explicit operation timeout
+        """
+        # type is a reserved word so it cannot be used, use doc_type instead
+        if "doc_type" in params:
+            params["type"] = params.pop("doc_type")
+
+        return self.transport.perform_request(
+            "GET",
+            _make_path("_nodes", node_id, "hot_threads"),
+            params=params,
+            headers=headers,
+        )
+
+    @query_params("timeout")
+    def usage(self, node_id=None, metric=None, params=None, headers=None):
+        """
+        Returns low-level information about REST actions usage on nodes.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-usage.html>`_
+
+        :arg node_id: A comma-separated list of node IDs or names to
+            limit the returned information; use `_local` to return information from
+            the node you're connecting to, leave empty to get information from all
+            nodes
+        :arg metric: Limit the information returned to the specified
+            metrics  Valid choices: _all, rest_actions
+        :arg timeout: Explicit operation timeout
+        """
+        return self.transport.perform_request(
+            "GET",
+            _make_path("_nodes", node_id, "usage", metric),
+            params=params,
+            headers=headers,
         )
 
     @query_params(
@@ -50,7 +107,9 @@ class NodesClient(NamespacedClient):
         "timeout",
         "types",
     )
-    def stats(self, node_id=None, metric=None, index_metric=None, params=None):
+    def stats(
+        self, node_id=None, metric=None, index_metric=None, params=None, headers=None
+    ):
         """
         Returns statistical information about nodes in the cluster.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-stats.html>`_
@@ -88,54 +147,5 @@ class NodesClient(NamespacedClient):
             "GET",
             _make_path("_nodes", node_id, "stats", metric, index_metric),
             params=params,
-        )
-
-    @query_params(
-        "doc_type", "ignore_idle_threads", "interval", "snapshots", "threads", "timeout"
-    )
-    def hot_threads(self, node_id=None, params=None):
-        """
-        Returns information about hot threads on each node in the cluster.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-hot-threads.html>`_
-
-        :arg node_id: A comma-separated list of node IDs or names to
-            limit the returned information; use `_local` to return information from
-            the node you're connecting to, leave empty to get information from all
-            nodes
-        :arg doc_type: The type to sample (default: cpu)  Valid choices:
-            cpu, wait, block
-        :arg ignore_idle_threads: Don't show threads that are in known-
-            idle places, such as waiting on a socket select or pulling from an empty
-            task queue (default: true)
-        :arg interval: The interval for the second sampling of threads
-        :arg snapshots: Number of samples of thread stacktrace (default:
-            10)
-        :arg threads: Specify the number of threads to provide
-            information for (default: 3)
-        :arg timeout: Explicit operation timeout
-        """
-        # type is a reserved word so it cannot be used, use doc_type instead
-        if "doc_type" in params:
-            params["type"] = params.pop("doc_type")
-
-        return self.transport.perform_request(
-            "GET", _make_path("_nodes", node_id, "hot_threads"), params=params
-        )
-
-    @query_params("timeout")
-    def usage(self, node_id=None, metric=None, params=None):
-        """
-        Returns low-level information about REST actions usage on nodes.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-usage.html>`_
-
-        :arg node_id: A comma-separated list of node IDs or names to
-            limit the returned information; use `_local` to return information from
-            the node you're connecting to, leave empty to get information from all
-            nodes
-        :arg metric: Limit the information returned to the specified
-            metrics  Valid choices: _all, rest_actions
-        :arg timeout: Explicit operation timeout
-        """
-        return self.transport.perform_request(
-            "GET", _make_path("_nodes", node_id, "usage", metric), params=params
+            headers=headers,
         )

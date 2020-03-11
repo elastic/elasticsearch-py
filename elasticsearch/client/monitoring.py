@@ -3,9 +3,9 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH, _bu
 
 class MonitoringClient(NamespacedClient):
     @query_params("interval", "system_api_version", "system_id")
-    def bulk(self, body, doc_type=None, params=None):
+    def bulk(self, body, doc_type=None, params=None, headers=None):
         """
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/es-monitoring.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/monitor-elasticsearch-cluster.html>`_
 
         :arg body: The operation definition and data (action-data
             pairs), separated by newlines
@@ -24,5 +24,6 @@ class MonitoringClient(NamespacedClient):
             "POST",
             _make_path("_monitoring", doc_type, "bulk"),
             params=params,
+            headers=headers,
             body=body,
         )
