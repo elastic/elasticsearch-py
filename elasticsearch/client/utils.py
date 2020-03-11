@@ -73,7 +73,9 @@ def query_params(*es_query_params):
             if "params" in kwargs:
                 params = kwargs.pop("params").copy()
             if "headers" in kwargs:
-                headers = {k.lower(): v for k, v in kwargs.pop("headers").items()}
+                headers = {
+                    k.lower(): v for k, v in (kwargs.pop("headers") or {}).items()
+                }
             if "opaque_id" in kwargs:
                 headers["x-opaque-id"] = kwargs.pop("opaque_id")
 

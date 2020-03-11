@@ -56,9 +56,7 @@ class TestUrllib3Connection(TestCase):
         self.assertTrue(con.use_ssl)
 
     def test_opaque_id(self):
-        con = Urllib3HttpConnection(
-            opaque_id="app-1"
-        )
+        con = Urllib3HttpConnection(opaque_id="app-1")
         self.assertEqual(con.headers["x-opaque-id"], "app-1")
 
     def test_http_cloud_id(self):
@@ -324,9 +322,7 @@ class TestRequestsConnection(TestCase):
         self.assertEquals(42, con.timeout)
 
     def test_opaque_id(self):
-        con = RequestsHttpConnection(
-            opaque_id="app-1"
-        )
+        con = RequestsHttpConnection(opaque_id="app-1")
         self.assertEqual(con.headers["x-opaque-id"], "app-1")
 
     def test_http_cloud_id(self):
