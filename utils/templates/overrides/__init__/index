@@ -4,6 +4,6 @@
             doc_type = "_doc"
 
 
-        return self.transport.perform_request("POST" if id in SKIP_IN_PATH else "PUT", {% include "url" %}, params=params, body=body)
+        return self.transport.perform_request("POST" if id in SKIP_IN_PATH else "PUT", {% include "url" %}, params=params, headers=headers, body=body)
 {% endblock %}
 

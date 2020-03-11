@@ -3,7 +3,7 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 class SlmClient(NamespacedClient):
     @query_params()
-    def delete_lifecycle(self, policy_id, params=None):
+    def delete_lifecycle(self, policy_id, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-api-delete.html>`_
 
@@ -14,11 +14,14 @@ class SlmClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'policy_id'.")
 
         return self.transport.perform_request(
-            "DELETE", _make_path("_slm", "policy", policy_id), params=params
+            "DELETE",
+            _make_path("_slm", "policy", policy_id),
+            params=params,
+            headers=headers,
         )
 
     @query_params()
-    def execute_lifecycle(self, policy_id, params=None):
+    def execute_lifecycle(self, policy_id, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-api-execute.html>`_
 
@@ -29,21 +32,24 @@ class SlmClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'policy_id'.")
 
         return self.transport.perform_request(
-            "PUT", _make_path("_slm", "policy", policy_id, "_execute"), params=params
+            "PUT",
+            _make_path("_slm", "policy", policy_id, "_execute"),
+            params=params,
+            headers=headers,
         )
 
     @query_params()
-    def execute_retention(self, params=None):
+    def execute_retention(self, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-api-execute-retention.html>`_
 
         """
         return self.transport.perform_request(
-            "POST", "/_slm/_execute_retention", params=params
+            "POST", "/_slm/_execute_retention", params=params, headers=headers
         )
 
     @query_params()
-    def get_lifecycle(self, policy_id=None, params=None):
+    def get_lifecycle(self, policy_id=None, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-api-get.html>`_
 
@@ -51,19 +57,24 @@ class SlmClient(NamespacedClient):
             policies to retrieve
         """
         return self.transport.perform_request(
-            "GET", _make_path("_slm", "policy", policy_id), params=params
+            "GET",
+            _make_path("_slm", "policy", policy_id),
+            params=params,
+            headers=headers,
         )
 
     @query_params()
-    def get_stats(self, params=None):
+    def get_stats(self, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/slm-get-stats.html>`_
 
         """
-        return self.transport.perform_request("GET", "/_slm/stats", params=params)
+        return self.transport.perform_request(
+            "GET", "/_slm/stats", params=params, headers=headers
+        )
 
     @query_params()
-    def put_lifecycle(self, policy_id, body=None, params=None):
+    def put_lifecycle(self, policy_id, body=None, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-api-put.html>`_
 
@@ -74,29 +85,39 @@ class SlmClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'policy_id'.")
 
         return self.transport.perform_request(
-            "PUT", _make_path("_slm", "policy", policy_id), params=params, body=body
+            "PUT",
+            _make_path("_slm", "policy", policy_id),
+            params=params,
+            headers=headers,
+            body=body,
         )
 
     @query_params()
-    def get_status(self, params=None):
+    def get_status(self, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-get-status.html>`_
 
         """
-        return self.transport.perform_request("GET", "/_slm/status", params=params)
+        return self.transport.perform_request(
+            "GET", "/_slm/status", params=params, headers=headers
+        )
 
     @query_params()
-    def start(self, params=None):
+    def start(self, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-start.html>`_
 
         """
-        return self.transport.perform_request("POST", "/_slm/start", params=params)
+        return self.transport.perform_request(
+            "POST", "/_slm/start", params=params, headers=headers
+        )
 
     @query_params()
-    def stop(self, params=None):
+    def stop(self, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-stop.html>`_
 
         """
-        return self.transport.perform_request("POST", "/_slm/stop", params=params)
+        return self.transport.perform_request(
+            "POST", "/_slm/stop", params=params, headers=headers
+        )

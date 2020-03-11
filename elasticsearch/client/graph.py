@@ -3,7 +3,7 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 class GraphClient(NamespacedClient):
     @query_params("routing", "timeout")
-    def explore(self, index, body=None, doc_type=None, params=None):
+    def explore(self, index, body=None, doc_type=None, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/graph-explore-api.html>`_
 
@@ -22,5 +22,6 @@ class GraphClient(NamespacedClient):
             "GET",
             _make_path(index, doc_type, "_graph", "explore"),
             params=params,
+            headers=headers,
             body=body,
         )
