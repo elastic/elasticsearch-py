@@ -3,7 +3,7 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH, _bu
 
 class MlClient(NamespacedClient):
     @query_params("allow_no_jobs", "force", "timeout")
-    def close_job(self, job_id, body=None, params=None):
+    def close_job(self, job_id, body=None, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-close-job.html>`_
 
@@ -23,11 +23,12 @@ class MlClient(NamespacedClient):
             "POST",
             _make_path("_ml", "anomaly_detectors", job_id, "_close"),
             params=params,
+            headers=headers,
             body=body,
         )
 
     @query_params()
-    def delete_calendar(self, calendar_id, params=None):
+    def delete_calendar(self, calendar_id, params=None, headers=None):
         """
 
         :arg calendar_id: The ID of the calendar to delete
@@ -38,11 +39,14 @@ class MlClient(NamespacedClient):
             )
 
         return self.transport.perform_request(
-            "DELETE", _make_path("_ml", "calendars", calendar_id), params=params
+            "DELETE",
+            _make_path("_ml", "calendars", calendar_id),
+            params=params,
+            headers=headers,
         )
 
     @query_params()
-    def delete_calendar_event(self, calendar_id, event_id, params=None):
+    def delete_calendar_event(self, calendar_id, event_id, params=None, headers=None):
         """
 
         :arg calendar_id: The ID of the calendar to modify
@@ -56,10 +60,11 @@ class MlClient(NamespacedClient):
             "DELETE",
             _make_path("_ml", "calendars", calendar_id, "events", event_id),
             params=params,
+            headers=headers,
         )
 
     @query_params()
-    def delete_calendar_job(self, calendar_id, job_id, params=None):
+    def delete_calendar_job(self, calendar_id, job_id, params=None, headers=None):
         """
 
         :arg calendar_id: The ID of the calendar to modify
@@ -73,10 +78,11 @@ class MlClient(NamespacedClient):
             "DELETE",
             _make_path("_ml", "calendars", calendar_id, "jobs", job_id),
             params=params,
+            headers=headers,
         )
 
     @query_params("force")
-    def delete_datafeed(self, datafeed_id, params=None):
+    def delete_datafeed(self, datafeed_id, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-datafeed.html>`_
 
@@ -89,20 +95,23 @@ class MlClient(NamespacedClient):
             )
 
         return self.transport.perform_request(
-            "DELETE", _make_path("_ml", "datafeeds", datafeed_id), params=params
+            "DELETE",
+            _make_path("_ml", "datafeeds", datafeed_id),
+            params=params,
+            headers=headers,
         )
 
     @query_params()
-    def delete_expired_data(self, params=None):
+    def delete_expired_data(self, params=None, headers=None):
         """
 
         """
         return self.transport.perform_request(
-            "DELETE", "/_ml/_delete_expired_data", params=params
+            "DELETE", "/_ml/_delete_expired_data", params=params, headers=headers
         )
 
     @query_params()
-    def delete_filter(self, filter_id, params=None):
+    def delete_filter(self, filter_id, params=None, headers=None):
         """
 
         :arg filter_id: The ID of the filter to delete
@@ -111,11 +120,14 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'filter_id'.")
 
         return self.transport.perform_request(
-            "DELETE", _make_path("_ml", "filters", filter_id), params=params
+            "DELETE",
+            _make_path("_ml", "filters", filter_id),
+            params=params,
+            headers=headers,
         )
 
     @query_params("allow_no_forecasts", "timeout")
-    def delete_forecast(self, job_id, forecast_id=None, params=None):
+    def delete_forecast(self, job_id, forecast_id=None, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-forecast.html>`_
 
@@ -134,10 +146,11 @@ class MlClient(NamespacedClient):
             "DELETE",
             _make_path("_ml", "anomaly_detectors", job_id, "_forecast", forecast_id),
             params=params,
+            headers=headers,
         )
 
     @query_params("force", "wait_for_completion")
-    def delete_job(self, job_id, params=None):
+    def delete_job(self, job_id, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-job.html>`_
 
@@ -150,11 +163,14 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'job_id'.")
 
         return self.transport.perform_request(
-            "DELETE", _make_path("_ml", "anomaly_detectors", job_id), params=params
+            "DELETE",
+            _make_path("_ml", "anomaly_detectors", job_id),
+            params=params,
+            headers=headers,
         )
 
     @query_params()
-    def delete_model_snapshot(self, job_id, snapshot_id, params=None):
+    def delete_model_snapshot(self, job_id, snapshot_id, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-snapshot.html>`_
 
@@ -171,6 +187,7 @@ class MlClient(NamespacedClient):
                 "_ml", "anomaly_detectors", job_id, "model_snapshots", snapshot_id
             ),
             params=params,
+            headers=headers,
         )
 
     @query_params(
@@ -189,7 +206,7 @@ class MlClient(NamespacedClient):
         "timestamp_field",
         "timestamp_format",
     )
-    def find_file_structure(self, body, params=None):
+    def find_file_structure(self, body, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-find-file-structure.html>`_
 
@@ -231,11 +248,15 @@ class MlClient(NamespacedClient):
 
         body = _bulk_body(self.transport.serializer, body)
         return self.transport.perform_request(
-            "POST", "/_ml/find_file_structure", params=params, body=body
+            "POST",
+            "/_ml/find_file_structure",
+            params=params,
+            headers=headers,
+            body=body,
         )
 
     @query_params("advance_time", "calc_interim", "end", "skip_time", "start")
-    def flush_job(self, job_id, body=None, params=None):
+    def flush_job(self, job_id, body=None, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-flush-job.html>`_
 
@@ -259,11 +280,12 @@ class MlClient(NamespacedClient):
             "POST",
             _make_path("_ml", "anomaly_detectors", job_id, "_flush"),
             params=params,
+            headers=headers,
             body=body,
         )
 
     @query_params("duration", "expires_in")
-    def forecast(self, job_id, params=None):
+    def forecast(self, job_id, params=None, headers=None):
         """
 
         :arg job_id: The ID of the job to forecast for
@@ -278,6 +300,7 @@ class MlClient(NamespacedClient):
             "POST",
             _make_path("_ml", "anomaly_detectors", job_id, "_forecast"),
             params=params,
+            headers=headers,
         )
 
     @query_params(
@@ -291,7 +314,7 @@ class MlClient(NamespacedClient):
         "sort",
         "start",
     )
-    def get_buckets(self, job_id, body=None, timestamp=None, params=None):
+    def get_buckets(self, job_id, body=None, timestamp=None, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-bucket.html>`_
 
@@ -322,11 +345,12 @@ class MlClient(NamespacedClient):
                 "_ml", "anomaly_detectors", job_id, "results", "buckets", timestamp
             ),
             params=params,
+            headers=headers,
             body=body,
         )
 
     @query_params("end", "from_", "job_id", "size", "start")
-    def get_calendar_events(self, calendar_id, params=None):
+    def get_calendar_events(self, calendar_id, params=None, headers=None):
         """
 
         :arg calendar_id: The ID of the calendar containing the events
@@ -347,11 +371,14 @@ class MlClient(NamespacedClient):
             )
 
         return self.transport.perform_request(
-            "GET", _make_path("_ml", "calendars", calendar_id, "events"), params=params
+            "GET",
+            _make_path("_ml", "calendars", calendar_id, "events"),
+            params=params,
+            headers=headers,
         )
 
     @query_params("from_", "size")
-    def get_calendars(self, body=None, calendar_id=None, params=None):
+    def get_calendars(self, body=None, calendar_id=None, params=None, headers=None):
         """
 
         :arg body: The from and size parameters optionally sent in the
@@ -365,11 +392,17 @@ class MlClient(NamespacedClient):
             params["from"] = params.pop("from_")
 
         return self.transport.perform_request(
-            "GET", _make_path("_ml", "calendars", calendar_id), params=params, body=body
+            "GET",
+            _make_path("_ml", "calendars", calendar_id),
+            params=params,
+            headers=headers,
+            body=body,
         )
 
     @query_params("from_", "size")
-    def get_categories(self, job_id, body=None, category_id=None, params=None):
+    def get_categories(
+        self, job_id, body=None, category_id=None, params=None, headers=None
+    ):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-category.html>`_
 
@@ -393,11 +426,12 @@ class MlClient(NamespacedClient):
                 "_ml", "anomaly_detectors", job_id, "results", "categories", category_id
             ),
             params=params,
+            headers=headers,
             body=body,
         )
 
     @query_params("allow_no_datafeeds")
-    def get_datafeed_stats(self, datafeed_id=None, params=None):
+    def get_datafeed_stats(self, datafeed_id=None, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-datafeed-stats.html>`_
 
@@ -407,11 +441,14 @@ class MlClient(NamespacedClient):
             datafeeds have been specified)
         """
         return self.transport.perform_request(
-            "GET", _make_path("_ml", "datafeeds", datafeed_id, "_stats"), params=params
+            "GET",
+            _make_path("_ml", "datafeeds", datafeed_id, "_stats"),
+            params=params,
+            headers=headers,
         )
 
     @query_params("allow_no_datafeeds")
-    def get_datafeeds(self, datafeed_id=None, params=None):
+    def get_datafeeds(self, datafeed_id=None, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-datafeed.html>`_
 
@@ -421,11 +458,14 @@ class MlClient(NamespacedClient):
             datafeeds have been specified)
         """
         return self.transport.perform_request(
-            "GET", _make_path("_ml", "datafeeds", datafeed_id), params=params
+            "GET",
+            _make_path("_ml", "datafeeds", datafeed_id),
+            params=params,
+            headers=headers,
         )
 
     @query_params("from_", "size")
-    def get_filters(self, filter_id=None, params=None):
+    def get_filters(self, filter_id=None, params=None, headers=None):
         """
 
         :arg filter_id: The ID of the filter to fetch
@@ -437,7 +477,10 @@ class MlClient(NamespacedClient):
             params["from"] = params.pop("from_")
 
         return self.transport.perform_request(
-            "GET", _make_path("_ml", "filters", filter_id), params=params
+            "GET",
+            _make_path("_ml", "filters", filter_id),
+            params=params,
+            headers=headers,
         )
 
     @query_params(
@@ -450,7 +493,7 @@ class MlClient(NamespacedClient):
         "sort",
         "start",
     )
-    def get_influencers(self, job_id, body=None, params=None):
+    def get_influencers(self, job_id, body=None, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-influencer.html>`_
 
@@ -478,11 +521,12 @@ class MlClient(NamespacedClient):
             "GET",
             _make_path("_ml", "anomaly_detectors", job_id, "results", "influencers"),
             params=params,
+            headers=headers,
             body=body,
         )
 
     @query_params("allow_no_jobs")
-    def get_job_stats(self, job_id=None, params=None):
+    def get_job_stats(self, job_id=None, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-job-stats.html>`_
 
@@ -495,10 +539,11 @@ class MlClient(NamespacedClient):
             "GET",
             _make_path("_ml", "anomaly_detectors", job_id, "_stats"),
             params=params,
+            headers=headers,
         )
 
     @query_params("allow_no_jobs")
-    def get_jobs(self, job_id=None, params=None):
+    def get_jobs(self, job_id=None, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-job.html>`_
 
@@ -508,11 +553,16 @@ class MlClient(NamespacedClient):
             specified)
         """
         return self.transport.perform_request(
-            "GET", _make_path("_ml", "anomaly_detectors", job_id), params=params
+            "GET",
+            _make_path("_ml", "anomaly_detectors", job_id),
+            params=params,
+            headers=headers,
         )
 
     @query_params("desc", "end", "from_", "size", "sort", "start")
-    def get_model_snapshots(self, job_id, body=None, snapshot_id=None, params=None):
+    def get_model_snapshots(
+        self, job_id, body=None, snapshot_id=None, params=None, headers=None
+    ):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-snapshot.html>`_
 
@@ -541,6 +591,7 @@ class MlClient(NamespacedClient):
                 "_ml", "anomaly_detectors", job_id, "model_snapshots", snapshot_id
             ),
             params=params,
+            headers=headers,
             body=body,
         )
 
@@ -553,7 +604,7 @@ class MlClient(NamespacedClient):
         "start",
         "top_n",
     )
-    def get_overall_buckets(self, job_id, body=None, params=None):
+    def get_overall_buckets(self, job_id, body=None, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-overall-buckets.html>`_
 
@@ -586,6 +637,7 @@ class MlClient(NamespacedClient):
                 "_ml", "anomaly_detectors", job_id, "results", "overall_buckets"
             ),
             params=params,
+            headers=headers,
             body=body,
         )
 
@@ -599,7 +651,7 @@ class MlClient(NamespacedClient):
         "sort",
         "start",
     )
-    def get_records(self, job_id, body=None, params=None):
+    def get_records(self, job_id, body=None, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-record.html>`_
 
@@ -625,18 +677,21 @@ class MlClient(NamespacedClient):
             "GET",
             _make_path("_ml", "anomaly_detectors", job_id, "results", "records"),
             params=params,
+            headers=headers,
             body=body,
         )
 
     @query_params()
-    def info(self, params=None):
+    def info(self, params=None, headers=None):
         """
 
         """
-        return self.transport.perform_request("GET", "/_ml/info", params=params)
+        return self.transport.perform_request(
+            "GET", "/_ml/info", params=params, headers=headers
+        )
 
     @query_params()
-    def open_job(self, job_id, params=None):
+    def open_job(self, job_id, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-open-job.html>`_
 
@@ -649,10 +704,11 @@ class MlClient(NamespacedClient):
             "POST",
             _make_path("_ml", "anomaly_detectors", job_id, "_open"),
             params=params,
+            headers=headers,
         )
 
     @query_params()
-    def post_calendar_events(self, calendar_id, body, params=None):
+    def post_calendar_events(self, calendar_id, body, params=None, headers=None):
         """
 
         :arg calendar_id: The ID of the calendar to modify
@@ -666,11 +722,12 @@ class MlClient(NamespacedClient):
             "POST",
             _make_path("_ml", "calendars", calendar_id, "events"),
             params=params,
+            headers=headers,
             body=body,
         )
 
     @query_params("reset_end", "reset_start")
-    def post_data(self, job_id, body, params=None):
+    def post_data(self, job_id, body, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-post-data.html>`_
 
@@ -690,11 +747,12 @@ class MlClient(NamespacedClient):
             "POST",
             _make_path("_ml", "anomaly_detectors", job_id, "_data"),
             params=params,
+            headers=headers,
             body=body,
         )
 
     @query_params()
-    def preview_datafeed(self, datafeed_id, params=None):
+    def preview_datafeed(self, datafeed_id, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-preview-datafeed.html>`_
 
@@ -709,10 +767,11 @@ class MlClient(NamespacedClient):
             "GET",
             _make_path("_ml", "datafeeds", datafeed_id, "_preview"),
             params=params,
+            headers=headers,
         )
 
     @query_params()
-    def put_calendar(self, calendar_id, body=None, params=None):
+    def put_calendar(self, calendar_id, body=None, params=None, headers=None):
         """
 
         :arg calendar_id: The ID of the calendar to create
@@ -724,11 +783,15 @@ class MlClient(NamespacedClient):
             )
 
         return self.transport.perform_request(
-            "PUT", _make_path("_ml", "calendars", calendar_id), params=params, body=body
+            "PUT",
+            _make_path("_ml", "calendars", calendar_id),
+            params=params,
+            headers=headers,
+            body=body,
         )
 
     @query_params()
-    def put_calendar_job(self, calendar_id, job_id, params=None):
+    def put_calendar_job(self, calendar_id, job_id, params=None, headers=None):
         """
 
         :arg calendar_id: The ID of the calendar to modify
@@ -742,10 +805,11 @@ class MlClient(NamespacedClient):
             "PUT",
             _make_path("_ml", "calendars", calendar_id, "jobs", job_id),
             params=params,
+            headers=headers,
         )
 
     @query_params()
-    def put_datafeed(self, datafeed_id, body, params=None):
+    def put_datafeed(self, datafeed_id, body, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-put-datafeed.html>`_
 
@@ -757,11 +821,15 @@ class MlClient(NamespacedClient):
                 raise ValueError("Empty value passed for a required argument.")
 
         return self.transport.perform_request(
-            "PUT", _make_path("_ml", "datafeeds", datafeed_id), params=params, body=body
+            "PUT",
+            _make_path("_ml", "datafeeds", datafeed_id),
+            params=params,
+            headers=headers,
+            body=body,
         )
 
     @query_params()
-    def put_filter(self, filter_id, body, params=None):
+    def put_filter(self, filter_id, body, params=None, headers=None):
         """
 
         :arg filter_id: The ID of the filter to create
@@ -772,11 +840,15 @@ class MlClient(NamespacedClient):
                 raise ValueError("Empty value passed for a required argument.")
 
         return self.transport.perform_request(
-            "PUT", _make_path("_ml", "filters", filter_id), params=params, body=body
+            "PUT",
+            _make_path("_ml", "filters", filter_id),
+            params=params,
+            headers=headers,
+            body=body,
         )
 
     @query_params()
-    def put_job(self, job_id, body, params=None):
+    def put_job(self, job_id, body, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-put-job.html>`_
 
@@ -791,11 +863,14 @@ class MlClient(NamespacedClient):
             "PUT",
             _make_path("_ml", "anomaly_detectors", job_id),
             params=params,
+            headers=headers,
             body=body,
         )
 
     @query_params("delete_intervening_results")
-    def revert_model_snapshot(self, job_id, snapshot_id, body=None, params=None):
+    def revert_model_snapshot(
+        self, job_id, snapshot_id, body=None, params=None, headers=None
+    ):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-revert-snapshot.html>`_
 
@@ -820,11 +895,12 @@ class MlClient(NamespacedClient):
                 "_revert",
             ),
             params=params,
+            headers=headers,
             body=body,
         )
 
     @query_params("enabled", "timeout")
-    def set_upgrade_mode(self, params=None):
+    def set_upgrade_mode(self, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-set-upgrade-mode.html>`_
 
@@ -834,11 +910,11 @@ class MlClient(NamespacedClient):
             Defaults to 30 seconds
         """
         return self.transport.perform_request(
-            "POST", "/_ml/set_upgrade_mode", params=params
+            "POST", "/_ml/set_upgrade_mode", params=params, headers=headers
         )
 
     @query_params("end", "start", "timeout")
-    def start_datafeed(self, datafeed_id, body=None, params=None):
+    def start_datafeed(self, datafeed_id, body=None, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-start-datafeed.html>`_
 
@@ -859,11 +935,12 @@ class MlClient(NamespacedClient):
             "POST",
             _make_path("_ml", "datafeeds", datafeed_id, "_start"),
             params=params,
+            headers=headers,
             body=body,
         )
 
     @query_params("allow_no_datafeeds", "force", "timeout")
-    def stop_datafeed(self, datafeed_id, params=None):
+    def stop_datafeed(self, datafeed_id, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-stop-datafeed.html>`_
 
@@ -881,11 +958,14 @@ class MlClient(NamespacedClient):
             )
 
         return self.transport.perform_request(
-            "POST", _make_path("_ml", "datafeeds", datafeed_id, "_stop"), params=params
+            "POST",
+            _make_path("_ml", "datafeeds", datafeed_id, "_stop"),
+            params=params,
+            headers=headers,
         )
 
     @query_params()
-    def update_datafeed(self, datafeed_id, body, params=None):
+    def update_datafeed(self, datafeed_id, body, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-update-datafeed.html>`_
 
@@ -900,11 +980,12 @@ class MlClient(NamespacedClient):
             "POST",
             _make_path("_ml", "datafeeds", datafeed_id, "_update"),
             params=params,
+            headers=headers,
             body=body,
         )
 
     @query_params()
-    def update_filter(self, filter_id, body, params=None):
+    def update_filter(self, filter_id, body, params=None, headers=None):
         """
 
         :arg filter_id: The ID of the filter to update
@@ -918,11 +999,12 @@ class MlClient(NamespacedClient):
             "POST",
             _make_path("_ml", "filters", filter_id, "_update"),
             params=params,
+            headers=headers,
             body=body,
         )
 
     @query_params()
-    def update_job(self, job_id, body, params=None):
+    def update_job(self, job_id, body, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-update-job.html>`_
 
@@ -937,11 +1019,14 @@ class MlClient(NamespacedClient):
             "POST",
             _make_path("_ml", "anomaly_detectors", job_id, "_update"),
             params=params,
+            headers=headers,
             body=body,
         )
 
     @query_params()
-    def update_model_snapshot(self, job_id, snapshot_id, body, params=None):
+    def update_model_snapshot(
+        self, job_id, snapshot_id, body, params=None, headers=None
+    ):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-update-snapshot.html>`_
 
@@ -964,11 +1049,12 @@ class MlClient(NamespacedClient):
                 "_update",
             ),
             params=params,
+            headers=headers,
             body=body,
         )
 
     @query_params()
-    def validate(self, body, params=None):
+    def validate(self, body, params=None, headers=None):
         """
 
         :arg body: The job config
@@ -977,11 +1063,15 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'body'.")
 
         return self.transport.perform_request(
-            "POST", "/_ml/anomaly_detectors/_validate", params=params, body=body
+            "POST",
+            "/_ml/anomaly_detectors/_validate",
+            params=params,
+            headers=headers,
+            body=body,
         )
 
     @query_params()
-    def validate_detector(self, body, params=None):
+    def validate_detector(self, body, params=None, headers=None):
         """
 
         :arg body: The detector
@@ -993,11 +1083,12 @@ class MlClient(NamespacedClient):
             "POST",
             "/_ml/anomaly_detectors/_validate/detector",
             params=params,
+            headers=headers,
             body=body,
         )
 
     @query_params()
-    def delete_data_frame_analytics(self, id, params=None):
+    def delete_data_frame_analytics(self, id, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/delete-dfanalytics.html>`_
 
@@ -1007,11 +1098,14 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'id'.")
 
         return self.transport.perform_request(
-            "DELETE", _make_path("_ml", "data_frame", "analytics", id), params=params
+            "DELETE",
+            _make_path("_ml", "data_frame", "analytics", id),
+            params=params,
+            headers=headers,
         )
 
     @query_params()
-    def estimate_memory_usage(self, body, params=None):
+    def estimate_memory_usage(self, body, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/estimate-memory-usage-dfanalytics.html>`_
 
@@ -1024,11 +1118,12 @@ class MlClient(NamespacedClient):
             "POST",
             "/_ml/data_frame/analytics/_estimate_memory_usage",
             params=params,
+            headers=headers,
             body=body,
         )
 
     @query_params()
-    def evaluate_data_frame(self, body, params=None):
+    def evaluate_data_frame(self, body, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/evaluate-dfanalytics.html>`_
 
@@ -1038,11 +1133,15 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'body'.")
 
         return self.transport.perform_request(
-            "POST", "/_ml/data_frame/_evaluate", params=params, body=body
+            "POST",
+            "/_ml/data_frame/_evaluate",
+            params=params,
+            headers=headers,
+            body=body,
         )
 
     @query_params("allow_no_match", "from_", "size")
-    def get_data_frame_analytics(self, id=None, params=None):
+    def get_data_frame_analytics(self, id=None, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/get-dfanalytics.html>`_
 
@@ -1059,11 +1158,14 @@ class MlClient(NamespacedClient):
             params["from"] = params.pop("from_")
 
         return self.transport.perform_request(
-            "GET", _make_path("_ml", "data_frame", "analytics", id), params=params
+            "GET",
+            _make_path("_ml", "data_frame", "analytics", id),
+            params=params,
+            headers=headers,
         )
 
     @query_params("allow_no_match", "from_", "size")
-    def get_data_frame_analytics_stats(self, id=None, params=None):
+    def get_data_frame_analytics_stats(self, id=None, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/get-dfanalytics-stats.html>`_
 
@@ -1083,10 +1185,11 @@ class MlClient(NamespacedClient):
             "GET",
             _make_path("_ml", "data_frame", "analytics", id, "_stats"),
             params=params,
+            headers=headers,
         )
 
     @query_params()
-    def put_data_frame_analytics(self, id, body, params=None):
+    def put_data_frame_analytics(self, id, body, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/put-dfanalytics.html>`_
 
@@ -1101,11 +1204,12 @@ class MlClient(NamespacedClient):
             "PUT",
             _make_path("_ml", "data_frame", "analytics", id),
             params=params,
+            headers=headers,
             body=body,
         )
 
     @query_params("timeout")
-    def start_data_frame_analytics(self, id, body=None, params=None):
+    def start_data_frame_analytics(self, id, body=None, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/start-dfanalytics.html>`_
 
@@ -1121,11 +1225,12 @@ class MlClient(NamespacedClient):
             "POST",
             _make_path("_ml", "data_frame", "analytics", id, "_start"),
             params=params,
+            headers=headers,
             body=body,
         )
 
     @query_params("allow_no_match", "force", "timeout")
-    def stop_data_frame_analytics(self, id, body=None, params=None):
+    def stop_data_frame_analytics(self, id, body=None, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/stop-dfanalytics.html>`_
 
@@ -1146,5 +1251,6 @@ class MlClient(NamespacedClient):
             "POST",
             _make_path("_ml", "data_frame", "analytics", id, "_stop"),
             params=params,
+            headers=headers,
             body=body,
         )

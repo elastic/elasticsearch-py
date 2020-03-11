@@ -3,7 +3,7 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 class CcrClient(NamespacedClient):
     @query_params()
-    def delete_auto_follow_pattern(self, name, params=None):
+    def delete_auto_follow_pattern(self, name, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ccr-delete-auto-follow-pattern.html>`_
 
@@ -13,11 +13,14 @@ class CcrClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'name'.")
 
         return self.transport.perform_request(
-            "DELETE", _make_path("_ccr", "auto_follow", name), params=params
+            "DELETE",
+            _make_path("_ccr", "auto_follow", name),
+            params=params,
+            headers=headers,
         )
 
     @query_params("wait_for_active_shards")
-    def follow(self, index, body, params=None):
+    def follow(self, index, body, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ccr-put-follow.html>`_
 
@@ -35,11 +38,15 @@ class CcrClient(NamespacedClient):
                 raise ValueError("Empty value passed for a required argument.")
 
         return self.transport.perform_request(
-            "PUT", _make_path(index, "_ccr", "follow"), params=params, body=body
+            "PUT",
+            _make_path(index, "_ccr", "follow"),
+            params=params,
+            headers=headers,
+            body=body,
         )
 
     @query_params()
-    def follow_info(self, index, params=None):
+    def follow_info(self, index, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ccr-get-follow-info.html>`_
 
@@ -50,11 +57,11 @@ class CcrClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'index'.")
 
         return self.transport.perform_request(
-            "GET", _make_path(index, "_ccr", "info"), params=params
+            "GET", _make_path(index, "_ccr", "info"), params=params, headers=headers
         )
 
     @query_params()
-    def follow_stats(self, index, params=None):
+    def follow_stats(self, index, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ccr-get-follow-stats.html>`_
 
@@ -65,11 +72,11 @@ class CcrClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'index'.")
 
         return self.transport.perform_request(
-            "GET", _make_path(index, "_ccr", "stats"), params=params
+            "GET", _make_path(index, "_ccr", "stats"), params=params, headers=headers
         )
 
     @query_params()
-    def forget_follower(self, index, body, params=None):
+    def forget_follower(self, index, body, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current>`_
 
@@ -88,22 +95,26 @@ class CcrClient(NamespacedClient):
             "POST",
             _make_path(index, "_ccr", "forget_follower"),
             params=params,
+            headers=headers,
             body=body,
         )
 
     @query_params()
-    def get_auto_follow_pattern(self, name=None, params=None):
+    def get_auto_follow_pattern(self, name=None, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ccr-get-auto-follow-pattern.html>`_
 
         :arg name: The name of the auto follow pattern.
         """
         return self.transport.perform_request(
-            "GET", _make_path("_ccr", "auto_follow", name), params=params
+            "GET",
+            _make_path("_ccr", "auto_follow", name),
+            params=params,
+            headers=headers,
         )
 
     @query_params()
-    def pause_follow(self, index, params=None):
+    def pause_follow(self, index, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ccr-post-pause-follow.html>`_
 
@@ -114,11 +125,14 @@ class CcrClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'index'.")
 
         return self.transport.perform_request(
-            "POST", _make_path(index, "_ccr", "pause_follow"), params=params
+            "POST",
+            _make_path(index, "_ccr", "pause_follow"),
+            params=params,
+            headers=headers,
         )
 
     @query_params()
-    def put_auto_follow_pattern(self, name, body, params=None):
+    def put_auto_follow_pattern(self, name, body, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ccr-put-auto-follow-pattern.html>`_
 
@@ -130,11 +144,15 @@ class CcrClient(NamespacedClient):
                 raise ValueError("Empty value passed for a required argument.")
 
         return self.transport.perform_request(
-            "PUT", _make_path("_ccr", "auto_follow", name), params=params, body=body
+            "PUT",
+            _make_path("_ccr", "auto_follow", name),
+            params=params,
+            headers=headers,
+            body=body,
         )
 
     @query_params()
-    def resume_follow(self, index, body=None, params=None):
+    def resume_follow(self, index, body=None, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ccr-post-resume-follow.html>`_
 
@@ -146,19 +164,25 @@ class CcrClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'index'.")
 
         return self.transport.perform_request(
-            "POST", _make_path(index, "_ccr", "resume_follow"), params=params, body=body
+            "POST",
+            _make_path(index, "_ccr", "resume_follow"),
+            params=params,
+            headers=headers,
+            body=body,
         )
 
     @query_params()
-    def stats(self, params=None):
+    def stats(self, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ccr-get-stats.html>`_
 
         """
-        return self.transport.perform_request("GET", "/_ccr/stats", params=params)
+        return self.transport.perform_request(
+            "GET", "/_ccr/stats", params=params, headers=headers
+        )
 
     @query_params()
-    def unfollow(self, index, params=None):
+    def unfollow(self, index, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current>`_
 
@@ -169,11 +193,14 @@ class CcrClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'index'.")
 
         return self.transport.perform_request(
-            "POST", _make_path(index, "_ccr", "unfollow"), params=params
+            "POST",
+            _make_path(index, "_ccr", "unfollow"),
+            params=params,
+            headers=headers,
         )
 
     @query_params()
-    def pause_auto_follow_pattern(self, name, params=None):
+    def pause_auto_follow_pattern(self, name, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ccr-pause-auto-follow-pattern.html>`_
 
@@ -184,11 +211,14 @@ class CcrClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'name'.")
 
         return self.transport.perform_request(
-            "POST", _make_path("_ccr", "auto_follow", name, "pause"), params=params
+            "POST",
+            _make_path("_ccr", "auto_follow", name, "pause"),
+            params=params,
+            headers=headers,
         )
 
     @query_params()
-    def resume_auto_follow_pattern(self, name, params=None):
+    def resume_auto_follow_pattern(self, name, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ccr-resume-auto-follow-pattern.html>`_
 
@@ -199,5 +229,8 @@ class CcrClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'name'.")
 
         return self.transport.perform_request(
-            "POST", _make_path("_ccr", "auto_follow", name, "resume"), params=params
+            "POST",
+            _make_path("_ccr", "auto_follow", name, "resume"),
+            params=params,
+            headers=headers,
         )

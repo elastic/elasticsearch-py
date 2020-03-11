@@ -119,6 +119,10 @@ class TestUrllib3Connection(TestCase):
         self.assertIsInstance(con.pool.conn_kw["ssl_context"], ssl.SSLContext)
         self.assertTrue(con.use_ssl)
 
+    def test_opaque_id(self):
+        con = Urllib3HttpConnection(opaque_id="app-1")
+        self.assertEqual(con.headers["x-opaque-id"], "app-1")
+
     def test_http_cloud_id(self):
         con = Urllib3HttpConnection(
             cloud_id="cluster:dXMtZWFzdC0xLmF3cy5mb3VuZC5pbyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5NyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5Ng=="
@@ -393,6 +397,10 @@ class TestRequestsConnection(TestCase):
     def test_timeout_set(self):
         con = RequestsHttpConnection(timeout=42)
         self.assertEquals(42, con.timeout)
+
+    def test_opaque_id(self):
+        con = RequestsHttpConnection(opaque_id="app-1")
+        self.assertEqual(con.headers["x-opaque-id"], "app-1")
 
     def test_http_cloud_id(self):
         con = RequestsHttpConnection(
