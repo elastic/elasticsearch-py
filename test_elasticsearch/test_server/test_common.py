@@ -161,13 +161,12 @@ class YamlTestCase(ElasticsearchTestCase):
     def run_do(self, action):
         """ Perform an api call with given parameters. """
         api = self.client
-        if "headers" in action:
-            api = self._get_client(headers=action.pop("headers"))
-
+        headers = action.pop("headers", None)
         catch = action.pop("catch", None)
         self.assertEquals(1, len(action))
 
         method, args = list(action.items())[0]
+        args["headers"] = headers
 
         # locate api endpoint
         for m in method.split("."):

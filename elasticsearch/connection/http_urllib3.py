@@ -75,12 +75,14 @@ class Urllib3HttpConnection(Connection):
     :arg cloud_id: The Cloud ID from ElasticCloud. Convenient way to connect to cloud instances.
         Other host connection params will be ignored.
     :arg api_key: optional API Key authentication as either base64 encoded string or a tuple.
+    :arg opaque_id: Send this value in the 'X-Opaque-Id' HTTP header
+        For tracing all requests made by this transport.
     """
 
     def __init__(
         self,
         host="localhost",
-        port=9200,
+        port=None,
         http_auth=None,
         use_ssl=False,
         verify_certs=VERIFY_CERTS_DEFAULT,
@@ -97,6 +99,7 @@ class Urllib3HttpConnection(Connection):
         http_compress=None,
         cloud_id=None,
         api_key=None,
+        opaque_id=None,
         **kwargs
     ):
         # Initialize headers before calling super().__init__().
@@ -110,6 +113,7 @@ class Urllib3HttpConnection(Connection):
             http_compress=http_compress,
             cloud_id=cloud_id,
             api_key=api_key,
+            opaque_id=opaque_id,
             **kwargs
         )
         if http_auth is not None:
@@ -182,7 +186,7 @@ class Urllib3HttpConnection(Connection):
                 if ssl_show_warn:
                     warnings.warn(
                         "Connecting to %s using SSL with verify_certs=False is insecure."
-                        % host
+                        % self.host
                     )
                 if not ssl_show_warn:
                     urllib3.disable_warnings()

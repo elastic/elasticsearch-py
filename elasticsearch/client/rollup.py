@@ -3,7 +3,7 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 class RollupClient(NamespacedClient):
     @query_params()
-    def delete_job(self, id, params=None):
+    def delete_job(self, id, params=None, headers=None):
         """
 
         :arg id: The ID of the job to delete
@@ -12,33 +12,33 @@ class RollupClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'id'.")
 
         return self.transport.perform_request(
-            "DELETE", _make_path("_rollup", "job", id), params=params
+            "DELETE", _make_path("_rollup", "job", id), params=params, headers=headers
         )
 
     @query_params()
-    def get_jobs(self, id=None, params=None):
+    def get_jobs(self, id=None, params=None, headers=None):
         """
 
         :arg id: The ID of the job(s) to fetch. Accepts glob patterns,
             or left blank for all jobs
         """
         return self.transport.perform_request(
-            "GET", _make_path("_rollup", "job", id), params=params
+            "GET", _make_path("_rollup", "job", id), params=params, headers=headers
         )
 
     @query_params()
-    def get_rollup_caps(self, id=None, params=None):
+    def get_rollup_caps(self, id=None, params=None, headers=None):
         """
 
         :arg id: The ID of the index to check rollup capabilities on, or
             left blank for all jobs
         """
         return self.transport.perform_request(
-            "GET", _make_path("_rollup", "data", id), params=params
+            "GET", _make_path("_rollup", "data", id), params=params, headers=headers
         )
 
     @query_params()
-    def get_rollup_index_caps(self, index, params=None):
+    def get_rollup_index_caps(self, index, params=None, headers=None):
         """
 
         :arg index: The rollup index or index pattern to obtain rollup
@@ -48,11 +48,11 @@ class RollupClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'index'.")
 
         return self.transport.perform_request(
-            "GET", _make_path(index, "_rollup", "data"), params=params
+            "GET", _make_path(index, "_rollup", "data"), params=params, headers=headers
         )
 
     @query_params()
-    def put_job(self, id, body, params=None):
+    def put_job(self, id, body, params=None, headers=None):
         """
 
         :arg id: The ID of the job to create
@@ -63,11 +63,15 @@ class RollupClient(NamespacedClient):
                 raise ValueError("Empty value passed for a required argument.")
 
         return self.transport.perform_request(
-            "PUT", _make_path("_rollup", "job", id), params=params, body=body
+            "PUT",
+            _make_path("_rollup", "job", id),
+            params=params,
+            headers=headers,
+            body=body,
         )
 
     @query_params("rest_total_hits_as_int", "typed_keys")
-    def rollup_search(self, index, body, doc_type=None, params=None):
+    def rollup_search(self, index, body, doc_type=None, params=None, headers=None):
         """
 
         :arg index: The indices or index-pattern(s) (containing rollup
@@ -87,11 +91,12 @@ class RollupClient(NamespacedClient):
             "GET",
             _make_path(index, doc_type, "_rollup_search"),
             params=params,
+            headers=headers,
             body=body,
         )
 
     @query_params()
-    def start_job(self, id, params=None):
+    def start_job(self, id, params=None, headers=None):
         """
 
         :arg id: The ID of the job to start
@@ -100,11 +105,14 @@ class RollupClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'id'.")
 
         return self.transport.perform_request(
-            "POST", _make_path("_rollup", "job", id, "_start"), params=params
+            "POST",
+            _make_path("_rollup", "job", id, "_start"),
+            params=params,
+            headers=headers,
         )
 
     @query_params("timeout", "wait_for_completion")
-    def stop_job(self, id, params=None):
+    def stop_job(self, id, params=None, headers=None):
         """
 
         :arg id: The ID of the job to stop
@@ -118,5 +126,8 @@ class RollupClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'id'.")
 
         return self.transport.perform_request(
-            "POST", _make_path("_rollup", "job", id, "_stop"), params=params
+            "POST",
+            _make_path("_rollup", "job", id, "_stop"),
+            params=params,
+            headers=headers,
         )

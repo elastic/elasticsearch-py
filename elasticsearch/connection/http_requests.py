@@ -38,12 +38,14 @@ class RequestsHttpConnection(Connection):
     :arg cloud_id: The Cloud ID from ElasticCloud. Convenient way to connect to cloud instances.
         Other host connection params will be ignored.
     :arg api_key: optional API Key authentication as either base64 encoded string or a tuple.
+    :arg opaque_id: Send this value in the 'X-Opaque-Id' HTTP header
+        For tracing all requests made by this transport.
     """
 
     def __init__(
         self,
         host="localhost",
-        port=9200,
+        port=None,
         http_auth=None,
         use_ssl=False,
         verify_certs=True,
@@ -55,6 +57,7 @@ class RequestsHttpConnection(Connection):
         http_compress=None,
         cloud_id=None,
         api_key=None,
+        opaque_id=None,
         **kwargs
     ):
         if not REQUESTS_AVAILABLE:
@@ -75,6 +78,7 @@ class RequestsHttpConnection(Connection):
             http_compress=http_compress,
             cloud_id=cloud_id,
             api_key=api_key,
+            opaque_id=opaque_id,
             **kwargs
         )
 
@@ -89,12 +93,7 @@ class RequestsHttpConnection(Connection):
                 http_auth = tuple(http_auth.split(":", 1))
             self.session.auth = http_auth
 
-        self.base_url = "http%s://%s:%d%s" % (
-            "s" if self.use_ssl else "",
-            self.hostname,
-            self.port,
-            self.url_prefix,
-        )
+        self.base_url = "%s%s" % (self.host, self.url_prefix,)
         self.session.verify = verify_certs
         if not client_key:
             self.session.cert = client_cert
@@ -114,7 +113,7 @@ class RequestsHttpConnection(Connection):
         if self.use_ssl and not verify_certs and ssl_show_warn:
             warnings.warn(
                 "Connecting to %s using SSL with verify_certs=False is insecure."
-                % self.base_url
+                % self.host
             )
 
     def perform_request(

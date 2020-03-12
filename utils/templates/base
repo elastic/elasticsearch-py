@@ -24,6 +24,6 @@
         body = _bulk_body(self.transport.serializer, body)
         {% endif %}
         {% block request %}
-        return self.transport.perform_request("{{ api.method }}", {% include "url" %}, params=params{% if api.body %}, body=body{% endif %})
+        return self.transport.perform_request("{{ api.method }}", {% include "url" %}, params=params, headers=headers{% if api.body %}, body=body{% endif %})
         {% endblock %}
 

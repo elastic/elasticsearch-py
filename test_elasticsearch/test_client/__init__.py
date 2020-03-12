@@ -52,7 +52,7 @@ class TestClient(ElasticsearchTestCase):
     def test_request_timeout_is_passed_through_unescaped(self):
         self.client.ping(request_timeout=0.1)
         calls = self.assert_url_called("HEAD", "/")
-        self.assertEquals([({"request_timeout": 0.1}, None)], calls)
+        self.assertEquals([({"request_timeout": 0.1}, {}, None)], calls)
 
     def test_params_is_copied_when(self):
         rt = object()
@@ -61,14 +61,27 @@ class TestClient(ElasticsearchTestCase):
         self.client.ping(params=params)
         calls = self.assert_url_called("HEAD", "/", 2)
         self.assertEquals(
-            [({"request_timeout": rt}, None), ({"request_timeout": rt}, None)], calls
+            [({"request_timeout": rt}, {}, None), ({"request_timeout": rt}, {}, None)],
+            calls,
+        )
+        self.assertFalse(calls[0][0] is calls[1][0])
+
+    def test_headers_is_copied_when(self):
+        hv = "value"
+        headers = dict(Authentication=hv)
+        self.client.ping(headers=headers)
+        self.client.ping(headers=headers)
+        calls = self.assert_url_called("HEAD", "/", 2)
+        self.assertEquals(
+            [({}, {"authentication": hv}, None), ({}, {"authentication": hv}, None)],
+            calls,
         )
         self.assertFalse(calls[0][0] is calls[1][0])
 
     def test_from_in_search(self):
         self.client.search(index="i", from_=10)
         calls = self.assert_url_called("GET", "/i/_search")
-        self.assertEquals([({"from": "10"}, None)], calls)
+        self.assertEquals([({"from": "10"}, {}, None)], calls)
 
     def test_repr_contains_hosts(self):
         self.assertEquals("<Elasticsearch([{}])>", repr(self.client))
