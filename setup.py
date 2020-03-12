@@ -26,7 +26,7 @@ if sys.version_info[:2] == (2, 6):
     install_requires.append("unittest2")
 
 setup(
-    name="elasticsearch6",
+    name="elasticsearch",
     description="Python client for Elasticsearch",
     license="Apache-2.0",
     url="https://github.com/elastic/elasticsearch-py",
