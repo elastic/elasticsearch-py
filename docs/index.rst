@@ -230,6 +230,27 @@ description of the options.
 
 .. _certifi: http://certifiio.readthedocs.io/en/latest/
 
+Connecting via Cloud ID
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Cloud ID is an easy way to configure your client to work
+with your Elastic Cloud deployment. Combine the ``cloud_id``
+with either ``http_auth`` or ``api_key`` to authenticate
+with your Elastic Cloud deployment.
+
+Using ``cloud_id`` enables TLS verification and HTTP compression by default
+and sets the port to ``443`` unless otherwise overwritten via the ``port`` parameter
+or the port value encoded within ``cloud_id``.  Using Cloud ID also disables sniffing.
+
+.. code-block:: python
+
+    from elasticsearch import Elasticsearch
+
+    es = Elasticsearch(
+        cloud_id="cluster-1:dXMa5Fx...",
+        http_auth=("elastic", "<password>"),
+    )
+
 APIKey Authentication
 ~~~~~~~~~~~~~~~~~~~~~~
 

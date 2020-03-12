@@ -82,7 +82,7 @@ class Urllib3HttpConnection(Connection):
     def __init__(
         self,
         host="localhost",
-        port=9200,
+        port=None,
         http_auth=None,
         use_ssl=False,
         verify_certs=VERIFY_CERTS_DEFAULT,
@@ -186,7 +186,7 @@ class Urllib3HttpConnection(Connection):
                 if ssl_show_warn:
                     warnings.warn(
                         "Connecting to %s using SSL with verify_certs=False is insecure."
-                        % host
+                        % self.host
                     )
                 if not ssl_show_warn:
                     urllib3.disable_warnings()
