@@ -50,10 +50,10 @@ copyright = u"2013, Honza Král"
 # built documents.
 #
 
-import elasticsearch6
+import elasticsearch
 
 # The short X.Y version.
-version = elasticsearch6.__versionstr__
+version = elasticsearch.__versionstr__
 # The full version, including alpha/beta/rc tags.
 release = version
 

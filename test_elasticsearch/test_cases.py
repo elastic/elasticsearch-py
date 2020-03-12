@@ -6,7 +6,7 @@ try:
 except ImportError:
     from unittest import TestCase, SkipTest  # noqa: F401
 
-from elasticsearch6 import Elasticsearch
+from elasticsearch import Elasticsearch
 
 
 class DummyTransport(object):
