@@ -441,7 +441,7 @@ def scan(
                 first_run = False
             else:
                 resp = client.scroll(
-                    scroll_id,
+                    scroll_id=scroll_id,
                     scroll=scroll,
                     request_timeout=request_timeout,
                     **scroll_kwargs
