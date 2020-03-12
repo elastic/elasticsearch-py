@@ -33,6 +33,7 @@ enables you to extract and summarize information about the documents and terms i
 .. autoclass:: GraphClient
    :members:
 
+
 Licensing APIs
 --------------
 
@@ -96,98 +97,15 @@ helps simplify upgrading X-Pack indices from one version to another.
    :members:
 
 
-Enrich APIs
-------------
-
-`Enrich API <https://www.elastic.co/guide/en/elasticsearch/reference/current/enrich-apis.html>`_
-can be used to add data from your existing indices to incoming documents during ingest.
-
-.. py:module:: elasticsearch.client.enrich
-
-.. autoclass:: EnrichClient
-   :members:
-
-SQL APIs
---------
-
-The `SQL REST API <https://www.elastic.co/guide/en/elasticsearch/reference/current/sql-rest.html>`_
-accepts SQL in a JSON document, executes it, and returns the results.
-
-.. py:module:: elasticsearch.client.sql
-
-.. autoclass:: SqlClient
-   :members:
-
-Cross-Cluster Replication APIs
--------------------------------
-
-`Cross-Cluster Replication API <https://www.elastic.co/guide/en/elasticsearch/reference/current/ccr-apis.html>`_
-used to perform cross-cluster replication operations.
-
-.. py:module:: elasticsearch.client.ccr
-
-.. autoclass:: CcrClient
-   :members:
-
-
 Monitoring APIs
 ----------------
 
 `Monitoring API <https://www.elastic.co/guide/en/elasticsearch/reference/master/es-monitoring.html>`_
 used to collect data from the Elasticsearch nodes, Logstash nodes, Kibana instances, and Beats in your cluster.
 
-.. py:module:: elasticsearch.client.monitoring
+.. py:module:: elasticsearch.client.xpack.monitoring
 
 .. autoclass:: MonitoringClient
-   :members:
-
-
-Rollup APIs
-------------
-
-`Rollup API <https://www.elastic.co/guide/en/elasticsearch/reference/current/rollup-apis.html>`_
-enables searching through rolled-up data using the standard query DSL.
-
-.. py:module:: elasticsearch.client.rollup
-
-.. autoclass:: RollupClient
-   :members:
-
-
-Snapshot Lifecycle Management APIs
------------------------------------
-
-`Snapshot Lifecycle Management API <https://www.elastic.co/guide/en/elasticsearch/reference/current/snapshot-lifecycle-management-api.html>`_
-can be used to set up policies to automatically take snapshots and control how long they are retained.
-
-.. py:module:: elasticsearch.client.slm
-
-.. autoclass:: SlmClient
-   :members:
-
-
-Index Lifecycle Management APIs
---------------------------------
-
-`Index Lifecycle Management API <https://www.elastic.co/guide/en/elasticsearch/reference/current/index-lifecycle-management-api.html>`_
-used to set up policies to automatically manage the index lifecycle.
-
-.. py:module:: elasticsearch.client.ilm
-
-.. autoclass:: IlmClient
-   :members:
-
-
-Transform APIs
----------------
-
-`Transform API <https://www.elastic.co/guide/en/elasticsearch/reference/current/transform-apis.html>`_
-manages transformation operations from grabbing data from source indices, transforms it, and
-saves it to a destination index.
-
-.. py:module:: elasticsearch.client.transform
-
-.. autoclass:: TransformClient
    :members:
 
 
@@ -198,7 +116,7 @@ Deprecation APIs
 used to retrieve information about different cluster, node, and index level settings that use deprecated features
 that will be removed or changed in the next major version.
 
-.. py:module:: elasticsearch.client.deprecation
+.. py:module:: elasticsearch.client.xpack.deprecation
 
 .. autoclass:: DeprecationClient
    :members:

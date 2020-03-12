@@ -3,8 +3,13 @@
 Changelog
 =========
 
-6.5.0 (dev)
+6.8.0 (2020-03-12)
 -----------
+  * Added support for HTTP compression to ``RequestsHttpConnection``
+  * Updated cloud_id default port
+  * Enable HTTP compression and disable sniffing by default
+    when using Cloud ID to connect to ES.
+  * Updated versioning scheme to match ES major.minor
 
 6.4.2 (2019-05-28)
 -----------
