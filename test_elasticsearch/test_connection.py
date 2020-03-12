@@ -8,14 +8,14 @@ import warnings
 from requests.auth import AuthBase
 from platform import python_version
 
-from elasticsearch6 import __versionstr__
-from elasticsearch6.exceptions import (
+from elasticsearch import __versionstr__
+from elasticsearch.exceptions import (
     TransportError,
     ConflictError,
     RequestError,
     NotFoundError,
 )
-from elasticsearch6.connection import (
+from elasticsearch.connection import (
     Connection,
     RequestsHttpConnection,
     Urllib3HttpConnection,
@@ -132,7 +132,6 @@ class TestUrllib3Connection(TestCase):
             con.hostname, "4fa8821e75634032bed1cf22110e2f97.us-east-1.aws.found.io"
         )
         self.assertTrue(con.http_compress)
-
 
         con = Urllib3HttpConnection(
             cloud_id="cluster:dXMtZWFzdC0xLmF3cy5mb3VuZC5pbyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5NyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5Ng==",
@@ -278,7 +277,7 @@ class TestUrllib3Connection(TestCase):
         con = Urllib3HttpConnection()
         self.assertIsInstance(con.pool, urllib3.HTTPConnectionPool)
 
-    @patch("elasticsearch6.connection.base.logger")
+    @patch("elasticsearch.connection.base.logger")
     def test_uncompressed_body_logged(self, logger):
         con = self._get_mock_connection(connection_params={"http_compress": True})
         con.perform_request("GET", "/", body=b'{"example": "body"}')
@@ -468,14 +467,14 @@ class TestRequestsConnection(TestCase):
         con = self._get_mock_connection(status_code=400)
         self.assertRaises(RequestError, con.perform_request, "GET", "/", {}, "")
 
-    @patch("elasticsearch6.connection.base.logger")
+    @patch("elasticsearch.connection.base.logger")
     def test_head_with_404_doesnt_get_logged(self, logger):
         con = self._get_mock_connection(status_code=404)
         self.assertRaises(NotFoundError, con.perform_request, "HEAD", "/", {}, "")
         self.assertEquals(0, logger.warning.call_count)
 
-    @patch("elasticsearch6.connection.base.tracer")
-    @patch("elasticsearch6.connection.base.logger")
+    @patch("elasticsearch.connection.base.tracer")
+    @patch("elasticsearch.connection.base.logger")
     def test_failed_request_logs_and_traces(self, logger, tracer):
         con = self._get_mock_connection(response_body='{"answer": 42}', status_code=500)
         self.assertRaises(
@@ -500,8 +499,8 @@ class TestRequestsConnection(TestCase):
             )
         )
 
-    @patch("elasticsearch6.connection.base.tracer")
-    @patch("elasticsearch6.connection.base.logger")
+    @patch("elasticsearch.connection.base.tracer")
+    @patch("elasticsearch.connection.base.logger")
     def test_success_logs_and_traces(self, logger, tracer):
         con = self._get_mock_connection(response_body="""{"answer": "that's it!"}""")
         status, headers, data = con.perform_request(
@@ -540,7 +539,7 @@ class TestRequestsConnection(TestCase):
         self.assertEquals('> {"question": "what\'s that?"}', req[0][0] % req[0][1:])
         self.assertEquals('< {"answer": "that\'s it!"}', resp[0][0] % resp[0][1:])
 
-    @patch("elasticsearch6.connection.base.logger")
+    @patch("elasticsearch.connection.base.logger")
     def test_uncompressed_body_logged(self, logger):
         con = self._get_mock_connection(connection_params={"http_compress": True})
         con.perform_request("GET", "/", body=b'{"example": "body"}')
@@ -584,7 +583,7 @@ class TestRequestsConnection(TestCase):
             request.headers["authorization"], "Basic dXNlcm5hbWU6c2VjcmV0"
         )
 
-    @patch("elasticsearch6.connection.base.tracer")
+    @patch("elasticsearch.connection.base.tracer")
     def test_url_prefix(self, tracer):
         con = self._get_mock_connection({"url_prefix": "/some-prefix/"})
         request = self._get_request(

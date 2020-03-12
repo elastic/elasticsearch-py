@@ -3,10 +3,10 @@ from __future__ import unicode_literals
 import time
 from mock import patch
 
-from elasticsearch6.transport import Transport, get_host_info
-from elasticsearch6.connection import Connection
-from elasticsearch6.connection_pool import DummyConnectionPool
-from elasticsearch6.exceptions import ConnectionError
+from elasticsearch.transport import Transport, get_host_info
+from elasticsearch.connection import Connection
+from elasticsearch.connection_pool import DummyConnectionPool
+from elasticsearch.exceptions import ConnectionError
 
 from .test_cases import TestCase
 
