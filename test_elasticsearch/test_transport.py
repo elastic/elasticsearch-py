@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import time
+from mock import patch
 
 from elasticsearch6.transport import Transport, get_host_info
 from elasticsearch6.connection import Connection
@@ -272,3 +273,15 @@ class TestTransport(TestCase):
         self.assertEquals(1, len(t.connection_pool.connections))
         self.assertEquals("http://1.1.1.1:123", t.get_connection().host)
         self.assertTrue(time.time() - 1 < t.last_sniff < time.time() + 0.01)
+
+    @patch("elasticsearch.transport.Transport.sniff_hosts")
+    def test_sniffing_disabled_on_cloud_instances(self, sniff_hosts):
+        t = Transport(
+            [{}],
+            sniff_on_start=True,
+            sniff_on_connection_fail=True,
+            cloud_id="cluster:dXMtZWFzdC0xLmF3cy5mb3VuZC5pbyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5NyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5Ng==",
+        )
+
+        self.assertFalse(t.sniff_on_connection_fail)
+        self.assertIs(sniff_hosts.call_args, None)  # Assert not called.

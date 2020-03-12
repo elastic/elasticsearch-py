@@ -128,6 +128,11 @@ class Transport(object):
         # retain the original connection instances for sniffing
         self.seed_connections = self.connection_pool.connections[:]
 
+        # Don't enable sniffing on Cloud instances.
+        if kwargs.get("cloud_id", False):
+            sniff_on_start = False
+            sniff_on_connection_fail = False
+
         # sniffing data
         self.sniffer_timeout = sniffer_timeout
         self.sniff_on_connection_fail = sniff_on_connection_fail
