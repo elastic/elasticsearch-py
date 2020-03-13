@@ -325,7 +325,7 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'body'.")
 
         return self.transport.perform_request(
-            "GET",
+            "POST",
             _make_path("_security", "user", user, "_has_privileges"),
             params=params,
             headers=headers,

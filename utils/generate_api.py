@@ -195,7 +195,12 @@ class API:
 
     @property
     def method(self):
-        return self.path["methods"][0]
+        # To adhere to the HTTP RFC we shouldn't send
+        # bodies in GET requests.
+        default_method = self.path["methods"][0]
+        if self.body and default_method == "GET" and "POST" in self.path["methods"]:
+            return "POST"
+        return default_method
 
     @property
     def url_parts(self):

@@ -15,7 +15,7 @@ class IndicesClient(NamespacedClient):
         :arg index: The name of the index to scope the operation
         """
         return self.transport.perform_request(
-            "GET",
+            "POST",
             _make_path(index, "_analyze"),
             params=params,
             headers=headers,
@@ -884,7 +884,7 @@ class IndicesClient(NamespacedClient):
             actual Lucene query that will be executed.
         """
         return self.transport.perform_request(
-            "GET",
+            "POST",
             _make_path(index, doc_type, "_validate", "query"),
             params=params,
             headers=headers,

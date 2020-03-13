@@ -915,7 +915,7 @@ class Elasticsearch(object):
             doc_type = "_doc"
 
         return self.transport.perform_request(
-            "GET",
+            "POST",
             _make_path(index, doc_type, id, "_explain"),
             params=params,
             headers=headers,
@@ -1111,7 +1111,7 @@ class Elasticsearch(object):
             raise ValueError("Empty value passed for a required argument 'body'.")
 
         return self.transport.perform_request(
-            "GET",
+            "POST",
             _make_path(index, doc_type, "_mget"),
             params=params,
             headers=headers,
@@ -1167,7 +1167,7 @@ class Elasticsearch(object):
 
         body = _bulk_body(self.transport.serializer, body)
         return self.transport.perform_request(
-            "GET",
+            "POST",
             _make_path(index, doc_type, "_msearch"),
             params=params,
             headers=headers,
@@ -1212,7 +1212,7 @@ class Elasticsearch(object):
 
         body = _bulk_body(self.transport.serializer, body)
         return self.transport.perform_request(
-            "GET",
+            "POST",
             _make_path(index, doc_type, "_msearch", "template"),
             params=params,
             headers=headers,
@@ -1278,7 +1278,7 @@ class Elasticsearch(object):
             internal, external, external_gte, force
         """
         return self.transport.perform_request(
-            "GET",
+            "POST",
             _make_path(index, doc_type, "_mtermvectors"),
             params=params,
             headers=headers,
@@ -1338,7 +1338,7 @@ class Elasticsearch(object):
             raise ValueError("Empty value passed for a required argument 'body'.")
 
         return self.transport.perform_request(
-            "GET",
+            "POST",
             _make_path(index, "_rank_eval"),
             params=params,
             headers=headers,
@@ -1421,7 +1421,7 @@ class Elasticsearch(object):
         :arg id: The id of the stored search template
         """
         return self.transport.perform_request(
-            "GET",
+            "POST",
             _make_path("_render", "template", id),
             params=params,
             headers=headers,
@@ -1437,7 +1437,7 @@ class Elasticsearch(object):
         :arg body: The script to execute
         """
         return self.transport.perform_request(
-            "GET",
+            "POST",
             "/_scripts/painless/_execute",
             params=params,
             headers=headers,
@@ -1467,7 +1467,7 @@ class Elasticsearch(object):
             params["scroll_id"] = scroll_id
 
         return self.transport.perform_request(
-            "GET", "/_search/scroll", params=params, headers=headers, body=body
+            "POST", "/_search/scroll", params=params, headers=headers, body=body
         )
 
     @query_params(
@@ -1620,7 +1620,7 @@ class Elasticsearch(object):
             params["from"] = params.pop("from_")
 
         return self.transport.perform_request(
-            "GET",
+            "POST",
             _make_path(index, doc_type, "_search"),
             params=params,
             headers=headers,
@@ -1721,7 +1721,7 @@ class Elasticsearch(object):
             raise ValueError("Empty value passed for a required argument 'body'.")
 
         return self.transport.perform_request(
-            "GET",
+            "POST",
             _make_path(index, doc_type, "_search", "template"),
             params=params,
             headers=headers,
@@ -1783,7 +1783,7 @@ class Elasticsearch(object):
             doc_type = "_doc"
 
         return self.transport.perform_request(
-            "GET",
+            "POST",
             _make_path(index, doc_type, id, "_termvectors"),
             params=params,
             headers=headers,

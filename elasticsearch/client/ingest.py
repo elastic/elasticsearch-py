@@ -77,7 +77,7 @@ class IngestClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'body'.")
 
         return self.transport.perform_request(
-            "GET",
+            "POST",
             _make_path("_ingest", "pipeline", id, "_simulate"),
             params=params,
             headers=headers,

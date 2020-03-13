@@ -340,7 +340,7 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'job_id'.")
 
         return self.transport.perform_request(
-            "GET",
+            "POST",
             _make_path(
                 "_ml", "anomaly_detectors", job_id, "results", "buckets", timestamp
             ),
@@ -392,7 +392,7 @@ class MlClient(NamespacedClient):
             params["from"] = params.pop("from_")
 
         return self.transport.perform_request(
-            "GET",
+            "POST",
             _make_path("_ml", "calendars", calendar_id),
             params=params,
             headers=headers,
@@ -487,7 +487,7 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'job_id'.")
 
         return self.transport.perform_request(
-            "GET",
+            "POST",
             _make_path("_ml", "anomaly_detectors", job_id, "results", "influencers"),
             params=params,
             headers=headers,
@@ -565,7 +565,7 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'job_id'.")
 
         return self.transport.perform_request(
-            "GET",
+            "POST",
             _make_path(
                 "_ml", "anomaly_detectors", job_id, "results", "overall_buckets"
             ),
@@ -607,7 +607,7 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'job_id'.")
 
         return self.transport.perform_request(
-            "GET",
+            "POST",
             _make_path("_ml", "anomaly_detectors", job_id, "results", "records"),
             params=params,
             headers=headers,
@@ -1137,7 +1137,7 @@ class MlClient(NamespacedClient):
         :arg id: The ID of the data frame analytics to explain
         """
         return self.transport.perform_request(
-            "GET",
+            "POST",
             _make_path("_ml", "data_frame", "analytics", id, "_explain"),
             params=params,
             headers=headers,
@@ -1166,7 +1166,7 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'job_id'.")
 
         return self.transport.perform_request(
-            "GET",
+            "POST",
             _make_path(
                 "_ml", "anomaly_detectors", job_id, "results", "categories", category_id
             ),
@@ -1202,7 +1202,7 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'job_id'.")
 
         return self.transport.perform_request(
-            "GET",
+            "POST",
             _make_path(
                 "_ml", "anomaly_detectors", job_id, "model_snapshots", snapshot_id
             ),
