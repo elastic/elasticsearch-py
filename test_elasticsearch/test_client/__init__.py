@@ -80,7 +80,7 @@ class TestClient(ElasticsearchTestCase):
 
     def test_from_in_search(self):
         self.client.search(index="i", from_=10)
-        calls = self.assert_url_called("GET", "/i/_search")
+        calls = self.assert_url_called("POST", "/i/_search")
         self.assertEquals([({"from": "10"}, {}, None)], calls)
 
     def test_repr_contains_hosts(self):

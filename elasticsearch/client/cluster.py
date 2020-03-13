@@ -229,7 +229,7 @@ class ClusterClient(NamespacedClient):
             explanation (default: false)
         """
         return self.transport.perform_request(
-            "GET",
+            "POST",
             "/_cluster/allocation/explain",
             params=params,
             headers=headers,

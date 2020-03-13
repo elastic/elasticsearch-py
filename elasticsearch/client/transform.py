@@ -137,7 +137,13 @@ class TransformClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("allow_no_match", "timeout", "wait_for_completion")
+    @query_params(
+        "allow_no_match",
+        "force",
+        "timeout",
+        "wait_for_checkpoint",
+        "wait_for_completion",
+    )
     def stop_transform(self, transform_id, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/stop-transform.html>`_
@@ -146,8 +152,12 @@ class TransformClient(NamespacedClient):
         :arg allow_no_match: Whether to ignore if a wildcard expression
             matches no transforms. (This includes `_all` string or when no
             transforms have been specified)
+        :arg force: Whether to force stop a failed transform or not.
+            Default to false
         :arg timeout: Controls the time to wait until the transform has
             stopped. Default to 30 seconds
+        :arg wait_for_checkpoint: Whether to wait for the transform to
+            reach a checkpoint before stopping. Default to false
         :arg wait_for_completion: Whether to wait for the transform to
             fully stop before returning or not. Default to false
         """

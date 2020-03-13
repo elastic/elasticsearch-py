@@ -19,7 +19,7 @@ class GraphClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'index'.")
 
         return self.transport.perform_request(
-            "GET",
+            "POST",
             _make_path(index, doc_type, "_graph", "explore"),
             params=params,
             headers=headers,
