@@ -5,7 +5,6 @@ class SqlClient(NamespacedClient):
     @query_params()
     def clear_cursor(self, body, params=None, headers=None):
         """
-        `<Clear SQL cursor>`_
 
         :arg body: Specify the cursor value in the `cursor` element to
             clean the cursor.
@@ -20,7 +19,6 @@ class SqlClient(NamespacedClient):
     @query_params("format")
     def query(self, body, params=None, headers=None):
         """
-        `<Execute SQL>`_
 
         :arg body: Use the `query` element to start a query. Use the
             `cursor` element to continue a query.
@@ -37,7 +35,6 @@ class SqlClient(NamespacedClient):
     @query_params()
     def translate(self, body, params=None, headers=None):
         """
-        `<Translate SQL into Elasticsearch queries>`_
 
         :arg body: Specify the query in the `query` element.
         """

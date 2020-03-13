@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+import warnings
 
 from elasticsearch.client import _normalize_hosts, Elasticsearch
 
@@ -80,7 +81,7 @@ class TestClient(ElasticsearchTestCase):
 
     def test_from_in_search(self):
         self.client.search(index="i", from_=10)
-        calls = self.assert_url_called("GET", "/i/_search")
+        calls = self.assert_url_called("POST", "/i/_search")
         self.assertEquals([({"from": "10"}, {}, None)], calls)
 
     def test_repr_contains_hosts(self):
@@ -110,3 +111,27 @@ class TestClient(ElasticsearchTestCase):
         self.client.index(index="my-index", id=0, body={})
 
         self.assert_url_called("PUT", "/my-index/_doc/0")
+
+    def test_tasks_get_without_task_id_deprecated(self):
+        warnings.simplefilter("always", DeprecationWarning)
+        with warnings.catch_warnings(record=True) as w:
+            self.client.tasks.get()
+
+        self.assert_url_called("GET", "/_tasks")
+        self.assertEquals(len(w), 1)
+        self.assertIs(w[0].category, DeprecationWarning)
+        self.assertEquals(
+            str(w[0].message),
+            "Calling client.tasks.get() without a task_id is deprecated "
+            "and will be removed in v8.0. Use client.tasks.list() instead.",
+        )
+
+    def test_tasks_get_with_task_id_not_deprecated(self):
+        warnings.simplefilter("always", DeprecationWarning)
+        with warnings.catch_warnings(record=True) as w:
+            self.client.tasks.get("task-1")
+            self.client.tasks.get(task_id="task-2")
+
+        self.assert_url_called("GET", "/_tasks/task-1")
+        self.assert_url_called("GET", "/_tasks/task-2")
+        self.assertEquals(len(w), 0)
