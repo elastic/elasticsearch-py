@@ -1,0 +1,20 @@
+*,
+
+{% for p, info in api.all_parts.items() %}
+  {% if info.required %}{{ p }}: Any, {% endif %}
+{% endfor %}
+
+{% if api.body %}
+  body:{% if not api.body.required %} Optional[Any]=None{% else %} Any{% endif %},
+{% endif %}
+
+{% for p, info in api.all_parts.items() %}
+  {% if not info.required %}{{ p }}: Optional[Any]=None, {% endif %}
+{% endfor %}
+
+{% for p in api.query_params %}
+  {{ p }}: Optional[Any]=None,
+{% endfor %}
+
+params: Optional[Mapping[str, str]]=None,
+headers: Optional[Mapping[str, str]]=None

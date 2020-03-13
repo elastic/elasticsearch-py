@@ -54,20 +54,28 @@ def blacken(filename):
 
 
 class Module:
-    def __init__(self, namespace):
+    def __init__(self, namespace, is_pyi=False):
         self.namespace = namespace
+        self.pyi = None
+        self.is_pyi = is_pyi
         self._apis = []
-        self.parse_orig()
+
+        if not is_pyi:
+            self.parse_orig()
+            self.pyi = Module(namespace, is_pyi=True)
+            self.pyi.parse_orig()
+            self.pyi.orders = self.orders[:]
 
     def add(self, api):
         self._apis.append(api)
+        if self.pyi:
+            self.pyi._apis.append(api)
 
     def parse_orig(self):
         self.orders = []
         self.header = "class C:"
-        fname = CODE_ROOT / "elasticsearch" / "client" / f"{self.namespace}.py"
-        if os.path.exists(fname):
-            with open(fname) as f:
+        if os.path.exists(self.filepath):
+            with open(self.filepath) as f:
                 content = f.read()
                 header_lines = []
                 for line in content.split("\n"):
@@ -100,12 +108,18 @@ class Module:
 
     def dump(self):
         self.sort()
-        fname = CODE_ROOT / "elasticsearch" / "client" / f"{self.namespace}.py"
-        with open(fname, "w") as f:
+        with open(self.filepath, "w") as f:
             f.write(self.header)
             for api in self._apis:
-                f.write(api.to_python())
-        blacken(fname)
+                f.write(api.to_python(is_pyi=self.is_pyi))
+        blacken(self.filepath)
+
+        if self.pyi:
+            self.pyi.dump()
+
+    @property
+    def filepath(self):
+        return CODE_ROOT / "elasticsearch" / "client" / f"{self.namespace}.py{'i' if self.is_pyi else ''}"
 
 
 class API:
@@ -219,11 +233,14 @@ class API:
             required.append("body")
         return required
 
-    def to_python(self):
-        try:
-            t = jinja_env.get_template(f"overrides/{self.namespace}/{self.name}")
-        except TemplateNotFound:
-            t = jinja_env.get_template("base")
+    def to_python(self, is_pyi):
+        if is_pyi:
+            t = jinja_env.get_template("base_pyi")
+        else:
+            try:
+                t = jinja_env.get_template(f"overrides/{self.namespace}/{self.name}")
+            except TemplateNotFound:
+                t = jinja_env.get_template("base")
         return t.render(
             api=self, substitutions={v: k for k, v in SUBSTITUTIONS.items()}
         )

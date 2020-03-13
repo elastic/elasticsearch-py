@@ -1,0 +1,3 @@
+
+    def {{ api.name }}(self, {% include "func_params_pyi" %}) -> Any:
+        ...
