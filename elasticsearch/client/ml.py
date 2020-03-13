@@ -399,37 +399,6 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("from_", "size")
-    def get_categories(
-        self, job_id, body=None, category_id=None, params=None, headers=None
-    ):
-        """
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-category.html>`_
-
-        :arg job_id: The name of the job
-        :arg body: Category selection details if not provided in URI
-        :arg category_id: The identifier of the category definition of
-            interest
-        :arg from_: skips a number of categories
-        :arg size: specifies a max number of categories to get
-        """
-        # from is a reserved word so it cannot be used, use from_ instead
-        if "from_" in params:
-            params["from"] = params.pop("from_")
-
-        if job_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'job_id'.")
-
-        return self.transport.perform_request(
-            "GET",
-            _make_path(
-                "_ml", "anomaly_detectors", job_id, "results", "categories", category_id
-            ),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
     @query_params("allow_no_datafeeds")
     def get_datafeed_stats(self, datafeed_id=None, params=None, headers=None):
         """
@@ -557,42 +526,6 @@ class MlClient(NamespacedClient):
             _make_path("_ml", "anomaly_detectors", job_id),
             params=params,
             headers=headers,
-        )
-
-    @query_params("desc", "end", "from_", "size", "sort", "start")
-    def get_model_snapshots(
-        self, job_id, body=None, snapshot_id=None, params=None, headers=None
-    ):
-        """
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-snapshot.html>`_
-
-        :arg job_id: The ID of the job to fetch
-        :arg body: Model snapshot selection criteria
-        :arg snapshot_id: The ID of the snapshot to fetch
-        :arg desc: True if the results should be sorted in descending
-            order
-        :arg end: The filter 'end' query parameter
-        :arg from_: Skips a number of documents
-        :arg size: The default number of documents returned in queries
-            as a string.
-        :arg sort: Name of the field to sort on
-        :arg start: The filter 'start' query parameter
-        """
-        # from is a reserved word so it cannot be used, use from_ instead
-        if "from_" in params:
-            params["from"] = params.pop("from_")
-
-        if job_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'job_id'.")
-
-        return self.transport.perform_request(
-            "GET",
-            _make_path(
-                "_ml", "anomaly_detectors", job_id, "model_snapshots", snapshot_id
-            ),
-            params=params,
-            headers=headers,
-            body=body,
         )
 
     @query_params(
@@ -867,38 +800,6 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("delete_intervening_results")
-    def revert_model_snapshot(
-        self, job_id, snapshot_id, body=None, params=None, headers=None
-    ):
-        """
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-revert-snapshot.html>`_
-
-        :arg job_id: The ID of the job to fetch
-        :arg snapshot_id: The ID of the snapshot to revert to
-        :arg body: Reversion options
-        :arg delete_intervening_results: Should we reset the results
-            back to the time of the snapshot?
-        """
-        for param in (job_id, snapshot_id):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return self.transport.perform_request(
-            "POST",
-            _make_path(
-                "_ml",
-                "anomaly_detectors",
-                job_id,
-                "model_snapshots",
-                snapshot_id,
-                "_revert",
-            ),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
     @query_params("enabled", "timeout")
     def set_upgrade_mode(self, params=None, headers=None):
         """
@@ -1024,36 +925,6 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    def update_model_snapshot(
-        self, job_id, snapshot_id, body, params=None, headers=None
-    ):
-        """
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-update-snapshot.html>`_
-
-        :arg job_id: The ID of the job to fetch
-        :arg snapshot_id: The ID of the snapshot to update
-        :arg body: The model snapshot properties to update
-        """
-        for param in (job_id, snapshot_id, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return self.transport.perform_request(
-            "POST",
-            _make_path(
-                "_ml",
-                "anomaly_detectors",
-                job_id,
-                "model_snapshots",
-                snapshot_id,
-                "_update",
-            ),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params()
     def validate(self, body, params=None, headers=None):
         """
 
@@ -1087,12 +958,13 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params("force")
     def delete_data_frame_analytics(self, id, params=None, headers=None):
         """
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/delete-dfanalytics.html>`_
 
         :arg id: The ID of the data frame analytics to delete
+        :arg force: True if the job should be forcefully deleted
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
@@ -1102,24 +974,6 @@ class MlClient(NamespacedClient):
             _make_path("_ml", "data_frame", "analytics", id),
             params=params,
             headers=headers,
-        )
-
-    @query_params()
-    def estimate_memory_usage(self, body, params=None, headers=None):
-        """
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/estimate-memory-usage-dfanalytics.html>`_
-
-        :arg body: Memory usage estimation definition
-        """
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
-
-        return self.transport.perform_request(
-            "POST",
-            "/_ml/data_frame/analytics/_estimate_memory_usage",
-            params=params,
-            headers=headers,
-            body=body,
         )
 
     @query_params()
@@ -1250,6 +1104,250 @@ class MlClient(NamespacedClient):
         return self.transport.perform_request(
             "POST",
             _make_path("_ml", "data_frame", "analytics", id, "_stop"),
+            params=params,
+            headers=headers,
+            body=body,
+        )
+
+    @query_params()
+    def delete_trained_model(self, model_id, params=None, headers=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-inference.html>`_
+
+        :arg model_id: The ID of the trained model to delete
+        """
+        if model_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'model_id'.")
+
+        return self.transport.perform_request(
+            "DELETE",
+            _make_path("_ml", "inference", model_id),
+            params=params,
+            headers=headers,
+        )
+
+    @query_params(
+        "allow_no_match",
+        "decompress_definition",
+        "from_",
+        "include_model_definition",
+        "size",
+    )
+    def get_trained_models(self, model_id=None, params=None, headers=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-inference.html>`_
+
+        :arg model_id: The ID of the trained models to fetch
+        :arg allow_no_match: Whether to ignore if a wildcard expression
+            matches no trained models. (This includes `_all` string or when no
+            trained models have been specified)  Default: True
+        :arg decompress_definition: Should the model definition be
+            decompressed into valid JSON or returned in a custom compressed format.
+            Defaults to true.  Default: True
+        :arg from_: skips a number of trained models
+        :arg include_model_definition: Should the full model definition
+            be included in the results. These definitions can be large. So be
+            cautious when including them. Defaults to false.
+        :arg size: specifies a max number of trained models to get
+            Default: 100
+        """
+        # from is a reserved word so it cannot be used, use from_ instead
+        if "from_" in params:
+            params["from"] = params.pop("from_")
+
+        return self.transport.perform_request(
+            "GET",
+            _make_path("_ml", "inference", model_id),
+            params=params,
+            headers=headers,
+        )
+
+    @query_params("allow_no_match", "from_", "size")
+    def get_trained_models_stats(self, model_id=None, params=None, headers=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-inference-stats.html>`_
+
+        :arg model_id: The ID of the trained models stats to fetch
+        :arg allow_no_match: Whether to ignore if a wildcard expression
+            matches no trained models. (This includes `_all` string or when no
+            trained models have been specified)  Default: True
+        :arg from_: skips a number of trained models
+        :arg size: specifies a max number of trained models to get
+            Default: 100
+        """
+        # from is a reserved word so it cannot be used, use from_ instead
+        if "from_" in params:
+            params["from"] = params.pop("from_")
+
+        return self.transport.perform_request(
+            "GET",
+            _make_path("_ml", "inference", model_id, "_stats"),
+            params=params,
+            headers=headers,
+        )
+
+    @query_params()
+    def put_trained_model(self, model_id, body, params=None, headers=None):
+        """
+        `<TODO>`_
+
+        :arg model_id: The ID of the trained models to store
+        :arg body: The trained model configuration
+        """
+        for param in (model_id, body):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
+
+        return self.transport.perform_request(
+            "PUT",
+            _make_path("_ml", "inference", model_id),
+            params=params,
+            headers=headers,
+            body=body,
+        )
+
+    @query_params()
+    def explain_data_frame_analytics(
+        self, body=None, id=None, params=None, headers=None
+    ):
+        """
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/explain-dfanalytics.html>`_
+
+        :arg body: The data frame analytics config to explain
+        :arg id: The ID of the data frame analytics to explain
+        """
+        return self.transport.perform_request(
+            "GET",
+            _make_path("_ml", "data_frame", "analytics", id, "_explain"),
+            params=params,
+            headers=headers,
+            body=body,
+        )
+
+    @query_params("from_", "size")
+    def get_categories(
+        self, job_id, body=None, category_id=None, params=None, headers=None
+    ):
+        """
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-category.html>`_
+
+        :arg job_id: The name of the job
+        :arg body: Category selection details if not provided in URI
+        :arg category_id: The identifier of the category definition of
+            interest
+        :arg from_: skips a number of categories
+        :arg size: specifies a max number of categories to get
+        """
+        # from is a reserved word so it cannot be used, use from_ instead
+        if "from_" in params:
+            params["from"] = params.pop("from_")
+
+        if job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'job_id'.")
+
+        return self.transport.perform_request(
+            "GET",
+            _make_path(
+                "_ml", "anomaly_detectors", job_id, "results", "categories", category_id
+            ),
+            params=params,
+            headers=headers,
+            body=body,
+        )
+
+    @query_params("desc", "end", "from_", "size", "sort", "start")
+    def get_model_snapshots(
+        self, job_id, body=None, snapshot_id=None, params=None, headers=None
+    ):
+        """
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-snapshot.html>`_
+
+        :arg job_id: The ID of the job to fetch
+        :arg body: Model snapshot selection criteria
+        :arg snapshot_id: The ID of the snapshot to fetch
+        :arg desc: True if the results should be sorted in descending
+            order
+        :arg end: The filter 'end' query parameter
+        :arg from_: Skips a number of documents
+        :arg size: The default number of documents returned in queries
+            as a string.
+        :arg sort: Name of the field to sort on
+        :arg start: The filter 'start' query parameter
+        """
+        # from is a reserved word so it cannot be used, use from_ instead
+        if "from_" in params:
+            params["from"] = params.pop("from_")
+
+        if job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'job_id'.")
+
+        return self.transport.perform_request(
+            "GET",
+            _make_path(
+                "_ml", "anomaly_detectors", job_id, "model_snapshots", snapshot_id
+            ),
+            params=params,
+            headers=headers,
+            body=body,
+        )
+
+    @query_params("delete_intervening_results")
+    def revert_model_snapshot(
+        self, job_id, snapshot_id, body=None, params=None, headers=None
+    ):
+        """
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-revert-snapshot.html>`_
+
+        :arg job_id: The ID of the job to fetch
+        :arg snapshot_id: The ID of the snapshot to revert to
+        :arg body: Reversion options
+        :arg delete_intervening_results: Should we reset the results
+            back to the time of the snapshot?
+        """
+        for param in (job_id, snapshot_id):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
+
+        return self.transport.perform_request(
+            "POST",
+            _make_path(
+                "_ml",
+                "anomaly_detectors",
+                job_id,
+                "model_snapshots",
+                snapshot_id,
+                "_revert",
+            ),
+            params=params,
+            headers=headers,
+            body=body,
+        )
+
+    @query_params()
+    def update_model_snapshot(
+        self, job_id, snapshot_id, body, params=None, headers=None
+    ):
+        """
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/ml-update-snapshot.html>`_
+
+        :arg job_id: The ID of the job to fetch
+        :arg snapshot_id: The ID of the snapshot to update
+        :arg body: The model snapshot properties to update
+        """
+        for param in (job_id, snapshot_id, body):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
+
+        return self.transport.perform_request(
+            "POST",
+            _make_path(
+                "_ml",
+                "anomaly_detectors",
+                job_id,
+                "model_snapshots",
+                snapshot_id,
+                "_update",
+            ),
             params=params,
             headers=headers,
             body=body,
