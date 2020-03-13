@@ -82,12 +82,11 @@ class Module:
                         if line.startswith("class"):
                             break
                 self.header = "\n".join(header_lines)
-                defined_apis = re.findall(
-                    r'\n    def ([a-z_]+)\([^\n]*\n *"""\n *([\w\W]*?)(?:`<|""")',
+                self.orders = re.findall(
+                    r'\n    def ([a-z_]+)\(',
                     content,
-                    re.MULTILINE,
+                    re.MULTILINE
                 )
-                self.orders = list(map(lambda x: x[0], defined_apis))
 
     def _position(self, api):
         try:
