@@ -1144,6 +1144,73 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
+    @query_params("from_", "size")
+    def get_categories(
+        self, job_id, body=None, category_id=None, params=None, headers=None
+    ):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-category.html>`_
+
+        :arg job_id: The name of the job
+        :arg body: Category selection details if not provided in URI
+        :arg category_id: The identifier of the category definition of
+            interest
+        :arg from_: skips a number of categories
+        :arg size: specifies a max number of categories to get
+        """
+        # from is a reserved word so it cannot be used, use from_ instead
+        if "from_" in params:
+            params["from"] = params.pop("from_")
+
+        if job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'job_id'.")
+
+        return self.transport.perform_request(
+            "GET",
+            _make_path(
+                "_ml", "anomaly_detectors", job_id, "results", "categories", category_id
+            ),
+            params=params,
+            headers=headers,
+            body=body,
+        )
+
+    @query_params("desc", "end", "from_", "size", "sort", "start")
+    def get_model_snapshots(
+        self, job_id, body=None, snapshot_id=None, params=None, headers=None
+    ):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-snapshot.html>`_
+
+        :arg job_id: The ID of the job to fetch
+        :arg body: Model snapshot selection criteria
+        :arg snapshot_id: The ID of the snapshot to fetch
+        :arg desc: True if the results should be sorted in descending
+            order
+        :arg end: The filter 'end' query parameter
+        :arg from_: Skips a number of documents
+        :arg size: The default number of documents returned in queries
+            as a string.
+        :arg sort: Name of the field to sort on
+        :arg start: The filter 'start' query parameter
+        """
+        # from is a reserved word so it cannot be used, use from_ instead
+        if "from_" in params:
+            params["from"] = params.pop("from_")
+
+        if job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'job_id'.")
+
+        return self.transport.perform_request(
+            "GET",
+            _make_path(
+                "_ml", "anomaly_detectors", job_id, "model_snapshots", snapshot_id
+            ),
+            params=params,
+            headers=headers,
+            body=body,
+        )
+
     @query_params(
         "allow_no_match",
         "decompress_definition",
@@ -1218,73 +1285,6 @@ class MlClient(NamespacedClient):
         return self.transport.perform_request(
             "PUT",
             _make_path("_ml", "inference", model_id),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params("from_", "size")
-    def get_categories(
-        self, job_id, body=None, category_id=None, params=None, headers=None
-    ):
-        """
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-category.html>`_
-
-        :arg job_id: The name of the job
-        :arg body: Category selection details if not provided in URI
-        :arg category_id: The identifier of the category definition of
-            interest
-        :arg from_: skips a number of categories
-        :arg size: specifies a max number of categories to get
-        """
-        # from is a reserved word so it cannot be used, use from_ instead
-        if "from_" in params:
-            params["from"] = params.pop("from_")
-
-        if job_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'job_id'.")
-
-        return self.transport.perform_request(
-            "GET",
-            _make_path(
-                "_ml", "anomaly_detectors", job_id, "results", "categories", category_id
-            ),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params("desc", "end", "from_", "size", "sort", "start")
-    def get_model_snapshots(
-        self, job_id, body=None, snapshot_id=None, params=None, headers=None
-    ):
-        """
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-snapshot.html>`_
-
-        :arg job_id: The ID of the job to fetch
-        :arg body: Model snapshot selection criteria
-        :arg snapshot_id: The ID of the snapshot to fetch
-        :arg desc: True if the results should be sorted in descending
-            order
-        :arg end: The filter 'end' query parameter
-        :arg from_: Skips a number of documents
-        :arg size: The default number of documents returned in queries
-            as a string.
-        :arg sort: Name of the field to sort on
-        :arg start: The filter 'start' query parameter
-        """
-        # from is a reserved word so it cannot be used, use from_ instead
-        if "from_" in params:
-            params["from"] = params.pop("from_")
-
-        if job_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'job_id'.")
-
-        return self.transport.perform_request(
-            "GET",
-            _make_path(
-                "_ml", "anomaly_detectors", job_id, "model_snapshots", snapshot_id
-            ),
             params=params,
             headers=headers,
             body=body,
