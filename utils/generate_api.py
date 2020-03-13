@@ -146,6 +146,13 @@ class API:
                 p in url.get("parts", {}) for url in self._def["url"]["paths"]
             )
 
+            # This piece of logic corresponds to calling
+            # client.tasks.get() w/o a task_id which was erroneously
+            # allowed in the 7.1 client library. This functionality
+            # is deprecated and will be removed in 8.x.
+            if self.namespace == "tasks" and self.name == "get":
+                parts["task_id"]["required"] = False
+
         for k, sub in SUBSTITUTIONS.items():
             if k in parts:
                 parts[sub] = parts.pop(k)
