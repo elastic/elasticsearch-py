@@ -1,3 +1,4 @@
+import warnings
 from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 
@@ -58,7 +59,7 @@ class TasksClient(NamespacedClient):
         )
 
     @query_params("timeout", "wait_for_completion")
-    def get(self, task_id, params=None, headers=None):
+    def get(self, task_id=None, params=None, headers=None):
         """
         Returns information about a task.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
@@ -70,7 +71,11 @@ class TasksClient(NamespacedClient):
             complete (default: false)
         """
         if task_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'task_id'.")
+            warnings.warn(
+                "Calling client.tasks.get() without a task_id is deprecated "
+                "and will be removed in v8.0. Use client.tasks.list() instead.",
+                DeprecationWarning,
+            )
 
         return self.transport.perform_request(
             "GET", _make_path("_tasks", task_id), params=params, headers=headers
