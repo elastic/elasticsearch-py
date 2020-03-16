@@ -14,6 +14,7 @@ code_root = Path(__file__).absolute().parent.parent
 asciidocs_dir = code_root / "docs/examples"
 flight_recorder_dir = code_root.parent / "clients-flight-recorder"
 report_path = flight_recorder_dir / "recordings/docs/parsed-alternative-report.json"
+substitutions = {"type": "doc_type", "from": "from_"}
 
 jinja_env = Environment(
     loader=FileSystemLoader([code_root / "utils" / "templates"]),
@@ -85,7 +86,9 @@ def main():
             parsed_sources.append(
                 ParsedSource(
                     api=src["api"],
-                    params={k: repr(v) for k, v in params.items()},
+                    params={
+                        substitutions.get(k, k): repr(v) for k, v in params.items()
+                    },
                     body=src.get("body", None) or None,
                 )
             )
