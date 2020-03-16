@@ -8,6 +8,7 @@ include README
 include tox.ini
 include setup.py
 recursive-include docs *
+recursive-exclude docs/examples *
 
 prune docs/_build
 prune test_elasticsearch
