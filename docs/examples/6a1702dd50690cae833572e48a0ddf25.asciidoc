@@ -1,0 +1,11 @@
+// query-dsl/multi-match-query.asciidoc:33
+
+[source, python]
+----
+resp = client.search(
+    body={
+        "query": {"multi_match": {"query": "Will Smith", "fields": ["title", "*_name"]}}
+    },
+)
+print(resp)
+----

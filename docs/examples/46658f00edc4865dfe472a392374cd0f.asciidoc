@@ -1,0 +1,7 @@
+// indices/templates.asciidoc:241
+
+[source, python]
+----
+resp = client.indices.get_template(name="template_1", filter_path="*.version")
+print(resp)
+----

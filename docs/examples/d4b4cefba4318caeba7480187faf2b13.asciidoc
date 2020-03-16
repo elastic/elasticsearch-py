@@ -1,0 +1,7 @@
+// query-dsl/term-query.asciidoc:113
+
+[source, python]
+----
+resp = client.index(index="my_index", id="1", body={"full_text": "Quick Brown Foxes!"})
+print(resp)
+----

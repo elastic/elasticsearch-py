@@ -2,20 +2,17 @@
 
 [source, python]
 ----
-client.search(
+resp = client.search(
     index="bank",
     body={
         "size": 0,
         "aggs": {
             "group_by_state": {
                 "terms": {"field": "state.keyword"},
-                "aggs": {
-                    "average_balance": {
-                        "avg": {"field": "balance"}
-                    }
-                },
+                "aggs": {"average_balance": {"avg": {"field": "balance"}}},
             }
         },
     },
 )
+print(resp)
 ----

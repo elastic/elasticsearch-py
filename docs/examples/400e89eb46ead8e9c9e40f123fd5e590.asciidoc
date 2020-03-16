@@ -1,0 +1,12 @@
+// docs/reindex.asciidoc:384
+
+[source, python]
+----
+resp = client.reindex(
+    body={
+        "source": {"index": "source", "size": 100},
+        "dest": {"index": "dest", "routing": "=cat"},
+    },
+)
+print(resp)
+----

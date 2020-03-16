@@ -1,0 +1,13 @@
+// docs/reindex.asciidoc:618
+
+[source, python]
+----
+resp = client.reindex(
+    body={
+        "max_docs": 1,
+        "source": {"index": "twitter"},
+        "dest": {"index": "new_twitter"},
+    },
+)
+print(resp)
+----

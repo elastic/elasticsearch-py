@@ -1,0 +1,17 @@
+// aggregations/bucket/terms-aggregation.asciidoc:544
+
+[source, python]
+----
+resp = client.search(
+    body={
+        "aggs": {
+            "genres": {
+                "terms": {
+                    "script": {"source": "doc['genre'].value", "lang": "painless"}
+                }
+            }
+        }
+    },
+)
+print(resp)
+----

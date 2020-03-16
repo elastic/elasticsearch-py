@@ -1,0 +1,17 @@
+// docs/update.asciidoc:114
+
+[source, python]
+----
+resp = client.update(
+    index="test",
+    id="1",
+    body={
+        "script": {
+            "source": "ctx._source.tags.add(params.tag)",
+            "lang": "painless",
+            "params": {"tag": "blue"},
+        }
+    },
+)
+print(resp)
+----

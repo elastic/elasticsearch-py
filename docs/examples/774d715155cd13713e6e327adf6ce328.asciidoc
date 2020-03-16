@@ -2,7 +2,8 @@
 
 [source, python]
 ----
-client.search(
+resp = client.search(
     body={"aggs": {"tags": {"terms": {"field": "tags", "execution_hint": "map"}}}},
 )
+print(resp)
 ----

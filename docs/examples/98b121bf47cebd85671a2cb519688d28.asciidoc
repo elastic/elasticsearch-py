@@ -2,7 +2,7 @@
 
 [source, python]
 ----
-client.search(
+resp = client.search(
     body={
         "aggs": {
             "JapaneseCars": {"terms": {"field": "make", "include": ["mazda", "honda"]}},
@@ -10,6 +10,7 @@ client.search(
                 "terms": {"field": "make", "exclude": ["rover", "jensen"]}
             },
         }
-    }
+    },
 )
+print(resp)
 ----

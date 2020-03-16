@@ -1,0 +1,9 @@
+// indices/put-mapping.asciidoc:11
+
+[source, python]
+----
+resp = client.indices.put_mapping(
+    index="twitter", body={"properties": {"email": {"type": "keyword"}}},
+)
+print(resp)
+----

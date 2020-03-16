@@ -1,0 +1,17 @@
+// query-dsl/query-string-query.asciidoc:462
+
+[source, python]
+----
+resp = client.search(
+    body={
+        "query": {
+            "query_string": {
+                "fields": ["title", "content"],
+                "query": "this that thus",
+                "minimum_should_match": 2,
+            }
+        }
+    },
+)
+print(resp)
+----

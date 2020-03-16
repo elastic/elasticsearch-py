@@ -1,0 +1,18 @@
+// mapping.asciidoc:144
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my-index",
+    body={
+        "mappings": {
+            "properties": {
+                "age": {"type": "integer"},
+                "email": {"type": "keyword"},
+                "name": {"type": "text"},
+            }
+        }
+    },
+)
+print(resp)
+----

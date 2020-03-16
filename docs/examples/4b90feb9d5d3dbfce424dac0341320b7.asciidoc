@@ -1,8 +1,15 @@
-// getting-started.asciidoc:495
+// getting-started.asciidoc:461
 
 [source, python]
 ----
-client.search(
-    index="bank", body={"query": {"match_phrase": {"address": "mill lane"}}},
+resp = client.search(
+    index="bank",
+    body={
+        "query": {"match_all": {}},
+        "sort": [{"account_number": "asc"}],
+        "from": 10,
+        "size": 10,
+    },
 )
+print(resp)
 ----

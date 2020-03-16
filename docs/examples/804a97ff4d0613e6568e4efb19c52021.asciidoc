@@ -1,0 +1,19 @@
+// docs/index_.asciidoc:146
+
+[source, python]
+----
+resp = client.cluster.put_settings(
+    body={"persistent": {"action.auto_create_index": "twitter,index10,-index1*,+ind*"}},
+)
+print(resp)
+
+resp = client.cluster.put_settings(
+    body={"persistent": {"action.auto_create_index": "false"}},
+)
+print(resp)
+
+resp = client.cluster.put_settings(
+    body={"persistent": {"action.auto_create_index": "true"}},
+)
+print(resp)
+----

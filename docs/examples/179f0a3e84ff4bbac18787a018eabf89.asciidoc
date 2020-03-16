@@ -1,0 +1,18 @@
+// query-dsl/multi-match-query.asciidoc:472
+
+[source, python]
+----
+resp = client.search(
+    body={
+        "query": {
+            "multi_match": {
+                "query": "Jon",
+                "type": "cross_fields",
+                "analyzer": "standard",
+                "fields": ["first", "last", "*.edge"],
+            }
+        }
+    },
+)
+print(resp)
+----
