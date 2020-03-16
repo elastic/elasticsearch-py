@@ -2,9 +2,6 @@
 
 [source, python]
 ----
-client.index(
-    index="customer",
-    id="1",
-    body={"name": "John Doe"},
-)
+resp = client.index(index="customer", id="1", body={"name": "John Doe"})
+print(resp)
 ----

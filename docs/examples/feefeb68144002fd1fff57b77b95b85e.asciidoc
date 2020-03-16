@@ -2,8 +2,9 @@
 
 [source, python]
 ----
-client.search(
+resp = client.search(
     index="bank",
     body={"size": 0, "aggs": {"group_by_state": {"terms": {"field": "state.keyword"}}}},
 )
+print(resp)
 ----

@@ -1,0 +1,7 @@
+// docs/update.asciidoc:218
+
+[source, python]
+----
+resp = client.update(index="test", id="1", body={"doc": {"name": "new_name"}})
+print(resp)
+----

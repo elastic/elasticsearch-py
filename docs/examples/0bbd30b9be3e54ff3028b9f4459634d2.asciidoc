@@ -1,0 +1,10 @@
+// indices/put-mapping.asciidoc:166
+
+[source, python]
+----
+resp = client.indices.put_mapping(
+    index="my_index",
+    body={"properties": {"name": {"properties": {"last": {"type": "text"}}}}},
+)
+print(resp)
+----

@@ -1,0 +1,10 @@
+// indices/create-index.asciidoc:99
+
+[source, python]
+----
+resp = client.indices.create(
+    index="twitter",
+    body={"settings": {"number_of_shards": 3, "number_of_replicas": 2}},
+)
+print(resp)
+----

@@ -2,7 +2,7 @@
 
 [source, python]
 ----
-client.search(
+resp = client.search(
     body={
         "size": 0,
         "aggs": {
@@ -16,6 +16,7 @@ client.search(
                 "aggs": {"last_access": {"max": {"field": "access_date"}}},
             }
         },
-    }
+    },
 )
+print(resp)
 ----

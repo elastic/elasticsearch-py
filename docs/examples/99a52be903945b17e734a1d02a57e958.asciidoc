@@ -1,0 +1,7 @@
+// mapping.asciidoc:257
+
+[source, python]
+----
+resp = client.indices.get_field_mapping(index="my-index", fields="employee-id")
+print(resp)
+----

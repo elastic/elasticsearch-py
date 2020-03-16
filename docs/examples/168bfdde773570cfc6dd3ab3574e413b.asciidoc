@@ -1,0 +1,7 @@
+// search/search.asciidoc:400
+
+[source, python]
+----
+resp = client.search(q="user:kimchy")
+print(resp)
+----

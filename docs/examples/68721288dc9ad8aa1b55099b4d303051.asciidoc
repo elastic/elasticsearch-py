@@ -1,0 +1,17 @@
+// query-dsl/multi-match-query.asciidoc:524
+
+[source, python]
+----
+resp = client.search(
+    body={
+        "query": {
+            "multi_match": {
+                "query": "quick brown f",
+                "type": "bool_prefix",
+                "fields": ["subject", "message"],
+            }
+        }
+    },
+)
+print(resp)
+----

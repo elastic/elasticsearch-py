@@ -2,8 +2,6 @@
 
 [source, python]
 ----
-client.get(
-    index="customer",
-    id="1",
-)
+resp = client.get(index="customer", id="1")
+print(resp)
 ----

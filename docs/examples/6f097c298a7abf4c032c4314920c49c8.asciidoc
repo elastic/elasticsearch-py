@@ -1,0 +1,9 @@
+// docs/reindex.asciidoc:640
+
+[source, python]
+----
+resp = client.reindex(
+    body={"source": {"index": ["twitter", "blog"]}, "dest": {"index": "all_together"}},
+)
+print(resp)
+----

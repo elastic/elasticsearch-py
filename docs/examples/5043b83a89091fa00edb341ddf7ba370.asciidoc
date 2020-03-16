@@ -1,0 +1,13 @@
+// query-dsl/match-query.asciidoc:219
+
+[source, python]
+----
+resp = client.search(
+    body={
+        "query": {
+            "match": {"message": {"query": "this is a testt", "fuzziness": "AUTO"}}
+        }
+    },
+)
+print(resp)
+----

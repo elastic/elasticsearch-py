@@ -1,0 +1,15 @@
+// indices/templates.asciidoc:223
+
+[source, python]
+----
+resp = client.indices.put_template(
+    name="template_1",
+    body={
+        "index_patterns": ["*"],
+        "order": 0,
+        "settings": {"number_of_shards": 1},
+        "version": 123,
+    },
+)
+print(resp)
+----

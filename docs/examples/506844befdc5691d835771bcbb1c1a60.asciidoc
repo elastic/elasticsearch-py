@@ -2,11 +2,9 @@
 
 [source, python]
 ----
-client.search(
+resp = client.search(
     index="bank",
-    body={
-        "query": {"match_all": {}},
-        "sort": [{"account_number": "asc"}],
-    },
+    body={"query": {"match_all": {}}, "sort": [{"account_number": "asc"}]},
 )
+print(resp)
 ----

@@ -1,0 +1,11 @@
+// query-dsl/match-query.asciidoc:175
+
+[source, python]
+----
+resp = client.search(
+    body={
+        "query": {"match": {"message": {"query": "this is a test", "operator": "and"}}}
+    },
+)
+print(resp)
+----

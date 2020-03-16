@@ -1,0 +1,10 @@
+// indices/put-mapping.asciidoc:519
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my_index",
+    body={"mappings": {"properties": {"user_identifier": {"type": "keyword"}}}},
+)
+print(resp)
+----

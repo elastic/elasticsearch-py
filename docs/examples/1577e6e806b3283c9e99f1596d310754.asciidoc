@@ -1,0 +1,9 @@
+// docs/reindex.asciidoc:687
+
+[source, python]
+----
+resp = client.index(
+    index="test", id="1", refresh=True, body={"text": "words words", "flag": "foo"},
+)
+print(resp)
+----

@@ -1,0 +1,18 @@
+// query-dsl/multi-match-query.asciidoc:275
+
+[source, python]
+----
+resp = client.search(
+    body={
+        "query": {
+            "dis_max": {
+                "queries": [
+                    {"match_phrase_prefix": {"subject": "quick brown f"}},
+                    {"match_phrase_prefix": {"message": "quick brown f"}},
+                ]
+            }
+        }
+    },
+)
+print(resp)
+----

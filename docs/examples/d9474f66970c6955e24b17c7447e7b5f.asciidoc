@@ -1,0 +1,14 @@
+// indices/put-mapping.asciidoc:144
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my_index",
+    body={
+        "mappings": {
+            "properties": {"name": {"properties": {"first": {"type": "text"}}}}
+        }
+    },
+)
+print(resp)
+----
