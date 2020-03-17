@@ -78,7 +78,7 @@ class CcrClient(NamespacedClient):
     @query_params()
     def forget_follower(self, index, body, params=None, headers=None):
         """
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ccr-post-forget-follower.html>`_
 
         :arg index: the name of the leader index for which specified
             follower retention leases should be removed
@@ -184,7 +184,7 @@ class CcrClient(NamespacedClient):
     @query_params()
     def unfollow(self, index, params=None, headers=None):
         """
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ccr-post-unfollow.html>`_
 
         :arg index: The name of the follower index that should be turned
             into a regular index.

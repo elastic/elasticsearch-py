@@ -2,7 +2,7 @@ from .utils import NamespacedClient, query_params, _make_path
 
 
 class CatClient(NamespacedClient):
-    @query_params("format", "h", "help", "local", "s", "v")
+    @query_params("expand_wildcards", "format", "h", "help", "local", "s", "v")
     def aliases(self, name=None, params=None, headers=None):
         """
         Shows information about currently configured aliases to indices including
@@ -10,6 +10,9 @@ class CatClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-alias.html>`_
 
         :arg name: A comma-separated list of alias names to return
+        :arg expand_wildcards: Whether to expand wildcard expression to
+            concrete indices that are open, closed or both.  Valid choices: open,
+            closed, hidden, none, all  Default: ['all']
         :arg format: a short version of the Accept header, e.g. json,
             yaml
         :arg h: Comma-separated list of column names to display
@@ -113,6 +116,7 @@ class CatClient(NamespacedClient):
 
     @query_params(
         "bytes",
+        "expand_wildcards",
         "format",
         "h",
         "health",
@@ -134,7 +138,10 @@ class CatClient(NamespacedClient):
         :arg index: A comma-separated list of index names to limit the
             returned information
         :arg bytes: The unit in which to display byte values  Valid
-            choices: b, k, m, g
+            choices: b, k, kb, m, mb, g, gb, t, tb, p, pb
+        :arg expand_wildcards: Whether to expand wildcard expression to
+            concrete indices that are open, closed or both.  Valid choices: open,
+            closed, hidden, none, all  Default: all
         :arg format: a short version of the Accept header, e.g. json,
             yaml
         :arg h: Comma-separated list of column names to display
@@ -153,8 +160,7 @@ class CatClient(NamespacedClient):
         :arg s: Comma-separated list of column names or column aliases
             to sort by
         :arg time: The unit in which to display time values  Valid
-            choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
-            (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
+            choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
         return self.transport.perform_request(
@@ -184,16 +190,7 @@ class CatClient(NamespacedClient):
         )
 
     @query_params(
-        "bytes",
-        "format",
-        "full_id",
-        "h",
-        "help",
-        "local",
-        "master_timeout",
-        "s",
-        "time",
-        "v",
+        "bytes", "format", "full_id", "h", "help", "master_timeout", "s", "time", "v"
     )
     def nodes(self, params=None, headers=None):
         """
@@ -208,15 +205,12 @@ class CatClient(NamespacedClient):
             version (default: false)
         :arg h: Comma-separated list of column names to display
         :arg help: Return help information
-        :arg local: Return local information, do not retrieve the state
-            from master node (default: false)
         :arg master_timeout: Explicit operation timeout for connection
             to master node
         :arg s: Comma-separated list of column names or column aliases
             to sort by
         :arg time: The unit in which to display time values  Valid
-            choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
-            (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
+            choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
         return self.transport.perform_request(
@@ -248,8 +242,7 @@ class CatClient(NamespacedClient):
         :arg s: Comma-separated list of column names or column aliases
             to sort by
         :arg time: The unit in which to display time values  Valid
-            choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
-            (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
+            choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
         return self.transport.perform_request(
@@ -279,8 +272,7 @@ class CatClient(NamespacedClient):
         :arg s: Comma-separated list of column names or column aliases
             to sort by
         :arg time: The unit in which to display time values  Valid
-            choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
-            (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
+            choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
         return self.transport.perform_request(
@@ -326,8 +318,7 @@ class CatClient(NamespacedClient):
         :arg s: Comma-separated list of column names or column aliases
             to sort by
         :arg time: The unit in which to display time values  Valid
-            choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
-            (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
+            choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
         return self.transport.perform_request(
@@ -479,8 +470,7 @@ class CatClient(NamespacedClient):
         :arg s: Comma-separated list of column names or column aliases
             to sort by
         :arg time: The unit in which to display time values  Valid
-            choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
-            (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
+            choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
         return self.transport.perform_request(
@@ -524,8 +514,7 @@ class CatClient(NamespacedClient):
         :arg s: Comma-separated list of column names or column aliases
             to sort by
         :arg time: The unit in which to display time values  Valid
-            choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
-            (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
+            choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
         return self.transport.perform_request(
@@ -553,4 +542,136 @@ class CatClient(NamespacedClient):
         """
         return self.transport.perform_request(
             "GET", _make_path("_cat", "templates", name), params=params, headers=headers
+        )
+
+    @query_params("allow_no_match", "bytes", "format", "h", "help", "s", "time", "v")
+    def ml_data_frame_analytics(self, id=None, params=None, headers=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-dfanalytics.html>`_
+
+        :arg id: The ID of the data frame analytics to fetch
+        :arg allow_no_match: Whether to ignore if a wildcard expression
+            matches no configs. (This includes `_all` string or when no configs have
+            been specified)
+        :arg bytes: The unit in which to display byte values  Valid
+            choices: b, k, kb, m, mb, g, gb, t, tb, p, pb
+        :arg format: a short version of the Accept header, e.g. json,
+            yaml
+        :arg h: Comma-separated list of column names to display
+        :arg help: Return help information
+        :arg s: Comma-separated list of column names or column aliases
+            to sort by
+        :arg time: The unit in which to display time values  Valid
+            choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
+            (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
+        :arg v: Verbose mode. Display column headers
+        """
+        return self.transport.perform_request(
+            "GET",
+            _make_path("_cat", "ml", "data_frame", "analytics", id),
+            params=params,
+            headers=headers,
+        )
+
+    @query_params("allow_no_datafeeds", "format", "h", "help", "s", "time", "v")
+    def ml_datafeeds(self, datafeed_id=None, params=None, headers=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-datafeeds.html>`_
+
+        :arg datafeed_id: The ID of the datafeeds stats to fetch
+        :arg allow_no_datafeeds: Whether to ignore if a wildcard
+            expression matches no datafeeds. (This includes `_all` string or when no
+            datafeeds have been specified)
+        :arg format: a short version of the Accept header, e.g. json,
+            yaml
+        :arg h: Comma-separated list of column names to display
+        :arg help: Return help information
+        :arg s: Comma-separated list of column names or column aliases
+            to sort by
+        :arg time: The unit in which to display time values  Valid
+            choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
+            (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
+        :arg v: Verbose mode. Display column headers
+        """
+        return self.transport.perform_request(
+            "GET",
+            _make_path("_cat", "ml", "datafeeds", datafeed_id),
+            params=params,
+            headers=headers,
+        )
+
+    @query_params("allow_no_jobs", "bytes", "format", "h", "help", "s", "time", "v")
+    def ml_jobs(self, job_id=None, params=None, headers=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-anomaly-detectors.html>`_
+
+        :arg job_id: The ID of the jobs stats to fetch
+        :arg allow_no_jobs: Whether to ignore if a wildcard expression
+            matches no jobs. (This includes `_all` string or when no jobs have been
+            specified)
+        :arg bytes: The unit in which to display byte values  Valid
+            choices: b, k, kb, m, mb, g, gb, t, tb, p, pb
+        :arg format: a short version of the Accept header, e.g. json,
+            yaml
+        :arg h: Comma-separated list of column names to display
+        :arg help: Return help information
+        :arg s: Comma-separated list of column names or column aliases
+            to sort by
+        :arg time: The unit in which to display time values  Valid
+            choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
+            (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
+        :arg v: Verbose mode. Display column headers
+        """
+        return self.transport.perform_request(
+            "GET",
+            _make_path("_cat", "ml", "anomaly_detectors", job_id),
+            params=params,
+            headers=headers,
+        )
+
+    @query_params(
+        "allow_no_match",
+        "bytes",
+        "format",
+        "from_",
+        "h",
+        "help",
+        "s",
+        "size",
+        "time",
+        "v",
+    )
+    def ml_trained_models(self, model_id=None, params=None, headers=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-trained-model.html>`_
+
+        :arg model_id: The ID of the trained models stats to fetch
+        :arg allow_no_match: Whether to ignore if a wildcard expression
+            matches no trained models. (This includes `_all` string or when no
+            trained models have been specified)  Default: True
+        :arg bytes: The unit in which to display byte values  Valid
+            choices: b, k, kb, m, mb, g, gb, t, tb, p, pb
+        :arg format: a short version of the Accept header, e.g. json,
+            yaml
+        :arg from_: skips a number of trained models
+        :arg h: Comma-separated list of column names to display
+        :arg help: Return help information
+        :arg s: Comma-separated list of column names or column aliases
+            to sort by
+        :arg size: specifies a max number of trained models to get
+            Default: 100
+        :arg time: The unit in which to display time values  Valid
+            choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
+            (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
+        :arg v: Verbose mode. Display column headers
+        """
+        # from is a reserved word so it cannot be used, use from_ instead
+        if "from_" in params:
+            params["from"] = params.pop("from_")
+
+        return self.transport.perform_request(
+            "GET",
+            _make_path("_cat", "ml", "trained_models", model_id),
+            params=params,
+            headers=headers,
         )
