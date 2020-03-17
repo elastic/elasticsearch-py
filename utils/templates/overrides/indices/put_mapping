@@ -1,8 +1,0 @@
-{% extends "base" %}
-{% block request %}
-        if doc_type not in SKIP_IN_PATH and index in SKIP_IN_PATH:
-            index = "_all"
-
-        {{ super()|trim }}
-{% endblock %}
-
