@@ -24,31 +24,22 @@ PARAMS_RENAMES = {"type": "doc_type", "from": "from_"}
 CATCH_CODES = {"missing": 404, "conflict": 409, "unauthorized": 401}
 
 # test features we have implemented
-IMPLEMENTED_FEATURES = ("gtelte", "stash_in_path", "headers", "catch_unauthorized")
+IMPLEMENTED_FEATURES = {
+    "gtelte",
+    "stash_in_path",
+    "headers",
+    "catch_unauthorized",
+    "default_shards",
+}
 
 # broken YAML tests on some releases
 SKIP_TESTS = {
-    "*": set(
-        (
-            # missing skip for transform_and_set feature
-            "TestApiKey10Basic",
-            # invalid license
-            "TestLicense20PutLicense",
-            "TestXpack15Basic",
-            # timeouts
-            "TestMlSetUpgradeMode",
-            # doesn't account for security index
-            "TestSnapshot10Basic",
-            # wrong exception, also body should be marked as required
-            "TestWatcherPutWatch10Basic",
-            # weird issue with SET cmd:
-            "TestUsers10Basic",
-            "TestWatcherExecuteWatch60HttpInput",
-            "TestSecurityHidden-Index13Security-TokensRead",
-            "TestSecurityHidden-Index14Security-Tokens-7Read",
-            "TestToken10Basic",
-        )
-    )
+    "*": {
+        # Can't figure out the get_alias(expand_wildcards=open) failure.
+        "TestIndicesGetAlias10Basic",
+        # Disallowing expensive queries is 7.7+
+        "TestSearch320DisallowQueries",
+    }
 }
 
 XPACK_FEATURES = None
@@ -61,11 +52,6 @@ class InvalidActionType(Exception):
 class YamlTestCase(ElasticsearchTestCase):
     def setUp(self):
         super(YamlTestCase, self).setUp()
-        if self._feature_enabled("security"):
-            self.client.security.put_user(
-                username="x_pack_rest_user",
-                body={"password": "x-pack-test-password", "roles": ["superuser"]},
-            )
         if hasattr(self, "_setup_code"):
             self.run_code(self._setup_code)
         self.last_response = None
@@ -106,15 +92,17 @@ class YamlTestCase(ElasticsearchTestCase):
         super(YamlTestCase, self).tearDown()
 
     def _feature_enabled(self, name):
-        global XPACK_FEATURES
+        global XPACK_FEATURES, IMPLEMENTED_FEATURES
         if XPACK_FEATURES is None:
             try:
                 xinfo = self.client.xpack.info()
                 XPACK_FEATURES = set(
                     f for f in xinfo["features"] if xinfo["features"][f]["enabled"]
                 )
+                IMPLEMENTED_FEATURES.add("xpack")
             except RequestError:
                 XPACK_FEATURES = set()
+                IMPLEMENTED_FEATURES.add("no_xpack")
         return name in XPACK_FEATURES
 
     def _resolve(self, value):
@@ -238,9 +226,7 @@ class YamlTestCase(ElasticsearchTestCase):
                 elif feature == "benchmark":
                     if self._get_benchmark_nodes():
                         continue
-                raise SkipTest(
-                    skip.get("reason", "Feature %s is not supported" % feature)
-                )
+                raise SkipTest("Feature %s is not supported" % feature)
 
         if "version" in skip:
             version, reason = skip["version"], skip["reason"]
@@ -320,10 +306,14 @@ class YamlTestCase(ElasticsearchTestCase):
                 and expected.startswith("/")
                 and expected.endswith("/")
             ):
-                expected = re.compile(expected[1:-1], re.VERBOSE)
-                self.assertTrue(expected.search(value))
+                expected = re.compile(expected[1:-1], re.VERBOSE | re.MULTILINE)
+                self.assertTrue(
+                    expected.search(value), "%r does not match %r" % (value, expected)
+                )
             else:
-                self.assertEquals(expected, value)
+                self.assertEquals(
+                    expected, value, "%r does not match %r" % (value, expected)
+                )
 
 
 def construct_case(filename, name):

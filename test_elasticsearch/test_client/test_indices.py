@@ -18,7 +18,3 @@ class TestIndices(ElasticsearchTestCase):
         self.assertRaises(ValueError, self.client.indices.exists, index=None)
         self.assertRaises(ValueError, self.client.indices.exists, index=[])
         self.assertRaises(ValueError, self.client.indices.exists, index="")
-
-    def test_put_mapping_without_index(self):
-        self.client.indices.put_mapping(doc_type="doc-type", body={})
-        self.assert_url_called("PUT", "/_all/doc-type/_mapping")
