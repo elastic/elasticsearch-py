@@ -1,0 +1,9 @@
+// indices/put-mapping.asciidoc:409
+
+[source, python]
+----
+resp = client.indices.create(
+    index="users", body={"mappings": {"properties": {"user_id": {"type": "long"}}}},
+)
+print(resp)
+----

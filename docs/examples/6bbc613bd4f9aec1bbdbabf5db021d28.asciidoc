@@ -1,0 +1,19 @@
+// query-dsl/multi-match-query.asciidoc:228
+
+[source, python]
+----
+resp = client.search(
+    body={
+        "query": {
+            "bool": {
+                "should": [
+                    {"match": {"title": "quick brown fox"}},
+                    {"match": {"title.original": "quick brown fox"}},
+                    {"match": {"title.shingles": "quick brown fox"}},
+                ]
+            }
+        }
+    },
+)
+print(resp)
+----

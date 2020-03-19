@@ -1,0 +1,9 @@
+// query-dsl/term-query.asciidoc:28
+
+[source, python]
+----
+resp = client.search(
+    body={"query": {"term": {"user": {"value": "Kimchy", "boost": 1}}}},
+)
+print(resp)
+----

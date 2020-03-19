@@ -1,0 +1,9 @@
+// query-dsl/bool-query.asciidoc:88
+
+[source, python]
+----
+resp = client.search(
+    body={"query": {"bool": {"filter": {"term": {"status": "active"}}}}},
+)
+print(resp)
+----

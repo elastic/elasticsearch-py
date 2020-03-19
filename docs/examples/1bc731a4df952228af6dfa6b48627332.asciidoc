@@ -1,0 +1,16 @@
+// docs/reindex.asciidoc:802
+
+[source, python]
+----
+resp = client.reindex(
+    body={
+        "max_docs": 10,
+        "source": {
+            "index": "twitter",
+            "query": {"function_score": {"random_score": {}, "min_score": 0.9}},
+        },
+        "dest": {"index": "random_twitter"},
+    },
+)
+print(resp)
+----

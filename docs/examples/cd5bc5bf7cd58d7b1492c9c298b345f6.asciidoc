@@ -2,7 +2,7 @@
 
 [source, python]
 ----
-client.search(
+resp = client.search(
     body={
         "aggs": {
             "actors": {
@@ -14,6 +14,7 @@ client.search(
                 "aggs": {"costars": {"terms": {"field": "actors", "size": 5}}},
             }
         }
-    }
+    },
 )
+print(resp)
 ----

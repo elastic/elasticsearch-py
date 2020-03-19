@@ -1,0 +1,10 @@
+// query-dsl/term-query.asciidoc:94
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my_index",
+    body={"mappings": {"properties": {"full_text": {"type": "text"}}}},
+)
+print(resp)
+----

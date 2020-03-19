@@ -2,7 +2,7 @@
 
 [source, python]
 ----
-client.search(
+resp = client.search(
     index="bank",
     body={
         "size": 0,
@@ -17,4 +17,5 @@ client.search(
         },
     },
 )
+print(resp)
 ----

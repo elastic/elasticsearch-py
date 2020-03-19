@@ -1,0 +1,10 @@
+// docs/reindex.asciidoc:224
+
+[source, python]
+----
+resp = client.indices.refresh()
+print(resp)
+
+resp = client.search(index="new_twitter", size="0", filter_path="hits.total")
+print(resp)
+----

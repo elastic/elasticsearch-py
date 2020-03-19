@@ -1,0 +1,13 @@
+// indices/create-index.asciidoc:123
+
+[source, python]
+----
+resp = client.indices.create(
+    index="test",
+    body={
+        "settings": {"number_of_shards": 1},
+        "mappings": {"properties": {"field1": {"type": "text"}}},
+    },
+)
+print(resp)
+----
