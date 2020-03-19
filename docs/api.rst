@@ -70,13 +70,12 @@ or to help with `identifying running tasks <https://www.elastic.co/guide/en/elas
 
  .. code-block:: python
 
-    import elasticsearch
+    from elasticsearch import Elasticsearch
 
-    # You can add to the client to apply to all requests
-    client = elasticsearch.Elasticsearch(opaque_id="app17@dc06.eu_user1234")
+    client = Elasticsearch()
 
-    # Or you can apply per-request for more granularity.
-    resp = client.get(index="test", id="1", opaque_id="app17@dc06.eu_user1234")
+    # You can apply X-Opaque-Id in any API request via 'opaque_id':
+    resp = client.get(index="test", id="1", opaque_id="request-1")
 
 
 .. py:module:: elasticsearch
