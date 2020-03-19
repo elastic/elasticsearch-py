@@ -52,7 +52,6 @@ class Connection(object):
         http_compress=None,
         cloud_id=None,
         api_key=None,
-        opaque_id=None,
         **kwargs
     ):
 
@@ -89,8 +88,6 @@ class Connection(object):
         headers = headers or {}
         for key in headers:
             self.headers[key.lower()] = headers[key]
-        if opaque_id:
-            self.headers["x-opaque-id"] = opaque_id
 
         self.headers.setdefault("content-type", "application/json")
         self.headers.setdefault("user-agent", self._get_default_user_agent())
