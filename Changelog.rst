@@ -3,7 +3,7 @@
 Changelog
 =========
 
-7.6.0a1 (2020-03-16)
+7.6.0 (2020-03-19)
 ------------------
   * Added support for ES 7.6 APIs
   * Added support for `X-Opaque-Id`_ to identify long-running tasks
