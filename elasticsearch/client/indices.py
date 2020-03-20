@@ -12,7 +12,6 @@ class IndicesClient(NamespacedClient):
         :arg body: Define analyzer/tokenizer parameters and the text on
             which the analysis should be performed
         :arg index: The name of the index to scope the operation
-        :arg index: The name of the index to scope the operation
         """
         return self.transport.perform_request(
             "POST",
@@ -918,8 +917,6 @@ class IndicesClient(NamespacedClient):
             using the `fielddata` parameter (default: all)
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
-        :arg index: A comma-separated list of index name to limit the
-            operation
         :arg query: Clear query caches
         :arg request: Clear request cache
         """
