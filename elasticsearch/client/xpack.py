@@ -21,7 +21,7 @@ class XPackClient(NamespacedClient):
     @query_params("master_timeout")
     def usage(self, params=None, headers=None):
         """
-        `<Retrieve information about xpack features usage>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/usage-api.html>`_
 
         :arg master_timeout: Specify timeout for watch write operation
         """

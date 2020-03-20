@@ -93,7 +93,7 @@ class SecurityClient(NamespacedClient):
     @query_params("refresh")
     def delete_privileges(self, application, name, params=None, headers=None):
         """
-        `<TODO>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-delete-privilege.html>`_
 
         :arg application: Application name
         :arg name: Privilege name
@@ -326,7 +326,7 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'body'.")
 
         return self.transport.perform_request(
-            "GET",
+            "POST",
             _make_path("_security", "user", user, "_has_privileges"),
             params=params,
             headers=headers,
@@ -368,7 +368,7 @@ class SecurityClient(NamespacedClient):
     @query_params("refresh")
     def put_privileges(self, body, params=None, headers=None):
         """
-        `<TODO>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-put-privileges.html>`_
 
         :arg body: The privilege(s) to add
         :arg refresh: If `true` (the default) then refresh the affected

@@ -12,11 +12,13 @@ class LicenseClient(NamespacedClient):
             "DELETE", "/_license", params=params, headers=headers
         )
 
-    @query_params("local")
+    @query_params("accept_enterprise", "local")
     def get(self, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-license.html>`_
 
+        :arg accept_enterprise: Supported for backwards compatibility
+            with 7.x. If this param is used it must be set to true
         :arg local: Return local information, do not retrieve the state
             from master node (default: false)
         """

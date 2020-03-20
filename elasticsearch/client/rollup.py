@@ -88,7 +88,7 @@ class RollupClient(NamespacedClient):
                 raise ValueError("Empty value passed for a required argument.")
 
         return self.transport.perform_request(
-            "GET",
+            "POST",
             _make_path(index, doc_type, "_rollup_search"),
             params=params,
             headers=headers,

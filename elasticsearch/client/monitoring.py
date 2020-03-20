@@ -5,7 +5,7 @@ class MonitoringClient(NamespacedClient):
     @query_params("interval", "system_api_version", "system_id")
     def bulk(self, body, doc_type=None, params=None, headers=None):
         """
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/es-monitoring.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/monitor-elasticsearch-cluster.html>`_
 
         :arg body: The operation definition and data (action-data
             pairs), separated by newlines
