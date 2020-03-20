@@ -1,0 +1,17 @@
+// docs/reindex.asciidoc:955
+
+[source, python]
+----
+resp = client.reindex(
+    body={
+        "source": {
+            "remote": {"host": "http://otherhost:9200"},
+            "index": "source",
+            "size": 10,
+            "query": {"match": {"test": "data"}},
+        },
+        "dest": {"index": "dest"},
+    },
+)
+print(resp)
+----

@@ -1,0 +1,20 @@
+// docs/reindex.asciidoc:751
+
+[source, python]
+----
+resp = client.index(
+    index="metricbeat-2016.05.30",
+    id="1",
+    refresh=True,
+    body={"system.cpu.idle.pct": 0.908},
+)
+print(resp)
+
+resp = client.index(
+    index="metricbeat-2016.05.31",
+    id="1",
+    refresh=True,
+    body={"system.cpu.idle.pct": 0.105},
+)
+print(resp)
+----

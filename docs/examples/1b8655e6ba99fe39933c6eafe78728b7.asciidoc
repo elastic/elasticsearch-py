@@ -1,0 +1,20 @@
+// docs/reindex.asciidoc:191
+
+[source, python]
+----
+resp = client.reindex(
+    body={
+        "source": {"index": "twitter", "slice": {"id": 0, "max": 2}},
+        "dest": {"index": "new_twitter"},
+    },
+)
+print(resp)
+
+resp = client.reindex(
+    body={
+        "source": {"index": "twitter", "slice": {"id": 1, "max": 2}},
+        "dest": {"index": "new_twitter"},
+    },
+)
+print(resp)
+----

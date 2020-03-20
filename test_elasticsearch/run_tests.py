@@ -21,10 +21,10 @@ def fetch_es_repo():
 
     # no repo
     if not exists(repo_path) or not exists(join(repo_path, ".git")):
-        print("No elasticsearch repo found...")
-        # set YAML DIR to empty to skip yaml tests
-        environ["TEST_ES_YAML_DIR"] = ""
-        return
+        subprocess.check_call(
+            "git clone https://github.com/elastic/elasticsearch %s" % repo_path,
+            shell=True,
+        )
 
     # set YAML test dir
     environ["TEST_ES_YAML_DIR"] = join(

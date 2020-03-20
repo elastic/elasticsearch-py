@@ -82,12 +82,11 @@ class Module:
                         if line.startswith("class"):
                             break
                 self.header = "\n".join(header_lines)
-                defined_apis = re.findall(
-                    r'\n    def ([a-z_]+)\([^\n]*\n *"""\n *([\w\W]*?)(?:`<|""")',
+                self.orders = re.findall(
+                    r'\n    def ([a-z_]+)\(',
                     content,
-                    re.MULTILINE,
+                    re.MULTILINE
                 )
-                self.orders = list(map(lambda x: x[0], defined_apis))
 
     def _position(self, api):
         try:
@@ -127,6 +126,14 @@ class API:
             # set as attribute so it may be overriden by Module.add
             self.description = definition["documentation"].get("description", "")
             self.doc_url = definition["documentation"].get("url", "")
+
+        # Filter out bad URL refs like 'TODO'
+        # and serve all docs over HTTPS.
+        if self.doc_url:
+            if not self.doc_url.startswith("http"):
+                self.doc_url = ""
+            if self.doc_url.startswith("http://"):
+                self.doc_url = self.doc_url.replace("http://", "https://")
 
     @property
     def all_parts(self):
@@ -188,7 +195,12 @@ class API:
 
     @property
     def method(self):
-        return self.path["methods"][0]
+        # To adhere to the HTTP RFC we shouldn't send
+        # bodies in GET requests.
+        default_method = self.path["methods"][0]
+        if self.body and default_method == "GET" and "POST" in self.path["methods"]:
+            return "POST"
+        return default_method
 
     @property
     def url_parts(self):
@@ -245,6 +257,10 @@ def read_modules():
             namespace = "__init__"
             if "." in name:
                 namespace, name = name.rsplit(".", 1)
+
+            # The data_frame API has been changed to transform.
+            if namespace == "data_frame_transform_deprecated":
+                continue
 
             if namespace not in modules:
                 modules[namespace] = Module(namespace)

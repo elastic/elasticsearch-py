@@ -3,6 +3,25 @@
 Changelog
 =========
 
+7.6.0 (2020-03-19)
+------------------
+  * Added support for ES 7.6 APIs
+  * Added support for `X-Opaque-Id`_ to identify long-running tasks
+  * Added support for HTTP compression to ``RequestsHttpConnection``
+  * Updated default setting of ``http_compress`` when using ``cloud_id`` to ``True``
+  * Updated default setting of ``sniffing`` when using ``cloud_id`` to ``False``
+  * Updated default port to ``443`` if ``cloud_id`` and no other port is defined
+    on the client or within ``cloud_id``
+  * Fix regression of ``client.cluster.state()`` where the default ``metric``
+    should be set to ``"_all"`` if an index is given (See `#1143`_)
+  * Fix regression of ``client.tasks.get()`` without a ``task_id``
+    having similar functionality to ``client.tasks.list()`` This will
+    be removed in ``v8.0`` of ``elasticsearch-py`` (See `#1157`_)
+
+  .. _X-Opaque-Id: https://www.elastic.co/guide/en/elasticsearch/reference/current/tasks.html#_identifying_running_tasks
+  .. _#1143: https://github.com/elastic/elasticsearch-py/pull/1143
+  .. _#1157: https://github.com/elastic/elasticsearch-py/pull/1157
+
 7.5.1 (2020-01-19)
 ------------------
   * ``7.5.0`` tag was not released so retagging

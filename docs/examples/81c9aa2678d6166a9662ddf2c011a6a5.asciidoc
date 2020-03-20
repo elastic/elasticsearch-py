@@ -1,0 +1,7 @@
+// query-dsl/match-all-query.asciidoc:39
+
+[source, python]
+----
+resp = client.search(body={"query": {"match_none": {}}})
+print(resp)
+----

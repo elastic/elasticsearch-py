@@ -1,0 +1,16 @@
+// aggregations/bucket/terms-aggregation.asciidoc:397
+
+[source, python]
+----
+resp = client.search(
+    body={
+        "aggs": {
+            "genres": {
+                "terms": {"field": "genre", "order": {"playback_stats.max": "desc"}},
+                "aggs": {"playback_stats": {"stats": {"field": "play_count"}}},
+            }
+        }
+    },
+)
+print(resp)
+----

@@ -1,0 +1,12 @@
+// docs/reindex.asciidoc:592
+
+[source, python]
+----
+resp = client.reindex(
+    body={
+        "source": {"index": "twitter", "query": {"term": {"user": "kimchy"}}},
+        "dest": {"index": "new_twitter"},
+    },
+)
+print(resp)
+----

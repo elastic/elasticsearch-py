@@ -4,7 +4,15 @@ import urllib3
 from urllib3.exceptions import ReadTimeoutError, SSLError as UrllibSSLError
 from urllib3.util.retry import Retry
 import warnings
-from base64 import decodestring
+
+from .base import Connection
+from ..exceptions import (
+    ConnectionError,
+    ImproperlyConfigured,
+    ConnectionTimeout,
+    SSLError,
+)
+from ..compat import urlencode
 
 # sentinel value for `verify_certs` and `ssl_show_warn`.
 # This is used to detect if a user is passing in a value
@@ -20,15 +28,6 @@ try:
     CA_CERTS = certifi.where()
 except ImportError:
     pass
-
-from .base import Connection
-from ..exceptions import (
-    ConnectionError,
-    ImproperlyConfigured,
-    ConnectionTimeout,
-    SSLError,
-)
-from ..compat import urlencode
 
 
 def create_ssl_context(**kwargs):
@@ -73,15 +72,17 @@ class Urllib3HttpConnection(Connection):
         information.
     :arg headers: any custom http headers to be add to requests
     :arg http_compress: Use gzip compression
-    :arg cloud_id: The Cloud ID from ElasticCloud. Convient way to connect to cloud instances.
-    :arg api_key: optional API Key authentication as either base64 encoded string or a tuple.
+    :arg cloud_id: The Cloud ID from ElasticCloud. Convenient way to connect to cloud instances.
         Other host connection params will be ignored.
+    :arg api_key: optional API Key authentication as either base64 encoded string or a tuple.
+    :arg opaque_id: Send this value in the 'X-Opaque-Id' HTTP header
+        For tracing all requests made by this transport.
     """
 
     def __init__(
         self,
         host="localhost",
-        port=9200,
+        port=None,
         http_auth=None,
         use_ssl=False,
         verify_certs=VERIFY_CERTS_DEFAULT,
@@ -95,43 +96,31 @@ class Urllib3HttpConnection(Connection):
         maxsize=10,
         headers=None,
         ssl_context=None,
-        http_compress=False,
+        http_compress=None,
         cloud_id=None,
         api_key=None,
+        opaque_id=None,
         **kwargs
     ):
-
-        if cloud_id:
-            cluster_name, cloud_id = cloud_id.split(":")
-            url, es_uuid, kibana_uuid = (
-                decodestring(cloud_id.encode("utf-8")).decode("utf-8").split("$")
-            )
-            host = "%s.%s" % (es_uuid, url)
-            port = "9243"
-            use_ssl = True
-            http_compress = True
-        super(Urllib3HttpConnection, self).__init__(
-            host=host, port=port, use_ssl=use_ssl, **kwargs
-        )
-        self.http_compress = http_compress
+        # Initialize headers before calling super().__init__().
         self.headers = urllib3.make_headers(keep_alive=True)
+
+        super(Urllib3HttpConnection, self).__init__(
+            host=host,
+            port=port,
+            use_ssl=use_ssl,
+            headers=headers,
+            http_compress=http_compress,
+            cloud_id=cloud_id,
+            api_key=api_key,
+            opaque_id=opaque_id,
+            **kwargs
+        )
         if http_auth is not None:
             if isinstance(http_auth, (tuple, list)):
                 http_auth = ":".join(http_auth)
             self.headers.update(urllib3.make_headers(basic_auth=http_auth))
 
-        # update headers in lowercase to allow overriding of auth headers
-        if headers:
-            for k in headers:
-                self.headers[k.lower()] = headers[k]
-
-        if self.http_compress:
-            self.headers["accept-encoding"] = "gzip,deflate"
-
-        self.headers.setdefault("content-type", "application/json")
-        self.headers.setdefault("user-agent", self._get_default_user_agent())
-        if api_key is not None:
-            self.headers.setdefault('authorization', self._get_api_key_header_val(api_key))
         pool_class = urllib3.HTTPConnectionPool
         kw = {}
 
@@ -197,14 +186,13 @@ class Urllib3HttpConnection(Connection):
                 if ssl_show_warn:
                     warnings.warn(
                         "Connecting to %s using SSL with verify_certs=False is insecure."
-                        % host
+                        % self.host
                     )
                 if not ssl_show_warn:
                     urllib3.disable_warnings()
 
-
         self.pool = pool_class(
-            host, port=port, timeout=self.timeout, maxsize=maxsize, **kw
+            self.hostname, port=self.port, timeout=self.timeout, maxsize=maxsize, **kw
         )
 
     def perform_request(

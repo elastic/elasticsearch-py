@@ -2,7 +2,7 @@
 
 [source, python]
 ----
-client.search(
+resp = client.search(
     index="bank",
     body={
         "query": {
@@ -13,4 +13,5 @@ client.search(
         }
     },
 )
+print(resp)
 ----

@@ -2,14 +2,17 @@ from .utils import NamespacedClient, query_params, _make_path
 
 
 class CatClient(NamespacedClient):
-    @query_params("format", "h", "help", "local", "s", "v")
-    def aliases(self, name=None, params=None):
+    @query_params("expand_wildcards", "format", "h", "help", "local", "s", "v")
+    def aliases(self, name=None, params=None, headers=None):
         """
         Shows information about currently configured aliases to indices including
         filter and routing infos.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-alias.html>`_
 
         :arg name: A comma-separated list of alias names to return
+        :arg expand_wildcards: Whether to expand wildcard expression to
+            concrete indices that are open, closed or both.  Valid choices: open,
+            closed, hidden, none, all  Default: ['all']
         :arg format: a short version of the Accept header, e.g. json,
             yaml
         :arg h: Comma-separated list of column names to display
@@ -21,11 +24,11 @@ class CatClient(NamespacedClient):
         :arg v: Verbose mode. Display column headers
         """
         return self.transport.perform_request(
-            "GET", _make_path("_cat", "aliases", name), params=params
+            "GET", _make_path("_cat", "aliases", name), params=params, headers=headers
         )
 
     @query_params("bytes", "format", "h", "help", "local", "master_timeout", "s", "v")
-    def allocation(self, node_id=None, params=None):
+    def allocation(self, node_id=None, params=None, headers=None):
         """
         Provides a snapshot of how many shards are allocated to each data node and how
         much disk space they are using.
@@ -48,11 +51,14 @@ class CatClient(NamespacedClient):
         :arg v: Verbose mode. Display column headers
         """
         return self.transport.perform_request(
-            "GET", _make_path("_cat", "allocation", node_id), params=params
+            "GET",
+            _make_path("_cat", "allocation", node_id),
+            params=params,
+            headers=headers,
         )
 
     @query_params("format", "h", "help", "s", "v")
-    def count(self, index=None, params=None):
+    def count(self, index=None, params=None, headers=None):
         """
         Provides quick access to the document count of the entire cluster, or
         individual indices.
@@ -69,11 +75,11 @@ class CatClient(NamespacedClient):
         :arg v: Verbose mode. Display column headers
         """
         return self.transport.perform_request(
-            "GET", _make_path("_cat", "count", index), params=params
+            "GET", _make_path("_cat", "count", index), params=params, headers=headers
         )
 
     @query_params("format", "h", "help", "s", "time", "ts", "v")
-    def health(self, params=None):
+    def health(self, params=None, headers=None):
         """
         Returns a concise representation of the cluster health.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-health.html>`_
@@ -90,10 +96,12 @@ class CatClient(NamespacedClient):
         :arg ts: Set to false to disable timestamping  Default: True
         :arg v: Verbose mode. Display column headers
         """
-        return self.transport.perform_request("GET", "/_cat/health", params=params)
+        return self.transport.perform_request(
+            "GET", "/_cat/health", params=params, headers=headers
+        )
 
     @query_params("help", "s")
-    def help(self, params=None):
+    def help(self, params=None, headers=None):
         """
         Returns help for the Cat APIs.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat.html>`_
@@ -102,10 +110,13 @@ class CatClient(NamespacedClient):
         :arg s: Comma-separated list of column names or column aliases
             to sort by
         """
-        return self.transport.perform_request("GET", "/_cat", params=params)
+        return self.transport.perform_request(
+            "GET", "/_cat", params=params, headers=headers
+        )
 
     @query_params(
         "bytes",
+        "expand_wildcards",
         "format",
         "h",
         "health",
@@ -118,7 +129,7 @@ class CatClient(NamespacedClient):
         "time",
         "v",
     )
-    def indices(self, index=None, params=None):
+    def indices(self, index=None, params=None, headers=None):
         """
         Returns information about indices: number of primaries and replicas, document
         counts, disk size, ...
@@ -127,7 +138,10 @@ class CatClient(NamespacedClient):
         :arg index: A comma-separated list of index names to limit the
             returned information
         :arg bytes: The unit in which to display byte values  Valid
-            choices: b, k, m, g
+            choices: b, k, kb, m, mb, g, gb, t, tb, p, pb
+        :arg expand_wildcards: Whether to expand wildcard expression to
+            concrete indices that are open, closed or both.  Valid choices: open,
+            closed, hidden, none, all  Default: all
         :arg format: a short version of the Accept header, e.g. json,
             yaml
         :arg h: Comma-separated list of column names to display
@@ -146,16 +160,15 @@ class CatClient(NamespacedClient):
         :arg s: Comma-separated list of column names or column aliases
             to sort by
         :arg time: The unit in which to display time values  Valid
-            choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
-            (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
+            choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
         return self.transport.perform_request(
-            "GET", _make_path("_cat", "indices", index), params=params
+            "GET", _make_path("_cat", "indices", index), params=params, headers=headers
         )
 
     @query_params("format", "h", "help", "local", "master_timeout", "s", "v")
-    def master(self, params=None):
+    def master(self, params=None, headers=None):
         """
         Returns information about the master node.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-master.html>`_
@@ -172,21 +185,14 @@ class CatClient(NamespacedClient):
             to sort by
         :arg v: Verbose mode. Display column headers
         """
-        return self.transport.perform_request("GET", "/_cat/master", params=params)
+        return self.transport.perform_request(
+            "GET", "/_cat/master", params=params, headers=headers
+        )
 
     @query_params(
-        "bytes",
-        "format",
-        "full_id",
-        "h",
-        "help",
-        "local",
-        "master_timeout",
-        "s",
-        "time",
-        "v",
+        "bytes", "format", "full_id", "h", "help", "master_timeout", "s", "time", "v"
     )
-    def nodes(self, params=None):
+    def nodes(self, params=None, headers=None):
         """
         Returns basic statistics about performance of cluster nodes.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-nodes.html>`_
@@ -199,23 +205,22 @@ class CatClient(NamespacedClient):
             version (default: false)
         :arg h: Comma-separated list of column names to display
         :arg help: Return help information
-        :arg local: Return local information, do not retrieve the state
-            from master node (default: false)
         :arg master_timeout: Explicit operation timeout for connection
             to master node
         :arg s: Comma-separated list of column names or column aliases
             to sort by
         :arg time: The unit in which to display time values  Valid
-            choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
-            (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
+            choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
-        return self.transport.perform_request("GET", "/_cat/nodes", params=params)
+        return self.transport.perform_request(
+            "GET", "/_cat/nodes", params=params, headers=headers
+        )
 
     @query_params(
         "active_only", "bytes", "detailed", "format", "h", "help", "s", "time", "v"
     )
-    def recovery(self, index=None, params=None):
+    def recovery(self, index=None, params=None, headers=None):
         """
         Returns information about index shard recoveries, both on-going completed.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-recovery.html>`_
@@ -237,18 +242,17 @@ class CatClient(NamespacedClient):
         :arg s: Comma-separated list of column names or column aliases
             to sort by
         :arg time: The unit in which to display time values  Valid
-            choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
-            (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
+            choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
         return self.transport.perform_request(
-            "GET", _make_path("_cat", "recovery", index), params=params
+            "GET", _make_path("_cat", "recovery", index), params=params, headers=headers
         )
 
     @query_params(
         "bytes", "format", "h", "help", "local", "master_timeout", "s", "time", "v"
     )
-    def shards(self, index=None, params=None):
+    def shards(self, index=None, params=None, headers=None):
         """
         Provides a detailed view of shard allocation on nodes.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-shards.html>`_
@@ -268,16 +272,15 @@ class CatClient(NamespacedClient):
         :arg s: Comma-separated list of column names or column aliases
             to sort by
         :arg time: The unit in which to display time values  Valid
-            choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
-            (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
+            choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
         return self.transport.perform_request(
-            "GET", _make_path("_cat", "shards", index), params=params
+            "GET", _make_path("_cat", "shards", index), params=params, headers=headers
         )
 
     @query_params("bytes", "format", "h", "help", "s", "v")
-    def segments(self, index=None, params=None):
+    def segments(self, index=None, params=None, headers=None):
         """
         Provides low-level information about the segments in the shards of an index.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-segments.html>`_
@@ -295,11 +298,11 @@ class CatClient(NamespacedClient):
         :arg v: Verbose mode. Display column headers
         """
         return self.transport.perform_request(
-            "GET", _make_path("_cat", "segments", index), params=params
+            "GET", _make_path("_cat", "segments", index), params=params, headers=headers
         )
 
     @query_params("format", "h", "help", "local", "master_timeout", "s", "time", "v")
-    def pending_tasks(self, params=None):
+    def pending_tasks(self, params=None, headers=None):
         """
         Returns a concise representation of the cluster pending tasks.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-pending-tasks.html>`_
@@ -315,16 +318,15 @@ class CatClient(NamespacedClient):
         :arg s: Comma-separated list of column names or column aliases
             to sort by
         :arg time: The unit in which to display time values  Valid
-            choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
-            (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
+            choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
         return self.transport.perform_request(
-            "GET", "/_cat/pending_tasks", params=params
+            "GET", "/_cat/pending_tasks", params=params, headers=headers
         )
 
     @query_params("format", "h", "help", "local", "master_timeout", "s", "size", "v")
-    def thread_pool(self, thread_pool_patterns=None, params=None):
+    def thread_pool(self, thread_pool_patterns=None, params=None, headers=None):
         """
         Returns cluster-wide thread pool statistics per node. By default the active,
         queue and rejected statistics are returned for all thread pools.
@@ -350,10 +352,11 @@ class CatClient(NamespacedClient):
             "GET",
             _make_path("_cat", "thread_pool", thread_pool_patterns),
             params=params,
+            headers=headers,
         )
 
     @query_params("bytes", "format", "h", "help", "s", "v")
-    def fielddata(self, fields=None, params=None):
+    def fielddata(self, fields=None, params=None, headers=None):
         """
         Shows how much heap memory is currently being used by fielddata on every data
         node in the cluster.
@@ -374,11 +377,14 @@ class CatClient(NamespacedClient):
         :arg v: Verbose mode. Display column headers
         """
         return self.transport.perform_request(
-            "GET", _make_path("_cat", "fielddata", fields), params=params
+            "GET",
+            _make_path("_cat", "fielddata", fields),
+            params=params,
+            headers=headers,
         )
 
     @query_params("format", "h", "help", "local", "master_timeout", "s", "v")
-    def plugins(self, params=None):
+    def plugins(self, params=None, headers=None):
         """
         Returns information about installed plugins across nodes node.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-plugins.html>`_
@@ -395,10 +401,12 @@ class CatClient(NamespacedClient):
             to sort by
         :arg v: Verbose mode. Display column headers
         """
-        return self.transport.perform_request("GET", "/_cat/plugins", params=params)
+        return self.transport.perform_request(
+            "GET", "/_cat/plugins", params=params, headers=headers
+        )
 
     @query_params("format", "h", "help", "local", "master_timeout", "s", "v")
-    def nodeattrs(self, params=None):
+    def nodeattrs(self, params=None, headers=None):
         """
         Returns information about custom node attributes.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-nodeattrs.html>`_
@@ -415,10 +423,12 @@ class CatClient(NamespacedClient):
             to sort by
         :arg v: Verbose mode. Display column headers
         """
-        return self.transport.perform_request("GET", "/_cat/nodeattrs", params=params)
+        return self.transport.perform_request(
+            "GET", "/_cat/nodeattrs", params=params, headers=headers
+        )
 
     @query_params("format", "h", "help", "local", "master_timeout", "s", "v")
-    def repositories(self, params=None):
+    def repositories(self, params=None, headers=None):
         """
         Returns information about snapshot repositories registered in the cluster.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-repositories.html>`_
@@ -436,13 +446,13 @@ class CatClient(NamespacedClient):
         :arg v: Verbose mode. Display column headers
         """
         return self.transport.perform_request(
-            "GET", "/_cat/repositories", params=params
+            "GET", "/_cat/repositories", params=params, headers=headers
         )
 
     @query_params(
         "format", "h", "help", "ignore_unavailable", "master_timeout", "s", "time", "v"
     )
-    def snapshots(self, repository=None, params=None):
+    def snapshots(self, repository=None, params=None, headers=None):
         """
         Returns all snapshots in a specific repository.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-snapshots.html>`_
@@ -460,12 +470,14 @@ class CatClient(NamespacedClient):
         :arg s: Comma-separated list of column names or column aliases
             to sort by
         :arg time: The unit in which to display time values  Valid
-            choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
-            (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
+            choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
         return self.transport.perform_request(
-            "GET", _make_path("_cat", "snapshots", repository), params=params
+            "GET",
+            _make_path("_cat", "snapshots", repository),
+            params=params,
+            headers=headers,
         )
 
     @query_params(
@@ -480,7 +492,7 @@ class CatClient(NamespacedClient):
         "time",
         "v",
     )
-    def tasks(self, params=None):
+    def tasks(self, params=None, headers=None):
         """
         Returns information about the tasks currently executing on one or more nodes in
         the cluster.
@@ -502,14 +514,15 @@ class CatClient(NamespacedClient):
         :arg s: Comma-separated list of column names or column aliases
             to sort by
         :arg time: The unit in which to display time values  Valid
-            choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
-            (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
+            choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
-        return self.transport.perform_request("GET", "/_cat/tasks", params=params)
+        return self.transport.perform_request(
+            "GET", "/_cat/tasks", params=params, headers=headers
+        )
 
     @query_params("format", "h", "help", "local", "master_timeout", "s", "v")
-    def templates(self, name=None, params=None):
+    def templates(self, name=None, params=None, headers=None):
         """
         Returns information about existing templates.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-templates.html>`_
@@ -528,5 +541,137 @@ class CatClient(NamespacedClient):
         :arg v: Verbose mode. Display column headers
         """
         return self.transport.perform_request(
-            "GET", _make_path("_cat", "templates", name), params=params
+            "GET", _make_path("_cat", "templates", name), params=params, headers=headers
+        )
+
+    @query_params("allow_no_match", "bytes", "format", "h", "help", "s", "time", "v")
+    def ml_data_frame_analytics(self, id=None, params=None, headers=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-dfanalytics.html>`_
+
+        :arg id: The ID of the data frame analytics to fetch
+        :arg allow_no_match: Whether to ignore if a wildcard expression
+            matches no configs. (This includes `_all` string or when no configs have
+            been specified)
+        :arg bytes: The unit in which to display byte values  Valid
+            choices: b, k, kb, m, mb, g, gb, t, tb, p, pb
+        :arg format: a short version of the Accept header, e.g. json,
+            yaml
+        :arg h: Comma-separated list of column names to display
+        :arg help: Return help information
+        :arg s: Comma-separated list of column names or column aliases
+            to sort by
+        :arg time: The unit in which to display time values  Valid
+            choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
+            (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
+        :arg v: Verbose mode. Display column headers
+        """
+        return self.transport.perform_request(
+            "GET",
+            _make_path("_cat", "ml", "data_frame", "analytics", id),
+            params=params,
+            headers=headers,
+        )
+
+    @query_params("allow_no_datafeeds", "format", "h", "help", "s", "time", "v")
+    def ml_datafeeds(self, datafeed_id=None, params=None, headers=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-datafeeds.html>`_
+
+        :arg datafeed_id: The ID of the datafeeds stats to fetch
+        :arg allow_no_datafeeds: Whether to ignore if a wildcard
+            expression matches no datafeeds. (This includes `_all` string or when no
+            datafeeds have been specified)
+        :arg format: a short version of the Accept header, e.g. json,
+            yaml
+        :arg h: Comma-separated list of column names to display
+        :arg help: Return help information
+        :arg s: Comma-separated list of column names or column aliases
+            to sort by
+        :arg time: The unit in which to display time values  Valid
+            choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
+            (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
+        :arg v: Verbose mode. Display column headers
+        """
+        return self.transport.perform_request(
+            "GET",
+            _make_path("_cat", "ml", "datafeeds", datafeed_id),
+            params=params,
+            headers=headers,
+        )
+
+    @query_params("allow_no_jobs", "bytes", "format", "h", "help", "s", "time", "v")
+    def ml_jobs(self, job_id=None, params=None, headers=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-anomaly-detectors.html>`_
+
+        :arg job_id: The ID of the jobs stats to fetch
+        :arg allow_no_jobs: Whether to ignore if a wildcard expression
+            matches no jobs. (This includes `_all` string or when no jobs have been
+            specified)
+        :arg bytes: The unit in which to display byte values  Valid
+            choices: b, k, kb, m, mb, g, gb, t, tb, p, pb
+        :arg format: a short version of the Accept header, e.g. json,
+            yaml
+        :arg h: Comma-separated list of column names to display
+        :arg help: Return help information
+        :arg s: Comma-separated list of column names or column aliases
+            to sort by
+        :arg time: The unit in which to display time values  Valid
+            choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
+            (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
+        :arg v: Verbose mode. Display column headers
+        """
+        return self.transport.perform_request(
+            "GET",
+            _make_path("_cat", "ml", "anomaly_detectors", job_id),
+            params=params,
+            headers=headers,
+        )
+
+    @query_params(
+        "allow_no_match",
+        "bytes",
+        "format",
+        "from_",
+        "h",
+        "help",
+        "s",
+        "size",
+        "time",
+        "v",
+    )
+    def ml_trained_models(self, model_id=None, params=None, headers=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-trained-model.html>`_
+
+        :arg model_id: The ID of the trained models stats to fetch
+        :arg allow_no_match: Whether to ignore if a wildcard expression
+            matches no trained models. (This includes `_all` string or when no
+            trained models have been specified)  Default: True
+        :arg bytes: The unit in which to display byte values  Valid
+            choices: b, k, kb, m, mb, g, gb, t, tb, p, pb
+        :arg format: a short version of the Accept header, e.g. json,
+            yaml
+        :arg from_: skips a number of trained models
+        :arg h: Comma-separated list of column names to display
+        :arg help: Return help information
+        :arg s: Comma-separated list of column names or column aliases
+            to sort by
+        :arg size: specifies a max number of trained models to get
+            Default: 100
+        :arg time: The unit in which to display time values  Valid
+            choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
+            (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
+        :arg v: Verbose mode. Display column headers
+        """
+        # from is a reserved word so it cannot be used, use from_ instead
+        if "from_" in params:
+            params["from"] = params.pop("from_")
+
+        return self.transport.perform_request(
+            "GET",
+            _make_path("_cat", "ml", "trained_models", model_id),
+            params=params,
+            headers=headers,
         )

@@ -1,0 +1,10 @@
+// docs/reindex.asciidoc:787
+
+[source, python]
+----
+resp = client.get(index="metricbeat-2016.05.30-1", id="1")
+print(resp)
+
+resp = client.get(index="metricbeat-2016.05.31-1", id="1")
+print(resp)
+----

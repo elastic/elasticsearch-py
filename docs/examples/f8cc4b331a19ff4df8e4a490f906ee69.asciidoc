@@ -2,5 +2,6 @@
 
 [source, python]
 ----
-client.cat.health(v=True)
+resp = client.cat.health(v=True)
+print(resp)
 ----

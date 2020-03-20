@@ -1,0 +1,7 @@
+// indices/put-mapping.asciidoc:553
+
+[source, python]
+----
+resp = client.indices.get_mapping(index="my_index")
+print(resp)
+----

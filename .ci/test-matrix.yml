@@ -1,0 +1,20 @@
+ELASTICSEARCH_VERSION:
+  - 8.0.0-SNAPSHOT
+
+TEST_SUITE:
+  - oss
+  - xpack
+
+PYTHON_VERSION:
+  - 2.7
+  - 3.4
+  - 3.5
+  - 3.6
+  - 3.7
+  - 3.8
+
+PYTHON_CONNECTION_CLASS:
+  - Urllib3HttpConnection
+  - RequestsHttpConnection
+
+exclude: ~

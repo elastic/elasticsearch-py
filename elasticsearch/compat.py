@@ -3,7 +3,7 @@ import sys
 PY2 = sys.version_info[0] == 2
 
 if PY2:
-    string_types = (basestring,)
+    string_types = (basestring,)  # noqa: F821
     from urllib import quote_plus, quote, urlencode, unquote
     from urlparse import urlparse
     from itertools import imap as map
@@ -14,3 +14,14 @@ else:
 
     map = map
     from queue import Queue
+
+__all__ = [
+    "string_types",
+    "quote_plus",
+    "quote",
+    "urlencode",
+    "unquote",
+    "urlparse",
+    "map",
+    "Queue",
+]

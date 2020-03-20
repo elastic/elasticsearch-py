@@ -3,7 +3,7 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 class IlmClient(NamespacedClient):
     @query_params()
-    def delete_lifecycle(self, policy, params=None):
+    def delete_lifecycle(self, policy, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-delete-lifecycle.html>`_
 
@@ -13,11 +13,14 @@ class IlmClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'policy'.")
 
         return self.transport.perform_request(
-            "DELETE", _make_path("_ilm", "policy", policy), params=params
+            "DELETE",
+            _make_path("_ilm", "policy", policy),
+            params=params,
+            headers=headers,
         )
 
     @query_params("only_errors", "only_managed")
-    def explain_lifecycle(self, index, params=None):
+    def explain_lifecycle(self, index, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-explain-lifecycle.html>`_
 
@@ -31,30 +34,32 @@ class IlmClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'index'.")
 
         return self.transport.perform_request(
-            "GET", _make_path(index, "_ilm", "explain"), params=params
+            "GET", _make_path(index, "_ilm", "explain"), params=params, headers=headers
         )
 
     @query_params()
-    def get_lifecycle(self, policy=None, params=None):
+    def get_lifecycle(self, policy=None, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-get-lifecycle.html>`_
 
         :arg policy: The name of the index lifecycle policy
         """
         return self.transport.perform_request(
-            "GET", _make_path("_ilm", "policy", policy), params=params
+            "GET", _make_path("_ilm", "policy", policy), params=params, headers=headers
         )
 
     @query_params()
-    def get_status(self, params=None):
+    def get_status(self, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-get-status.html>`_
 
         """
-        return self.transport.perform_request("GET", "/_ilm/status", params=params)
+        return self.transport.perform_request(
+            "GET", "/_ilm/status", params=params, headers=headers
+        )
 
     @query_params()
-    def move_to_step(self, index, body=None, params=None):
+    def move_to_step(self, index, body=None, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-move-to-step.html>`_
 
@@ -66,11 +71,15 @@ class IlmClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'index'.")
 
         return self.transport.perform_request(
-            "POST", _make_path("_ilm", "move", index), params=params, body=body
+            "POST",
+            _make_path("_ilm", "move", index),
+            params=params,
+            headers=headers,
+            body=body,
         )
 
     @query_params()
-    def put_lifecycle(self, policy, body=None, params=None):
+    def put_lifecycle(self, policy, body=None, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-put-lifecycle.html>`_
 
@@ -81,11 +90,15 @@ class IlmClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'policy'.")
 
         return self.transport.perform_request(
-            "PUT", _make_path("_ilm", "policy", policy), params=params, body=body
+            "PUT",
+            _make_path("_ilm", "policy", policy),
+            params=params,
+            headers=headers,
+            body=body,
         )
 
     @query_params()
-    def remove_policy(self, index, params=None):
+    def remove_policy(self, index, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-remove-policy.html>`_
 
@@ -95,11 +108,11 @@ class IlmClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'index'.")
 
         return self.transport.perform_request(
-            "POST", _make_path(index, "_ilm", "remove"), params=params
+            "POST", _make_path(index, "_ilm", "remove"), params=params, headers=headers
         )
 
     @query_params()
-    def retry(self, index, params=None):
+    def retry(self, index, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-retry-policy.html>`_
 
@@ -110,21 +123,25 @@ class IlmClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'index'.")
 
         return self.transport.perform_request(
-            "POST", _make_path(index, "_ilm", "retry"), params=params
+            "POST", _make_path(index, "_ilm", "retry"), params=params, headers=headers
         )
 
     @query_params()
-    def start(self, params=None):
+    def start(self, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-start.html>`_
 
         """
-        return self.transport.perform_request("POST", "/_ilm/start", params=params)
+        return self.transport.perform_request(
+            "POST", "/_ilm/start", params=params, headers=headers
+        )
 
     @query_params()
-    def stop(self, params=None):
+    def stop(self, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-stop.html>`_
 
         """
-        return self.transport.perform_request("POST", "/_ilm/stop", params=params)
+        return self.transport.perform_request(
+            "POST", "/_ilm/stop", params=params, headers=headers
+        )

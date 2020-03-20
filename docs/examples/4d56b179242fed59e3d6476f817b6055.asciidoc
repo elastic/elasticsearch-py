@@ -1,0 +1,15 @@
+// indices/create-index.asciidoc:143
+
+[source, python]
+----
+resp = client.indices.create(
+    index="test",
+    body={
+        "aliases": {
+            "alias_1": {},
+            "alias_2": {"filter": {"term": {"user": "kimchy"}}, "routing": "kimchy"},
+        }
+    },
+)
+print(resp)
+----

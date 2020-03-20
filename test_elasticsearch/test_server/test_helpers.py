@@ -71,15 +71,9 @@ class TestStreamingBulk(ElasticsearchTestCase):
         self.client.index(index="i", id=45, body={})
         self.client.index(index="i", id=42, body={})
         docs = [
-            {"_index": "i", "_type": "_doc", "_id": 47, "f": "v"},
-            {"_op_type": "delete", "_index": "i", "_type": "_doc", "_id": 45},
-            {
-                "_op_type": "update",
-                "_index": "i",
-                "_type": "_doc",
-                "_id": 42,
-                "doc": {"answer": 42},
-            },
+            {"_index": "i", "_id": 47, "f": "v"},
+            {"_op_type": "delete", "_index": "i", "_id": 45},
+            {"_op_type": "update", "_index": "i", "_id": 42, "doc": {"answer": 42}},
         ]
         for ok, item in helpers.streaming_bulk(self.client, docs):
             self.assertTrue(ok)
@@ -91,9 +85,9 @@ class TestStreamingBulk(ElasticsearchTestCase):
     def test_transport_error_can_becaught(self):
         failing_client = FailingBulkClient(self.client)
         docs = [
-            {"_index": "i", "_type": "_doc", "_id": 47, "f": "v"},
-            {"_index": "i", "_type": "_doc", "_id": 45, "f": "v"},
-            {"_index": "i", "_type": "_doc", "_id": 42, "f": "v"},
+            {"_index": "i", "_id": 47, "f": "v"},
+            {"_index": "i", "_id": 45, "f": "v"},
+            {"_index": "i", "_id": 42, "f": "v"},
         ]
 
         results = list(
@@ -115,7 +109,6 @@ class TestStreamingBulk(ElasticsearchTestCase):
             {
                 "index": {
                     "_index": "i",
-                    "_type": "_doc",
                     "_id": 45,
                     "data": {"f": "v"},
                     "error": "TransportError(599, 'Error!')",
@@ -130,9 +123,9 @@ class TestStreamingBulk(ElasticsearchTestCase):
             self.client, fail_with=TransportError(429, "Rejected!", {})
         )
         docs = [
-            {"_index": "i", "_type": "_doc", "_id": 47, "f": "v"},
-            {"_index": "i", "_type": "_doc", "_id": 45, "f": "v"},
-            {"_index": "i", "_type": "_doc", "_id": 42, "f": "v"},
+            {"_index": "i", "_id": 47, "f": "v"},
+            {"_index": "i", "_id": 45, "f": "v"},
+            {"_index": "i", "_id": 42, "f": "v"},
         ]
         results = list(
             helpers.streaming_bulk(
@@ -158,9 +151,9 @@ class TestStreamingBulk(ElasticsearchTestCase):
         )
 
         docs = [
-            {"_index": "i", "_type": "_doc", "_id": 47, "f": "v"},
-            {"_index": "i", "_type": "_doc", "_id": 45, "f": "v"},
-            {"_index": "i", "_type": "_doc", "_id": 42, "f": "v"},
+            {"_index": "i", "_id": 47, "f": "v"},
+            {"_index": "i", "_id": 45, "f": "v"},
+            {"_index": "i", "_id": 42, "f": "v"},
         ]
         results = list(
             helpers.streaming_bulk(
@@ -260,7 +253,6 @@ class TestBulk(ElasticsearchTestCase):
         self.assertEquals(1, len(failed))
         error = failed[0]
         self.assertEquals("42", error["index"]["_id"])
-        self.assertEquals("_doc", error["index"]["_type"])
         self.assertEquals("i", error["index"]["_index"])
         print(error["index"]["error"])
         self.assertTrue(
@@ -329,7 +321,7 @@ class TestScan(ElasticsearchTestCase):
     def test_order_can_be_preserved(self):
         bulk = []
         for x in range(100):
-            bulk.append({"index": {"_index": "test_index", "_type": "_doc", "_id": x}})
+            bulk.append({"index": {"_index": "test_index", "_id": x}})
             bulk.append({"answer": x, "correct": x == 42})
         self.client.bulk(bulk, refresh=True)
 
@@ -349,7 +341,7 @@ class TestScan(ElasticsearchTestCase):
     def test_all_documents_are_read(self):
         bulk = []
         for x in range(100):
-            bulk.append({"index": {"_index": "test_index", "_type": "_doc", "_id": x}})
+            bulk.append({"index": {"_index": "test_index", "_id": x}})
             bulk.append({"answer": x, "correct": x == 42})
         self.client.bulk(bulk, refresh=True)
 
@@ -362,7 +354,7 @@ class TestScan(ElasticsearchTestCase):
     def test_scroll_error(self):
         bulk = []
         for x in range(4):
-            bulk.append({"index": {"_index": "test_index", "_type": "_doc"}})
+            bulk.append({"index": {"_index": "test_index"}})
             bulk.append({"value": x})
         self.client.bulk(bulk, refresh=True)
 
@@ -433,7 +425,7 @@ class TestScan(ElasticsearchTestCase):
     def test_logger(self, logger_mock):
         bulk = []
         for x in range(4):
-            bulk.append({"index": {"_index": "test_index", "_type": "_doc"}})
+            bulk.append({"index": {"_index": "test_index"}})
             bulk.append({"value": x})
         self.client.bulk(bulk, refresh=True)
 
@@ -468,7 +460,7 @@ class TestScan(ElasticsearchTestCase):
     def test_clear_scroll(self):
         bulk = []
         for x in range(4):
-            bulk.append({"index": {"_index": "test_index", "_type": "_doc"}})
+            bulk.append({"index": {"_index": "test_index"}})
             bulk.append({"value": x})
         self.client.bulk(bulk, refresh=True)
 
@@ -498,7 +490,7 @@ class TestReindex(ElasticsearchTestCase):
         super(TestReindex, self).setUp()
         bulk = []
         for x in range(100):
-            bulk.append({"index": {"_index": "test_index", "_type": "_doc", "_id": x}})
+            bulk.append({"index": {"_index": "test_index", "_id": x}})
             bulk.append(
                 {
                     "answer": x,
@@ -603,7 +595,6 @@ class TestParentChildReindex(ElasticsearchTestCase):
                 "_primary_term": 1,
                 "_seq_no": 0,
                 "_source": {"question_answer": "question"},
-                "_type": "_doc",
                 "_version": 1,
                 "found": True,
             },
@@ -621,7 +612,6 @@ class TestParentChildReindex(ElasticsearchTestCase):
                     "some": "data",
                     "question_answer": {"name": "answer", "parent": 42},
                 },
-                "_type": "_doc",
                 "_version": 1,
                 "found": True,
             },

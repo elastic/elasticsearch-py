@@ -29,7 +29,7 @@ class ConnectionSelector(object):
 
     Example of where this would be useful is a zone-aware selector that would
     only select connections from it's own zones and only fall back to other
-    connections where there would be none in it's zones.
+    connections where there would be none in its zones.
     """
 
     def __init__(self, opts):
@@ -150,7 +150,10 @@ class ConnectionPool(object):
         try:
             self.connections.remove(connection)
         except ValueError:
-            logger.info("Attempted to remove %r, but it does not exist in the connection pool.", connection)
+            logger.info(
+                "Attempted to remove %r, but it does not exist in the connection pool.",
+                connection,
+            )
             # connection not alive or another thread marked it already, ignore
             return
         else:

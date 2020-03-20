@@ -1,0 +1,55 @@
+---
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v1
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+      - name: Install dependencies
+        run: |
+          python3.7 -m pip install setuptools wheel twine
+      - name: Build packages
+        run: |
+          python3.7 setup.py sdist bdist_wheel
+      - name: Check packages
+        run: |
+          set -exo pipefail;
+          if [ $(python3.7 -m twine check dist/* | grep -c 'warning') != 0 ]; then exit 1; fi
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v1
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+      - name: Install dependencies
+        run: |
+          python3.7 -m pip install tox
+      - name: Lint the code
+        run: tox -e lint
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v1
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+      - name: Install dependencies
+        run: |
+          python3.7 -m pip install tox
+      - name: Build the docs
+        run: tox -e docs

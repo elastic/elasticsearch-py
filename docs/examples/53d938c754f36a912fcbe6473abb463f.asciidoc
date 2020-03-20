@@ -1,0 +1,9 @@
+// indices/put-mapping.asciidoc:465
+
+[source, python]
+----
+resp = client.reindex(
+    body={"source": {"index": "users"}, "dest": {"index": "new_users"}},
+)
+print(resp)
+----

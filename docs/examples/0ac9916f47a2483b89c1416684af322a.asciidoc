@@ -1,0 +1,19 @@
+// query-dsl/match-query.asciidoc:241
+
+[source, python]
+----
+resp = client.search(
+    body={
+        "query": {
+            "match": {
+                "message": {
+                    "query": "to be or not to be",
+                    "operator": "and",
+                    "zero_terms_query": "all",
+                }
+            }
+        }
+    },
+)
+print(resp)
+----
