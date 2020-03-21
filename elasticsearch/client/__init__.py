@@ -434,8 +434,6 @@ class Elasticsearch(object):
             the returned _source field, can be overridden on each sub-request
         :arg _source_includes: Default list of fields to extract and
             return from the _source field, can be overridden on each sub-request
-        :arg doc_type: Default document type for items which don't
-            provide one
         :arg pipeline: The pipeline id to preprocess incoming documents
             with
         :arg refresh: If `true` then refresh the affected shards to make
