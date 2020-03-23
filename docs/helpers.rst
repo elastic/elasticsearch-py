@@ -91,7 +91,7 @@ document is like ``{"word": "<myword>"}``.
 
 
 For a more complete and complex example please take a look at
-https://github.com/elastic/elasticsearch-py/blob/master/example/load.py#L76-L130
+https://github.com/elastic/elasticsearch-py/blob/master/examples/bulk-ingest
 
 The :meth:`~elasticsearch.Elasticsearch.parallel_bulk` api is a wrapper around the :meth:`~elasticsearch.Elasticsearch.bulk` api to provide threading. :meth:`~elasticsearch.Elasticsearch.parallel_bulk` returns a generator which must be consumed to produce results.
 
