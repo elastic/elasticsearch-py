@@ -13,6 +13,7 @@ with open(join(dirname(__file__), "README")) as f:
 install_requires = ["urllib3>=1.21.1"]
 tests_require = [
     "requests>=2.0.0, <3.0.0",
+    "pycurl>=7.43",
     "nose",
     "coverage",
     "mock",
@@ -61,5 +62,6 @@ setup(
         "develop": tests_require + docs_require + generate_require,
         "docs": docs_require,
         "requests": ["requests>=2.4.0, <3.0.0"],
+        "pycurl": ["pycurl>=7.43.0.2"],
     },
 )

@@ -25,5 +25,10 @@ from .client import Elasticsearch
 from .transport import Transport
 from .connection_pool import ConnectionPool, ConnectionSelector, RoundRobinSelector
 from .serializer import JSONSerializer
-from .connection import Connection, RequestsHttpConnection, Urllib3HttpConnection
+from .connection import (
+    Connection,
+    RequestsHttpConnection,
+    Urllib3HttpConnection,
+    PyCurlHttpConnection,
+)
 from .exceptions import *
