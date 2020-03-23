@@ -12,7 +12,6 @@ class IndicesClient(NamespacedClient):
         :arg body: Define analyzer/tokenizer parameters and the text on
             which the analysis should be performed
         :arg index: The name of the index to scope the operation
-        :arg index: The name of the index to scope the operation
         """
         return self.transport.perform_request(
             "POST",
@@ -514,7 +513,7 @@ class IndicesClient(NamespacedClient):
             "DELETE", _make_path(index, "_alias", name), params=params, headers=headers
         )
 
-    @query_params("create", "flat_settings", "master_timeout", "order", "timeout")
+    @query_params("create", "master_timeout", "order")
     def put_template(self, name, body, params=None, headers=None):
         """
         Creates or updates an index template.
@@ -524,13 +523,10 @@ class IndicesClient(NamespacedClient):
         :arg body: The template definition
         :arg create: Whether the index template should only be added if
             new or can also replace an existing one
-        :arg flat_settings: Return settings in flat format (default:
-            false)
         :arg master_timeout: Specify timeout for connection to master
         :arg order: The order for this template when merging multiple
             matching ones (higher numbers are merged later, overriding the lower
             numbers)
-        :arg timeout: Explicit operation timeout
         """
         for param in (name, body):
             if param in SKIP_IN_PATH:
@@ -784,8 +780,6 @@ class IndicesClient(NamespacedClient):
             using the `fielddata` parameter (default: all)
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
-        :arg index: A comma-separated list of index name to limit the
-            operation
         :arg query: Clear query caches
         :arg request: Clear request cache
         """
@@ -1195,4 +1189,52 @@ class IndicesClient(NamespacedClient):
             params=params,
             headers=headers,
             body=body,
+        )
+
+    @query_params()
+    def create_data_stream(self, name, body, params=None, headers=None):
+        """
+        Creates or updates a data stream
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
+
+        :arg name: The name of the data stream
+        :arg body: The data stream definition
+        """
+        for param in (name, body):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
+
+        return self.transport.perform_request(
+            "PUT",
+            _make_path("_data_stream", name),
+            params=params,
+            headers=headers,
+            body=body,
+        )
+
+    @query_params()
+    def delete_data_stream(self, name, params=None, headers=None):
+        """
+        Deletes a data stream.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
+
+        :arg name: The name of the data stream
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'name'.")
+
+        return self.transport.perform_request(
+            "DELETE", _make_path("_data_stream", name), params=params, headers=headers
+        )
+
+    @query_params()
+    def get_data_streams(self, name=None, params=None, headers=None):
+        """
+        Returns data streams.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
+
+        :arg name: The comma separated names of data streams
+        """
+        return self.transport.perform_request(
+            "GET", _make_path("_data_streams", name), params=params, headers=headers
         )

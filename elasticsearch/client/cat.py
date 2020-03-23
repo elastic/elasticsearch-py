@@ -237,8 +237,6 @@ class CatClient(NamespacedClient):
             yaml
         :arg h: Comma-separated list of column names to display
         :arg help: Return help information
-        :arg index: Comma-separated list or wildcard expression of index
-            names to limit the returned information
         :arg s: Comma-separated list of column names or column aliases
             to sort by
         :arg time: The unit in which to display time values  Valid
@@ -362,12 +360,10 @@ class CatClient(NamespacedClient):
         node in the cluster.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-fielddata.html>`_
 
-        :arg fields: A comma-separated list of fields to return the
-            fielddata size
-        :arg bytes: The unit in which to display byte values  Valid
-            choices: b, k, kb, m, mb, g, gb, t, tb, p, pb
         :arg fields: A comma-separated list of fields to return in the
             output
+        :arg bytes: The unit in which to display byte values  Valid
+            choices: b, k, kb, m, mb, g, gb, t, tb, p, pb
         :arg format: a short version of the Accept header, e.g. json,
             yaml
         :arg h: Comma-separated list of column names to display

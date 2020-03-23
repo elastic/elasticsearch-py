@@ -164,11 +164,14 @@ class API:
     @property
     def params(self):
         parts = self.all_parts
+        params = self._def.get("params", {})
         return chain(
             ((p, parts[p]) for p in parts if parts[p]["required"]),
-            (("body", self.body), ) if self.body else (),
-            ((p, parts[p]) for p in parts if not parts[p]["required"]),
-            sorted(self._def.get("params", {}).items()),
+            (("body", self.body),) if self.body else (),
+            ((p, parts[p]) for p in parts
+             if not parts[p]["required"] and
+             p not in params),
+            sorted(params.items(), key=lambda x: (x[0] not in parts, x[0])),
         )
 
     @property

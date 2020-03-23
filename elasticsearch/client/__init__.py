@@ -434,8 +434,6 @@ class Elasticsearch(object):
             the returned _source field, can be overridden on each sub-request
         :arg _source_includes: Default list of fields to extract and
             return from the _source field, can be overridden on each sub-request
-        :arg doc_type: Default document type for items which don't
-            provide one
         :arg pipeline: The pipeline id to preprocess incoming documents
             with
         :arg refresh: If `true` then refresh the affected shards to make
@@ -1121,8 +1119,8 @@ class Elasticsearch(object):
             the number of shards the search request expands to exceeds the
             threshold. This filter roundtrip can limit the number of shards
             significantly if for instance a shard can not match any documents based
-            on it's rewrite method ie. if date filters are mandatory to match but
-            the shard bounds and the query are disjoint.  Default: 128
+            on its rewrite method ie. if date filters are mandatory to match but the
+            shard bounds and the query are disjoint.
         :arg rest_total_hits_as_int: Indicates whether hits.total should
             be rendered as an integer or an object in the rest search response
         :arg search_type: Search operation type  Valid choices:
@@ -1151,7 +1149,6 @@ class Elasticsearch(object):
 
         :arg id: Script ID
         :arg body: The document
-        :arg context: Script context
         :arg context: Context name to compile script against
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
@@ -1310,12 +1307,11 @@ class Elasticsearch(object):
 
         :arg body: The scroll ID if not passed by URL or query
             parameter.
-        :arg scroll_id: The scroll ID
+        :arg scroll_id: The scroll ID for scrolled search
         :arg rest_total_hits_as_int: Indicates whether hits.total should
             be rendered as an integer or an object in the rest search response
         :arg scroll: Specify how long a consistent view of the index
             should be maintained for scrolled search
-        :arg scroll_id: The scroll ID for scrolled search
         """
         if scroll_id in SKIP_IN_PATH and body in SKIP_IN_PATH:
             raise ValueError("You need to supply scroll_id or body.")
@@ -1430,8 +1426,8 @@ class Elasticsearch(object):
             the number of shards the search request expands to exceeds the
             threshold. This filter roundtrip can limit the number of shards
             significantly if for instance a shard can not match any documents based
-            on it's rewrite method ie. if date filters are mandatory to match but
-            the shard bounds and the query are disjoint.  Default: 128
+            on its rewrite method ie. if date filters are mandatory to match but the
+            shard bounds and the query are disjoint.
         :arg preference: Specify the node or shard the operation should
             be performed on (default: random)
         :arg q: Query in the Lucene query string syntax
