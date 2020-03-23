@@ -12,6 +12,8 @@ Changelog
   * Updated default setting of ``sniffing`` when using ``cloud_id`` to ``False``
   * Updated default port to ``443`` if ``cloud_id`` and no other port is defined
     on the client or within ``cloud_id``
+  * Updated ``GET`` HTTP requests that contain a body to ``POST`` where
+    the API allows this to fix proxies rejecting these requests.
   * Fix regression of ``client.cluster.state()`` where the default ``metric``
     should be set to ``"_all"`` if an index is given (See `#1143`_)
   * Fix regression of ``client.tasks.get()`` without a ``task_id``
