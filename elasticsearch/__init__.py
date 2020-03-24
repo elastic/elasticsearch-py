@@ -6,6 +6,7 @@ __version__ = VERSION
 __versionstr__ = ".".join(map(str, VERSION))
 
 import logging
+import warnings
 
 logger = logging.getLogger("elasticsearch")
 logger.addHandler(logging.NullHandler())
@@ -28,7 +29,10 @@ from .exceptions import (
     ConnectionTimeout,
     AuthenticationException,
     AuthorizationException,
+    ElasticsearchDeprecationWarning,
 )
+
+warnings.simplefilter("always", category=ElasticsearchDeprecationWarning, append=True)
 
 __all__ = [
     "Elasticsearch",
@@ -52,4 +56,5 @@ __all__ = [
     "ConnectionTimeout",
     "AuthenticationException",
     "AuthorizationException",
+    "ElasticsearchDeprecationWarning",
 ]
