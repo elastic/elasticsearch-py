@@ -136,7 +136,7 @@ class AsyncSearchClient(NamespacedClient):
             be performed on (default: random)
         :arg q: Query in the Lucene query string syntax
         :arg request_cache: Specify if request cache should be used for
-            this request or not, defaults to index level setting
+            this request or not, defaults to true
         :arg routing: A comma-separated list of specific routing values
         :arg search_type: Search operation type  Valid choices:
             query_then_fetch, dfs_query_then_fetch

@@ -200,7 +200,7 @@ class TransformClient(NamespacedClient):
     )
     def cat_transform(self, transform_id=None, params=None, headers=None):
         """
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-transforms.html>`_
 
         :arg transform_id: The id of the transform for which to get
             stats. '_all' or '*' implies all transforms
@@ -227,7 +227,7 @@ class TransformClient(NamespacedClient):
 
         return self.transport.perform_request(
             "GET",
-            _make_path("_cat", "transform", transform_id),
+            _make_path("_cat", "transforms", transform_id),
             params=params,
             headers=headers,
         )
