@@ -83,7 +83,7 @@ class JSONSerializer(object):
         if pd:
             if isinstance(data, pd.Series):
                 return data.tolist()
-            elif pd.isna(data):
+            elif hasattr(pd, "NA") and pd.isna(data):
                 return None
 
         raise TypeError("Unable to serialize %r (type: %s)" % (data, type(data)))

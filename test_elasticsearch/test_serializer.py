@@ -102,6 +102,8 @@ class TestJSONSerializer(TestCase):
         )
 
     def test_serializes_pandas_na(self):
+        if not hasattr(pd, "NA"):  # pandas.NA added in v1
+            raise SkipTest("pandas.NA required")
         self.assertEquals(
             '{"d":null}', JSONSerializer().dumps({"d": pd.NA}),
         )
