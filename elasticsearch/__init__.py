@@ -32,7 +32,9 @@ from .exceptions import (
     ElasticsearchDeprecationWarning,
 )
 
-warnings.simplefilter("always", category=ElasticsearchDeprecationWarning, append=True)
+# Only raise one warning per deprecation message so as not
+# to spam up the user if the same action is done multiple times.
+warnings.simplefilter("default", category=ElasticsearchDeprecationWarning, append=True)
 
 __all__ = [
     "Elasticsearch",

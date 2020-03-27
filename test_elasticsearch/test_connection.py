@@ -14,7 +14,6 @@ from elasticsearch.exceptions import (
     ConflictError,
     RequestError,
     NotFoundError,
-    ElasticsearchDeprecationWarning,
 )
 from elasticsearch.connection import (
     Connection,
@@ -89,7 +88,7 @@ class TestBaseConnection(TestCase):
             "8af7ee35420f458e903026b4064081f2.westeurope.azure.elastic-cloud.com",
         )
 
-    def test_no_warnings(self):
+    def test_empty_warnings(self):
         con = Connection()
         with warnings.catch_warnings(record=True) as w:
             con._raise_warnings(())
@@ -100,24 +99,23 @@ class TestBaseConnection(TestCase):
     def test_raises_warnings(self):
         con = Connection()
 
-        warnings.simplefilter("ignore", category=ElasticsearchDeprecationWarning)
         with warnings.catch_warnings(record=True) as warn:
             con._raise_warnings(['299 Elasticsearch-7.6.1-aa751 "this is deprecated"'])
 
-        self.assertEquals([str(w.message) for w in warn], [])
+        self.assertEquals([str(w.message) for w in warn], ["this is deprecated"])
 
-        warnings.simplefilter("always", category=ElasticsearchDeprecationWarning)
         with warnings.catch_warnings(record=True) as warn:
             con._raise_warnings(
                 [
-                    '299 Elasticsearch-7.6.1-aa751 "this is deprecated"',
-                    '299 Elasticsearch-7.6.1-aa751 "this is deprecated"',
+                    '299 Elasticsearch-7.6.1-aa751 "this is also deprecated"',
+                    '299 Elasticsearch-7.6.1-aa751 "this is also deprecated"',
+                    '299 Elasticsearch-7.6.1-aa751 "guess what? deprecated"',
                 ]
             )
 
         self.assertEquals(
             [str(w.message) for w in warn],
-            ["this is deprecated", "this is deprecated"],
+            ["this is also deprecated", "guess what? deprecated"],
         )
 
     def test_raises_warnings_when_folded(self):
