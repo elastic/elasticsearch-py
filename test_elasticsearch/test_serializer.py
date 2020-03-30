@@ -5,6 +5,9 @@ import uuid
 from datetime import datetime
 from decimal import Decimal
 
+import numpy as np
+import pandas as pd
+
 from elasticsearch.serializer import (
     JSONSerializer,
     Deserializer,
@@ -34,6 +37,86 @@ class TestJSONSerializer(TestCase):
             JSONSerializer().dumps(
                 {"d": uuid.UUID("00000000-0000-0000-0000-000000000003")}
             ),
+        )
+
+    def test_serializes_numpy_bool(self):
+        self.assertEquals('{"d":true}', JSONSerializer().dumps({"d": np.bool_(True)}))
+
+    def test_serializes_numpy_integers(self):
+        ser = JSONSerializer()
+        for np_type in (
+            np.int_,
+            np.int8,
+            np.int16,
+            np.int32,
+            np.int64,
+        ):
+            self.assertEquals(ser.dumps({"d": np_type(-1)}), '{"d":-1}')
+
+        for np_type in (
+            np.uint8,
+            np.uint16,
+            np.uint32,
+            np.uint64,
+        ):
+            self.assertEquals(ser.dumps({"d": np_type(1)}), '{"d":1}')
+
+    def test_serializes_numpy_floats(self):
+        ser = JSONSerializer()
+        for np_type in (
+            np.float_,
+            np.float32,
+            np.float64,
+        ):
+            self.assertRegexpMatches(
+                ser.dumps({"d": np_type(1.2)}), r'^\{"d":1\.2[\d]*}$'
+            )
+
+    def test_serializes_numpy_datetime(self):
+        self.assertEquals(
+            '{"d":"2010-10-01T02:30:00"}',
+            JSONSerializer().dumps({"d": np.datetime64("2010-10-01T02:30:00")}),
+        )
+
+    def test_serializes_numpy_ndarray(self):
+        self.assertEquals(
+            '{"d":[0,0,0,0,0]}',
+            JSONSerializer().dumps({"d": np.zeros((5,), dtype=np.uint8)}),
+        )
+        # This isn't useful for Elasticsearch, just want to make sure it works.
+        self.assertEquals(
+            '{"d":[[0,0],[0,0]]}',
+            JSONSerializer().dumps({"d": np.zeros((2, 2), dtype=np.uint8)}),
+        )
+
+    def test_serializes_pandas_timestamp(self):
+        self.assertEquals(
+            '{"d":"2010-10-01T02:30:00"}',
+            JSONSerializer().dumps({"d": pd.Timestamp("2010-10-01T02:30:00")}),
+        )
+
+    def test_serializes_pandas_series(self):
+        self.assertEquals(
+            '{"d":["a","b","c","d"]}',
+            JSONSerializer().dumps({"d": pd.Series(["a", "b", "c", "d"])}),
+        )
+
+    def test_serializes_pandas_na(self):
+        if not hasattr(pd, "NA"):  # pandas.NA added in v1
+            raise SkipTest("pandas.NA required")
+        self.assertEquals(
+            '{"d":null}', JSONSerializer().dumps({"d": pd.NA}),
+        )
+
+    def test_serializes_pandas_category(self):
+        cat = pd.Categorical(["a", "c", "b", "a"], categories=["a", "b", "c"])
+        self.assertEquals(
+            '{"d":["a","c","b","a"]}', JSONSerializer().dumps({"d": cat}),
+        )
+
+        cat = pd.Categorical([1, 2, 3], categories=[1, 2, 3])
+        self.assertEquals(
+            '{"d":[1,2,3]}', JSONSerializer().dumps({"d": cat}),
         )
 
     def test_raises_serialization_error_on_dump_error(self):
