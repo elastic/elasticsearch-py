@@ -6,6 +6,8 @@ nosexcover
 sphinx<1.7
 sphinx_rtd_theme
 jinja2
+numpy
+pandas
 
 # PyYAML 5.3 dropped support for Python 3.4 while
 # not amending that requirement to the package. :(

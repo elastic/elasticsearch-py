@@ -39,6 +39,7 @@ SKIP_TESTS = {
         "TestIndicesGetAlias10Basic",
         # Disallowing expensive queries is 7.7+
         "TestSearch320DisallowQueries",
+        "TestIndicesPutIndexTemplate10Basic",
     }
 }
 
