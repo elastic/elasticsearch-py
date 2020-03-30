@@ -17,9 +17,12 @@ from .xpack import XPackClient
 from .utils import query_params, _make_path, SKIP_IN_PATH, _bulk_body
 
 # xpack APIs
+from .async_search import AsyncSearchClient
+from .autoscaling import AutoscalingClient
 from .ccr import CcrClient
 from .data_frame import Data_FrameClient
 from .deprecation import DeprecationClient
+from .eql import EqlClient
 from .graph import GraphClient
 from .ilm import IlmClient
 from .license import LicenseClient
@@ -237,9 +240,12 @@ class Elasticsearch(object):
         self.tasks = TasksClient(self)
 
         self.xpack = XPackClient(self)
+        self.async_search = AsyncSearchClient(self)
+        self.autoscaling = AutoscalingClient(self)
         self.ccr = CcrClient(self)
         self.data_frame = Data_FrameClient(self)
         self.deprecation = DeprecationClient(self)
+        self.eql = EqlClient(self)
         self.graph = GraphClient(self)
         self.ilm = IlmClient(self)
         self.indices = IndicesClient(self)
@@ -520,7 +526,7 @@ class Elasticsearch(object):
             given in the query string
         :arg expand_wildcards: Whether to expand wildcard expression to
             concrete indices that are open, closed or both.  Valid choices: open,
-            closed, none, all  Default: open
+            closed, hidden, none, all  Default: open
         :arg ignore_throttled: Whether specified concrete, expanded or
             aliased indices should be ignored when throttled
         :arg ignore_unavailable: Whether specified concrete indices
@@ -659,7 +665,7 @@ class Elasticsearch(object):
             given in the query string
         :arg expand_wildcards: Whether to expand wildcard expression to
             concrete indices that are open, closed or both.  Valid choices: open,
-            closed, none, all  Default: open
+            closed, hidden, none, all  Default: open
         :arg from_: Starting offset (default: 0)
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
@@ -686,8 +692,8 @@ class Elasticsearch(object):
             query_then_fetch, dfs_query_then_fetch
         :arg size: Deprecated, please use `max_docs` instead
         :arg slices: The number of slices this task should be divided
-            into. Defaults to 1 meaning the task isn't sliced into subtasks.
-            Default: 1
+            into. Defaults to 1, meaning the task isn't sliced into subtasks. Can be
+            set to `auto`.  Default: 1
         :arg sort: A comma-separated list of <field>:<direction> pairs
         :arg stats: Specific 'tag' of the request for logging and
             statistical purposes
@@ -940,7 +946,7 @@ class Elasticsearch(object):
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
             concrete indices that are open, closed or both.  Valid choices: open,
-            closed, none, all  Default: open
+            closed, hidden, none, all  Default: open
         :arg fields: A comma-separated list of field names
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
@@ -1150,8 +1156,8 @@ class Elasticsearch(object):
             the number of shards the search request expands to exceeds the
             threshold. This filter roundtrip can limit the number of shards
             significantly if for instance a shard can not match any documents based
-            on it's rewrite method ie. if date filters are mandatory to match but
-            the shard bounds and the query are disjoint.  Default: 128
+            on its rewrite method ie. if date filters are mandatory to match but the
+            shard bounds and the query are disjoint.
         :arg rest_total_hits_as_int: Indicates whether hits.total should
             be rendered as an integer or an object in the rest search response
         :arg search_type: Search operation type  Valid choices:
@@ -1325,7 +1331,7 @@ class Elasticsearch(object):
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
             concrete indices that are open, closed or both.  Valid choices: open,
-            closed, none, all  Default: open
+            closed, hidden, none, all  Default: open
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         :arg search_type: Search operation type  Valid choices:
@@ -1369,8 +1375,8 @@ class Elasticsearch(object):
         :arg scroll: Control how long to keep the search context alive
             Default: 5m
         :arg slices: The number of slices this task should be divided
-            into. Defaults to 1 meaning the task isn't sliced into subtasks.
-            Default: 1
+            into. Defaults to 1, meaning the task isn't sliced into subtasks. Can be
+            set to `auto`.  Default: 1
         :arg timeout: Time each individual bulk request should wait for
             shards that are unavailable.  Default: 1m
         :arg wait_for_active_shards: Sets the number of shard copies
@@ -1551,7 +1557,7 @@ class Elasticsearch(object):
             as the docvalue representation of a field for each hit
         :arg expand_wildcards: Whether to expand wildcard expression to
             concrete indices that are open, closed or both.  Valid choices: open,
-            closed, none, all  Default: open
+            closed, hidden, none, all  Default: open
         :arg explain: Specify whether to return detailed information
             about score computation as part of a hit
         :arg from_: Starting offset (default: 0)
@@ -1570,8 +1576,8 @@ class Elasticsearch(object):
             the number of shards the search request expands to exceeds the
             threshold. This filter roundtrip can limit the number of shards
             significantly if for instance a shard can not match any documents based
-            on it's rewrite method ie. if date filters are mandatory to match but
-            the shard bounds and the query are disjoint.  Default: 128
+            on its rewrite method ie. if date filters are mandatory to match but the
+            shard bounds and the query are disjoint.
         :arg preference: Specify the node or shard the operation should
             be performed on (default: random)
         :arg q: Query in the Lucene query string syntax
@@ -1644,7 +1650,7 @@ class Elasticsearch(object):
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
             concrete indices that are open, closed or both.  Valid choices: open,
-            closed, none, all  Default: open
+            closed, hidden, none, all  Default: open
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         :arg local: Return local information, do not retrieve the state
@@ -1692,7 +1698,7 @@ class Elasticsearch(object):
             execution  Default: true
         :arg expand_wildcards: Whether to expand wildcard expression to
             concrete indices that are open, closed or both.  Valid choices: open,
-            closed, none, all  Default: open
+            closed, hidden, none, all  Default: open
         :arg explain: Specify whether to return detailed information
             about score computation as part of a hit
         :arg ignore_throttled: Whether specified concrete, expanded or
@@ -1921,7 +1927,7 @@ class Elasticsearch(object):
             given in the query string
         :arg expand_wildcards: Whether to expand wildcard expression to
             concrete indices that are open, closed or both.  Valid choices: open,
-            closed, none, all  Default: open
+            closed, hidden, none, all  Default: open
         :arg from_: Starting offset (default: 0)
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
@@ -1950,8 +1956,8 @@ class Elasticsearch(object):
             query_then_fetch, dfs_query_then_fetch
         :arg size: Deprecated, please use `max_docs` instead
         :arg slices: The number of slices this task should be divided
-            into. Defaults to 1 meaning the task isn't sliced into subtasks.
-            Default: 1
+            into. Defaults to 1, meaning the task isn't sliced into subtasks. Can be
+            set to `auto`.  Default: 1
         :arg sort: A comma-separated list of <field>:<direction> pairs
         :arg stats: Specific 'tag' of the request for logging and
             statistical purposes

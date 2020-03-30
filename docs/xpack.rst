@@ -21,6 +21,44 @@ provides general info about the installed X-Pack.
    :members:
 
 
+Async Search APIs
+-----------------
+
+`Async Search API <https://www.elastic.co/guide/en/elasticsearch/reference/current/async-search.html>`_
+lets you asynchronously execute a search request, monitor its progress,
+and retrieve partial results as they become available.
+
+.. py:module:: elasticsearch.client.async_search
+
+.. autoclass:: AsyncSearchClient
+   :members:
+
+
+Autoscaling APIs
+-----------------
+
+`Autoscaling API <https://www.elastic.co/guide/en/elasticsearch/reference/master/autoscaling-apis.html>`_
+gets the current autoscaling decision based on the configured autoscaling policy.
+
+.. py:module:: elasticsearch.client.autoscaling
+
+.. autoclass:: AutoscalingClient
+   :members:
+
+
+EQL APIs
+--------
+
+`EQL API <https://www.elastic.co/guide/en/elasticsearch/reference/current/eql.html>`_
+allows querying with Event Query Language (EQL) to search logs and events and match
+them with shared properties.
+
+.. py:module:: elasticsearch.client.eql
+
+.. autoclass:: EqlClient
+   :members:
+
+
 Graph Explore APIs
 ------------------
 
