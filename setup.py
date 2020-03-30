@@ -19,6 +19,8 @@ tests_require = [
     "mock",
     "pyyaml",
     "nosexcover",
+    "numpy",
+    "pandas",
 ]
 
 # use external unittest for 2.6
