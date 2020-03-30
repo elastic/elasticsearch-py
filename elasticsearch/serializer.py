@@ -81,7 +81,7 @@ class JSONSerializer(object):
             elif isinstance(data, np.ndarray):
                 return data.tolist()
         if pd:
-            if isinstance(data, pd.Series):
+            if isinstance(data, (pd.Series, pd.Categorical)):
                 return data.tolist()
             elif hasattr(pd, "NA") and pd.isna(data):
                 return None

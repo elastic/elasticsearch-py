@@ -108,6 +108,17 @@ class TestJSONSerializer(TestCase):
             '{"d":null}', JSONSerializer().dumps({"d": pd.NA}),
         )
 
+    def test_serializes_pandas_category(self):
+        cat = pd.Categorical(["a", "c", "b", "a"], categories=["a", "b", "c"])
+        self.assertEquals(
+            '{"d":["a","c","b","a"]}', JSONSerializer().dumps({"d": cat}),
+        )
+
+        cat = pd.Categorical([1, 2, 3], categories=[1, 2, 3])
+        self.assertEquals(
+            '{"d":[1,2,3]}', JSONSerializer().dumps({"d": cat}),
+        )
+
     def test_raises_serialization_error_on_dump_error(self):
         self.assertRaises(SerializationError, JSONSerializer().dumps, object())
 
