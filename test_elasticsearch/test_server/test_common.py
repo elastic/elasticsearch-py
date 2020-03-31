@@ -8,8 +8,9 @@ from os import walk, environ
 from os.path import exists, join, dirname, pardir
 import yaml
 from shutil import rmtree
+import warnings
 
-from elasticsearch import TransportError
+from elasticsearch import TransportError, ElasticsearchDeprecationWarning
 from elasticsearch.compat import string_types
 from elasticsearch.helpers.test import _get_version
 
@@ -24,14 +25,17 @@ PARAMS_RENAMES = {"type": "doc_type", "from": "from_"}
 CATCH_CODES = {"missing": 404, "conflict": 409, "unauthorized": 401}
 
 # test features we have implemented
-IMPLEMENTED_FEATURES = ("gtelte", "stash_in_path", "headers", "catch_unauthorized")
+IMPLEMENTED_FEATURES = {
+    "gtelte",
+    "stash_in_path",
+    "headers",
+    "catch_unauthorized",
+    "default_shards",
+    "warnings",
+}
 
 # broken YAML tests on some releases
-SKIP_TESTS = {
-    # wait for https://github.com/elastic/elasticsearch/issues/25694 to be fixed
-    # upstream
-    "*": set(())
-}
+SKIP_TESTS = {"*": set()}
 
 
 class InvalidActionType(Exception):
@@ -95,6 +99,7 @@ class YamlTestCase(ElasticsearchTestCase):
 
     def run_code(self, test):
         """ Execute an instruction based on it's type. """
+        print(test)
         for action in test:
             self.assertEquals(1, len(action))
             action_type, action = list(action.items())[0]
@@ -111,6 +116,7 @@ class YamlTestCase(ElasticsearchTestCase):
             api = self._get_client(headers=action.pop("headers"))
 
         catch = action.pop("catch", None)
+        warn = action.pop("warnings", ())
         self.assertEquals(1, len(action))
 
         method, args = list(action.items())[0]
@@ -130,17 +136,34 @@ class YamlTestCase(ElasticsearchTestCase):
         for k in args:
             args[k] = self._resolve(args[k])
 
-        try:
-            self.last_response = api(**args)
-        except Exception as e:
-            if not catch:
-                raise
-            self.run_catch(catch, e)
-        else:
-            if catch:
-                raise AssertionError(
-                    "Failed to catch %r in %r." % (catch, self.last_response)
-                )
+        warnings.simplefilter("always", category=ElasticsearchDeprecationWarning)
+        with warnings.catch_warnings(record=True) as caught_warnings:
+            try:
+                self.last_response = api(**args)
+            except Exception as e:
+                if not catch:
+                    raise
+                self.run_catch(catch, e)
+            else:
+                if catch:
+                    raise AssertionError(
+                        "Failed to catch %r in %r." % (catch, self.last_response)
+                    )
+
+        # Filter out warnings raised by other components.
+        caught_warnings = [
+            str(w.message)
+            for w in caught_warnings
+            if w.category == ElasticsearchDeprecationWarning
+        ]
+
+        # Sorting removes the issue with order raised. We only care about
+        # if all warnings are raised in the single API call.
+        if sorted(warn) != sorted(caught_warnings):
+            raise AssertionError(
+                "Expected warnings not equal to actual warnings: expected=%r actual=%r"
+                % (warn, caught_warnings)
+            )
 
     def _get_nodes(self):
         if not hasattr(self, "_node_info"):
