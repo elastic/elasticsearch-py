@@ -169,7 +169,7 @@ class YamlTestCase(ElasticsearchTestCase):
         api = self.client
         headers = action.pop("headers", None)
         catch = action.pop("catch", None)
-        warn = action.pop("warnings", ())
+        warn = action.pop("warnings", None)
         self.assertEquals(1, len(action))
 
         method, args = list(action.items())[0]
@@ -213,7 +213,7 @@ class YamlTestCase(ElasticsearchTestCase):
 
         # Sorting removes the issue with order raised. We only care about
         # if all warnings are raised in the single API call.
-        if sorted(warn) != sorted(caught_warnings):
+        if warn is not None and sorted(warn) != sorted(caught_warnings):
             raise AssertionError(
                 "Expected warnings not equal to actual warnings: expected=%r actual=%r"
                 % (warn, caught_warnings)
