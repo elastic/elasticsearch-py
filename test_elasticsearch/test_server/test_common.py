@@ -41,6 +41,7 @@ SKIP_TESTS = {
         "TestIndicesGetAlias10Basic",
         # Disallowing expensive queries is 7.7+
         "TestSearch320DisallowQueries",
+        # v2 Index Template API 8.0+
         "TestIndicesPutIndexTemplate10Basic",
         "TestIndicesGetIndexTemplate10Basic",
         "TestIndicesGetIndexTemplate20GetMissing",
