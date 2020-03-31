@@ -41,8 +41,7 @@ SKIP_TESTS = {
         "TestIndicesGetAlias10Basic",
         # Disallowing expensive queries is 7.7+
         "TestSearch320DisallowQueries",
-        # <0 window is erroring now instead of warning
-        "TestSearchAggregation250MovingFn",
+        "TestIndicesPutIndexTemplate10Basic",
     }
 }
 
