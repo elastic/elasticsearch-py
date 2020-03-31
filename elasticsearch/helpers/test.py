@@ -51,7 +51,14 @@ class ElasticsearchTestCase(TestCase):
 
     def tearDown(self):
         super(ElasticsearchTestCase, self).tearDown()
-        self.client.indices.delete(index="*", ignore=404)
+        # Hidden indices expanded in wildcards in ES 7.7
+        expand_wildcards = ["open", "closed"]
+        if self.es_version >= (7, 7):
+            expand_wildcards.append("hidden")
+
+        self.client.indices.delete(
+            index="*", ignore=404, expand_wildcards=expand_wildcards
+        )
         self.client.indices.delete_template(name="*", ignore=404)
         self.client.indices.delete_alias(index="_all", name="_all", ignore=404)
 

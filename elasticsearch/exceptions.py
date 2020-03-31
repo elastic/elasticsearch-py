@@ -136,6 +136,12 @@ class AuthorizationException(TransportError):
     """ Exception representing a 403 status code. """
 
 
+class ElasticsearchDeprecationWarning(Warning):
+    """ Warning that is raised when a deprecated option
+    is flagged via the 'Warning' HTTP header.
+    """
+
+
 # more generic mappings from status_code to python exceptions
 HTTP_EXCEPTIONS = {
     400: RequestError,
