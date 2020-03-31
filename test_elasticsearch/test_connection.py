@@ -4,6 +4,7 @@ import gzip
 import io
 from mock import Mock, patch
 import urllib3
+from urllib3._collections import HTTPHeaderDict
 import warnings
 from requests.auth import AuthBase
 from platform import python_version
@@ -87,6 +88,48 @@ class TestBaseConnection(TestCase):
             "8af7ee35420f458e903026b4064081f2.westeurope.azure.elastic-cloud.com",
         )
 
+    def test_empty_warnings(self):
+        con = Connection()
+        with warnings.catch_warnings(record=True) as w:
+            con._raise_warnings(())
+            con._raise_warnings([])
+
+        self.assertEquals(w, [])
+
+    def test_raises_warnings(self):
+        con = Connection()
+
+        with warnings.catch_warnings(record=True) as warn:
+            con._raise_warnings(['299 Elasticsearch-7.6.1-aa751 "this is deprecated"'])
+
+        self.assertEquals([str(w.message) for w in warn], ["this is deprecated"])
+
+        with warnings.catch_warnings(record=True) as warn:
+            con._raise_warnings(
+                [
+                    '299 Elasticsearch-7.6.1-aa751 "this is also deprecated"',
+                    '299 Elasticsearch-7.6.1-aa751 "this is also deprecated"',
+                    '299 Elasticsearch-7.6.1-aa751 "guess what? deprecated"',
+                ]
+            )
+
+        self.assertEquals(
+            [str(w.message) for w in warn],
+            ["this is also deprecated", "guess what? deprecated"],
+        )
+
+    def test_raises_warnings_when_folded(self):
+        con = Connection()
+        with warnings.catch_warnings(record=True) as warn:
+            con._raise_warnings(
+                [
+                    '299 Elasticsearch-7.6.1-aa751 "warning",'
+                    '299 Elasticsearch-7.6.1-aa751 "folded"',
+                ]
+            )
+
+        self.assertEquals([str(w.message) for w in warn], ["warning", "folded"])
+
 
 class TestUrllib3Connection(TestCase):
     def _get_mock_connection(self, connection_params={}, response_body=b"{}"):
@@ -94,7 +137,7 @@ class TestUrllib3Connection(TestCase):
 
         def _dummy_urlopen(*args, **kwargs):
             dummy_response = Mock()
-            dummy_response.headers = {}
+            dummy_response.headers = HTTPHeaderDict({})
             dummy_response.status = 200
             dummy_response.data = response_body
             _dummy_urlopen.call_args = (args, kwargs)

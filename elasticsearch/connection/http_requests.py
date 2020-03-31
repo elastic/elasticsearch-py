@@ -156,6 +156,12 @@ class RequestsHttpConnection(Connection):
                 raise ConnectionTimeout("TIMEOUT", str(e), e)
             raise ConnectionError("N/A", str(e), e)
 
+        # raise warnings if any from the 'Warnings' header.
+        warnings_headers = (
+            (response.headers["warning"],) if "warning" in response.headers else ()
+        )
+        self._raise_warnings(warnings_headers)
+
         # raise errors based on http status codes, let the client handle those if needed
         if (
             not (200 <= response.status_code < 300)
