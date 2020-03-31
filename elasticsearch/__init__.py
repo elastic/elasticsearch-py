@@ -6,6 +6,7 @@ __version__ = VERSION
 __versionstr__ = ".".join(map(str, VERSION))
 
 import logging
+import warnings
 
 logger = logging.getLogger("elasticsearch")
 logger.addHandler(logging.NullHandler())
@@ -28,7 +29,12 @@ from .exceptions import (
     ConnectionTimeout,
     AuthenticationException,
     AuthorizationException,
+    ElasticsearchDeprecationWarning,
 )
+
+# Only raise one warning per deprecation message so as not
+# to spam up the user if the same action is done multiple times.
+warnings.simplefilter("default", category=ElasticsearchDeprecationWarning, append=True)
 
 __all__ = [
     "Elasticsearch",
@@ -52,4 +58,5 @@ __all__ = [
     "ConnectionTimeout",
     "AuthenticationException",
     "AuthorizationException",
+    "ElasticsearchDeprecationWarning",
 ]

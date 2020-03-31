@@ -2,14 +2,21 @@ import logging
 import binascii
 import gzip
 import io
+import re
 from platform import python_version
+import warnings
 
 try:
     import simplejson as json
 except ImportError:
     import json
 
-from ..exceptions import TransportError, ImproperlyConfigured, HTTP_EXCEPTIONS
+from ..exceptions import (
+    TransportError,
+    ImproperlyConfigured,
+    ElasticsearchDeprecationWarning,
+    HTTP_EXCEPTIONS,
+)
 from .. import __versionstr__
 
 logger = logging.getLogger("elasticsearch")
@@ -20,6 +27,8 @@ _tracer_already_configured = "elasticsearch.trace" in logging.Logger.manager.log
 tracer = logging.getLogger("elasticsearch.trace")
 if not _tracer_already_configured:
     tracer.propagate = False
+
+_WARNING_RE = re.compile(r"\"([^\"]*)\"")
 
 
 class Connection(object):
@@ -134,6 +143,33 @@ class Connection(object):
         with gzip.GzipFile(fileobj=buf, mode="wb") as f:
             f.write(body)
         return buf.getvalue()
+
+    def _raise_warnings(self, warning_headers):
+        """If 'headers' contains a 'Warning' header raise
+        the warnings to be seen by the user. Takes an iterable
+        of string values from any number of 'Warning' headers.
+        """
+        if not warning_headers:
+            return
+
+        # Grab only the message from each header, the rest is discarded.
+        # Format is: '(number) Elasticsearch-(version)-(instance) "(message)"'
+        warning_messages = []
+        for header in warning_headers:
+            # Because 'Requests' does it's own folding of multiple HTTP headers
+            # into one header delimited by commas (totally standard compliant, just
+            # annoying for cases like this) we need to expect there may be
+            # more than one message per 'Warning' header.
+            matches = _WARNING_RE.findall(header)
+            if matches:
+                warning_messages.extend(matches)
+            else:
+                # Don't want to throw away any warnings, even if they
+                # don't follow the format we have now. Use the whole header.
+                warning_messages.append(header)
+
+        for message in warning_messages:
+            warnings.warn(message, category=ElasticsearchDeprecationWarning)
 
     def _pretty_json(self, data):
         # pretty JSON in tracer curl logs
