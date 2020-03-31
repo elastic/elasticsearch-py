@@ -42,6 +42,8 @@ SKIP_TESTS = {
         # Disallowing expensive queries is 7.7+
         "TestSearch320DisallowQueries",
         "TestIndicesPutIndexTemplate10Basic",
+        "TestIndicesGetIndexTemplate10Basic",
+        "TestIndicesGetIndexTemplate20GetMissing",
     }
 }
 
@@ -144,6 +146,7 @@ class YamlTestCase(ElasticsearchTestCase):
 
     def run_code(self, test):
         """ Execute an instruction based on it's type. """
+        print(test)
         for action in test:
             self.assertEquals(1, len(action))
             action_type, action = list(action.items())[0]
@@ -179,6 +182,7 @@ class YamlTestCase(ElasticsearchTestCase):
         for k in args:
             args[k] = self._resolve(args[k])
 
+        warnings.simplefilter("always", category=ElasticsearchDeprecationWarning)
         with warnings.catch_warnings(record=True) as caught_warnings:
             try:
                 self.last_response = api(**args)
