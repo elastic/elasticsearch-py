@@ -3,6 +3,16 @@
 Changelog
 =========
 
+6.8.1 (2020-03-31)
+------------------
+  * Added support for serializing ``numpy`` and ``pandas``
+    data types to ``JSONSerializer``. (See `#1180`_)
+  * Fixed a namespace conflict in ``elasticsearch6`` wheel
+    distribution for ``v6.8.0`` (See `#1186`_)
+
+  .. _#1180: https://github.com/elastic/elasticsearch-py/issues/1180
+  .. _#1186: https://github.com/elastic/elasticsearch-py/issues/1186
+
 6.8.0 (2020-03-12)
 -----------
   * Added support for HTTP compression to ``RequestsHttpConnection``
