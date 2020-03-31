@@ -240,6 +240,10 @@ class Urllib3HttpConnection(Connection):
                 raise ConnectionTimeout("TIMEOUT", str(e), e)
             raise ConnectionError("N/A", str(e), e)
 
+        # raise warnings if any from the 'Warnings' header.
+        warning_headers = response.headers.get_all("warning", ())
+        self._raise_warnings(warning_headers)
+
         # raise errors based on http status codes, let the client handle those if needed
         if not (200 <= response.status < 300) and response.status not in ignore:
             self.log_request_fail(
