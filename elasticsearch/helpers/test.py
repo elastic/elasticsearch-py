@@ -51,6 +51,7 @@ class ElasticsearchTestCase(TestCase):
 
     def tearDown(self):
         super(ElasticsearchTestCase, self).tearDown()
+
         # Hidden indices expanded in wildcards in ES 7.7
         expand_wildcards = ["open", "closed"]
         if self.es_version >= (7, 7):

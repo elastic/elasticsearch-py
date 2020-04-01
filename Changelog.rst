@@ -3,6 +3,21 @@
 Changelog
 =========
 
+7.7.0a1 (2020-03-31)
+--------------------
+  * Added support for ES 7.7 APIs (See `#1812`_)
+  * Added ``ElasticsearchDeprecationWarning`` which is raised when a ``Warning``
+    HTTP header is sent by Elasticsearch. (See `#1179`_)
+  * Added support for serializing ``numpy`` and ``pandas``.
+    data types to ``JSONSerializer``. (See `#1180`_)
+  * Added ``certifi`` as a dependency so HTTPS connections work automatically.
+  * Fixed duplicated parameters in some API docstrings (See `#1169`_, thanks to `Morten Hauberg <https://github.com/mortenhauberg>`_!)
+
+ .. _#1169: https://github.com/elastic/elasticsearch-py/pull/1169
+ .. _#1179: https://github.com/elastic/elasticsearch-py/pull/1179
+ .. _#1180: https://github.com/elastic/elasticsearch-py/pull/1180
+ .. _#1812: https://github.com/elastic/elasticsearch-py/pull/1182
+
 7.6.0 (2020-03-19)
 ------------------
   * Added support for ES 7.6 APIs

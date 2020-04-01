@@ -74,7 +74,8 @@ class TasksClient(NamespacedClient):
             warnings.warn(
                 "Calling client.tasks.get() without a task_id is deprecated "
                 "and will be removed in v8.0. Use client.tasks.list() instead.",
-                DeprecationWarning,
+                category=DeprecationWarning,
+                stacklevel=3,
             )
 
         return self.transport.perform_request(

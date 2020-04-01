@@ -808,13 +808,24 @@ class MlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        "allow_no_indices", "expand_wildcards", "ignore_throttled", "ignore_unavailable"
+    )
     def put_datafeed(self, datafeed_id, body, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-put-datafeed.html>`_
 
         :arg datafeed_id: The ID of the datafeed to create
         :arg body: The datafeed config
+        :arg allow_no_indices: Ignore if the source indices expressions
+            resolves to no concrete indices (default: true)
+        :arg expand_wildcards: Whether source index expressions should
+            get expanded to open or closed indices (default: open)  Valid choices:
+            open, closed, hidden, none, all
+        :arg ignore_throttled: Ignore indices that are marked as
+            throttled (default: true)
+        :arg ignore_unavailable: Ignore unavailable indexes (default:
+            false)
         """
         for param in (datafeed_id, body):
             if param in SKIP_IN_PATH:
@@ -964,13 +975,24 @@ class MlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        "allow_no_indices", "expand_wildcards", "ignore_throttled", "ignore_unavailable"
+    )
     def update_datafeed(self, datafeed_id, body, params=None, headers=None):
         """
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-update-datafeed.html>`_
 
         :arg datafeed_id: The ID of the datafeed to update
         :arg body: The datafeed update settings
+        :arg allow_no_indices: Ignore if the source indices expressions
+            resolves to no concrete indices (default: true)
+        :arg expand_wildcards: Whether source index expressions should
+            get expanded to open or closed indices (default: open)  Valid choices:
+            open, closed, hidden, none, all
+        :arg ignore_throttled: Ignore indices that are marked as
+            throttled (default: true)
+        :arg ignore_unavailable: Ignore unavailable indexes (default:
+            false)
         """
         for param in (datafeed_id, body):
             if param in SKIP_IN_PATH:
@@ -1279,6 +1301,7 @@ class MlClient(NamespacedClient):
         "from_",
         "include_model_definition",
         "size",
+        "tags",
     )
     def get_trained_models(self, model_id=None, params=None, headers=None):
         """
@@ -1297,6 +1320,8 @@ class MlClient(NamespacedClient):
             cautious when including them. Defaults to false.
         :arg size: specifies a max number of trained models to get
             Default: 100
+        :arg tags: A comma-separated list of tags that the model must
+            have.
         """
         # from is a reserved word so it cannot be used, use from_ instead
         if "from_" in params:
@@ -1347,6 +1372,24 @@ class MlClient(NamespacedClient):
         return self.transport.perform_request(
             "PUT",
             _make_path("_ml", "inference", model_id),
+            params=params,
+            headers=headers,
+            body=body,
+        )
+
+    @query_params()
+    def estimate_model_memory(self, body, params=None, headers=None):
+        """
+
+        :arg body: The analysis config, plus cardinality estimates for
+            fields it references
+        """
+        if body in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'body'.")
+
+        return self.transport.perform_request(
+            "POST",
+            "/_ml/anomaly_detectors/_estimate_model_memory",
             params=params,
             headers=headers,
             body=body,
