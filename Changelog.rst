@@ -3,7 +3,7 @@
 Changelog
 =========
 
-7.7.0a1 (2020-03-31)
+7.7.0a1 (2020-04-01)
 --------------------
   * Added support for ES 7.7 APIs (See `#1812`_)
   * Added ``ElasticsearchDeprecationWarning`` which is raised when a ``Warning``
