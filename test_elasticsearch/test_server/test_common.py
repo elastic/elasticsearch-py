@@ -3,10 +3,12 @@ Dynamically generated set of TestCases based on set of yaml files decribing
 some integration tests. These files are shared among all official Elasticsearch
 clients.
 """
+from collections import OrderedDict
 import re
 from os import walk, environ
 from os.path import exists, join, dirname, pardir
 import yaml
+from yaml.resolver import BaseResolver
 from shutil import rmtree
 import warnings
 
@@ -52,6 +54,16 @@ XPACK_FEATURES = None
 
 class InvalidActionType(Exception):
     pass
+
+
+class OrderedYAMLLoader(yaml.SafeLoader):
+    def __init__(self, stream):
+        super(OrderedYAMLLoader, self).__init__(stream)
+
+        def ordereddict_constructor(loader, node):
+            return OrderedDict(loader.construct_pairs(node))
+
+        self.add_constructor(BaseResolver.DEFAULT_MAPPING_TAG, ordereddict_constructor)
 
 
 class YamlTestCase(ElasticsearchTestCase):
@@ -369,7 +381,7 @@ def construct_case(filename, name):
         return m
 
     with open(filename) as f:
-        tests = list(yaml.load_all(f))
+        tests = list(yaml.load_all(f, Loader=OrderedYAMLLoader))
 
     attrs = {"_yaml_file": filename}
     i = 0
