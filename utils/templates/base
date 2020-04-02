@@ -8,7 +8,7 @@
         {% if api.doc_url %}
         `<{{ api.doc_url }}>`_
         {% endif %}
-        {% if api.params %}
+        {% if api.params|list|length %}
 
         {% for p, info in api.params %}
         {% filter wordwrap(72, wrapstring="\n            ") %}

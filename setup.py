@@ -5,7 +5,7 @@ import sys
 
 VERSION = (7, 7, 0)
 __version__ = VERSION
-__versionstr__ = "7.7.0a1"
+__versionstr__ = "7.7.0a2"
 
 with open(join(dirname(__file__), "README")) as f:
     long_description = f.read().strip()

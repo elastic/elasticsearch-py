@@ -528,7 +528,7 @@ class IndicesClient(NamespacedClient):
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
             concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: ['all']
+            closed, hidden, none, all  Default: all
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         :arg local: Return local information, do not retrieve the state
@@ -685,7 +685,7 @@ class IndicesClient(NamespacedClient):
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
             concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: ['open', 'closed']
+            closed, hidden, none, all  Default: all
         :arg flat_settings: Return settings in flat format (default:
             false)
         :arg ignore_unavailable: Whether specified concrete indices
@@ -1180,7 +1180,9 @@ class IndicesClient(NamespacedClient):
     )
     def freeze(self, index, params=None, headers=None):
         """
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/frozen.html>`_
+        Freezes an index. A frozen index has almost no overhead on the cluster (except
+        for maintaining its metadata in memory) and is read-only.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/freeze-index-api.html>`_
 
         :arg index: The name of the index to freeze
         :arg allow_no_indices: Whether to ignore if a wildcard indices
@@ -1188,7 +1190,7 @@ class IndicesClient(NamespacedClient):
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
             concrete indices that are open, closed or both.  Valid choices: open,
-            closed, none, all  Default: closed
+            closed, hidden, none, all  Default: closed
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         :arg master_timeout: Specify timeout for connection to master
@@ -1213,7 +1215,9 @@ class IndicesClient(NamespacedClient):
     )
     def unfreeze(self, index, params=None, headers=None):
         """
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/frozen.html>`_
+        Unfreezes an index. When a frozen index is unfrozen, the index goes through the
+        normal recovery process and becomes writeable again.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/unfreeze-index-api.html>`_
 
         :arg index: The name of the index to unfreeze
         :arg allow_no_indices: Whether to ignore if a wildcard indices
@@ -1221,7 +1225,7 @@ class IndicesClient(NamespacedClient):
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
             concrete indices that are open, closed or both.  Valid choices: open,
-            closed, none, all  Default: closed
+            closed, hidden, none, all  Default: closed
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         :arg master_timeout: Specify timeout for connection to master
@@ -1239,6 +1243,7 @@ class IndicesClient(NamespacedClient):
     @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable")
     def reload_search_analyzers(self, index, params=None, headers=None):
         """
+        Reloads an index's search analyzers and their resources.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-reload-analyzers.html>`_
 
         :arg index: A comma-separated list of index names to reload
@@ -1248,7 +1253,7 @@ class IndicesClient(NamespacedClient):
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
             concrete indices that are open, closed or both.  Valid choices: open,
-            closed, none, all  Default: open
+            closed, hidden, none, all  Default: open
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         """
