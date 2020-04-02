@@ -84,8 +84,14 @@ class TestBulkBody(TestCase):
 
     def test_bulk_body_as_string_adds_trailing_newline(self):
         string_body = '"{"index":{ "_index" : "test"}}\n{"field1": "value1"}"'
-        self.assertEqual('"{"index":{ "_index" : "test"}}\n{"field1": "value1"}"\n', _bulk_body(None, string_body))
+        self.assertEqual(
+            '"{"index":{ "_index" : "test"}}\n{"field1": "value1"}"\n',
+            _bulk_body(None, string_body),
+        )
 
     def test_bulk_body_as_bytestring_adds_trailing_newline(self):
         bytestring_body = b'"{"index":{ "_index" : "test"}}\n{"field1": "value1"}"'
-        self.assertEqual(b'"{"index":{ "_index" : "test"}}\n{"field1": "value1"}"\n', _bulk_body(None, bytestring_body))
+        self.assertEqual(
+            b'"{"index":{ "_index" : "test"}}\n{"field1": "value1"}"\n',
+            _bulk_body(None, bytestring_body),
+        )
