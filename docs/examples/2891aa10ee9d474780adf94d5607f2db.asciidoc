@@ -1,0 +1,10 @@
+// search/request/sort.asciidoc:154
+
+[source, python]
+----
+resp = client.search(
+    index="index_long,index_double",
+    body={"sort": [{"field": {"numeric_type": "double"}}]},
+)
+print(resp)
+----

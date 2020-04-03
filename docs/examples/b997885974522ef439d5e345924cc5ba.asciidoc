@@ -1,0 +1,20 @@
+// search/request/sort.asciidoc:94
+
+[source, python]
+----
+resp = client.index(
+    index="my_index",
+    id="1",
+    refresh=True,
+    body={"product": "chocolate", "price": [20, 4]},
+)
+print(resp)
+
+resp = client.search(
+    body={
+        "query": {"term": {"product": "chocolate"}},
+        "sort": [{"price": {"order": "asc", "mode": "avg"}}],
+    },
+)
+print(resp)
+----

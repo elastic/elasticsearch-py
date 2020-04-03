@@ -6,7 +6,9 @@ resp = client.indices.create(
     index="my_index",
     body={
         "mappings": {
-            "properties": {"name": {"properties": {"first": {"type": "text"}}}}
+            "properties": {
+                "name": {"properties": {"first": {"type": "text"}}}
+            }
         }
     },
 )

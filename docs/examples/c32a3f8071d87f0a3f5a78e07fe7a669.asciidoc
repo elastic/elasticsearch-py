@@ -1,0 +1,11 @@
+// docs/delete-by-query.asciidoc:376
+
+[source, python]
+----
+resp = client.delete_by_query(
+    index="twitter",
+    routing="1",
+    body={"query": {"range": {"age": {"gte": 10}}}},
+)
+print(resp)
+----

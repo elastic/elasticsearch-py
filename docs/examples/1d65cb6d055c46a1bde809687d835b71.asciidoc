@@ -1,0 +1,7 @@
+// docs/get.asciidoc:86
+
+[source, python]
+----
+resp = client.get(index="twitter", id="2", routing="user1")
+print(resp)
+----

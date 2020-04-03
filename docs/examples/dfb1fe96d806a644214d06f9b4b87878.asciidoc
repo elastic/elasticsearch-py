@@ -1,0 +1,11 @@
+// docs/delete-by-query.asciidoc:394
+
+[source, python]
+----
+resp = client.delete_by_query(
+    index="twitter",
+    scroll_size="5000",
+    body={"query": {"term": {"user": "kimchy"}}},
+)
+print(resp)
+----

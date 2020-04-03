@@ -3,7 +3,8 @@
 [source, python]
 ----
 resp = client.indices.create(
-    index="users", body={"mappings": {"properties": {"user_id": {"type": "long"}}}},
+    index="users",
+    body={"mappings": {"properties": {"user_id": {"type": "long"}}}},
 )
 print(resp)
 ----

@@ -3,7 +3,10 @@
 [source, python]
 ----
 resp = client.index(
-    index="test", id="1", refresh=True, body={"text": "words words", "flag": "foo"},
+    index="test",
+    id="1",
+    refresh=True,
+    body={"text": "words words", "flag": "foo"},
 )
 print(resp)
 ----

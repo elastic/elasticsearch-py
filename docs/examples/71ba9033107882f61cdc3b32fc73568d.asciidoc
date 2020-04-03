@@ -4,7 +4,9 @@
 ----
 resp = client.indices.put_mapping(
     index="my-index",
-    body={"properties": {"employee-id": {"type": "keyword", "index": False}}},
+    body={
+        "properties": {"employee-id": {"type": "keyword", "index": False}}
+    },
 )
 print(resp)
 ----

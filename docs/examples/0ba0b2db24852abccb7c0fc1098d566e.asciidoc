@@ -1,0 +1,12 @@
+// docs/get.asciidoc:363
+
+[source, python]
+----
+resp = client.index(
+    index="twitter",
+    id="2",
+    routing="user1",
+    body={"counter": 1, "tags": ["white"]},
+)
+print(resp)
+----

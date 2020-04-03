@@ -4,7 +4,11 @@
 ----
 resp = client.search(
     body={
-        "query": {"match": {"message": {"query": "this is a test", "operator": "and"}}}
+        "query": {
+            "match": {
+                "message": {"query": "this is a test", "operator": "and"}
+            }
+        }
     },
 )
 print(resp)

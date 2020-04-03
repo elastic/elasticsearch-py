@@ -1,0 +1,22 @@
+// search/request/sort.asciidoc:569
+
+[source, python]
+----
+resp = client.search(
+    body={
+        "query": {"term": {"user": "kimchy"}},
+        "sort": {
+            "_script": {
+                "type": "number",
+                "script": {
+                    "lang": "painless",
+                    "source": "doc['field_name'].value * params.factor",
+                    "params": {"factor": 1.1},
+                },
+                "order": "asc",
+            }
+        },
+    },
+)
+print(resp)
+----

@@ -3,7 +3,11 @@
 [source, python]
 ----
 resp = client.cluster.put_settings(
-    body={"persistent": {"action.auto_create_index": "twitter,index10,-index1*,+ind*"}},
+    body={
+        "persistent": {
+            "action.auto_create_index": "twitter,index10,-index1*,+ind*"
+        }
+    },
 )
 print(resp)
 

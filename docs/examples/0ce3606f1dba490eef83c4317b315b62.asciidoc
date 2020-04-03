@@ -2,6 +2,8 @@
 
 [source, python]
 ----
-resp = client.search(index="twitter", body={"query": {"term": {"user": "kimchy"}}})
+resp = client.search(
+    index="twitter", body={"query": {"term": {"user": "kimchy"}}},
+)
 print(resp)
 ----

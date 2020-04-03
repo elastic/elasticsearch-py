@@ -4,7 +4,10 @@
 ----
 resp = client.reindex(
     body={
-        "source": {"index": "source", "query": {"match": {"company": "cat"}}},
+        "source": {
+            "index": "source",
+            "query": {"match": {"company": "cat"}},
+        },
         "dest": {"index": "dest", "routing": "=cat"},
     },
 )

@@ -7,7 +7,10 @@ resp = client.indices.create(
     body={
         "aliases": {
             "alias_1": {},
-            "alias_2": {"filter": {"term": {"user": "kimchy"}}, "routing": "kimchy"},
+            "alias_2": {
+                "filter": {"term": {"user": "kimchy"}},
+                "routing": "kimchy",
+            },
         }
     },
 )

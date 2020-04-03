@@ -1,0 +1,66 @@
+// mapping/types/nested.asciidoc:80
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my_index",
+    body={"mappings": {"properties": {"user": {"type": "nested"}}}},
+)
+print(resp)
+
+resp = client.index(
+    index="my_index",
+    id="1",
+    body={
+        "group": "fans",
+        "user": [
+            {"first": "John", "last": "Smith"},
+            {"first": "Alice", "last": "White"},
+        ],
+    },
+)
+print(resp)
+
+resp = client.search(
+    index="my_index",
+    body={
+        "query": {
+            "nested": {
+                "path": "user",
+                "query": {
+                    "bool": {
+                        "must": [
+                            {"match": {"user.first": "Alice"}},
+                            {"match": {"user.last": "Smith"}},
+                        ]
+                    }
+                },
+            }
+        }
+    },
+)
+print(resp)
+
+resp = client.search(
+    index="my_index",
+    body={
+        "query": {
+            "nested": {
+                "path": "user",
+                "query": {
+                    "bool": {
+                        "must": [
+                            {"match": {"user.first": "Alice"}},
+                            {"match": {"user.last": "White"}},
+                        ]
+                    }
+                },
+                "inner_hits": {
+                    "highlight": {"fields": {"user.first": {}}}
+                },
+            }
+        }
+    },
+)
+print(resp)
+----

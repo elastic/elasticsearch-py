@@ -4,7 +4,11 @@
 ----
 resp = client.indices.create(
     index="my_index",
-    body={"mappings": {"properties": {"user_identifier": {"type": "keyword"}}}},
+    body={
+        "mappings": {
+            "properties": {"user_identifier": {"type": "keyword"}}
+        }
+    },
 )
 print(resp)
 ----

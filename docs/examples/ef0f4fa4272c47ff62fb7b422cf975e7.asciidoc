@@ -1,0 +1,12 @@
+// search/request/sort.asciidoc:346
+
+[source, python]
+----
+resp = client.search(
+    body={
+        "sort": [{"price": {"missing": "_last"}}],
+        "query": {"term": {"product": "chocolate"}},
+    },
+)
+print(resp)
+----

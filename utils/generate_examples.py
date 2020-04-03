@@ -46,6 +46,14 @@ files_to_generate = [
     "getting-started.asciidoc",
     "docs/update.asciidoc",
     "query-dsl/match-all-query.asciidoc",
+    "docs/get.asciidoc",
+    "query-dsl/wildcard-query.asciidoc",
+    "query-dsl/exists-query.asciidoc",
+    "docs/delete-by-query.asciidoc",
+    "mapping/params/format.asciidoc",
+    "mapping/types/nested.asciidoc",
+    "query-dsl/terms-query.asciidoc",
+    "search/request/sort.asciidoc"
 ]
 
 
@@ -54,7 +62,7 @@ ParsedSource = collections.namedtuple("ParsedSource", ["api", "params", "body"])
 
 def blacken(filename):
     runner = CliRunner()
-    result = runner.invoke(black.main, [str(filename), "--target-version", "py27"])
+    result = runner.invoke(black.main, [str(filename), "--line-length=75", "--target-version=py27"])
     assert result.exit_code == 0, result.output
 
 

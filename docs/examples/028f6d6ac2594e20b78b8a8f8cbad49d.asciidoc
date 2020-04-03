@@ -8,12 +8,19 @@ resp = client.search(
             "countries": {
                 "terms": {
                     "field": "artist.country",
-                    "order": [{"rock>playback_stats.avg": "desc"}, {"_count": "desc"}],
+                    "order": [
+                        {"rock>playback_stats.avg": "desc"},
+                        {"_count": "desc"},
+                    ],
                 },
                 "aggs": {
                     "rock": {
                         "filter": {"term": {"genre": "rock"}},
-                        "aggs": {"playback_stats": {"stats": {"field": "play_count"}}},
+                        "aggs": {
+                            "playback_stats": {
+                                "stats": {"field": "play_count"}
+                            }
+                        },
                     }
                 },
             }

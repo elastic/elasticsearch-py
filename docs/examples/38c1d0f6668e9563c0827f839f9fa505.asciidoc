@@ -2,6 +2,8 @@
 
 [source, python]
 ----
-resp = client.update(index="test", id="1", body={"doc": {"name": "new_name"}})
+resp = client.update(
+    index="test", id="1", body={"doc": {"name": "new_name"}},
+)
 print(resp)
 ----
