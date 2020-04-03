@@ -12,7 +12,7 @@ class CatClient(NamespacedClient):
         :arg name: A comma-separated list of alias names to return
         :arg expand_wildcards: Whether to expand wildcard expression to
             concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: ['all']
+            closed, hidden, none, all  Default: all
         :arg format: a short version of the Accept header, e.g. json,
             yaml
         :arg h: Comma-separated list of column names to display
@@ -91,8 +91,7 @@ class CatClient(NamespacedClient):
         :arg s: Comma-separated list of column names or column aliases
             to sort by
         :arg time: The unit in which to display time values  Valid
-            choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
-            (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
+            choices: d, h, m, s, ms, micros, nanos
         :arg ts: Set to false to disable timestamping  Default: True
         :arg v: Verbose mode. Display column headers
         """
@@ -554,6 +553,7 @@ class CatClient(NamespacedClient):
     @query_params("allow_no_match", "bytes", "format", "h", "help", "s", "time", "v")
     def ml_data_frame_analytics(self, id=None, params=None, headers=None):
         """
+        Gets configuration and usage information about data frame analytics jobs.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-dfanalytics.html>`_
 
         :arg id: The ID of the data frame analytics to fetch
@@ -569,8 +569,7 @@ class CatClient(NamespacedClient):
         :arg s: Comma-separated list of column names or column aliases
             to sort by
         :arg time: The unit in which to display time values  Valid
-            choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
-            (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
+            choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
         return self.transport.perform_request(
@@ -583,6 +582,7 @@ class CatClient(NamespacedClient):
     @query_params("allow_no_datafeeds", "format", "h", "help", "s", "time", "v")
     def ml_datafeeds(self, datafeed_id=None, params=None, headers=None):
         """
+        Gets configuration and usage information about datafeeds.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-datafeeds.html>`_
 
         :arg datafeed_id: The ID of the datafeeds stats to fetch
@@ -596,8 +596,7 @@ class CatClient(NamespacedClient):
         :arg s: Comma-separated list of column names or column aliases
             to sort by
         :arg time: The unit in which to display time values  Valid
-            choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
-            (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
+            choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
         return self.transport.perform_request(
@@ -610,6 +609,7 @@ class CatClient(NamespacedClient):
     @query_params("allow_no_jobs", "bytes", "format", "h", "help", "s", "time", "v")
     def ml_jobs(self, job_id=None, params=None, headers=None):
         """
+        Gets configuration and usage information about anomaly detection jobs.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-anomaly-detectors.html>`_
 
         :arg job_id: The ID of the jobs stats to fetch
@@ -625,8 +625,7 @@ class CatClient(NamespacedClient):
         :arg s: Comma-separated list of column names or column aliases
             to sort by
         :arg time: The unit in which to display time values  Valid
-            choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
-            (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
+            choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
         return self.transport.perform_request(
@@ -650,6 +649,7 @@ class CatClient(NamespacedClient):
     )
     def ml_trained_models(self, model_id=None, params=None, headers=None):
         """
+        Gets configuration and usage information about inference trained models.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-trained-model.html>`_
 
         :arg model_id: The ID of the trained models stats to fetch
@@ -668,8 +668,7 @@ class CatClient(NamespacedClient):
         :arg size: specifies a max number of trained models to get
             Default: 100
         :arg time: The unit in which to display time values  Valid
-            choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
-            (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
+            choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
         # from is a reserved word so it cannot be used, use from_ instead
@@ -686,8 +685,9 @@ class CatClient(NamespacedClient):
     @query_params(
         "allow_no_match", "format", "from_", "h", "help", "s", "size", "time", "v"
     )
-    def transform(self, transform_id=None, params=None, headers=None):
+    def transforms(self, transform_id=None, params=None, headers=None):
         """
+        Gets configuration and usage information about transforms.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-transforms.html>`_
 
         :arg transform_id: The id of the transform for which to get
@@ -705,8 +705,7 @@ class CatClient(NamespacedClient):
         :arg size: specifies a max number of transforms to get, defaults
             to 100
         :arg time: The unit in which to display time values  Valid
-            choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
-            (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
+            choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
         # from is a reserved word so it cannot be used, use from_ instead

@@ -5,6 +5,8 @@ class AsyncSearchClient(NamespacedClient):
     @query_params()
     def delete(self, id, params=None, headers=None):
         """
+        Deletes an async search by ID. If the search is still running, the search
+        request will be cancelled. Otherwise, the saved search results are deleted.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/async-search.html>`_
 
         :arg id: The async search ID
@@ -19,6 +21,8 @@ class AsyncSearchClient(NamespacedClient):
     @query_params("keep_alive", "typed_keys", "wait_for_completion_timeout")
     def get(self, id, params=None, headers=None):
         """
+        Retrieves the results of a previously submitted async search request given its
+        ID.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/async-search.html>`_
 
         :arg id: The async search ID
@@ -81,6 +85,7 @@ class AsyncSearchClient(NamespacedClient):
     )
     def submit(self, body=None, index=None, params=None, headers=None):
         """
+        Executes a search request asynchronously.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/async-search.html>`_
 
         :arg body: The search definition using the Query DSL
@@ -113,7 +118,7 @@ class AsyncSearchClient(NamespacedClient):
             as the docvalue representation of a field for each hit
         :arg expand_wildcards: Whether to expand wildcard expression to
             concrete indices that are open, closed or both.  Valid choices: open,
-            closed, none, all  Default: open
+            closed, hidden, none, all  Default: open
         :arg explain: Specify whether to return detailed information
             about score computation as part of a hit
         :arg from_: Starting offset (default: 0)
