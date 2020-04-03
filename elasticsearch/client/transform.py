@@ -5,6 +5,7 @@ class TransformClient(NamespacedClient):
     @query_params("force")
     def delete_transform(self, transform_id, params=None, headers=None):
         """
+        Deletes an existing transform.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-transform.html>`_
 
         :arg transform_id: The id of the transform to delete
@@ -27,6 +28,7 @@ class TransformClient(NamespacedClient):
     @query_params("allow_no_match", "from_", "size")
     def get_transform(self, transform_id=None, params=None, headers=None):
         """
+        Retrieves configuration information for transforms.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-transform.html>`_
 
         :arg transform_id: The id or comma delimited list of id
@@ -53,6 +55,7 @@ class TransformClient(NamespacedClient):
     @query_params("allow_no_match", "from_", "size")
     def get_transform_stats(self, transform_id, params=None, headers=None):
         """
+        Retrieves usage information for transforms.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-transform-stats.html>`_
 
         :arg transform_id: The id of the transform for which to get
@@ -83,6 +86,7 @@ class TransformClient(NamespacedClient):
     @query_params()
     def preview_transform(self, body, params=None, headers=None):
         """
+        Previews a transform.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/preview-transform.html>`_
 
         :arg body: The definition for the transform to preview
@@ -97,6 +101,7 @@ class TransformClient(NamespacedClient):
     @query_params("defer_validation")
     def put_transform(self, transform_id, body, params=None, headers=None):
         """
+        Instantiates a transform.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/put-transform.html>`_
 
         :arg transform_id: The id of the new transform.
@@ -119,6 +124,7 @@ class TransformClient(NamespacedClient):
     @query_params("timeout")
     def start_transform(self, transform_id, params=None, headers=None):
         """
+        Starts one or more transforms.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/start-transform.html>`_
 
         :arg transform_id: The id of the transform to start
@@ -146,6 +152,7 @@ class TransformClient(NamespacedClient):
     )
     def stop_transform(self, transform_id, params=None, headers=None):
         """
+        Stops one or more transforms.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/stop-transform.html>`_
 
         :arg transform_id: The id of the transform to stop
@@ -176,6 +183,7 @@ class TransformClient(NamespacedClient):
     @query_params("defer_validation")
     def update_transform(self, transform_id, body, params=None, headers=None):
         """
+        Updates certain properties of a transform.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/update-transform.html>`_
 
         :arg transform_id: The id of the transform.
@@ -193,41 +201,4 @@ class TransformClient(NamespacedClient):
             params=params,
             headers=headers,
             body=body,
-        )
-
-    @query_params(
-        "allow_no_match", "format", "from_", "h", "help", "s", "size", "time", "v"
-    )
-    def cat_transform(self, transform_id=None, params=None, headers=None):
-        """
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-transforms.html>`_
-
-        :arg transform_id: The id of the transform for which to get
-            stats. '_all' or '*' implies all transforms
-        :arg allow_no_match: Whether to ignore if a wildcard expression
-            matches no transforms. (This includes `_all` string or when no
-            transforms have been specified)
-        :arg format: a short version of the Accept header, e.g. json,
-            yaml
-        :arg from_: skips a number of transform configs, defaults to 0
-        :arg h: Comma-separated list of column names to display
-        :arg help: Return help information
-        :arg s: Comma-separated list of column names or column aliases
-            to sort by
-        :arg size: specifies a max number of transforms to get, defaults
-            to 100
-        :arg time: The unit in which to display time values  Valid
-            choices: d (Days), h (Hours), m (Minutes), s (Seconds), ms
-            (Milliseconds), micros (Microseconds), nanos (Nanoseconds)
-        :arg v: Verbose mode. Display column headers
-        """
-        # from is a reserved word so it cannot be used, use from_ instead
-        if "from_" in params:
-            params["from"] = params.pop("from_")
-
-        return self.transport.perform_request(
-            "GET",
-            _make_path("_cat", "transforms", transform_id),
-            params=params,
-            headers=headers,
         )

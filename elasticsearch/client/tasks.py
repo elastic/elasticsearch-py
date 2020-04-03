@@ -34,7 +34,7 @@ class TasksClient(NamespacedClient):
             "GET", "/_tasks", params=params, headers=headers
         )
 
-    @query_params("actions", "nodes", "parent_task_id")
+    @query_params("actions", "nodes", "parent_task_id", "wait_for_completion")
     def cancel(self, task_id=None, params=None, headers=None):
         """
         Cancels a task, if it can be cancelled through an API.
@@ -49,6 +49,9 @@ class TasksClient(NamespacedClient):
             node you're connecting to, leave empty to get information from all nodes
         :arg parent_task_id: Cancel tasks with specified parent task id
             (node_id:task_number). Set to -1 to cancel all.
+        :arg wait_for_completion: Should the request block until the
+            cancellation of the task and its child tasks is completed. Defaults to
+            false
         """
         return self.transport.perform_request(
             "POST",

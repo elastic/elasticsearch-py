@@ -5,6 +5,7 @@ class EqlClient(NamespacedClient):
     @query_params()
     def search(self, index, body, params=None, headers=None):
         """
+        Returns results matching a query expressed in Event Query Language (EQL)
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/eql.html>`_
 
         :arg index: The name of the index to scope the operation
