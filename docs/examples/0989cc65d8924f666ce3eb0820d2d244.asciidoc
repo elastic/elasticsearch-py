@@ -2,9 +2,13 @@
 
 [source, python]
 ----
-resp = client.index(index="users", refresh="wait_for", body={"user_id": 12345})
+resp = client.index(
+    index="users", refresh="wait_for", body={"user_id": 12345},
+)
 print(resp)
 
-resp = client.index(index="users", refresh="wait_for", body={"user_id": 12346})
+resp = client.index(
+    index="users", refresh="wait_for", body={"user_id": 12346},
+)
 print(resp)
 ----

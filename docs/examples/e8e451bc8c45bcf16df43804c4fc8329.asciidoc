@@ -1,0 +1,17 @@
+// search/request/sort.asciidoc:598
+
+[source, python]
+----
+resp = client.search(
+    body={
+        "track_scores": True,
+        "sort": [
+            {"post_date": {"order": "desc"}},
+            {"name": "desc"},
+            {"age": "desc"},
+        ],
+        "query": {"term": {"user": "kimchy"}},
+    },
+)
+print(resp)
+----

@@ -7,7 +7,9 @@ resp = client.index(
     id="1",
     version="2",
     version_type="external",
-    body={"message": "elasticsearch now has versioning support, double cool!"},
+    body={
+        "message": "elasticsearch now has versioning support, double cool!"
+    },
 )
 print(resp)
 ----

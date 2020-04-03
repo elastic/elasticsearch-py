@@ -4,7 +4,9 @@
 ----
 resp = client.indices.put_mapping(
     index="my_index",
-    body={"properties": {"name": {"properties": {"last": {"type": "text"}}}}},
+    body={
+        "properties": {"name": {"properties": {"last": {"type": "text"}}}}
+    },
 )
 print(resp)
 ----

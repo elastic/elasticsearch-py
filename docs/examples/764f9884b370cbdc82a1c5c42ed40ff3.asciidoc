@@ -4,7 +4,10 @@
 ----
 resp = client.reindex(
     body={
-        "source": {"index": "twitter", "query": {"term": {"user": "kimchy"}}},
+        "source": {
+            "index": "twitter",
+            "query": {"term": {"user": "kimchy"}},
+        },
         "dest": {"index": "new_twitter"},
     },
 )

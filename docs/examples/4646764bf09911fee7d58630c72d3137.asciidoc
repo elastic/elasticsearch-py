@@ -6,7 +6,12 @@ resp = client.search(
     body={
         "aggs": {
             "genres": {
-                "terms": {"script": {"id": "my_script", "params": {"field": "genre"}}}
+                "terms": {
+                    "script": {
+                        "id": "my_script",
+                        "params": {"field": "genre"},
+                    }
+                }
             }
         }
     },

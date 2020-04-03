@@ -5,7 +5,10 @@
 resp = client.reindex(
     slices="5",
     refresh=True,
-    body={"source": {"index": "twitter"}, "dest": {"index": "new_twitter"}},
+    body={
+        "source": {"index": "twitter"},
+        "dest": {"index": "new_twitter"},
+    },
 )
 print(resp)
 ----

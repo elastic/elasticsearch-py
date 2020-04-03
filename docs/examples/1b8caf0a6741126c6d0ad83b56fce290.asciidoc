@@ -9,7 +9,10 @@ resp = client.indices.put_template(
         "settings": {"number_of_shards": 1},
         "aliases": {
             "alias1": {},
-            "alias2": {"filter": {"term": {"user": "kimchy"}}, "routing": "kimchy"},
+            "alias2": {
+                "filter": {"term": {"user": "kimchy"}},
+                "routing": "kimchy",
+            },
             "{index}-alias": {},
         },
     },

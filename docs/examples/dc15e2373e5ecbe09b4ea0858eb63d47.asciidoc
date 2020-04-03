@@ -13,7 +13,11 @@ resp = client.search(
                 "aggs": {
                     "rock": {
                         "filter": {"term": {"genre": "rock"}},
-                        "aggs": {"playback_stats": {"stats": {"field": "play_count"}}},
+                        "aggs": {
+                            "playback_stats": {
+                                "stats": {"field": "play_count"}
+                            }
+                        },
                     }
                 },
             }

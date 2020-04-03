@@ -3,7 +3,9 @@
 [source, python]
 ----
 resp = client.update(
-    index="test", id="1", body={"doc": {"name": "new_name"}, "detect_noop": False},
+    index="test",
+    id="1",
+    body={"doc": {"name": "new_name"}, "detect_noop": False},
 )
 print(resp)
 ----

@@ -5,7 +5,10 @@
 resp = client.search(
     body={
         "query": {
-            "query_string": {"fields": ["content", "name"], "query": "this AND that"}
+            "query_string": {
+                "fields": ["content", "name"],
+                "query": "this AND that",
+            }
         }
     },
 )

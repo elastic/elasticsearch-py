@@ -2,6 +2,8 @@
 
 [source, python]
 ----
-resp = client.search(index="bank", body={"query": {"match": {"address": "mill lane"}}})
+resp = client.search(
+    index="bank", body={"query": {"match": {"address": "mill lane"}}},
+)
 print(resp)
 ----

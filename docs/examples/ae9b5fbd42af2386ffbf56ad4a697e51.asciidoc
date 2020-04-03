@@ -1,0 +1,19 @@
+// search/request/sort.asciidoc:30
+
+[source, python]
+----
+resp = client.search(
+    index="my_index",
+    body={
+        "sort": [
+            {"post_date": {"order": "asc"}},
+            "user",
+            {"name": "desc"},
+            {"age": "desc"},
+            "_score",
+        ],
+        "query": {"term": {"user": "kimchy"}},
+    },
+)
+print(resp)
+----

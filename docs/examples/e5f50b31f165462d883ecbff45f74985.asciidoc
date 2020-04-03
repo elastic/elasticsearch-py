@@ -11,7 +11,10 @@ resp = client.indices.put_template(
             "_source": {"enabled": False},
             "properties": {
                 "host_name": {"type": "keyword"},
-                "created_at": {"type": "date", "format": "EEE MMM dd HH:mm:ss Z yyyy"},
+                "created_at": {
+                    "type": "date",
+                    "format": "EEE MMM dd HH:mm:ss Z yyyy",
+                },
             },
         },
     },

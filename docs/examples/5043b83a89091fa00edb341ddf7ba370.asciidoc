@@ -5,7 +5,12 @@
 resp = client.search(
     body={
         "query": {
-            "match": {"message": {"query": "this is a testt", "fuzziness": "AUTO"}}
+            "match": {
+                "message": {
+                    "query": "this is a testt",
+                    "fuzziness": "AUTO",
+                }
+            }
         }
     },
 )

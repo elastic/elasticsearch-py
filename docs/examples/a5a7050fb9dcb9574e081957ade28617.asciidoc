@@ -1,0 +1,12 @@
+// docs/delete-by-query.asciidoc:487
+
+[source, python]
+----
+resp = client.delete_by_query(
+    index="twitter",
+    refresh=True,
+    slices="5",
+    body={"query": {"range": {"likes": {"lt": 10}}}},
+)
+print(resp)
+----

@@ -3,7 +3,11 @@
 [source, python]
 ----
 resp = client.search(
-    body={"query": {"range": {"timestamp": {"gte": "now-1d/d", "lt": "now/d"}}}},
+    body={
+        "query": {
+            "range": {"timestamp": {"gte": "now-1d/d", "lt": "now/d"}}
+        }
+    },
 )
 print(resp)
 ----

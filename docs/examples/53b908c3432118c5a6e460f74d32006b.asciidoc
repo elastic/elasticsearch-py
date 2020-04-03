@@ -5,7 +5,10 @@
 resp = client.search(
     body={
         "query": {
-            "multi_match": {"query": "this is a test", "fields": ["subject", "message"]}
+            "multi_match": {
+                "query": "this is a test",
+                "fields": ["subject", "message"],
+            }
         }
     },
 )

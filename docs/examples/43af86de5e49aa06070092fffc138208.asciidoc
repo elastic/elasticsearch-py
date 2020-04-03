@@ -1,0 +1,9 @@
+// query-dsl/exists-query.asciidoc:56
+
+[source, python]
+----
+resp = client.search(
+    body={"query": {"bool": {"must_not": {"exists": {"field": "user"}}}}},
+)
+print(resp)
+----

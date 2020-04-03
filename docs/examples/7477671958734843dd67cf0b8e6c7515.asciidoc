@@ -1,0 +1,10 @@
+// search/request/sort.asciidoc:193
+
+[source, python]
+----
+resp = client.indices.create(
+    index="index_long",
+    body={"mappings": {"properties": {"field": {"type": "date_nanos"}}}},
+)
+print(resp)
+----

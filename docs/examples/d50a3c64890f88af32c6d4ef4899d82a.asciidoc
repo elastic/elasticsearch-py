@@ -1,0 +1,20 @@
+// search/request/sort.asciidoc:471
+
+[source, python]
+----
+resp = client.search(
+    body={
+        "sort": [
+            {
+                "_geo_distance": {
+                    "pin.location": "40,-70",
+                    "order": "asc",
+                    "unit": "km",
+                }
+            }
+        ],
+        "query": {"term": {"user": "kimchy"}},
+    },
+)
+print(resp)
+----

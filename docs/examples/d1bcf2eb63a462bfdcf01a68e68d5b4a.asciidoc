@@ -1,0 +1,17 @@
+// query-dsl/terms-query.asciidoc:186
+
+[source, python]
+----
+resp = client.search(
+    index="my_index",
+    pretty=True,
+    body={
+        "query": {
+            "terms": {
+                "color": {"index": "my_index", "id": "2", "path": "color"}
+            }
+        }
+    },
+)
+print(resp)
+----

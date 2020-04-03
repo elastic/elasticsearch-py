@@ -7,7 +7,10 @@ resp = client.search(
         "aggs": {
             "genres": {
                 "terms": {
-                    "script": {"source": "doc['genre'].value", "lang": "painless"}
+                    "script": {
+                        "source": "doc['genre'].value",
+                        "lang": "painless",
+                    }
                 }
             }
         }

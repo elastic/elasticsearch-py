@@ -1,0 +1,10 @@
+// docs/delete-by-query.asciidoc:10
+
+[source, python]
+----
+resp = client.delete_by_query(
+    index="twitter",
+    body={"query": {"match": {"message": "some message"}}},
+)
+print(resp)
+----

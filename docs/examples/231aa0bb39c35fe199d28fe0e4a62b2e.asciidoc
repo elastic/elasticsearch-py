@@ -3,7 +3,8 @@
 [source, python]
 ----
 resp = client.search(
-    index="bank", body={"query": {"match_phrase": {"address": "mill lane"}}},
+    index="bank",
+    body={"query": {"match_phrase": {"address": "mill lane"}}},
 )
 print(resp)
 ----

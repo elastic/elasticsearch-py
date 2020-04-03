@@ -1,0 +1,17 @@
+// docs/get.asciidoc:299
+
+[source, python]
+----
+resp = client.indices.create(
+    index="twitter",
+    body={
+        "mappings": {
+            "properties": {
+                "counter": {"type": "integer", "store": False},
+                "tags": {"type": "keyword", "store": True},
+            }
+        }
+    },
+)
+print(resp)
+----
