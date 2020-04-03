@@ -1,4 +1,4 @@
-from .utils import NamespacedClient, query_params
+from .utils import NamespacedClient, query_params, SKIP_IN_PATH, _make_path
 
 
 class AutoscalingClient(NamespacedClient):
