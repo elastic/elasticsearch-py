@@ -276,7 +276,6 @@ class Elasticsearch(object):
         """
         Returns whether the cluster is running.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html>`_
-
         """
         try:
             return self.transport.perform_request(
@@ -290,7 +289,6 @@ class Elasticsearch(object):
         """
         Returns basic information about the cluster.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html>`_
-
         """
         return self.transport.perform_request(
             "GET", "/", params=params, headers=headers
@@ -674,7 +672,7 @@ class Elasticsearch(object):
         :arg scroll: Specify how long a consistent view of the index
             should be maintained for scrolled search
         :arg scroll_size: Size on the scroll request powering the delete
-            by query
+            by query  Default: 100
         :arg search_timeout: Explicit timeout for each search request.
             Defaults to no timeout.
         :arg search_type: Search operation type  Valid choices:
@@ -1601,7 +1599,7 @@ class Elasticsearch(object):
     def get_script_context(self, params=None, headers=None):
         """
         Returns all script contexts.
-
+        `<https://www.elastic.co/guide/en/elasticsearch/painless/master/painless-contexts.html>`_
         """
         return self.transport.perform_request(
             "GET", "/_script_context", params=params, headers=headers
@@ -1611,7 +1609,7 @@ class Elasticsearch(object):
     def get_script_languages(self, params=None, headers=None):
         """
         Returns available script types, languages and contexts
-
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
         """
         return self.transport.perform_request(
             "GET", "/_script_language", params=params, headers=headers
@@ -1927,7 +1925,7 @@ class Elasticsearch(object):
         :arg scroll: Specify how long a consistent view of the index
             should be maintained for scrolled search
         :arg scroll_size: Size on the scroll request powering the update
-            by query
+            by query  Default: 100
         :arg search_timeout: Explicit timeout for each search request.
             Defaults to no timeout.
         :arg search_type: Search operation type  Valid choices:

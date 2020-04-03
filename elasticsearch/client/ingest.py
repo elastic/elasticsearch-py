@@ -89,7 +89,6 @@ class IngestClient(NamespacedClient):
         """
         Returns a list of the built-in patterns.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/grok-processor.html#grok-processor-rest-get>`_
-
         """
         return self.transport.perform_request(
             "GET", "/_ingest/processor/grok", params=params, headers=headers

@@ -3,6 +3,7 @@ Dynamically generated set of TestCases based on set of yaml files decribing
 some integration tests. These files are shared among all official Elasticsearch
 clients.
 """
+import sys
 import re
 from os import walk, environ
 from os.path import exists, join, dirname, pardir
@@ -41,12 +42,13 @@ SKIP_TESTS = {
         "TestIndicesGetAlias10Basic",
         # Disallowing expensive queries is 7.7+
         "TestSearch320DisallowQueries",
-        # v2 Index Template API 8.0+
-        "TestIndicesPutIndexTemplate10Basic",
-        "TestIndicesGetIndexTemplate10Basic",
-        "TestIndicesGetIndexTemplate20GetMissing",
     }
 }
+
+# Test is inconsistent due to dictionaries not being ordered.
+if sys.version_info < (3, 6):
+    SKIP_TESTS["*"].add("TestSearchAggregation250MovingFn")
+
 
 XPACK_FEATURES = None
 

@@ -5,6 +5,8 @@ class AsyncSearchClient(NamespacedClient):
     @query_params()
     def delete(self, id, params=None, headers=None):
         """
+        Deletes an async search by ID. If the search is still running, the search
+        request will be cancelled. Otherwise, the saved search results are deleted.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/async-search.html>`_
 
         :arg id: The async search ID
@@ -16,18 +18,20 @@ class AsyncSearchClient(NamespacedClient):
             "DELETE", _make_path("_async_search", id), params=params, headers=headers
         )
 
-    @query_params("keep_alive", "typed_keys", "wait_for_completion")
+    @query_params("keep_alive", "typed_keys", "wait_for_completion_timeout")
     def get(self, id, params=None, headers=None):
         """
+        Retrieves the results of a previously submitted async search request given its
+        ID.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/async-search.html>`_
 
         :arg id: The async search ID
         :arg keep_alive: Specify the time interval in which the results
-            (partial or final) for this search will be available  Default: 5d
+            (partial or final) for this search will be available
         :arg typed_keys: Specify whether aggregation and suggester names
             should be prefixed by their respective types in the response
-        :arg wait_for_completion: Specify the time that the request
-            should block waiting for the final response  Default: 1s
+        :arg wait_for_completion_timeout: Specify the time that the
+            request should block waiting for the final response
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
@@ -45,7 +49,6 @@ class AsyncSearchClient(NamespacedClient):
         "analyze_wildcard",
         "analyzer",
         "batched_reduce_size",
-        "clean_on_completion",
         "default_operator",
         "df",
         "docvalue_fields",
@@ -55,6 +58,7 @@ class AsyncSearchClient(NamespacedClient):
         "ignore_throttled",
         "ignore_unavailable",
         "keep_alive",
+        "keep_on_completion",
         "lenient",
         "max_concurrent_shard_requests",
         "preference",
@@ -77,10 +81,11 @@ class AsyncSearchClient(NamespacedClient):
         "track_total_hits",
         "typed_keys",
         "version",
-        "wait_for_completion",
+        "wait_for_completion_timeout",
     )
     def submit(self, body=None, index=None, params=None, headers=None):
         """
+        Executes a search request asynchronously.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/async-search.html>`_
 
         :arg body: The search definition using the Query DSL
@@ -105,9 +110,6 @@ class AsyncSearchClient(NamespacedClient):
             should be reduced at once on the coordinating node. This value should be
             used as the granularity at which progress results will be made
             available.  Default: 5
-        :arg clean_on_completion: Control whether the response should
-            not be stored in the cluster if it completed within the provided
-            [wait_for_completion] time (default: true)
         :arg default_operator: The default operator for query string
             query (AND or OR)  Valid choices: AND, OR  Default: OR
         :arg df: The field to use as default where no field prefix is
@@ -116,7 +118,7 @@ class AsyncSearchClient(NamespacedClient):
             as the docvalue representation of a field for each hit
         :arg expand_wildcards: Whether to expand wildcard expression to
             concrete indices that are open, closed or both.  Valid choices: open,
-            closed, none, all  Default: open
+            closed, hidden, none, all  Default: open
         :arg explain: Specify whether to return detailed information
             about score computation as part of a hit
         :arg from_: Starting offset (default: 0)
@@ -125,7 +127,10 @@ class AsyncSearchClient(NamespacedClient):
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         :arg keep_alive: Update the time interval in which the results
-            (partial or final) for this search will be available
+            (partial or final) for this search will be available  Default: 5d
+        :arg keep_on_completion: Control whether the response should be
+            stored in the cluster if it completed within the provided
+            [wait_for_completion] time (default: false)
         :arg lenient: Specify whether format-based query failures (such
             as providing text to a numeric field) should be ignored
         :arg max_concurrent_shard_requests: The number of concurrent
@@ -166,8 +171,8 @@ class AsyncSearchClient(NamespacedClient):
             should be prefixed by their respective types in the response
         :arg version: Specify whether to return document version as part
             of a hit
-        :arg wait_for_completion: Specify the time that the request
-            should block waiting for the final response  Default: 1s
+        :arg wait_for_completion_timeout: Specify the time that the
+            request should block waiting for the final response  Default: 1s
         """
         # from is a reserved word so it cannot be used, use from_ instead
         if "from_" in params:

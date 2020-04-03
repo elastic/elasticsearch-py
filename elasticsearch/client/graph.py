@@ -5,6 +5,8 @@ class GraphClient(NamespacedClient):
     @query_params("routing", "timeout")
     def explore(self, index, body=None, params=None, headers=None):
         """
+        Explore extracted and summarized information about the documents and terms in
+        an index.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/graph-explore-api.html>`_
 
         :arg index: A comma-separated list of index names to search; use
