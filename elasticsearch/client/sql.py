@@ -21,7 +21,7 @@ class SqlClient(NamespacedClient):
     @query_params("format")
     def query(self, body, params=None, headers=None):
         """
-        Executes an SQL request
+        Executes a SQL request
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/sql-rest-overview.html>`_
 
         :arg body: Use the `query` element to start a query. Use the

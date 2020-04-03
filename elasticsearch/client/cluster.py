@@ -209,7 +209,6 @@ class ClusterClient(NamespacedClient):
         """
         Returns the information about configured remote clusters.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-remote-info.html>`_
-
         """
         return self.transport.perform_request(
             "GET", "/_remote/info", params=params, headers=headers
