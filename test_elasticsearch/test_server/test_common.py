@@ -372,7 +372,7 @@ def construct_case(filename, name):
         return m
 
     with open(filename) as f:
-        tests = list(yaml.load_all(f, Loader=OrderedYAMLLoader))
+        tests = list(yaml.load_all(f))
 
     attrs = {"_yaml_file": filename}
     i = 0
