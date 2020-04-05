@@ -5,7 +5,9 @@
 resp = client.search(
     body={
         "aggs": {
-            "JapaneseCars": {"terms": {"field": "make", "include": ["mazda", "honda"]}},
+            "JapaneseCars": {
+                "terms": {"field": "make", "include": ["mazda", "honda"]}
+            },
             "ActiveCarManufacturers": {
                 "terms": {"field": "make", "exclude": ["rover", "jensen"]}
             },

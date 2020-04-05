@@ -2,6 +2,8 @@
 
 [source, python]
 ----
-resp = client.indices.get_template(name="template_1", filter_path="*.version")
+resp = client.indices.get_template(
+    name="template_1", filter_path="*.version",
+)
 print(resp)
 ----

@@ -3,7 +3,13 @@
 [source, python]
 ----
 resp = client.search(
-    body={"aggs": {"genres": {"terms": {"field": "genre", "order": {"_key": "asc"}}}}},
+    body={
+        "aggs": {
+            "genres": {
+                "terms": {"field": "genre", "order": {"_key": "asc"}}
+            }
+        }
+    },
 )
 print(resp)
 ----

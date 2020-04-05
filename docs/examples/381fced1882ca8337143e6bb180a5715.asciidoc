@@ -2,6 +2,8 @@
 
 [source, python]
 ----
-resp = client.index(index="test", id="1", body={"counter": 1, "tags": ["red"]})
+resp = client.index(
+    index="test", id="1", body={"counter": 1, "tags": ["red"]},
+)
 print(resp)
 ----

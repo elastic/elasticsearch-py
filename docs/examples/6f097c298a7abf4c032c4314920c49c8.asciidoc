@@ -3,7 +3,10 @@
 [source, python]
 ----
 resp = client.reindex(
-    body={"source": {"index": ["twitter", "blog"]}, "dest": {"index": "all_together"}},
+    body={
+        "source": {"index": ["twitter", "blog"]},
+        "dest": {"index": "all_together"},
+    },
 )
 print(resp)
 ----

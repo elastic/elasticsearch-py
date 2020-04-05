@@ -1,0 +1,7 @@
+// docs/delete-by-query.asciidoc:660
+
+[source, python]
+----
+resp = client.tasks.cancel(task_id="r1A2WoRbTwKZ516z6NEs5A:36619")
+print(resp)
+----

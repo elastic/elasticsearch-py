@@ -4,7 +4,11 @@
 ----
 resp = client.search(
     body={
-        "aggs": {"genres": {"terms": {"field": "genre", "order": {"_count": "asc"}}}}
+        "aggs": {
+            "genres": {
+                "terms": {"field": "genre", "order": {"_count": "asc"}}
+            }
+        }
     },
 )
 print(resp)

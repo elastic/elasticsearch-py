@@ -2,6 +2,8 @@
 
 [source, python]
 ----
-resp = client.search(body={"aggs": {"genres": {"terms": {"field": "genre"}}}})
+resp = client.search(
+    body={"aggs": {"genres": {"terms": {"field": "genre"}}}},
+)
 print(resp)
 ----

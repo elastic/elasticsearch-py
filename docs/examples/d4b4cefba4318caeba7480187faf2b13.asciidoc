@@ -2,6 +2,8 @@
 
 [source, python]
 ----
-resp = client.index(index="my_index", id="1", body={"full_text": "Quick Brown Foxes!"})
+resp = client.index(
+    index="my_index", id="1", body={"full_text": "Quick Brown Foxes!"},
+)
 print(resp)
 ----

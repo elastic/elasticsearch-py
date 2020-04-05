@@ -3,7 +3,9 @@
 [source, python]
 ----
 resp = client.search(
-    body={"aggs": {"tags": {"terms": {"field": "tags", "min_doc_count": 10}}}},
+    body={
+        "aggs": {"tags": {"terms": {"field": "tags", "min_doc_count": 10}}}
+    },
 )
 print(resp)
 ----

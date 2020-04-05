@@ -5,7 +5,12 @@
 resp = client.indices.put_mapping(
     index="my_index",
     body={
-        "properties": {"city": {"type": "text", "fields": {"raw": {"type": "keyword"}}}}
+        "properties": {
+            "city": {
+                "type": "text",
+                "fields": {"raw": {"type": "keyword"}},
+            }
+        }
     },
 )
 print(resp)

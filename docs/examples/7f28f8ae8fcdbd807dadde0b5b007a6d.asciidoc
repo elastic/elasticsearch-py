@@ -7,7 +7,9 @@ resp = client.search(
         "aggs": {
             "actors": {
                 "terms": {"field": "actors", "size": 10},
-                "aggs": {"costars": {"terms": {"field": "actors", "size": 5}}},
+                "aggs": {
+                    "costars": {"terms": {"field": "actors", "size": 5}}
+                },
             }
         }
     },

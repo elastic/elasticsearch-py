@@ -8,7 +8,10 @@ resp = client.search(
             "genres": {
                 "terms": {
                     "field": "genre",
-                    "script": {"source": "'Genre: ' +_value", "lang": "painless"},
+                    "script": {
+                        "source": "'Genre: ' +_value",
+                        "lang": "painless",
+                    },
                 }
             }
         }

@@ -1,0 +1,23 @@
+// search/request/sort.asciidoc:263
+
+[source, python]
+----
+resp = client.search(
+    body={
+        "query": {"term": {"product": "chocolate"}},
+        "sort": [
+            {
+                "offer.price": {
+                    "mode": "avg",
+                    "order": "asc",
+                    "nested": {
+                        "path": "offer",
+                        "filter": {"term": {"offer.color": "blue"}},
+                    },
+                }
+            }
+        ],
+    },
+)
+print(resp)
+----

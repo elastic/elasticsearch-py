@@ -3,7 +3,8 @@
 [source, python]
 ----
 resp = client.indices.create(
-    index="test", body={"settings": {"index.write.wait_for_active_shards": "2"}},
+    index="test",
+    body={"settings": {"index.write.wait_for_active_shards": "2"}},
 )
 print(resp)
 ----

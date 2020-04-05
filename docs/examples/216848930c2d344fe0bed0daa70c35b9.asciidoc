@@ -1,0 +1,7 @@
+// docs/delete-by-query.asciidoc:586
+
+[source, python]
+----
+resp = client.tasks.list(detailed="true", actions="*/delete/byquery")
+print(resp)
+----

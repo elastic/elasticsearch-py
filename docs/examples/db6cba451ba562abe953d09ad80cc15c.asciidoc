@@ -3,7 +3,11 @@
 [source, python]
 ----
 resp = client.search(
-    body={"query": {"query_string": {"query": "city.\\*:(this AND that OR thus)"}}},
+    body={
+        "query": {
+            "query_string": {"query": "city.\\*:(this AND that OR thus)"}
+        }
+    },
 )
 print(resp)
 ----

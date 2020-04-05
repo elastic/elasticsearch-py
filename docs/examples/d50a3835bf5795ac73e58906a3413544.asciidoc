@@ -3,7 +3,9 @@
 [source, python]
 ----
 resp = client.search(
-    body={"aggs": {"products": {"terms": {"field": "product", "size": 5}}}},
+    body={
+        "aggs": {"products": {"terms": {"field": "product", "size": 5}}}
+    },
 )
 print(resp)
 ----

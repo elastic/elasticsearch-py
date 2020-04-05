@@ -1,0 +1,16 @@
+// mapping/params/format.asciidoc:13
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my_index",
+    body={
+        "mappings": {
+            "properties": {
+                "date": {"type": "date", "format": "yyyy-MM-dd"}
+            }
+        }
+    },
+)
+print(resp)
+----

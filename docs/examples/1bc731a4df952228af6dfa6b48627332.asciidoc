@@ -7,7 +7,9 @@ resp = client.reindex(
         "max_docs": 10,
         "source": {
             "index": "twitter",
-            "query": {"function_score": {"random_score": {}, "min_score": 0.9}},
+            "query": {
+                "function_score": {"random_score": {}, "min_score": 0.9}
+            },
         },
         "dest": {"index": "random_twitter"},
     },

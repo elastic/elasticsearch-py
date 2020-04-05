@@ -1,0 +1,19 @@
+// mapping/types/nested.asciidoc:55
+
+[source, python]
+----
+resp = client.search(
+    index="my_index",
+    body={
+        "query": {
+            "bool": {
+                "must": [
+                    {"match": {"user.first": "Alice"}},
+                    {"match": {"user.last": "Smith"}},
+                ]
+            }
+        }
+    },
+)
+print(resp)
+----
