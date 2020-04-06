@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from elasticsearch.client.utils import _make_path, _escape, query_params
+from elasticsearch.client.utils import _bulk_body, _make_path, _escape, query_params
 from elasticsearch.compat import PY2
 
 from ..test_cases import TestCase, SkipTest
@@ -71,3 +71,27 @@ class TestEscape(TestCase):
     def test_handles_bytestring(self):
         string = b"celery-task-meta-c4f1201f-eb7b-41d5-9318-a75a8cfbdaa0"
         self.assertEquals(string, _escape(string))
+
+
+class TestBulkBody(TestCase):
+    def test_proper_bulk_body_as_string_is_not_modified(self):
+        string_body = '"{"index":{ "_index" : "test"}}\n{"field1": "value1"}"\n'
+        self.assertEqual(string_body, _bulk_body(None, string_body))
+
+    def test_proper_bulk_body_as_bytestring_is_not_modified(self):
+        bytestring_body = b'"{"index":{ "_index" : "test"}}\n{"field1": "value1"}"\n'
+        self.assertEqual(bytestring_body, _bulk_body(None, bytestring_body))
+
+    def test_bulk_body_as_string_adds_trailing_newline(self):
+        string_body = '"{"index":{ "_index" : "test"}}\n{"field1": "value1"}"'
+        self.assertEqual(
+            '"{"index":{ "_index" : "test"}}\n{"field1": "value1"}"\n',
+            _bulk_body(None, string_body),
+        )
+
+    def test_bulk_body_as_bytestring_adds_trailing_newline(self):
+        bytestring_body = b'"{"index":{ "_index" : "test"}}\n{"field1": "value1"}"'
+        self.assertEqual(
+            b'"{"index":{ "_index" : "test"}}\n{"field1": "value1"}"\n',
+            _bulk_body(None, bytestring_body),
+        )
