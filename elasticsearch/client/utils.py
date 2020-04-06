@@ -104,7 +104,7 @@ def _bulk_body(serializer, body):
     # bulk body must end with a newline
     if isinstance(body, bytes) and not body.endswith(b"\n"):
         body += b"\n"
-    elif isinstance(body, str) and not body.endswith("\n"):
+    elif isinstance(body, string_types) and not body.endswith("\n"):
         body += "\n"
 
     return body
