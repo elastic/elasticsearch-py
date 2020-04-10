@@ -1408,7 +1408,7 @@ class Elasticsearch(object):
             closed, hidden, none, all  Default: open
         :arg explain: Specify whether to return detailed information
             about score computation as part of a hit
-        :arg from_: Starting offset (default: 0)
+        :arg from\_: Starting offset (default: 0)
         :arg ignore_throttled: Whether specified concrete, expanded or
             aliased indices should be ignored when throttled
         :arg ignore_unavailable: Whether specified concrete indices
