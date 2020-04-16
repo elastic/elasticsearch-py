@@ -5,6 +5,7 @@ VERSION = (8, 0, 0)
 __version__ = VERSION
 __versionstr__ = ".".join(map(str, VERSION))
 
+import sys
 import logging
 import warnings
 
@@ -60,3 +61,23 @@ __all__ = [
     "AuthorizationException",
     "ElasticsearchDeprecationWarning",
 ]
+
+try:
+    # Async is only supported on Python 3.6+
+    if sys.version_info < (3, 6):
+        raise ImportError()
+    import asyncio
+
+    from ._async import (
+        AsyncElasticsearch as AsyncElasticsearch,
+        AsyncTransport as AsyncTransport,
+        AIOHttpConnection as AIOHttpConnection,
+    )
+
+    __all__ += [
+        "AsyncElasticsearch",
+        "AsyncTransport",
+        "AIOHttpConnection",
+    ]
+except ImportError as e:
+    print(e)

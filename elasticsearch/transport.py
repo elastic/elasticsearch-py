@@ -40,10 +40,12 @@ class Transport(object):
     Main interface is the `perform_request` method.
     """
 
+    DEFAULT_CONNECTION_CLASS = Urllib3HttpConnection
+
     def __init__(
         self,
         hosts,
-        connection_class=Urllib3HttpConnection,
+        connection_class=None,
         connection_pool_class=ConnectionPool,
         host_info_callback=get_host_info,
         sniff_on_start=False,
@@ -96,6 +98,8 @@ class Transport(object):
         when creating and instance unless overridden by that connection's
         options provided as part of the hosts parameter.
         """
+        if connection_class is None:
+            connection_class = self.DEFAULT_CONNECTION_CLASS
 
         # serialization config
         _serializers = DEFAULT_SERIALIZERS.copy()
