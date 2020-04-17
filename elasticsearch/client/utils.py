@@ -102,7 +102,10 @@ def _bulk_body(serializer, body):
         body = "\n".join(map(serializer.dumps, body))
 
     # bulk body must end with a newline
-    if not body.endswith("\n"):
+    if isinstance(body, bytes):
+        if not body.endswith(b"\n"):
+            body += b"\n"
+    elif isinstance(body, string_types) and not body.endswith("\n"):
         body += "\n"
 
     return body
