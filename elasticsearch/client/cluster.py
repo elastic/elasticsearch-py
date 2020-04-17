@@ -46,10 +46,7 @@ class ClusterClient(NamespacedClient):
             Valid choices: green, yellow, red
         """
         return self.transport.perform_request(
-            "GET",
-            _make_path("_cluster", "health", index),
-            params=params,
-            headers=headers,
+            "GET", _make_path("_cluster/health", index), params=params, headers=headers
         )
 
     @query_params("local", "master_timeout")
@@ -110,7 +107,7 @@ class ClusterClient(NamespacedClient):
 
         return self.transport.perform_request(
             "GET",
-            _make_path("_cluster", "state", metric, index),
+            _make_path("_cluster/state", metric, index),
             params=params,
             headers=headers,
         )

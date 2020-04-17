@@ -874,7 +874,7 @@ class IndicesClient(NamespacedClient):
         """
         return self.transport.perform_request(
             "POST",
-            _make_path(index, doc_type, "_validate", "query"),
+            _make_path(index, doc_type, "_validate/query"),
             params=params,
             headers=headers,
             body=body,
@@ -911,7 +911,7 @@ class IndicesClient(NamespacedClient):
         :arg request: Clear request cache
         """
         return self.transport.perform_request(
-            "POST", _make_path(index, "_cache", "clear"), params=params, headers=headers
+            "POST", _make_path(index, "_cache/clear"), params=params, headers=headers
         )
 
     @query_params("active_only", "detailed")
@@ -1002,10 +1002,7 @@ class IndicesClient(NamespacedClient):
             should be ignored when unavailable (missing or closed)
         """
         return self.transport.perform_request(
-            "POST",
-            _make_path(index, "_flush", "synced"),
-            params=params,
-            headers=headers,
+            "POST", _make_path(index, "_flush/synced"), params=params, headers=headers
         )
 
     @query_params(

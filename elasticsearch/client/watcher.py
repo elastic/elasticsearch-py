@@ -17,7 +17,7 @@ class WatcherClient(NamespacedClient):
 
         return self.transport.perform_request(
             "PUT",
-            _make_path("_watcher", "watch", watch_id, "_ack", action_id),
+            _make_path("_watcher/watch", watch_id, "_ack", action_id),
             params=params,
             headers=headers,
         )
@@ -35,7 +35,7 @@ class WatcherClient(NamespacedClient):
 
         return self.transport.perform_request(
             "PUT",
-            _make_path("_watcher", "watch", watch_id, "_activate"),
+            _make_path("_watcher/watch", watch_id, "_activate"),
             params=params,
             headers=headers,
         )
@@ -53,7 +53,7 @@ class WatcherClient(NamespacedClient):
 
         return self.transport.perform_request(
             "PUT",
-            _make_path("_watcher", "watch", watch_id, "_deactivate"),
+            _make_path("_watcher/watch", watch_id, "_deactivate"),
             params=params,
             headers=headers,
         )
@@ -70,10 +70,7 @@ class WatcherClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'id'.")
 
         return self.transport.perform_request(
-            "DELETE",
-            _make_path("_watcher", "watch", id),
-            params=params,
-            headers=headers,
+            "DELETE", _make_path("_watcher/watch", id), params=params, headers=headers
         )
 
     @query_params("debug")
@@ -89,7 +86,7 @@ class WatcherClient(NamespacedClient):
         """
         return self.transport.perform_request(
             "PUT",
-            _make_path("_watcher", "watch", id, "_execute"),
+            _make_path("_watcher/watch", id, "_execute"),
             params=params,
             headers=headers,
             body=body,
@@ -107,7 +104,7 @@ class WatcherClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'id'.")
 
         return self.transport.perform_request(
-            "GET", _make_path("_watcher", "watch", id), params=params, headers=headers
+            "GET", _make_path("_watcher/watch", id), params=params, headers=headers
         )
 
     @query_params("active", "if_primary_term", "if_seq_no", "version")
@@ -130,7 +127,7 @@ class WatcherClient(NamespacedClient):
 
         return self.transport.perform_request(
             "PUT",
-            _make_path("_watcher", "watch", id),
+            _make_path("_watcher/watch", id),
             params=params,
             headers=headers,
             body=body,
@@ -159,10 +156,7 @@ class WatcherClient(NamespacedClient):
             watches
         """
         return self.transport.perform_request(
-            "GET",
-            _make_path("_watcher", "stats", metric),
-            params=params,
-            headers=headers,
+            "GET", _make_path("_watcher/stats", metric), params=params, headers=headers
         )
 
     @query_params()

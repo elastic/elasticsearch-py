@@ -1215,7 +1215,7 @@ class Elasticsearch(object):
         body = _bulk_body(self.transport.serializer, body)
         return self.transport.perform_request(
             "POST",
-            _make_path(index, doc_type, "_msearch", "template"),
+            _make_path(index, doc_type, "_msearch/template"),
             params=params,
             headers=headers,
             body=body,
@@ -1423,7 +1423,7 @@ class Elasticsearch(object):
         """
         return self.transport.perform_request(
             "POST",
-            _make_path("_render", "template", id),
+            _make_path("_render/template", id),
             params=params,
             headers=headers,
             body=body,
@@ -1722,7 +1722,7 @@ class Elasticsearch(object):
 
         return self.transport.perform_request(
             "POST",
-            _make_path(index, doc_type, "_search", "template"),
+            _make_path(index, doc_type, "_search/template"),
             params=params,
             headers=headers,
             body=body,

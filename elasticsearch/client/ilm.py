@@ -15,10 +15,7 @@ class IlmClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'policy'.")
 
         return self.transport.perform_request(
-            "DELETE",
-            _make_path("_ilm", "policy", policy),
-            params=params,
-            headers=headers,
+            "DELETE", _make_path("_ilm/policy", policy), params=params, headers=headers
         )
 
     @query_params("only_errors", "only_managed")
@@ -38,7 +35,7 @@ class IlmClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'index'.")
 
         return self.transport.perform_request(
-            "GET", _make_path(index, "_ilm", "explain"), params=params, headers=headers
+            "GET", _make_path(index, "_ilm/explain"), params=params, headers=headers
         )
 
     @query_params()
@@ -51,7 +48,7 @@ class IlmClient(NamespacedClient):
         :arg policy: The name of the index lifecycle policy
         """
         return self.transport.perform_request(
-            "GET", _make_path("_ilm", "policy", policy), params=params, headers=headers
+            "GET", _make_path("_ilm/policy", policy), params=params, headers=headers
         )
 
     @query_params()
@@ -79,7 +76,7 @@ class IlmClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path("_ilm", "move", index),
+            _make_path("_ilm/move", index),
             params=params,
             headers=headers,
             body=body,
@@ -99,7 +96,7 @@ class IlmClient(NamespacedClient):
 
         return self.transport.perform_request(
             "PUT",
-            _make_path("_ilm", "policy", policy),
+            _make_path("_ilm/policy", policy),
             params=params,
             headers=headers,
             body=body,
@@ -117,7 +114,7 @@ class IlmClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'index'.")
 
         return self.transport.perform_request(
-            "POST", _make_path(index, "_ilm", "remove"), params=params, headers=headers
+            "POST", _make_path(index, "_ilm/remove"), params=params, headers=headers
         )
 
     @query_params()
@@ -133,7 +130,7 @@ class IlmClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'index'.")
 
         return self.transport.perform_request(
-            "POST", _make_path(index, "_ilm", "retry"), params=params, headers=headers
+            "POST", _make_path(index, "_ilm/retry"), params=params, headers=headers
         )
 
     @query_params()

@@ -18,7 +18,7 @@ class EqlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path(index, "_eql", "search"),
+            _make_path(index, "_eql/search"),
             params=params,
             headers=headers,
             body=body,

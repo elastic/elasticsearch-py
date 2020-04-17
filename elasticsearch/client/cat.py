@@ -24,7 +24,7 @@ class CatClient(NamespacedClient):
         :arg v: Verbose mode. Display column headers
         """
         return self.transport.perform_request(
-            "GET", _make_path("_cat", "aliases", name), params=params, headers=headers
+            "GET", _make_path("_cat/aliases", name), params=params, headers=headers
         )
 
     @query_params("bytes", "format", "h", "help", "local", "master_timeout", "s", "v")
@@ -52,7 +52,7 @@ class CatClient(NamespacedClient):
         """
         return self.transport.perform_request(
             "GET",
-            _make_path("_cat", "allocation", node_id),
+            _make_path("_cat/allocation", node_id),
             params=params,
             headers=headers,
         )
@@ -75,7 +75,7 @@ class CatClient(NamespacedClient):
         :arg v: Verbose mode. Display column headers
         """
         return self.transport.perform_request(
-            "GET", _make_path("_cat", "count", index), params=params, headers=headers
+            "GET", _make_path("_cat/count", index), params=params, headers=headers
         )
 
     @query_params("format", "h", "help", "s", "time", "ts", "v")
@@ -163,7 +163,7 @@ class CatClient(NamespacedClient):
         :arg v: Verbose mode. Display column headers
         """
         return self.transport.perform_request(
-            "GET", _make_path("_cat", "indices", index), params=params, headers=headers
+            "GET", _make_path("_cat/indices", index), params=params, headers=headers
         )
 
     @query_params("format", "h", "help", "local", "master_timeout", "s", "v")
@@ -254,7 +254,7 @@ class CatClient(NamespacedClient):
         :arg v: Verbose mode. Display column headers
         """
         return self.transport.perform_request(
-            "GET", _make_path("_cat", "recovery", index), params=params, headers=headers
+            "GET", _make_path("_cat/recovery", index), params=params, headers=headers
         )
 
     @query_params(
@@ -284,7 +284,7 @@ class CatClient(NamespacedClient):
         :arg v: Verbose mode. Display column headers
         """
         return self.transport.perform_request(
-            "GET", _make_path("_cat", "shards", index), params=params, headers=headers
+            "GET", _make_path("_cat/shards", index), params=params, headers=headers
         )
 
     @query_params("bytes", "format", "h", "help", "s", "v")
@@ -306,7 +306,7 @@ class CatClient(NamespacedClient):
         :arg v: Verbose mode. Display column headers
         """
         return self.transport.perform_request(
-            "GET", _make_path("_cat", "segments", index), params=params, headers=headers
+            "GET", _make_path("_cat/segments", index), params=params, headers=headers
         )
 
     @query_params("format", "h", "help", "local", "master_timeout", "s", "time", "v")
@@ -358,7 +358,7 @@ class CatClient(NamespacedClient):
         """
         return self.transport.perform_request(
             "GET",
-            _make_path("_cat", "thread_pool", thread_pool_patterns),
+            _make_path("_cat/thread_pool", thread_pool_patterns),
             params=params,
             headers=headers,
         )
@@ -383,10 +383,7 @@ class CatClient(NamespacedClient):
         :arg v: Verbose mode. Display column headers
         """
         return self.transport.perform_request(
-            "GET",
-            _make_path("_cat", "fielddata", fields),
-            params=params,
-            headers=headers,
+            "GET", _make_path("_cat/fielddata", fields), params=params, headers=headers
         )
 
     @query_params("format", "h", "help", "local", "master_timeout", "s", "v")
@@ -481,7 +478,7 @@ class CatClient(NamespacedClient):
         """
         return self.transport.perform_request(
             "GET",
-            _make_path("_cat", "snapshots", repository),
+            _make_path("_cat/snapshots", repository),
             params=params,
             headers=headers,
         )
@@ -547,7 +544,7 @@ class CatClient(NamespacedClient):
         :arg v: Verbose mode. Display column headers
         """
         return self.transport.perform_request(
-            "GET", _make_path("_cat", "templates", name), params=params, headers=headers
+            "GET", _make_path("_cat/templates", name), params=params, headers=headers
         )
 
     @query_params("allow_no_match", "bytes", "format", "h", "help", "s", "time", "v")
@@ -574,7 +571,7 @@ class CatClient(NamespacedClient):
         """
         return self.transport.perform_request(
             "GET",
-            _make_path("_cat", "ml", "data_frame", "analytics", id),
+            _make_path("_cat/ml/data_frame/analytics", id),
             params=params,
             headers=headers,
         )
@@ -601,7 +598,7 @@ class CatClient(NamespacedClient):
         """
         return self.transport.perform_request(
             "GET",
-            _make_path("_cat", "ml", "datafeeds", datafeed_id),
+            _make_path("_cat/ml/datafeeds", datafeed_id),
             params=params,
             headers=headers,
         )
@@ -630,7 +627,7 @@ class CatClient(NamespacedClient):
         """
         return self.transport.perform_request(
             "GET",
-            _make_path("_cat", "ml", "anomaly_detectors", job_id),
+            _make_path("_cat/ml/anomaly_detectors", job_id),
             params=params,
             headers=headers,
         )
@@ -677,7 +674,7 @@ class CatClient(NamespacedClient):
 
         return self.transport.perform_request(
             "GET",
-            _make_path("_cat", "ml", "trained_models", model_id),
+            _make_path("_cat/ml/trained_models", model_id),
             params=params,
             headers=headers,
         )
@@ -714,7 +711,7 @@ class CatClient(NamespacedClient):
 
         return self.transport.perform_request(
             "GET",
-            _make_path("_cat", "transforms", transform_id),
+            _make_path("_cat/transforms", transform_id),
             params=params,
             headers=headers,
         )
