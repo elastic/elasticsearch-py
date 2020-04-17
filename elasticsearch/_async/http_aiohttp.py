@@ -45,7 +45,7 @@ class AIOHttpConnection(Connection):
         client_key=None,
         ssl_version=None,
         ssl_assert_fingerprint=None,
-        maxsize=50,
+        maxsize=10,
         headers=None,
         ssl_context=None,
         http_compress=None,
@@ -113,6 +113,7 @@ class AIOHttpConnection(Connection):
 
         self.headers.setdefault("connection", "keep-alive")
         self.session = aiohttp.ClientSession(
+            auth=http_auth,
             headers=self.headers,
             auto_decompress=True,
             connector=aiohttp.TCPConnector(

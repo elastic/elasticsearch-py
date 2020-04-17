@@ -3,7 +3,7 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH, _bu
 
 class MonitoringClient(NamespacedClient):
     @query_params("interval", "system_api_version", "system_id")
-    async def bulk(self, body, *, doc_type=None, params=None, headers=None):
+    async def bulk(self, body, doc_type=None, params=None, headers=None):
         """
         Used by the monitoring features to send monitoring data.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/monitor-elasticsearch-cluster.html>`_

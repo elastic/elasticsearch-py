@@ -2,9 +2,7 @@
 from __future__ import unicode_literals
 import logging
 
-from ..transport import Transport
-from ..exceptions import TransportError
-from ..compat import string_types, urlparse, unquote
+from .utils import query_params, _make_path, SKIP_IN_PATH, _bulk_body
 from .async_search import AsyncSearchClient
 from .autoscaling import AutoscalingClient
 from .indices import IndicesClient
@@ -12,11 +10,11 @@ from .ingest import IngestClient
 from .cluster import ClusterClient
 from .cat import CatClient
 from .nodes import NodesClient
-from .remote import RemoteClient
 from .snapshot import SnapshotClient
 from .tasks import TasksClient
 from .xpack import XPackClient
-from .utils import query_params, _make_path, SKIP_IN_PATH, _bulk_body
+from ..transport import Transport, TransportError
+from ..compat import string_types, urlparse, unquote
 
 # xpack APIs
 from .ccr import CcrClient
@@ -235,7 +233,6 @@ class Elasticsearch(object):
         self.cluster = ClusterClient(self)
         self.cat = CatClient(self)
         self.nodes = NodesClient(self)
-        self.remote = RemoteClient(self)
         self.snapshot = SnapshotClient(self)
         self.tasks = TasksClient(self)
 
@@ -270,141 +267,13 @@ class Elasticsearch(object):
             # probably operating on custom transport and connection_pool, ignore
             return super(Elasticsearch, self).__repr__()
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *_):
+        self.transport.close()
+
     # AUTO-GENERATED-API-DEFINITIONS #
-    @query_params()
-    def ping(self, params=None, headers=None):
-        """
-        Returns whether the cluster is running.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html>`_
-        """
-        try:
-            return self.transport.perform_request(
-                "HEAD", "/", params=params, headers=headers
-            )
-        except TransportError:
-            return False
-
-    @query_params()
-    def info(self, params=None, headers=None):
-        """
-        Returns basic information about the cluster.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html>`_
-        """
-        return self.transport.perform_request(
-            "GET", "/", params=params, headers=headers
-        )
-
-    @query_params(
-        "pipeline",
-        "refresh",
-        "routing",
-        "timeout",
-        "version",
-        "version_type",
-        "wait_for_active_shards",
-    )
-    def create(self, index, id, body, doc_type=None, params=None, headers=None):
-        """
-        Creates a new document in the index.  Returns a 409 response when a document
-        with a same ID already exists in the index.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-index_.html>`_
-
-        :arg index: The name of the index
-        :arg id: Document ID
-        :arg body: The document
-        :arg doc_type: The type of the document
-        :arg pipeline: The pipeline id to preprocess incoming documents
-            with
-        :arg refresh: If `true` then refresh the affected shards to make
-            this operation visible to search, if `wait_for` then wait for a refresh
-            to make this operation visible to search, if `false` (the default) then
-            do nothing with refreshes.  Valid choices: true, false, wait_for
-        :arg routing: Specific routing value
-        :arg timeout: Explicit operation timeout
-        :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type  Valid choices:
-            internal, external, external_gte
-        :arg wait_for_active_shards: Sets the number of shard copies
-            that must be active before proceeding with the index operation. Defaults
-            to 1, meaning the primary shard only. Set to `all` for all shard copies,
-            otherwise set to any non-negative value less than or equal to the total
-            number of copies for the shard (number of replicas + 1)
-        """
-        for param in (index, id, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        if doc_type in SKIP_IN_PATH:
-            path = _make_path(index, "_create", id)
-        else:
-            path = _make_path(index, doc_type, id)
-
-        return self.transport.perform_request(
-            "POST" if id in SKIP_IN_PATH else "PUT",
-            path,
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params(
-        "if_primary_term",
-        "if_seq_no",
-        "op_type",
-        "pipeline",
-        "refresh",
-        "routing",
-        "timeout",
-        "version",
-        "version_type",
-        "wait_for_active_shards",
-    )
-    def index(self, index, body, id=None, params=None, headers=None):
-        """
-        Creates or updates a document in an index.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-index_.html>`_
-
-        :arg index: The name of the index
-        :arg body: The document
-        :arg id: Document ID
-        :arg if_primary_term: only perform the index operation if the
-            last operation that has changed the document has the specified primary
-            term
-        :arg if_seq_no: only perform the index operation if the last
-            operation that has changed the document has the specified sequence
-            number
-        :arg op_type: Explicit operation type. Defaults to `index` for
-            requests with an explicit document ID, and to `create`for requests
-            without an explicit document ID  Valid choices: index, create
-        :arg pipeline: The pipeline id to preprocess incoming documents
-            with
-        :arg refresh: If `true` then refresh the affected shards to make
-            this operation visible to search, if `wait_for` then wait for a refresh
-            to make this operation visible to search, if `false` (the default) then
-            do nothing with refreshes.  Valid choices: true, false, wait_for
-        :arg routing: Specific routing value
-        :arg timeout: Explicit operation timeout
-        :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type  Valid choices:
-            internal, external, external_gte
-        :arg wait_for_active_shards: Sets the number of shard copies
-            that must be active before proceeding with the index operation. Defaults
-            to 1, meaning the primary shard only. Set to `all` for all shard copies,
-            otherwise set to any non-negative value less than or equal to the total
-            number of copies for the shard (number of replicas + 1)
-        """
-        for param in (index, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return self.transport.perform_request(
-            "POST" if id in SKIP_IN_PATH else "PUT",
-            _make_path(index, "_doc", id),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
     @query_params(
         "_source",
         "_source_excludes",
@@ -535,6 +404,59 @@ class Elasticsearch(object):
         return self.transport.perform_request(
             "POST",
             _make_path(index, "_count"),
+            params=params,
+            headers=headers,
+            body=body,
+        )
+
+    @query_params(
+        "pipeline",
+        "refresh",
+        "routing",
+        "timeout",
+        "version",
+        "version_type",
+        "wait_for_active_shards",
+    )
+    def create(self, index, id, body, doc_type=None, params=None, headers=None):
+        """
+        Creates a new document in the index.  Returns a 409 response when a document
+        with a same ID already exists in the index.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-index_.html>`_
+
+        :arg index: The name of the index
+        :arg id: Document ID
+        :arg body: The document
+        :arg doc_type: The type of the document
+        :arg pipeline: The pipeline id to preprocess incoming documents
+            with
+        :arg refresh: If `true` then refresh the affected shards to make
+            this operation visible to search, if `wait_for` then wait for a refresh
+            to make this operation visible to search, if `false` (the default) then
+            do nothing with refreshes.  Valid choices: true, false, wait_for
+        :arg routing: Specific routing value
+        :arg timeout: Explicit operation timeout
+        :arg version: Explicit version number for concurrency control
+        :arg version_type: Specific version type  Valid choices:
+            internal, external, external_gte
+        :arg wait_for_active_shards: Sets the number of shard copies
+            that must be active before proceeding with the index operation. Defaults
+            to 1, meaning the primary shard only. Set to `all` for all shard copies,
+            otherwise set to any non-negative value less than or equal to the total
+            number of copies for the shard (number of replicas + 1)
+        """
+        for param in (index, id, body):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
+
+        if doc_type in SKIP_IN_PATH:
+            path = _make_path(index, "_create", id)
+        else:
+            path = _make_path(index, doc_type, id)
+
+        return self.transport.perform_request(
+            "POST" if id in SKIP_IN_PATH else "PUT",
+            path,
             params=params,
             headers=headers,
             body=body,
@@ -996,6 +918,26 @@ class Elasticsearch(object):
             "GET", _make_path("_scripts", id), params=params, headers=headers
         )
 
+    @query_params()
+    def get_script_context(self, params=None, headers=None):
+        """
+        Returns all script contexts.
+        `<https://www.elastic.co/guide/en/elasticsearch/painless/master/painless-contexts.html>`_
+        """
+        return self.transport.perform_request(
+            "GET", "/_script_context", params=params, headers=headers
+        )
+
+    @query_params()
+    def get_script_languages(self, params=None, headers=None):
+        """
+        Returns available script types, languages and contexts
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
+        """
+        return self.transport.perform_request(
+            "GET", "/_script_language", params=params, headers=headers
+        )
+
     @query_params(
         "_source",
         "_source_excludes",
@@ -1037,6 +979,74 @@ class Elasticsearch(object):
 
         return self.transport.perform_request(
             "GET", _make_path(index, "_source", id), params=params, headers=headers
+        )
+
+    @query_params(
+        "if_primary_term",
+        "if_seq_no",
+        "op_type",
+        "pipeline",
+        "refresh",
+        "routing",
+        "timeout",
+        "version",
+        "version_type",
+        "wait_for_active_shards",
+    )
+    def index(self, index, body, id=None, params=None, headers=None):
+        """
+        Creates or updates a document in an index.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-index_.html>`_
+
+        :arg index: The name of the index
+        :arg body: The document
+        :arg id: Document ID
+        :arg if_primary_term: only perform the index operation if the
+            last operation that has changed the document has the specified primary
+            term
+        :arg if_seq_no: only perform the index operation if the last
+            operation that has changed the document has the specified sequence
+            number
+        :arg op_type: Explicit operation type. Defaults to `index` for
+            requests with an explicit document ID, and to `create`for requests
+            without an explicit document ID  Valid choices: index, create
+        :arg pipeline: The pipeline id to preprocess incoming documents
+            with
+        :arg refresh: If `true` then refresh the affected shards to make
+            this operation visible to search, if `wait_for` then wait for a refresh
+            to make this operation visible to search, if `false` (the default) then
+            do nothing with refreshes.  Valid choices: true, false, wait_for
+        :arg routing: Specific routing value
+        :arg timeout: Explicit operation timeout
+        :arg version: Explicit version number for concurrency control
+        :arg version_type: Specific version type  Valid choices:
+            internal, external, external_gte
+        :arg wait_for_active_shards: Sets the number of shard copies
+            that must be active before proceeding with the index operation. Defaults
+            to 1, meaning the primary shard only. Set to `all` for all shard copies,
+            otherwise set to any non-negative value less than or equal to the total
+            number of copies for the shard (number of replicas + 1)
+        """
+        for param in (index, body):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
+
+        return self.transport.perform_request(
+            "POST" if id in SKIP_IN_PATH else "PUT",
+            _make_path(index, "_doc", id),
+            params=params,
+            headers=headers,
+            body=body,
+        )
+
+    @query_params()
+    def info(self, params=None, headers=None):
+        """
+        Returns basic information about the cluster.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html>`_
+        """
+        return self.transport.perform_request(
+            "GET", "/", params=params, headers=headers
         )
 
     @query_params(
@@ -1138,6 +1148,123 @@ class Elasticsearch(object):
             headers=headers,
             body=body,
         )
+
+    @query_params(
+        "ccs_minimize_roundtrips",
+        "max_concurrent_searches",
+        "rest_total_hits_as_int",
+        "search_type",
+        "typed_keys",
+    )
+    def msearch_template(self, body, index=None, params=None, headers=None):
+        """
+        Allows to execute several search template operations in one request.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/search-multi-search.html>`_
+
+        :arg body: The request definitions (metadata-search request
+            definition pairs), separated by newlines
+        :arg index: A comma-separated list of index names to use as
+            default
+        :arg ccs_minimize_roundtrips: Indicates whether network round-
+            trips should be minimized as part of cross-cluster search requests
+            execution  Default: true
+        :arg max_concurrent_searches: Controls the maximum number of
+            concurrent searches the multi search api will execute
+        :arg rest_total_hits_as_int: Indicates whether hits.total should
+            be rendered as an integer or an object in the rest search response
+        :arg search_type: Search operation type  Valid choices:
+            query_then_fetch, query_and_fetch, dfs_query_then_fetch,
+            dfs_query_and_fetch
+        :arg typed_keys: Specify whether aggregation and suggester names
+            should be prefixed by their respective types in the response
+        """
+        if body in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'body'.")
+
+        body = _bulk_body(self.transport.serializer, body)
+        return self.transport.perform_request(
+            "POST",
+            _make_path(index, "_msearch/template"),
+            params=params,
+            headers=headers,
+            body=body,
+        )
+
+    @query_params(
+        "field_statistics",
+        "fields",
+        "ids",
+        "offsets",
+        "payloads",
+        "positions",
+        "preference",
+        "realtime",
+        "routing",
+        "term_statistics",
+        "version",
+        "version_type",
+    )
+    def mtermvectors(self, body=None, index=None, params=None, headers=None):
+        """
+        Returns multiple termvectors in one request.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-multi-termvectors.html>`_
+
+        :arg body: Define ids, documents, parameters or a list of
+            parameters per document here. You must at least provide a list of
+            document ids. See documentation.
+        :arg index: The index in which the document resides.
+        :arg field_statistics: Specifies if document count, sum of
+            document frequencies and sum of total term frequencies should be
+            returned. Applies to all returned documents unless otherwise specified
+            in body "params" or "docs".  Default: True
+        :arg fields: A comma-separated list of fields to return. Applies
+            to all returned documents unless otherwise specified in body "params" or
+            "docs".
+        :arg ids: A comma-separated list of documents ids. You must
+            define ids as parameter or set "ids" or "docs" in the request body
+        :arg offsets: Specifies if term offsets should be returned.
+            Applies to all returned documents unless otherwise specified in body
+            "params" or "docs".  Default: True
+        :arg payloads: Specifies if term payloads should be returned.
+            Applies to all returned documents unless otherwise specified in body
+            "params" or "docs".  Default: True
+        :arg positions: Specifies if term positions should be returned.
+            Applies to all returned documents unless otherwise specified in body
+            "params" or "docs".  Default: True
+        :arg preference: Specify the node or shard the operation should
+            be performed on (default: random) .Applies to all returned documents
+            unless otherwise specified in body "params" or "docs".
+        :arg realtime: Specifies if requests are real-time as opposed to
+            near-real-time (default: true).
+        :arg routing: Specific routing value. Applies to all returned
+            documents unless otherwise specified in body "params" or "docs".
+        :arg term_statistics: Specifies if total term frequency and
+            document frequency should be returned. Applies to all returned documents
+            unless otherwise specified in body "params" or "docs".
+        :arg version: Explicit version number for concurrency control
+        :arg version_type: Specific version type  Valid choices:
+            internal, external, external_gte
+        """
+        return self.transport.perform_request(
+            "POST",
+            _make_path(index, "_mtermvectors"),
+            params=params,
+            headers=headers,
+            body=body,
+        )
+
+    @query_params()
+    def ping(self, params=None, headers=None):
+        """
+        Returns whether the cluster is running.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html>`_
+        """
+        try:
+            return self.transport.perform_request(
+                "HEAD", "/", params=params, headers=headers
+            )
+        except TransportError:
+            return False
 
     @query_params("master_timeout", "timeout")
     def put_script(self, id, body, context=None, params=None, headers=None):
@@ -1275,7 +1402,7 @@ class Elasticsearch(object):
         """
         return self.transport.perform_request(
             "POST",
-            _make_path("_render", "template", id),
+            _make_path("_render/template", id),
             params=params,
             headers=headers,
             body=body,
@@ -1512,6 +1639,125 @@ class Elasticsearch(object):
         )
 
     @query_params(
+        "allow_no_indices",
+        "ccs_minimize_roundtrips",
+        "expand_wildcards",
+        "explain",
+        "ignore_throttled",
+        "ignore_unavailable",
+        "preference",
+        "profile",
+        "rest_total_hits_as_int",
+        "routing",
+        "scroll",
+        "search_type",
+        "typed_keys",
+    )
+    def search_template(self, body, index=None, params=None, headers=None):
+        """
+        Allows to use the Mustache language to pre-render a search definition.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html>`_
+
+        :arg body: The search definition template and its params
+        :arg index: A comma-separated list of index names to search; use
+            `_all` or empty string to perform the operation on all indices
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+            expression resolves into no concrete indices. (This includes `_all`
+            string or when no indices have been specified)
+        :arg ccs_minimize_roundtrips: Indicates whether network round-
+            trips should be minimized as part of cross-cluster search requests
+            execution  Default: true
+        :arg expand_wildcards: Whether to expand wildcard expression to
+            concrete indices that are open, closed or both.  Valid choices: open,
+            closed, hidden, none, all  Default: open
+        :arg explain: Specify whether to return detailed information
+            about score computation as part of a hit
+        :arg ignore_throttled: Whether specified concrete, expanded or
+            aliased indices should be ignored when throttled
+        :arg ignore_unavailable: Whether specified concrete indices
+            should be ignored when unavailable (missing or closed)
+        :arg preference: Specify the node or shard the operation should
+            be performed on (default: random)
+        :arg profile: Specify whether to profile the query execution
+        :arg rest_total_hits_as_int: Indicates whether hits.total should
+            be rendered as an integer or an object in the rest search response
+        :arg routing: A comma-separated list of specific routing values
+        :arg scroll: Specify how long a consistent view of the index
+            should be maintained for scrolled search
+        :arg search_type: Search operation type  Valid choices:
+            query_then_fetch, query_and_fetch, dfs_query_then_fetch,
+            dfs_query_and_fetch
+        :arg typed_keys: Specify whether aggregation and suggester names
+            should be prefixed by their respective types in the response
+        """
+        if body in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'body'.")
+
+        return self.transport.perform_request(
+            "POST",
+            _make_path(index, "_search/template"),
+            params=params,
+            headers=headers,
+            body=body,
+        )
+
+    @query_params(
+        "field_statistics",
+        "fields",
+        "offsets",
+        "payloads",
+        "positions",
+        "preference",
+        "realtime",
+        "routing",
+        "term_statistics",
+        "version",
+        "version_type",
+    )
+    def termvectors(self, index, body=None, id=None, params=None, headers=None):
+        """
+        Returns information and statistics about terms in the fields of a particular
+        document.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-termvectors.html>`_
+
+        :arg index: The index in which the document resides.
+        :arg body: Define parameters and or supply a document to get
+            termvectors for. See documentation.
+        :arg id: The id of the document, when not specified a doc param
+            should be supplied.
+        :arg field_statistics: Specifies if document count, sum of
+            document frequencies and sum of total term frequencies should be
+            returned.  Default: True
+        :arg fields: A comma-separated list of fields to return.
+        :arg offsets: Specifies if term offsets should be returned.
+            Default: True
+        :arg payloads: Specifies if term payloads should be returned.
+            Default: True
+        :arg positions: Specifies if term positions should be returned.
+            Default: True
+        :arg preference: Specify the node or shard the operation should
+            be performed on (default: random).
+        :arg realtime: Specifies if request is real-time as opposed to
+            near-real-time (default: true).
+        :arg routing: Specific routing value.
+        :arg term_statistics: Specifies if total term frequency and
+            document frequency should be returned.
+        :arg version: Explicit version number for concurrency control
+        :arg version_type: Specific version type  Valid choices:
+            internal, external, external_gte
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'index'.")
+
+        return self.transport.perform_request(
+            "POST",
+            _make_path(index, "_termvectors", id),
+            params=params,
+            headers=headers,
+            body=body,
+        )
+
+    @query_params(
         "_source",
         "_source_excludes",
         "_source_includes",
@@ -1572,270 +1818,6 @@ class Elasticsearch(object):
 
         return self.transport.perform_request(
             "POST", path, params=params, headers=headers, body=body
-        )
-
-    @query_params("requests_per_second")
-    def update_by_query_rethrottle(self, task_id, params=None, headers=None):
-        """
-        Changes the number of requests per second for a particular Update By Query
-        operation.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update-by-query.html>`_
-
-        :arg task_id: The task id to rethrottle
-        :arg requests_per_second: The throttle to set on this request in
-            floating sub-requests per second. -1 means set no throttle.
-        """
-        if task_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'task_id'.")
-
-        return self.transport.perform_request(
-            "POST",
-            _make_path("_update_by_query", task_id, "_rethrottle"),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params()
-    def get_script_context(self, params=None, headers=None):
-        """
-        Returns all script contexts.
-        `<https://www.elastic.co/guide/en/elasticsearch/painless/master/painless-contexts.html>`_
-        """
-        return self.transport.perform_request(
-            "GET", "/_script_context", params=params, headers=headers
-        )
-
-    @query_params()
-    def get_script_languages(self, params=None, headers=None):
-        """
-        Returns available script types, languages and contexts
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
-        """
-        return self.transport.perform_request(
-            "GET", "/_script_language", params=params, headers=headers
-        )
-
-    @query_params(
-        "ccs_minimize_roundtrips",
-        "max_concurrent_searches",
-        "rest_total_hits_as_int",
-        "search_type",
-        "typed_keys",
-    )
-    def msearch_template(self, body, index=None, params=None, headers=None):
-        """
-        Allows to execute several search template operations in one request.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/search-multi-search.html>`_
-
-        :arg body: The request definitions (metadata-search request
-            definition pairs), separated by newlines
-        :arg index: A comma-separated list of index names to use as
-            default
-        :arg ccs_minimize_roundtrips: Indicates whether network round-
-            trips should be minimized as part of cross-cluster search requests
-            execution  Default: true
-        :arg max_concurrent_searches: Controls the maximum number of
-            concurrent searches the multi search api will execute
-        :arg rest_total_hits_as_int: Indicates whether hits.total should
-            be rendered as an integer or an object in the rest search response
-        :arg search_type: Search operation type  Valid choices:
-            query_then_fetch, query_and_fetch, dfs_query_then_fetch,
-            dfs_query_and_fetch
-        :arg typed_keys: Specify whether aggregation and suggester names
-            should be prefixed by their respective types in the response
-        """
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
-
-        body = _bulk_body(self.transport.serializer, body)
-        return self.transport.perform_request(
-            "POST",
-            _make_path(index, "_msearch", "template"),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params(
-        "field_statistics",
-        "fields",
-        "ids",
-        "offsets",
-        "payloads",
-        "positions",
-        "preference",
-        "realtime",
-        "routing",
-        "term_statistics",
-        "version",
-        "version_type",
-    )
-    def mtermvectors(self, body=None, index=None, params=None, headers=None):
-        """
-        Returns multiple termvectors in one request.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-multi-termvectors.html>`_
-
-        :arg body: Define ids, documents, parameters or a list of
-            parameters per document here. You must at least provide a list of
-            document ids. See documentation.
-        :arg index: The index in which the document resides.
-        :arg field_statistics: Specifies if document count, sum of
-            document frequencies and sum of total term frequencies should be
-            returned. Applies to all returned documents unless otherwise specified
-            in body "params" or "docs".  Default: True
-        :arg fields: A comma-separated list of fields to return. Applies
-            to all returned documents unless otherwise specified in body "params" or
-            "docs".
-        :arg ids: A comma-separated list of documents ids. You must
-            define ids as parameter or set "ids" or "docs" in the request body
-        :arg offsets: Specifies if term offsets should be returned.
-            Applies to all returned documents unless otherwise specified in body
-            "params" or "docs".  Default: True
-        :arg payloads: Specifies if term payloads should be returned.
-            Applies to all returned documents unless otherwise specified in body
-            "params" or "docs".  Default: True
-        :arg positions: Specifies if term positions should be returned.
-            Applies to all returned documents unless otherwise specified in body
-            "params" or "docs".  Default: True
-        :arg preference: Specify the node or shard the operation should
-            be performed on (default: random) .Applies to all returned documents
-            unless otherwise specified in body "params" or "docs".
-        :arg realtime: Specifies if requests are real-time as opposed to
-            near-real-time (default: true).
-        :arg routing: Specific routing value. Applies to all returned
-            documents unless otherwise specified in body "params" or "docs".
-        :arg term_statistics: Specifies if total term frequency and
-            document frequency should be returned. Applies to all returned documents
-            unless otherwise specified in body "params" or "docs".
-        :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type  Valid choices:
-            internal, external, external_gte
-        """
-        return self.transport.perform_request(
-            "POST",
-            _make_path(index, "_mtermvectors"),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params(
-        "allow_no_indices",
-        "ccs_minimize_roundtrips",
-        "expand_wildcards",
-        "explain",
-        "ignore_throttled",
-        "ignore_unavailable",
-        "preference",
-        "profile",
-        "rest_total_hits_as_int",
-        "routing",
-        "scroll",
-        "search_type",
-        "typed_keys",
-    )
-    def search_template(self, body, index=None, params=None, headers=None):
-        """
-        Allows to use the Mustache language to pre-render a search definition.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html>`_
-
-        :arg body: The search definition template and its params
-        :arg index: A comma-separated list of index names to search; use
-            `_all` or empty string to perform the operation on all indices
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg ccs_minimize_roundtrips: Indicates whether network round-
-            trips should be minimized as part of cross-cluster search requests
-            execution  Default: true
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
-        :arg explain: Specify whether to return detailed information
-            about score computation as part of a hit
-        :arg ignore_throttled: Whether specified concrete, expanded or
-            aliased indices should be ignored when throttled
-        :arg ignore_unavailable: Whether specified concrete indices
-            should be ignored when unavailable (missing or closed)
-        :arg preference: Specify the node or shard the operation should
-            be performed on (default: random)
-        :arg profile: Specify whether to profile the query execution
-        :arg rest_total_hits_as_int: Indicates whether hits.total should
-            be rendered as an integer or an object in the rest search response
-        :arg routing: A comma-separated list of specific routing values
-        :arg scroll: Specify how long a consistent view of the index
-            should be maintained for scrolled search
-        :arg search_type: Search operation type  Valid choices:
-            query_then_fetch, query_and_fetch, dfs_query_then_fetch,
-            dfs_query_and_fetch
-        :arg typed_keys: Specify whether aggregation and suggester names
-            should be prefixed by their respective types in the response
-        """
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
-
-        return self.transport.perform_request(
-            "POST",
-            _make_path(index, "_search", "template"),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params(
-        "field_statistics",
-        "fields",
-        "offsets",
-        "payloads",
-        "positions",
-        "preference",
-        "realtime",
-        "routing",
-        "term_statistics",
-        "version",
-        "version_type",
-    )
-    def termvectors(self, index, body=None, id=None, params=None, headers=None):
-        """
-        Returns information and statistics about terms in the fields of a particular
-        document.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-termvectors.html>`_
-
-        :arg index: The index in which the document resides.
-        :arg body: Define parameters and or supply a document to get
-            termvectors for. See documentation.
-        :arg id: The id of the document, when not specified a doc param
-            should be supplied.
-        :arg field_statistics: Specifies if document count, sum of
-            document frequencies and sum of total term frequencies should be
-            returned.  Default: True
-        :arg fields: A comma-separated list of fields to return.
-        :arg offsets: Specifies if term offsets should be returned.
-            Default: True
-        :arg payloads: Specifies if term payloads should be returned.
-            Default: True
-        :arg positions: Specifies if term positions should be returned.
-            Default: True
-        :arg preference: Specify the node or shard the operation should
-            be performed on (default: random).
-        :arg realtime: Specifies if request is real-time as opposed to
-            near-real-time (default: true).
-        :arg routing: Specific routing value.
-        :arg term_statistics: Specifies if total term frequency and
-            document frequency should be returned.
-        :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type  Valid choices:
-            internal, external, external_gte
-        """
-        if index in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'index'.")
-
-        return self.transport.perform_request(
-            "POST",
-            _make_path(index, "_termvectors", id),
-            params=params,
-            headers=headers,
-            body=body,
         )
 
     @query_params(
@@ -1967,4 +1949,25 @@ class Elasticsearch(object):
             params=params,
             headers=headers,
             body=body,
+        )
+
+    @query_params("requests_per_second")
+    def update_by_query_rethrottle(self, task_id, params=None, headers=None):
+        """
+        Changes the number of requests per second for a particular Update By Query
+        operation.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update-by-query.html>`_
+
+        :arg task_id: The task id to rethrottle
+        :arg requests_per_second: The throttle to set on this request in
+            floating sub-requests per second. -1 means set no throttle.
+        """
+        if task_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'task_id'.")
+
+        return self.transport.perform_request(
+            "POST",
+            _make_path("_update_by_query", task_id, "_rethrottle"),
+            params=params,
+            headers=headers,
         )

@@ -3,7 +3,7 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 class IlmClient(NamespacedClient):
     @query_params()
-    async def delete_lifecycle(self, policy, *, params=None, headers=None):
+    async def delete_lifecycle(self, policy, params=None, headers=None):
         """
         Deletes the specified lifecycle policy definition. A currently used policy
         cannot be deleted.
@@ -19,7 +19,7 @@ class IlmClient(NamespacedClient):
         )
 
     @query_params("only_errors", "only_managed")
-    async def explain_lifecycle(self, index, *, params=None, headers=None):
+    async def explain_lifecycle(self, index, params=None, headers=None):
         """
         Retrieves information about the index's current lifecycle state, such as the
         currently executing phase, action, and step.
@@ -39,7 +39,7 @@ class IlmClient(NamespacedClient):
         )
 
     @query_params()
-    async def get_lifecycle(self, *, policy=None, params=None, headers=None):
+    async def get_lifecycle(self, policy=None, params=None, headers=None):
         """
         Returns the specified policy definition. Includes the policy version and last
         modified date.
@@ -52,7 +52,7 @@ class IlmClient(NamespacedClient):
         )
 
     @query_params()
-    async def get_status(self, *, params=None, headers=None):
+    async def get_status(self, params=None, headers=None):
         """
         Retrieves the current index lifecycle management (ILM) status.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-get-status.html>`_
@@ -62,7 +62,7 @@ class IlmClient(NamespacedClient):
         )
 
     @query_params()
-    async def move_to_step(self, index, *, body=None, params=None, headers=None):
+    async def move_to_step(self, index, body=None, params=None, headers=None):
         """
         Manually moves an index into the specified step and executes that step.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-move-to-step.html>`_
@@ -83,7 +83,7 @@ class IlmClient(NamespacedClient):
         )
 
     @query_params()
-    async def put_lifecycle(self, policy, *, body=None, params=None, headers=None):
+    async def put_lifecycle(self, policy, body=None, params=None, headers=None):
         """
         Creates a lifecycle policy
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-put-lifecycle.html>`_
@@ -103,7 +103,7 @@ class IlmClient(NamespacedClient):
         )
 
     @query_params()
-    async def remove_policy(self, index, *, params=None, headers=None):
+    async def remove_policy(self, index, params=None, headers=None):
         """
         Removes the assigned lifecycle policy and stops managing the specified index
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-remove-policy.html>`_
@@ -118,7 +118,7 @@ class IlmClient(NamespacedClient):
         )
 
     @query_params()
-    async def retry(self, index, *, params=None, headers=None):
+    async def retry(self, index, params=None, headers=None):
         """
         Retries executing the policy for an index that is in the ERROR step.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-retry-policy.html>`_
@@ -134,7 +134,7 @@ class IlmClient(NamespacedClient):
         )
 
     @query_params()
-    async def start(self, *, params=None, headers=None):
+    async def start(self, params=None, headers=None):
         """
         Start the index lifecycle management (ILM) plugin.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-start.html>`_
@@ -144,7 +144,7 @@ class IlmClient(NamespacedClient):
         )
 
     @query_params()
-    async def stop(self, *, params=None, headers=None):
+    async def stop(self, params=None, headers=None):
         """
         Halts all lifecycle management operations and stops the index lifecycle
         management (ILM) plugin

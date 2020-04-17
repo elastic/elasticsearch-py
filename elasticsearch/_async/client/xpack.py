@@ -7,7 +7,7 @@ class XPackClient(NamespacedClient):
 
     # AUTO-GENERATED-API-DEFINITIONS #
     @query_params("categories")
-    async def info(self, *, params=None, headers=None):
+    async def info(self, params=None, headers=None):
         """
         Retrieves information about the installed X-Pack features.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/info-api.html>`_
@@ -20,7 +20,7 @@ class XPackClient(NamespacedClient):
         )
 
     @query_params("master_timeout")
-    async def usage(self, *, params=None, headers=None):
+    async def usage(self, params=None, headers=None):
         """
         Retrieves usage information about the installed X-Pack features.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/usage-api.html>`_

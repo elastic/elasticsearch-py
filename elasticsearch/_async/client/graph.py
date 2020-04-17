@@ -3,7 +3,7 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 class GraphClient(NamespacedClient):
     @query_params("routing", "timeout")
-    async def explore(self, index, *, body=None, params=None, headers=None):
+    async def explore(self, index, body=None, params=None, headers=None):
         """
         Explore extracted and summarized information about the documents and terms in
         an index.

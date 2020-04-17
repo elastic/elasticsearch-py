@@ -15,7 +15,7 @@ class ClusterClient(NamespacedClient):
         "wait_for_nodes",
         "wait_for_status",
     )
-    async def health(self, *, index=None, params=None, headers=None):
+    async def health(self, index=None, params=None, headers=None):
         """
         Returns basic information about the health of the cluster.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-health.html>`_
@@ -50,7 +50,7 @@ class ClusterClient(NamespacedClient):
         )
 
     @query_params("local", "master_timeout")
-    async def pending_tasks(self, *, params=None, headers=None):
+    async def pending_tasks(self, params=None, headers=None):
         """
         Returns a list of any cluster-level changes (e.g. create index, update mapping,
         allocate or fail shard) which have not yet been executed.
@@ -74,7 +74,7 @@ class ClusterClient(NamespacedClient):
         "wait_for_metadata_version",
         "wait_for_timeout",
     )
-    async def state(self, *, metric=None, index=None, params=None, headers=None):
+    async def state(self, metric=None, index=None, params=None, headers=None):
         """
         Returns a comprehensive information about the state of the cluster.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-state.html>`_
@@ -113,7 +113,7 @@ class ClusterClient(NamespacedClient):
         )
 
     @query_params("flat_settings", "timeout")
-    async def stats(self, *, node_id=None, params=None, headers=None):
+    async def stats(self, node_id=None, params=None, headers=None):
         """
         Returns high-level overview of cluster statistics.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-stats.html>`_
@@ -138,7 +138,7 @@ class ClusterClient(NamespacedClient):
     @query_params(
         "dry_run", "explain", "master_timeout", "metric", "retry_failed", "timeout"
     )
-    async def reroute(self, *, body=None, params=None, headers=None):
+    async def reroute(self, body=None, params=None, headers=None):
         """
         Allows to manually change the allocation of individual shards in the cluster.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-reroute.html>`_
@@ -163,7 +163,7 @@ class ClusterClient(NamespacedClient):
         )
 
     @query_params("flat_settings", "include_defaults", "master_timeout", "timeout")
-    async def get_settings(self, *, params=None, headers=None):
+    async def get_settings(self, params=None, headers=None):
         """
         Returns cluster settings.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-update-settings.html>`_
@@ -181,7 +181,7 @@ class ClusterClient(NamespacedClient):
         )
 
     @query_params("flat_settings", "master_timeout", "timeout")
-    async def put_settings(self, body, *, params=None, headers=None):
+    async def put_settings(self, body, params=None, headers=None):
         """
         Updates the cluster settings.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-update-settings.html>`_
@@ -202,7 +202,7 @@ class ClusterClient(NamespacedClient):
         )
 
     @query_params()
-    async def remote_info(self, *, params=None, headers=None):
+    async def remote_info(self, params=None, headers=None):
         """
         Returns the information about configured remote clusters.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-remote-info.html>`_
@@ -212,7 +212,7 @@ class ClusterClient(NamespacedClient):
         )
 
     @query_params("include_disk_info", "include_yes_decisions")
-    async def allocation_explain(self, *, body=None, params=None, headers=None):
+    async def allocation_explain(self, body=None, params=None, headers=None):
         """
         Provides explanations for shard allocations in the cluster.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-allocation-explain.html>`_
@@ -233,7 +233,7 @@ class ClusterClient(NamespacedClient):
         )
 
     @query_params("master_timeout", "timeout")
-    async def delete_component_template(self, name, *, params=None, headers=None):
+    async def delete_component_template(self, name, params=None, headers=None):
         """
         Deletes a component template
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-templates.html>`_
@@ -253,7 +253,7 @@ class ClusterClient(NamespacedClient):
         )
 
     @query_params("local", "master_timeout")
-    async def get_component_template(self, *, name=None, params=None, headers=None):
+    async def get_component_template(self, name=None, params=None, headers=None):
         """
         Returns one or more component templates
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-templates.html>`_
@@ -272,7 +272,7 @@ class ClusterClient(NamespacedClient):
         )
 
     @query_params("create", "master_timeout", "timeout")
-    async def put_component_template(self, name, body, *, params=None, headers=None):
+    async def put_component_template(self, name, body, params=None, headers=None):
         """
         Creates or updates a component template
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-templates.html>`_
@@ -297,7 +297,7 @@ class ClusterClient(NamespacedClient):
         )
 
     @query_params("local", "master_timeout")
-    async def exists_component_template(self, name, *, params=None, headers=None):
+    async def exists_component_template(self, name, params=None, headers=None):
         """
         Returns information about whether a particular component template exist
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-templates.html>`_

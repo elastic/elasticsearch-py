@@ -3,7 +3,7 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH, _bu
 
 class MlClient(NamespacedClient):
     @query_params("allow_no_jobs", "force", "timeout")
-    async def close_job(self, job_id, *, body=None, params=None, headers=None):
+    async def close_job(self, job_id, body=None, params=None, headers=None):
         """
         Closes one or more anomaly detection jobs. A job can be opened and closed
         multiple times throughout its lifecycle.
@@ -30,7 +30,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    async def delete_calendar(self, calendar_id, *, params=None, headers=None):
+    async def delete_calendar(self, calendar_id, params=None, headers=None):
         """
         Deletes a calendar.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-calendar.html>`_
@@ -51,7 +51,7 @@ class MlClient(NamespacedClient):
 
     @query_params()
     async def delete_calendar_event(
-        self, calendar_id, event_id, *, params=None, headers=None
+        self, calendar_id, event_id, params=None, headers=None
     ):
         """
         Deletes scheduled events from a calendar.
@@ -72,9 +72,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    async def delete_calendar_job(
-        self, calendar_id, job_id, *, params=None, headers=None
-    ):
+    async def delete_calendar_job(self, calendar_id, job_id, params=None, headers=None):
         """
         Deletes anomaly detection jobs from a calendar.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-calendar-job.html>`_
@@ -94,7 +92,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("force")
-    async def delete_datafeed(self, datafeed_id, *, params=None, headers=None):
+    async def delete_datafeed(self, datafeed_id, params=None, headers=None):
         """
         Deletes an existing datafeed.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-datafeed.html>`_
@@ -115,7 +113,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    async def delete_expired_data(self, *, params=None, headers=None):
+    async def delete_expired_data(self, params=None, headers=None):
         """
         Deletes expired and unused machine learning data.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-expired-data.html>`_
@@ -125,7 +123,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    async def delete_filter(self, filter_id, *, params=None, headers=None):
+    async def delete_filter(self, filter_id, params=None, headers=None):
         """
         Deletes a filter.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-filter.html>`_
@@ -144,7 +142,7 @@ class MlClient(NamespacedClient):
 
     @query_params("allow_no_forecasts", "timeout")
     async def delete_forecast(
-        self, job_id, *, forecast_id=None, params=None, headers=None
+        self, job_id, forecast_id=None, params=None, headers=None
     ):
         """
         Deletes forecasts from a machine learning job.
@@ -169,7 +167,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("force", "wait_for_completion")
-    async def delete_job(self, job_id, *, params=None, headers=None):
+    async def delete_job(self, job_id, params=None, headers=None):
         """
         Deletes an existing anomaly detection job.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-job.html>`_
@@ -191,7 +189,7 @@ class MlClient(NamespacedClient):
 
     @query_params()
     async def delete_model_snapshot(
-        self, job_id, snapshot_id, *, params=None, headers=None
+        self, job_id, snapshot_id, params=None, headers=None
     ):
         """
         Deletes an existing model snapshot.
@@ -227,7 +225,7 @@ class MlClient(NamespacedClient):
         "timestamp_field",
         "timestamp_format",
     )
-    async def find_file_structure(self, body, *, params=None, headers=None):
+    async def find_file_structure(self, body, params=None, headers=None):
         """
         Finds the structure of a text file. The text file must contain data that is
         suitable to be ingested into Elasticsearch.
@@ -279,7 +277,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("advance_time", "calc_interim", "end", "skip_time", "start")
-    async def flush_job(self, job_id, *, body=None, params=None, headers=None):
+    async def flush_job(self, job_id, body=None, params=None, headers=None):
         """
         Forces any buffered data to be processed by the job.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-flush-job.html>`_
@@ -309,7 +307,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("duration", "expires_in")
-    async def forecast(self, job_id, *, params=None, headers=None):
+    async def forecast(self, job_id, params=None, headers=None):
         """
         Predicts the future behavior of a time series by using its historical behavior.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-forecast.html>`_
@@ -341,7 +339,7 @@ class MlClient(NamespacedClient):
         "start",
     )
     async def get_buckets(
-        self, job_id, *, body=None, timestamp=None, params=None, headers=None
+        self, job_id, body=None, timestamp=None, params=None, headers=None
     ):
         """
         Retrieves anomaly detection job results for one or more buckets.
@@ -377,7 +375,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("end", "from_", "job_id", "size", "start")
-    async def get_calendar_events(self, calendar_id, *, params=None, headers=None):
+    async def get_calendar_events(self, calendar_id, params=None, headers=None):
         """
         Retrieves information about the scheduled events in calendars.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-calendar-event.html>`_
@@ -408,7 +406,7 @@ class MlClient(NamespacedClient):
 
     @query_params("from_", "size")
     async def get_calendars(
-        self, *, body=None, calendar_id=None, params=None, headers=None
+        self, body=None, calendar_id=None, params=None, headers=None
     ):
         """
         Retrieves configuration information for calendars.
@@ -433,7 +431,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("allow_no_datafeeds")
-    async def get_datafeed_stats(self, *, datafeed_id=None, params=None, headers=None):
+    async def get_datafeed_stats(self, datafeed_id=None, params=None, headers=None):
         """
         Retrieves usage information for datafeeds.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-datafeed-stats.html>`_
@@ -451,7 +449,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("allow_no_datafeeds")
-    async def get_datafeeds(self, *, datafeed_id=None, params=None, headers=None):
+    async def get_datafeeds(self, datafeed_id=None, params=None, headers=None):
         """
         Retrieves configuration information for datafeeds.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-datafeed.html>`_
@@ -469,7 +467,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("from_", "size")
-    async def get_filters(self, *, filter_id=None, params=None, headers=None):
+    async def get_filters(self, filter_id=None, params=None, headers=None):
         """
         Retrieves filters.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-filter.html>`_
@@ -496,7 +494,7 @@ class MlClient(NamespacedClient):
         "sort",
         "start",
     )
-    async def get_influencers(self, job_id, *, body=None, params=None, headers=None):
+    async def get_influencers(self, job_id, body=None, params=None, headers=None):
         """
         Retrieves anomaly detection job results for one or more influencers.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-influencer.html>`_
@@ -530,7 +528,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("allow_no_jobs")
-    async def get_job_stats(self, *, job_id=None, params=None, headers=None):
+    async def get_job_stats(self, job_id=None, params=None, headers=None):
         """
         Retrieves usage information for anomaly detection jobs.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-job-stats.html>`_
@@ -548,7 +546,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("allow_no_jobs")
-    async def get_jobs(self, *, job_id=None, params=None, headers=None):
+    async def get_jobs(self, job_id=None, params=None, headers=None):
         """
         Retrieves configuration information for anomaly detection jobs.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-job.html>`_
@@ -574,9 +572,7 @@ class MlClient(NamespacedClient):
         "start",
         "top_n",
     )
-    async def get_overall_buckets(
-        self, job_id, *, body=None, params=None, headers=None
-    ):
+    async def get_overall_buckets(self, job_id, body=None, params=None, headers=None):
         """
         Retrieves overall bucket results that summarize the bucket results of multiple
         anomaly detection jobs.
@@ -623,7 +619,7 @@ class MlClient(NamespacedClient):
         "sort",
         "start",
     )
-    async def get_records(self, job_id, *, body=None, params=None, headers=None):
+    async def get_records(self, job_id, body=None, params=None, headers=None):
         """
         Retrieves anomaly records for an anomaly detection job.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-record.html>`_
@@ -656,7 +652,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    async def info(self, *, params=None, headers=None):
+    async def info(self, params=None, headers=None):
         """
         Returns defaults and limits used by machine learning.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-ml-info.html>`_
@@ -666,7 +662,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    async def open_job(self, job_id, *, params=None, headers=None):
+    async def open_job(self, job_id, params=None, headers=None):
         """
         Opens one or more anomaly detection jobs.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-open-job.html>`_
@@ -684,9 +680,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    async def post_calendar_events(
-        self, calendar_id, body, *, params=None, headers=None
-    ):
+    async def post_calendar_events(self, calendar_id, body, params=None, headers=None):
         """
         Posts scheduled events in a calendar.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-post-calendar-event.html>`_
@@ -707,7 +701,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("reset_end", "reset_start")
-    async def post_data(self, job_id, body, *, params=None, headers=None):
+    async def post_data(self, job_id, body, params=None, headers=None):
         """
         Sends data to an anomaly detection job for analysis.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-post-data.html>`_
@@ -733,7 +727,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    async def preview_datafeed(self, datafeed_id, *, params=None, headers=None):
+    async def preview_datafeed(self, datafeed_id, params=None, headers=None):
         """
         Previews a datafeed.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-preview-datafeed.html>`_
@@ -753,7 +747,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    async def put_calendar(self, calendar_id, *, body=None, params=None, headers=None):
+    async def put_calendar(self, calendar_id, body=None, params=None, headers=None):
         """
         Instantiates a calendar.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-put-calendar.html>`_
@@ -775,7 +769,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    async def put_calendar_job(self, calendar_id, job_id, *, params=None, headers=None):
+    async def put_calendar_job(self, calendar_id, job_id, params=None, headers=None):
         """
         Adds an anomaly detection job to a calendar.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-put-calendar-job.html>`_
@@ -797,7 +791,7 @@ class MlClient(NamespacedClient):
     @query_params(
         "allow_no_indices", "expand_wildcards", "ignore_throttled", "ignore_unavailable"
     )
-    async def put_datafeed(self, datafeed_id, body, *, params=None, headers=None):
+    async def put_datafeed(self, datafeed_id, body, params=None, headers=None):
         """
         Instantiates a datafeed.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-put-datafeed.html>`_
@@ -827,7 +821,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    async def put_filter(self, filter_id, body, *, params=None, headers=None):
+    async def put_filter(self, filter_id, body, params=None, headers=None):
         """
         Instantiates a filter.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-put-filter.html>`_
@@ -848,7 +842,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    async def put_job(self, job_id, body, *, params=None, headers=None):
+    async def put_job(self, job_id, body, params=None, headers=None):
         """
         Instantiates an anomaly detection job.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-put-job.html>`_
@@ -869,7 +863,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("enabled", "timeout")
-    async def set_upgrade_mode(self, *, params=None, headers=None):
+    async def set_upgrade_mode(self, params=None, headers=None):
         """
         Sets a cluster wide upgrade_mode setting that prepares machine learning indices
         for an upgrade.
@@ -885,9 +879,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("end", "start", "timeout")
-    async def start_datafeed(
-        self, datafeed_id, *, body=None, params=None, headers=None
-    ):
+    async def start_datafeed(self, datafeed_id, body=None, params=None, headers=None):
         """
         Starts one or more datafeeds.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-start-datafeed.html>`_
@@ -914,7 +906,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("allow_no_datafeeds", "force", "timeout")
-    async def stop_datafeed(self, datafeed_id, *, params=None, headers=None):
+    async def stop_datafeed(self, datafeed_id, params=None, headers=None):
         """
         Stops one or more datafeeds.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-stop-datafeed.html>`_
@@ -942,7 +934,7 @@ class MlClient(NamespacedClient):
     @query_params(
         "allow_no_indices", "expand_wildcards", "ignore_throttled", "ignore_unavailable"
     )
-    async def update_datafeed(self, datafeed_id, body, *, params=None, headers=None):
+    async def update_datafeed(self, datafeed_id, body, params=None, headers=None):
         """
         Updates certain properties of a datafeed.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-update-datafeed.html>`_
@@ -972,7 +964,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    async def update_filter(self, filter_id, body, *, params=None, headers=None):
+    async def update_filter(self, filter_id, body, params=None, headers=None):
         """
         Updates the description of a filter, adds items, or removes items.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-update-filter.html>`_
@@ -993,7 +985,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    async def update_job(self, job_id, body, *, params=None, headers=None):
+    async def update_job(self, job_id, body, params=None, headers=None):
         """
         Updates certain properties of an anomaly detection job.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-update-job.html>`_
@@ -1014,7 +1006,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    async def validate(self, body, *, params=None, headers=None):
+    async def validate(self, body, params=None, headers=None):
         """
         Validates an anomaly detection job.
 
@@ -1032,7 +1024,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    async def validate_detector(self, body, *, params=None, headers=None):
+    async def validate_detector(self, body, params=None, headers=None):
         """
         Validates an anomaly detection detector.
 
@@ -1050,7 +1042,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("force")
-    async def delete_data_frame_analytics(self, id, *, params=None, headers=None):
+    async def delete_data_frame_analytics(self, id, params=None, headers=None):
         """
         Deletes an existing data frame analytics job.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-dfanalytics.html>`_
@@ -1069,7 +1061,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    async def evaluate_data_frame(self, body, *, params=None, headers=None):
+    async def evaluate_data_frame(self, body, params=None, headers=None):
         """
         Evaluates the data frame analytics for an annotated index.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/evaluate-dfanalytics.html>`_
@@ -1088,7 +1080,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("allow_no_match", "from_", "size")
-    async def get_data_frame_analytics(self, *, id=None, params=None, headers=None):
+    async def get_data_frame_analytics(self, id=None, params=None, headers=None):
         """
         Retrieves configuration information for data frame analytics jobs.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-dfanalytics.html>`_
@@ -1113,9 +1105,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("allow_no_match", "from_", "size")
-    async def get_data_frame_analytics_stats(
-        self, *, id=None, params=None, headers=None
-    ):
+    async def get_data_frame_analytics_stats(self, id=None, params=None, headers=None):
         """
         Retrieves usage information for data frame analytics jobs.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-dfanalytics-stats.html>`_
@@ -1140,7 +1130,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    async def put_data_frame_analytics(self, id, body, *, params=None, headers=None):
+    async def put_data_frame_analytics(self, id, body, params=None, headers=None):
         """
         Instantiates a data frame analytics job.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/put-dfanalytics.html>`_
@@ -1162,7 +1152,7 @@ class MlClient(NamespacedClient):
 
     @query_params("timeout")
     async def start_data_frame_analytics(
-        self, id, *, body=None, params=None, headers=None
+        self, id, body=None, params=None, headers=None
     ):
         """
         Starts a data frame analytics job.
@@ -1185,9 +1175,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("allow_no_match", "force", "timeout")
-    async def stop_data_frame_analytics(
-        self, id, *, body=None, params=None, headers=None
-    ):
+    async def stop_data_frame_analytics(self, id, body=None, params=None, headers=None):
         """
         Stops one or more data frame analytics jobs.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/stop-dfanalytics.html>`_
@@ -1214,7 +1202,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    async def delete_trained_model(self, model_id, *, params=None, headers=None):
+    async def delete_trained_model(self, model_id, params=None, headers=None):
         """
         Deletes an existing trained inference model that is currently not referenced by
         an ingest pipeline.
@@ -1240,7 +1228,7 @@ class MlClient(NamespacedClient):
         "size",
         "tags",
     )
-    async def get_trained_models(self, *, model_id=None, params=None, headers=None):
+    async def get_trained_models(self, model_id=None, params=None, headers=None):
         """
         Retrieves configuration information for a trained inference model.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-inference.html>`_
@@ -1270,9 +1258,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("allow_no_match", "from_", "size")
-    async def get_trained_models_stats(
-        self, *, model_id=None, params=None, headers=None
-    ):
+    async def get_trained_models_stats(self, model_id=None, params=None, headers=None):
         """
         Retrieves usage information for trained inference models.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-inference-stats.html>`_
@@ -1297,7 +1283,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    async def put_trained_model(self, model_id, body, *, params=None, headers=None):
+    async def put_trained_model(self, model_id, body, params=None, headers=None):
         """
         Creates an inference trained model.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/put-inference.html>`_
@@ -1318,7 +1304,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    async def estimate_model_memory(self, body, *, params=None, headers=None):
+    async def estimate_model_memory(self, body, params=None, headers=None):
         """
         Estimates the model memory
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-apis.html>`_
@@ -1339,7 +1325,7 @@ class MlClient(NamespacedClient):
 
     @query_params()
     async def explain_data_frame_analytics(
-        self, *, body=None, id=None, params=None, headers=None
+        self, body=None, id=None, params=None, headers=None
     ):
         """
         Explains a data frame analytics config.
@@ -1358,7 +1344,7 @@ class MlClient(NamespacedClient):
 
     @query_params("from_", "size")
     async def get_categories(
-        self, job_id, *, body=None, category_id=None, params=None, headers=None
+        self, job_id, body=None, category_id=None, params=None, headers=None
     ):
         """
         Retrieves anomaly detection job results for one or more categories.
@@ -1390,7 +1376,7 @@ class MlClient(NamespacedClient):
 
     @query_params("desc", "end", "from_", "size", "sort", "start")
     async def get_model_snapshots(
-        self, job_id, *, body=None, snapshot_id=None, params=None, headers=None
+        self, job_id, body=None, snapshot_id=None, params=None, headers=None
     ):
         """
         Retrieves information about model snapshots.
@@ -1425,7 +1411,7 @@ class MlClient(NamespacedClient):
 
     @query_params("delete_intervening_results")
     async def revert_model_snapshot(
-        self, job_id, snapshot_id, *, body=None, params=None, headers=None
+        self, job_id, snapshot_id, body=None, params=None, headers=None
     ):
         """
         Reverts to a specific snapshot.
@@ -1457,7 +1443,7 @@ class MlClient(NamespacedClient):
 
     @query_params()
     async def update_model_snapshot(
-        self, job_id, snapshot_id, body, *, params=None, headers=None
+        self, job_id, snapshot_id, body, params=None, headers=None
     ):
         """
         Updates certain properties of a snapshot.

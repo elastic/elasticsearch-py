@@ -3,7 +3,7 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 class RollupClient(NamespacedClient):
     @query_params()
-    async def delete_job(self, id, *, params=None, headers=None):
+    async def delete_job(self, id, params=None, headers=None):
         """
         Deletes an existing rollup job.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-delete-job.html>`_
@@ -18,7 +18,7 @@ class RollupClient(NamespacedClient):
         )
 
     @query_params()
-    async def get_jobs(self, *, id=None, params=None, headers=None):
+    async def get_jobs(self, id=None, params=None, headers=None):
         """
         Retrieves the configuration, stats, and status of rollup jobs.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-get-job.html>`_
@@ -31,7 +31,7 @@ class RollupClient(NamespacedClient):
         )
 
     @query_params()
-    async def get_rollup_caps(self, *, id=None, params=None, headers=None):
+    async def get_rollup_caps(self, id=None, params=None, headers=None):
         """
         Returns the capabilities of any rollup jobs that have been configured for a
         specific index or index pattern.
@@ -45,7 +45,7 @@ class RollupClient(NamespacedClient):
         )
 
     @query_params()
-    async def get_rollup_index_caps(self, index, *, params=None, headers=None):
+    async def get_rollup_index_caps(self, index, params=None, headers=None):
         """
         Returns the rollup capabilities of all jobs inside of a rollup index (e.g. the
         index where rollup data is stored).
@@ -62,7 +62,7 @@ class RollupClient(NamespacedClient):
         )
 
     @query_params()
-    async def put_job(self, id, body, *, params=None, headers=None):
+    async def put_job(self, id, body, params=None, headers=None):
         """
         Creates a rollup job.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-put-job.html>`_
@@ -84,7 +84,7 @@ class RollupClient(NamespacedClient):
 
     @query_params("rest_total_hits_as_int", "typed_keys")
     async def rollup_search(
-        self, index, body, *, doc_type=None, params=None, headers=None
+        self, index, body, doc_type=None, params=None, headers=None
     ):
         """
         Enables searching rolled-up data using the standard query DSL.
@@ -112,7 +112,7 @@ class RollupClient(NamespacedClient):
         )
 
     @query_params()
-    async def start_job(self, id, *, params=None, headers=None):
+    async def start_job(self, id, params=None, headers=None):
         """
         Starts an existing, stopped rollup job.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-start-job.html>`_
@@ -130,7 +130,7 @@ class RollupClient(NamespacedClient):
         )
 
     @query_params("timeout", "wait_for_completion")
-    async def stop_job(self, id, *, params=None, headers=None):
+    async def stop_job(self, id, params=None, headers=None):
         """
         Stops an existing, started rollup job.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-stop-job.html>`_

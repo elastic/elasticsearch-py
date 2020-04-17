@@ -3,7 +3,7 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 class EnrichClient(NamespacedClient):
     @query_params()
-    async def delete_policy(self, name, *, params=None, headers=None):
+    async def delete_policy(self, name, params=None, headers=None):
         """
         Deletes an existing enrich policy and its enrich index.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-enrich-policy-api.html>`_
@@ -18,7 +18,7 @@ class EnrichClient(NamespacedClient):
         )
 
     @query_params("wait_for_completion")
-    async def execute_policy(self, name, *, params=None, headers=None):
+    async def execute_policy(self, name, params=None, headers=None):
         """
         Creates the enrich index for an existing enrich policy.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/execute-enrich-policy-api.html>`_
@@ -38,7 +38,7 @@ class EnrichClient(NamespacedClient):
         )
 
     @query_params()
-    async def get_policy(self, *, name=None, params=None, headers=None):
+    async def get_policy(self, name=None, params=None, headers=None):
         """
         Gets information about an enrich policy.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-enrich-policy-api.html>`_
@@ -50,7 +50,7 @@ class EnrichClient(NamespacedClient):
         )
 
     @query_params()
-    async def put_policy(self, name, body, *, params=None, headers=None):
+    async def put_policy(self, name, body, params=None, headers=None):
         """
         Creates a new enrich policy.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/put-enrich-policy-api.html>`_
@@ -71,7 +71,7 @@ class EnrichClient(NamespacedClient):
         )
 
     @query_params()
-    async def stats(self, *, params=None, headers=None):
+    async def stats(self, params=None, headers=None):
         """
         Gets enrich coordinator statistics and information about enrich policies that
         are currently executing.

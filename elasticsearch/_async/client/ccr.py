@@ -3,7 +3,7 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 class CcrClient(NamespacedClient):
     @query_params()
-    async def delete_auto_follow_pattern(self, name, *, params=None, headers=None):
+    async def delete_auto_follow_pattern(self, name, params=None, headers=None):
         """
         Deletes auto-follow patterns.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ccr-delete-auto-follow-pattern.html>`_
@@ -21,7 +21,7 @@ class CcrClient(NamespacedClient):
         )
 
     @query_params("wait_for_active_shards")
-    async def follow(self, index, body, *, params=None, headers=None):
+    async def follow(self, index, body, params=None, headers=None):
         """
         Creates a new follower index configured to follow the referenced leader index.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ccr-put-follow.html>`_
@@ -48,7 +48,7 @@ class CcrClient(NamespacedClient):
         )
 
     @query_params()
-    async def follow_info(self, index, *, params=None, headers=None):
+    async def follow_info(self, index, params=None, headers=None):
         """
         Retrieves information about all follower indices, including parameters and
         status for each follower index
@@ -65,7 +65,7 @@ class CcrClient(NamespacedClient):
         )
 
     @query_params()
-    async def follow_stats(self, index, *, params=None, headers=None):
+    async def follow_stats(self, index, params=None, headers=None):
         """
         Retrieves follower stats. return shard-level stats about the following tasks
         associated with each shard for the specified indices.
@@ -82,7 +82,7 @@ class CcrClient(NamespacedClient):
         )
 
     @query_params()
-    async def forget_follower(self, index, body, *, params=None, headers=None):
+    async def forget_follower(self, index, body, params=None, headers=None):
         """
         Removes the follower retention leases from the leader.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ccr-post-forget-follower.html>`_
@@ -107,7 +107,7 @@ class CcrClient(NamespacedClient):
         )
 
     @query_params()
-    async def get_auto_follow_pattern(self, *, name=None, params=None, headers=None):
+    async def get_auto_follow_pattern(self, name=None, params=None, headers=None):
         """
         Gets configured auto-follow patterns. Returns the specified auto-follow pattern
         collection.
@@ -120,7 +120,7 @@ class CcrClient(NamespacedClient):
         )
 
     @query_params()
-    async def pause_follow(self, index, *, params=None, headers=None):
+    async def pause_follow(self, index, params=None, headers=None):
         """
         Pauses a follower index. The follower index will not fetch any additional
         operations from the leader index.
@@ -140,7 +140,7 @@ class CcrClient(NamespacedClient):
         )
 
     @query_params()
-    async def put_auto_follow_pattern(self, name, body, *, params=None, headers=None):
+    async def put_auto_follow_pattern(self, name, body, params=None, headers=None):
         """
         Creates a new named collection of auto-follow patterns against a specified
         remote cluster. Newly created indices on the remote cluster matching any of the
@@ -163,7 +163,7 @@ class CcrClient(NamespacedClient):
         )
 
     @query_params()
-    async def resume_follow(self, index, *, body=None, params=None, headers=None):
+    async def resume_follow(self, index, body=None, params=None, headers=None):
         """
         Resumes a follower index that has been paused
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ccr-post-resume-follow.html>`_
@@ -184,7 +184,7 @@ class CcrClient(NamespacedClient):
         )
 
     @query_params()
-    async def stats(self, *, params=None, headers=None):
+    async def stats(self, params=None, headers=None):
         """
         Gets all stats related to cross-cluster replication.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ccr-get-stats.html>`_
@@ -194,7 +194,7 @@ class CcrClient(NamespacedClient):
         )
 
     @query_params()
-    async def unfollow(self, index, *, params=None, headers=None):
+    async def unfollow(self, index, params=None, headers=None):
         """
         Stops the following task associated with a follower index and removes index
         metadata and settings associated with cross-cluster replication.
@@ -211,7 +211,7 @@ class CcrClient(NamespacedClient):
         )
 
     @query_params()
-    async def pause_auto_follow_pattern(self, name, *, params=None, headers=None):
+    async def pause_auto_follow_pattern(self, name, params=None, headers=None):
         """
         Pauses an auto-follow pattern
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ccr-pause-auto-follow-pattern.html>`_
@@ -230,7 +230,7 @@ class CcrClient(NamespacedClient):
         )
 
     @query_params()
-    async def resume_auto_follow_pattern(self, name, *, params=None, headers=None):
+    async def resume_auto_follow_pattern(self, name, params=None, headers=None):
         """
         Resumes an auto-follow pattern that has been paused
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ccr-resume-auto-follow-pattern.html>`_

@@ -3,7 +3,7 @@ from .utils import NamespacedClient, SKIP_IN_PATH, query_params, _make_path
 
 class AsyncSearchClient(NamespacedClient):
     @query_params()
-    async def delete(self, id, *, params=None, headers=None):
+    async def delete(self, id, params=None, headers=None):
         """
         Deletes an async search by ID. If the search is still running, the search
         request will be cancelled. Otherwise, the saved search results are deleted.
@@ -19,7 +19,7 @@ class AsyncSearchClient(NamespacedClient):
         )
 
     @query_params("keep_alive", "typed_keys", "wait_for_completion_timeout")
-    async def get(self, id, *, params=None, headers=None):
+    async def get(self, id, params=None, headers=None):
         """
         Retrieves the results of a previously submitted async search request given its
         ID.
@@ -83,7 +83,7 @@ class AsyncSearchClient(NamespacedClient):
         "version",
         "wait_for_completion_timeout",
     )
-    async def submit(self, *, body=None, index=None, params=None, headers=None):
+    async def submit(self, body=None, index=None, params=None, headers=None):
         """
         Executes a search request asynchronously.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/async-search.html>`_

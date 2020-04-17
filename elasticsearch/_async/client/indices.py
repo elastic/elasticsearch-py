@@ -3,7 +3,7 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 class IndicesClient(NamespacedClient):
     @query_params()
-    async def analyze(self, *, body=None, index=None, params=None, headers=None):
+    async def analyze(self, body=None, index=None, params=None, headers=None):
         """
         Performs the analysis process on a text and return the tokens breakdown of the
         text.
@@ -22,7 +22,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable")
-    async def refresh(self, *, index=None, params=None, headers=None):
+    async def refresh(self, index=None, params=None, headers=None):
         """
         Performs the refresh operation in one or more indices.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-refresh.html>`_
@@ -49,7 +49,7 @@ class IndicesClient(NamespacedClient):
         "ignore_unavailable",
         "wait_if_ongoing",
     )
-    async def flush(self, *, index=None, params=None, headers=None):
+    async def flush(self, index=None, params=None, headers=None):
         """
         Performs the flush operation on one or more indices.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-flush.html>`_
@@ -79,7 +79,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params("master_timeout", "timeout", "wait_for_active_shards")
-    async def create(self, index, *, body=None, params=None, headers=None):
+    async def create(self, index, body=None, params=None, headers=None):
         """
         Creates an index with optional settings and mappings.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-create-index.html>`_
@@ -100,7 +100,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params("master_timeout", "timeout", "wait_for_active_shards")
-    async def clone(self, index, target, *, body=None, params=None, headers=None):
+    async def clone(self, index, target, body=None, params=None, headers=None):
         """
         Clones an index
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-clone-index.html>`_
@@ -135,7 +135,7 @@ class IndicesClient(NamespacedClient):
         "local",
         "master_timeout",
     )
-    async def get(self, index, *, params=None, headers=None):
+    async def get(self, index, params=None, headers=None):
         """
         Returns information about one or more indices.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-get-index.html>`_
@@ -171,7 +171,7 @@ class IndicesClient(NamespacedClient):
         "timeout",
         "wait_for_active_shards",
     )
-    async def open(self, index, *, params=None, headers=None):
+    async def open(self, index, params=None, headers=None):
         """
         Opens an index.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-open-close.html>`_
@@ -205,7 +205,7 @@ class IndicesClient(NamespacedClient):
         "timeout",
         "wait_for_active_shards",
     )
-    async def close(self, index, *, params=None, headers=None):
+    async def close(self, index, params=None, headers=None):
         """
         Closes an index.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-open-close.html>`_
@@ -238,7 +238,7 @@ class IndicesClient(NamespacedClient):
         "master_timeout",
         "timeout",
     )
-    async def delete(self, index, *, params=None, headers=None):
+    async def delete(self, index, params=None, headers=None):
         """
         Deletes an index.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-delete-index.html>`_
@@ -270,7 +270,7 @@ class IndicesClient(NamespacedClient):
         "include_defaults",
         "local",
     )
-    async def exists(self, index, *, params=None, headers=None):
+    async def exists(self, index, params=None, headers=None):
         """
         Returns information about whether a particular index exists.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-exists.html>`_
@@ -298,7 +298,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable", "local")
-    async def exists_type(self, index, doc_type, *, params=None, headers=None):
+    async def exists_type(self, index, doc_type, params=None, headers=None):
         """
         Returns information about whether a particular document type exists.
         (DEPRECATED)
@@ -336,7 +336,7 @@ class IndicesClient(NamespacedClient):
         "master_timeout",
         "timeout",
     )
-    async def put_mapping(self, index, body, *, params=None, headers=None):
+    async def put_mapping(self, index, body, params=None, headers=None):
         """
         Updates the index mappings.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-put-mapping.html>`_
@@ -375,7 +375,7 @@ class IndicesClient(NamespacedClient):
         "local",
         "master_timeout",
     )
-    async def get_mapping(self, *, index=None, params=None, headers=None):
+    async def get_mapping(self, index=None, params=None, headers=None):
         """
         Returns mappings for one or more indices.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-get-mapping.html>`_
@@ -398,7 +398,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params("master_timeout", "timeout")
-    async def put_alias(self, index, name, *, body=None, params=None, headers=None):
+    async def put_alias(self, index, name, body=None, params=None, headers=None):
         """
         Creates or updates an alias.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-aliases.html>`_
@@ -425,7 +425,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable", "local")
-    async def exists_alias(self, name, *, index=None, params=None, headers=None):
+    async def exists_alias(self, name, index=None, params=None, headers=None):
         """
         Returns information about whether a particular alias exists.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-aliases.html>`_
@@ -452,7 +452,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable", "local")
-    async def get_alias(self, *, index=None, name=None, params=None, headers=None):
+    async def get_alias(self, index=None, name=None, params=None, headers=None):
         """
         Returns an alias.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-aliases.html>`_
@@ -476,7 +476,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params("master_timeout", "timeout")
-    async def update_aliases(self, body, *, params=None, headers=None):
+    async def update_aliases(self, body, params=None, headers=None):
         """
         Updates index aliases.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-aliases.html>`_
@@ -493,7 +493,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params("master_timeout", "timeout")
-    async def delete_alias(self, index, name, *, params=None, headers=None):
+    async def delete_alias(self, index, name, params=None, headers=None):
         """
         Deletes an alias.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-aliases.html>`_
@@ -514,7 +514,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params("create", "master_timeout", "order")
-    async def put_template(self, name, body, *, params=None, headers=None):
+    async def put_template(self, name, body, params=None, headers=None):
         """
         Creates or updates an index template.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
@@ -541,7 +541,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params("flat_settings", "local", "master_timeout")
-    async def exists_template(self, name, *, params=None, headers=None):
+    async def exists_template(self, name, params=None, headers=None):
         """
         Returns information about whether a particular index template exists.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
@@ -562,7 +562,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params("flat_settings", "local", "master_timeout")
-    async def get_template(self, *, name=None, params=None, headers=None):
+    async def get_template(self, name=None, params=None, headers=None):
         """
         Returns an index template.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
@@ -580,7 +580,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params("master_timeout", "timeout")
-    async def delete_template(self, name, *, params=None, headers=None):
+    async def delete_template(self, name, params=None, headers=None):
         """
         Deletes an index template.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
@@ -605,7 +605,7 @@ class IndicesClient(NamespacedClient):
         "local",
         "master_timeout",
     )
-    async def get_settings(self, *, index=None, name=None, params=None, headers=None):
+    async def get_settings(self, index=None, name=None, params=None, headers=None):
         """
         Returns settings for one or more indices.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-get-settings.html>`_
@@ -642,7 +642,7 @@ class IndicesClient(NamespacedClient):
         "preserve_existing",
         "timeout",
     )
-    async def put_settings(self, body, *, index=None, params=None, headers=None):
+    async def put_settings(self, body, index=None, params=None, headers=None):
         """
         Updates the index settings.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-update-settings.html>`_
@@ -689,7 +689,7 @@ class IndicesClient(NamespacedClient):
         "level",
         "types",
     )
-    async def stats(self, *, index=None, metric=None, params=None, headers=None):
+    async def stats(self, index=None, metric=None, params=None, headers=None):
         """
         Provides statistics on operations happening in an index.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-stats.html>`_
@@ -732,7 +732,7 @@ class IndicesClient(NamespacedClient):
     @query_params(
         "allow_no_indices", "expand_wildcards", "ignore_unavailable", "verbose"
     )
-    async def segments(self, *, index=None, params=None, headers=None):
+    async def segments(self, index=None, params=None, headers=None):
         """
         Provides low-level information about segments in a Lucene index.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-segments.html>`_
@@ -762,7 +762,7 @@ class IndicesClient(NamespacedClient):
         "query",
         "request",
     )
-    async def clear_cache(self, *, index=None, params=None, headers=None):
+    async def clear_cache(self, index=None, params=None, headers=None):
         """
         Clears all or specific caches for one or more indices.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-clearcache.html>`_
@@ -788,7 +788,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params("active_only", "detailed")
-    async def recovery(self, *, index=None, params=None, headers=None):
+    async def recovery(self, index=None, params=None, headers=None):
         """
         Returns information about ongoing index shard recoveries.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-recovery.html>`_
@@ -811,7 +811,7 @@ class IndicesClient(NamespacedClient):
         "only_ancient_segments",
         "wait_for_completion",
     )
-    async def upgrade(self, *, index=None, params=None, headers=None):
+    async def upgrade(self, index=None, params=None, headers=None):
         """
         DEPRECATED Upgrades to the current version of Lucene.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-upgrade.html>`_
@@ -836,7 +836,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable")
-    async def get_upgrade(self, *, index=None, params=None, headers=None):
+    async def get_upgrade(self, index=None, params=None, headers=None):
         """
         DEPRECATED Returns a progress status of current upgrade.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-upgrade.html>`_
@@ -859,7 +859,7 @@ class IndicesClient(NamespacedClient):
     @query_params(
         "allow_no_indices", "expand_wildcards", "ignore_unavailable", "status"
     )
-    async def shard_stores(self, *, index=None, params=None, headers=None):
+    async def shard_stores(self, index=None, params=None, headers=None):
         """
         Provides store information for shard copies of indices.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-shards-stores.html>`_
@@ -890,7 +890,7 @@ class IndicesClient(NamespacedClient):
         "max_num_segments",
         "only_expunge_deletes",
     )
-    async def forcemerge(self, *, index=None, params=None, headers=None):
+    async def forcemerge(self, index=None, params=None, headers=None):
         """
         Performs the force merge operation on one or more indices.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-forcemerge.html>`_
@@ -917,7 +917,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params("master_timeout", "timeout", "wait_for_active_shards")
-    async def shrink(self, index, target, *, body=None, params=None, headers=None):
+    async def shrink(self, index, target, body=None, params=None, headers=None):
         """
         Allow to shrink an existing index into a new index with fewer primary shards.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-shrink-index.html>`_
@@ -944,7 +944,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params("master_timeout", "timeout", "wait_for_active_shards")
-    async def split(self, index, target, *, body=None, params=None, headers=None):
+    async def split(self, index, target, body=None, params=None, headers=None):
         """
         Allows you to split an existing index into a new index with more primary
         shards.
@@ -973,7 +973,7 @@ class IndicesClient(NamespacedClient):
 
     @query_params("dry_run", "master_timeout", "timeout", "wait_for_active_shards")
     async def rollover(
-        self, alias, *, body=None, new_index=None, params=None, headers=None
+        self, alias, body=None, new_index=None, params=None, headers=None
     ):
         """
         Updates an alias to point to a new index when the existing index is considered
@@ -1012,7 +1012,7 @@ class IndicesClient(NamespacedClient):
         "timeout",
         "wait_for_active_shards",
     )
-    async def freeze(self, index, *, params=None, headers=None):
+    async def freeze(self, index, params=None, headers=None):
         """
         Freezes an index. A frozen index has almost no overhead on the cluster (except
         for maintaining its metadata in memory) and is read-only.
@@ -1047,7 +1047,7 @@ class IndicesClient(NamespacedClient):
         "timeout",
         "wait_for_active_shards",
     )
-    async def unfreeze(self, index, *, params=None, headers=None):
+    async def unfreeze(self, index, params=None, headers=None):
         """
         Unfreezes an index. When a frozen index is unfrozen, the index goes through the
         normal recovery process and becomes writeable again.
@@ -1075,7 +1075,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable")
-    async def reload_search_analyzers(self, index, *, params=None, headers=None):
+    async def reload_search_analyzers(self, index, params=None, headers=None):
         """
         Reloads an index's search analyzers and their resources.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-reload-analyzers.html>`_
@@ -1108,7 +1108,7 @@ class IndicesClient(NamespacedClient):
         "include_defaults",
         "local",
     )
-    async def get_field_mapping(self, fields, *, index=None, params=None, headers=None):
+    async def get_field_mapping(self, fields, index=None, params=None, headers=None):
         """
         Returns mapping for one or more fields.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-get-field-mapping.html>`_
@@ -1153,7 +1153,7 @@ class IndicesClient(NamespacedClient):
         "rewrite",
     )
     async def validate_query(
-        self, *, body=None, index=None, doc_type=None, params=None, headers=None
+        self, body=None, index=None, doc_type=None, params=None, headers=None
     ):
         """
         Allows a user to validate a potentially expensive query without executing it.
@@ -1199,7 +1199,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params()
-    async def create_data_stream(self, name, body, *, params=None, headers=None):
+    async def create_data_stream(self, name, body, params=None, headers=None):
         """
         Creates or updates a data stream
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
@@ -1220,7 +1220,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params()
-    async def delete_data_stream(self, name, *, params=None, headers=None):
+    async def delete_data_stream(self, name, params=None, headers=None):
         """
         Deletes a data stream.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
@@ -1235,7 +1235,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params()
-    async def get_data_streams(self, *, name=None, params=None, headers=None):
+    async def get_data_streams(self, name=None, params=None, headers=None):
         """
         Returns data streams.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
@@ -1248,7 +1248,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params("master_timeout", "timeout")
-    async def delete_index_template(self, name, *, params=None, headers=None):
+    async def delete_index_template(self, name, params=None, headers=None):
         """
         Deletes an index template.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
@@ -1268,28 +1268,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params("flat_settings", "local", "master_timeout")
-    async def exists_index_template(self, name, *, params=None, headers=None):
-        """
-        Returns information about whether a particular index template exists.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
-
-        :arg name: The name of the template
-        :arg flat_settings: Return settings in flat format (default:
-            false)
-        :arg local: Return local information, do not retrieve the state
-            from master node (default: false)
-        :arg master_timeout: Explicit operation timeout for connection
-            to master node
-        """
-        if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'name'.")
-
-        return await self.transport.perform_request(
-            "HEAD", _make_path("_index_template", name), params=params, headers=headers
-        )
-
-    @query_params("flat_settings", "local", "master_timeout")
-    async def get_index_template(self, *, name=None, params=None, headers=None):
+    async def get_index_template(self, name=None, params=None, headers=None):
         """
         Returns an index template.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
@@ -1307,7 +1286,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params("create", "master_timeout", "order")
-    async def put_index_template(self, name, body, *, params=None, headers=None):
+    async def put_index_template(self, name, body, params=None, headers=None):
         """
         Creates or updates an index template.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
@@ -1331,4 +1310,25 @@ class IndicesClient(NamespacedClient):
             params=params,
             headers=headers,
             body=body,
+        )
+
+    @query_params("flat_settings", "local", "master_timeout")
+    async def exists_index_template(self, name, params=None, headers=None):
+        """
+        Returns information about whether a particular index template exists.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+
+        :arg name: The name of the template
+        :arg flat_settings: Return settings in flat format (default:
+            false)
+        :arg local: Return local information, do not retrieve the state
+            from master node (default: false)
+        :arg master_timeout: Explicit operation timeout for connection
+            to master node
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'name'.")
+
+        return await self.transport.perform_request(
+            "HEAD", _make_path("_index_template", name), params=params, headers=headers
         )

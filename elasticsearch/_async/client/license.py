@@ -3,7 +3,7 @@ from .utils import NamespacedClient, query_params
 
 class LicenseClient(NamespacedClient):
     @query_params()
-    async def delete(self, *, params=None, headers=None):
+    async def delete(self, params=None, headers=None):
         """
         Deletes licensing information for the cluster
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-license.html>`_
@@ -13,7 +13,7 @@ class LicenseClient(NamespacedClient):
         )
 
     @query_params("accept_enterprise", "local")
-    async def get(self, *, params=None, headers=None):
+    async def get(self, params=None, headers=None):
         """
         Retrieves licensing information for the cluster
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-license.html>`_
@@ -28,7 +28,7 @@ class LicenseClient(NamespacedClient):
         )
 
     @query_params()
-    async def get_basic_status(self, *, params=None, headers=None):
+    async def get_basic_status(self, params=None, headers=None):
         """
         Retrieves information about the status of the basic license.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-basic-status.html>`_
@@ -38,7 +38,7 @@ class LicenseClient(NamespacedClient):
         )
 
     @query_params()
-    async def get_trial_status(self, *, params=None, headers=None):
+    async def get_trial_status(self, params=None, headers=None):
         """
         Retrieves information about the status of the trial license.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-trial-status.html>`_
@@ -48,7 +48,7 @@ class LicenseClient(NamespacedClient):
         )
 
     @query_params("acknowledge")
-    async def post(self, *, body=None, params=None, headers=None):
+    async def post(self, body=None, params=None, headers=None):
         """
         Updates the license for the cluster.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/update-license.html>`_
@@ -62,7 +62,7 @@ class LicenseClient(NamespacedClient):
         )
 
     @query_params("acknowledge")
-    async def post_start_basic(self, *, params=None, headers=None):
+    async def post_start_basic(self, params=None, headers=None):
         """
         Starts an indefinite basic license.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/start-basic.html>`_
@@ -75,7 +75,7 @@ class LicenseClient(NamespacedClient):
         )
 
     @query_params("acknowledge", "doc_type")
-    async def post_start_trial(self, *, params=None, headers=None):
+    async def post_start_trial(self, params=None, headers=None):
         """
         starts a limited time trial license.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/start-trial.html>`_

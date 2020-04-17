@@ -3,9 +3,7 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 class SnapshotClient(NamespacedClient):
     @query_params("master_timeout", "wait_for_completion")
-    async def create(
-        self, repository, snapshot, *, body=None, params=None, headers=None
-    ):
+    async def create(self, repository, snapshot, body=None, params=None, headers=None):
         """
         Creates a snapshot in a repository.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
@@ -31,7 +29,7 @@ class SnapshotClient(NamespacedClient):
         )
 
     @query_params("master_timeout")
-    async def delete(self, repository, snapshot, *, params=None, headers=None):
+    async def delete(self, repository, snapshot, params=None, headers=None):
         """
         Deletes a snapshot.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
@@ -53,7 +51,7 @@ class SnapshotClient(NamespacedClient):
         )
 
     @query_params("ignore_unavailable", "master_timeout", "verbose")
-    async def get(self, repository, snapshot, *, params=None, headers=None):
+    async def get(self, repository, snapshot, params=None, headers=None):
         """
         Returns information about a snapshot.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
@@ -80,7 +78,7 @@ class SnapshotClient(NamespacedClient):
         )
 
     @query_params("master_timeout", "timeout")
-    async def delete_repository(self, repository, *, params=None, headers=None):
+    async def delete_repository(self, repository, params=None, headers=None):
         """
         Deletes a repository.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
@@ -101,7 +99,7 @@ class SnapshotClient(NamespacedClient):
         )
 
     @query_params("local", "master_timeout")
-    async def get_repository(self, *, repository=None, params=None, headers=None):
+    async def get_repository(self, repository=None, params=None, headers=None):
         """
         Returns information about a repository.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
@@ -117,7 +115,7 @@ class SnapshotClient(NamespacedClient):
         )
 
     @query_params("master_timeout", "timeout", "verify")
-    async def create_repository(self, repository, body, *, params=None, headers=None):
+    async def create_repository(self, repository, body, params=None, headers=None):
         """
         Creates a repository.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
@@ -142,9 +140,7 @@ class SnapshotClient(NamespacedClient):
         )
 
     @query_params("master_timeout", "wait_for_completion")
-    async def restore(
-        self, repository, snapshot, *, body=None, params=None, headers=None
-    ):
+    async def restore(self, repository, snapshot, body=None, params=None, headers=None):
         """
         Restores a snapshot.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
@@ -170,9 +166,7 @@ class SnapshotClient(NamespacedClient):
         )
 
     @query_params("ignore_unavailable", "master_timeout")
-    async def status(
-        self, *, repository=None, snapshot=None, params=None, headers=None
-    ):
+    async def status(self, repository=None, snapshot=None, params=None, headers=None):
         """
         Returns information about the status of a snapshot.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
@@ -193,7 +187,7 @@ class SnapshotClient(NamespacedClient):
         )
 
     @query_params("master_timeout", "timeout")
-    async def verify_repository(self, repository, *, params=None, headers=None):
+    async def verify_repository(self, repository, params=None, headers=None):
         """
         Verifies a repository.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
@@ -214,7 +208,7 @@ class SnapshotClient(NamespacedClient):
         )
 
     @query_params("master_timeout", "timeout")
-    async def cleanup_repository(self, repository, *, params=None, headers=None):
+    async def cleanup_repository(self, repository, params=None, headers=None):
         """
         Removes stale data from repository.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_

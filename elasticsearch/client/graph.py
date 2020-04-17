@@ -20,7 +20,7 @@ class GraphClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path(index, "_graph", "explore"),
+            _make_path(index, "_graph/explore"),
             params=params,
             headers=headers,
             body=body,

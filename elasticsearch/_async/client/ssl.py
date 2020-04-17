@@ -3,7 +3,7 @@ from .utils import NamespacedClient, query_params
 
 class SslClient(NamespacedClient):
     @query_params()
-    async def certificates(self, *, params=None, headers=None):
+    async def certificates(self, params=None, headers=None):
         """
         Retrieves information about the X.509 certificates used to encrypt
         communications in the cluster.

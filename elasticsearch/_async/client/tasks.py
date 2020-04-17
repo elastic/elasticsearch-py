@@ -11,7 +11,7 @@ class TasksClient(NamespacedClient):
         "timeout",
         "wait_for_completion",
     )
-    async def list(self, *, params=None, headers=None):
+    async def list(self, params=None, headers=None):
         """
         Returns a list of tasks.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
@@ -35,7 +35,7 @@ class TasksClient(NamespacedClient):
         )
 
     @query_params("actions", "nodes", "parent_task_id", "wait_for_completion")
-    async def cancel(self, *, task_id=None, params=None, headers=None):
+    async def cancel(self, task_id=None, params=None, headers=None):
         """
         Cancels a task, if it can be cancelled through an API.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
@@ -61,7 +61,7 @@ class TasksClient(NamespacedClient):
         )
 
     @query_params("timeout", "wait_for_completion")
-    async def get(self, task_id, *, params=None, headers=None):
+    async def get(self, task_id, params=None, headers=None):
         """
         Returns information about a task.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_

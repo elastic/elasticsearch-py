@@ -3,7 +3,7 @@ from .utils import NamespacedClient, query_params, SKIP_IN_PATH
 
 class SqlClient(NamespacedClient):
     @query_params()
-    async def clear_cursor(self, body, *, params=None, headers=None):
+    async def clear_cursor(self, body, params=None, headers=None):
         """
         Clears the SQL cursor
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/sql-pagination.html>`_
@@ -19,7 +19,7 @@ class SqlClient(NamespacedClient):
         )
 
     @query_params("format")
-    async def query(self, body, *, params=None, headers=None):
+    async def query(self, body, params=None, headers=None):
         """
         Executes a SQL request
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/sql-rest-overview.html>`_
@@ -37,7 +37,7 @@ class SqlClient(NamespacedClient):
         )
 
     @query_params()
-    async def translate(self, body, *, params=None, headers=None):
+    async def translate(self, body, params=None, headers=None):
         """
         Translates SQL into Elasticsearch queries
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/sql-translate.html>`_

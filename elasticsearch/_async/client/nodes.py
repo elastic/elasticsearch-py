@@ -4,7 +4,7 @@ from .utils import NamespacedClient, query_params, _make_path
 class NodesClient(NamespacedClient):
     @query_params("timeout")
     async def reload_secure_settings(
-        self, *, body=None, node_id=None, params=None, headers=None
+        self, body=None, node_id=None, params=None, headers=None
     ):
         """
         Reloads secure settings.
@@ -26,7 +26,7 @@ class NodesClient(NamespacedClient):
         )
 
     @query_params("flat_settings", "timeout")
-    async def info(self, *, node_id=None, metric=None, params=None, headers=None):
+    async def info(self, node_id=None, metric=None, params=None, headers=None):
         """
         Returns information about nodes in the cluster.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-info.html>`_
@@ -49,7 +49,7 @@ class NodesClient(NamespacedClient):
     @query_params(
         "doc_type", "ignore_idle_threads", "interval", "snapshots", "threads", "timeout"
     )
-    async def hot_threads(self, *, node_id=None, params=None, headers=None):
+    async def hot_threads(self, node_id=None, params=None, headers=None):
         """
         Returns information about hot threads on each node in the cluster.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-hot-threads.html>`_
@@ -82,7 +82,7 @@ class NodesClient(NamespacedClient):
         )
 
     @query_params("timeout")
-    async def usage(self, *, node_id=None, metric=None, params=None, headers=None):
+    async def usage(self, node_id=None, metric=None, params=None, headers=None):
         """
         Returns low-level information about REST actions usage on nodes.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-usage.html>`_
@@ -113,7 +113,7 @@ class NodesClient(NamespacedClient):
         "types",
     )
     async def stats(
-        self, *, node_id=None, metric=None, index_metric=None, params=None, headers=None
+        self, node_id=None, metric=None, index_metric=None, params=None, headers=None
     ):
         """
         Returns statistical information about nodes in the cluster.

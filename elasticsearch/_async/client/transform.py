@@ -3,7 +3,7 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 class TransformClient(NamespacedClient):
     @query_params("force")
-    async def delete_transform(self, transform_id, *, params=None, headers=None):
+    async def delete_transform(self, transform_id, params=None, headers=None):
         """
         Deletes an existing transform.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-transform.html>`_
@@ -26,7 +26,7 @@ class TransformClient(NamespacedClient):
         )
 
     @query_params("allow_no_match", "from_", "size")
-    async def get_transform(self, *, transform_id=None, params=None, headers=None):
+    async def get_transform(self, transform_id=None, params=None, headers=None):
         """
         Retrieves configuration information for transforms.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-transform.html>`_
@@ -53,7 +53,7 @@ class TransformClient(NamespacedClient):
         )
 
     @query_params("allow_no_match", "from_", "size")
-    async def get_transform_stats(self, transform_id, *, params=None, headers=None):
+    async def get_transform_stats(self, transform_id, params=None, headers=None):
         """
         Retrieves usage information for transforms.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-transform-stats.html>`_
@@ -84,7 +84,7 @@ class TransformClient(NamespacedClient):
         )
 
     @query_params()
-    async def preview_transform(self, body, *, params=None, headers=None):
+    async def preview_transform(self, body, params=None, headers=None):
         """
         Previews a transform.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/preview-transform.html>`_
@@ -99,7 +99,7 @@ class TransformClient(NamespacedClient):
         )
 
     @query_params("defer_validation")
-    async def put_transform(self, transform_id, body, *, params=None, headers=None):
+    async def put_transform(self, transform_id, body, params=None, headers=None):
         """
         Instantiates a transform.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/put-transform.html>`_
@@ -122,7 +122,7 @@ class TransformClient(NamespacedClient):
         )
 
     @query_params("timeout")
-    async def start_transform(self, transform_id, *, params=None, headers=None):
+    async def start_transform(self, transform_id, params=None, headers=None):
         """
         Starts one or more transforms.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/start-transform.html>`_
@@ -150,7 +150,7 @@ class TransformClient(NamespacedClient):
         "wait_for_checkpoint",
         "wait_for_completion",
     )
-    async def stop_transform(self, transform_id, *, params=None, headers=None):
+    async def stop_transform(self, transform_id, params=None, headers=None):
         """
         Stops one or more transforms.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/stop-transform.html>`_
@@ -181,7 +181,7 @@ class TransformClient(NamespacedClient):
         )
 
     @query_params("defer_validation")
-    async def update_transform(self, transform_id, body, *, params=None, headers=None):
+    async def update_transform(self, transform_id, body, params=None, headers=None):
         """
         Updates certain properties of a transform.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/update-transform.html>`_

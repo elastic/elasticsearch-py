@@ -1,7 +1,7 @@
 import logging
 
-from ..transport import Transport
 from .http_aiohttp import AIOHttpConnection
+from ..transport import Transport
 from ..connection_pool import DummyConnectionPool
 from ..exceptions import TransportError, ConnectionTimeout
 

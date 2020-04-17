@@ -3,7 +3,7 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 class WatcherClient(NamespacedClient):
     @query_params()
-    async def ack_watch(self, watch_id, *, action_id=None, params=None, headers=None):
+    async def ack_watch(self, watch_id, action_id=None, params=None, headers=None):
         """
         Acknowledges a watch, manually throttling the execution of the watch's actions.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-ack-watch.html>`_
@@ -23,7 +23,7 @@ class WatcherClient(NamespacedClient):
         )
 
     @query_params()
-    async def activate_watch(self, watch_id, *, params=None, headers=None):
+    async def activate_watch(self, watch_id, params=None, headers=None):
         """
         Activates a currently inactive watch.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-activate-watch.html>`_
@@ -41,7 +41,7 @@ class WatcherClient(NamespacedClient):
         )
 
     @query_params()
-    async def deactivate_watch(self, watch_id, *, params=None, headers=None):
+    async def deactivate_watch(self, watch_id, params=None, headers=None):
         """
         Deactivates a currently active watch.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-deactivate-watch.html>`_
@@ -59,7 +59,7 @@ class WatcherClient(NamespacedClient):
         )
 
     @query_params()
-    async def delete_watch(self, id, *, params=None, headers=None):
+    async def delete_watch(self, id, params=None, headers=None):
         """
         Removes a watch from Watcher.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-delete-watch.html>`_
@@ -74,7 +74,7 @@ class WatcherClient(NamespacedClient):
         )
 
     @query_params("debug")
-    async def execute_watch(self, *, body=None, id=None, params=None, headers=None):
+    async def execute_watch(self, body=None, id=None, params=None, headers=None):
         """
         Forces the execution of a stored watch.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-execute-watch.html>`_
@@ -93,7 +93,7 @@ class WatcherClient(NamespacedClient):
         )
 
     @query_params()
-    async def get_watch(self, id, *, params=None, headers=None):
+    async def get_watch(self, id, params=None, headers=None):
         """
         Retrieves a watch by its ID.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-get-watch.html>`_
@@ -108,7 +108,7 @@ class WatcherClient(NamespacedClient):
         )
 
     @query_params("active", "if_primary_term", "if_seq_no", "version")
-    async def put_watch(self, id, *, body=None, params=None, headers=None):
+    async def put_watch(self, id, body=None, params=None, headers=None):
         """
         Creates a new watch, or updates an existing one.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-put-watch.html>`_
@@ -134,7 +134,7 @@ class WatcherClient(NamespacedClient):
         )
 
     @query_params()
-    async def start(self, *, params=None, headers=None):
+    async def start(self, params=None, headers=None):
         """
         Starts Watcher if it is not already running.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-start.html>`_
@@ -144,7 +144,7 @@ class WatcherClient(NamespacedClient):
         )
 
     @query_params("emit_stacktraces")
-    async def stats(self, *, metric=None, params=None, headers=None):
+    async def stats(self, metric=None, params=None, headers=None):
         """
         Retrieves the current Watcher metrics.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-stats.html>`_
@@ -160,7 +160,7 @@ class WatcherClient(NamespacedClient):
         )
 
     @query_params()
-    async def stop(self, *, params=None, headers=None):
+    async def stop(self, params=None, headers=None):
         """
         Stops Watcher if it is running.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-stop.html>`_

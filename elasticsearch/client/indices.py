@@ -784,7 +784,7 @@ class IndicesClient(NamespacedClient):
         :arg request: Clear request cache
         """
         return self.transport.perform_request(
-            "POST", _make_path(index, "_cache", "clear"), params=params, headers=headers
+            "POST", _make_path(index, "_cache/clear"), params=params, headers=headers
         )
 
     @query_params("active_only", "detailed")
@@ -1131,7 +1131,7 @@ class IndicesClient(NamespacedClient):
 
         return self.transport.perform_request(
             "GET",
-            _make_path(index, "_mapping", "field", fields),
+            _make_path(index, "_mapping/field", fields),
             params=params,
             headers=headers,
         )
@@ -1190,7 +1190,7 @@ class IndicesClient(NamespacedClient):
         """
         return self.transport.perform_request(
             "POST",
-            _make_path(index, doc_type, "_validate", "query"),
+            _make_path(index, doc_type, "_validate/query"),
             params=params,
             headers=headers,
             body=body,
@@ -1238,7 +1238,8 @@ class IndicesClient(NamespacedClient):
         Returns data streams.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
 
-        :arg name: The comma separated names of data streams
+        :arg name: The name or wildcard expression of the requested data
+            streams
         """
         return self.transport.perform_request(
             "GET", _make_path("_data_streams", name), params=params, headers=headers
@@ -1307,4 +1308,25 @@ class IndicesClient(NamespacedClient):
             params=params,
             headers=headers,
             body=body,
+        )
+
+    @query_params("flat_settings", "local", "master_timeout")
+    def exists_index_template(self, name, params=None, headers=None):
+        """
+        Returns information about whether a particular index template exists.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+
+        :arg name: The name of the template
+        :arg flat_settings: Return settings in flat format (default:
+            false)
+        :arg local: Return local information, do not retrieve the state
+            from master node (default: false)
+        :arg master_timeout: Explicit operation timeout for connection
+            to master node
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'name'.")
+
+        return self.transport.perform_request(
+            "HEAD", _make_path("_index_template", name), params=params, headers=headers
         )

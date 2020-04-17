@@ -3,7 +3,7 @@ from .utils import NamespacedClient, query_params, _make_path
 
 class MigrationClient(NamespacedClient):
     @query_params()
-    async def deprecations(self, *, index=None, params=None, headers=None):
+    async def deprecations(self, index=None, params=None, headers=None):
         """
         Retrieves information about different cluster, node, and index level settings
         that use deprecated features that will be removed or changed in the next major

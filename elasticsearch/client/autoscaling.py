@@ -25,7 +25,7 @@ class AutoscalingClient(NamespacedClient):
 
         return self.transport.perform_request(
             "DELETE",
-            _make_path("_autoscaling", "policy", name),
+            _make_path("_autoscaling/policy", name),
             params=params,
             headers=headers,
         )
@@ -44,8 +44,25 @@ class AutoscalingClient(NamespacedClient):
 
         return self.transport.perform_request(
             "PUT",
-            _make_path("_autoscaling", "policy", name),
+            _make_path("_autoscaling/policy", name),
             params=params,
             headers=headers,
             body=body,
+        )
+
+    @query_params()
+    def get_autoscaling_policy(self, name, params=None, headers=None):
+        """
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/autoscaling-get-autoscaling-policy.html>`_
+
+        :arg name: the name of the autoscaling policy
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'name'.")
+
+        return self.transport.perform_request(
+            "GET",
+            _make_path("_autoscaling/policy", name),
+            params=params,
+            headers=headers,
         )
