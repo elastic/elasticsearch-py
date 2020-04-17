@@ -1,5 +1,5 @@
 import asyncio
-from ..compat import *  # noqa: F401
+from ..compat import *  # noqa: F401,F403
 
 # Hack supporting Python 3.6 asyncio which didn't have 'get_running_loop()'.
 # Essentially we want to get away from having users pass in a loop to us.
