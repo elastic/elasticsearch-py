@@ -64,7 +64,9 @@ def run_all(argv=None):
 
     # always insert coverage when running tests
     if argv is None:
-        junit_xml = join(abspath(dirname(dirname(__file__))), "junit", "elasticsearch-py-junit.xml")
+        junit_xml = join(
+            abspath(dirname(dirname(__file__))), "junit", "elasticsearch-py-junit.xml"
+        )
         argv = [
             "pytest",
             "--cov=elasticsearch",
