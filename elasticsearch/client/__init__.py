@@ -33,6 +33,7 @@ from .sql import SqlClient
 from .ssl import SslClient
 from .watcher import WatcherClient
 from .enrich import EnrichClient
+from .searchable_snapshots import SearchableSnapshotsClient
 from .slm import SlmClient
 from .transform import TransformClient
 
@@ -255,6 +256,7 @@ class Elasticsearch(object):
         self.ssl = SslClient(self)
         self.watcher = WatcherClient(self)
         self.enrich = EnrichClient(self)
+        self.searchable_snapshots = SearchableSnapshotsClient(self)
         self.slm = SlmClient(self)
         self.transform = TransformClient(self)
 
@@ -1275,7 +1277,7 @@ class Elasticsearch(object):
         """
         return self.transport.perform_request(
             "POST",
-            _make_path("_render", "template", id),
+            _make_path("_render/template", id),
             params=params,
             headers=headers,
             body=body,
@@ -1650,7 +1652,7 @@ class Elasticsearch(object):
         body = _bulk_body(self.transport.serializer, body)
         return self.transport.perform_request(
             "POST",
-            _make_path(index, "_msearch", "template"),
+            _make_path(index, "_msearch/template"),
             params=params,
             headers=headers,
             body=body,
@@ -1776,7 +1778,7 @@ class Elasticsearch(object):
 
         return self.transport.perform_request(
             "POST",
-            _make_path(index, "_search", "template"),
+            _make_path(index, "_search/template"),
             params=params,
             headers=headers,
             body=body,

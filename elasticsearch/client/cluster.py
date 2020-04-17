@@ -46,10 +46,7 @@ class ClusterClient(NamespacedClient):
             Valid choices: green, yellow, red
         """
         return self.transport.perform_request(
-            "GET",
-            _make_path("_cluster", "health", index),
-            params=params,
-            headers=headers,
+            "GET", _make_path("_cluster/health", index), params=params, headers=headers
         )
 
     @query_params("local", "master_timeout")
@@ -110,7 +107,7 @@ class ClusterClient(NamespacedClient):
 
         return self.transport.perform_request(
             "GET",
-            _make_path("_cluster", "state", metric, index),
+            _make_path("_cluster/state", metric, index),
             params=params,
             headers=headers,
         )
@@ -133,7 +130,7 @@ class ClusterClient(NamespacedClient):
             "GET",
             "/_cluster/stats"
             if node_id in SKIP_IN_PATH
-            else _make_path("_cluster", "stats", "nodes", node_id),
+            else _make_path("_cluster/stats/nodes", node_id),
             params=params,
             headers=headers,
         )
@@ -297,4 +294,26 @@ class ClusterClient(NamespacedClient):
             params=params,
             headers=headers,
             body=body,
+        )
+
+    @query_params("local", "master_timeout")
+    def exists_component_template(self, name, params=None, headers=None):
+        """
+        Returns information about whether a particular component template exist
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-templates.html>`_
+
+        :arg name: The name of the template
+        :arg local: Return local information, do not retrieve the state
+            from master node (default: false)
+        :arg master_timeout: Explicit operation timeout for connection
+            to master node
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'name'.")
+
+        return self.transport.perform_request(
+            "HEAD",
+            _make_path("_component_template", name),
+            params=params,
+            headers=headers,
         )
