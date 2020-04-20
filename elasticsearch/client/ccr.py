@@ -15,7 +15,7 @@ class CcrClient(NamespacedClient):
 
         return self.transport.perform_request(
             "DELETE",
-            _make_path("_ccr/auto_follow", name),
+            _make_path("_ccr", "auto_follow", name),
             params=params,
             headers=headers,
         )
@@ -41,7 +41,7 @@ class CcrClient(NamespacedClient):
 
         return self.transport.perform_request(
             "PUT",
-            _make_path(index, "_ccr/follow"),
+            _make_path(index, "_ccr", "follow"),
             params=params,
             headers=headers,
             body=body,
@@ -61,7 +61,7 @@ class CcrClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'index'.")
 
         return self.transport.perform_request(
-            "GET", _make_path(index, "_ccr/info"), params=params, headers=headers
+            "GET", _make_path(index, "_ccr", "info"), params=params, headers=headers
         )
 
     @query_params()
@@ -78,7 +78,7 @@ class CcrClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'index'.")
 
         return self.transport.perform_request(
-            "GET", _make_path(index, "_ccr/stats"), params=params, headers=headers
+            "GET", _make_path(index, "_ccr", "stats"), params=params, headers=headers
         )
 
     @query_params()
@@ -100,7 +100,7 @@ class CcrClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path(index, "_ccr/forget_follower"),
+            _make_path(index, "_ccr", "forget_follower"),
             params=params,
             headers=headers,
             body=body,
@@ -116,7 +116,10 @@ class CcrClient(NamespacedClient):
         :arg name: The name of the auto follow pattern.
         """
         return self.transport.perform_request(
-            "GET", _make_path("_ccr/auto_follow", name), params=params, headers=headers
+            "GET",
+            _make_path("_ccr", "auto_follow", name),
+            params=params,
+            headers=headers,
         )
 
     @query_params()
@@ -134,7 +137,7 @@ class CcrClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path(index, "_ccr/pause_follow"),
+            _make_path(index, "_ccr", "pause_follow"),
             params=params,
             headers=headers,
         )
@@ -156,7 +159,7 @@ class CcrClient(NamespacedClient):
 
         return self.transport.perform_request(
             "PUT",
-            _make_path("_ccr/auto_follow", name),
+            _make_path("_ccr", "auto_follow", name),
             params=params,
             headers=headers,
             body=body,
@@ -177,7 +180,7 @@ class CcrClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path(index, "_ccr/resume_follow"),
+            _make_path(index, "_ccr", "resume_follow"),
             params=params,
             headers=headers,
             body=body,
@@ -207,7 +210,10 @@ class CcrClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'index'.")
 
         return self.transport.perform_request(
-            "POST", _make_path(index, "_ccr/unfollow"), params=params, headers=headers
+            "POST",
+            _make_path(index, "_ccr", "unfollow"),
+            params=params,
+            headers=headers,
         )
 
     @query_params()
@@ -224,7 +230,7 @@ class CcrClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path("_ccr/auto_follow", name, "pause"),
+            _make_path("_ccr", "auto_follow", name, "pause"),
             params=params,
             headers=headers,
         )
@@ -243,7 +249,7 @@ class CcrClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path("_ccr/auto_follow", name, "resume"),
+            _make_path("_ccr", "auto_follow", name, "resume"),
             params=params,
             headers=headers,
         )

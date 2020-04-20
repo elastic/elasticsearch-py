@@ -699,7 +699,7 @@ class IndicesClient(NamespacedClient):
         :arg metric: Limit the information returned the specific
             metrics.  Valid choices: _all, completion, docs, fielddata, query_cache,
             flush, get, indexing, merge, request_cache, refresh, search, segments,
-            store, warmer, suggest
+            store, warmer, suggest, bulk
         :arg completion_fields: A comma-separated list of fields for
             `fielddata` and `suggest` index metric (supports wildcards)
         :arg expand_wildcards: Whether to expand wildcard expression to
@@ -784,7 +784,7 @@ class IndicesClient(NamespacedClient):
         :arg request: Clear request cache
         """
         return self.transport.perform_request(
-            "POST", _make_path(index, "_cache/clear"), params=params, headers=headers
+            "POST", _make_path(index, "_cache", "clear"), params=params, headers=headers
         )
 
     @query_params("active_only", "detailed")
@@ -1131,7 +1131,7 @@ class IndicesClient(NamespacedClient):
 
         return self.transport.perform_request(
             "GET",
-            _make_path(index, "_mapping/field", fields),
+            _make_path(index, "_mapping", "field", fields),
             params=params,
             headers=headers,
         )
@@ -1190,7 +1190,7 @@ class IndicesClient(NamespacedClient):
         """
         return self.transport.perform_request(
             "POST",
-            _make_path(index, doc_type, "_validate/query"),
+            _make_path(index, doc_type, "_validate", "query"),
             params=params,
             headers=headers,
             body=body,

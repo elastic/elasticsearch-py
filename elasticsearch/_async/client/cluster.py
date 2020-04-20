@@ -46,7 +46,10 @@ class ClusterClient(NamespacedClient):
             Valid choices: green, yellow, red
         """
         return await self.transport.perform_request(
-            "GET", _make_path("_cluster/health", index), params=params, headers=headers
+            "GET",
+            _make_path("_cluster", "health", index),
+            params=params,
+            headers=headers,
         )
 
     @query_params("local", "master_timeout")
@@ -107,7 +110,7 @@ class ClusterClient(NamespacedClient):
 
         return await self.transport.perform_request(
             "GET",
-            _make_path("_cluster/state", metric, index),
+            _make_path("_cluster", "state", metric, index),
             params=params,
             headers=headers,
         )
@@ -130,7 +133,7 @@ class ClusterClient(NamespacedClient):
             "GET",
             "/_cluster/stats"
             if node_id in SKIP_IN_PATH
-            else _make_path("_cluster", "stats", "nodes", node_id),
+            else _make_path("_cluster/stats/nodes", node_id),
             params=params,
             headers=headers,
         )

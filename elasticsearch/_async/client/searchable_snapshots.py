@@ -20,7 +20,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         """
         return await self.transport.perform_request(
             "POST",
-            _make_path(index, "_searchable_snapshots/cache/clear"),
+            _make_path(index, "_searchable_snapshots", "cache", "clear"),
             params=params,
             headers=headers,
         )
@@ -78,7 +78,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         """
         return await self.transport.perform_request(
             "GET",
-            _make_path(index, "_searchable_snapshots/stats"),
+            _make_path(index, "_searchable_snapshots", "stats"),
             params=params,
             headers=headers,
         )

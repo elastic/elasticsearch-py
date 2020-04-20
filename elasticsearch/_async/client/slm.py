@@ -16,7 +16,7 @@ class SlmClient(NamespacedClient):
 
         return await self.transport.perform_request(
             "DELETE",
-            _make_path("_slm/policy", policy_id),
+            _make_path("_slm", "policy", policy_id),
             params=params,
             headers=headers,
         )
@@ -36,7 +36,7 @@ class SlmClient(NamespacedClient):
 
         return await self.transport.perform_request(
             "PUT",
-            _make_path("_slm/policy", policy_id, "_execute"),
+            _make_path("_slm", "policy", policy_id, "_execute"),
             params=params,
             headers=headers,
         )
@@ -63,7 +63,10 @@ class SlmClient(NamespacedClient):
             policies to retrieve
         """
         return await self.transport.perform_request(
-            "GET", _make_path("_slm/policy", policy_id), params=params, headers=headers
+            "GET",
+            _make_path("_slm", "policy", policy_id),
+            params=params,
+            headers=headers,
         )
 
     @query_params()
@@ -91,7 +94,7 @@ class SlmClient(NamespacedClient):
 
         return await self.transport.perform_request(
             "PUT",
-            _make_path("_slm/policy", policy_id),
+            _make_path("_slm", "policy", policy_id),
             params=params,
             headers=headers,
             body=body,

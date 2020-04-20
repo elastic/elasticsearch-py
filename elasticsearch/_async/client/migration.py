@@ -14,7 +14,7 @@ class MigrationClient(NamespacedClient):
         """
         return await self.transport.perform_request(
             "GET",
-            _make_path(index, "_migration/deprecations"),
+            _make_path(index, "_migration", "deprecations"),
             params=params,
             headers=headers,
         )

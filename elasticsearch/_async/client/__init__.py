@@ -268,6 +268,7 @@ class Elasticsearch(object):
             return super(Elasticsearch, self).__repr__()
 
     async def __aenter__(self):
+        await self.transport._async_start()
         return self
 
     async def __aexit__(self, *_):
@@ -1184,7 +1185,7 @@ class Elasticsearch(object):
         body = _bulk_body(self.transport.serializer, body)
         return await self.transport.perform_request(
             "POST",
-            _make_path(index, "_msearch/template"),
+            _make_path(index, "_msearch", "template"),
             params=params,
             headers=headers,
             body=body,
@@ -1404,7 +1405,7 @@ class Elasticsearch(object):
         """
         return await self.transport.perform_request(
             "POST",
-            _make_path("_render/template", id),
+            _make_path("_render", "template", id),
             params=params,
             headers=headers,
             body=body,
@@ -1697,7 +1698,7 @@ class Elasticsearch(object):
 
         return await self.transport.perform_request(
             "POST",
-            _make_path(index, "_search/template"),
+            _make_path(index, "_search", "template"),
             params=params,
             headers=headers,
             body=body,

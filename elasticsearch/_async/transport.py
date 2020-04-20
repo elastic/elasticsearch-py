@@ -1,8 +1,9 @@
 import logging
 
+from .compat import get_running_loop
 from .http_aiohttp import AIOHttpConnection
+from .connection_pool import AsyncConnectionPool, AsyncDummyConnectionPool
 from ..transport import Transport
-from ..connection_pool import DummyConnectionPool
 from ..exceptions import TransportError, ConnectionTimeout
 
 
@@ -11,65 +12,27 @@ logger = logging.getLogger("elasticsearch")
 
 class AsyncTransport(Transport):
     DEFAULT_CONNECTION_CLASS = AIOHttpConnection
+    DEFAULT_CONNECTION_POOL = AsyncConnectionPool
+    DUMMY_CONNECTION_POOL = AsyncDummyConnectionPool
 
-    def add_connection(self, host):
-        """
-        Create a new :class:`~elasticsearch.Connection` instance and add it to the pool.
+    def __init__(self, *args, **kwargs):
+        self.sniffing_task = None
+        self.loop = None
+        self._async_started = False
 
-        :arg host: kwargs that will be used to create the instance
-        """
-        self.hosts.append(host)
-        self.set_connections(self.hosts)
+        super(AsyncTransport, self).__init__(*args, **kwargs)
 
-    def set_connections(self, hosts):
-        """
-        Instantiate all the connections and create new connection pool to hold them.
-        Tries to identify unchanged hosts and re-use existing
-        :class:`~elasticsearch.Connection` instances.
+    async def _async_start(self):
+        if self._async_started:
+            return
+        self._async_started = True
 
-        :arg hosts: same as `__init__`
-        """
-        # construct the connections
-        def _create_connection(host):
-            # if this is not the initial setup look at the existing connection
-            # options and identify connections that haven't changed and can be
-            # kept around.
-            if hasattr(self, "connection_pool"):
-                for (connection, old_host) in self.connection_pool.connection_opts:
-                    if old_host == host:
-                        return connection
-
-            # previously unseen params, create new connection
-            kwargs = self.kwargs.copy()
-            kwargs.update(host)
-            return self.connection_class(**kwargs)
-
-        connections = map(_create_connection, hosts)
-
-        connections = list(zip(connections, hosts))
-        if len(connections) == 1:
-            self.connection_pool = DummyConnectionPool(connections)
-        else:
-            # pass the hosts dicts to the connection pool to optionally extract parameters from
-            self.connection_pool = self.connection_pool_class(
-                connections, **self.kwargs
-            )
-
-    def get_connection(self):
-        """
-        Retrieve a :class:`~elasticsearch.Connection` instance from the
-        :class:`~elasticsearch.ConnectionPool` instance.
-        """
-        return self.connection_pool.get_connection()
-
-    def mark_dead(self, connection):
-        """
-        Mark a connection as dead (failed) in the connection pool. If sniffing
-        on failure is enabled this will initiate the sniffing process.
-
-        :arg connection: instance of :class:`~elasticsearch.Connection` that failed
-        """
-        self.connection_pool.mark_dead(connection)
+        # Detect the async loop we're running in and set it
+        # on all already created HTTP connections.
+        self.loop = get_running_loop()
+        self.kwargs["loop"] = self.loop
+        for connection in self.connection_pool.connections:
+            connection.loop = self.loop
 
     async def close(self):
         if getattr(self, "sniffing_task", None):
@@ -77,36 +40,9 @@ class AsyncTransport(Transport):
         await self.connection_pool.close()
 
     async def perform_request(self, method, url, headers=None, params=None, body=None):
-        if body is not None:
-            body = self.serializer.dumps(body)
+        await self._async_start()
 
-            # some clients or environments don't support sending GET with body
-            if method in ("HEAD", "GET") and self.send_get_body_as != "GET":
-                # send it as post instead
-                if self.send_get_body_as == "POST":
-                    method = "POST"
-
-                # or as source parameter
-                elif self.send_get_body_as == "source":
-                    if params is None:
-                        params = {}
-                    params["source"] = body
-                    body = None
-
-        if body is not None:
-            try:
-                body = body.encode("utf-8")
-            except (UnicodeDecodeError, AttributeError):
-                # bytes/str - no need to re-encode
-                pass
-
-        ignore = ()
-        timeout = None
-        if params:
-            timeout = params.pop("request_timeout", None)
-            ignore = params.pop("ignore", ())
-            if isinstance(ignore, int):
-                ignore = (ignore,)
+        params, body, ignore, timeout = self._resolve_request_args(method, params, body)
 
         for attempt in range(self.max_retries + 1):
             connection = self.get_connection()

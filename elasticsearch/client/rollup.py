@@ -14,7 +14,7 @@ class RollupClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'id'.")
 
         return self.transport.perform_request(
-            "DELETE", _make_path("_rollup/job", id), params=params, headers=headers
+            "DELETE", _make_path("_rollup", "job", id), params=params, headers=headers
         )
 
     @query_params()
@@ -27,7 +27,7 @@ class RollupClient(NamespacedClient):
             or left blank for all jobs
         """
         return self.transport.perform_request(
-            "GET", _make_path("_rollup/job", id), params=params, headers=headers
+            "GET", _make_path("_rollup", "job", id), params=params, headers=headers
         )
 
     @query_params()
@@ -41,7 +41,7 @@ class RollupClient(NamespacedClient):
             left blank for all jobs
         """
         return self.transport.perform_request(
-            "GET", _make_path("_rollup/data", id), params=params, headers=headers
+            "GET", _make_path("_rollup", "data", id), params=params, headers=headers
         )
 
     @query_params()
@@ -58,7 +58,7 @@ class RollupClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'index'.")
 
         return self.transport.perform_request(
-            "GET", _make_path(index, "_rollup/data"), params=params, headers=headers
+            "GET", _make_path(index, "_rollup", "data"), params=params, headers=headers
         )
 
     @query_params()
@@ -76,7 +76,7 @@ class RollupClient(NamespacedClient):
 
         return self.transport.perform_request(
             "PUT",
-            _make_path("_rollup/job", id),
+            _make_path("_rollup", "job", id),
             params=params,
             headers=headers,
             body=body,
@@ -122,7 +122,7 @@ class RollupClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path("_rollup/job", id, "_start"),
+            _make_path("_rollup", "job", id, "_start"),
             params=params,
             headers=headers,
         )
@@ -145,7 +145,7 @@ class RollupClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path("_rollup/job", id, "_stop"),
+            _make_path("_rollup", "job", id, "_stop"),
             params=params,
             headers=headers,
         )

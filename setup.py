@@ -13,8 +13,6 @@ with open(join(dirname(__file__), "README")) as f:
 install_requires = [
     "urllib3>=1.21.1",
     "certifi",
-    # Async is supported on Python 3.6+
-    "aiohttp; python_version>='3.6'",
 ]
 tests_require = [
     "requests>=2.0.0, <3.0.0",
@@ -24,6 +22,7 @@ tests_require = [
     "pyyaml",
     "nosexcover",
 ]
+async_requires = ["aiohttp>3.5.4,<4", "yarl"]
 
 docs_require = ["sphinx<1.7", "sphinx_rtd_theme"]
 generate_require = ["black", "jinja2"]
@@ -66,5 +65,6 @@ setup(
         "develop": tests_require + docs_require + generate_require,
         "docs": docs_require,
         "requests": ["requests>=2.4.0, <3.0.0"],
+        "async": async_requires,
     },
 )

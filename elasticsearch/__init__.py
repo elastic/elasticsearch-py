@@ -66,18 +66,21 @@ try:
     # Async is only supported on Python 3.6+
     if sys.version_info < (3, 6):
         raise ImportError()
-    import asyncio
 
     from ._async import (
-        AsyncElasticsearch as AsyncElasticsearch,
-        AsyncTransport as AsyncTransport,
-        AIOHttpConnection as AIOHttpConnection,
+        AsyncElasticsearch,
+        AsyncTransport,
+        AIOHttpConnection,
+        AsyncConnectionPool,
+        AsyncDummyConnectionPool,
     )
 
     __all__ += [
         "AsyncElasticsearch",
         "AsyncTransport",
         "AIOHttpConnection",
+        "AsyncConnectionPool",
+        "AsyncDummyConnectionPool",
     ]
-except ImportError as e:
+except (ImportError, SyntaxError):
     pass

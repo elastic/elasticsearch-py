@@ -14,7 +14,10 @@ class EnrichClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'name'.")
 
         return await self.transport.perform_request(
-            "DELETE", _make_path("_enrich/policy", name), params=params, headers=headers
+            "DELETE",
+            _make_path("_enrich", "policy", name),
+            params=params,
+            headers=headers,
         )
 
     @query_params("wait_for_completion")
@@ -32,7 +35,7 @@ class EnrichClient(NamespacedClient):
 
         return await self.transport.perform_request(
             "PUT",
-            _make_path("_enrich/policy", name, "_execute"),
+            _make_path("_enrich", "policy", name, "_execute"),
             params=params,
             headers=headers,
         )
@@ -46,7 +49,7 @@ class EnrichClient(NamespacedClient):
         :arg name: A comma-separated list of enrich policy names
         """
         return await self.transport.perform_request(
-            "GET", _make_path("_enrich/policy", name), params=params, headers=headers
+            "GET", _make_path("_enrich", "policy", name), params=params, headers=headers
         )
 
     @query_params()
@@ -64,7 +67,7 @@ class EnrichClient(NamespacedClient):
 
         return await self.transport.perform_request(
             "PUT",
-            _make_path("_enrich/policy", name),
+            _make_path("_enrich", "policy", name),
             params=params,
             headers=headers,
             body=body,

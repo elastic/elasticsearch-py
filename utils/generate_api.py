@@ -225,11 +225,7 @@ class API:
                 part = part[1:-1]
                 parts.append(SUBSTITUTIONS.get(part, part))
             else:
-                # Previous was a string, we can concat with '/'
-                if parts and parts[-1].startswith("'"):
-                    parts[-1] = f"'{parts[-1][1:-1]}/{part}'"
-                else:
-                    parts.append(f"'{part}'")
+                parts.append(f"'{part}'")
 
         return dynamic, parts
 

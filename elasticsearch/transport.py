@@ -41,12 +41,14 @@ class Transport(object):
     """
 
     DEFAULT_CONNECTION_CLASS = Urllib3HttpConnection
+    DEFAULT_CONNECTION_POOL = ConnectionPool
+    DUMMY_CONNECTION_POOL = DummyConnectionPool
 
     def __init__(
         self,
         hosts,
         connection_class=None,
-        connection_pool_class=ConnectionPool,
+        connection_pool_class=None,
         host_info_callback=get_host_info,
         sniff_on_start=False,
         sniffer_timeout=None,
@@ -100,6 +102,8 @@ class Transport(object):
         """
         if connection_class is None:
             connection_class = self.DEFAULT_CONNECTION_CLASS
+        if connection_pool_class is None:
+            connection_pool_class = self.DEFAULT_CONNECTION_POOL
 
         # serialization config
         _serializers = DEFAULT_SERIALIZERS.copy()
@@ -185,7 +189,7 @@ class Transport(object):
 
         connections = list(zip(connections, hosts))
         if len(connections) == 1:
-            self.connection_pool = DummyConnectionPool(connections)
+            self.connection_pool = self.DUMMY_CONNECTION_POOL(connections)
         else:
             # pass the hosts dicts to the connection pool to optionally extract parameters from
             self.connection_pool = self.connection_pool_class(
@@ -321,36 +325,7 @@ class Transport(object):
         :arg body: body of the request, will be serialized using serializer and
             passed to the connection
         """
-        if body is not None:
-            body = self.serializer.dumps(body)
-
-            # some clients or environments don't support sending GET with body
-            if method in ("HEAD", "GET") and self.send_get_body_as != "GET":
-                # send it as post instead
-                if self.send_get_body_as == "POST":
-                    method = "POST"
-
-                # or as source parameter
-                elif self.send_get_body_as == "source":
-                    if params is None:
-                        params = {}
-                    params["source"] = body
-                    body = None
-
-        if body is not None:
-            try:
-                body = body.encode("utf-8", "surrogatepass")
-            except (UnicodeDecodeError, AttributeError):
-                # bytes/str - no need to re-encode
-                pass
-
-        ignore = ()
-        timeout = None
-        if params:
-            timeout = params.pop("request_timeout", None)
-            ignore = params.pop("ignore", ())
-            if isinstance(ignore, int):
-                ignore = (ignore,)
+        params, body, ignore, timeout = self._resolve_request_args(method, params, body)
 
         for attempt in range(self.max_retries + 1):
             connection = self.get_connection()
@@ -405,3 +380,38 @@ class Transport(object):
         Explicitly closes connections
         """
         self.connection_pool.close()
+
+    def _resolve_request_args(self, method, params, body):
+        """Resolves parameters for .perform_request()"""
+        if body is not None:
+            body = self.serializer.dumps(body)
+
+            # some clients or environments don't support sending GET with body
+            if method in ("HEAD", "GET") and self.send_get_body_as != "GET":
+                # send it as post instead
+                if self.send_get_body_as == "POST":
+                    method = "POST"
+
+                # or as source parameter
+                elif self.send_get_body_as == "source":
+                    if params is None:
+                        params = {}
+                    params["source"] = body
+                    body = None
+
+        if body is not None:
+            try:
+                body = body.encode("utf-8", "surrogatepass")
+            except (UnicodeDecodeError, AttributeError):
+                # bytes/str - no need to re-encode
+                pass
+
+        ignore = ()
+        timeout = None
+        if params:
+            timeout = params.pop("request_timeout", None)
+            ignore = params.pop("ignore", ())
+            if isinstance(ignore, int):
+                ignore = (ignore,)
+
+        return params, body, ignore, timeout

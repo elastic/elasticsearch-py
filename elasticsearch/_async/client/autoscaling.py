@@ -25,7 +25,7 @@ class AutoscalingClient(NamespacedClient):
 
         return await self.transport.perform_request(
             "DELETE",
-            _make_path("_autoscaling/policy", name),
+            _make_path("_autoscaling", "policy", name),
             params=params,
             headers=headers,
         )
@@ -44,7 +44,7 @@ class AutoscalingClient(NamespacedClient):
 
         return await self.transport.perform_request(
             "PUT",
-            _make_path("_autoscaling/policy", name),
+            _make_path("_autoscaling", "policy", name),
             params=params,
             headers=headers,
             body=body,
@@ -62,7 +62,7 @@ class AutoscalingClient(NamespacedClient):
 
         return await self.transport.perform_request(
             "GET",
-            _make_path("_autoscaling/policy", name),
+            _make_path("_autoscaling", "policy", name),
             params=params,
             headers=headers,
         )

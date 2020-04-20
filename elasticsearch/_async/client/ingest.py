@@ -14,7 +14,7 @@ class IngestClient(NamespacedClient):
             to master node
         """
         return await self.transport.perform_request(
-            "GET", _make_path("_ingest/pipeline", id), params=params, headers=headers
+            "GET", _make_path("_ingest", "pipeline", id), params=params, headers=headers
         )
 
     @query_params("master_timeout", "timeout")
@@ -35,7 +35,7 @@ class IngestClient(NamespacedClient):
 
         return await self.transport.perform_request(
             "PUT",
-            _make_path("_ingest/pipeline", id),
+            _make_path("_ingest", "pipeline", id),
             params=params,
             headers=headers,
             body=body,
@@ -56,7 +56,10 @@ class IngestClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'id'.")
 
         return await self.transport.perform_request(
-            "DELETE", _make_path("_ingest/pipeline", id), params=params, headers=headers
+            "DELETE",
+            _make_path("_ingest", "pipeline", id),
+            params=params,
+            headers=headers,
         )
 
     @query_params("verbose")
@@ -75,7 +78,7 @@ class IngestClient(NamespacedClient):
 
         return await self.transport.perform_request(
             "POST",
-            _make_path("_ingest/pipeline", id, "_simulate"),
+            _make_path("_ingest", "pipeline", id, "_simulate"),
             params=params,
             headers=headers,
             body=body,

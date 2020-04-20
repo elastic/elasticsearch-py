@@ -23,7 +23,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path("_ml/anomaly_detectors", job_id, "_close"),
+            _make_path("_ml", "anomaly_detectors", job_id, "_close"),
             params=params,
             headers=headers,
             body=body,
@@ -44,7 +44,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "DELETE",
-            _make_path("_ml/calendars", calendar_id),
+            _make_path("_ml", "calendars", calendar_id),
             params=params,
             headers=headers,
         )
@@ -64,7 +64,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "DELETE",
-            _make_path("_ml/calendars", calendar_id, "events", event_id),
+            _make_path("_ml", "calendars", calendar_id, "events", event_id),
             params=params,
             headers=headers,
         )
@@ -84,7 +84,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "DELETE",
-            _make_path("_ml/calendars", calendar_id, "jobs", job_id),
+            _make_path("_ml", "calendars", calendar_id, "jobs", job_id),
             params=params,
             headers=headers,
         )
@@ -105,7 +105,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "DELETE",
-            _make_path("_ml/datafeeds", datafeed_id),
+            _make_path("_ml", "datafeeds", datafeed_id),
             params=params,
             headers=headers,
         )
@@ -133,7 +133,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "DELETE",
-            _make_path("_ml/filters", filter_id),
+            _make_path("_ml", "filters", filter_id),
             params=params,
             headers=headers,
         )
@@ -157,7 +157,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "DELETE",
-            _make_path("_ml/anomaly_detectors", job_id, "_forecast", forecast_id),
+            _make_path("_ml", "anomaly_detectors", job_id, "_forecast", forecast_id),
             params=params,
             headers=headers,
         )
@@ -178,7 +178,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "DELETE",
-            _make_path("_ml/anomaly_detectors", job_id),
+            _make_path("_ml", "anomaly_detectors", job_id),
             params=params,
             headers=headers,
         )
@@ -198,7 +198,9 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "DELETE",
-            _make_path("_ml/anomaly_detectors", job_id, "model_snapshots", snapshot_id),
+            _make_path(
+                "_ml", "anomaly_detectors", job_id, "model_snapshots", snapshot_id
+            ),
             params=params,
             headers=headers,
         )
@@ -294,7 +296,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path("_ml/anomaly_detectors", job_id, "_flush"),
+            _make_path("_ml", "anomaly_detectors", job_id, "_flush"),
             params=params,
             headers=headers,
             body=body,
@@ -316,7 +318,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path("_ml/anomaly_detectors", job_id, "_forecast"),
+            _make_path("_ml", "anomaly_detectors", job_id, "_forecast"),
             params=params,
             headers=headers,
         )
@@ -360,7 +362,9 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path("_ml/anomaly_detectors", job_id, "results/buckets", timestamp),
+            _make_path(
+                "_ml", "anomaly_detectors", job_id, "results", "buckets", timestamp
+            ),
             params=params,
             headers=headers,
             body=body,
@@ -391,7 +395,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "GET",
-            _make_path("_ml/calendars", calendar_id, "events"),
+            _make_path("_ml", "calendars", calendar_id, "events"),
             params=params,
             headers=headers,
         )
@@ -414,7 +418,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path("_ml/calendars", calendar_id),
+            _make_path("_ml", "calendars", calendar_id),
             params=params,
             headers=headers,
             body=body,
@@ -433,7 +437,7 @@ class MlClient(NamespacedClient):
         """
         return self.transport.perform_request(
             "GET",
-            _make_path("_ml/datafeeds", datafeed_id, "_stats"),
+            _make_path("_ml", "datafeeds", datafeed_id, "_stats"),
             params=params,
             headers=headers,
         )
@@ -451,7 +455,7 @@ class MlClient(NamespacedClient):
         """
         return self.transport.perform_request(
             "GET",
-            _make_path("_ml/datafeeds", datafeed_id),
+            _make_path("_ml", "datafeeds", datafeed_id),
             params=params,
             headers=headers,
         )
@@ -471,7 +475,10 @@ class MlClient(NamespacedClient):
             params["from"] = params.pop("from_")
 
         return self.transport.perform_request(
-            "GET", _make_path("_ml/filters", filter_id), params=params, headers=headers
+            "GET",
+            _make_path("_ml", "filters", filter_id),
+            params=params,
+            headers=headers,
         )
 
     @query_params(
@@ -511,7 +518,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path("_ml/anomaly_detectors", job_id, "results/influencers"),
+            _make_path("_ml", "anomaly_detectors", job_id, "results", "influencers"),
             params=params,
             headers=headers,
             body=body,
@@ -530,7 +537,7 @@ class MlClient(NamespacedClient):
         """
         return self.transport.perform_request(
             "GET",
-            _make_path("_ml/anomaly_detectors", job_id, "_stats"),
+            _make_path("_ml", "anomaly_detectors", job_id, "_stats"),
             params=params,
             headers=headers,
         )
@@ -548,7 +555,7 @@ class MlClient(NamespacedClient):
         """
         return self.transport.perform_request(
             "GET",
-            _make_path("_ml/anomaly_detectors", job_id),
+            _make_path("_ml", "anomaly_detectors", job_id),
             params=params,
             headers=headers,
         )
@@ -593,7 +600,9 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path("_ml/anomaly_detectors", job_id, "results/overall_buckets"),
+            _make_path(
+                "_ml", "anomaly_detectors", job_id, "results", "overall_buckets"
+            ),
             params=params,
             headers=headers,
             body=body,
@@ -635,7 +644,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path("_ml/anomaly_detectors", job_id, "results/records"),
+            _make_path("_ml", "anomaly_detectors", job_id, "results", "records"),
             params=params,
             headers=headers,
             body=body,
@@ -664,7 +673,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path("_ml/anomaly_detectors", job_id, "_open"),
+            _make_path("_ml", "anomaly_detectors", job_id, "_open"),
             params=params,
             headers=headers,
         )
@@ -684,7 +693,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path("_ml/calendars", calendar_id, "events"),
+            _make_path("_ml", "calendars", calendar_id, "events"),
             params=params,
             headers=headers,
             body=body,
@@ -710,7 +719,7 @@ class MlClient(NamespacedClient):
         body = _bulk_body(self.transport.serializer, body)
         return self.transport.perform_request(
             "POST",
-            _make_path("_ml/anomaly_detectors", job_id, "_data"),
+            _make_path("_ml", "anomaly_detectors", job_id, "_data"),
             params=params,
             headers=headers,
             body=body,
@@ -731,7 +740,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "GET",
-            _make_path("_ml/datafeeds", datafeed_id, "_preview"),
+            _make_path("_ml", "datafeeds", datafeed_id, "_preview"),
             params=params,
             headers=headers,
         )
@@ -752,7 +761,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "PUT",
-            _make_path("_ml/calendars", calendar_id),
+            _make_path("_ml", "calendars", calendar_id),
             params=params,
             headers=headers,
             body=body,
@@ -773,7 +782,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "PUT",
-            _make_path("_ml/calendars", calendar_id, "jobs", job_id),
+            _make_path("_ml", "calendars", calendar_id, "jobs", job_id),
             params=params,
             headers=headers,
         )
@@ -804,7 +813,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "PUT",
-            _make_path("_ml/datafeeds", datafeed_id),
+            _make_path("_ml", "datafeeds", datafeed_id),
             params=params,
             headers=headers,
             body=body,
@@ -825,7 +834,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "PUT",
-            _make_path("_ml/filters", filter_id),
+            _make_path("_ml", "filters", filter_id),
             params=params,
             headers=headers,
             body=body,
@@ -846,7 +855,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "PUT",
-            _make_path("_ml/anomaly_detectors", job_id),
+            _make_path("_ml", "anomaly_detectors", job_id),
             params=params,
             headers=headers,
             body=body,
@@ -889,7 +898,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path("_ml/datafeeds", datafeed_id, "_start"),
+            _make_path("_ml", "datafeeds", datafeed_id, "_start"),
             params=params,
             headers=headers,
             body=body,
@@ -916,7 +925,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path("_ml/datafeeds", datafeed_id, "_stop"),
+            _make_path("_ml", "datafeeds", datafeed_id, "_stop"),
             params=params,
             headers=headers,
         )
@@ -947,7 +956,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path("_ml/datafeeds", datafeed_id, "_update"),
+            _make_path("_ml", "datafeeds", datafeed_id, "_update"),
             params=params,
             headers=headers,
             body=body,
@@ -968,7 +977,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path("_ml/filters", filter_id, "_update"),
+            _make_path("_ml", "filters", filter_id, "_update"),
             params=params,
             headers=headers,
             body=body,
@@ -989,7 +998,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path("_ml/anomaly_detectors", job_id, "_update"),
+            _make_path("_ml", "anomaly_detectors", job_id, "_update"),
             params=params,
             headers=headers,
             body=body,
@@ -1045,7 +1054,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "DELETE",
-            _make_path("_ml/data_frame/analytics", id),
+            _make_path("_ml", "data_frame", "analytics", id),
             params=params,
             headers=headers,
         )
@@ -1089,7 +1098,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "GET",
-            _make_path("_ml/data_frame/analytics", id),
+            _make_path("_ml", "data_frame", "analytics", id),
             params=params,
             headers=headers,
         )
@@ -1114,7 +1123,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "GET",
-            _make_path("_ml/data_frame/analytics", id, "_stats"),
+            _make_path("_ml", "data_frame", "analytics", id, "_stats"),
             params=params,
             headers=headers,
         )
@@ -1134,7 +1143,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "PUT",
-            _make_path("_ml/data_frame/analytics", id),
+            _make_path("_ml", "data_frame", "analytics", id),
             params=params,
             headers=headers,
             body=body,
@@ -1156,7 +1165,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path("_ml/data_frame/analytics", id, "_start"),
+            _make_path("_ml", "data_frame", "analytics", id, "_start"),
             params=params,
             headers=headers,
             body=body,
@@ -1183,7 +1192,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path("_ml/data_frame/analytics", id, "_stop"),
+            _make_path("_ml", "data_frame", "analytics", id, "_stop"),
             params=params,
             headers=headers,
             body=body,
@@ -1203,7 +1212,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "DELETE",
-            _make_path("_ml/inference", model_id),
+            _make_path("_ml", "inference", model_id),
             params=params,
             headers=headers,
         )
@@ -1242,7 +1251,10 @@ class MlClient(NamespacedClient):
             params["from"] = params.pop("from_")
 
         return self.transport.perform_request(
-            "GET", _make_path("_ml/inference", model_id), params=params, headers=headers
+            "GET",
+            _make_path("_ml", "inference", model_id),
+            params=params,
+            headers=headers,
         )
 
     @query_params("allow_no_match", "from_", "size")
@@ -1265,7 +1277,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "GET",
-            _make_path("_ml/inference", model_id, "_stats"),
+            _make_path("_ml", "inference", model_id, "_stats"),
             params=params,
             headers=headers,
         )
@@ -1285,7 +1297,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "PUT",
-            _make_path("_ml/inference", model_id),
+            _make_path("_ml", "inference", model_id),
             params=params,
             headers=headers,
             body=body,
@@ -1324,7 +1336,7 @@ class MlClient(NamespacedClient):
         """
         return self.transport.perform_request(
             "POST",
-            _make_path("_ml/data_frame/analytics", id, "_explain"),
+            _make_path("_ml", "data_frame", "analytics", id, "_explain"),
             params=params,
             headers=headers,
             body=body,
@@ -1355,7 +1367,7 @@ class MlClient(NamespacedClient):
         return self.transport.perform_request(
             "POST",
             _make_path(
-                "_ml/anomaly_detectors", job_id, "results/categories", category_id
+                "_ml", "anomaly_detectors", job_id, "results", "categories", category_id
             ),
             params=params,
             headers=headers,
@@ -1391,7 +1403,9 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path("_ml/anomaly_detectors", job_id, "model_snapshots", snapshot_id),
+            _make_path(
+                "_ml", "anomaly_detectors", job_id, "model_snapshots", snapshot_id
+            ),
             params=params,
             headers=headers,
             body=body,
@@ -1418,7 +1432,8 @@ class MlClient(NamespacedClient):
         return self.transport.perform_request(
             "POST",
             _make_path(
-                "_ml/anomaly_detectors",
+                "_ml",
+                "anomaly_detectors",
                 job_id,
                 "model_snapshots",
                 snapshot_id,
@@ -1448,7 +1463,8 @@ class MlClient(NamespacedClient):
         return self.transport.perform_request(
             "POST",
             _make_path(
-                "_ml/anomaly_detectors",
+                "_ml",
+                "anomaly_detectors",
                 job_id,
                 "model_snapshots",
                 snapshot_id,

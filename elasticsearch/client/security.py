@@ -32,7 +32,7 @@ class SecurityClient(NamespacedClient):
 
         return self.transport.perform_request(
             "PUT",
-            _make_path("_security/user", username, "_password"),
+            _make_path("_security", "user", username, "_password"),
             params=params,
             headers=headers,
             body=body,
@@ -54,7 +54,7 @@ class SecurityClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path("_security/realm", realms, "_clear_cache"),
+            _make_path("_security", "realm", realms, "_clear_cache"),
             params=params,
             headers=headers,
         )
@@ -72,7 +72,7 @@ class SecurityClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path("_security/role", name, "_clear_cache"),
+            _make_path("_security", "role", name, "_clear_cache"),
             params=params,
             headers=headers,
         )
@@ -115,7 +115,7 @@ class SecurityClient(NamespacedClient):
 
         return self.transport.perform_request(
             "DELETE",
-            _make_path("_security/privilege", application, name),
+            _make_path("_security", "privilege", application, name),
             params=params,
             headers=headers,
         )
@@ -136,7 +136,10 @@ class SecurityClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'name'.")
 
         return self.transport.perform_request(
-            "DELETE", _make_path("_security/role", name), params=params, headers=headers
+            "DELETE",
+            _make_path("_security", "role", name),
+            params=params,
+            headers=headers,
         )
 
     @query_params("refresh")
@@ -156,7 +159,7 @@ class SecurityClient(NamespacedClient):
 
         return self.transport.perform_request(
             "DELETE",
-            _make_path("_security/role_mapping", name),
+            _make_path("_security", "role_mapping", name),
             params=params,
             headers=headers,
         )
@@ -178,7 +181,7 @@ class SecurityClient(NamespacedClient):
 
         return self.transport.perform_request(
             "DELETE",
-            _make_path("_security/user", username),
+            _make_path("_security", "user", username),
             params=params,
             headers=headers,
         )
@@ -200,7 +203,7 @@ class SecurityClient(NamespacedClient):
 
         return self.transport.perform_request(
             "PUT",
-            _make_path("_security/user", username, "_disable"),
+            _make_path("_security", "user", username, "_disable"),
             params=params,
             headers=headers,
         )
@@ -222,7 +225,7 @@ class SecurityClient(NamespacedClient):
 
         return self.transport.perform_request(
             "PUT",
-            _make_path("_security/user", username, "_enable"),
+            _make_path("_security", "user", username, "_enable"),
             params=params,
             headers=headers,
         )
@@ -257,7 +260,7 @@ class SecurityClient(NamespacedClient):
         """
         return self.transport.perform_request(
             "GET",
-            _make_path("_security/privilege", application, name),
+            _make_path("_security", "privilege", application, name),
             params=params,
             headers=headers,
         )
@@ -271,7 +274,7 @@ class SecurityClient(NamespacedClient):
         :arg name: Role name
         """
         return self.transport.perform_request(
-            "GET", _make_path("_security/role", name), params=params, headers=headers
+            "GET", _make_path("_security", "role", name), params=params, headers=headers
         )
 
     @query_params()
@@ -284,7 +287,7 @@ class SecurityClient(NamespacedClient):
         """
         return self.transport.perform_request(
             "GET",
-            _make_path("_security/role_mapping", name),
+            _make_path("_security", "role_mapping", name),
             params=params,
             headers=headers,
         )
@@ -314,7 +317,7 @@ class SecurityClient(NamespacedClient):
         """
         return self.transport.perform_request(
             "GET",
-            _make_path("_security/user", username),
+            _make_path("_security", "user", username),
             params=params,
             headers=headers,
         )
@@ -343,7 +346,7 @@ class SecurityClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path("_security/user", user, "_has_privileges"),
+            _make_path("_security", "user", user, "_has_privileges"),
             params=params,
             headers=headers,
             body=body,
@@ -421,7 +424,7 @@ class SecurityClient(NamespacedClient):
 
         return self.transport.perform_request(
             "PUT",
-            _make_path("_security/role", name),
+            _make_path("_security", "role", name),
             params=params,
             headers=headers,
             body=body,
@@ -446,7 +449,7 @@ class SecurityClient(NamespacedClient):
 
         return self.transport.perform_request(
             "PUT",
-            _make_path("_security/role_mapping", name),
+            _make_path("_security", "role_mapping", name),
             params=params,
             headers=headers,
             body=body,
@@ -472,7 +475,7 @@ class SecurityClient(NamespacedClient):
 
         return self.transport.perform_request(
             "PUT",
-            _make_path("_security/user", username),
+            _make_path("_security", "user", username),
             params=params,
             headers=headers,
             body=body,

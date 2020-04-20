@@ -4,10 +4,10 @@ import os
 import warnings
 
 import aiohttp
+import yarl
 from aiohttp.client_exceptions import ServerFingerprintMismatch
 
 from ..connection import Connection
-from .compat import get_running_loop
 from ..compat import urlencode
 from ..exceptions import (
     ConnectionError,
@@ -52,6 +52,7 @@ class AIOHttpConnection(Connection):
         cloud_id=None,
         api_key=None,
         opaque_id=None,
+        loop=None,
         **kwargs,
     ):
         self.headers = {}
@@ -112,37 +113,53 @@ class AIOHttpConnection(Connection):
                 raise ImproperlyConfigured("ca_certs parameter is not a path")
 
         self.headers.setdefault("connection", "keep-alive")
-        self.session = aiohttp.ClientSession(
-            auth=http_auth,
-            headers=self.headers,
-            auto_decompress=True,
-            connector=aiohttp.TCPConnector(
-                limit=maxsize,
-                verify_ssl=verify_certs,
-                use_dns_cache=True,
-                ssl_context=ssl_context,
-                keepalive_timeout=10,
-            ),
-        )
+        self.loop = loop
+        self.session = None
+
+        # Parameters for creating an aiohttp.ClientSession later.
+        self._limit = maxsize
+        self._http_auth = http_auth
+        self._verify_certs = verify_certs
+        self._ssl_context = ssl_context
 
     async def close(self):
-        await self.session.close()
+        if self.session:
+            await self.session.close()
+            self.session = None
 
     async def perform_request(
         self, method, url, params=None, body=None, timeout=None, ignore=(), headers=None
     ):
+        if self.session is None:
+            self._create_aiohttp_session()
+
         url_path = url
         if params:
-            url_path = "%s?%s" % (url, urlencode(params or {}))
-        url = self.host + url_path
+            query_string = urlencode(params)
+        else:
+            query_string = ""
 
-        timeout = aiohttp.ClientTimeout(total=timeout)
-        req_headers = self.headers.copy()
+        # Provide correct URL object to avoid string parsing in low-level code
+        url = yarl.URL.build(
+            scheme=self.scheme,
+            host=self.hostname,
+            port=self.port,
+            path=url,
+            query_string=query_string,
+            encoded=True,
+        )
+
+        timeout = aiohttp.ClientTimeout(
+            total=timeout if timeout is not None else self.timeout
+        )
+
         if headers:
+            req_headers = self.headers.copy()
             req_headers.update(headers)
+        else:
+            req_headers = self.headers
 
-        loop = get_running_loop()
-        start = loop.time()
+        start = self.loop.time()
         try:
             async with self.session.request(
                 method,
@@ -153,7 +170,7 @@ class AIOHttpConnection(Connection):
                 fingerprint=self.ssl_assert_fingerprint,
             ) as response:
                 raw_data = await response.text()
-                duration = loop.time() - start
+                duration = self.loop.time() - start
 
         # We want to reraise a cancellation.
         except asyncio.CancelledError:
@@ -161,7 +178,7 @@ class AIOHttpConnection(Connection):
 
         except Exception as e:
             self.log_request_fail(
-                method, url, url_path, body, loop.time() - start, exception=e
+                method, url, url_path, body, self.loop.time() - start, exception=e
             )
             if isinstance(e, ServerFingerprintMismatch):
                 raise SSLError("N/A", str(e), e)
@@ -187,3 +204,21 @@ class AIOHttpConnection(Connection):
         )
 
         return response.status, response.headers, raw_data
+
+    def _create_aiohttp_session(self):
+        """Creates an aiohttp.ClientSession(). This is delayed until
+        the first call to perform_request() so that AsyncTransport has
+        a chance to set AIOHttpConnection.loop
+        """
+        self.session = aiohttp.ClientSession(
+            auth=self._http_auth,
+            headers=self.headers,
+            auto_decompress=True,
+            loop=self.loop,
+            connector=aiohttp.TCPConnector(
+                limit=self._limit,
+                verify_ssl=self._verify_certs,
+                use_dns_cache=True,
+                ssl_context=self._ssl_context,
+            ),
+        )
