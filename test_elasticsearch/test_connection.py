@@ -397,6 +397,11 @@ class TestUrllib3Connection(TestCase):
         self.assertEquals('> {"example": "body"}', req[0][0] % req[0][1:])
         self.assertEquals("< {}", resp[0][0] % resp[0][1:])
 
+    def test_surrogatepass_into_bytes(self):
+        buf = b'\xe4\xbd\xa0\xe5\xa5\xbd\xed\xa9\xaa'
+        con = self._get_mock_connection(response_body=buf)
+        status, headers, data = con.perform_request("GET", "/")
+        self.assertEqual("你好\uda6a", data)
 
 class TestRequestsConnection(TestCase):
     def _get_mock_connection(
