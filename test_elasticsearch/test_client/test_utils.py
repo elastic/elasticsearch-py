@@ -58,6 +58,9 @@ class TestMakePath(TestCase):
             "/some-index/type/%E4%B8%AD%E6%96%87", _make_path("some-index", "type", id)
         )
 
+    def test_does_not_encode_asterisk_comma_or_slash(self):
+        self.assertEquals("/some-index/a,b,c/*%26", _make_path("some-index/a,b,c/*&"))
+
 
 class TestEscape(TestCase):
     def test_handles_ascii(self):

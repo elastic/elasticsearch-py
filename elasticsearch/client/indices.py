@@ -699,7 +699,7 @@ class IndicesClient(NamespacedClient):
         :arg metric: Limit the information returned the specific
             metrics.  Valid choices: _all, completion, docs, fielddata, query_cache,
             flush, get, indexing, merge, request_cache, refresh, search, segments,
-            store, warmer, suggest
+            store, warmer, suggest, bulk
         :arg completion_fields: A comma-separated list of fields for
             `fielddata` and `suggest` index metric (supports wildcards)
         :arg expand_wildcards: Whether to expand wildcard expression to
