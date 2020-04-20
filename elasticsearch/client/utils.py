@@ -71,7 +71,7 @@ def query_params(*es_query_params):
             params = {}
             headers = {}
             if "params" in kwargs:
-                params = kwargs.pop("params").copy()
+                params = (kwargs.pop("params") or params).copy()
             if "headers" in kwargs:
                 headers = {
                     k.lower(): v for k, v in (kwargs.pop("headers") or {}).items()
