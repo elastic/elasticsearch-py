@@ -5,6 +5,7 @@ from ...client.utils import (
     _bulk_body,
     NamespacedClient,
     AddonClient,
+    _normalize_hosts,
 )
 
 __all__ = [
@@ -14,4 +15,5 @@ __all__ = [
     "_bulk_body",
     "NamespacedClient",
     "AddonClient",
+    "_normalize_hosts",
 ]
