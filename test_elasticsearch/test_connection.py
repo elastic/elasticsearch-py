@@ -403,6 +403,7 @@ class TestUrllib3Connection(TestCase):
         status, headers, data = con.perform_request("GET", "/")
         self.assertEqual("你好\uda6a", data)
 
+
 class TestRequestsConnection(TestCase):
     def _get_mock_connection(
         self, connection_params={}, status_code=200, response_body="{}"
