@@ -42,6 +42,22 @@ class TestQueryParams(TestCase):
             self.calls, [((), {"params": {}, "headers": {"x-opaque-id": "request-id"}})]
         )
 
+    def test_handles_empty_none_and_normalization(self):
+        self.func_to_wrap(params=None)
+        self.assertEqual(self.calls[-1], ((), {"params": {}, "headers": {}}))
+
+        self.func_to_wrap(headers=None)
+        self.assertEqual(self.calls[-1], ((), {"params": {}, "headers": {}}))
+
+        self.func_to_wrap(headers=None, params=None)
+        self.assertEqual(self.calls[-1], ((), {"params": {}, "headers": {}}))
+
+        self.func_to_wrap(headers={}, params={})
+        self.assertEqual(self.calls[-1], ((), {"params": {}, "headers": {}}))
+
+        self.func_to_wrap(headers={"X": "y"})
+        self.assertEqual(self.calls[-1], ((), {"params": {}, "headers": {"x": "y"}}))
+
 
 class TestMakePath(TestCase):
     def test_handles_unicode(self):
