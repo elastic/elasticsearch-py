@@ -222,7 +222,6 @@ class Elasticsearch(object):
             return super(Elasticsearch, self).__repr__()
 
     async def __aenter__(self):
-        await self.transport._async_start()
         return self
 
     async def __aexit__(self, *_):

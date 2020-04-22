@@ -1,10 +1,17 @@
+import asyncio
 import logging
+from itertools import chain
 
 from .compat import get_running_loop
 from .http_aiohttp import AIOHttpConnection
 from .connection_pool import AsyncConnectionPool, AsyncDummyConnectionPool
 from ..transport import Transport
-from ..exceptions import TransportError, ConnectionTimeout
+from ..exceptions import (
+    TransportError,
+    ConnectionTimeout,
+    ConnectionError,
+    SerializationError,
+)
 
 
 logger = logging.getLogger("elasticsearch")
@@ -15,34 +22,188 @@ class AsyncTransport(Transport):
     DEFAULT_CONNECTION_POOL = AsyncConnectionPool
     DUMMY_CONNECTION_POOL = AsyncDummyConnectionPool
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, hosts, *args, sniff_on_start=False, **kwargs):
         self.sniffing_task = None
         self.loop = None
-        self._async_started = False
+        self._async_init_called = False
 
-        super(AsyncTransport, self).__init__(*args, **kwargs)
+        super(AsyncTransport, self).__init__(
+            *args, hosts=[], sniff_on_start=False, **kwargs
+        )
 
-    async def _async_start(self):
-        if self._async_started:
-            return
-        self._async_started = True
+        # Since we defer connections / sniffing to not occur
+        # within the constructor we never want to signal to
+        # our parent to 'sniff_on_start' or non-empty 'hosts'.
+        self.hosts = hosts
+        self.sniff_on_start = sniff_on_start
 
+    async def _async_init(self):
+        """This is our stand-in for an async contructor. Everything
+        that was deferred within __init__() should be done here now.
+
+        This method will only be called once per AsyncTransport instance
+        and is called from one of AsyncElasticsearch.__aenter__(),
+        AsyncTransport.perform_request() or AsyncTransport.get_connection()
+        """
         # Detect the async loop we're running in and set it
         # on all already created HTTP connections.
         self.loop = get_running_loop()
         self.kwargs["loop"] = self.loop
-        for connection in self.connection_pool.connections:
-            connection.loop = self.loop
+
+        # Now that we have a loop we can create all our HTTP connections
+        self.set_connections(self.hosts)
+        self.seed_connections = list(self.connection_pool.connections[:])
+
+        # ... and we can start sniffing in the background.
+        if self.sniffing_task is None and self.sniff_on_start:
+            self.last_sniff = self.loop.time()
+            self.create_sniff_task(initial=True)
+
+    async def _async_call(self):
+        """This method is called within any async method of AsyncTransport
+        where the transport is not closing. This will check to see if we should
+        call our _async_init() or create a new sniffing task
+        """
+        if not self._async_init_called:
+            self._async_init_called = True
+            await self._async_init()
+
+        if self.sniffer_timeout:
+            if self.loop.time() >= self.last_sniff + self.sniff_timeout:
+                self.create_sniff_task()
+
+    async def _get_node_info(self, conn, initial):
+        try:
+            # use small timeout for the sniffing request, should be a fast api call
+            _, headers, node_info = await conn.perform_request(
+                "GET",
+                "/_nodes/_all/http",
+                timeout=self.sniff_timeout if not initial else None,
+            )
+            return self.deserializer.loads(node_info, headers.get("content-type"))
+        except Exception:
+            pass
+        return None
+
+    async def _get_sniff_data(self, initial=False):
+        previous_sniff = self.last_sniff
+
+        # reset last_sniff timestamp
+        self.last_sniff = self.loop.time()
+
+        # use small timeout for the sniffing request, should be a fast api call
+        timeout = self.sniff_timeout if not initial else None
+
+        def _sniff_request(conn):
+            return self.loop.create_task(
+                conn.perform_request("GET", "/_nodes/_all/http", timeout=timeout)
+            )
+
+        # Go through all current connections as well as the
+        # seed_connections for good measure
+        tasks = []
+        for conn in self.connection_pool.connections:
+            tasks.append(_sniff_request(conn))
+        for conn in self.seed_connections:
+            # Ensure that we don't have any duplication within seed_connections.
+            if conn in self.connection_pool.connections:
+                continue
+            tasks.append(_sniff_request(conn))
+
+        done = ()
+        try:
+            while tasks:
+                # execute sniff requests in parallel, wait for first to return
+                done, tasks = await asyncio.wait(
+                    tasks, return_when=asyncio.FIRST_COMPLETED, loop=self.loop
+                )
+                # go through all the finished tasks
+                for t in done:
+                    try:
+                        _, headers, node_info = t.result()
+                        node_info = self.deserializer.loads(
+                            node_info, headers.get("content-type")
+                        )
+                    except (ConnectionError, SerializationError):
+                        continue
+                    node_info = list(node_info["nodes"].values())
+                    return node_info
+            else:
+                # no task has finished completely
+                raise TransportError("N/A", "Unable to sniff hosts.")
+        except Exception:
+            # keep the previous value on error
+            self.last_sniff = previous_sniff
+            raise
+        finally:
+            # Cancel all the pending tasks
+            for task in chain(done, tasks):
+                task.cancel()
+
+    async def sniff_hosts(self, initial=False):
+        """Either spawns a sniffing_task which does regular sniffing
+        over time or does a single sniffing session and awaits the results.
+        """
+        # Without a loop we can't do anything.
+        if not self.loop:
+            return
+
+        node_info = await self._get_sniff_data(initial)
+        hosts = list(filter(None, (self._get_host_info(n) for n in node_info)))
+
+        # we weren't able to get any nodes, maybe using an incompatible
+        # transport_schema or host_info_callback blocked all - raise error.
+        if not hosts:
+            raise TransportError(
+                "N/A", "Unable to sniff hosts - no viable hosts found."
+            )
+
+        # remember current live connections
+        orig_connections = self.connection_pool.connections[:]
+        self.set_connections(hosts)
+        # close those connections that are not in use any more
+        for c in orig_connections:
+            if c not in self.connection_pool.connections:
+                await c.close()
+            if c in self.seed_connections:
+                self.seed_connections.remove(c)
+
+    def create_sniff_task(self, initial=False):
+        """
+        Initiate a sniffing task. Make sure we only have one sniff request
+        running at any given time. If a finished sniffing request is around,
+        collect its result (which can raise its exception).
+        """
+        if self.sniffing_task and self.sniffing_task.done():
+            try:
+                if self.sniffing_task is not None:
+                    self.sniffing_task.result()
+            finally:
+                self.sniffing_task = None
+
+        if self.sniffing_task is None:
+            self.sniffing_task = self.loop.create_task(self.sniff_hosts(initial))
+
+    def mark_dead(self, connection):
+        self.connection_pool.mark_dead(connection)
+        if self.sniff_on_connection_fail:
+            self.create_sniff_task()
+
+    def get_connection(self):
+        return self.connection_pool.get_connection()
 
     async def close(self):
-        if getattr(self, "sniffing_task", None):
+        if self.sniffing_task:
             self.sniffing_task.cancel()
+            self.sniffing_task = None
         await self.connection_pool.close()
 
     async def perform_request(self, method, url, headers=None, params=None, body=None):
-        await self._async_start()
+        await self._async_call()
 
-        params, body, ignore, timeout = self._resolve_request_args(method, params, body)
+        method, params, body, ignore, timeout = self._resolve_request_args(
+            method, params, body
+        )
 
         for attempt in range(self.max_retries + 1):
             connection = self.get_connection()

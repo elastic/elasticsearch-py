@@ -255,6 +255,9 @@ class ConnectionPool(object):
         for conn in self.orig_connections:
             conn.close()
 
+    def __repr__(self):
+        return "<%s: %r>" % (type(self).__name__, self.connections)
+
 
 class DummyConnectionPool(ConnectionPool):
     def __init__(self, connections, **kwargs):

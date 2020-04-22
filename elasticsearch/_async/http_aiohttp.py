@@ -122,11 +122,6 @@ class AIOHttpConnection(Connection):
         self._verify_certs = verify_certs
         self._ssl_context = ssl_context
 
-    async def close(self):
-        if self.session:
-            await self.session.close()
-            self.session = None
-
     async def perform_request(
         self, method, url, params=None, body=None, timeout=None, ignore=(), headers=None
     ):
@@ -138,6 +133,14 @@ class AIOHttpConnection(Connection):
             query_string = urlencode(params)
         else:
             query_string = ""
+
+        # There is a bug in aiohttp that disables the re-use
+        # of the connection in the pool when method=HEAD.
+        # See: aio-libs/aiohttp#1769
+        is_head = False
+        if method == "HEAD":
+            method = "GET"
+            is_head = True
 
         # Provide correct URL object to avoid string parsing in low-level code
         url = yarl.URL.build(
@@ -169,7 +172,11 @@ class AIOHttpConnection(Connection):
                 timeout=timeout,
                 fingerprint=self.ssl_assert_fingerprint,
             ) as response:
-                raw_data = await response.text()
+                if is_head:  # We actually called 'GET' so throw away the data.
+                    await response.release()
+                    raw_data = ""
+                else:
+                    raw_data = await response.text()
                 duration = self.loop.time() - start
 
         # We want to reraise a cancellation.
@@ -204,6 +211,10 @@ class AIOHttpConnection(Connection):
         )
 
         return response.status, response.headers, raw_data
+
+    async def close(self):
+        if self.session:
+            await self.session.close()
 
     def _create_aiohttp_session(self):
         """Creates an aiohttp.ClientSession(). This is delayed until

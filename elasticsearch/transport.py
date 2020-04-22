@@ -131,10 +131,13 @@ class Transport(object):
         self.kwargs = kwargs
         self.hosts = hosts
 
-        # ...and instantiate them
-        self.set_connections(hosts)
-        # retain the original connection instances for sniffing
-        self.seed_connections = self.connection_pool.connections[:]
+        if hosts:
+            # ...and instantiate them
+            self.set_connections(hosts)
+            # retain the original connection instances for sniffing
+            self.seed_connections = list(self.connection_pool.connections[:])
+        else:
+            self.seed_connections = []
 
         # Don't enable sniffing on Cloud instances.
         if kwargs.get("cloud_id", False):
@@ -143,6 +146,7 @@ class Transport(object):
 
         # sniffing data
         self.sniffer_timeout = sniffer_timeout
+        self.sniff_on_start = sniff_on_start
         self.sniff_on_connection_fail = sniff_on_connection_fail
         self.last_sniff = time.time()
         self.sniff_timeout = sniff_timeout
@@ -325,7 +329,9 @@ class Transport(object):
         :arg body: body of the request, will be serialized using serializer and
             passed to the connection
         """
-        params, body, ignore, timeout = self._resolve_request_args(method, params, body)
+        method, params, body, ignore, timeout = self._resolve_request_args(
+            method, params, body
+        )
 
         for attempt in range(self.max_retries + 1):
             connection = self.get_connection()
@@ -414,4 +420,4 @@ class Transport(object):
             if isinstance(ignore, int):
                 ignore = (ignore,)
 
-        return params, body, ignore, timeout
+        return method, params, body, ignore, timeout

@@ -7,7 +7,7 @@ class AsyncConnectionPool(ConnectionPool):
         """
         Explicitly closes connections
         """
-        for conn in self.orig_connections:
+        for conn in self.connections:
             await conn.close()
 
 

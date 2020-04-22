@@ -5,7 +5,11 @@ from .http_aiohttp import AIOHttpConnection
 
 
 class AsyncElasticsearch(Elasticsearch):
-    """This is only for the rename of the class"""
+    # This class def is for both the name 'AsyncElasticsearch'
+    # and all async-only additions to the class.
+    async def __aenter__(self):
+        await self.transport._async_call()
+        return self
 
 
 __all__ = [
