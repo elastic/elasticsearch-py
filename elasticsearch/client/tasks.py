@@ -54,8 +54,8 @@ class TasksClient(NamespacedClient):
         :arg parent_task_id: Cancel tasks with specified parent task id
             (node_id:task_number). Set to -1 to cancel all.
         :arg wait_for_completion: Should the request block until the
-            cancellation of the task and its child tasks is completed. Defaults to
-            false
+            cancellation of the task and its descendant tasks is completed. Defaults
+            to false
         """
         return self.transport.perform_request(
             "POST",

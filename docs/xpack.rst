@@ -166,6 +166,18 @@ can be used to set up policies to automatically take snapshots and control how l
    :members:
 
 
+Searchable Snapshots APIs
+-------------------------
+
+`Searchable Snapshots API <https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-apis.html>`_
+used to perform searchable snapshots operations.
+
+.. py:module:: elasticsearch.client.searchable_snapshots
+
+.. autoclass:: SearchableSnapshotsClient
+   :members:
+
+
 Index Lifecycle Management APIs
 --------------------------------
 
