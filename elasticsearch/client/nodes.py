@@ -3,11 +3,15 @@ from .utils import NamespacedClient, query_params, _make_path
 
 class NodesClient(NamespacedClient):
     @query_params("timeout")
-    def reload_secure_settings(self, node_id=None, params=None, headers=None):
+    def reload_secure_settings(
+        self, body=None, node_id=None, params=None, headers=None
+    ):
         """
         Reloads secure settings.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/secure-settings.html#reloadable-secure-settings>`_
 
+        :arg body: An object containing the password for the
+            elasticsearch keystore
         :arg node_id: A comma-separated list of node IDs to span the
             reload/reinit call. Should stay empty because reloading usually involves
             all cluster nodes.
@@ -18,6 +22,7 @@ class NodesClient(NamespacedClient):
             _make_path("_nodes", node_id, "reload_secure_settings"),
             params=params,
             headers=headers,
+            body=body,
         )
 
     @query_params("flat_settings", "timeout")
