@@ -1,3 +1,4 @@
+from functools import partial
 from operator import methodcaller
 import time
 
@@ -63,14 +64,21 @@ def expand_action(data):
     return action, data.get("_source", data)
 
 
-def _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer):
+def _chunk_actions(
+    actions,
+    chunk_size,
+    max_chunk_bytes,
+    serializer,
+    expand_action_callback=expand_action
+):
     """
     Split actions into chunks by number or size, serialize them into strings in
     the process.
     """
     bulk_actions, bulk_data = [], []
     size, action_count = 0, 0
-    for action, data in actions:
+    for input_action in actions:
+        action, data = expand_action_callback(input_action)
         raw_data, raw_action = data, action
         action = serializer.dumps(action)
         # +1 to account for the trailing new line character
@@ -91,9 +99,9 @@ def _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer):
         bulk_actions.append(action)
         if data is not None:
             bulk_actions.append(data)
-            bulk_data.append((raw_action, raw_data))
+            bulk_data.append((input_action, raw_action, raw_data))
         else:
-            bulk_data.append((raw_action,))
+            bulk_data.append((input_action, raw_action,))
 
         size += cur_size
         action_count += 1
@@ -131,10 +139,12 @@ def _process_bulk_chunk(
 
         for data in bulk_data:
             # collect all the information about failed actions
-            op_type, action = data[0].copy().popitem()
+            op_type, action = data[1].copy().popitem()
             info = {"error": err_message, "status": e.status_code, "exception": e}
+            # include original input action
+            info["action"] = data[0]
             if op_type != "delete":
-                info["data"] = data[1]
+                info["data"] = data[2]
             info.update(action)
             exc_errors.append({op_type: info})
 
@@ -152,11 +162,13 @@ def _process_bulk_chunk(
     for data, (op_type, item) in zip(
         bulk_data, map(methodcaller("popitem"), resp["items"])
     ):
+        # include original input action
+        item["action"] = data[0]
         ok = 200 <= item.get("status", 500) < 300
         if not ok and raise_on_error:
             # include original document source
-            if len(data) > 1:
-                item["data"] = data[1]
+            if len(data) > 2:
+                item["data"] = data[2]
             errors.append({op_type: item})
 
         if ok or not errors:
@@ -183,7 +195,6 @@ def streaming_bulk(
     *args,
     **kwargs
 ):
-
     """
     Streaming bulk consumes actions from the iterable passed in and yields
     results per action. For non-streaming usecases use
@@ -216,11 +227,64 @@ def streaming_bulk(
     :arg max_backoff: maximum number of seconds a retry will wait
     :arg yield_ok: if set to False will skip successful documents in the output
     """
-    actions = map(expand_action_callback, actions)
+    chunker = partial(
+        _chunk_actions,
+        chunk_size=chunk_size,
+        max_chunk_bytes=max_chunk_bytes,
+        serializer=client.transport.serializer,
+        expand_action_callback=expand_action_callback
+    )
 
-    for bulk_data, bulk_actions in _chunk_actions(
-        actions, chunk_size, max_chunk_bytes, client.transport.serializer
+    for item in streaming_chunks(
+        client,
+        actions,
+        chunker,
+        raise_on_error=raise_on_error,
+        raise_on_exception=raise_on_exception,
+        max_retries=max_retries,
+        initial_backoff=initial_backoff,
+        max_backoff=max_backoff,
+        yield_ok=yield_ok,
+        *args,
+        **kwargs
     ):
+        yield item
+
+
+def streaming_chunks(
+    client,
+    actions,
+    chunker,
+    raise_on_error=True,
+    raise_on_exception=True,
+    max_retries=0,
+    initial_backoff=2,
+    max_backoff=600,
+    yield_ok=True,
+    *args,
+    **kwargs
+):
+    """
+    Implementation of the ``streaming_bulk`` helper, chunking actions using
+    given chunker function.
+
+    :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use
+    :arg actions: iterable containing the actions to be executed
+    :arg chunker: function to chunk actions into separate ``bulk`` calls,
+        should yield tuples of raw data and serialized actions.
+    :arg raise_on_error: raise ``BulkIndexError`` containing errors (as `.errors`)
+        from the execution of the last chunk when some occur. By default we raise.
+    :arg raise_on_exception: if ``False`` then don't propagate exceptions from
+        call to ``bulk`` and just report the items that failed as failed.
+    :arg max_retries: maximum number of times a document will be retried when
+        ``429`` is received, set to 0 (default) for no retries on ``429``
+    :arg initial_backoff: number of seconds we should wait before the first
+        retry. Any subsequent retries will be powers of ``initial_backoff *
+        2**retry_number``
+    :arg max_backoff: maximum number of seconds a retry will wait
+    :arg yield_ok: if set to False will skip successful documents in the output
+    """
+    for bulk_data, bulk_actions in chunker(actions):
 
         for attempt in range(max_retries + 1):
             to_retry, to_retry_data = [], []
@@ -251,9 +315,9 @@ def streaming_bulk(
                             and (attempt + 1) <= max_retries
                         ):
                             # _process_bulk_chunk expects strings so we need to
-                            # re-serialize the data
+                            # re-serialize the expanded action and data
                             to_retry.extend(
-                                map(client.transport.serializer.dumps, data)
+                                map(client.transport.serializer.dumps, data[1:])
                             )
                             to_retry_data.append(data)
                         else:
@@ -348,11 +412,54 @@ def parallel_bulk(
     :arg queue_size: size of the task queue between the main thread (producing
         chunks to send) and the processing threads.
     """
+    chunker = partial(
+        _chunk_actions,
+        chunk_size=chunk_size,
+        max_chunk_bytes=max_chunk_bytes,
+        serializer=client.transport.serializer,
+        expand_action_callback=expand_action_callback
+    )
+
+    for item in parallel_chunks(
+        client,
+        actions,
+        chunker,
+        thread_count=thread_count,
+        queue_size=queue_size,
+        *args,
+        **kwargs
+    ):
+        yield item
+
+
+def parallel_chunks(
+    client,
+    actions,
+    chunker,
+    thread_count=4,
+    queue_size=4,
+    *args,
+    **kwargs
+):
+    """
+    Implementation of the ``parallel_bulk`` helper, chunking actions using
+    given chunker function.
+
+    :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use
+    :arg actions: iterator containing the actions
+    :arg chunker: function to chunk actions into separate ``bulk`` calls,
+        should yield tuples of raw data and serialized actions.
+    :arg thread_count: size of the threadpool to use for the bulk requests
+    :arg raise_on_error: raise ``BulkIndexError`` containing errors (as `.errors`)
+        from the execution of the last chunk when some occur. By default we raise.
+    :arg raise_on_exception: if ``False`` then don't propagate exceptions from
+        call to ``bulk`` and just report the items that failed as failed.
+    :arg queue_size: size of the task queue between the main thread (producing
+        chunks to send) and the processing threads.
+    """
     # Avoid importing multiprocessing unless parallel_bulk is used
     # to avoid exceptions on restricted environments like App Engine
     from multiprocessing.pool import ThreadPool
-
-    actions = map(expand_action_callback, actions)
 
     class BlockingPool(ThreadPool):
         def _setup_queues(self):
@@ -371,9 +478,7 @@ def parallel_bulk(
                     client, bulk_chunk[1], bulk_chunk[0], *args, **kwargs
                 )
             ),
-            _chunk_actions(
-                actions, chunk_size, max_chunk_bytes, client.transport.serializer
-            ),
+            chunker(actions)
         ):
             for item in result:
                 yield item
