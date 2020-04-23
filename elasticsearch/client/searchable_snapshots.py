@@ -1,3 +1,7 @@
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
 from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 
@@ -5,7 +9,7 @@ class SearchableSnapshotsClient(NamespacedClient):
     @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable")
     def clear_cache(self, index=None, params=None, headers=None):
         """
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/searchable-snapshots-api-clear-cache.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/searchable-snapshots-api-clear-cache.html>`_
 
         :arg index: A comma-separated list of index name to limit the
             operation
@@ -55,7 +59,7 @@ class SearchableSnapshotsClient(NamespacedClient):
     @query_params()
     def repository_stats(self, repository, params=None, headers=None):
         """
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-repository-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/searchable-snapshots-repository-stats.html>`_
 
         :arg repository: The repository for which to get the stats for
         """
@@ -72,7 +76,7 @@ class SearchableSnapshotsClient(NamespacedClient):
     @query_params()
     def stats(self, index=None, params=None, headers=None):
         """
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/searchable-snapshots-api-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/searchable-snapshots-api-stats.html>`_
 
         :arg index: A comma-separated list of index names
         """

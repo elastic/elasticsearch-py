@@ -1,3 +1,7 @@
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
 import warnings
 from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
@@ -15,7 +19,7 @@ class TasksClient(NamespacedClient):
     def list(self, params=None, headers=None):
         """
         Returns a list of tasks.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/tasks.html>`_
 
         :arg actions: A comma-separated list of actions that should be
             returned. Leave empty to return all.
@@ -39,7 +43,7 @@ class TasksClient(NamespacedClient):
     def cancel(self, task_id=None, params=None, headers=None):
         """
         Cancels a task, if it can be cancelled through an API.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/tasks.html>`_
 
         :arg task_id: Cancel the task with specified task id
             (node_id:task_number)
@@ -65,7 +69,7 @@ class TasksClient(NamespacedClient):
     def get(self, task_id=None, params=None, headers=None):
         """
         Returns information about a task.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/tasks.html>`_
 
         :arg task_id: Return the task with specified id
             (node_id:task_number)

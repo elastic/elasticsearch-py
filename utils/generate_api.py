@@ -3,7 +3,6 @@
 # Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 # See the LICENSE file in the project root for more information
 
-
 import os
 import json
 import re
@@ -198,8 +197,8 @@ class API:
             ((p, parts[p]) for p in parts if parts[p]["required"]),
             (("body", self.body),) if self.body else (),
             ((p, parts[p]) for p in parts
-             if not parts[p]["required"] and
-             p not in params),
+             if not parts[p]["required"]
+             and p not in params),
             sorted(params.items(), key=lambda x: (x[0] not in parts, x[0])),
         )
 

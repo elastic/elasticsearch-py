@@ -1,3 +1,7 @@
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
 from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 
@@ -6,7 +10,7 @@ class IngestClient(NamespacedClient):
     def get_pipeline(self, id=None, params=None, headers=None):
         """
         Returns a pipeline.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-pipeline-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/get-pipeline-api.html>`_
 
         :arg id: Comma separated list of pipeline ids. Wildcards
             supported
@@ -21,7 +25,7 @@ class IngestClient(NamespacedClient):
     def put_pipeline(self, id, body, params=None, headers=None):
         """
         Creates or updates a pipeline.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-pipeline-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/put-pipeline-api.html>`_
 
         :arg id: Pipeline ID
         :arg body: The ingest definition
@@ -45,7 +49,7 @@ class IngestClient(NamespacedClient):
     def delete_pipeline(self, id, params=None, headers=None):
         """
         Deletes a pipeline.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-pipeline-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/delete-pipeline-api.html>`_
 
         :arg id: Pipeline ID
         :arg master_timeout: Explicit operation timeout for connection
@@ -66,7 +70,7 @@ class IngestClient(NamespacedClient):
     def simulate(self, body, id=None, params=None, headers=None):
         """
         Allows to simulate a pipeline with example documents.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/simulate-pipeline-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/simulate-pipeline-api.html>`_
 
         :arg body: The simulate definition
         :arg id: Pipeline ID
@@ -88,7 +92,7 @@ class IngestClient(NamespacedClient):
     def processor_grok(self, params=None, headers=None):
         """
         Returns a list of the built-in patterns.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/grok-processor.html#grok-processor-rest-get>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/grok-processor.html#grok-processor-rest-get>`_
         """
         return self.transport.perform_request(
             "GET", "/_ingest/processor/grok", params=params, headers=headers

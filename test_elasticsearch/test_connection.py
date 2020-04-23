@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
 import re
 import ssl
 import gzip
@@ -397,7 +402,7 @@ class TestUrllib3Connection(TestCase):
         buf = b"\xe4\xbd\xa0\xe5\xa5\xbd\xed\xa9\xaa"
         con = self._get_mock_connection(response_body=buf)
         status, headers, data = con.perform_request("GET", "/")
-        self.assertEqual("你好\uda6a", data)
+        self.assertEqual(u"你好\uda6a", data)
 
 
 class TestRequestsConnection(TestCase):
@@ -782,4 +787,4 @@ class TestRequestsConnection(TestCase):
         buf = b"\xe4\xbd\xa0\xe5\xa5\xbd\xed\xa9\xaa"
         con = self._get_mock_connection(response_body=buf)
         status, headers, data = con.perform_request("GET", "/")
-        self.assertEqual("你好\uda6a", data)
+        self.assertEqual(u"你好\uda6a", data)
