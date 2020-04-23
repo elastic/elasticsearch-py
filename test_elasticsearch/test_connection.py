@@ -397,10 +397,16 @@ class TestUrllib3Connection(TestCase):
         self.assertEquals('> {"example": "body"}', req[0][0] % req[0][1:])
         self.assertEquals("< {}", resp[0][0] % resp[0][1:])
 
+    def test_surrogatepass_into_bytes(self):
+        buf = b"\xe4\xbd\xa0\xe5\xa5\xbd\xed\xa9\xaa"
+        con = self._get_mock_connection(response_body=buf)
+        status, headers, data = con.perform_request("GET", "/")
+        self.assertEqual("你好\uda6a", data)
+
 
 class TestRequestsConnection(TestCase):
     def _get_mock_connection(
-        self, connection_params={}, status_code=200, response_body="{}"
+        self, connection_params={}, status_code=200, response_body=b"{}"
     ):
         con = RequestsHttpConnection(**connection_params)
 
@@ -408,7 +414,7 @@ class TestRequestsConnection(TestCase):
             dummy_response = Mock()
             dummy_response.headers = {}
             dummy_response.status_code = status_code
-            dummy_response.text = response_body
+            dummy_response.content = response_body
             dummy_response.request = args[0]
             dummy_response.cookies = {}
             _dummy_send.call_args = (args, kwargs)
@@ -653,7 +659,9 @@ class TestRequestsConnection(TestCase):
     @patch("elasticsearch.connection.base.tracer")
     @patch("elasticsearch.connection.base.logger")
     def test_failed_request_logs_and_traces(self, logger, tracer):
-        con = self._get_mock_connection(response_body='{"answer": 42}', status_code=500)
+        con = self._get_mock_connection(
+            response_body=b'{"answer": 42}', status_code=500
+        )
         self.assertRaises(
             TransportError,
             con.perform_request,
@@ -679,7 +687,7 @@ class TestRequestsConnection(TestCase):
     @patch("elasticsearch.connection.base.tracer")
     @patch("elasticsearch.connection.base.logger")
     def test_success_logs_and_traces(self, logger, tracer):
-        con = self._get_mock_connection(response_body="""{"answer": "that's it!"}""")
+        con = self._get_mock_connection(response_body=b"""{"answer": "that's it!"}""")
         status, headers, data = con.perform_request(
             "GET",
             "/",
@@ -777,3 +785,9 @@ class TestRequestsConnection(TestCase):
             "curl -H 'Content-Type: application/json' -XGET 'http://localhost:9200/_search?pretty' -d '{\n  \"answer\": 42\n}'",
             tracer.info.call_args[0][0] % tracer.info.call_args[0][1:],
         )
+
+    def test_surrogatepass_into_bytes(self):
+        buf = b"\xe4\xbd\xa0\xe5\xa5\xbd\xed\xa9\xaa"
+        con = self._get_mock_connection(response_body=buf)
+        status, headers, data = con.perform_request("GET", "/")
+        self.assertEqual("你好\uda6a", data)
