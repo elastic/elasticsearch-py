@@ -151,7 +151,7 @@ class YamlTestCase(ElasticsearchTestCase):
         """ Execute an instruction based on it's type. """
         print(test)
         for action in test:
-            self.assertEquals(1, len(action))
+            self.assertEqual(1, len(action))
             action_type, action = list(action.items())[0]
 
             if hasattr(self, "run_" + action_type):
@@ -165,7 +165,7 @@ class YamlTestCase(ElasticsearchTestCase):
         headers = action.pop("headers", None)
         catch = action.pop("catch", None)
         warn = action.pop("warnings", ())
-        self.assertEquals(1, len(action))
+        self.assertEqual(1, len(action))
 
         method, args = list(action.items())[0]
         args["headers"] = headers
@@ -272,7 +272,7 @@ class YamlTestCase(ElasticsearchTestCase):
 
         self.assertIsInstance(exception, TransportError)
         if catch in CATCH_CODES:
-            self.assertEquals(CATCH_CODES[catch], exception.status_code)
+            self.assertEqual(CATCH_CODES[catch], exception.status_code)
         elif catch[0] == "/" and catch[-1] == "/":
             self.assertTrue(
                 re.search(catch[1:-1], exception.error + " " + repr(exception.info)),
@@ -321,7 +321,7 @@ class YamlTestCase(ElasticsearchTestCase):
         for path, expected in action.items():
             value = self._lookup(path)
             expected = self._resolve(expected)
-            self.assertEquals(expected, len(value))
+            self.assertEqual(expected, len(value))
 
     def run_match(self, action):
         for path, expected in action.items():
@@ -338,7 +338,7 @@ class YamlTestCase(ElasticsearchTestCase):
                     expected.search(value), "%r does not match %r" % (value, expected)
                 )
             else:
-                self.assertEquals(
+                self.assertEqual(
                     expected, value, "%r does not match %r" % (value, expected)
                 )
 

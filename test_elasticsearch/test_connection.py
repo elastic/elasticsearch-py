@@ -94,7 +94,7 @@ class TestBaseConnection(TestCase):
             con._raise_warnings(())
             con._raise_warnings([])
 
-        self.assertEquals(w, [])
+        self.assertEqual(w, [])
 
     def test_raises_warnings(self):
         con = Connection()
@@ -102,7 +102,7 @@ class TestBaseConnection(TestCase):
         with warnings.catch_warnings(record=True) as warn:
             con._raise_warnings(['299 Elasticsearch-7.6.1-aa751 "this is deprecated"'])
 
-        self.assertEquals([str(w.message) for w in warn], ["this is deprecated"])
+        self.assertEqual([str(w.message) for w in warn], ["this is deprecated"])
 
         with warnings.catch_warnings(record=True) as warn:
             con._raise_warnings(
@@ -113,7 +113,7 @@ class TestBaseConnection(TestCase):
                 ]
             )
 
-        self.assertEquals(
+        self.assertEqual(
             [str(w.message) for w in warn],
             ["this is also deprecated", "guess what? deprecated"],
         )
@@ -128,7 +128,7 @@ class TestBaseConnection(TestCase):
                 ]
             )
 
-        self.assertEquals([str(w.message) for w in warn], ["warning", "folded"])
+        self.assertEqual([str(w.message) for w in warn], ["warning", "folded"])
 
 
 class TestUrllib3Connection(TestCase):
@@ -171,11 +171,11 @@ class TestUrllib3Connection(TestCase):
             cloud_id="cluster:dXMtZWFzdC0xLmF3cy5mb3VuZC5pbyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5NyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5Ng=="
         )
         self.assertTrue(con.use_ssl)
-        self.assertEquals(
+        self.assertEqual(
             con.host, "https://4fa8821e75634032bed1cf22110e2f97.us-east-1.aws.found.io"
         )
-        self.assertEquals(con.port, None)
-        self.assertEquals(
+        self.assertEqual(con.port, None)
+        self.assertEqual(
             con.hostname, "4fa8821e75634032bed1cf22110e2f97.us-east-1.aws.found.io"
         )
         self.assertTrue(con.http_compress)
@@ -184,12 +184,12 @@ class TestUrllib3Connection(TestCase):
             cloud_id="cluster:dXMtZWFzdC0xLmF3cy5mb3VuZC5pbyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5NyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5Ng==",
             port=9243,
         )
-        self.assertEquals(
+        self.assertEqual(
             con.host,
             "https://4fa8821e75634032bed1cf22110e2f97.us-east-1.aws.found.io:9243",
         )
-        self.assertEquals(con.port, 9243)
-        self.assertEquals(
+        self.assertEqual(con.port, 9243)
+        self.assertEqual(
             con.hostname, "4fa8821e75634032bed1cf22110e2f97.us-east-1.aws.found.io"
         )
 
@@ -199,10 +199,10 @@ class TestUrllib3Connection(TestCase):
             cloud_id="cluster:dXMtZWFzdC0xLmF3cy5mb3VuZC5pbyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5NyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5Ng==",
             api_key=("elastic", "changeme1"),
         )
-        self.assertEquals(
+        self.assertEqual(
             con.headers["authorization"], "ApiKey ZWxhc3RpYzpjaGFuZ2VtZTE="
         )
-        self.assertEquals(
+        self.assertEqual(
             con.host, "https://4fa8821e75634032bed1cf22110e2f97.us-east-1.aws.found.io"
         )
 
@@ -211,10 +211,10 @@ class TestUrllib3Connection(TestCase):
             cloud_id="cluster:dXMtZWFzdC0xLmF3cy5mb3VuZC5pbyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5NyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5Ng==",
             api_key="ZWxhc3RpYzpjaGFuZ2VtZTI=",
         )
-        self.assertEquals(
+        self.assertEqual(
             con.headers["authorization"], "ApiKey ZWxhc3RpYzpjaGFuZ2VtZTI="
         )
-        self.assertEquals(
+        self.assertEqual(
             con.host, "https://4fa8821e75634032bed1cf22110e2f97.us-east-1.aws.found.io"
         )
 
@@ -262,34 +262,34 @@ class TestUrllib3Connection(TestCase):
         con = Urllib3HttpConnection(
             cloud_id="cluster:dXMtZWFzdC0xLmF3cy5mb3VuZC5pbyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5NyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5Ng==",
         )
-        self.assertEquals(con.http_compress, True)
+        self.assertEqual(con.http_compress, True)
 
         con = Urllib3HttpConnection(
             cloud_id="cluster:dXMtZWFzdC0xLmF3cy5mb3VuZC5pbyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5NyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5Ng==",
             http_compress=False,
         )
-        self.assertEquals(con.http_compress, False)
+        self.assertEqual(con.http_compress, False)
 
         con = Urllib3HttpConnection(
             cloud_id="cluster:dXMtZWFzdC0xLmF3cy5mb3VuZC5pbyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5NyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5Ng==",
             http_compress=True,
         )
-        self.assertEquals(con.http_compress, True)
+        self.assertEqual(con.http_compress, True)
 
     def test_default_user_agent(self):
         con = Urllib3HttpConnection()
-        self.assertEquals(
+        self.assertEqual(
             con._get_default_user_agent(),
             "elasticsearch-py/%s (Python %s)" % (__versionstr__, python_version()),
         )
 
     def test_timeout_set(self):
         con = Urllib3HttpConnection(timeout=42)
-        self.assertEquals(42, con.timeout)
+        self.assertEqual(42, con.timeout)
 
     def test_keep_alive_is_on_by_default(self):
         con = Urllib3HttpConnection()
-        self.assertEquals(
+        self.assertEqual(
             {
                 "connection": "keep-alive",
                 "content-type": "application/json",
@@ -300,7 +300,7 @@ class TestUrllib3Connection(TestCase):
 
     def test_http_auth(self):
         con = Urllib3HttpConnection(http_auth="username:secret")
-        self.assertEquals(
+        self.assertEqual(
             {
                 "authorization": "Basic dXNlcm5hbWU6c2VjcmV0",
                 "connection": "keep-alive",
@@ -312,7 +312,7 @@ class TestUrllib3Connection(TestCase):
 
     def test_http_auth_tuple(self):
         con = Urllib3HttpConnection(http_auth=("username", "secret"))
-        self.assertEquals(
+        self.assertEqual(
             {
                 "authorization": "Basic dXNlcm5hbWU6c2VjcmV0",
                 "content-type": "application/json",
@@ -324,7 +324,7 @@ class TestUrllib3Connection(TestCase):
 
     def test_http_auth_list(self):
         con = Urllib3HttpConnection(http_auth=["username", "secret"])
-        self.assertEquals(
+        self.assertEqual(
             {
                 "authorization": "Basic dXNlcm5hbWU6c2VjcmV0",
                 "content-type": "application/json",
@@ -337,8 +337,8 @@ class TestUrllib3Connection(TestCase):
     def test_uses_https_if_verify_certs_is_off(self):
         with warnings.catch_warnings(record=True) as w:
             con = Urllib3HttpConnection(use_ssl=True, verify_certs=False)
-            self.assertEquals(1, len(w))
-            self.assertEquals(
+            self.assertEqual(1, len(w))
+            self.assertEqual(
                 "Connecting to https://localhost:9200 using SSL with verify_certs=False is insecure.",
                 str(w[0].message),
             )
@@ -350,7 +350,7 @@ class TestUrllib3Connection(TestCase):
             con = Urllib3HttpConnection(
                 use_ssl=True, verify_certs=False, ssl_show_warn=False
             )
-            self.assertEquals(0, len(w))
+            self.assertEqual(0, len(w))
 
         self.assertIsInstance(con.pool, urllib3.HTTPSConnectionPool)
 
@@ -362,7 +362,7 @@ class TestUrllib3Connection(TestCase):
         ctx = ssl.create_default_context()
         with warnings.catch_warnings(record=True) as w:
             Urllib3HttpConnection(ssl_context=ctx)
-            self.assertEquals(0, len(w))
+            self.assertEqual(0, len(w))
 
     def test_warns_if_using_non_default_ssl_kwargs_with_ssl_context(self):
         for kwargs in (
@@ -380,8 +380,8 @@ class TestUrllib3Connection(TestCase):
 
                 Urllib3HttpConnection(**kwargs)
 
-                self.assertEquals(1, len(w))
-                self.assertEquals(
+                self.assertEqual(1, len(w))
+                self.assertEqual(
                     "When using `ssl_context`, all other SSL related kwargs are ignored",
                     str(w[0].message),
                 )
@@ -391,17 +391,17 @@ class TestUrllib3Connection(TestCase):
         con = self._get_mock_connection(connection_params={"http_compress": True})
         con.perform_request("GET", "/", body=b'{"example": "body"}')
 
-        self.assertEquals(2, logger.debug.call_count)
+        self.assertEqual(2, logger.debug.call_count)
         req, resp = logger.debug.call_args_list
 
-        self.assertEquals('> {"example": "body"}', req[0][0] % req[0][1:])
-        self.assertEquals("< {}", resp[0][0] % resp[0][1:])
+        self.assertEqual('> {"example": "body"}', req[0][0] % req[0][1:])
+        self.assertEqual("< {}", resp[0][0] % resp[0][1:])
 
     def test_surrogatepass_into_bytes(self):
         buf = b"\xe4\xbd\xa0\xe5\xa5\xbd\xed\xa9\xaa"
         con = self._get_mock_connection(response_body=buf)
         status, headers, data = con.perform_request("GET", "/")
-        self.assertEqual("你好\uda6a", data)
+        self.assertEqual(u"你好\uda6a", data)
 
 
 class TestRequestsConnection(TestCase):
@@ -428,24 +428,24 @@ class TestRequestsConnection(TestCase):
             kwargs["body"] = kwargs["body"].encode("utf-8")
 
         status, headers, data = connection.perform_request(*args, **kwargs)
-        self.assertEquals(200, status)
-        self.assertEquals("{}", data)
+        self.assertEqual(200, status)
+        self.assertEqual("{}", data)
 
         timeout = kwargs.pop("timeout", connection.timeout)
         args, kwargs = connection.session.send.call_args
-        self.assertEquals(timeout, kwargs["timeout"])
-        self.assertEquals(1, len(args))
+        self.assertEqual(timeout, kwargs["timeout"])
+        self.assertEqual(1, len(args))
         return args[0]
 
     def test_custom_http_auth_is_allowed(self):
         auth = AuthBase()
         c = RequestsHttpConnection(http_auth=auth)
 
-        self.assertEquals(auth, c.session.auth)
+        self.assertEqual(auth, c.session.auth)
 
     def test_timeout_set(self):
         con = RequestsHttpConnection(timeout=42)
-        self.assertEquals(42, con.timeout)
+        self.assertEqual(42, con.timeout)
 
     def test_opaque_id(self):
         con = RequestsHttpConnection(opaque_id="app-1")
@@ -456,11 +456,11 @@ class TestRequestsConnection(TestCase):
             cloud_id="cluster:dXMtZWFzdC0xLmF3cy5mb3VuZC5pbyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5NyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5Ng=="
         )
         self.assertTrue(con.use_ssl)
-        self.assertEquals(
+        self.assertEqual(
             con.host, "https://4fa8821e75634032bed1cf22110e2f97.us-east-1.aws.found.io"
         )
-        self.assertEquals(con.port, None)
-        self.assertEquals(
+        self.assertEqual(con.port, None)
+        self.assertEqual(
             con.hostname, "4fa8821e75634032bed1cf22110e2f97.us-east-1.aws.found.io"
         )
         self.assertTrue(con.http_compress)
@@ -469,12 +469,12 @@ class TestRequestsConnection(TestCase):
             cloud_id="cluster:dXMtZWFzdC0xLmF3cy5mb3VuZC5pbyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5NyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5Ng==",
             port=9243,
         )
-        self.assertEquals(
+        self.assertEqual(
             con.host,
             "https://4fa8821e75634032bed1cf22110e2f97.us-east-1.aws.found.io:9243",
         )
-        self.assertEquals(con.port, 9243)
-        self.assertEquals(
+        self.assertEqual(con.port, 9243)
+        self.assertEqual(
             con.hostname, "4fa8821e75634032bed1cf22110e2f97.us-east-1.aws.found.io"
         )
 
@@ -484,10 +484,10 @@ class TestRequestsConnection(TestCase):
             cloud_id="cluster:dXMtZWFzdC0xLmF3cy5mb3VuZC5pbyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5NyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5Ng==",
             api_key=("elastic", "changeme1"),
         )
-        self.assertEquals(
+        self.assertEqual(
             con.session.headers["authorization"], "ApiKey ZWxhc3RpYzpjaGFuZ2VtZTE="
         )
-        self.assertEquals(
+        self.assertEqual(
             con.host, "https://4fa8821e75634032bed1cf22110e2f97.us-east-1.aws.found.io"
         )
 
@@ -496,10 +496,10 @@ class TestRequestsConnection(TestCase):
             cloud_id="cluster:dXMtZWFzdC0xLmF3cy5mb3VuZC5pbyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5NyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5Ng==",
             api_key="ZWxhc3RpYzpjaGFuZ2VtZTI=",
         )
-        self.assertEquals(
+        self.assertEqual(
             con.session.headers["authorization"], "ApiKey ZWxhc3RpYzpjaGFuZ2VtZTI="
         )
-        self.assertEquals(
+        self.assertEqual(
             con.host, "https://4fa8821e75634032bed1cf22110e2f97.us-east-1.aws.found.io"
         )
 
@@ -542,36 +542,36 @@ class TestRequestsConnection(TestCase):
         con = RequestsHttpConnection(
             cloud_id="cluster:dXMtZWFzdC0xLmF3cy5mb3VuZC5pbyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5NyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5Ng==",
         )
-        self.assertEquals(con.http_compress, True)
+        self.assertEqual(con.http_compress, True)
 
         con = RequestsHttpConnection(
             cloud_id="cluster:dXMtZWFzdC0xLmF3cy5mb3VuZC5pbyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5NyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5Ng==",
             http_compress=False,
         )
-        self.assertEquals(con.http_compress, False)
+        self.assertEqual(con.http_compress, False)
 
         con = RequestsHttpConnection(
             cloud_id="cluster:dXMtZWFzdC0xLmF3cy5mb3VuZC5pbyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5NyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5Ng==",
             http_compress=True,
         )
-        self.assertEquals(con.http_compress, True)
+        self.assertEqual(con.http_compress, True)
 
     def test_uses_https_if_verify_certs_is_off(self):
         with warnings.catch_warnings(record=True) as w:
             con = self._get_mock_connection(
                 {"use_ssl": True, "url_prefix": "url", "verify_certs": False}
             )
-            self.assertEquals(1, len(w))
-            self.assertEquals(
+            self.assertEqual(1, len(w))
+            self.assertEqual(
                 "Connecting to https://localhost:9200 using SSL with verify_certs=False is insecure.",
                 str(w[0].message),
             )
 
         request = self._get_request(con, "GET", "/")
 
-        self.assertEquals("https://localhost:9200/url/", request.url)
-        self.assertEquals("GET", request.method)
-        self.assertEquals(None, request.body)
+        self.assertEqual("https://localhost:9200/url/", request.url)
+        self.assertEqual("GET", request.method)
+        self.assertEqual(None, request.body)
 
     def nowarn_when_test_uses_https_if_verify_certs_is_off(self):
         with warnings.catch_warnings(record=True) as w:
@@ -583,28 +583,28 @@ class TestRequestsConnection(TestCase):
                     "ssl_show_warn": False,
                 }
             )
-            self.assertEquals(0, len(w))
+            self.assertEqual(0, len(w))
 
         request = self._get_request(con, "GET", "/")
 
-        self.assertEquals("https://localhost:9200/url/", request.url)
-        self.assertEquals("GET", request.method)
-        self.assertEquals(None, request.body)
+        self.assertEqual("https://localhost:9200/url/", request.url)
+        self.assertEqual("GET", request.method)
+        self.assertEqual(None, request.body)
 
     def test_merge_headers(self):
         con = self._get_mock_connection(
             connection_params={"headers": {"h1": "v1", "h2": "v2"}}
         )
         req = self._get_request(con, "GET", "/", headers={"h2": "v2p", "h3": "v3"})
-        self.assertEquals(req.headers["h1"], "v1")
-        self.assertEquals(req.headers["h2"], "v2p")
-        self.assertEquals(req.headers["h3"], "v3")
+        self.assertEqual(req.headers["h1"], "v1")
+        self.assertEqual(req.headers["h2"], "v2p")
+        self.assertEqual(req.headers["h3"], "v3")
 
     def test_default_headers(self):
         con = self._get_mock_connection()
         req = self._get_request(con, "GET", "/")
-        self.assertEquals(req.headers["content-type"], "application/json")
-        self.assertEquals(req.headers["user-agent"], con._get_default_user_agent())
+        self.assertEqual(req.headers["content-type"], "application/json")
+        self.assertEqual(req.headers["user-agent"], con._get_default_user_agent())
 
     def test_custom_headers(self):
         con = self._get_mock_connection()
@@ -617,24 +617,24 @@ class TestRequestsConnection(TestCase):
                 "user-agent": "custom-agent/1.2.3",
             },
         )
-        self.assertEquals(req.headers["content-type"], "application/x-ndjson")
-        self.assertEquals(req.headers["user-agent"], "custom-agent/1.2.3")
+        self.assertEqual(req.headers["content-type"], "application/x-ndjson")
+        self.assertEqual(req.headers["user-agent"], "custom-agent/1.2.3")
 
     def test_http_auth(self):
         con = RequestsHttpConnection(http_auth="username:secret")
-        self.assertEquals(("username", "secret"), con.session.auth)
+        self.assertEqual(("username", "secret"), con.session.auth)
 
     def test_http_auth_tuple(self):
         con = RequestsHttpConnection(http_auth=("username", "secret"))
-        self.assertEquals(("username", "secret"), con.session.auth)
+        self.assertEqual(("username", "secret"), con.session.auth)
 
     def test_http_auth_list(self):
         con = RequestsHttpConnection(http_auth=["username", "secret"])
-        self.assertEquals(("username", "secret"), con.session.auth)
+        self.assertEqual(("username", "secret"), con.session.auth)
 
     def test_repr(self):
         con = self._get_mock_connection({"host": "elasticsearch.com", "port": 443})
-        self.assertEquals(
+        self.assertEqual(
             "<RequestsHttpConnection: http://elasticsearch.com:443>", repr(con)
         )
 
@@ -654,7 +654,7 @@ class TestRequestsConnection(TestCase):
     def test_head_with_404_doesnt_get_logged(self, logger):
         con = self._get_mock_connection(status_code=404)
         self.assertRaises(NotFoundError, con.perform_request, "HEAD", "/", {}, "")
-        self.assertEquals(0, logger.warning.call_count)
+        self.assertEqual(0, logger.warning.call_count)
 
     @patch("elasticsearch.connection.base.tracer")
     @patch("elasticsearch.connection.base.logger")
@@ -672,11 +672,11 @@ class TestRequestsConnection(TestCase):
         )
 
         # trace request
-        self.assertEquals(1, tracer.info.call_count)
+        self.assertEqual(1, tracer.info.call_count)
         # trace response
-        self.assertEquals(1, tracer.debug.call_count)
+        self.assertEqual(1, tracer.debug.call_count)
         # log url and duration
-        self.assertEquals(1, logger.warning.call_count)
+        self.assertEqual(1, logger.warning.call_count)
         self.assertTrue(
             re.match(
                 r"^GET http://localhost:9200/\?param=42 \[status:500 request:0.[0-9]{3}s\]",
@@ -696,13 +696,13 @@ class TestRequestsConnection(TestCase):
         )
 
         # trace request
-        self.assertEquals(1, tracer.info.call_count)
-        self.assertEquals(
+        self.assertEqual(1, tracer.info.call_count)
+        self.assertEqual(
             """curl -H 'Content-Type: application/json' -XGET 'http://localhost:9200/?pretty&param=42' -d '{\n  "question": "what\\u0027s that?"\n}'""",
             tracer.info.call_args[0][0] % tracer.info.call_args[0][1:],
         )
         # trace response
-        self.assertEquals(1, tracer.debug.call_count)
+        self.assertEqual(1, tracer.debug.call_count)
         self.assertTrue(
             re.match(
                 r'#\[200\] \(0.[0-9]{3}s\)\n#{\n#  "answer": "that\\u0027s it!"\n#}',
@@ -711,7 +711,7 @@ class TestRequestsConnection(TestCase):
         )
 
         # log url and duration
-        self.assertEquals(1, logger.info.call_count)
+        self.assertEqual(1, logger.info.call_count)
         self.assertTrue(
             re.match(
                 r"GET http://localhost:9200/\?param=42 \[status:200 request:0.[0-9]{3}s\]",
@@ -719,28 +719,28 @@ class TestRequestsConnection(TestCase):
             )
         )
         # log request body and response
-        self.assertEquals(2, logger.debug.call_count)
+        self.assertEqual(2, logger.debug.call_count)
         req, resp = logger.debug.call_args_list
-        self.assertEquals('> {"question": "what\'s that?"}', req[0][0] % req[0][1:])
-        self.assertEquals('< {"answer": "that\'s it!"}', resp[0][0] % resp[0][1:])
+        self.assertEqual('> {"question": "what\'s that?"}', req[0][0] % req[0][1:])
+        self.assertEqual('< {"answer": "that\'s it!"}', resp[0][0] % resp[0][1:])
 
     @patch("elasticsearch.connection.base.logger")
     def test_uncompressed_body_logged(self, logger):
         con = self._get_mock_connection(connection_params={"http_compress": True})
         con.perform_request("GET", "/", body=b'{"example": "body"}')
 
-        self.assertEquals(2, logger.debug.call_count)
+        self.assertEqual(2, logger.debug.call_count)
         req, resp = logger.debug.call_args_list
-        self.assertEquals('> {"example": "body"}', req[0][0] % req[0][1:])
-        self.assertEquals("< {}", resp[0][0] % resp[0][1:])
+        self.assertEqual('> {"example": "body"}', req[0][0] % req[0][1:])
+        self.assertEqual("< {}", resp[0][0] % resp[0][1:])
 
     def test_defaults(self):
         con = self._get_mock_connection()
         request = self._get_request(con, "GET", "/")
 
-        self.assertEquals("http://localhost:9200/", request.url)
-        self.assertEquals("GET", request.method)
-        self.assertEquals(None, request.body)
+        self.assertEqual("http://localhost:9200/", request.url)
+        self.assertEqual("GET", request.method)
+        self.assertEqual(None, request.body)
 
     def test_params_properly_encoded(self):
         con = self._get_mock_connection()
@@ -748,25 +748,23 @@ class TestRequestsConnection(TestCase):
             con, "GET", "/", params={"param": "value with spaces"}
         )
 
-        self.assertEquals("http://localhost:9200/?param=value+with+spaces", request.url)
-        self.assertEquals("GET", request.method)
-        self.assertEquals(None, request.body)
+        self.assertEqual("http://localhost:9200/?param=value+with+spaces", request.url)
+        self.assertEqual("GET", request.method)
+        self.assertEqual(None, request.body)
 
     def test_body_attached(self):
         con = self._get_mock_connection()
         request = self._get_request(con, "GET", "/", body='{"answer": 42}')
 
-        self.assertEquals("http://localhost:9200/", request.url)
-        self.assertEquals("GET", request.method)
-        self.assertEquals('{"answer": 42}'.encode("utf-8"), request.body)
+        self.assertEqual("http://localhost:9200/", request.url)
+        self.assertEqual("GET", request.method)
+        self.assertEqual('{"answer": 42}'.encode("utf-8"), request.body)
 
     def test_http_auth_attached(self):
         con = self._get_mock_connection({"http_auth": "username:secret"})
         request = self._get_request(con, "GET", "/")
 
-        self.assertEquals(
-            request.headers["authorization"], "Basic dXNlcm5hbWU6c2VjcmV0"
-        )
+        self.assertEqual(request.headers["authorization"], "Basic dXNlcm5hbWU6c2VjcmV0")
 
     @patch("elasticsearch.connection.base.tracer")
     def test_url_prefix(self, tracer):
@@ -775,13 +773,13 @@ class TestRequestsConnection(TestCase):
             con, "GET", "/_search", body='{"answer": 42}', timeout=0.1
         )
 
-        self.assertEquals("http://localhost:9200/some-prefix/_search", request.url)
-        self.assertEquals("GET", request.method)
-        self.assertEquals('{"answer": 42}'.encode("utf-8"), request.body)
+        self.assertEqual("http://localhost:9200/some-prefix/_search", request.url)
+        self.assertEqual("GET", request.method)
+        self.assertEqual('{"answer": 42}'.encode("utf-8"), request.body)
 
         # trace request
-        self.assertEquals(1, tracer.info.call_count)
-        self.assertEquals(
+        self.assertEqual(1, tracer.info.call_count)
+        self.assertEqual(
             "curl -H 'Content-Type: application/json' -XGET 'http://localhost:9200/_search?pretty' -d '{\n  \"answer\": 42\n}'",
             tracer.info.call_args[0][0] % tracer.info.call_args[0][1:],
         )
@@ -790,4 +788,4 @@ class TestRequestsConnection(TestCase):
         buf = b"\xe4\xbd\xa0\xe5\xa5\xbd\xed\xa9\xaa"
         con = self._get_mock_connection(response_body=buf)
         status, headers, data = con.perform_request("GET", "/")
-        self.assertEqual("你好\uda6a", data)
+        self.assertEqual(u"你好\uda6a", data)

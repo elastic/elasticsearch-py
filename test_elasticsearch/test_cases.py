@@ -26,12 +26,12 @@ class ElasticsearchTestCase(TestCase):
         self.client = Elasticsearch(transport_class=DummyTransport)
 
     def assert_call_count_equals(self, count):
-        self.assertEquals(count, self.client.transport.call_count)
+        self.assertEqual(count, self.client.transport.call_count)
 
     def assert_url_called(self, method, url, count=1):
         self.assertIn((method, url), self.client.transport.calls)
         calls = self.client.transport.calls[(method, url)]
-        self.assertEquals(count, len(calls))
+        self.assertEqual(count, len(calls))
         return calls
 
 
@@ -46,6 +46,6 @@ class TestElasticsearchTestCase(ElasticsearchTestCase):
         self.client.transport.perform_request("GET", "/")
         self.client.transport.perform_request("DELETE", "/42", params={}, body="body")
         self.assert_call_count_equals(2)
-        self.assertEquals(
+        self.assertEqual(
             [({}, None, "body")], self.assert_url_called("DELETE", "/42", 1)
         )

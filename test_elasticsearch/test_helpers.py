@@ -35,7 +35,7 @@ class TestParallelBulk(TestCase):
         actions = ({"x": i} for i in range(100))
         list(helpers.parallel_bulk(Elasticsearch(), actions, chunk_size=2))
 
-        self.assertEquals(50, mock_process_bulk_chunk.call_count)
+        self.assertEqual(50, mock_process_bulk_chunk.call_count)
 
     @SkipTest
     @mock.patch(
@@ -61,7 +61,7 @@ class TestChunkActions(TestCase):
         self.actions = [({"index": {}}, {"some": u"datá", "i": i}) for i in range(100)]
 
     def test_chunks_are_chopped_by_byte_size(self):
-        self.assertEquals(
+        self.assertEqual(
             100,
             len(
                 list(helpers._chunk_actions(self.actions, 100000, 1, JSONSerializer()))
@@ -69,7 +69,7 @@ class TestChunkActions(TestCase):
         )
 
     def test_chunks_are_chopped_by_chunk_size(self):
-        self.assertEquals(
+        self.assertEqual(
             10,
             len(
                 list(
@@ -85,7 +85,7 @@ class TestChunkActions(TestCase):
                 self.actions, 100000, max_byte_size, JSONSerializer()
             )
         )
-        self.assertEquals(25, len(chunks))
+        self.assertEqual(25, len(chunks))
         for chunk_data, chunk_actions in chunks:
             chunk = u"".join(chunk_actions)
             chunk = chunk if isinstance(chunk, str) else chunk.encode("utf-8")
@@ -94,6 +94,6 @@ class TestChunkActions(TestCase):
 
 class TestExpandActions(TestCase):
     def test_string_actions_are_marked_as_simple_inserts(self):
-        self.assertEquals(
+        self.assertEqual(
             ('{"index":{}}', "whatever"), helpers.expand_action("whatever")
         )
