@@ -1,3 +1,7 @@
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
 from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH, _bulk_body
 
 
@@ -6,7 +10,7 @@ class MonitoringClient(NamespacedClient):
     def bulk(self, body, doc_type=None, params=None, headers=None):
         """
         Used by the monitoring features to send monitoring data.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/monitor-elasticsearch-cluster.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/monitor-elasticsearch-cluster.html>`_
 
         :arg body: The operation definition and data (action-data
             pairs), separated by newlines
