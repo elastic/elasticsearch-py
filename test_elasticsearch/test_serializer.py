@@ -21,7 +21,7 @@ from .test_cases import TestCase, SkipTest
 
 class TestJSONSerializer(TestCase):
     def test_datetime_serialization(self):
-        self.assertEquals(
+        self.assertEqual(
             '{"d":"2010-10-01T02:30:00"}',
             JSONSerializer().dumps({"d": datetime(2010, 10, 1, 2, 30)}),
         )
@@ -29,10 +29,10 @@ class TestJSONSerializer(TestCase):
     def test_decimal_serialization(self):
         if sys.version_info[:2] == (2, 6):
             raise SkipTest("Float rounding is broken in 2.6.")
-        self.assertEquals('{"d":3.8}', JSONSerializer().dumps({"d": Decimal("3.8")}))
+        self.assertEqual('{"d":3.8}', JSONSerializer().dumps({"d": Decimal("3.8")}))
 
     def test_uuid_serialization(self):
-        self.assertEquals(
+        self.assertEqual(
             '{"d":"00000000-0000-0000-0000-000000000003"}',
             JSONSerializer().dumps(
                 {"d": uuid.UUID("00000000-0000-0000-0000-000000000003")}
@@ -40,7 +40,7 @@ class TestJSONSerializer(TestCase):
         )
 
     def test_serializes_numpy_bool(self):
-        self.assertEquals('{"d":true}', JSONSerializer().dumps({"d": np.bool_(True)}))
+        self.assertEqual('{"d":true}', JSONSerializer().dumps({"d": np.bool_(True)}))
 
     def test_serializes_numpy_integers(self):
         ser = JSONSerializer()
@@ -51,7 +51,7 @@ class TestJSONSerializer(TestCase):
             np.int32,
             np.int64,
         ):
-            self.assertEquals(ser.dumps({"d": np_type(-1)}), '{"d":-1}')
+            self.assertEqual(ser.dumps({"d": np_type(-1)}), '{"d":-1}')
 
         for np_type in (
             np.uint8,
@@ -59,7 +59,7 @@ class TestJSONSerializer(TestCase):
             np.uint32,
             np.uint64,
         ):
-            self.assertEquals(ser.dumps({"d": np_type(1)}), '{"d":1}')
+            self.assertEqual(ser.dumps({"d": np_type(1)}), '{"d":1}')
 
     def test_serializes_numpy_floats(self):
         ser = JSONSerializer()
@@ -73,30 +73,30 @@ class TestJSONSerializer(TestCase):
             )
 
     def test_serializes_numpy_datetime(self):
-        self.assertEquals(
+        self.assertEqual(
             '{"d":"2010-10-01T02:30:00"}',
             JSONSerializer().dumps({"d": np.datetime64("2010-10-01T02:30:00")}),
         )
 
     def test_serializes_numpy_ndarray(self):
-        self.assertEquals(
+        self.assertEqual(
             '{"d":[0,0,0,0,0]}',
             JSONSerializer().dumps({"d": np.zeros((5,), dtype=np.uint8)}),
         )
         # This isn't useful for Elasticsearch, just want to make sure it works.
-        self.assertEquals(
+        self.assertEqual(
             '{"d":[[0,0],[0,0]]}',
             JSONSerializer().dumps({"d": np.zeros((2, 2), dtype=np.uint8)}),
         )
 
     def test_serializes_pandas_timestamp(self):
-        self.assertEquals(
+        self.assertEqual(
             '{"d":"2010-10-01T02:30:00"}',
             JSONSerializer().dumps({"d": pd.Timestamp("2010-10-01T02:30:00")}),
         )
 
     def test_serializes_pandas_series(self):
-        self.assertEquals(
+        self.assertEqual(
             '{"d":["a","b","c","d"]}',
             JSONSerializer().dumps({"d": pd.Series(["a", "b", "c", "d"])}),
         )
@@ -104,18 +104,18 @@ class TestJSONSerializer(TestCase):
     def test_serializes_pandas_na(self):
         if not hasattr(pd, "NA"):  # pandas.NA added in v1
             raise SkipTest("pandas.NA required")
-        self.assertEquals(
+        self.assertEqual(
             '{"d":null}', JSONSerializer().dumps({"d": pd.NA}),
         )
 
     def test_serializes_pandas_category(self):
         cat = pd.Categorical(["a", "c", "b", "a"], categories=["a", "b", "c"])
-        self.assertEquals(
+        self.assertEqual(
             '{"d":["a","c","b","a"]}', JSONSerializer().dumps({"d": cat}),
         )
 
         cat = pd.Categorical([1, 2, 3], categories=[1, 2, 3])
-        self.assertEquals(
+        self.assertEqual(
             '{"d":[1,2,3]}', JSONSerializer().dumps({"d": cat}),
         )
 
@@ -128,12 +128,12 @@ class TestJSONSerializer(TestCase):
         self.assertRaises(SerializationError, JSONSerializer().loads, "{{")
 
     def test_strings_are_left_untouched(self):
-        self.assertEquals("你好", JSONSerializer().dumps("你好"))
+        self.assertEqual("你好", JSONSerializer().dumps("你好"))
 
 
 class TestTextSerializer(TestCase):
     def test_strings_are_left_untouched(self):
-        self.assertEquals("你好", TextSerializer().dumps("你好"))
+        self.assertEqual("你好", TextSerializer().dumps("你好"))
 
     def test_raises_serialization_error_on_dump_error(self):
         self.assertRaises(SerializationError, TextSerializer().dumps, {})
@@ -145,13 +145,13 @@ class TestDeserializer(TestCase):
         self.de = Deserializer(DEFAULT_SERIALIZERS)
 
     def test_deserializes_json_by_default(self):
-        self.assertEquals({"some": "data"}, self.de.loads('{"some":"data"}'))
+        self.assertEqual({"some": "data"}, self.de.loads('{"some":"data"}'))
 
     def test_deserializes_text_with_correct_ct(self):
-        self.assertEquals(
+        self.assertEqual(
             '{"some":"data"}', self.de.loads('{"some":"data"}', "text/plain")
         )
-        self.assertEquals(
+        self.assertEqual(
             '{"some":"data"}',
             self.de.loads('{"some":"data"}', "text/plain; charset=whatever"),
         )

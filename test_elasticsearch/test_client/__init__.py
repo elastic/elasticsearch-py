@@ -7,13 +7,13 @@ from ..test_cases import TestCase, ElasticsearchTestCase
 
 class TestNormalizeHosts(TestCase):
     def test_none_uses_defaults(self):
-        self.assertEquals([{}], _normalize_hosts(None))
+        self.assertEqual([{}], _normalize_hosts(None))
 
     def test_strings_are_used_as_hostnames(self):
-        self.assertEquals([{"host": "elastic.co"}], _normalize_hosts(["elastic.co"]))
+        self.assertEqual([{"host": "elastic.co"}], _normalize_hosts(["elastic.co"]))
 
     def test_strings_are_parsed_for_port_and_user(self):
-        self.assertEquals(
+        self.assertEqual(
             [
                 {"host": "elastic.co", "port": 42},
                 {"host": "elastic.co", "http_auth": "user:secre]"},
@@ -22,7 +22,7 @@ class TestNormalizeHosts(TestCase):
         )
 
     def test_strings_are_parsed_for_scheme(self):
-        self.assertEquals(
+        self.assertEqual(
             [
                 {"host": "elastic.co", "port": 42, "use_ssl": True},
                 {
@@ -39,20 +39,20 @@ class TestNormalizeHosts(TestCase):
         )
 
     def test_dicts_are_left_unchanged(self):
-        self.assertEquals(
+        self.assertEqual(
             [{"host": "local", "extra": 123}],
             _normalize_hosts([{"host": "local", "extra": 123}]),
         )
 
     def test_single_string_is_wrapped_in_list(self):
-        self.assertEquals([{"host": "elastic.co"}], _normalize_hosts("elastic.co"))
+        self.assertEqual([{"host": "elastic.co"}], _normalize_hosts("elastic.co"))
 
 
 class TestClient(ElasticsearchTestCase):
     def test_request_timeout_is_passed_through_unescaped(self):
         self.client.ping(request_timeout=0.1)
         calls = self.assert_url_called("HEAD", "/")
-        self.assertEquals([({"request_timeout": 0.1}, {}, None)], calls)
+        self.assertEqual([({"request_timeout": 0.1}, {}, None)], calls)
 
     def test_params_is_copied_when(self):
         rt = object()
@@ -60,7 +60,7 @@ class TestClient(ElasticsearchTestCase):
         self.client.ping(params=params)
         self.client.ping(params=params)
         calls = self.assert_url_called("HEAD", "/", 2)
-        self.assertEquals(
+        self.assertEqual(
             [({"request_timeout": rt}, {}, None), ({"request_timeout": rt}, {}, None)],
             calls,
         )
@@ -72,7 +72,7 @@ class TestClient(ElasticsearchTestCase):
         self.client.ping(headers=headers)
         self.client.ping(headers=headers)
         calls = self.assert_url_called("HEAD", "/", 2)
-        self.assertEquals(
+        self.assertEqual(
             [({}, {"authentication": hv}, None), ({}, {"authentication": hv}, None)],
             calls,
         )
@@ -81,10 +81,10 @@ class TestClient(ElasticsearchTestCase):
     def test_from_in_search(self):
         self.client.search(index="i", from_=10)
         calls = self.assert_url_called("POST", "/i/_search")
-        self.assertEquals([({"from": "10"}, {}, None)], calls)
+        self.assertEqual([({"from": "10"}, {}, None)], calls)
 
     def test_repr_contains_hosts(self):
-        self.assertEquals("<Elasticsearch([{}])>", repr(self.client))
+        self.assertEqual("<Elasticsearch([{}])>", repr(self.client))
 
     def test_repr_subclass(self):
         class OtherElasticsearch(Elasticsearch):
