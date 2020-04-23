@@ -79,7 +79,11 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params(
-        "include_type_name", "master_timeout", "timeout", "wait_for_active_shards"
+        "include_type_name",
+        "master_timeout",
+        "prefer_v2_templates",
+        "timeout",
+        "wait_for_active_shards",
     )
     def create(self, index, body=None, params=None, headers=None):
         """
@@ -92,6 +96,8 @@ class IndicesClient(NamespacedClient):
         :arg include_type_name: Whether a type should be expected in the
             body of the mappings.
         :arg master_timeout: Specify timeout for connection to master
+        :arg prefer_v2_templates: favor V2 templates instead of V1
+            templates during index creation
         :arg timeout: Explicit operation timeout
         :arg wait_for_active_shards: Set the number of active shards to
             wait for before the operation returns.
@@ -1135,6 +1141,7 @@ class IndicesClient(NamespacedClient):
         "dry_run",
         "include_type_name",
         "master_timeout",
+        "prefer_v2_templates",
         "timeout",
         "wait_for_active_shards",
     )
@@ -1154,6 +1161,8 @@ class IndicesClient(NamespacedClient):
         :arg include_type_name: Whether a type should be included in the
             body of the mappings.
         :arg master_timeout: Specify timeout for connection to master
+        :arg prefer_v2_templates: favor V2 templates instead of V1
+            templates during automatic index creation
         :arg timeout: Explicit operation timeout
         :arg wait_for_active_shards: Set the number of active shards to
             wait for on the newly created rollover index before the operation
@@ -1309,8 +1318,95 @@ class IndicesClient(NamespacedClient):
         Returns data streams.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
 
-        :arg name: The comma separated names of data streams
+        :arg name: The name or wildcard expression of the requested data
+            streams
         """
         return self.transport.perform_request(
             "GET", _make_path("_data_streams", name), params=params, headers=headers
+        )
+
+    @query_params("master_timeout", "timeout")
+    def delete_index_template(self, name, params=None, headers=None):
+        """
+        Deletes an index template.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+
+        :arg name: The name of the template
+        :arg master_timeout: Specify timeout for connection to master
+        :arg timeout: Explicit operation timeout
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'name'.")
+
+        return self.transport.perform_request(
+            "DELETE",
+            _make_path("_index_template", name),
+            params=params,
+            headers=headers,
+        )
+
+    @query_params("flat_settings", "local", "master_timeout")
+    def exists_index_template(self, name, params=None, headers=None):
+        """
+        Returns information about whether a particular index template exists.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+
+        :arg name: The name of the template
+        :arg flat_settings: Return settings in flat format (default:
+            false)
+        :arg local: Return local information, do not retrieve the state
+            from master node (default: false)
+        :arg master_timeout: Explicit operation timeout for connection
+            to master node
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'name'.")
+
+        return self.transport.perform_request(
+            "HEAD", _make_path("_index_template", name), params=params, headers=headers
+        )
+
+    @query_params("flat_settings", "local", "master_timeout")
+    def get_index_template(self, name=None, params=None, headers=None):
+        """
+        Returns an index template.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+
+        :arg name: The comma separated names of the index templates
+        :arg flat_settings: Return settings in flat format (default:
+            false)
+        :arg local: Return local information, do not retrieve the state
+            from master node (default: false)
+        :arg master_timeout: Explicit operation timeout for connection
+            to master node
+        """
+        return self.transport.perform_request(
+            "GET", _make_path("_index_template", name), params=params, headers=headers
+        )
+
+    @query_params("create", "master_timeout", "order")
+    def put_index_template(self, name, body, params=None, headers=None):
+        """
+        Creates or updates an index template.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+
+        :arg name: The name of the template
+        :arg body: The template definition
+        :arg create: Whether the index template should only be added if
+            new or can also replace an existing one
+        :arg master_timeout: Specify timeout for connection to master
+        :arg order: The order for this template when merging multiple
+            matching ones (higher numbers are merged later, overriding the lower
+            numbers)
+        """
+        for param in (name, body):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
+
+        return self.transport.perform_request(
+            "PUT",
+            _make_path("_index_template", name),
+            params=params,
+            headers=headers,
+            body=body,
         )
