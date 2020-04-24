@@ -78,7 +78,7 @@ def run_all(argv=None):
             "--log-level=DEBUG",
             "--cache-clear",
             "-vv",
-            join(abspath(dirname(__file__)), "test_exceptions.py"),
+            abspath(dirname(__file__)),
         ]
 
     exit_code = 0
