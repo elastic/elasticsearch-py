@@ -1,3 +1,7 @@
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
 from __future__ import unicode_literals
 
 import weakref
@@ -68,14 +72,12 @@ def query_params(*es_query_params):
     def _wrapper(func):
         @wraps(func)
         def _wrapped(*args, **kwargs):
-            params = {}
-            headers = {}
-            if "params" in kwargs:
-                params = kwargs.pop("params").copy()
-            if "headers" in kwargs:
-                headers = {
-                    k.lower(): v for k, v in (kwargs.pop("headers") or {}).items()
-                }
+            params = (kwargs.pop("params", None) or {}).copy()
+            headers = {
+                k.lower(): v
+                for k, v in (kwargs.pop("headers", None) or {}).copy().items()
+            }
+
             if "opaque_id" in kwargs:
                 headers["x-opaque-id"] = kwargs.pop("opaque_id")
 

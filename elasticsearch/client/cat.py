@@ -1,3 +1,7 @@
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
 from .utils import NamespacedClient, query_params, _make_path
 
 
@@ -543,7 +547,7 @@ class CatClient(NamespacedClient):
     def ml_data_frame_analytics(self, id=None, params=None, headers=None):
         """
         Gets configuration and usage information about data frame analytics jobs.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-dfanalytics.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-dfanalytics.html>`_
 
         :arg id: The ID of the data frame analytics to fetch
         :arg allow_no_match: Whether to ignore if a wildcard expression
@@ -572,7 +576,7 @@ class CatClient(NamespacedClient):
     def ml_datafeeds(self, datafeed_id=None, params=None, headers=None):
         """
         Gets configuration and usage information about datafeeds.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-datafeeds.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-datafeeds.html>`_
 
         :arg datafeed_id: The ID of the datafeeds stats to fetch
         :arg allow_no_datafeeds: Whether to ignore if a wildcard
@@ -599,7 +603,7 @@ class CatClient(NamespacedClient):
     def ml_jobs(self, job_id=None, params=None, headers=None):
         """
         Gets configuration and usage information about anomaly detection jobs.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-anomaly-detectors.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-anomaly-detectors.html>`_
 
         :arg job_id: The ID of the jobs stats to fetch
         :arg allow_no_jobs: Whether to ignore if a wildcard expression
@@ -639,7 +643,7 @@ class CatClient(NamespacedClient):
     def ml_trained_models(self, model_id=None, params=None, headers=None):
         """
         Gets configuration and usage information about inference trained models.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-trained-model.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-trained-model.html>`_
 
         :arg model_id: The ID of the trained models stats to fetch
         :arg allow_no_match: Whether to ignore if a wildcard expression
@@ -677,7 +681,7 @@ class CatClient(NamespacedClient):
     def transforms(self, transform_id=None, params=None, headers=None):
         """
         Gets configuration and usage information about transforms.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-transforms.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-transforms.html>`_
 
         :arg transform_id: The id of the transform for which to get
             stats. '_all' or '*' implies all transforms

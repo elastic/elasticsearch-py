@@ -1,3 +1,7 @@
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
 from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 
@@ -50,8 +54,8 @@ class TasksClient(NamespacedClient):
         :arg parent_task_id: Cancel tasks with specified parent task id
             (node_id:task_number). Set to -1 to cancel all.
         :arg wait_for_completion: Should the request block until the
-            cancellation of the task and its child tasks is completed. Defaults to
-            false
+            cancellation of the task and its descendant tasks is completed. Defaults
+            to false
         """
         return self.transport.perform_request(
             "POST",

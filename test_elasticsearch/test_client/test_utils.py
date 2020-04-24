@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
 from __future__ import unicode_literals
 
 from elasticsearch.client.utils import _bulk_body, _make_path, _escape, query_params
@@ -42,11 +46,27 @@ class TestQueryParams(TestCase):
             self.calls, [((), {"params": {}, "headers": {"x-opaque-id": "request-id"}})]
         )
 
+    def test_handles_empty_none_and_normalization(self):
+        self.func_to_wrap(params=None)
+        self.assertEqual(self.calls[-1], ((), {"params": {}, "headers": {}}))
+
+        self.func_to_wrap(headers=None)
+        self.assertEqual(self.calls[-1], ((), {"params": {}, "headers": {}}))
+
+        self.func_to_wrap(headers=None, params=None)
+        self.assertEqual(self.calls[-1], ((), {"params": {}, "headers": {}}))
+
+        self.func_to_wrap(headers={}, params={})
+        self.assertEqual(self.calls[-1], ((), {"params": {}, "headers": {}}))
+
+        self.func_to_wrap(headers={"X": "y"})
+        self.assertEqual(self.calls[-1], ((), {"params": {}, "headers": {"x": "y"}}))
+
 
 class TestMakePath(TestCase):
     def test_handles_unicode(self):
         id = "中文"
-        self.assertEquals(
+        self.assertEqual(
             "/some-index/type/%E4%B8%AD%E6%96%87", _make_path("some-index", "type", id)
         )
 
@@ -54,7 +74,7 @@ class TestMakePath(TestCase):
         if not PY2:
             raise SkipTest("Only relevant for py2")
         id = "中文".encode("utf-8")
-        self.assertEquals(
+        self.assertEqual(
             "/some-index/type/%E4%B8%AD%E6%96%87", _make_path("some-index", "type", id)
         )
 
@@ -62,15 +82,15 @@ class TestMakePath(TestCase):
 class TestEscape(TestCase):
     def test_handles_ascii(self):
         string = "abc123"
-        self.assertEquals(b"abc123", _escape(string))
+        self.assertEqual(b"abc123", _escape(string))
 
     def test_handles_unicode(self):
         string = "中文"
-        self.assertEquals(b"\xe4\xb8\xad\xe6\x96\x87", _escape(string))
+        self.assertEqual(b"\xe4\xb8\xad\xe6\x96\x87", _escape(string))
 
     def test_handles_bytestring(self):
         string = b"celery-task-meta-c4f1201f-eb7b-41d5-9318-a75a8cfbdaa0"
-        self.assertEquals(string, _escape(string))
+        self.assertEqual(string, _escape(string))
 
 
 class TestBulkBody(TestCase):

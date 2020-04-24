@@ -1,9 +1,15 @@
 #!/usr/bin/env python
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
 
 import os
 import json
 import re
+import urllib3
 from itertools import chain
+from functools import lru_cache
 
 import black
 from click.testing import CliRunner
@@ -12,11 +18,14 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound
 
 
+http = urllib3.PoolManager()
+
 # line to look for in the original source file
 SEPARATOR = "    # AUTO-GENERATED-API-DEFINITIONS #"
 # global substitutions for python keywords
 SUBSTITUTIONS = {"type": "doc_type", "from": "from_"}
 # api path(s)
+BRANCH_NAME = "master"
 CODE_ROOT = Path(__file__).absolute().parent.parent
 BASE_PATH = (
     CODE_ROOT.parent
@@ -51,6 +60,11 @@ def blacken(filename):
     runner = CliRunner()
     result = runner.invoke(black.main, [str(filename)])
     assert result.exit_code == 0, result.output
+
+
+@lru_cache()
+def is_valid_url(url):
+    return http.request("HEAD", url).status == 200
 
 
 class Module:
@@ -135,6 +149,14 @@ class API:
             if self.doc_url.startswith("http://"):
                 self.doc_url = self.doc_url.replace("http://", "https://")
 
+            # Try setting doc refs like 'current' and 'master' to our branches ref.
+            if BRANCH_NAME is not None:
+                revised_url = re.sub("/elasticsearch/reference/[^/]+/", f"/elasticsearch/reference/{BRANCH_NAME}/", self.doc_url)
+                if is_valid_url(revised_url):
+                    self.doc_url = revised_url
+                else:
+                    print(f"URL {revised_url!r}, falling back on {self.doc_url!r}")
+
     @property
     def all_parts(self):
         parts = {}
@@ -169,8 +191,8 @@ class API:
             ((p, parts[p]) for p in parts if parts[p]["required"]),
             (("body", self.body),) if self.body else (),
             ((p, parts[p]) for p in parts
-             if not parts[p]["required"] and
-             p not in params),
+             if not parts[p]["required"]
+             and p not in params),
             sorted(params.items(), key=lambda x: (x[0] not in parts, x[0])),
         )
 

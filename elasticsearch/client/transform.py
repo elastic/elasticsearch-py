@@ -1,3 +1,7 @@
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
 from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 
@@ -6,7 +10,7 @@ class TransformClient(NamespacedClient):
     def delete_transform(self, transform_id, params=None, headers=None):
         """
         Deletes an existing transform.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-transform.html>`_
 
         :arg transform_id: The id of the transform to delete
         :arg force: When `true`, the transform is deleted regardless of
@@ -29,7 +33,7 @@ class TransformClient(NamespacedClient):
     def get_transform(self, transform_id=None, params=None, headers=None):
         """
         Retrieves configuration information for transforms.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-transform.html>`_
 
         :arg transform_id: The id or comma delimited list of id
             expressions of the transforms to get, '_all' or '*' implies get all
@@ -56,7 +60,7 @@ class TransformClient(NamespacedClient):
     def get_transform_stats(self, transform_id, params=None, headers=None):
         """
         Retrieves usage information for transforms.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-transform-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-transform-stats.html>`_
 
         :arg transform_id: The id of the transform for which to get
             stats. '_all' or '*' implies all transforms
@@ -87,7 +91,7 @@ class TransformClient(NamespacedClient):
     def preview_transform(self, body, params=None, headers=None):
         """
         Previews a transform.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/preview-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/preview-transform.html>`_
 
         :arg body: The definition for the transform to preview
         """
@@ -102,7 +106,7 @@ class TransformClient(NamespacedClient):
     def put_transform(self, transform_id, body, params=None, headers=None):
         """
         Instantiates a transform.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/put-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-transform.html>`_
 
         :arg transform_id: The id of the new transform.
         :arg body: The transform definition
@@ -125,7 +129,7 @@ class TransformClient(NamespacedClient):
     def start_transform(self, transform_id, params=None, headers=None):
         """
         Starts one or more transforms.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/start-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/start-transform.html>`_
 
         :arg transform_id: The id of the transform to start
         :arg timeout: Controls the time to wait for the transform to
@@ -153,7 +157,7 @@ class TransformClient(NamespacedClient):
     def stop_transform(self, transform_id, params=None, headers=None):
         """
         Stops one or more transforms.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/stop-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/stop-transform.html>`_
 
         :arg transform_id: The id of the transform to stop
         :arg allow_no_match: Whether to ignore if a wildcard expression
@@ -184,7 +188,7 @@ class TransformClient(NamespacedClient):
     def update_transform(self, transform_id, body, params=None, headers=None):
         """
         Updates certain properties of a transform.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/update-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/update-transform.html>`_
 
         :arg transform_id: The id of the transform.
         :arg body: The update transform definition
