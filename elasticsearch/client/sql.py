@@ -1,3 +1,7 @@
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
 from .utils import NamespacedClient, query_params, SKIP_IN_PATH
 
 
@@ -6,7 +10,7 @@ class SqlClient(NamespacedClient):
     def clear_cursor(self, body, params=None, headers=None):
         """
         Clears the SQL cursor
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/sql-pagination.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/sql-pagination.html>`_
 
         :arg body: Specify the cursor value in the `cursor` element to
             clean the cursor.
@@ -22,7 +26,7 @@ class SqlClient(NamespacedClient):
     def query(self, body, params=None, headers=None):
         """
         Executes a SQL request
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/sql-rest-overview.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/sql-rest-overview.html>`_
 
         :arg body: Use the `query` element to start a query. Use the
             `cursor` element to continue a query.
@@ -40,7 +44,7 @@ class SqlClient(NamespacedClient):
     def translate(self, body, params=None, headers=None):
         """
         Translates SQL into Elasticsearch queries
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/sql-translate.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/sql-translate.html>`_
 
         :arg body: Specify the query in the `query` element.
         """

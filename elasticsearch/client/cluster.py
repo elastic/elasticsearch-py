@@ -1,3 +1,7 @@
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
 from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 
@@ -297,4 +301,26 @@ class ClusterClient(NamespacedClient):
             params=params,
             headers=headers,
             body=body,
+        )
+
+    @query_params("local", "master_timeout")
+    def exists_component_template(self, name, params=None, headers=None):
+        """
+        Returns information about whether a particular component template exist
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-templates.html>`_
+
+        :arg name: The name of the template
+        :arg local: Return local information, do not retrieve the state
+            from master node (default: false)
+        :arg master_timeout: Explicit operation timeout for connection
+            to master node
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'name'.")
+
+        return self.transport.perform_request(
+            "HEAD",
+            _make_path("_component_template", name),
+            params=params,
+            headers=headers,
         )
