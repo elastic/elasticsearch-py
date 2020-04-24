@@ -1,9 +1,7 @@
 ARG PYTHON_VERSION=3.8
 FROM python:${PYTHON_VERSION}
 
+COPY dev-requirements.txt /tmp
+RUN python -m pip install -r /tmp/dev-requirements.txt
+
 WORKDIR /code/elasticsearch-py
-
-COPY dev-requirements.txt .
-RUN python -m pip install -r dev-requirements.txt
-
-COPY . .

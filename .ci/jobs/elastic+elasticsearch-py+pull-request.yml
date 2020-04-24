@@ -3,7 +3,7 @@
     name: elastic+elasticsearch-py+pull-request
     display-name: 'elastic / elasticsearch-py # pull-request'
     description: Testing of elasticsearch-py pull requests.
-    junit_results: "*-junit.xml"
+    junit_results: "junit/*-junit.xml"
     scm:
     - git:
         branches:
