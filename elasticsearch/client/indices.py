@@ -1,3 +1,7 @@
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
 from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 
@@ -78,7 +82,9 @@ class IndicesClient(NamespacedClient):
             "POST", _make_path(index, "_flush"), params=params, headers=headers
         )
 
-    @query_params("master_timeout", "timeout", "wait_for_active_shards")
+    @query_params(
+        "master_timeout", "prefer_v2_templates", "timeout", "wait_for_active_shards"
+    )
     def create(self, index, body=None, params=None, headers=None):
         """
         Creates an index with optional settings and mappings.
@@ -88,6 +94,8 @@ class IndicesClient(NamespacedClient):
         :arg body: The configuration for the index (`settings` and
             `mappings`)
         :arg master_timeout: Specify timeout for connection to master
+        :arg prefer_v2_templates: favor V2 templates instead of V1
+            templates during index creation
         :arg timeout: Explicit operation timeout
         :arg wait_for_active_shards: Set the number of active shards to
             wait for before the operation returns.
@@ -699,7 +707,7 @@ class IndicesClient(NamespacedClient):
         :arg metric: Limit the information returned the specific
             metrics.  Valid choices: _all, completion, docs, fielddata, query_cache,
             flush, get, indexing, merge, request_cache, refresh, search, segments,
-            store, warmer, suggest
+            store, warmer, suggest, bulk
         :arg completion_fields: A comma-separated list of fields for
             `fielddata` and `suggest` index metric (supports wildcards)
         :arg expand_wildcards: Whether to expand wildcard expression to
@@ -971,7 +979,13 @@ class IndicesClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("dry_run", "master_timeout", "timeout", "wait_for_active_shards")
+    @query_params(
+        "dry_run",
+        "master_timeout",
+        "prefer_v2_templates",
+        "timeout",
+        "wait_for_active_shards",
+    )
     def rollover(self, alias, body=None, new_index=None, params=None, headers=None):
         """
         Updates an alias to point to a new index when the existing index is considered
@@ -986,6 +1000,8 @@ class IndicesClient(NamespacedClient):
             validated but not actually performed even if a condition matches. The
             default is false
         :arg master_timeout: Specify timeout for connection to master
+        :arg prefer_v2_templates: favor V2 templates instead of V1
+            templates during automatic index creation
         :arg timeout: Explicit operation timeout
         :arg wait_for_active_shards: Set the number of active shards to
             wait for on the newly created rollover index before the operation
@@ -1014,7 +1030,7 @@ class IndicesClient(NamespacedClient):
         """
         Freezes an index. A frozen index has almost no overhead on the cluster (except
         for maintaining its metadata in memory) and is read-only.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/freeze-index-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/freeze-index-api.html>`_
 
         :arg index: The name of the index to freeze
         :arg allow_no_indices: Whether to ignore if a wildcard indices
@@ -1049,7 +1065,7 @@ class IndicesClient(NamespacedClient):
         """
         Unfreezes an index. When a frozen index is unfrozen, the index goes through the
         normal recovery process and becomes writeable again.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/unfreeze-index-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/unfreeze-index-api.html>`_
 
         :arg index: The name of the index to unfreeze
         :arg allow_no_indices: Whether to ignore if a wildcard indices
@@ -1238,7 +1254,8 @@ class IndicesClient(NamespacedClient):
         Returns data streams.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
 
-        :arg name: The comma separated names of data streams
+        :arg name: The name or wildcard expression of the requested data
+            streams
         """
         return self.transport.perform_request(
             "GET", _make_path("_data_streams", name), params=params, headers=headers
@@ -1307,4 +1324,25 @@ class IndicesClient(NamespacedClient):
             params=params,
             headers=headers,
             body=body,
+        )
+
+    @query_params("flat_settings", "local", "master_timeout")
+    def exists_index_template(self, name, params=None, headers=None):
+        """
+        Returns information about whether a particular index template exists.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+
+        :arg name: The name of the template
+        :arg flat_settings: Return settings in flat format (default:
+            false)
+        :arg local: Return local information, do not retrieve the state
+            from master node (default: false)
+        :arg master_timeout: Explicit operation timeout for connection
+            to master node
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'name'.")
+
+        return self.transport.perform_request(
+            "HEAD", _make_path("_index_template", name), params=params, headers=headers
         )

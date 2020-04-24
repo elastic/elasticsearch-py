@@ -1,3 +1,7 @@
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
 import time
 import ssl
 import urllib3
@@ -229,7 +233,7 @@ class Urllib3HttpConnection(Connection):
                 method, url, body, retries=Retry(False), headers=request_headers, **kw
             )
             duration = time.time() - start
-            raw_data = response.data.decode("utf-8")
+            raw_data = response.data.decode("utf-8", "surrogatepass")
         except Exception as e:
             self.log_request_fail(
                 method, full_url, url, orig_body, time.time() - start, exception=e
