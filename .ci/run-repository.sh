@@ -31,6 +31,7 @@ docker build \
 
 echo -e "\033[1m>>>>> Run [elastic/elasticsearch-py container] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>\033[0m"
 
+mkdir -p junit
 docker run \
   --network=${NETWORK_NAME} \
   --env "ELASTICSEARCH_HOST=${ELASTICSEARCH_URL}" \
@@ -38,5 +39,6 @@ docker run \
   --env "PYTHON_CONNECTION_CLASS=${PYTHON_CONNECTION_CLASS}" \
   --name elasticsearch-py \
   --rm \
+  --volume `pwd`:/code/elasticsearch-py \
   elastic/elasticsearch-py \
   python setup.py test

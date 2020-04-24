@@ -3,7 +3,7 @@
     name: elastic+elasticsearch-py+master
     display-name: 'elastic / elasticsearch-py # master'
     description: Testing the elasticsearch-py master branch.
-    junit_results: "*-junit.xml"
+    junit_results: "junit/*-junit.xml"
     parameters:
     - string:
         name: branch_specifier

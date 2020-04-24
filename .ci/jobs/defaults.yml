@@ -72,5 +72,5 @@
     - email:
         recipients: infra-root+build@elastic.co
     - junit:
-        results: "*-junit.xml"
+        results: "junit/*-junit.xml"
         allow-empty-results: true
