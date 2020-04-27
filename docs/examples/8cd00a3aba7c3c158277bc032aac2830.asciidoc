@@ -1,4 +1,4 @@
-// docs/bulk.asciidoc:405
+// docs/bulk.asciidoc:522
 
 [source, python]
 ----
