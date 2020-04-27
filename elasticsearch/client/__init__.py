@@ -266,7 +266,6 @@ class Elasticsearch(object):
         self.enrich = EnrichClient(self)
         self.searchable_snapshots = SearchableSnapshotsClient(self)
         self.slm = SlmClient(self)
-        self.searchable_snapshots = SearchableSnapshotsClient(self)
         self.transform = TransformClient(self)
 
     def __repr__(self):
