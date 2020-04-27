@@ -1,0 +1,7 @@
+// indices/create-index.asciidoc:203
+
+[source, python]
+----
+resp = client.indices.create(index="test", wait_for_active_shards="2")
+print(resp)
+----

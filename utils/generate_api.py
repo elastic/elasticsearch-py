@@ -1,9 +1,15 @@
 #!/usr/bin/env python
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
 
 import os
 import json
 import re
+import urllib3
 from itertools import chain
+from functools import lru_cache
 
 import black
 from click.testing import CliRunner
@@ -12,11 +18,14 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound
 
 
+http = urllib3.PoolManager()
+
 # line to look for in the original source file
 SEPARATOR = "    # AUTO-GENERATED-API-DEFINITIONS #"
 # global substitutions for python keywords
 SUBSTITUTIONS = {"type": "doc_type", "from": "from_"}
 # api path(s)
+BRANCH_NAME = "master"
 CODE_ROOT = Path(__file__).absolute().parent.parent
 BASE_PATH = (
     CODE_ROOT.parent
@@ -53,6 +62,11 @@ def blacken(filename):
     assert result.exit_code == 0, result.output
 
 
+@lru_cache()
+def is_valid_url(url):
+    return http.request("HEAD", url).status == 200
+
+
 class Module:
     def __init__(self, namespace):
         self.namespace = namespace
@@ -82,12 +96,11 @@ class Module:
                         if line.startswith("class"):
                             break
                 self.header = "\n".join(header_lines)
-                defined_apis = re.findall(
-                    r'\n    def ([a-z_]+)\([^\n]*\n *"""\n *([\w\W]*?)(?:`<|""")',
+                self.orders = re.findall(
+                    r'\n    def ([a-z_]+)\(',
                     content,
-                    re.MULTILINE,
+                    re.MULTILINE
                 )
-                self.orders = list(map(lambda x: x[0], defined_apis))
 
     def _position(self, api):
         try:
@@ -128,6 +141,22 @@ class API:
             self.description = definition["documentation"].get("description", "")
             self.doc_url = definition["documentation"].get("url", "")
 
+        # Filter out bad URL refs like 'TODO'
+        # and serve all docs over HTTPS.
+        if self.doc_url:
+            if not self.doc_url.startswith("http"):
+                self.doc_url = ""
+            if self.doc_url.startswith("http://"):
+                self.doc_url = self.doc_url.replace("http://", "https://")
+
+            # Try setting doc refs like 'current' and 'master' to our branches ref.
+            if BRANCH_NAME is not None:
+                revised_url = re.sub("/elasticsearch/reference/[^/]+/", f"/elasticsearch/reference/{BRANCH_NAME}/", self.doc_url)
+                if is_valid_url(revised_url):
+                    self.doc_url = revised_url
+                else:
+                    print(f"URL {revised_url!r}, falling back on {self.doc_url!r}")
+
     @property
     def all_parts(self):
         parts = {}
@@ -157,11 +186,14 @@ class API:
     @property
     def params(self):
         parts = self.all_parts
+        params = self._def.get("params", {})
         return chain(
             ((p, parts[p]) for p in parts if parts[p]["required"]),
-            (("body", self.body), ) if self.body else (),
-            ((p, parts[p]) for p in parts if not parts[p]["required"]),
-            sorted(self._def.get("params", {}).items()),
+            (("body", self.body),) if self.body else (),
+            ((p, parts[p]) for p in parts
+             if not parts[p]["required"]
+             and p not in params),
+            sorted(params.items(), key=lambda x: (x[0] not in parts, x[0])),
         )
 
     @property
@@ -188,7 +220,12 @@ class API:
 
     @property
     def method(self):
-        return self.path["methods"][0]
+        # To adhere to the HTTP RFC we shouldn't send
+        # bodies in GET requests.
+        default_method = self.path["methods"][0]
+        if self.body and default_method == "GET" and "POST" in self.path["methods"]:
+            return "POST"
+        return default_method
 
     @property
     def url_parts(self):
@@ -245,6 +282,10 @@ def read_modules():
             namespace = "__init__"
             if "." in name:
                 namespace, name = name.rsplit(".", 1)
+
+            # The data_frame API has been changed to transform.
+            if namespace == "data_frame_transform_deprecated":
+                continue
 
             if namespace not in modules:
                 modules[namespace] = Module(namespace)

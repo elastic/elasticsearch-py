@@ -1,0 +1,12 @@
+// search/request/sort.asciidoc:370
+
+[source, python]
+----
+resp = client.search(
+    body={
+        "sort": [{"price": {"unmapped_type": "long"}}],
+        "query": {"term": {"product": "chocolate"}},
+    },
+)
+print(resp)
+----

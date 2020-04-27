@@ -1,14 +1,26 @@
-import logging
-import base64
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
 
+import logging
+import binascii
+import gzip
+import io
+import re
 from platform import python_version
+import warnings
 
 try:
     import simplejson as json
 except ImportError:
     import json
 
-from ..exceptions import TransportError, HTTP_EXCEPTIONS
+from ..exceptions import (
+    TransportError,
+    ImproperlyConfigured,
+    ElasticsearchDeprecationWarning,
+    HTTP_EXCEPTIONS,
+)
 from .. import __versionstr__
 
 logger = logging.getLogger("elasticsearch")
@@ -20,6 +32,8 @@ tracer = logging.getLogger("elasticsearch.trace")
 if not _tracer_already_configured:
     tracer.propagate = False
 
+_WARNING_RE = re.compile(r"\"([^\"]*)\"")
+
 
 class Connection(object):
     """
@@ -28,30 +42,90 @@ class Connection(object):
     (`perform_request`) is thread-safe.
 
     Also responsible for logging.
+
+    :arg host: hostname of the node (default: localhost)
+    :arg port: port to use (integer, default: 9200)
+    :arg use_ssl: use ssl for the connection if `True`
+    :arg url_prefix: optional url prefix for elasticsearch
+    :arg timeout: default timeout in seconds (float, default: 10)
+    :arg http_compress: Use gzip compression
+    :arg cloud_id: The Cloud ID from ElasticCloud. Convenient way to connect to cloud instances.
+    :arg opaque_id: Send this value in the 'X-Opaque-Id' HTTP header
+        For tracing all requests made by this transport.
     """
 
     def __init__(
         self,
         host="localhost",
-        port=9200,
+        port=None,
         use_ssl=False,
         url_prefix="",
         timeout=10,
+        headers=None,
+        http_compress=None,
+        cloud_id=None,
+        api_key=None,
+        opaque_id=None,
         **kwargs
     ):
-        """
-        :arg host: hostname of the node (default: localhost)
-        :arg port: port to use (integer, default: 9200)
-        :arg url_prefix: optional url prefix for elasticsearch
-        :arg timeout: default timeout in seconds (float, default: 10)
-        """
+
+        if cloud_id:
+            try:
+                _, cloud_id = cloud_id.split(":")
+                parent_dn, es_uuid = (
+                    binascii.a2b_base64(cloud_id.encode("utf-8"))
+                    .decode("utf-8")
+                    .split("$")[:2]
+                )
+                if ":" in parent_dn:
+                    parent_dn, _, parent_port = parent_dn.rpartition(":")
+                    if port is None and parent_port != "443":
+                        port = int(parent_port)
+            except (ValueError, IndexError):
+                raise ImproperlyConfigured("'cloud_id' is not properly formatted")
+
+            host = "%s.%s" % (es_uuid, parent_dn)
+            use_ssl = True
+            if http_compress is None:
+                http_compress = True
+
+        # If cloud_id isn't set and port is default then use 9200.
+        # Cloud should use '443' by default via the 'https' scheme.
+        elif port is None:
+            port = 9200
+
+        # Work-around if the implementing class doesn't
+        # define the headers property before calling super().__init__()
+        if not hasattr(self, "headers"):
+            self.headers = {}
+
+        headers = headers or {}
+        for key in headers:
+            self.headers[key.lower()] = headers[key]
+        if opaque_id:
+            self.headers["x-opaque-id"] = opaque_id
+
+        self.headers.setdefault("content-type", "application/json")
+        self.headers.setdefault("user-agent", self._get_default_user_agent())
+
+        if api_key is not None:
+            self.headers["authorization"] = self._get_api_key_header_val(api_key)
+
+        if http_compress:
+            self.headers["accept-encoding"] = "gzip,deflate"
+
         scheme = kwargs.get("scheme", "http")
         if use_ssl or scheme == "https":
             scheme = "https"
             use_ssl = True
         self.use_ssl = use_ssl
+        self.http_compress = http_compress or False
 
-        self.host = "%s://%s:%s" % (scheme, host, port)
+        self.hostname = host
+        self.port = port
+        self.host = "%s://%s" % (scheme, host)
+        if self.port is not None:
+            self.host += ":%s" % self.port
         if url_prefix:
             url_prefix = "/" + url_prefix.strip("/")
         self.url_prefix = url_prefix
@@ -62,13 +136,44 @@ class Connection(object):
 
     def __eq__(self, other):
         if not isinstance(other, Connection):
-            raise TypeError(
-                "Unsupported equality check for %s and %s" % (self, other)
-            )
+            raise TypeError("Unsupported equality check for %s and %s" % (self, other))
         return self.__hash__() == other.__hash__()
 
     def __hash__(self):
         return id(self)
+
+    def _gzip_compress(self, body):
+        buf = io.BytesIO()
+        with gzip.GzipFile(fileobj=buf, mode="wb") as f:
+            f.write(body)
+        return buf.getvalue()
+
+    def _raise_warnings(self, warning_headers):
+        """If 'headers' contains a 'Warning' header raise
+        the warnings to be seen by the user. Takes an iterable
+        of string values from any number of 'Warning' headers.
+        """
+        if not warning_headers:
+            return
+
+        # Grab only the message from each header, the rest is discarded.
+        # Format is: '(number) Elasticsearch-(version)-(instance) "(message)"'
+        warning_messages = []
+        for header in warning_headers:
+            # Because 'Requests' does it's own folding of multiple HTTP headers
+            # into one header delimited by commas (totally standard compliant, just
+            # annoying for cases like this) we need to expect there may be
+            # more than one message per 'Warning' header.
+            matches = _WARNING_RE.findall(header)
+            if matches:
+                warning_messages.extend(matches)
+            else:
+                # Don't want to throw away any warnings, even if they
+                # don't follow the format we have now. Use the whole header.
+                warning_messages.append(header)
+
+        for message in warning_messages:
+            warnings.warn(message, category=ElasticsearchDeprecationWarning)
 
     def _pretty_json(self, data):
         # pretty JSON in tracer curl logs
@@ -192,6 +297,6 @@ class Connection(object):
         :arg api_key, either a tuple or a base64 encoded string
         """
         if isinstance(api_key, (tuple, list)):
-            s = "{0}:{1}".format(api_key[0], api_key[1]).encode('utf-8')
-            return "ApiKey " + base64.b64encode(s).decode('utf-8')
+            s = "{0}:{1}".format(api_key[0], api_key[1]).encode("utf-8")
+            return "ApiKey " + binascii.b2a_base64(s).rstrip(b"\r\n").decode("utf-8")
         return "ApiKey " + api_key

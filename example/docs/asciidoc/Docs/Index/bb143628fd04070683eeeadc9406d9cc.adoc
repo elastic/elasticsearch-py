@@ -1,4 +1,0 @@
-[source,python]
-----
-include::./../../../src/Examples/Docs/Docs/Index.py[tag=bb143628fd04070683eeeadc9406d9cc,indent=0]
-----

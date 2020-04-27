@@ -1,0 +1,7 @@
+// getting-started.asciidoc:167
+
+[source, python]
+----
+resp = client.cat.health(v=True)
+print(resp)
+----

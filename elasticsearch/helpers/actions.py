@@ -1,3 +1,7 @@
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
 from operator import methodcaller
 import time
 
@@ -45,7 +49,13 @@ def expand_action(data):
         "version_type",
     ):
         if key in data:
-            if key in ["_parent", "_retry_on_conflict", "_routing", "_version", "_version_type"]:
+            if key in [
+                "_parent",
+                "_retry_on_conflict",
+                "_routing",
+                "_version",
+                "_version_type",
+            ]:
                 action[op_type][key[1:]] = data.pop(key)
             else:
                 action[op_type][key] = data.pop(key)

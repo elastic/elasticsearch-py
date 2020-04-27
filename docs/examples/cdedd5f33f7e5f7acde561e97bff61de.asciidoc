@@ -1,0 +1,11 @@
+// query-dsl/term-query.asciidoc:132
+
+[source, python]
+----
+resp = client.search(
+    index="my_index",
+    pretty=True,
+    body={"query": {"term": {"full_text": "Quick Brown Foxes!"}}},
+)
+print(resp)
+----

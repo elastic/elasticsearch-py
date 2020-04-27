@@ -1,11 +1,16 @@
-from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
+from .utils import NamespacedClient, query_params, SKIP_IN_PATH
 
 
 class SqlClient(NamespacedClient):
     @query_params()
-    def clear_cursor(self, body, params=None):
+    def clear_cursor(self, body, params=None, headers=None):
         """
-        `<Clear SQL cursor>`_
+        Clears the SQL cursor
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/sql-pagination.html>`_
 
         :arg body: Specify the cursor value in the `cursor` element to
             clean the cursor.
@@ -14,13 +19,14 @@ class SqlClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'body'.")
 
         return self.transport.perform_request(
-            "POST", "/_sql/close", params=params, body=body
+            "POST", "/_sql/close", params=params, headers=headers, body=body
         )
 
     @query_params("format")
-    def query(self, body, params=None):
+    def query(self, body, params=None, headers=None):
         """
-        `<Execute SQL>`_
+        Executes a SQL request
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/sql-rest-overview.html>`_
 
         :arg body: Use the `query` element to start a query. Use the
             `cursor` element to continue a query.
@@ -30,12 +36,15 @@ class SqlClient(NamespacedClient):
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return self.transport.perform_request("POST", "/_sql", params=params, body=body)
+        return self.transport.perform_request(
+            "POST", "/_sql", params=params, headers=headers, body=body
+        )
 
     @query_params()
-    def translate(self, body, params=None):
+    def translate(self, body, params=None, headers=None):
         """
-        `<Translate SQL into Elasticsearch queries>`_
+        Translates SQL into Elasticsearch queries
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/sql-translate.html>`_
 
         :arg body: Specify the query in the `query` element.
         """
@@ -43,5 +52,5 @@ class SqlClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'body'.")
 
         return self.transport.perform_request(
-            "POST", "/_sql/translate", params=params, body=body
+            "POST", "/_sql/translate", params=params, headers=headers, body=body
         )

@@ -1,0 +1,17 @@
+// query-dsl/multi-match-query.asciidoc:212
+
+[source, python]
+----
+resp = client.search(
+    body={
+        "query": {
+            "multi_match": {
+                "query": "quick brown fox",
+                "type": "most_fields",
+                "fields": ["title", "title.original", "title.shingles"],
+            }
+        }
+    },
+)
+print(resp)
+----

@@ -1,25 +1,13 @@
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
 import time
 import ssl
 import urllib3
 from urllib3.exceptions import ReadTimeoutError, SSLError as UrllibSSLError
 from urllib3.util.retry import Retry
 import warnings
-import gzip
-from base64 import decodestring
-
-# sentinal value for `verify_certs`.
-# This is used to detect if a user is passing in a value for `verify_certs`
-# so we can raise a warning if using SSL kwargs AND SSLContext.
-VERIFY_CERTS_DEFAULT = None
-
-CA_CERTS = None
-
-try:
-    import certifi
-
-    CA_CERTS = certifi.where()
-except ImportError:
-    pass
 
 from .base import Connection
 from ..exceptions import (
@@ -29,6 +17,21 @@ from ..exceptions import (
     SSLError,
 )
 from ..compat import urlencode
+
+# sentinel value for `verify_certs` and `ssl_show_warn`.
+# This is used to detect if a user is passing in a value
+# for SSL kwargs if also using an SSLContext.
+VERIFY_CERTS_DEFAULT = object()
+SSL_SHOW_WARN_DEFAULT = object()
+
+CA_CERTS = None
+
+try:
+    import certifi
+
+    CA_CERTS = certifi.where()
+except ImportError:
+    pass
 
 
 def create_ssl_context(**kwargs):
@@ -73,19 +76,21 @@ class Urllib3HttpConnection(Connection):
         information.
     :arg headers: any custom http headers to be add to requests
     :arg http_compress: Use gzip compression
-    :arg cloud_id: The Cloud ID from ElasticCloud. Convient way to connect to cloud instances.
-    :arg api_key: optional API Key authentication as either base64 encoded string or a tuple.
+    :arg cloud_id: The Cloud ID from ElasticCloud. Convenient way to connect to cloud instances.
         Other host connection params will be ignored.
+    :arg api_key: optional API Key authentication as either base64 encoded string or a tuple.
+    :arg opaque_id: Send this value in the 'X-Opaque-Id' HTTP header
+        For tracing all requests made by this transport.
     """
 
     def __init__(
         self,
         host="localhost",
-        port=9200,
+        port=None,
         http_auth=None,
         use_ssl=False,
         verify_certs=VERIFY_CERTS_DEFAULT,
-        ssl_show_warn=True,
+        ssl_show_warn=SSL_SHOW_WARN_DEFAULT,
         ca_certs=None,
         client_cert=None,
         client_key=None,
@@ -95,54 +100,42 @@ class Urllib3HttpConnection(Connection):
         maxsize=10,
         headers=None,
         ssl_context=None,
-        http_compress=False,
+        http_compress=None,
         cloud_id=None,
         api_key=None,
+        opaque_id=None,
         **kwargs
     ):
-
-        if cloud_id:
-            cluster_name, cloud_id = cloud_id.split(":")
-            url, es_uuid, kibana_uuid = (
-                decodestring(cloud_id.encode("utf-8")).decode("utf-8").split("$")
-            )
-            host = "%s.%s" % (es_uuid, url)
-            port = "9243"
-            use_ssl = True
-        super(Urllib3HttpConnection, self).__init__(
-            host=host, port=port, use_ssl=use_ssl, **kwargs
-        )
-        self.http_compress = http_compress
+        # Initialize headers before calling super().__init__().
         self.headers = urllib3.make_headers(keep_alive=True)
+
+        super(Urllib3HttpConnection, self).__init__(
+            host=host,
+            port=port,
+            use_ssl=use_ssl,
+            headers=headers,
+            http_compress=http_compress,
+            cloud_id=cloud_id,
+            api_key=api_key,
+            opaque_id=opaque_id,
+            **kwargs
+        )
         if http_auth is not None:
             if isinstance(http_auth, (tuple, list)):
                 http_auth = ":".join(http_auth)
             self.headers.update(urllib3.make_headers(basic_auth=http_auth))
 
-        # update headers in lowercase to allow overriding of auth headers
-        if headers:
-            for k in headers:
-                self.headers[k.lower()] = headers[k]
-
-        if self.http_compress == True:
-            self.headers.update(urllib3.make_headers(accept_encoding=True))
-            self.headers.update({"content-encoding": "gzip"})
-
-        self.headers.setdefault("content-type", "application/json")
-        self.headers.setdefault("user-agent", self._get_default_user_agent())
-        if api_key is not None:
-            self.headers.setdefault('authorization', self._get_api_key_header_val(api_key))
         pool_class = urllib3.HTTPConnectionPool
         kw = {}
 
         # if providing an SSL context, raise error if any other SSL related flag is used
         if ssl_context and (
             (verify_certs is not VERIFY_CERTS_DEFAULT)
+            or (ssl_show_warn is not SSL_SHOW_WARN_DEFAULT)
             or ca_certs
             or client_cert
             or client_key
             or ssl_version
-            or ssl_show_warn
         ):
             warnings.warn(
                 "When using `ssl_context`, all other SSL related kwargs are ignored"
@@ -168,9 +161,12 @@ class Urllib3HttpConnection(Connection):
                 }
             )
 
-            # If `verify_certs` is sentinal value, default `verify_certs` to `True`
+            # Convert all sentinel values to their actual default
+            # values if not using an SSLContext.
             if verify_certs is VERIFY_CERTS_DEFAULT:
                 verify_certs = True
+            if ssl_show_warn is SSL_SHOW_WARN_DEFAULT:
+                ssl_show_warn = True
 
             ca_certs = CA_CERTS if ca_certs is None else ca_certs
             if verify_certs:
@@ -194,14 +190,13 @@ class Urllib3HttpConnection(Connection):
                 if ssl_show_warn:
                     warnings.warn(
                         "Connecting to %s using SSL with verify_certs=False is insecure."
-                        % host
+                        % self.host
                     )
                 if not ssl_show_warn:
                     urllib3.disable_warnings()
 
-
         self.pool = pool_class(
-            host, port=port, timeout=self.timeout, maxsize=maxsize, **kw
+            self.hostname, port=self.port, timeout=self.timeout, maxsize=maxsize, **kw
         )
 
     def perform_request(
@@ -213,6 +208,7 @@ class Urllib3HttpConnection(Connection):
         full_url = self.host + url
 
         start = time.time()
+        orig_body = body
         try:
             kw = {}
             if timeout:
@@ -226,26 +222,21 @@ class Urllib3HttpConnection(Connection):
             if not isinstance(method, str):
                 method = method.encode("utf-8")
 
-            request_headers = self.headers
-            if headers:
-                request_headers = request_headers.copy()
-                request_headers.update(headers)
+            request_headers = self.headers.copy()
+            request_headers.update(headers or ())
+
             if self.http_compress and body:
-                try:
-                    body = gzip.compress(body)
-                except AttributeError:
-                    # oops, Python2.7 doesn't have `gzip.compress` let's try
-                    # again
-                    body = gzip.zlib.compress(body)
+                body = self._gzip_compress(body)
+                request_headers["content-encoding"] = "gzip"
 
             response = self.pool.urlopen(
                 method, url, body, retries=Retry(False), headers=request_headers, **kw
             )
             duration = time.time() - start
-            raw_data = response.data.decode("utf-8")
+            raw_data = response.data.decode("utf-8", "surrogatepass")
         except Exception as e:
             self.log_request_fail(
-                method, full_url, url, body, time.time() - start, exception=e
+                method, full_url, url, orig_body, time.time() - start, exception=e
             )
             if isinstance(e, UrllibSSLError):
                 raise SSLError("N/A", str(e), e)
@@ -253,15 +244,19 @@ class Urllib3HttpConnection(Connection):
                 raise ConnectionTimeout("TIMEOUT", str(e), e)
             raise ConnectionError("N/A", str(e), e)
 
+        # raise warnings if any from the 'Warnings' header.
+        warning_headers = response.headers.get_all("warning", ())
+        self._raise_warnings(warning_headers)
+
         # raise errors based on http status codes, let the client handle those if needed
         if not (200 <= response.status < 300) and response.status not in ignore:
             self.log_request_fail(
-                method, full_url, url, body, duration, response.status, raw_data
+                method, full_url, url, orig_body, duration, response.status, raw_data
             )
             self._raise_error(response.status, raw_data)
 
         self.log_request_success(
-            method, full_url, url, body, response.status, raw_data, duration
+            method, full_url, url, orig_body, response.status, raw_data, duration
         )
 
         return response.status, response.getheaders(), raw_data

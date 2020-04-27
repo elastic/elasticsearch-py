@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
 #
 # Elasticsearch documentation build configuration file, created by
 # sphinx-quickstart on Mon May  6 15:38:41 2013.
@@ -11,7 +15,9 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys, os
+import os
+import datetime
+import elasticsearch
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -43,14 +49,11 @@ master_doc = "index"
 
 # General information about the project.
 project = u"Elasticsearch"
-copyright = u"2013, Honza Král"
+copyright = u"%d, Elasticsearch B.V" % datetime.date.today().year
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
-#
-
-import elasticsearch
 
 # The short X.Y version.
 version = elasticsearch.__versionstr__
@@ -69,7 +72,7 @@ release = version
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ["_build"]
+exclude_patterns = ["_build", "examples"]
 
 # The reST default role (used for this markup: `text`) to use for all documents.
 # default_role = None
@@ -190,11 +193,11 @@ htmlhelp_basename = "Elasticsearchdoc"
 
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
-    #'papersize': 'letterpaper',
+    # 'papersize': 'letterpaper',
     # The font size ('10pt', '11pt' or '12pt').
-    #'pointsize': '10pt',
+    # 'pointsize': '10pt',
     # Additional stuff for the LaTeX preamble.
-    #'preamble': '',
+    # 'preamble': '',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples

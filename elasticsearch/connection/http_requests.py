@@ -1,6 +1,9 @@
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
 import time
 import warnings
-from base64 import decodestring
 
 try:
     import requests
@@ -35,15 +38,18 @@ class RequestsHttpConnection(Connection):
     :arg client_key: path to the file containing the private key if using
         separate cert and key files (client_cert will contain only the cert)
     :arg headers: any custom http headers to be add to requests
-    :arg cloud_id: The Cloud ID from ElasticCloud. Convient way to connect to cloud instances.
-    :arg api_key: optional API Key authentication as either base64 encoded string or a tuple.
+    :arg http_compress: Use gzip compression
+    :arg cloud_id: The Cloud ID from ElasticCloud. Convenient way to connect to cloud instances.
         Other host connection params will be ignored.
+    :arg api_key: optional API Key authentication as either base64 encoded string or a tuple.
+    :arg opaque_id: Send this value in the 'X-Opaque-Id' HTTP header
+        For tracing all requests made by this transport.
     """
 
     def __init__(
         self,
         host="localhost",
-        port=9200,
+        port=None,
         http_auth=None,
         use_ssl=False,
         verify_certs=True,
@@ -52,44 +58,46 @@ class RequestsHttpConnection(Connection):
         client_cert=None,
         client_key=None,
         headers=None,
+        http_compress=None,
         cloud_id=None,
         api_key=None,
+        opaque_id=None,
         **kwargs
     ):
         if not REQUESTS_AVAILABLE:
             raise ImproperlyConfigured(
                 "Please install requests to use RequestsHttpConnection."
             )
-        if cloud_id:
-            cluster_name, cloud_id = cloud_id.split(":")
-            url, es_uuid, kibana_uuid = (
-                decodestring(cloud_id.encode("utf-8")).decode("utf-8").split("$")
-            )
-            host = "%s.%s" % (es_uuid, url)
-            port = 9243
-            use_ssl = True
+
+        # Initialize Session so .headers works before calling super().__init__().
+        self.session = requests.Session()
+        for key in list(self.session.headers):
+            self.session.headers.pop(key)
 
         super(RequestsHttpConnection, self).__init__(
-            host=host, port=port, use_ssl=use_ssl, **kwargs
+            host=host,
+            port=port,
+            use_ssl=use_ssl,
+            headers=headers,
+            http_compress=http_compress,
+            cloud_id=cloud_id,
+            api_key=api_key,
+            opaque_id=opaque_id,
+            **kwargs
         )
-        self.session = requests.Session()
-        self.session.headers = headers or {}
-        self.session.headers.setdefault("content-type", "application/json")
-        self.session.headers.setdefault("user-agent", self._get_default_user_agent())
+
+        if not self.http_compress:
+            # Need to set this to 'None' otherwise Requests adds its own.
+            self.session.headers["accept-encoding"] = None
+
         if http_auth is not None:
             if isinstance(http_auth, (tuple, list)):
                 http_auth = tuple(http_auth)
             elif isinstance(http_auth, string_types):
                 http_auth = tuple(http_auth.split(":", 1))
             self.session.auth = http_auth
-        if api_key is not None:
-            self.session.headers['authorization'] = self._get_api_key_header_val(api_key)
-        self.base_url = "http%s://%s:%d%s" % (
-            "s" if self.use_ssl else "",
-            host,
-            port,
-            self.url_prefix,
-        )
+
+        self.base_url = "%s%s" % (self.host, self.url_prefix,)
         self.session.verify = verify_certs
         if not client_key:
             self.session.cert = client_cert
@@ -109,15 +117,21 @@ class RequestsHttpConnection(Connection):
         if self.use_ssl and not verify_certs and ssl_show_warn:
             warnings.warn(
                 "Connecting to %s using SSL with verify_certs=False is insecure."
-                % self.base_url
+                % self.host
             )
 
     def perform_request(
         self, method, url, params=None, body=None, timeout=None, ignore=(), headers=None
     ):
         url = self.base_url + url
+        headers = headers or {}
         if params:
             url = "%s?%s" % (url, urlencode(params or {}))
+
+        orig_body = body
+        if self.http_compress and body:
+            body = self._gzip_compress(body)
+            headers["content-encoding"] = "gzip"
 
         start = time.time()
         request = requests.Request(method=method, headers=headers, url=url, data=body)
@@ -130,7 +144,7 @@ class RequestsHttpConnection(Connection):
         try:
             response = self.session.send(prepared_request, **send_kwargs)
             duration = time.time() - start
-            raw_data = response.text
+            raw_data = response.content.decode("utf-8", "surrogatepass")
         except Exception as e:
             self.log_request_fail(
                 method,
@@ -146,6 +160,12 @@ class RequestsHttpConnection(Connection):
                 raise ConnectionTimeout("TIMEOUT", str(e), e)
             raise ConnectionError("N/A", str(e), e)
 
+        # raise warnings if any from the 'Warnings' header.
+        warnings_headers = (
+            (response.headers["warning"],) if "warning" in response.headers else ()
+        )
+        self._raise_warnings(warnings_headers)
+
         # raise errors based on http status codes, let the client handle those if needed
         if (
             not (200 <= response.status_code < 300)
@@ -155,7 +175,7 @@ class RequestsHttpConnection(Connection):
                 method,
                 url,
                 response.request.path_url,
-                body,
+                orig_body,
                 duration,
                 response.status_code,
                 raw_data,
@@ -166,13 +186,17 @@ class RequestsHttpConnection(Connection):
             method,
             url,
             response.request.path_url,
-            body,
+            orig_body,
             response.status_code,
             raw_data,
             duration,
         )
 
         return response.status_code, response.headers, raw_data
+
+    @property
+    def headers(self):
+        return self.session.headers
 
     def close(self):
         """

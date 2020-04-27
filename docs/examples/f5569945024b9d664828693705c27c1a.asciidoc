@@ -1,0 +1,7 @@
+// search/search.asciidoc:388
+
+[source, python]
+----
+resp = client.search(index="kimchy,elasticsearch", q="user:kimchy")
+print(resp)
+----

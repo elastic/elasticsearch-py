@@ -1,0 +1,7 @@
+// query-dsl/match-all-query.asciidoc:23
+
+[source, python]
+----
+resp = client.search(body={"query": {"match_all": {"boost": 1.2}}})
+print(resp)
+----

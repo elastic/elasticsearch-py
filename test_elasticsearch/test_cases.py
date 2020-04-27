@@ -1,11 +1,10 @@
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
 from collections import defaultdict
-
-try:
-    # python 2.6
-    from unittest2 import TestCase, SkipTest
-except ImportError:
-    from unittest import TestCase, SkipTest
-
+from unittest import TestCase
+from unittest import SkipTest  # noqa: F401
 from elasticsearch import Elasticsearch
 
 
@@ -16,12 +15,12 @@ class DummyTransport(object):
         self.call_count = 0
         self.calls = defaultdict(list)
 
-    def perform_request(self, method, url, params=None, body=None):
+    def perform_request(self, method, url, params=None, headers=None, body=None):
         resp = 200, {}
         if self.responses:
             resp = self.responses[self.call_count]
         self.call_count += 1
-        self.calls[(method, url)].append((params, body))
+        self.calls[(method, url)].append((params, headers, body))
         return resp
 
 
@@ -31,12 +30,12 @@ class ElasticsearchTestCase(TestCase):
         self.client = Elasticsearch(transport_class=DummyTransport)
 
     def assert_call_count_equals(self, count):
-        self.assertEquals(count, self.client.transport.call_count)
+        self.assertEqual(count, self.client.transport.call_count)
 
     def assert_url_called(self, method, url, count=1):
         self.assertIn((method, url), self.client.transport.calls)
         calls = self.client.transport.calls[(method, url)]
-        self.assertEquals(count, len(calls))
+        self.assertEqual(count, len(calls))
         return calls
 
 
@@ -51,4 +50,6 @@ class TestElasticsearchTestCase(ElasticsearchTestCase):
         self.client.transport.perform_request("GET", "/")
         self.client.transport.perform_request("DELETE", "/42", params={}, body="body")
         self.assert_call_count_equals(2)
-        self.assertEquals([({}, "body")], self.assert_url_called("DELETE", "/42", 1))
+        self.assertEqual(
+            [({}, None, "body")], self.assert_url_called("DELETE", "/42", 1)
+        )

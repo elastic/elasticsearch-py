@@ -1,15 +1,21 @@
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
 """
 Dynamically generated set of TestCases based on set of yaml files decribing
 some integration tests. These files are shared among all official Elasticsearch
 clients.
 """
+import sys
 import re
 from os import walk, environ
 from os.path import exists, join, dirname, pardir
 import yaml
 from shutil import rmtree
+import warnings
 
-from elasticsearch import TransportError
+from elasticsearch import TransportError, RequestError, ElasticsearchDeprecationWarning
 from elasticsearch.compat import string_types
 from elasticsearch.helpers.test import _get_version
 
@@ -24,32 +30,29 @@ PARAMS_RENAMES = {"type": "doc_type", "from": "from_"}
 CATCH_CODES = {"missing": 404, "conflict": 409, "unauthorized": 401}
 
 # test features we have implemented
-IMPLEMENTED_FEATURES = ("gtelte", "stash_in_path", "headers", "catch_unauthorized")
+IMPLEMENTED_FEATURES = {
+    "gtelte",
+    "stash_in_path",
+    "headers",
+    "catch_unauthorized",
+    "default_shards",
+    "warnings",
+}
 
 # broken YAML tests on some releases
 SKIP_TESTS = {
-    "*": set(
-        (
-            # missing skip for transform_and_set feature
-            "TestApiKey10Basic",
-            # invalid license
-            "TestLicense20PutLicense",
-            "TestXpack15Basic",
-            # timeouts
-            "TestMlSetUpgradeMode",
-            # doesn't account for security index
-            "TestSnapshot10Basic",
-            # wrong exception, also body should be marked as required
-            "TestWatcherPutWatch10Basic",
-            # weird issue with SET cmd:
-            "TestUsers10Basic",
-            "TestWatcherExecuteWatch60HttpInput",
-            "TestSecurityHidden-Index13Security-TokensRead",
-            "TestSecurityHidden-Index14Security-Tokens-7Read",
-            "TestToken10Basic",
-        )
-    )
+    "*": {
+        # Can't figure out the get_alias(expand_wildcards=open) failure.
+        "TestIndicesGetAlias10Basic",
+        # Disallowing expensive queries is 7.7+
+        "TestSearch320DisallowQueries",
+    }
 }
+
+# Test is inconsistent due to dictionaries not being ordered.
+if sys.version_info < (3, 6):
+    SKIP_TESTS["*"].add("TestSearchAggregation250MovingFn")
+
 
 XPACK_FEATURES = None
 
@@ -61,11 +64,6 @@ class InvalidActionType(Exception):
 class YamlTestCase(ElasticsearchTestCase):
     def setUp(self):
         super(YamlTestCase, self).setUp()
-        if self._feature_enabled("security"):
-            self.client.security.put_user(
-                username="x_pack_rest_user",
-                body={"password": "x-pack-test-password", "roles": ["superuser"]},
-            )
         if hasattr(self, "_setup_code"):
             self.run_code(self._setup_code)
         self.last_response = None
@@ -106,12 +104,17 @@ class YamlTestCase(ElasticsearchTestCase):
         super(YamlTestCase, self).tearDown()
 
     def _feature_enabled(self, name):
-        global XPACK_FEATURES
+        global XPACK_FEATURES, IMPLEMENTED_FEATURES
         if XPACK_FEATURES is None:
-            xinfo = self.client.xpack.info()
-            XPACK_FEATURES = set(
-                f for f in xinfo["features"] if xinfo["features"][f]["enabled"]
-            )
+            try:
+                xinfo = self.client.xpack.info()
+                XPACK_FEATURES = set(
+                    f for f in xinfo["features"] if xinfo["features"][f]["enabled"]
+                )
+                IMPLEMENTED_FEATURES.add("xpack")
+            except RequestError:
+                XPACK_FEATURES = set()
+                IMPLEMENTED_FEATURES.add("no_xpack")
         return name in XPACK_FEATURES
 
     def _resolve(self, value):
@@ -150,8 +153,9 @@ class YamlTestCase(ElasticsearchTestCase):
 
     def run_code(self, test):
         """ Execute an instruction based on it's type. """
+        print(test)
         for action in test:
-            self.assertEquals(1, len(action))
+            self.assertEqual(1, len(action))
             action_type, action = list(action.items())[0]
 
             if hasattr(self, "run_" + action_type):
@@ -162,13 +166,13 @@ class YamlTestCase(ElasticsearchTestCase):
     def run_do(self, action):
         """ Perform an api call with given parameters. """
         api = self.client
-        if "headers" in action:
-            api = self._get_client(headers=action.pop("headers"))
-
+        headers = action.pop("headers", None)
         catch = action.pop("catch", None)
-        self.assertEquals(1, len(action))
+        warn = action.pop("warnings", ())
+        self.assertEqual(1, len(action))
 
         method, args = list(action.items())[0]
+        args["headers"] = headers
 
         # locate api endpoint
         for m in method.split("."):
@@ -185,17 +189,34 @@ class YamlTestCase(ElasticsearchTestCase):
         for k in args:
             args[k] = self._resolve(args[k])
 
-        try:
-            self.last_response = api(**args)
-        except Exception as e:
-            if not catch:
-                raise
-            self.run_catch(catch, e)
-        else:
-            if catch:
-                raise AssertionError(
-                    "Failed to catch %r in %r." % (catch, self.last_response)
-                )
+        warnings.simplefilter("always", category=ElasticsearchDeprecationWarning)
+        with warnings.catch_warnings(record=True) as caught_warnings:
+            try:
+                self.last_response = api(**args)
+            except Exception as e:
+                if not catch:
+                    raise
+                self.run_catch(catch, e)
+            else:
+                if catch:
+                    raise AssertionError(
+                        "Failed to catch %r in %r." % (catch, self.last_response)
+                    )
+
+        # Filter out warnings raised by other components.
+        caught_warnings = [
+            str(w.message)
+            for w in caught_warnings
+            if w.category == ElasticsearchDeprecationWarning
+        ]
+
+        # Sorting removes the issue with order raised. We only care about
+        # if all warnings are raised in the single API call.
+        if sorted(warn) != sorted(caught_warnings):
+            raise AssertionError(
+                "Expected warnings not equal to actual warnings: expected=%r actual=%r"
+                % (warn, caught_warnings)
+            )
 
     def _get_nodes(self):
         if not hasattr(self, "_node_info"):
@@ -236,9 +257,7 @@ class YamlTestCase(ElasticsearchTestCase):
                 elif feature == "benchmark":
                     if self._get_benchmark_nodes():
                         continue
-                raise SkipTest(
-                    skip.get("reason", "Feature %s is not supported" % feature)
-                )
+                raise SkipTest("Feature %s is not supported" % feature)
 
         if "version" in skip:
             version, reason = skip["version"], skip["reason"]
@@ -257,7 +276,7 @@ class YamlTestCase(ElasticsearchTestCase):
 
         self.assertIsInstance(exception, TransportError)
         if catch in CATCH_CODES:
-            self.assertEquals(CATCH_CODES[catch], exception.status_code)
+            self.assertEqual(CATCH_CODES[catch], exception.status_code)
         elif catch[0] == "/" and catch[-1] == "/":
             self.assertTrue(
                 re.search(catch[1:-1], exception.error + " " + repr(exception.info)),
@@ -306,7 +325,7 @@ class YamlTestCase(ElasticsearchTestCase):
         for path, expected in action.items():
             value = self._lookup(path)
             expected = self._resolve(expected)
-            self.assertEquals(expected, len(value))
+            self.assertEqual(expected, len(value))
 
     def run_match(self, action):
         for path, expected in action.items():
@@ -318,10 +337,14 @@ class YamlTestCase(ElasticsearchTestCase):
                 and expected.startswith("/")
                 and expected.endswith("/")
             ):
-                expected = re.compile(expected[1:-1], re.VERBOSE)
-                self.assertTrue(expected.search(value))
+                expected = re.compile(expected[1:-1], re.VERBOSE | re.MULTILINE)
+                self.assertTrue(
+                    expected.search(value), "%r does not match %r" % (value, expected)
+                )
             else:
-                self.assertEquals(expected, value)
+                self.assertEqual(
+                    expected, value, "%r does not match %r" % (value, expected)
+                )
 
 
 def construct_case(filename, name):

@@ -1,0 +1,19 @@
+// search/request/sort.asciidoc:11
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my_index",
+    body={
+        "mappings": {
+            "properties": {
+                "post_date": {"type": "date"},
+                "user": {"type": "keyword"},
+                "name": {"type": "keyword"},
+                "age": {"type": "integer"},
+            }
+        }
+    },
+)
+print(resp)
+----

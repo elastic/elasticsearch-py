@@ -1,3 +1,7 @@
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
 __all__ = [
     "ImproperlyConfigured",
     "ElasticsearchException",
@@ -134,6 +138,12 @@ class AuthenticationException(TransportError):
 
 class AuthorizationException(TransportError):
     """ Exception representing a 403 status code. """
+
+
+class ElasticsearchDeprecationWarning(Warning):
+    """ Warning that is raised when a deprecated option
+    is flagged via the 'Warning' HTTP header.
+    """
 
 
 # more generic mappings from status_code to python exceptions

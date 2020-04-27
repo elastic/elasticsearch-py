@@ -1,3 +1,8 @@
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
+from unittest import SkipTest
 from elasticsearch.helpers import test
 from elasticsearch.helpers.test import ElasticsearchTestCase as BaseTestCase
 
@@ -6,6 +11,8 @@ client = None
 
 def get_client(**kwargs):
     global client
+    if client is False:
+        raise SkipTest("No client is available")
     if client is not None and not kwargs:
         return client
 
@@ -16,7 +23,11 @@ def get_client(**kwargs):
         new_client = local_get_client(**kwargs)
     except ImportError:
         # fallback to using vanilla client
-        new_client = test.get_test_client(**kwargs)
+        try:
+            new_client = test.get_test_client(**kwargs)
+        except SkipTest:
+            client = False
+            raise
 
     if not kwargs:
         client = new_client

@@ -1,0 +1,10 @@
+// search/request/sort.asciidoc:212
+
+[source, python]
+----
+resp = client.search(
+    index="index_long,index_double",
+    body={"sort": [{"field": {"numeric_type": "date_nanos"}}]},
+)
+print(resp)
+----

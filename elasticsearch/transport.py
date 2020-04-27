@@ -1,11 +1,13 @@
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
 import time
 from itertools import chain
-from platform import python_version
 
 from .connection import Urllib3HttpConnection
 from .connection_pool import ConnectionPool, DummyConnectionPool
 from .serializer import JSONSerializer, Deserializer, DEFAULT_SERIALIZERS
-from . import __versionstr__
 from .exceptions import (
     ConnectionError,
     TransportError,
@@ -130,6 +132,11 @@ class Transport(object):
         # retain the original connection instances for sniffing
         self.seed_connections = self.connection_pool.connections[:]
 
+        # Don't enable sniffing on Cloud instances.
+        if kwargs.get("cloud_id", False):
+            sniff_on_start = False
+            sniff_on_connection_fail = False
+
         # sniffing data
         self.sniffer_timeout = sniffer_timeout
         self.sniff_on_connection_fail = sniff_on_connection_fail
@@ -230,7 +237,7 @@ class Transport(object):
                     pass
             else:
                 raise TransportError("N/A", "Unable to sniff hosts.")
-        except:
+        except Exception:
             # keep the previous value on error
             self.last_sniff = previous_sniff
             raise
@@ -245,11 +252,11 @@ class Transport(object):
         if not address or ":" not in address:
             return None
 
-        if '/' in address:
+        if "/" in address:
             # Support 7.x host/ip:port behavior where http.publish_host has been set.
-            fqdn, ipaddress = address.split('/', 1)
+            fqdn, ipaddress = address.split("/", 1)
             host["host"] = fqdn
-            _, host["port"] = ipaddress.rsplit(':', 1)
+            _, host["port"] = ipaddress.rsplit(":", 1)
             host["port"] = int(host["port"])
 
         else:
@@ -344,6 +351,7 @@ class Transport(object):
             ignore = params.pop("ignore", ())
             if isinstance(ignore, int):
                 ignore = (ignore,)
+
         for attempt in range(self.max_retries + 1):
             connection = self.get_connection()
 

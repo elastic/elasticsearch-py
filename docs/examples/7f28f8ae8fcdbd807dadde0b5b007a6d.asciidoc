@@ -1,0 +1,18 @@
+// aggregations/bucket/terms-aggregation.asciidoc:775
+
+[source, python]
+----
+resp = client.search(
+    body={
+        "aggs": {
+            "actors": {
+                "terms": {"field": "actors", "size": 10},
+                "aggs": {
+                    "costars": {"terms": {"field": "actors", "size": 5}}
+                },
+            }
+        }
+    },
+)
+print(resp)
+----

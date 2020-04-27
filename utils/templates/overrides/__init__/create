@@ -1,1 +1,10 @@
-single_doc_op
+{% extends "base" %}
+{% block request %}
+        if doc_type in SKIP_IN_PATH:
+            path = _make_path(index, "_create", id)
+        else:
+            path = _make_path(index, doc_type, id)
+
+        return self.transport.perform_request("POST" if id in SKIP_IN_PATH else "PUT", path, params=params, headers=headers, body=body)
+{% endblock %}
+

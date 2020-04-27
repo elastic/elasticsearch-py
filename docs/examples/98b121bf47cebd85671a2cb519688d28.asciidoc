@@ -1,0 +1,18 @@
+// aggregations/bucket/terms-aggregation.asciidoc:654
+
+[source, python]
+----
+resp = client.search(
+    body={
+        "aggs": {
+            "JapaneseCars": {
+                "terms": {"field": "make", "include": ["mazda", "honda"]}
+            },
+            "ActiveCarManufacturers": {
+                "terms": {"field": "make", "exclude": ["rover", "jensen"]}
+            },
+        }
+    },
+)
+print(resp)
+----

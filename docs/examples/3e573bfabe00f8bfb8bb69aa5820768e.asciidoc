@@ -1,0 +1,15 @@
+// docs/delete-by-query.asciidoc:449
+
+[source, python]
+----
+resp = client.indices.refresh()
+print(resp)
+
+resp = client.search(
+    index="twitter",
+    size="0",
+    filter_path="hits.total",
+    body={"query": {"range": {"likes": {"lt": 10}}}},
+)
+print(resp)
+----

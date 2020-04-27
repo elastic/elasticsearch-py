@@ -1,0 +1,19 @@
+// getting-started.asciidoc:544
+
+[source, python]
+----
+resp = client.search(
+    index="bank",
+    body={
+        "query": {
+            "bool": {
+                "must": {"match_all": {}},
+                "filter": {
+                    "range": {"balance": {"gte": 20000, "lte": 30000}}
+                },
+            }
+        }
+    },
+)
+print(resp)
+----

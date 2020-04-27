@@ -1,0 +1,9 @@
+// query-dsl/range-query.asciidoc:16
+
+[source, python]
+----
+resp = client.search(
+    body={"query": {"range": {"age": {"gte": 10, "lte": 20, "boost": 2}}}},
+)
+print(resp)
+----

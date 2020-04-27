@@ -1,3 +1,7 @@
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
 from __future__ import unicode_literals
 
 import weakref
@@ -33,7 +37,7 @@ def _escape(value):
 
     # encode strings to utf-8
     if isinstance(value, string_types):
-        if PY2 and isinstance(value, unicode):
+        if PY2 and isinstance(value, unicode):  # noqa: F821
             return value.encode("utf-8")
         if not PY2 and isinstance(value, str):
             return value.encode("utf-8")
@@ -68,20 +72,26 @@ def query_params(*es_query_params):
     def _wrapper(func):
         @wraps(func)
         def _wrapped(*args, **kwargs):
-            params = {}
-            if "params" in kwargs:
-                params = kwargs.pop("params").copy()
+            params = (kwargs.pop("params", None) or {}).copy()
+            headers = {
+                k.lower(): v
+                for k, v in (kwargs.pop("headers", None) or {}).copy().items()
+            }
+
+            if "opaque_id" in kwargs:
+                headers["x-opaque-id"] = kwargs.pop("opaque_id")
+
             for p in es_query_params + GLOBAL_PARAMS:
                 if p in kwargs:
                     v = kwargs.pop(p)
                     if v is not None:
                         params[p] = _escape(v)
 
-            # don't treat ignore and request_timeout as other params to avoid escaping
+            # don't treat ignore, request_timeout, and opaque_id as other params to avoid escaping
             for p in ("ignore", "request_timeout"):
                 if p in kwargs:
                     params[p] = kwargs.pop(p)
-            return func(*args, params=params, **kwargs)
+            return func(*args, params=params, headers=headers, **kwargs)
 
         return _wrapped
 
@@ -94,7 +104,10 @@ def _bulk_body(serializer, body):
         body = "\n".join(map(serializer.dumps, body))
 
     # bulk body must end with a newline
-    if not body.endswith("\n"):
+    if isinstance(body, bytes):
+        if not body.endswith(b"\n"):
+            body += b"\n"
+    elif isinstance(body, string_types) and not body.endswith("\n"):
         body += "\n"
 
     return body

@@ -1,0 +1,10 @@
+// search/request/sort.asciidoc:135
+
+[source, python]
+----
+resp = client.indices.create(
+    index="index_long",
+    body={"mappings": {"properties": {"field": {"type": "long"}}}},
+)
+print(resp)
+----
