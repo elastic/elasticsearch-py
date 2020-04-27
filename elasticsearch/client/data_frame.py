@@ -9,7 +9,7 @@ class Data_FrameClient(NamespacedClient):
     @query_params()
     def delete_data_frame_transform(self, transform_id, params=None, headers=None):
         """
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-data-frame-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/delete-data-frame-transform.html>`_
 
         :arg transform_id: The id of the transform to delete
         """
@@ -27,7 +27,7 @@ class Data_FrameClient(NamespacedClient):
     @query_params("from_", "size")
     def get_data_frame_transform(self, transform_id=None, params=None, headers=None):
         """
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-data-frame-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/get-data-frame-transform.html>`_
 
         :arg transform_id: The id or comma delimited list of id expressions of
             the transforms to get, '_all' or '*' implies get all transforms
@@ -46,7 +46,7 @@ class Data_FrameClient(NamespacedClient):
         self, transform_id=None, params=None, headers=None
     ):
         """
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-data-frame-transform-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/get-data-frame-transform-stats.html>`_
 
         :arg transform_id: The id of the transform for which to get stats.
             '_all' or '*' implies all transforms
@@ -60,7 +60,7 @@ class Data_FrameClient(NamespacedClient):
     @query_params()
     def preview_data_frame_transform(self, body, params=None, headers=None):
         """
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/preview-data-frame-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/preview-data-frame-transform.html>`_
 
         :arg body: The definition for the data_frame transform to preview
         """
@@ -77,7 +77,7 @@ class Data_FrameClient(NamespacedClient):
     @query_params()
     def put_data_frame_transform(self, transform_id, body, params=None, headers=None):
         """
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/put-data-frame-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/put-data-frame-transform.html>`_
 
         :arg transform_id: The id of the new transform.
         :arg body: The data frame transform definition
@@ -96,7 +96,7 @@ class Data_FrameClient(NamespacedClient):
     @query_params("timeout")
     def start_data_frame_transform(self, transform_id, params=None, headers=None):
         """
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/start-data-frame-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/start-data-frame-transform.html>`_
 
         :arg transform_id: The id of the transform to start
         :arg timeout: Controls the time to wait for the transform to start
@@ -115,7 +115,7 @@ class Data_FrameClient(NamespacedClient):
     @query_params("timeout", "wait_for_completion")
     def stop_data_frame_transform(self, transform_id, params=None, headers=None):
         """
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/stop-data-frame-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/stop-data-frame-transform.html>`_
 
         :arg transform_id: The id of the transform to stop
         :arg timeout: Controls the time to wait until the transform has stopped.

@@ -12,7 +12,7 @@ class MigrationClient(NamespacedClient):
         Retrieves information about different cluster, node, and index level settings
         that use deprecated features that will be removed or changed in the next major
         version.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/migration-api-deprecation.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/migration-api-deprecation.html>`_
 
         :arg index: Index pattern
         """

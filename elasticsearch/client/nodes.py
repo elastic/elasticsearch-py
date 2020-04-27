@@ -7,11 +7,15 @@ from .utils import NamespacedClient, query_params, _make_path
 
 class NodesClient(NamespacedClient):
     @query_params("timeout")
-    def reload_secure_settings(self, node_id=None, params=None, headers=None):
+    def reload_secure_settings(
+        self, body=None, node_id=None, params=None, headers=None
+    ):
         """
         Reloads secure settings.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/secure-settings.html#reloadable-secure-settings>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/secure-settings.html#reloadable-secure-settings>`_
 
+        :arg body: An object containing the password for the
+            elasticsearch keystore
         :arg node_id: A comma-separated list of node IDs to span the
             reload/reinit call. Should stay empty because reloading usually involves
             all cluster nodes.
@@ -22,13 +26,14 @@ class NodesClient(NamespacedClient):
             _make_path("_nodes", node_id, "reload_secure_settings"),
             params=params,
             headers=headers,
+            body=body,
         )
 
     @query_params("flat_settings", "timeout")
     def info(self, node_id=None, metric=None, params=None, headers=None):
         """
         Returns information about nodes in the cluster.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-info.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/cluster-nodes-info.html>`_
 
         :arg node_id: A comma-separated list of node IDs or names to
             limit the returned information; use `_local` to return information from
@@ -60,7 +65,7 @@ class NodesClient(NamespacedClient):
     ):
         """
         Returns statistical information about nodes in the cluster.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/cluster-nodes-stats.html>`_
 
         :arg node_id: A comma-separated list of node IDs or names to
             limit the returned information; use `_local` to return information from
@@ -104,7 +109,7 @@ class NodesClient(NamespacedClient):
     def hot_threads(self, node_id=None, params=None, headers=None):
         """
         Returns information about hot threads on each node in the cluster.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-hot-threads.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/cluster-nodes-hot-threads.html>`_
 
         :arg node_id: A comma-separated list of node IDs or names to
             limit the returned information; use `_local` to return information from
@@ -137,7 +142,7 @@ class NodesClient(NamespacedClient):
     def usage(self, node_id=None, metric=None, params=None, headers=None):
         """
         Returns low-level information about REST actions usage on nodes.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-usage.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/cluster-nodes-usage.html>`_
 
         :arg node_id: A comma-separated list of node IDs or names to
             limit the returned information; use `_local` to return information from

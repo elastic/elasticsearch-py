@@ -39,6 +39,7 @@ from .sql import SqlClient
 from .ssl import SslClient
 from .watcher import WatcherClient
 from .enrich import EnrichClient
+from .searchable_snapshots import SearchableSnapshotsClient
 from .slm import SlmClient
 from .transform import TransformClient
 
@@ -263,7 +264,9 @@ class Elasticsearch(object):
         self.ssl = SslClient(self)
         self.watcher = WatcherClient(self)
         self.enrich = EnrichClient(self)
+        self.searchable_snapshots = SearchableSnapshotsClient(self)
         self.slm = SlmClient(self)
+        self.searchable_snapshots = SearchableSnapshotsClient(self)
         self.transform = TransformClient(self)
 
     def __repr__(self):
@@ -283,7 +286,7 @@ class Elasticsearch(object):
     def ping(self, params=None, headers=None):
         """
         Returns whether the cluster is running.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/index.html>`_
         """
         try:
             return self.transport.perform_request(
@@ -296,7 +299,7 @@ class Elasticsearch(object):
     def info(self, params=None, headers=None):
         """
         Returns basic information about the cluster.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/index.html>`_
         """
         return self.transport.perform_request(
             "GET", "/", params=params, headers=headers
@@ -304,6 +307,7 @@ class Elasticsearch(object):
 
     @query_params(
         "pipeline",
+        "prefer_v2_templates",
         "refresh",
         "routing",
         "timeout",
@@ -315,7 +319,7 @@ class Elasticsearch(object):
         """
         Creates a new document in the index.  Returns a 409 response when a document
         with a same ID already exists in the index.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-index_.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/docs-index_.html>`_
 
         :arg index: The name of the index
         :arg id: Document ID
@@ -323,6 +327,8 @@ class Elasticsearch(object):
         :arg doc_type: The type of the document
         :arg pipeline: The pipeline id to preprocess incoming documents
             with
+        :arg prefer_v2_templates: favor V2 templates instead of V1
+            templates during automatic index creation
         :arg refresh: If `true` then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then
@@ -358,6 +364,7 @@ class Elasticsearch(object):
         "if_seq_no",
         "op_type",
         "pipeline",
+        "prefer_v2_templates",
         "refresh",
         "routing",
         "timeout",
@@ -368,7 +375,7 @@ class Elasticsearch(object):
     def index(self, index, body, doc_type=None, id=None, params=None, headers=None):
         """
         Creates or updates a document in an index.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-index_.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/docs-index_.html>`_
 
         :arg index: The name of the index
         :arg body: The document
@@ -385,6 +392,8 @@ class Elasticsearch(object):
             without an explicit document ID  Valid choices: index, create
         :arg pipeline: The pipeline id to preprocess incoming documents
             with
+        :arg prefer_v2_templates: favor V2 templates instead of V1
+            templates during automatic index creation
         :arg refresh: If `true` then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then
@@ -420,6 +429,7 @@ class Elasticsearch(object):
         "_source_excludes",
         "_source_includes",
         "pipeline",
+        "prefer_v2_templates",
         "refresh",
         "routing",
         "timeout",
@@ -428,7 +438,7 @@ class Elasticsearch(object):
     def bulk(self, body, index=None, doc_type=None, params=None, headers=None):
         """
         Allows to perform multiple index/update/delete operations in a single request.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-bulk.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/docs-bulk.html>`_
 
         :arg body: The operation definition and data (action-data
             pairs), separated by newlines
@@ -444,6 +454,8 @@ class Elasticsearch(object):
             return from the _source field, can be overridden on each sub-request
         :arg pipeline: The pipeline id to preprocess incoming documents
             with
+        :arg prefer_v2_templates: favor V2 templates instead of V1
+            templates during automatic index creation
         :arg refresh: If `true` then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then
@@ -472,7 +484,7 @@ class Elasticsearch(object):
     def clear_scroll(self, body=None, scroll_id=None, params=None, headers=None):
         """
         Explicitly clears the search context for a scroll.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-request-body.html#_clear_scroll_api>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/search-request-body.html#_clear_scroll_api>`_
 
         :arg body: A comma-separated list of scroll IDs to clear if none
             was specified via the scroll_id parameter
@@ -508,7 +520,7 @@ class Elasticsearch(object):
     def count(self, body=None, index=None, doc_type=None, params=None, headers=None):
         """
         Returns number of documents matching a query.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-count.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/search-count.html>`_
 
         :arg body: A query to restrict the results specified with the
             Query DSL (optional)
@@ -565,7 +577,7 @@ class Elasticsearch(object):
     def delete(self, index, id, doc_type=None, params=None, headers=None):
         """
         Removes a document from the index.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-delete.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/docs-delete.html>`_
 
         :arg index: The name of the index
         :arg id: The document ID
@@ -640,7 +652,7 @@ class Elasticsearch(object):
     def delete_by_query(self, index, body, doc_type=None, params=None, headers=None):
         """
         Deletes documents matching the provided query.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-delete-by-query.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/docs-delete-by-query.html>`_
 
         :arg index: A comma-separated list of index names to search; use
             `_all` or empty string to perform the operation on all indices
@@ -736,7 +748,7 @@ class Elasticsearch(object):
         """
         Changes the number of requests per second for a particular Delete By Query
         operation.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-delete-by-query.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/docs-delete-by-query.html>`_
 
         :arg task_id: The task id to rethrottle
         :arg requests_per_second: The throttle to set on this request in
@@ -756,7 +768,7 @@ class Elasticsearch(object):
     def delete_script(self, id, params=None, headers=None):
         """
         Deletes a script.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/modules-scripting.html>`_
 
         :arg id: Script ID
         :arg master_timeout: Specify timeout for connection to master
@@ -784,7 +796,7 @@ class Elasticsearch(object):
     def exists(self, index, id, doc_type=None, params=None, headers=None):
         """
         Returns information about whether a document exists in an index.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-get.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/docs-get.html>`_
 
         :arg index: The name of the index
         :arg id: The document ID
@@ -834,7 +846,7 @@ class Elasticsearch(object):
     def exists_source(self, index, id, doc_type=None, params=None, headers=None):
         """
         Returns information about whether a document source exists in an index.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-get.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/docs-get.html>`_
 
         :arg index: The name of the index
         :arg id: The document ID
@@ -885,7 +897,7 @@ class Elasticsearch(object):
     def explain(self, index, id, body=None, doc_type=None, params=None, headers=None):
         """
         Returns information about why a specific matches (or doesn't match) a query.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-explain.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/search-explain.html>`_
 
         :arg index: The name of the index
         :arg id: The document ID
@@ -939,7 +951,7 @@ class Elasticsearch(object):
         """
         Returns the information about the capabilities of fields among multiple
         indices.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-field-caps.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/search-field-caps.html>`_
 
         :arg index: A comma-separated list of index names; use `_all` or
             empty string to perform the operation on all indices
@@ -974,7 +986,7 @@ class Elasticsearch(object):
     def get(self, index, id, doc_type=None, params=None, headers=None):
         """
         Returns a document.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-get.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/docs-get.html>`_
 
         :arg index: The name of the index
         :arg id: The document ID
@@ -1014,7 +1026,7 @@ class Elasticsearch(object):
     def get_script(self, id, params=None, headers=None):
         """
         Returns a script.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/modules-scripting.html>`_
 
         :arg id: Script ID
         :arg master_timeout: Specify timeout for connection to master
@@ -1040,7 +1052,7 @@ class Elasticsearch(object):
     def get_source(self, index, id, doc_type=None, params=None, headers=None):
         """
         Returns the source of a document.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-get.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/docs-get.html>`_
 
         :arg index: The name of the index
         :arg id: The document ID
@@ -1090,7 +1102,7 @@ class Elasticsearch(object):
     def mget(self, body, index=None, doc_type=None, params=None, headers=None):
         """
         Allows to get multiple documents in one request.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-multi-get.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/docs-multi-get.html>`_
 
         :arg body: Document identifiers; can be either `docs`
             (containing full document information) or `ids` (when index and type is
@@ -1136,7 +1148,7 @@ class Elasticsearch(object):
     def msearch(self, body, index=None, doc_type=None, params=None, headers=None):
         """
         Allows to execute several search operations in one request.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-multi-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/search-multi-search.html>`_
 
         :arg body: The request definitions (metadata-search request
             definition pairs), separated by newlines
@@ -1192,7 +1204,7 @@ class Elasticsearch(object):
     ):
         """
         Allows to execute several search template operations in one request.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/search-multi-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/search-multi-search.html>`_
 
         :arg body: The request definitions (metadata-search request
             definition pairs), separated by newlines
@@ -1244,7 +1256,7 @@ class Elasticsearch(object):
     ):
         """
         Returns multiple termvectors in one request.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-multi-termvectors.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/docs-multi-termvectors.html>`_
 
         :arg body: Define ids, documents, parameters or a list of
             parameters per document here. You must at least provide a list of
@@ -1295,7 +1307,7 @@ class Elasticsearch(object):
     def put_script(self, id, body, context=None, params=None, headers=None):
         """
         Creates or updates a script.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/modules-scripting.html>`_
 
         :arg id: Script ID
         :arg body: The document
@@ -1322,7 +1334,7 @@ class Elasticsearch(object):
         """
         Allows to evaluate the quality of ranked search results over a set of typical
         search queries
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-rank-eval.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/search-rank-eval.html>`_
 
         :arg body: The ranking evaluation search definition, including
             search requests, document ratings and ranking metric definition.
@@ -1365,7 +1377,7 @@ class Elasticsearch(object):
         Allows to copy documents from one index to another, optionally filtering the
         source documents by a query, changing the destination index settings, or
         fetching the documents from a remote cluster.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-reindex.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/docs-reindex.html>`_
 
         :arg body: The search definition using the Query DSL and the
             prototype for the index request.
@@ -1400,7 +1412,7 @@ class Elasticsearch(object):
     def reindex_rethrottle(self, task_id, params=None, headers=None):
         """
         Changes the number of requests per second for a particular Reindex operation.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-reindex.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/docs-reindex.html>`_
 
         :arg task_id: The task id to rethrottle
         :arg requests_per_second: The throttle to set on this request in
@@ -1420,7 +1432,7 @@ class Elasticsearch(object):
     def render_search_template(self, body=None, id=None, params=None, headers=None):
         """
         Allows to use the Mustache language to pre-render a search definition.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html#_validating_templates>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/search-template.html#_validating_templates>`_
 
         :arg body: The search definition template and its params
         :arg id: The id of the stored search template
@@ -1453,7 +1465,7 @@ class Elasticsearch(object):
     def scroll(self, body=None, scroll_id=None, params=None, headers=None):
         """
         Allows to retrieve a large numbers of results from a single search request.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-request-body.html#request-body-search-scroll>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/search-request-body.html#request-body-search-scroll>`_
 
         :arg body: The scroll ID if not passed by URL or query
             parameter.
@@ -1521,7 +1533,7 @@ class Elasticsearch(object):
     def search(self, body=None, index=None, doc_type=None, params=None, headers=None):
         """
         Returns results matching a query.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/search-search.html>`_
 
         :arg body: The search definition using the Query DSL
         :arg index: A comma-separated list of index names to search; use
@@ -1643,7 +1655,7 @@ class Elasticsearch(object):
         """
         Returns information about the indices and shards that a search request would be
         executed against.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-shards.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/search-shards.html>`_
 
         :arg index: A comma-separated list of index names to search; use
             `_all` or empty string to perform the operation on all indices
@@ -1685,7 +1697,7 @@ class Elasticsearch(object):
     ):
         """
         Allows to use the Mustache language to pre-render a search definition.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/search-template.html>`_
 
         :arg body: The search definition template and its params
         :arg index: A comma-separated list of index names to search; use
@@ -1751,7 +1763,7 @@ class Elasticsearch(object):
         """
         Returns information and statistics about terms in the fields of a particular
         document.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-termvectors.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/docs-termvectors.html>`_
 
         :arg index: The index in which the document resides.
         :arg body: Define parameters and or supply a document to get
@@ -1801,6 +1813,7 @@ class Elasticsearch(object):
         "if_primary_term",
         "if_seq_no",
         "lang",
+        "prefer_v2_templates",
         "refresh",
         "retry_on_conflict",
         "routing",
@@ -1810,7 +1823,7 @@ class Elasticsearch(object):
     def update(self, index, id, body, doc_type=None, params=None, headers=None):
         """
         Updates a document with a script or partial document.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-update.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/docs-update.html>`_
 
         :arg index: The name of the index
         :arg id: Document ID
@@ -1830,6 +1843,8 @@ class Elasticsearch(object):
             operation that has changed the document has the specified sequence
             number
         :arg lang: The script language (default: painless)
+        :arg prefer_v2_templates: favor V2 templates instead of V1
+            templates during automatic index creation
         :arg refresh: If `true` then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then
@@ -1902,7 +1917,7 @@ class Elasticsearch(object):
         """
         Performs an update on every document in the index without changing the source,
         for example to pick up a mapping change.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-update-by-query.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/docs-update-by-query.html>`_
 
         :arg index: A comma-separated list of index names to search; use
             `_all` or empty string to perform the operation on all indices
@@ -2001,7 +2016,7 @@ class Elasticsearch(object):
         """
         Changes the number of requests per second for a particular Update By Query
         operation.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update-by-query.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/docs-update-by-query.html>`_
 
         :arg task_id: The task id to rethrottle
         :arg requests_per_second: The throttle to set on this request in
@@ -2031,7 +2046,7 @@ class Elasticsearch(object):
     def get_script_languages(self, params=None, headers=None):
         """
         Returns available script types, languages and contexts
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/modules-scripting.html>`_
         """
         return self.transport.perform_request(
             "GET", "/_script_language", params=params, headers=headers

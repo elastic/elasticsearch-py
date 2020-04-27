@@ -3,7 +3,6 @@
 # Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 # See the LICENSE file in the project root for more information
 
-
 import os
 import json
 import re
@@ -25,7 +24,7 @@ SEPARATOR = "    # AUTO-GENERATED-API-DEFINITIONS #"
 # global substitutions for python keywords
 SUBSTITUTIONS = {"type": "doc_type", "from": "from_"}
 # api path(s)
-BRANCH_NAME = "master"
+BRANCH_NAME = "7.x"
 CODE_ROOT = Path(__file__).absolute().parent.parent
 BASE_PATH = (
     CODE_ROOT.parent

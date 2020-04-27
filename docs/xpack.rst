@@ -24,7 +24,7 @@ provides general info about the installed X-Pack.
 Async Search APIs
 -----------------
 
-`Async Search API <https://www.elastic.co/guide/en/elasticsearch/reference/current/async-search.html>`_
+`Async Search API <https://www.elastic.co/guide/en/elasticsearch/reference/7.x/async-search.html>`_
 lets you asynchronously execute a search request, monitor its progress,
 and retrieve partial results as they become available.
 
@@ -49,7 +49,7 @@ gets the current autoscaling decision based on the configured autoscaling policy
 EQL APIs
 --------
 
-`EQL API <https://www.elastic.co/guide/en/elasticsearch/reference/current/eql.html>`_
+`EQL API <https://www.elastic.co/guide/en/elasticsearch/reference/7.x/eql.html>`_
 allows querying with Event Query Language (EQL) to search logs and events and match
 them with shared properties.
 
@@ -201,6 +201,18 @@ can be used to set up policies to automatically take snapshots and control how l
 .. py:module:: elasticsearch.client.slm
 
 .. autoclass:: SlmClient
+   :members:
+
+
+Searchable Snapshots APIs
+-------------------------
+
+`Searchable Snapshots API <https://www.elastic.co/guide/en/elasticsearch/reference/7.x/searchable-snapshots-apis.html>`_
+used to perform searchable snapshots operations.
+
+.. py:module:: elasticsearch.client.searchable_snapshots
+
+.. autoclass:: SearchableSnapshotsClient
    :members:
 
 

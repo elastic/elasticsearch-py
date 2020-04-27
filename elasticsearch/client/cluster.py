@@ -22,7 +22,7 @@ class ClusterClient(NamespacedClient):
     def health(self, index=None, params=None, headers=None):
         """
         Returns basic information about the health of the cluster.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-health.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/cluster-health.html>`_
 
         :arg index: Limit the information returned to a specific index
         :arg expand_wildcards: Whether to expand wildcard expression to
@@ -61,7 +61,7 @@ class ClusterClient(NamespacedClient):
         """
         Returns a list of any cluster-level changes (e.g. create index, update mapping,
         allocate or fail shard) which have not yet been executed.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-pending.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/cluster-pending.html>`_
 
         :arg local: Return local information, do not retrieve the state
             from master node (default: false)
@@ -84,7 +84,7 @@ class ClusterClient(NamespacedClient):
     def state(self, metric=None, index=None, params=None, headers=None):
         """
         Returns a comprehensive information about the state of the cluster.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-state.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/cluster-state.html>`_
 
         :arg metric: Limit the information returned to the specified
             metrics  Valid choices: _all, blocks, metadata, nodes, routing_table,
@@ -123,7 +123,7 @@ class ClusterClient(NamespacedClient):
     def stats(self, node_id=None, params=None, headers=None):
         """
         Returns high-level overview of cluster statistics.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/cluster-stats.html>`_
 
         :arg node_id: A comma-separated list of node IDs or names to
             limit the returned information; use `_local` to return information from
@@ -148,7 +148,7 @@ class ClusterClient(NamespacedClient):
     def reroute(self, body=None, params=None, headers=None):
         """
         Allows to manually change the allocation of individual shards in the cluster.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-reroute.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/cluster-reroute.html>`_
 
         :arg body: The definition of `commands` to perform (`move`,
             `cancel`, `allocate`)
@@ -173,7 +173,7 @@ class ClusterClient(NamespacedClient):
     def get_settings(self, params=None, headers=None):
         """
         Returns cluster settings.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-update-settings.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/cluster-update-settings.html>`_
 
         :arg flat_settings: Return settings in flat format (default:
             false)
@@ -191,7 +191,7 @@ class ClusterClient(NamespacedClient):
     def put_settings(self, body, params=None, headers=None):
         """
         Updates the cluster settings.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-update-settings.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/cluster-update-settings.html>`_
 
         :arg body: The settings to be updated. Can be either `transient`
             or `persistent` (survives cluster restart).
@@ -212,7 +212,7 @@ class ClusterClient(NamespacedClient):
     def remote_info(self, params=None, headers=None):
         """
         Returns the information about configured remote clusters.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-remote-info.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/cluster-remote-info.html>`_
         """
         return self.transport.perform_request(
             "GET", "/_remote/info", params=params, headers=headers
@@ -222,7 +222,7 @@ class ClusterClient(NamespacedClient):
     def allocation_explain(self, body=None, params=None, headers=None):
         """
         Provides explanations for shard allocations in the cluster.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-allocation-explain.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/cluster-allocation-explain.html>`_
 
         :arg body: The index, shard, and primary flag to explain. Empty
             means 'explain the first unassigned shard'
@@ -301,4 +301,26 @@ class ClusterClient(NamespacedClient):
             params=params,
             headers=headers,
             body=body,
+        )
+
+    @query_params("local", "master_timeout")
+    def exists_component_template(self, name, params=None, headers=None):
+        """
+        Returns information about whether a particular component template exist
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-templates.html>`_
+
+        :arg name: The name of the template
+        :arg local: Return local information, do not retrieve the state
+            from master node (default: false)
+        :arg master_timeout: Explicit operation timeout for connection
+            to master node
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'name'.")
+
+        return self.transport.perform_request(
+            "HEAD",
+            _make_path("_component_template", name),
+            params=params,
+            headers=headers,
         )
