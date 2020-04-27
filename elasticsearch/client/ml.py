@@ -352,7 +352,7 @@ class MlClient(NamespacedClient):
         :arg end: End time filter for buckets
         :arg exclude_interim: Exclude interim results
         :arg expand: Include anomaly records
-        :arg from_: skips a number of buckets
+        :arg from\\_: skips a number of buckets
         :arg size: specifies a max number of buckets to get
         :arg sort: Sort buckets by a particular field
         :arg start: Start time filter for buckets
@@ -382,7 +382,7 @@ class MlClient(NamespacedClient):
 
         :arg calendar_id: The ID of the calendar containing the events
         :arg end: Get events before this time
-        :arg from_: Skips a number of events
+        :arg from\\_: Skips a number of events
         :arg job_id: Get events for the job. When this option is used
             calendar_id must be '_all'
         :arg size: Specifies a max number of events to get
@@ -413,7 +413,7 @@ class MlClient(NamespacedClient):
         :arg body: The from and size parameters optionally sent in the
             body
         :arg calendar_id: The ID of the calendar to fetch
-        :arg from_: skips a number of calendars
+        :arg from\\_: skips a number of calendars
         :arg size: specifies a max number of calendars to get
         """
         # from is a reserved word so it cannot be used, use from_ instead
@@ -471,7 +471,7 @@ class MlClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-filter.html>`_
 
         :arg filter_id: The ID of the filter to fetch
-        :arg from_: skips a number of filters
+        :arg from\\_: skips a number of filters
         :arg size: specifies a max number of filters to get
         """
         # from is a reserved word so it cannot be used, use from_ instead
@@ -506,7 +506,7 @@ class MlClient(NamespacedClient):
             order
         :arg end: end timestamp for the requested influencers
         :arg exclude_interim: Exclude interim results
-        :arg from_: skips a number of influencers
+        :arg from\\_: skips a number of influencers
         :arg influencer_score: influencer score threshold for the
             requested influencers
         :arg size: specifies a max number of influencers to get
@@ -632,7 +632,7 @@ class MlClient(NamespacedClient):
         :arg desc: Set the sort direction
         :arg end: End time filter for records
         :arg exclude_interim: Exclude interim results
-        :arg from_: skips a number of records
+        :arg from\\_: skips a number of records
         :arg record_score: Returns records with anomaly scores greater
             or equal than this value
         :arg size: specifies a max number of records to get
@@ -1092,7 +1092,7 @@ class MlClient(NamespacedClient):
         :arg allow_no_match: Whether to ignore if a wildcard expression
             matches no data frame analytics. (This includes `_all` string or when no
             data frame analytics have been specified)  Default: True
-        :arg from_: skips a number of analytics
+        :arg from\\_: skips a number of analytics
         :arg size: specifies a max number of analytics to get  Default:
             100
         """
@@ -1117,7 +1117,7 @@ class MlClient(NamespacedClient):
         :arg allow_no_match: Whether to ignore if a wildcard expression
             matches no data frame analytics. (This includes `_all` string or when no
             data frame analytics have been specified)  Default: True
-        :arg from_: skips a number of analytics
+        :arg from\\_: skips a number of analytics
         :arg size: specifies a max number of analytics to get  Default:
             100
         """
@@ -1241,7 +1241,7 @@ class MlClient(NamespacedClient):
         :arg decompress_definition: Should the model definition be
             decompressed into valid JSON or returned in a custom compressed format.
             Defaults to true.  Default: True
-        :arg from_: skips a number of trained models
+        :arg from\\_: skips a number of trained models
         :arg include_model_definition: Should the full model definition
             be included in the results. These definitions can be large. So be
             cautious when including them. Defaults to false.
@@ -1271,7 +1271,7 @@ class MlClient(NamespacedClient):
         :arg allow_no_match: Whether to ignore if a wildcard expression
             matches no trained models. (This includes `_all` string or when no
             trained models have been specified)  Default: True
-        :arg from_: skips a number of trained models
+        :arg from\\_: skips a number of trained models
         :arg size: specifies a max number of trained models to get
             Default: 100
         """
@@ -1358,7 +1358,7 @@ class MlClient(NamespacedClient):
         :arg body: Category selection details if not provided in URI
         :arg category_id: The identifier of the category definition of
             interest
-        :arg from_: skips a number of categories
+        :arg from\\_: skips a number of categories
         :arg size: specifies a max number of categories to get
         """
         # from is a reserved word so it cannot be used, use from_ instead
@@ -1392,7 +1392,7 @@ class MlClient(NamespacedClient):
         :arg desc: True if the results should be sorted in descending
             order
         :arg end: The filter 'end' query parameter
-        :arg from_: Skips a number of documents
+        :arg from\\_: Skips a number of documents
         :arg size: The default number of documents returned in queries
             as a string.
         :arg sort: Name of the field to sort on

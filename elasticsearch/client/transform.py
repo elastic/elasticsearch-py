@@ -41,7 +41,7 @@ class TransformClient(NamespacedClient):
         :arg allow_no_match: Whether to ignore if a wildcard expression
             matches no transforms. (This includes `_all` string or when no
             transforms have been specified)
-        :arg from_: skips a number of transform configs, defaults to 0
+        :arg from\\_: skips a number of transform configs, defaults to 0
         :arg size: specifies a max number of transforms to get, defaults
             to 100
         """
@@ -67,7 +67,7 @@ class TransformClient(NamespacedClient):
         :arg allow_no_match: Whether to ignore if a wildcard expression
             matches no transforms. (This includes `_all` string or when no
             transforms have been specified)
-        :arg from_: skips a number of transform stats, defaults to 0
+        :arg from\\_: skips a number of transform stats, defaults to 0
         :arg size: specifies a max number of transform stats to get,
             defaults to 100
         """

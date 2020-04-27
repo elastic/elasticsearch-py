@@ -653,7 +653,7 @@ class CatClient(NamespacedClient):
             choices: b, k, kb, m, mb, g, gb, t, tb, p, pb
         :arg format: a short version of the Accept header, e.g. json,
             yaml
-        :arg from_: skips a number of trained models
+        :arg from\\_: skips a number of trained models
         :arg h: Comma-separated list of column names to display
         :arg help: Return help information
         :arg s: Comma-separated list of column names or column aliases
@@ -690,7 +690,7 @@ class CatClient(NamespacedClient):
             transforms have been specified)
         :arg format: a short version of the Accept header, e.g. json,
             yaml
-        :arg from_: skips a number of transform configs, defaults to 0
+        :arg from\\_: skips a number of transform configs, defaults to 0
         :arg h: Comma-separated list of column names to display
         :arg help: Return help information
         :arg s: Comma-separated list of column names or column aliases
