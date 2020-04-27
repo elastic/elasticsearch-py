@@ -1,5 +1,6 @@
 requests>=2, <3
-nose
+pytest
+pytest-cov
 coverage
 mock
 nosexcover
