@@ -1,4 +1,4 @@
-// search/search.asciidoc:342
+// search/search.asciidoc:346
 
 [source, python]
 ----
