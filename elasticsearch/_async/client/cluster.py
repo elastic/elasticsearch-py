@@ -1,3 +1,7 @@
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
 from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 
@@ -319,4 +323,39 @@ class ClusterClient(NamespacedClient):
             _make_path("_component_template", name),
             params=params,
             headers=headers,
+        )
+
+    @query_params("wait_for_removal")
+    async def delete_voting_config_exclusions(self, params=None, headers=None):
+        """
+        Clears cluster voting config exclusions.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/voting-config-exclusions.html>`_
+
+        :arg wait_for_removal: Specifies whether to wait for all
+            excluded nodes to be removed from the cluster before clearing the voting
+            configuration exclusions list.  Default: True
+        """
+        return await self.transport.perform_request(
+            "DELETE",
+            "/_cluster/voting_config_exclusions",
+            params=params,
+            headers=headers,
+        )
+
+    @query_params("node_ids", "node_names", "timeout")
+    async def post_voting_config_exclusions(self, params=None, headers=None):
+        """
+        Updates the cluster voting config exclusions by node ids or node names.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/voting-config-exclusions.html>`_
+
+        :arg node_ids: A comma-separated list of the persistent ids of
+            the nodes to exclude from the voting configuration. If specified, you
+            may not also specify ?node_names.
+        :arg node_names: A comma-separated list of the names of the
+            nodes to exclude from the voting configuration. If specified, you may
+            not also specify ?node_ids.
+        :arg timeout: Explicit operation timeout  Default: 30s
+        """
+        return await self.transport.perform_request(
+            "POST", "/_cluster/voting_config_exclusions", params=params, headers=headers
         )

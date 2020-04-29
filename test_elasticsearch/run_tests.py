@@ -1,12 +1,14 @@
 #!/usr/bin/env python
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
 from __future__ import print_function
 
 import sys
 from os import environ
 from os.path import dirname, join, pardir, abspath, exists
 import subprocess
-
-import nose
 
 
 def fetch_es_repo():
@@ -66,19 +68,25 @@ def run_all(argv=None):
 
     # always insert coverage when running tests
     if argv is None:
+        junit_xml = join(
+            abspath(dirname(dirname(__file__))), "junit", "elasticsearch-py-junit.xml"
+        )
         argv = [
-            "nosetests",
-            "--with-xunit",
-            "--with-xcoverage",
-            "--cover-package=elasticsearch",
-            "--cover-erase",
-            "--logging-filter=elasticsearch",
-            "--logging-level=DEBUG",
-            "--verbose",
-            "--with-id",
+            "pytest",
+            "--cov=elasticsearch",
+            "--junitxml=%s" % junit_xml,
+            "--log-level=DEBUG",
+            "--cache-clear",
+            "-vv",
+            abspath(dirname(__file__)),
         ]
 
-    nose.run_exit(argv=argv, defaultTest=abspath(dirname(__file__)))
+    exit_code = 0
+    try:
+        subprocess.check_call(argv, stdout=sys.stdout, stderr=sys.stderr)
+    except subprocess.CalledProcessError as e:
+        exit_code = e.returncode
+    sys.exit(exit_code)
 
 
 if __name__ == "__main__":

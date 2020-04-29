@@ -1,4 +1,4 @@
-// indices/templates.asciidoc:138
+// indices/templates.asciidoc:136
 
 [source, python]
 ----

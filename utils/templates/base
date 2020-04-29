@@ -12,7 +12,7 @@
 
         {% for p, info in api.params %}
         {% filter wordwrap(72, wrapstring="\n            ") %}
-        :arg {{ p }}: {{ info.description }} {% if info.options %}  Valid choices: {{ info.options|join(", ") }}{% endif %} {% if info.default %}  Default: {{ info.default }}{% endif %}
+        :arg {{ 'from\\\\_' if p == 'from_' else p }}: {{ info.description }} {% if info.options %}  Valid choices: {{ info.options|join(", ") }}{% endif %} {% if info.default %}  Default: {{ info.default }}{% endif %}
         {% endfilter %}
 
         {% endfor %}

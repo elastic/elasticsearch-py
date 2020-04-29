@@ -1,3 +1,7 @@
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
 from .utils import NamespacedClient, query_params
 
 
@@ -10,7 +14,7 @@ class XPackClient(NamespacedClient):
     def info(self, params=None, headers=None):
         """
         Retrieves information about the installed X-Pack features.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/info-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/info-api.html>`_
 
         :arg categories: Comma-separated list of info categories. Can be
             any of: build, license, features
@@ -23,7 +27,7 @@ class XPackClient(NamespacedClient):
     def usage(self, params=None, headers=None):
         """
         Retrieves usage information about the installed X-Pack features.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/usage-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/usage-api.html>`_
 
         :arg master_timeout: Specify timeout for watch write operation
         """

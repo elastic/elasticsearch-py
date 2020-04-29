@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+# Licensed to Elasticsearch B.V under one or more agreements.
+# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
+# See the LICENSE file in the project root for more information
+
 from __future__ import unicode_literals
 import logging
 
@@ -222,7 +226,6 @@ class Elasticsearch(object):
             return super(Elasticsearch, self).__repr__()
 
     def __enter__(self):
-        self.transport._async_start()
         return self
 
     def __exit__(self, *_):
@@ -234,6 +237,7 @@ class Elasticsearch(object):
         "_source_excludes",
         "_source_includes",
         "pipeline",
+        "prefer_v2_templates",
         "refresh",
         "routing",
         "timeout",
@@ -258,6 +262,8 @@ class Elasticsearch(object):
             return from the _source field, can be overridden on each sub-request
         :arg pipeline: The pipeline id to preprocess incoming documents
             with
+        :arg prefer_v2_templates: favor V2 templates instead of V1
+            templates during automatic index creation
         :arg refresh: If `true` then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then
@@ -366,6 +372,7 @@ class Elasticsearch(object):
 
     @query_params(
         "pipeline",
+        "prefer_v2_templates",
         "refresh",
         "routing",
         "timeout",
@@ -385,6 +392,8 @@ class Elasticsearch(object):
         :arg doc_type: The type of the document
         :arg pipeline: The pipeline id to preprocess incoming documents
             with
+        :arg prefer_v2_templates: favor V2 templates instead of V1
+            templates during automatic index creation
         :arg refresh: If `true` then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then
@@ -530,7 +539,7 @@ class Elasticsearch(object):
         :arg expand_wildcards: Whether to expand wildcard expression to
             concrete indices that are open, closed or both.  Valid choices: open,
             closed, hidden, none, all  Default: open
-        :arg from_: Starting offset (default: 0)
+        :arg from\\_: Starting offset (default: 0)
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         :arg lenient: Specify whether format-based query failures (such
@@ -597,7 +606,7 @@ class Elasticsearch(object):
         """
         Changes the number of requests per second for a particular Delete By Query
         operation.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-delete-by-query.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-delete-by-query.html>`_
 
         :arg task_id: The task id to rethrottle
         :arg requests_per_second: The throttle to set on this request in
@@ -941,6 +950,7 @@ class Elasticsearch(object):
         "if_seq_no",
         "op_type",
         "pipeline",
+        "prefer_v2_templates",
         "refresh",
         "routing",
         "timeout",
@@ -967,6 +977,8 @@ class Elasticsearch(object):
             without an explicit document ID  Valid choices: index, create
         :arg pipeline: The pipeline id to preprocess incoming documents
             with
+        :arg prefer_v2_templates: favor V2 templates instead of V1
+            templates during automatic index creation
         :arg refresh: If `true` then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then
@@ -998,7 +1010,7 @@ class Elasticsearch(object):
     def info(self, params=None, headers=None):
         """
         Returns basic information about the cluster.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/index.html>`_
         """
         return self.transport.perform_request(
             "GET", "/", params=params, headers=headers
@@ -1114,7 +1126,7 @@ class Elasticsearch(object):
     def msearch_template(self, body, index=None, params=None, headers=None):
         """
         Allows to execute several search template operations in one request.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/search-multi-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-multi-search.html>`_
 
         :arg body: The request definitions (metadata-search request
             definition pairs), separated by newlines
@@ -1212,7 +1224,7 @@ class Elasticsearch(object):
     def ping(self, params=None, headers=None):
         """
         Returns whether the cluster is running.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/index.html>`_
         """
         try:
             return self.transport.perform_request(
@@ -1350,7 +1362,7 @@ class Elasticsearch(object):
     def render_search_template(self, body=None, id=None, params=None, headers=None):
         """
         Allows to use the Mustache language to pre-render a search definition.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html#_validating_templates>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-template.html#_validating_templates>`_
 
         :arg body: The search definition template and its params
         :arg id: The id of the stored search template
@@ -1490,7 +1502,7 @@ class Elasticsearch(object):
             closed, hidden, none, all  Default: open
         :arg explain: Specify whether to return detailed information
             about score computation as part of a hit
-        :arg from_: Starting offset (default: 0)
+        :arg from\\_: Starting offset (default: 0)
         :arg ignore_throttled: Whether specified concrete, expanded or
             aliased indices should be ignored when throttled
         :arg ignore_unavailable: Whether specified concrete indices
@@ -1611,7 +1623,7 @@ class Elasticsearch(object):
     def search_template(self, body, index=None, params=None, headers=None):
         """
         Allows to use the Mustache language to pre-render a search definition.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-template.html>`_
 
         :arg body: The search definition template and its params
         :arg index: A comma-separated list of index names to search; use
@@ -1719,6 +1731,7 @@ class Elasticsearch(object):
         "if_primary_term",
         "if_seq_no",
         "lang",
+        "prefer_v2_templates",
         "refresh",
         "retry_on_conflict",
         "routing",
@@ -1748,6 +1761,8 @@ class Elasticsearch(object):
             operation that has changed the document has the specified sequence
             number
         :arg lang: The script language (default: painless)
+        :arg prefer_v2_templates: favor V2 templates instead of V1
+            templates during automatic index creation
         :arg refresh: If `true` then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then
@@ -1841,7 +1856,7 @@ class Elasticsearch(object):
         :arg expand_wildcards: Whether to expand wildcard expression to
             concrete indices that are open, closed or both.  Valid choices: open,
             closed, hidden, none, all  Default: open
-        :arg from_: Starting offset (default: 0)
+        :arg from\\_: Starting offset (default: 0)
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         :arg lenient: Specify whether format-based query failures (such
@@ -1911,7 +1926,7 @@ class Elasticsearch(object):
         """
         Changes the number of requests per second for a particular Update By Query
         operation.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update-by-query.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-update-by-query.html>`_
 
         :arg task_id: The task id to rethrottle
         :arg requests_per_second: The throttle to set on this request in
