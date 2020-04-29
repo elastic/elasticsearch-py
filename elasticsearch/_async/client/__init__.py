@@ -229,6 +229,9 @@ class Elasticsearch(object):
         return self
 
     async def __aexit__(self, *_):
+        await self.close()
+
+    async def close(self):
         await self.transport.close()
 
     # AUTO-GENERATED-API-DEFINITIONS #

@@ -5,6 +5,7 @@
 import asyncio
 import ssl
 import os
+import urllib3
 import warnings
 
 import aiohttp
@@ -25,6 +26,7 @@ from ..exceptions import (
 # This is used to detect if a user is passing in a value
 # for SSL kwargs if also using an SSLContext.
 VERIFY_CERTS_DEFAULT = object()
+SSL_SHOW_WARN_DEFAULT = object()
 
 CA_CERTS = None
 
@@ -43,7 +45,8 @@ class AIOHttpConnection(Connection):
         port=None,
         http_auth=None,
         use_ssl=False,
-        verify_certs=True,
+        verify_certs=VERIFY_CERTS_DEFAULT,
+        ssl_show_warn=SSL_SHOW_WARN_DEFAULT,
         ca_certs=None,
         client_cert=None,
         client_key=None,
@@ -74,15 +77,14 @@ class AIOHttpConnection(Connection):
         )
 
         if http_auth is not None:
-            if isinstance(http_auth, str):
-                http_auth = tuple(http_auth.split(":", 1))
-
             if isinstance(http_auth, (tuple, list)):
-                http_auth = aiohttp.BasicAuth(*http_auth)
+                http_auth = ":".join(http_auth)
+            self.headers.update(urllib3.make_headers(basic_auth=http_auth))
 
         # if providing an SSL context, raise error if any other SSL related flag is used
         if ssl_context and (
             (verify_certs is not VERIFY_CERTS_DEFAULT)
+            or (ssl_show_warn is not SSL_SHOW_WARN_DEFAULT)
             or ca_certs
             or client_cert
             or client_key
@@ -100,6 +102,8 @@ class AIOHttpConnection(Connection):
             # values if not using an SSLContext.
             if verify_certs is VERIFY_CERTS_DEFAULT:
                 verify_certs = True
+            if ssl_show_warn is SSL_SHOW_WARN_DEFAULT:
+                ssl_show_warn = True
 
             ca_certs = CA_CERTS if ca_certs is None else ca_certs
             if verify_certs:
@@ -109,6 +113,13 @@ class AIOHttpConnection(Connection):
                         "validation. Either pass them in using the ca_certs parameter or "
                         "install certifi to use it automatically."
                     )
+            else:
+                if ssl_show_warn:
+                    warnings.warn(
+                        "Connecting to %s using SSL with verify_certs=False is insecure."
+                        % self.host
+                    )
+
             if os.path.isfile(ca_certs):
                 ssl_context.load_verify_locations(cafile=ca_certs)
             elif os.path.isdir(ca_certs):
@@ -180,7 +191,7 @@ class AIOHttpConnection(Connection):
                     await response.release()
                     raw_data = ""
                 else:
-                    raw_data = await response.text()
+                    raw_data = (await response.read()).decode("utf-8", "surrogatepass")
                 duration = self.loop.time() - start
 
         # We want to reraise a cancellation.
