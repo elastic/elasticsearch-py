@@ -15,4 +15,4 @@ pandas
 pyyaml<5.3
 
 black; python_version>="3.6"
-git+https://github.com/python-trio/unasync
+unasync

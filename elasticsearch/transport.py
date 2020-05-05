@@ -6,7 +6,7 @@ import time
 from itertools import chain
 
 from .connection import Urllib3HttpConnection
-from .connection_pool import ConnectionPool, DummyConnectionPool
+from .connection_pool import ConnectionPool, DummyConnectionPool, EmptyConnectionPool
 from .serializer import JSONSerializer, Deserializer, DEFAULT_SERIALIZERS
 from .exceptions import (
     ConnectionError,
@@ -134,6 +134,11 @@ class Transport(object):
         # ...save kwargs to be passed to the connections
         self.kwargs = kwargs
         self.hosts = hosts
+
+        # Start with an empty pool specifically for `AsyncTransport`.
+        # It should never be used, will be replaced on first call to
+        # .set_connections()
+        self.connection_pool = EmptyConnectionPool()
 
         if hosts:
             # ...and instantiate them

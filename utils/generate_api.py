@@ -303,22 +303,27 @@ def dump_modules(modules):
         mod.dump()
 
     # Unasync all the generated async code
-    rule = unasync.Rule(
-        fromdir="elasticsearch/_async/client",
-        todir="elasticsearch/client",
-        replacements={
-            # We want to rewrite to 'Transport' instead of 'SyncTransport'
-            "AsyncTransport": "Transport",
-            # We don't want to rewrite this class
-            "AsyncSearchClient": "AsyncSearchClient",
-        }
-    )
-    for root, _, filenames in os.walk(CODE_ROOT / "elasticsearch/_async/client"):
+    rules = [
+        unasync.Rule(
+            fromdir="elasticsearch/_async/client",
+            todir="elasticsearch/client",
+            additional_replacements={
+                # We want to rewrite to 'Transport' instead of 'SyncTransport'
+                "AsyncTransport": "Transport",
+                # We don't want to rewrite this class
+                "AsyncSearchClient": "AsyncSearchClient",
+            }
+        ),
+    ]
+
+    filepaths = []
+    for root, _, filenames in os.walk(CODE_ROOT / "elasticsearch/_async"):
         for filename in filenames:
             if filename.endswith(".py") and filename != "utils.py":
-                rule.unasync_file(os.path.join(root, filename))
+                filepaths.append(os.path.join(root, filename))
 
-    blacken(CODE_ROOT / "elasticsearch/client")
+    unasync.unasync_files(filepaths, rules)
+    blacken(CODE_ROOT / "elasticsearch")
 
 
 if __name__ == "__main__":
