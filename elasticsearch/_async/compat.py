@@ -26,22 +26,17 @@ def get_sleep():
 
     async def sleep(duration):
         await asyncio.sleep(duration, loop=loop)
+
     return sleep
 
 
 def azip(*iterables):
-    print("AZIP", iterables)
     iterators = [aiter(x) for x in iterables]
-    print("AZIPTOR", iterators)
 
     async def generator():
         while True:
             try:
-                tuple_items = []
-                for iterator in iterators:
-                    tuple_items.append(await iterator.__anext__())
-                print("azip tuple", tuple_items)
-                yield tuple(tuple_items)
+                yield tuple([await i.__anext__() for i in iterators])
             except StopAsyncIteration:
                 break
 

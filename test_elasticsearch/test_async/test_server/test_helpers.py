@@ -95,15 +95,18 @@ class TestStreamingBulk:
             {"_index": "i", "_id": 42, "f": "v"},
         ]
 
-        results = [x async for x in (
-            helpers.async_streaming_bulk(
-                failing_client,
-                docs,
-                raise_on_exception=False,
-                raise_on_error=False,
-                chunk_size=1,
+        results = [
+            x
+            async for x in (
+                helpers.async_streaming_bulk(
+                    failing_client,
+                    docs,
+                    raise_on_exception=False,
+                    raise_on_error=False,
+                    chunk_size=1,
+                )
             )
-        )]
+        ]
         assert 3 == len(results)
         assert [True, False, True] == [r[0] for r in results]
 
@@ -129,8 +132,9 @@ class TestStreamingBulk:
             {"_index": "i", "_id": 45, "f": "v"},
             {"_index": "i", "_id": 42, "f": "v"},
         ]
-        results = [doc async for doc in
-            helpers.async_streaming_bulk(
+        results = [
+            doc
+            async for doc in helpers.async_streaming_bulk(
                 failing_client,
                 docs,
                 raise_on_exception=False,
@@ -159,8 +163,9 @@ class TestStreamingBulk:
             {"_index": "i", "_id": 45, "f": "v"},
             {"_index": "i", "_id": 42, "f": "v"},
         ]
-        results = [doc async for doc in
-            helpers.async_streaming_bulk(
+        results = [
+            doc
+            async for doc in helpers.async_streaming_bulk(
                 failing_client,
                 docs,
                 raise_on_exception=False,
@@ -185,8 +190,9 @@ class TestStreamingBulk:
         )
 
         async def streaming_bulk():
-            results = [doc async for doc in
-                helpers.async_streaming_bulk(
+            results = [
+                doc
+                async for doc in helpers.async_streaming_bulk(
                     failing_client,
                     [{"a": 42}, {"a": 39}],
                     raise_on_exception=True,
@@ -440,9 +446,7 @@ class TestScan:
             client_mock.search.return_value = {"no": "_scroll_id"}
             data = [
                 doc
-                async for doc in (
-                    helpers.async_scan(async_client, index="test_index")
-                )
+                async for doc in (helpers.async_scan(async_client, index="test_index"))
             ]
 
             assert data == []
@@ -562,11 +566,9 @@ class TestReindex:
             == (await async_client.count(index="prod_index", q="type:answers"))["count"]
         )
 
-        assert {
-            "answer": 42,
-            "correct": True,
-            "type": "answers",
-        } == (await async_client.get(index="prod_index", id=42))["_source"]
+        assert {"answer": 42, "correct": True, "type": "answers",} == (
+            await async_client.get(index="prod_index", id=42)
+        )["_source"]
 
     async def test_reindex_accepts_a_query(self, async_client, reindex_fixture):
         await helpers.async_reindex(
@@ -583,11 +585,9 @@ class TestReindex:
             == (await async_client.count(index="prod_index", q="type:answers"))["count"]
         )
 
-        assert {
-            "answer": 42,
-            "correct": True,
-            "type": "answers",
-        } == (await async_client.get(index="prod_index", id=42))["_source"]
+        assert {"answer": 42, "correct": True, "type": "answers",} == (
+            await async_client.get(index="prod_index", id=42)
+        )["_source"]
 
     async def test_all_documents_get_moved(self, async_client, reindex_fixture):
         await helpers.async_reindex(async_client, "test_index", "prod_index")
@@ -596,18 +596,18 @@ class TestReindex:
         assert await async_client.indices.exists("prod_index")
         assert (
             50
-            == (await async_client.count(index="prod_index", q="type:questions"))["count"]
+            == (await async_client.count(index="prod_index", q="type:questions"))[
+                "count"
+            ]
         )
         assert (
             50
             == (await async_client.count(index="prod_index", q="type:answers"))["count"]
         )
 
-        assert {
-            "answer": 42,
-            "correct": True,
-            "type": "answers",
-        } == (await async_client.get(index="prod_index", id=42))["_source"]
+        assert {"answer": 42, "correct": True, "type": "answers",} == (
+            await async_client.get(index="prod_index", id=42)
+        )["_source"]
 
 
 @pytest.fixture(scope="function")

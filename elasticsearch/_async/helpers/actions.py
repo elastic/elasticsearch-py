@@ -115,7 +115,6 @@ async def _process_bulk_chunk(
     """
     Send a bulk request to elasticsearch and process the output.
     """
-    print("BULK DATA", bulk_data)
     # if raise on error is set, we need to collect errors per chunk before raising them
     errors = []
 
@@ -226,7 +225,10 @@ def streaming_bulk(
 
     async def generator():
         async for bulk_data, bulk_actions in _chunk_actions(
-            actions_generator(), chunk_size, max_chunk_bytes, client.transport.serializer
+            aiter(actions_generator()),
+            chunk_size,
+            max_chunk_bytes,
+            client.transport.serializer,
         ):
 
             for attempt in range(max_retries + 1):
@@ -235,17 +237,18 @@ def streaming_bulk(
                     await sleep(min(max_backoff, initial_backoff * 2 ** (attempt - 1)))
 
                 try:
-                    print("before zip", bulk_actions, bulk_data)
-                    async for data, (ok, info) in azip(bulk_actions, _process_bulk_chunk(
-                        client,
-                        bulk_actions,
+                    async for data, (ok, info) in azip(
                         bulk_data,
-                        raise_on_exception,
-                        raise_on_error,
-                        *args,
-                        **kwargs
-                    )):
-                        print("zipped", data, ok, info)
+                        _process_bulk_chunk(
+                            client,
+                            bulk_actions,
+                            bulk_data,
+                            raise_on_exception,
+                            raise_on_error,
+                            *args,
+                            **kwargs
+                        ),
+                    ):
                         if not ok:
                             action, info = info.popitem()
                             # retry if retries enabled, we get 429, and we are not
@@ -257,7 +260,6 @@ def streaming_bulk(
                             ):
                                 # _process_bulk_chunk expects strings so we need to
                                 # re-serialize the data
-                                print("RETRY", data)
                                 to_retry.extend(
                                     map(client.transport.serializer.dumps, data)
                                 )
@@ -442,6 +444,7 @@ def scan(
         )
 
     """
+
     async def generator(query, scroll_kwargs):
         scroll_kwargs = scroll_kwargs or {}
 
@@ -451,7 +454,11 @@ def scan(
 
         # initial search
         resp = await client.search(
-            body=query, scroll=scroll, size=size, request_timeout=request_timeout, **kwargs
+            body=query,
+            scroll=scroll,
+            size=size,
+            request_timeout=request_timeout,
+            **kwargs
         )
         scroll_id = resp.get("_scroll_id")
 
@@ -487,7 +494,9 @@ def scan(
 
         finally:
             if scroll_id and clear_scroll:
-                await client.clear_scroll(body={"scroll_id": [scroll_id]}, ignore=(404,))
+                await client.clear_scroll(
+                    body={"scroll_id": [scroll_id]}, ignore=(404,)
+                )
 
     return aiter(generator(query, scroll_kwargs))
 

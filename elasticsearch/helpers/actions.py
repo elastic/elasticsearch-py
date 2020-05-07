@@ -2,16 +2,13 @@
 # Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 # See the LICENSE file in the project root for more information
 
-from operator import methodcaller
-import time
-
-from ..exceptions import TransportError
-from ..compat import map, string_types, Queue, zip
-
-from .errors import ScanError, BulkIndexError
-
 import logging
+from operator import methodcaller
 
+from ..compat import map, string_types, Queue, iter, zip, get_sleep
+
+from elasticsearch.exceptions import TransportError
+from elasticsearch.helpers.errors import ScanError, BulkIndexError
 
 logger = logging.getLogger("elasticsearch.helpers")
 
@@ -120,7 +117,6 @@ def _process_bulk_chunk(
     """
     # if raise on error is set, we need to collect errors per chunk before raising them
     errors = []
-    print("SYNC BULK DATA", bulk_data)
 
     try:
         # send the actual request
@@ -221,62 +217,69 @@ def streaming_bulk(
     :arg max_backoff: maximum number of seconds a retry will wait
     :arg yield_ok: if set to False will skip successful documents in the output
     """
-    actions = map(expand_action_callback, actions)
+    sleep = get_sleep()
 
-    for bulk_data, bulk_actions in _chunk_actions(
-        actions, chunk_size, max_chunk_bytes, client.transport.serializer
-    ):
+    def actions_generator():
+        for action in iter(actions):
+            yield expand_action_callback(action)
 
-        for attempt in range(max_retries + 1):
-            to_retry, to_retry_data = [], []
-            if attempt:
-                time.sleep(min(max_backoff, initial_backoff * 2 ** (attempt - 1)))
+    def generator():
+        for bulk_data, bulk_actions in _chunk_actions(
+            iter(actions_generator()),
+            chunk_size,
+            max_chunk_bytes,
+            client.transport.serializer,
+        ):
 
-            try:
-                print("before zip", bulk_actions, bulk_data)
-                for data, (ok, info) in zip(
-                    bulk_data,
-                    _process_bulk_chunk(
-                        client,
-                        bulk_actions,
+            for attempt in range(max_retries + 1):
+                to_retry, to_retry_data = [], []
+                if attempt:
+                    sleep(min(max_backoff, initial_backoff * 2 ** (attempt - 1)))
+
+                try:
+                    for data, (ok, info) in zip(
                         bulk_data,
-                        raise_on_exception,
-                        raise_on_error,
-                        *args,
-                        **kwargs
-                    ),
-                ):
-                    print("zipped", data, ok, info)
-                    if not ok:
-                        action, info = info.popitem()
-                        # retry if retries enabled, we get 429, and we are not
-                        # in the last attempt
-                        if (
-                            max_retries
-                            and info["status"] == 429
-                            and (attempt + 1) <= max_retries
-                        ):
-                            # _process_bulk_chunk expects strings so we need to
-                            # re-serialize the data
-                            print("RETRY", data)
-                            to_retry.extend(
-                                map(client.transport.serializer.dumps, data)
-                            )
-                            to_retry_data.append(data)
-                        else:
-                            yield ok, {action: info}
-                    elif yield_ok:
-                        yield ok, info
+                        _process_bulk_chunk(
+                            client,
+                            bulk_actions,
+                            bulk_data,
+                            raise_on_exception,
+                            raise_on_error,
+                            *args,
+                            **kwargs
+                        ),
+                    ):
+                        if not ok:
+                            action, info = info.popitem()
+                            # retry if retries enabled, we get 429, and we are not
+                            # in the last attempt
+                            if (
+                                max_retries
+                                and info["status"] == 429
+                                and (attempt + 1) <= max_retries
+                            ):
+                                # _process_bulk_chunk expects strings so we need to
+                                # re-serialize the data
+                                to_retry.extend(
+                                    map(client.transport.serializer.dumps, data)
+                                )
+                                to_retry_data.append(data)
+                            else:
+                                yield ok, {action: info}
+                        elif yield_ok:
+                            yield ok, info
 
-            except TransportError as e:
-                # suppress 429 errors since we will retry them
-                if attempt == max_retries or e.status_code != 429:
-                    raise
-            else:
-                if not to_retry:
-                    break
-                # retry only subset of documents that didn't succeed
-                bulk_actions, bulk_data = to_retry, to_retry_data
+                except TransportError as e:
+                    # suppress 429 errors since we will retry them
+                    if attempt == max_retries or e.status_code != 429:
+                        raise
+                else:
+                    if not to_retry:
+                        break
+                    # retry only subset of documents that didn't succeed
+                    bulk_actions, bulk_data = to_retry, to_retry_data
+
+    return iter(generator())
 
 
 def bulk(client, actions, stats_only=False, *args, **kwargs):
@@ -340,7 +343,7 @@ def parallel_bulk(
     """
     Parallel version of the bulk helper run in multiple threads at once.
 
-    :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use
+    :arg client:  instance of :class:`~elasticsearch.Elasticsearch` to use
     :arg actions: iterator containing the actions
     :arg thread_count: size of the threadpool to use for the bulk requests
     :arg chunk_size: number of docs in one chunk sent to es (default: 500)
@@ -441,51 +444,59 @@ def scan(
         )
 
     """
-    scroll_kwargs = scroll_kwargs or {}
 
-    if not preserve_order:
-        query = query.copy() if query else {}
-        query["sort"] = "_doc"
+    def generator(query, scroll_kwargs):
+        scroll_kwargs = scroll_kwargs or {}
 
-    # initial search
-    resp = client.search(
-        body=query, scroll=scroll, size=size, request_timeout=request_timeout, **kwargs
-    )
-    scroll_id = resp.get("_scroll_id")
+        if not preserve_order:
+            query = query.copy() if query else {}
+            query["sort"] = "_doc"
 
-    try:
-        while scroll_id and resp["hits"]["hits"]:
-            for hit in resp["hits"]["hits"]:
-                yield hit
+        # initial search
+        resp = client.search(
+            body=query,
+            scroll=scroll,
+            size=size,
+            request_timeout=request_timeout,
+            **kwargs
+        )
+        scroll_id = resp.get("_scroll_id")
 
-            # check if we have any errors
-            if (resp["_shards"]["successful"] + resp["_shards"]["skipped"]) < resp[
-                "_shards"
-            ]["total"]:
-                logger.warning(
-                    "Scroll request has only succeeded on %d (+%d skipped) shards out of %d.",
-                    resp["_shards"]["successful"],
-                    resp["_shards"]["skipped"],
-                    resp["_shards"]["total"],
-                )
-                if raise_on_error:
-                    raise ScanError(
-                        scroll_id,
-                        "Scroll request has only succeeded on %d (+%d skiped) shards out of %d."
-                        % (
-                            resp["_shards"]["successful"],
-                            resp["_shards"]["skipped"],
-                            resp["_shards"]["total"],
-                        ),
+        try:
+            while scroll_id and resp["hits"]["hits"]:
+                for hit in resp["hits"]["hits"]:
+                    yield hit
+
+                # check if we have any errors
+                if (resp["_shards"]["successful"] + resp["_shards"]["skipped"]) < resp[
+                    "_shards"
+                ]["total"]:
+                    logger.warning(
+                        "Scroll request has only succeeded on %d (+%d skipped) shards out of %d.",
+                        resp["_shards"]["successful"],
+                        resp["_shards"]["skipped"],
+                        resp["_shards"]["total"],
                     )
-            resp = client.scroll(
-                body={"scroll_id": scroll_id, "scroll": scroll}, **scroll_kwargs
-            )
-            scroll_id = resp.get("_scroll_id")
+                    if raise_on_error:
+                        raise ScanError(
+                            scroll_id,
+                            "Scroll request has only succeeded on %d (+%d skiped) shards out of %d."
+                            % (
+                                resp["_shards"]["successful"],
+                                resp["_shards"]["skipped"],
+                                resp["_shards"]["total"],
+                            ),
+                        )
+                resp = client.scroll(
+                    body={"scroll_id": scroll_id, "scroll": scroll}, **scroll_kwargs
+                )
+                scroll_id = resp.get("_scroll_id")
 
-    finally:
-        if scroll_id and clear_scroll:
-            client.clear_scroll(body={"scroll_id": [scroll_id]}, ignore=(404,))
+        finally:
+            if scroll_id and clear_scroll:
+                client.clear_scroll(body={"scroll_id": [scroll_id]}, ignore=(404,))
+
+    return iter(generator(query, scroll_kwargs))
 
 
 def reindex(

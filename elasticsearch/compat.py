@@ -17,31 +17,13 @@ else:
     string_types = str, bytes
     from urllib.parse import quote, quote_plus, urlencode, urlparse, unquote
 
+    zip = zip
     map = map
     from queue import Queue
 
 
 def get_sleep():
     return time.sleep
-
-
-def zip(*iterables):
-    print("ZIP", iterables)
-    iterators = [iter(x) for x in iterables]
-    print("ZIPTOR", iterators)
-
-    def generator():
-        while True:
-            try:
-                tuple_items = []
-                for iterator in iterators:
-                    tuple_items.append(iterator.__next__())
-                print("zip tuple", tuple_items)
-                yield tuple(tuple_items)
-            except StopIteration:
-                break
-
-    return generator().__iter__()
 
 
 # These match against 'anext' and 'aiter'

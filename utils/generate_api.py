@@ -299,8 +299,8 @@ def read_modules():
 
 
 def dump_modules(modules):
-    #for mod in modules.values():
-    #    mod.dump()
+    for mod in modules.values():
+        mod.dump()
 
     # Unasync all the generated async code
     additional_replacements = {
