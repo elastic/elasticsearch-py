@@ -3,7 +3,7 @@
 # See the LICENSE file in the project root for more information
 
 import pytest
-from mock import patch
+from mock import patch, Mock
 
 from elasticsearch import helpers, TransportError
 from elasticsearch.helpers import ScanError
@@ -312,20 +312,29 @@ async def scan_fixture(async_client):
     await async_client.clear_scroll(scroll_id="_all")
 
 
-class TestScan:
-    mock_scroll_responses = [
-        {
-            "_scroll_id": "dummy_id",
-            "_shards": {"successful": 4, "total": 5, "skipped": 0},
-            "hits": {"hits": [{"scroll_data": 42}]},
-        },
-        {
-            "_scroll_id": "dummy_id",
-            "_shards": {"successful": 4, "total": 5, "skipped": 0},
-            "hits": {"hits": []},
-        },
-    ]
+class MockScroll:
+    def __init__(self):
+        self.i = 0
+        self.values = [
+            {
+                "_scroll_id": "dummy_id",
+                "_shards": {"successful": 4, "total": 5, "skipped": 0},
+                "hits": {"hits": [{"scroll_data": 42}]},
+            },
+            {
+                "_scroll_id": "dummy_id",
+                "_shards": {"successful": 4, "total": 5, "skipped": 0},
+                "hits": {"hits": []},
+            },
+        ]
 
+    async def scroll(self, *args, **kwargs):
+        val = self.values[self.i]
+        self.i += 1
+        return val
+
+
+class TestScan:
     async def test_order_can_be_preserved(self, async_client, scan_fixture):
         bulk = []
         for x in range(100):
@@ -373,7 +382,7 @@ class TestScan:
         await async_client.bulk(bulk, refresh=True)
 
         with patch.object(async_client, "scroll") as scroll_mock:
-            scroll_mock.side_effect = self.mock_scroll_responses
+            scroll_mock.side_effect = MockScroll().scroll
             data = [
                 doc
                 async for doc in (
@@ -389,7 +398,7 @@ class TestScan:
             assert len(data) == 3
             assert data[-1] == {"scroll_data": 42}
 
-            scroll_mock.side_effect = self.mock_scroll_responses
+            scroll_mock.side_effect = MockScroll().scroll
             with pytest.raises(ScanError):
                 data = [
                     doc
@@ -406,54 +415,62 @@ class TestScan:
             assert len(data) == 3
             assert data[-1] == {"scroll_data": 42}
 
-    async def test_initial_search_error(self, async_client, scan_fixture):
-        with patch.object(self, "client") as client_mock:
-            client_mock.search.return_value = {
+    async def test_initial_search_error(self):
+        client_mock = Mock()
+
+        async def search_mock(*_, **__):
+            return {
                 "_scroll_id": "dummy_id",
                 "_shards": {"successful": 4, "total": 5, "skipped": 0},
                 "hits": {"hits": [{"search_data": 1}]},
             }
-            client_mock.scroll.side_effect = self.mock_scroll_responses
 
+        async def clear_scroll(*_, **__):
+            return {}
+
+        client_mock.search = search_mock
+        client_mock.scroll = MockScroll().scroll
+        client_mock.clear_scroll = clear_scroll
+
+        data = [
+            doc
+            async for doc in (
+                helpers.async_scan(
+                    client_mock, index="test_index", size=2, raise_on_error=False
+                )
+            )
+        ]
+        assert data == [{"search_data": 1}, {"scroll_data": 42}]
+
+        client_mock.scroll = MockScroll().scroll
+        with pytest.raises(ScanError):
             data = [
                 doc
                 async for doc in (
                     helpers.async_scan(
-                        async_client, index="test_index", size=2, raise_on_error=False
+                        client_mock, index="test_index", size=2, raise_on_error=True,
                     )
                 )
             ]
-            assert data == [{"search_data": 1}, {"scroll_data": 42}]
+            assert data == [{"search_data": 1}]
+            scroll_mock.assert_not_called()
 
-            client_mock.scroll.side_effect = self.mock_scroll_responses
-            with pytest.raises(ScanError):
-                data = [
-                    doc
-                    async for doc in (
-                        helpers.async_scan(
-                            async_client,
-                            index="test_index",
-                            size=2,
-                            raise_on_error=True,
-                        )
-                    )
-                ]
-                assert data == [{"search_data": 1}]
-                client_mock.scroll.assert_not_called()
+    async def test_no_scroll_id_fast_route(self):
+        client_mock = Mock()
 
-    async def test_no_scroll_id_fast_route(self, async_client, scan_fixture):
-        with patch.object(self, "client") as client_mock:
-            client_mock.search.return_value = {"no": "_scroll_id"}
-            data = [
-                doc
-                async for doc in (helpers.async_scan(async_client, index="test_index"))
-            ]
+        async def search_mock(*args, **kwargs):
+            return {"no": "_scroll_id"}
 
-            assert data == []
-            client_mock.scroll.assert_not_called()
-            client_mock.clear_scroll.assert_not_called()
+        client_mock.search = search_mock
+        data = [
+            doc async for doc in (helpers.async_scan(client_mock, index="test_index"))
+        ]
 
-    @patch("elasticsearch.helpers.actions.logger")
+        assert data == []
+        client_mock.scroll.assert_not_called()
+        client_mock.clear_scroll.assert_not_called()
+
+    @patch("elasticsearch._async.helpers.actions.logger")
     async def test_logger(self, logger_mock, async_client, scan_fixture):
         bulk = []
         for x in range(4):
@@ -462,7 +479,7 @@ class TestScan:
         await async_client.bulk(bulk, refresh=True)
 
         with patch.object(async_client, "scroll") as scroll_mock:
-            scroll_mock.side_effect = self.mock_scroll_responses
+            scroll_mock.side_effect = MockScroll().scroll
             _ = [
                 doc
                 async for doc in (
@@ -477,7 +494,7 @@ class TestScan:
             ]
             logger_mock.warning.assert_called()
 
-            scroll_mock.side_effect = self.mock_scroll_responses
+            scroll_mock.side_effect = MockScroll().scroll
             try:
                 _ = [
                     doc

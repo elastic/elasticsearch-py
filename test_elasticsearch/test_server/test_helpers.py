@@ -177,8 +177,6 @@ class TestStreamingBulk(ElasticsearchTestCase):
         self.assertEqual({"value": 2, "relation": "eq"}, res["hits"]["total"])
         self.assertEqual(4, failing_client._called)
 
-        assert False
-
     def test_transport_error_is_raised_with_max_retries(self):
         failing_client = FailingBulkClient(
             self.client,

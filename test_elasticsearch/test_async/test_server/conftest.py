@@ -17,10 +17,9 @@ async def async_client():
 
     kw = {"timeout": 30, "ca_certs": ".ci/certs/ca.pem"}
     if "PYTHON_CONNECTION_CLASS" in os.environ:
-        from elasticsearch import connection
 
         kw["connection_class"] = getattr(
-            connection, os.environ["PYTHON_CONNECTION_CLASS"]
+            elasticsearch, os.environ["PYTHON_CONNECTION_CLASS"]
         )
 
     client = elasticsearch.AsyncElasticsearch(
