@@ -237,7 +237,6 @@ class AIOHttpConnection(Connection):
         a chance to set AIOHttpConnection.loop
         """
         self.session = aiohttp.ClientSession(
-            auth=self._http_auth,
             headers=self.headers,
             auto_decompress=True,
             loop=self.loop,

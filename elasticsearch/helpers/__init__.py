@@ -26,11 +26,11 @@ try:
     if sys.version_info < (3, 6):
         raise ImportError()
 
-    from .._async.actions import (
-        async_bulk as async_bulk,
-        async_scan as async_scan,
-        async_streaming_bulk as async_streaming_bulk,
-        async_reindex as async_reindex,
+    from .._async.helpers.actions import (
+        bulk as async_bulk,
+        scan as async_scan,
+        streaming_bulk as async_streaming_bulk,
+        reindex as async_reindex,
     )
 
     __all__ += [

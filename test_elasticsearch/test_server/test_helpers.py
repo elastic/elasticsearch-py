@@ -70,7 +70,7 @@ class TestStreamingBulk(ElasticsearchTestCase):
             assert False, "exception should have been raised"
 
     def test_different_op_types(self):
-        if self.es_version < (0, 90, 1):
+        if self.es_version() < (0, 90, 1):
             raise SkipTest("update supported since 0.90.1")
         self.client.index(index="i", id=45, body={})
         self.client.index(index="i", id=42, body={})
@@ -176,6 +176,8 @@ class TestStreamingBulk(ElasticsearchTestCase):
         res = self.client.search(index="i")
         self.assertEqual({"value": 2, "relation": "eq"}, res["hits"]["total"])
         self.assertEqual(4, failing_client._called)
+
+        assert False
 
     def test_transport_error_is_raised_with_max_retries(self):
         failing_client = FailingBulkClient(

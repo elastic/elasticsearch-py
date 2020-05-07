@@ -308,7 +308,7 @@ class Elasticsearch(object):
         elif scroll_id:
             params["scroll_id"] = scroll_id
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "DELETE", "/_search/scroll", params=params, headers=headers, body=body
         )
 
@@ -421,7 +421,7 @@ class Elasticsearch(object):
         else:
             path = _make_path(index, doc_type, id)
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST" if id in SKIP_IN_PATH else "PUT",
             path,
             params=params,
@@ -1001,7 +1001,7 @@ class Elasticsearch(object):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST" if id in SKIP_IN_PATH else "PUT",
             _make_path(index, "_doc", id),
             params=params,
@@ -1417,7 +1417,7 @@ class Elasticsearch(object):
         elif scroll_id:
             params["scroll_id"] = scroll_id
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST", "/_search/scroll", params=params, headers=headers, body=body
         )
 
@@ -1791,7 +1791,7 @@ class Elasticsearch(object):
         else:
             path = _make_path(index, doc_type, id, "_update")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST", path, params=params, headers=headers, body=body
         )
 

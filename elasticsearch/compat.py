@@ -3,6 +3,7 @@
 # See the LICENSE file in the project root for more information
 
 import sys
+import time
 
 PY2 = sys.version_info[0] == 2
 
@@ -10,7 +11,7 @@ if PY2:
     string_types = (basestring,)  # noqa: F821
     from urllib import quote_plus, quote, urlencode, unquote
     from urlparse import urlparse
-    from itertools import imap as map
+    from itertools import imap as map, izip as zip
     from Queue import Queue
 else:
     string_types = str, bytes
@@ -18,6 +19,34 @@ else:
 
     map = map
     from queue import Queue
+
+
+def get_sleep():
+    return time.sleep
+
+
+def zip(*iterables):
+    print("ZIP", iterables)
+    iterators = [iter(x) for x in iterables]
+    print("ZIPTOR", iterators)
+
+    def generator():
+        while True:
+            try:
+                tuple_items = []
+                for iterator in iterators:
+                    tuple_items.append(iterator.__next__())
+                print("zip tuple", tuple_items)
+                yield tuple(tuple_items)
+            except StopIteration:
+                break
+
+    return generator().__iter__()
+
+
+# These match against 'anext' and 'aiter'
+next = next
+iter = iter
 
 __all__ = [
     "string_types",
@@ -28,4 +57,6 @@ __all__ = [
     "urlparse",
     "map",
     "Queue",
+    "iter",
+    "zip",
 ]

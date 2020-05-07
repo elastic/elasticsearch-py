@@ -48,15 +48,15 @@ class ElasticsearchTestCase(TestCase):
         return get_test_client()
 
     @classmethod
-    def setUpClass(cls):
+    def setup_class(cls):
         super(ElasticsearchTestCase, cls).setUpClass()
         cls.client = cls._get_client()
 
-    def tearDown(self):
+    def teardown(self):
         super(ElasticsearchTestCase, self).tearDown()
         # Hidden indices expanded in wildcards in ES 7.7
         expand_wildcards = ["open", "closed"]
-        if self.es_version >= (7, 7):
+        if self.es_version() >= (7, 7):
             expand_wildcards.append("hidden")
 
         self.client.indices.delete(
@@ -64,7 +64,6 @@ class ElasticsearchTestCase(TestCase):
         )
         self.client.indices.delete_template(name="*", ignore=404)
 
-    @property
     def es_version(self):
         if not hasattr(self, "_es_version"):
             version_string = self.client.info()["version"]["number"]

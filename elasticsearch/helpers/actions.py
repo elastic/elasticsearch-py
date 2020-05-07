@@ -6,7 +6,7 @@ from operator import methodcaller
 import time
 
 from ..exceptions import TransportError
-from ..compat import map, string_types, Queue
+from ..compat import map, string_types, Queue, zip
 
 from .errors import ScanError, BulkIndexError
 
@@ -120,6 +120,7 @@ def _process_bulk_chunk(
     """
     # if raise on error is set, we need to collect errors per chunk before raising them
     errors = []
+    print("SYNC BULK DATA", bulk_data)
 
     try:
         # send the actual request
@@ -232,6 +233,7 @@ def streaming_bulk(
                 time.sleep(min(max_backoff, initial_backoff * 2 ** (attempt - 1)))
 
             try:
+                print("before zip", bulk_actions, bulk_data)
                 for data, (ok, info) in zip(
                     bulk_data,
                     _process_bulk_chunk(
@@ -244,7 +246,7 @@ def streaming_bulk(
                         **kwargs
                     ),
                 ):
-
+                    print("zipped", data, ok, info)
                     if not ok:
                         action, info = info.popitem()
                         # retry if retries enabled, we get 429, and we are not
@@ -256,6 +258,7 @@ def streaming_bulk(
                         ):
                             # _process_bulk_chunk expects strings so we need to
                             # re-serialize the data
+                            print("RETRY", data)
                             to_retry.extend(
                                 map(client.transport.serializer.dumps, data)
                             )

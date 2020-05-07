@@ -299,21 +299,30 @@ def read_modules():
 
 
 def dump_modules(modules):
-    for mod in modules.values():
-        mod.dump()
+    #for mod in modules.values():
+    #    mod.dump()
 
     # Unasync all the generated async code
+    additional_replacements = {
+        # We want to rewrite to 'Transport' instead of 'SyncTransport'
+        "AsyncTransport": "Transport",
+        # We don't want to rewrite this class
+        "AsyncSearchClient": "AsyncSearchClient",
+        # Iterator tools
+        "aiter": "iter",
+        "azip": "zip",
+    }
     rules = [
         unasync.Rule(
-            fromdir="elasticsearch/_async/client",
-            todir="elasticsearch/client",
-            additional_replacements={
-                # We want to rewrite to 'Transport' instead of 'SyncTransport'
-                "AsyncTransport": "Transport",
-                # We don't want to rewrite this class
-                "AsyncSearchClient": "AsyncSearchClient",
-            }
+            fromdir="/elasticsearch/_async/client/",
+            todir="/elasticsearch/client/",
+            additional_replacements=additional_replacements
         ),
+        unasync.Rule(
+            fromdir="/elasticsearch/_async/helpers/actions.py",
+            todir="/elasticsearch/helpers/actions.py",
+            additional_replacements=additional_replacements,
+        )
     ]
 
     filepaths = []

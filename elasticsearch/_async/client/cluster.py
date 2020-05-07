@@ -133,7 +133,7 @@ class ClusterClient(NamespacedClient):
             false)
         :arg timeout: Explicit operation timeout
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET",
             "/_cluster/stats"
             if node_id in SKIP_IN_PATH

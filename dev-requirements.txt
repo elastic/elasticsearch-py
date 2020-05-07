@@ -1,6 +1,7 @@
 requests>=2, <3
 pytest
 pytest-cov
+pytest-asyncio
 coverage
 mock
 nosexcover
