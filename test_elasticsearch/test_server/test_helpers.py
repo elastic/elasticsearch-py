@@ -35,7 +35,7 @@ class TestStreamingBulk(ElasticsearchTestCase):
             self.client, actions, index="test-index"
         ):
             self.assertTrue(ok)
-        self.assertEquals([{"_id": 1}, {"_id": 2}], actions)
+        self.assertEqual([{"_id": 1}, {"_id": 2}], actions)
 
     def test_all_documents_get_inserted(self):
         docs = [{"answer": x, "_id": x} for x in range(100)]
@@ -44,8 +44,8 @@ class TestStreamingBulk(ElasticsearchTestCase):
         ):
             self.assertTrue(ok)
 
-        self.assertEquals(100, self.client.count(index="test-index")["count"])
-        self.assertEquals(
+        self.assertEqual(100, self.client.count(index="test-index")["count"])
+        self.assertEqual(
             {"answer": 42}, self.client.get(index="test-index", id=42)["_source"]
         )
 
@@ -65,7 +65,7 @@ class TestStreamingBulk(ElasticsearchTestCase):
             ):
                 self.assertTrue(ok)
         except helpers.BulkIndexError as e:
-            self.assertEquals(2, len(e.errors))
+            self.assertEqual(2, len(e.errors))
         else:
             assert False, "exception should have been raised"
 
@@ -89,8 +89,8 @@ class TestStreamingBulk(ElasticsearchTestCase):
             self.assertTrue(ok)
 
         self.assertFalse(self.client.exists(index="i", id=45))
-        self.assertEquals({"answer": 42}, self.client.get(index="i", id=42)["_source"])
-        self.assertEquals({"f": "v"}, self.client.get(index="i", id=47)["_source"])
+        self.assertEqual({"answer": 42}, self.client.get(index="i", id=42)["_source"])
+        self.assertEqual({"f": "v"}, self.client.get(index="i", id=47)["_source"])
 
     def test_transport_error_can_becaught(self):
         failing_client = FailingBulkClient(self.client)
@@ -109,13 +109,13 @@ class TestStreamingBulk(ElasticsearchTestCase):
                 chunk_size=1,
             )
         )
-        self.assertEquals(3, len(results))
-        self.assertEquals([True, False, True], [r[0] for r in results])
+        self.assertEqual(3, len(results))
+        self.assertEqual([True, False, True], [r[0] for r in results])
 
         exc = results[1][1]["index"].pop("exception")
         self.assertIsInstance(exc, TransportError)
-        self.assertEquals(599, exc.status_code)
-        self.assertEquals(
+        self.assertEqual(599, exc.status_code)
+        self.assertEqual(
             {
                 "index": {
                     "_index": "i",
@@ -149,12 +149,12 @@ class TestStreamingBulk(ElasticsearchTestCase):
                 initial_backoff=0,
             )
         )
-        self.assertEquals(3, len(results))
-        self.assertEquals([True, True, True], [r[0] for r in results])
+        self.assertEqual(3, len(results))
+        self.assertEqual([True, True, True], [r[0] for r in results])
         self.client.indices.refresh(index="i")
         res = self.client.search(index="i")
-        self.assertEquals({"value": 3, "relation": "eq"}, res["hits"]["total"])
-        self.assertEquals(4, failing_client._called)
+        self.assertEqual({"value": 3, "relation": "eq"}, res["hits"]["total"])
+        self.assertEqual(4, failing_client._called)
 
     def test_rejected_documents_are_retried_at_most_max_retries_times(self):
         failing_client = FailingBulkClient(
@@ -177,12 +177,12 @@ class TestStreamingBulk(ElasticsearchTestCase):
                 initial_backoff=0,
             )
         )
-        self.assertEquals(3, len(results))
-        self.assertEquals([False, True, True], [r[0] for r in results])
+        self.assertEqual(3, len(results))
+        self.assertEqual([False, True, True], [r[0] for r in results])
         self.client.indices.refresh(index="i")
         res = self.client.search(index="i")
-        self.assertEquals({"value": 2, "relation": "eq"}, res["hits"]["total"])
-        self.assertEquals(4, failing_client._called)
+        self.assertEqual({"value": 2, "relation": "eq"}, res["hits"]["total"])
+        self.assertEqual(4, failing_client._called)
 
     def test_transport_error_is_raised_with_max_retries(self):
         failing_client = FailingBulkClient(
@@ -204,7 +204,7 @@ class TestStreamingBulk(ElasticsearchTestCase):
             return results
 
         self.assertRaises(TransportError, streaming_bulk)
-        self.assertEquals(4, failing_client._called)
+        self.assertEqual(4, failing_client._called)
 
 
 class TestBulk(ElasticsearchTestCase):
@@ -214,10 +214,10 @@ class TestBulk(ElasticsearchTestCase):
             self.client, docs, index="test-index", refresh=True
         )
 
-        self.assertEquals(1, success)
+        self.assertEqual(1, success)
         self.assertFalse(failed)
-        self.assertEquals(1, self.client.count(index="test-index")["count"])
-        self.assertEquals(
+        self.assertEqual(1, self.client.count(index="test-index")["count"])
+        self.assertEqual(
             {"answer": 42}, self.client.get(index="test-index", id=1)["_source"]
         )
 
@@ -227,10 +227,10 @@ class TestBulk(ElasticsearchTestCase):
             self.client, docs, index="test-index", refresh=True
         )
 
-        self.assertEquals(100, success)
+        self.assertEqual(100, success)
         self.assertFalse(failed)
-        self.assertEquals(100, self.client.count(index="test-index")["count"])
-        self.assertEquals(
+        self.assertEqual(100, self.client.count(index="test-index")["count"])
+        self.assertEqual(
             {"answer": 42}, self.client.get(index="test-index", id=42)["_source"]
         )
 
@@ -240,9 +240,9 @@ class TestBulk(ElasticsearchTestCase):
             self.client, docs, index="test-index", refresh=True, stats_only=True
         )
 
-        self.assertEquals(100, success)
-        self.assertEquals(0, failed)
-        self.assertEquals(100, self.client.count(index="test-index")["count"])
+        self.assertEqual(100, success)
+        self.assertEqual(0, failed)
+        self.assertEqual(100, self.client.count(index="test-index")["count"])
 
     def test_errors_are_reported_correctly(self):
         self.client.indices.create(
@@ -260,12 +260,12 @@ class TestBulk(ElasticsearchTestCase):
             index="i",
             raise_on_error=False,
         )
-        self.assertEquals(1, success)
-        self.assertEquals(1, len(failed))
+        self.assertEqual(1, success)
+        self.assertEqual(1, len(failed))
         error = failed[0]
-        self.assertEquals("42", error["index"]["_id"])
-        self.assertEquals("_doc", error["index"]["_type"])
-        self.assertEquals("i", error["index"]["_index"])
+        self.assertEqual("42", error["index"]["_id"])
+        self.assertEqual("_doc", error["index"]["_type"])
+        self.assertEqual("i", error["index"]["_index"])
         print(error["index"]["error"])
         self.assertTrue(
             "MapperParsingException" in repr(error["index"]["error"])
@@ -307,8 +307,8 @@ class TestBulk(ElasticsearchTestCase):
             stats_only=True,
             raise_on_error=False,
         )
-        self.assertEquals(1, success)
-        self.assertEquals(1, failed)
+        self.assertEqual(1, success)
+        self.assertEqual(1, failed)
 
 
 class TestScan(ElasticsearchTestCase):
@@ -346,9 +346,9 @@ class TestScan(ElasticsearchTestCase):
             )
         )
 
-        self.assertEquals(100, len(docs))
-        self.assertEquals(list(map(str, range(100))), list(d["_id"] for d in docs))
-        self.assertEquals(list(range(100)), list(d["_source"]["answer"] for d in docs))
+        self.assertEqual(100, len(docs))
+        self.assertEqual(list(map(str, range(100))), list(d["_id"] for d in docs))
+        self.assertEqual(list(range(100)), list(d["_source"]["answer"] for d in docs))
 
     def test_all_documents_are_read(self):
         bulk = []
@@ -359,9 +359,9 @@ class TestScan(ElasticsearchTestCase):
 
         docs = list(helpers.scan(self.client, index="test_index", size=2))
 
-        self.assertEquals(100, len(docs))
-        self.assertEquals(set(map(str, range(100))), set(d["_id"] for d in docs))
-        self.assertEquals(set(range(100)), set(d["_source"]["answer"] for d in docs))
+        self.assertEqual(100, len(docs))
+        self.assertEqual(set(map(str, range(100))), set(d["_id"] for d in docs))
+        self.assertEqual(set(range(100)), set(d["_source"]["answer"] for d in docs))
 
     def test_scroll_error(self):
         bulk = []
@@ -522,11 +522,11 @@ class TestReindex(ElasticsearchTestCase):
         )
 
         self.assertTrue(self.client.indices.exists("prod_index"))
-        self.assertEquals(
+        self.assertEqual(
             50, self.client.count(index="prod_index", q="type:answers")["count"]
         )
 
-        self.assertEquals(
+        self.assertEqual(
             {"answer": 42, "correct": True, "type": "answers"},
             self.client.get(index="prod_index", id=42)["_source"],
         )
@@ -541,11 +541,11 @@ class TestReindex(ElasticsearchTestCase):
         self.client.indices.refresh()
 
         self.assertTrue(self.client.indices.exists("prod_index"))
-        self.assertEquals(
+        self.assertEqual(
             50, self.client.count(index="prod_index", q="type:answers")["count"]
         )
 
-        self.assertEquals(
+        self.assertEqual(
             {"answer": 42, "correct": True, "type": "answers"},
             self.client.get(index="prod_index", id=42)["_source"],
         )
@@ -555,14 +555,14 @@ class TestReindex(ElasticsearchTestCase):
         self.client.indices.refresh()
 
         self.assertTrue(self.client.indices.exists("prod_index"))
-        self.assertEquals(
+        self.assertEqual(
             50, self.client.count(index="prod_index", q="type:questions")["count"]
         )
-        self.assertEquals(
+        self.assertEqual(
             50, self.client.count(index="prod_index", q="type:answers")["count"]
         )
 
-        self.assertEquals(
+        self.assertEqual(
             {"answer": 42, "correct": True, "type": "answers"},
             self.client.get(index="prod_index", id=42)["_source"],
         )
@@ -600,7 +600,7 @@ class TestParentChildReindex(ElasticsearchTestCase):
         helpers.reindex(self.client, "test-index", "real-index")
 
         q = self.client.get(index="real-index", id=42)
-        self.assertEquals(
+        self.assertEqual(
             {
                 "_id": "42",
                 "_index": "real-index",
@@ -614,7 +614,7 @@ class TestParentChildReindex(ElasticsearchTestCase):
             q,
         )
         q = self.client.get(index="test-index", id=47, routing=42)
-        self.assertEquals(
+        self.assertEqual(
             {
                 "_routing": "42",
                 "_id": "47",
