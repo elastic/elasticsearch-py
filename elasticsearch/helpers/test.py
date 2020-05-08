@@ -48,7 +48,7 @@ class ElasticsearchTestCase(TestCase):
         return get_test_client()
 
     @classmethod
-    def setup_class(cls):
+    def setUpClass(cls):
         super(ElasticsearchTestCase, cls).setUpClass()
         cls.client = cls._get_client()
 

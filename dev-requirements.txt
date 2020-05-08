@@ -1,7 +1,6 @@
 requests>=2, <3
 pytest
 pytest-cov
-pytest-asyncio
 coverage
 mock
 nosexcover
@@ -16,4 +15,8 @@ pandas
 pyyaml<5.3
 
 black; python_version>="3.6"
-unasync
+
+# Async dependencies
+unasync; python_version>="3.6"
+aiohttp; python_version>="3.6"
+pytest-asyncio; python_version>="3.6"

@@ -8,10 +8,12 @@ from mock import patch, Mock
 from elasticsearch import helpers, TransportError
 from elasticsearch.helpers import ScanError
 
-pytestmark = pytest.mark.asyncio
-
-if not hasattr(helpers, "async_bulk"):
-    pytest.skip("requires async helpers")
+pytestmark = [
+    pytest.mark.asyncio,
+    pytest.mark.skipif(
+        not hasattr(helpers, "async_bulk"), reason="requires async helpers"
+    ),
+]
 
 
 class FailingBulkClient(object):

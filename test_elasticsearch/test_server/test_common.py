@@ -266,7 +266,7 @@ class YamlTestCase(ElasticsearchTestCase):
             min_version, max_version = version.split("-")
             min_version = _get_version(min_version) or (0,)
             max_version = _get_version(max_version) or (999,)
-            if min_version <= self.es_version <= max_version:
+            if min_version <= self.es_version() <= max_version:
                 raise SkipTest(reason)
 
     def run_catch(self, catch, exception):

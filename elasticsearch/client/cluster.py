@@ -137,7 +137,7 @@ class ClusterClient(NamespacedClient):
             "GET",
             "/_cluster/stats"
             if node_id in SKIP_IN_PATH
-            else _make_path("_cluster/stats/nodes", node_id),
+            else _make_path("_cluster", "stats", "nodes", node_id),
             params=params,
             headers=headers,
         )

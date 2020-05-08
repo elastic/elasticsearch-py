@@ -3,18 +3,11 @@
 # Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 # See the LICENSE file in the project root for more information
 
-import re
 import ssl
 from mock import Mock, patch
 import warnings
 from platform import python_version
 
-from elasticsearch.exceptions import (
-    TransportError,
-    ConflictError,
-    RequestError,
-    NotFoundError,
-)
 from elasticsearch import AIOHttpConnection
 from elasticsearch import __versionstr__
 from ..test_cases import TestCase, SkipTest
