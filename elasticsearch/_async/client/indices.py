@@ -1301,7 +1301,7 @@ class IndicesClient(NamespacedClient):
             "GET", _make_path("_index_template", name), params=params, headers=headers
         )
 
-    @query_params("create", "master_timeout", "order")
+    @query_params("cause", "create", "master_timeout")
     async def put_index_template(self, name, body, params=None, headers=None):
         """
         Creates or updates an index template.
@@ -1309,12 +1309,11 @@ class IndicesClient(NamespacedClient):
 
         :arg name: The name of the template
         :arg body: The template definition
+        :arg cause: User defined reason for creating/updating the index
+            template
         :arg create: Whether the index template should only be added if
             new or can also replace an existing one
         :arg master_timeout: Specify timeout for connection to master
-        :arg order: The order for this template when merging multiple
-            matching ones (higher numbers are merged later, overriding the lower
-            numbers)
         """
         for param in (name, body):
             if param in SKIP_IN_PATH:
@@ -1349,7 +1348,7 @@ class IndicesClient(NamespacedClient):
             "HEAD", _make_path("_index_template", name), params=params, headers=headers
         )
 
-    @query_params("master_timeout")
+    @query_params("cause", "create", "master_timeout")
     async def simulate_index_template(self, name, body=None, params=None, headers=None):
         """
         Simulate matching the given index name against the index templates in the
@@ -1360,6 +1359,11 @@ class IndicesClient(NamespacedClient):
             name)
         :arg body: New index template definition, which will be included
             in the simulation, as if it already exists in the system
+        :arg cause: User defined reason for dry-run creating the new
+            template for simulation purposes
+        :arg create: Whether the index template we optionally defined in
+            the body should only be dry-run added if new or can also replace an
+            existing one
         :arg master_timeout: Specify timeout for connection to master
         """
         if name in SKIP_IN_PATH:

@@ -6,6 +6,7 @@
 from __future__ import unicode_literals
 import time
 from mock import patch
+import pytest
 
 from elasticsearch import AsyncTransport
 from elasticsearch.connection import Connection
@@ -13,6 +14,9 @@ from elasticsearch import AsyncDummyConnectionPool
 from elasticsearch.exceptions import ConnectionError
 
 from ..test_cases import TestCase
+
+
+pytestmark = pytest.mark.asyncio
 
 
 class DummyConnection(Connection):

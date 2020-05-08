@@ -1297,6 +1297,7 @@ class Elasticsearch(object):
 
     @query_params(
         "max_docs",
+        "prefer_v2_templates",
         "refresh",
         "requests_per_second",
         "scroll",
@@ -1316,6 +1317,8 @@ class Elasticsearch(object):
             prototype for the index request.
         :arg max_docs: Maximum number of documents to process (default:
             all documents)
+        :arg prefer_v2_templates: favor V2 templates instead of V1
+            templates during index creation
         :arg refresh: Should the affected indexes be refreshed?
         :arg requests_per_second: The throttle to set on this request in
             sub-requests per second. -1 means no throttle.

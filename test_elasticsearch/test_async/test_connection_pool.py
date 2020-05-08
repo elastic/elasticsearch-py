@@ -3,6 +3,7 @@
 # See the LICENSE file in the project root for more information
 
 import time
+import pytest
 
 from elasticsearch import (
     AsyncConnectionPool,
@@ -13,6 +14,9 @@ from elasticsearch.connection import Connection
 from elasticsearch.exceptions import ImproperlyConfigured
 
 from ..test_cases import TestCase
+
+
+pytestmark = pytest.mark.asyncio
 
 
 class TestConnectionPool(TestCase):

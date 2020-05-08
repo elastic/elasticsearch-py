@@ -444,7 +444,7 @@ class TestScan:
         ]
         assert data == [{"search_data": 1}, {"scroll_data": 42}]
 
-        client_mock.scroll = MockScroll().scroll
+        client_mock.scroll = Mock()
         with pytest.raises(ScanError):
             data = [
                 doc
@@ -455,7 +455,7 @@ class TestScan:
                 )
             ]
             assert data == [{"search_data": 1}]
-            scroll_mock.assert_not_called()
+            client_mock.scroll.assert_not_called()
 
     async def test_no_scroll_id_fast_route(self):
         client_mock = Mock()
@@ -585,7 +585,7 @@ class TestReindex:
             == (await async_client.count(index="prod_index", q="type:answers"))["count"]
         )
 
-        assert {"answer": 42, "correct": True, "type": "answers",} == (
+        assert {"answer": 42, "correct": True, "type": "answers"} == (
             await async_client.get(index="prod_index", id=42)
         )["_source"]
 
@@ -604,7 +604,7 @@ class TestReindex:
             == (await async_client.count(index="prod_index", q="type:answers"))["count"]
         )
 
-        assert {"answer": 42, "correct": True, "type": "answers",} == (
+        assert {"answer": 42, "correct": True, "type": "answers"} == (
             await async_client.get(index="prod_index", id=42)
         )["_source"]
 
@@ -624,7 +624,7 @@ class TestReindex:
             == (await async_client.count(index="prod_index", q="type:answers"))["count"]
         )
 
-        assert {"answer": 42, "correct": True, "type": "answers",} == (
+        assert {"answer": 42, "correct": True, "type": "answers"} == (
             await async_client.get(index="prod_index", id=42)
         )["_source"]
 

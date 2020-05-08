@@ -78,8 +78,13 @@ def run_all(argv=None):
             "--log-level=DEBUG",
             "--cache-clear",
             "-vv",
-            abspath(dirname(__file__)),
         ]
+
+        # Skip all async tests unless Python 3.6+
+        if sys.version_info < (3, 6):
+            argv.append("--ignore=test_elasticsearch/test_async/")
+
+        argv.append(abspath(dirname(__file__)))
 
     exit_code = 0
     try:

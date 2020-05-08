@@ -4,13 +4,24 @@
 # See the LICENSE file in the project root for more information
 
 import ssl
+import gzip
+import io
 from mock import Mock, patch
 import warnings
 from platform import python_version
+import aiohttp
+import pytest
 
 from elasticsearch import AIOHttpConnection
 from elasticsearch import __versionstr__
 from ..test_cases import TestCase, SkipTest
+
+pytestmark = pytest.mark.asyncio
+
+
+def gzip_decompress(data):
+    buf = gzip.GzipFile(fileobj=io.BytesIO(data), mode="rb")
+    return buf.read()
 
 
 class TestAIOHttpConnection(TestCase):
@@ -232,14 +243,15 @@ class TestAIOHttpConnection(TestCase):
         self.assertEqual(con.scheme, "https")
         self.assertEqual(con.host, "https://localhost:9200")
 
-    def nowarn_when_test_uses_https_if_verify_certs_is_off(self):
+    async def test_nowarn_when_test_uses_https_if_verify_certs_is_off(self):
         with warnings.catch_warnings(record=True) as w:
-            con = Urllib3HttpConnection(
+            con = AIOHttpConnection(
                 use_ssl=True, verify_certs=False, ssl_show_warn=False
             )
+            con._create_aiohttp_session()
             self.assertEqual(0, len(w))
 
-        self.assertIsInstance(con.pool, urllib3.HTTPSConnectionPool)
+        self.assertIsInstance(con.session, aiohttp.ClientSession)
 
     def test_doesnt_use_https_if_not_specified(self):
         con = AIOHttpConnection()
