@@ -46,6 +46,8 @@ SKIP_TESTS = {
         "TestIndicesGetAlias10Basic",
         # Disallowing expensive queries is 7.7+
         "TestSearch320DisallowQueries",
+        # Order of overlapped templates isn't consistent
+        "TestIndicesSimulateIndexTemplate10Basic",
     }
 }
 
