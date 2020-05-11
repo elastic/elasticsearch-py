@@ -16,12 +16,11 @@ async def async_client():
         if not hasattr(elasticsearch, "AsyncElasticsearch"):
             pytest.skip("test requires 'AsyncElasticsearch'")
 
-        kw = {"timeout": 30, "ca_certs": ".ci/certs/ca.pem"}
-        if "PYTHON_CONNECTION_CLASS" in os.environ:
-
-            kw["connection_class"] = getattr(
-                elasticsearch, os.environ["PYTHON_CONNECTION_CLASS"]
-            )
+        kw = {
+            "timeout": 30,
+            "ca_certs": ".ci/certs/ca.pem",
+            "connection_class": elasticsearch.AIOHttpConnection,
+        }
 
         client = elasticsearch.AsyncElasticsearch(
             [os.environ.get("ELASTICSEARCH_HOST", {})], **kw
