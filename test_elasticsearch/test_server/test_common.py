@@ -46,6 +46,13 @@ SKIP_TESTS = {
         "TestIndicesGetAlias10Basic",
         # Disallowing expensive queries is 7.7+
         "TestSearch320DisallowQueries",
+        # Extra warning due to v2 index templates
+        "TestIndicesPutTemplate10Basic",
+        # Depends on order of response which is random.
+        "TestIndicesSimulateIndexTemplate10Basic",
+        # simulate index template doesn't work with ?q=
+        "TestSearch60QueryString",
+        "TestExplain30QueryString",
     }
 }
 
