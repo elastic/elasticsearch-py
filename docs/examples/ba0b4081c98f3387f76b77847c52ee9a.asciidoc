@@ -1,0 +1,22 @@
+// indices/update-settings.asciidoc:145
+
+[source, python]
+----
+resp = client.indices.close(index="twitter")
+print(resp)
+
+resp = client.indices.put_settings(
+    index="twitter",
+    body={
+        "analysis": {
+            "analyzer": {
+                "content": {"type": "custom", "tokenizer": "whitespace"}
+            }
+        }
+    },
+)
+print(resp)
+
+resp = client.indices.open(index="twitter")
+print(resp)
+----

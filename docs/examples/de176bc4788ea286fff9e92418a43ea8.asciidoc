@@ -1,0 +1,20 @@
+// indices/aliases.asciidoc:264
+
+[source, python]
+----
+resp = client.indices.create(index="test")
+print(resp)
+
+resp = client.indices.create(index="test_2")
+print(resp)
+
+resp = client.indices.update_aliases(
+    body={
+        "actions": [
+            {"add": {"index": "test_2", "alias": "test"}},
+            {"remove_index": {"index": "test"}},
+        ]
+    },
+)
+print(resp)
+----

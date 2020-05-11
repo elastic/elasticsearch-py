@@ -1,0 +1,7 @@
+// indices/aliases.asciidoc:382
+
+[source, python]
+----
+resp = client.search(index="alias2", q="user:kimchy", routing="2,3")
+print(resp)
+----

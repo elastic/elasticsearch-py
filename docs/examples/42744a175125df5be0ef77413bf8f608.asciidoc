@@ -1,0 +1,9 @@
+// indices/update-settings.asciidoc:73
+
+[source, python]
+----
+resp = client.indices.put_settings(
+    index="twitter", body={"index": {"refresh_interval": None}},
+)
+print(resp)
+----

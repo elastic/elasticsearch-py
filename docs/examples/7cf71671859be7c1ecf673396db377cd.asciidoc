@@ -1,0 +1,19 @@
+// indices/aliases.asciidoc:308
+
+[source, python]
+----
+resp = client.indices.update_aliases(
+    body={
+        "actions": [
+            {
+                "add": {
+                    "index": "test1",
+                    "alias": "alias2",
+                    "filter": {"term": {"user": "kimchy"}},
+                }
+            }
+        ]
+    },
+)
+print(resp)
+----

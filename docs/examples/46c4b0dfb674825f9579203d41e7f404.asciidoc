@@ -1,0 +1,10 @@
+// mapping/types/keyword.asciidoc:20
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my_index",
+    body={"mappings": {"properties": {"tags": {"type": "keyword"}}}},
+)
+print(resp)
+----

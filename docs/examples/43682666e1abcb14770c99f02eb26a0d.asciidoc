@@ -1,7 +1,0 @@
-// search/search.asciidoc:419
-
-[source, python]
-----
-resp = client.search(index="*", q="user:kimchy")
-print(resp)
-----

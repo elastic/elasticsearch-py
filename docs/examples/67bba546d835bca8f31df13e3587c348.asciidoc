@@ -1,0 +1,7 @@
+// indices/aliases.asciidoc:441
+
+[source, python]
+----
+resp = client.get(index="test", id="1")
+print(resp)
+----

@@ -1,0 +1,25 @@
+// query-dsl/nested-query.asciidoc:41
+
+[source, python]
+----
+resp = client.search(
+    index="my_index",
+    body={
+        "query": {
+            "nested": {
+                "path": "obj1",
+                "query": {
+                    "bool": {
+                        "must": [
+                            {"match": {"obj1.name": "blue"}},
+                            {"range": {"obj1.count": {"gt": 5}}},
+                        ]
+                    }
+                },
+                "score_mode": "avg",
+            }
+        }
+    },
+)
+print(resp)
+----

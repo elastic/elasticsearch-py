@@ -1,0 +1,10 @@
+// query-dsl/nested-query.asciidoc:23
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my_index",
+    body={"mappings": {"properties": {"obj1": {"type": "nested"}}}},
+)
+print(resp)
+----

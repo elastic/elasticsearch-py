@@ -1,0 +1,34 @@
+// mapping/types/array.asciidoc:42
+
+[source, python]
+----
+resp = client.index(
+    index="my_index",
+    id="1",
+    body={
+        "message": "some arrays in this document...",
+        "tags": ["elasticsearch", "wow"],
+        "lists": [
+            {"name": "prog_list", "description": "programming list"},
+            {"name": "cool_list", "description": "cool stuff list"},
+        ],
+    },
+)
+print(resp)
+
+resp = client.index(
+    index="my_index",
+    id="2",
+    body={
+        "message": "no arrays in this document...",
+        "tags": "elasticsearch",
+        "lists": {"name": "prog_list", "description": "programming list"},
+    },
+)
+print(resp)
+
+resp = client.search(
+    index="my_index", body={"query": {"match": {"tags": "elasticsearch"}}},
+)
+print(resp)
+----

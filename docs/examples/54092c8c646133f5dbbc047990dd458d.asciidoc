@@ -1,0 +1,28 @@
+// query-dsl/nested-query.asciidoc:133
+
+[source, python]
+----
+resp = client.indices.create(
+    index="drivers",
+    body={
+        "mappings": {
+            "properties": {
+                "driver": {
+                    "type": "nested",
+                    "properties": {
+                        "last_name": {"type": "text"},
+                        "vehicle": {
+                            "type": "nested",
+                            "properties": {
+                                "make": {"type": "text"},
+                                "model": {"type": "text"},
+                            },
+                        },
+                    },
+                }
+            }
+        }
+    },
+)
+print(resp)
+----

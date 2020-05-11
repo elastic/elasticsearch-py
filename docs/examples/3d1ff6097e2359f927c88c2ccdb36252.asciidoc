@@ -1,0 +1,7 @@
+// setup/install/check-running.asciidoc:7
+
+[source, python]
+----
+resp = client.info()
+print(resp)
+----

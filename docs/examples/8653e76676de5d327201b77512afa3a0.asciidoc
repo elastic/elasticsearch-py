@@ -1,0 +1,9 @@
+// indices/update-settings.asciidoc:10
+
+[source, python]
+----
+resp = client.indices.put_settings(
+    index="twitter", body={"index": {"number_of_replicas": 2}},
+)
+print(resp)
+----

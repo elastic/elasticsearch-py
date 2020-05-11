@@ -1,0 +1,35 @@
+// query-dsl/nested-query.asciidoc:165
+
+[source, python]
+----
+resp = client.index(
+    index="drivers",
+    id="1",
+    body={
+        "driver": {
+            "last_name": "McQueen",
+            "vehicle": [
+                {"make": "Powell Motors", "model": "Canyonero"},
+                {"make": "Miller-Meteor", "model": "Ecto-1"},
+            ],
+        }
+    },
+)
+print(resp)
+
+resp = client.index(
+    index="drivers",
+    id="2",
+    refresh=True,
+    body={
+        "driver": {
+            "last_name": "Hudson",
+            "vehicle": [
+                {"make": "Mifune", "model": "Mach Five"},
+                {"make": "Miller-Meteor", "model": "Ecto-1"},
+            ],
+        }
+    },
+)
+print(resp)
+----

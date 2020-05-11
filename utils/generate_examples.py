@@ -39,7 +39,7 @@ files_to_generate = [
     "docs/index_.asciidoc",
     "aggregations/bucket/terms-aggregation.asciidoc",
     "query-dsl/range-query.asciidoc",
-    "search/search.asciidoc",
+    "/search/search.asciidoc",
     "query-dsl/multi-match-query.asciidoc",
     "docs/bulk.asciidoc",
     "indices/delete-index.asciidoc",
@@ -57,7 +57,20 @@ files_to_generate = [
     "mapping/params/format.asciidoc",
     "mapping/types/nested.asciidoc",
     "query-dsl/terms-query.asciidoc",
-    "search/request/sort.asciidoc"
+    "search/request/sort.asciidoc",
+    "mapping/types/date.asciidoc",
+    "indices/update-settings.asciidoc",
+    "indices/aliases.asciidoc",
+    "setup/install/check-running.asciidoc",
+    "query-dsl/regexp-query.asciidoc",
+    "query-dsl/function-score-query.asciidoc",
+    "search/request/from-size.asciidoc",
+    "cluster/health.asciidoc",
+    "query-dsl/nested-query.asciidoc",
+    "mapping/types/array.asciidoc",
+    "mapping/params/fielddata.asciidoc",
+    "search/count.asciidoc",
+    "mapping/types/keyword.asciidoc",
 ]
 
 
@@ -66,7 +79,9 @@ ParsedSource = collections.namedtuple("ParsedSource", ["api", "params", "body"])
 
 def blacken(filename):
     runner = CliRunner()
-    result = runner.invoke(black.main, [str(filename), "--line-length=75", "--target-version=py27"])
+    result = runner.invoke(
+        black.main, [str(filename), "--line-length=75", "--target-version=py27"]
+    )
     assert result.exit_code == 0, result.output
 
 
