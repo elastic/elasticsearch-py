@@ -151,13 +151,13 @@ class YamlRunner:
         # stop and remove all ML stuff
         if await self._feature_enabled("ml"):
             await self.client.ml.stop_datafeed(datafeed_id="*", force=True)
-            for feed in await self.client.ml.get_datafeeds(datafeed_id="*")[
+            for feed in (await self.client.ml.get_datafeeds(datafeed_id="*"))[
                 "datafeeds"
             ]:
                 await self.client.ml.delete_datafeed(datafeed_id=feed["datafeed_id"])
 
             await self.client.ml.close_job(job_id="*", force=True)
-            for job in await self.client.ml.get_jobs(job_id="*")["jobs"]:
+            for job in (await self.client.ml.get_jobs(job_id="*"))["jobs"]:
                 await self.client.ml.delete_job(
                     job_id=job["job_id"], wait_for_completion=True, force=True
                 )
