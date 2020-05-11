@@ -12,46 +12,48 @@ pytestmark = pytest.mark.asyncio
 
 @pytest.fixture(scope="function")
 async def async_client():
-    if not hasattr(elasticsearch, "AsyncElasticsearch"):
-        pytest.skip("test requires 'AsyncElasticsearch'")
+    try:
+        if not hasattr(elasticsearch, "AsyncElasticsearch"):
+            pytest.skip("test requires 'AsyncElasticsearch'")
 
-    kw = {"timeout": 30, "ca_certs": ".ci/certs/ca.pem"}
-    if "PYTHON_CONNECTION_CLASS" in os.environ:
+        kw = {"timeout": 30, "ca_certs": ".ci/certs/ca.pem"}
+        if "PYTHON_CONNECTION_CLASS" in os.environ:
 
-        kw["connection_class"] = getattr(
-            elasticsearch, os.environ["PYTHON_CONNECTION_CLASS"]
+            kw["connection_class"] = getattr(
+                elasticsearch, os.environ["PYTHON_CONNECTION_CLASS"]
+            )
+
+        client = elasticsearch.AsyncElasticsearch(
+            [os.environ.get("ELASTICSEARCH_HOST", {})], **kw
         )
 
-    client = elasticsearch.AsyncElasticsearch(
-        [os.environ.get("ELASTICSEARCH_HOST", {})], **kw
-    )
+        # wait for yellow status
+        for _ in range(100):
+            try:
+                await client.cluster.health(wait_for_status="yellow")
+                break
+            except ConnectionError:
+                await asyncio.sleep(0.1)
+        else:
+            # timeout
+            pytest.skip("Elasticsearch failed to start.")
 
-    # wait for yellow status
-    for _ in range(100):
-        try:
-            await client.cluster.health(wait_for_status="yellow")
-            break
-        except ConnectionError:
-            await asyncio.sleep(0.1)
-    else:
-        # timeout
-        pytest.skip("Elasticsearch failed to start.")
+        yield client
 
-    yield client
+    finally:
+        version = tuple(
+            [
+                int(x) if x.isdigit() else 999
+                for x in (await client.info())["version"]["number"].split(".")
+            ]
+        )
 
-    version = tuple(
-        [
-            int(x) if x.isdigit() else 999
-            for x in (await client.info())["version"]["number"].split(".")
-        ]
-    )
+        expand_wildcards = ["open", "closed"]
+        if version >= (7, 7):
+            expand_wildcards.append("hidden")
 
-    expand_wildcards = ["open", "closed"]
-    if version >= (7, 7):
-        expand_wildcards.append("hidden")
-
-    await client.indices.delete(
-        index="*", ignore=404, expand_wildcards=expand_wildcards
-    )
-    await client.indices.delete_template(name="*", ignore=404)
-    await client.close()
+        await client.indices.delete(
+            index="*", ignore=404, expand_wildcards=expand_wildcards
+        )
+        await client.indices.delete_template(name="*", ignore=404)
+        await client.close()

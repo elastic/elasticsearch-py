@@ -8,7 +8,6 @@ some integration tests. These files are shared among all official Elasticsearch
 clients.
 """
 import pytest
-import sys
 import re
 from os import walk, environ
 from os.path import exists, join, dirname, pardir, relpath
@@ -42,18 +41,13 @@ IMPLEMENTED_FEATURES = {
 
 # broken YAML tests on some releases
 SKIP_TESTS = {
-    "*": {
-        # Can't figure out the get_alias(expand_wildcards=open) failure.
-        "TestIndicesGetAlias10Basic",
-        # Disallowing expensive queries is 7.7+
-        "TestSearch320DisallowQueries",
-    }
+    # [interval] on [date_histogram] is deprecated, use [fixed_interval] or [calendar_interval] in the future.
+    "search/aggregation/230_composite[6]",
+    "search/aggregation/250_moving_fn[1]",
+    # fails by not returning 'search'?
+    "search/320_disallow_queries[2]",
+    "search/40_indices_boost[1]",
 }
-
-# Test is inconsistent due to dictionaries not being ordered.
-if sys.version_info < (3, 6):
-    SKIP_TESTS["*"].add("TestSearchAggregation250MovingFn")
-
 
 XPACK_FEATURES = None
 ES_VERSION = None
@@ -88,7 +82,7 @@ if exists(YAML_DIR):
 
             filepath = join(path, filename)
             with open(filepath) as f:
-                tests = list(yaml.load_all(f))
+                tests = list(yaml.load_all(f, Loader=yaml.SafeLoader))
 
             setup_code = None
             teardown_code = None
@@ -104,11 +98,11 @@ if exists(YAML_DIR):
 
             for i, run_code in run_codes:
                 src = {"setup": setup_code, "run": run_code, "teardown": teardown_code}
-                # Pytest already replaces '.' with '_' so we do
+                # Pytest already replaces '.' and '_' with '/' so we do
                 # it ourselves so UI and 'SKIP_TESTS' match.
                 pytest_param_id = (
                     "%s[%d]" % (relpath(filepath, YAML_DIR).rpartition(".")[0], i)
-                ).replace(".", "_")
+                ).replace(".", "/")
 
                 if pytest_param_id in SKIP_TESTS:
                     src["skip"] = True
@@ -175,15 +169,6 @@ class YamlRunner:
                     id=rollup["config"]["id"], wait_for_completion=True
                 )
                 await self.client.rollup.delete_job(id=rollup["config"]["id"])
-
-        expand_wildcards = ["open", "closed"]
-        if (await self.es_version()) >= (7, 7):
-            expand_wildcards.append("hidden")
-
-        await self.client.indices.delete(
-            index="*", ignore=404, expand_wildcards=expand_wildcards
-        )
-        await self.client.indices.delete_template(name="*", ignore=404)
 
     async def es_version(self):
         global ES_VERSION

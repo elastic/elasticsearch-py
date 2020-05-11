@@ -240,6 +240,7 @@ class AIOHttpConnection(Connection):
             headers=self.headers,
             auto_decompress=True,
             loop=self.loop,
+            cookie_jar=aiohttp.DummyCookieJar(),
             connector=aiohttp.TCPConnector(
                 limit=self._limit,
                 verify_ssl=self._verify_certs,
