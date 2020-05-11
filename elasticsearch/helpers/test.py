@@ -48,12 +48,10 @@ class ElasticsearchTestCase(TestCase):
         return get_test_client()
 
     @classmethod
-    def setUpClass(cls):
-        super(ElasticsearchTestCase, cls).setUpClass()
+    def setup_class(cls):
         cls.client = cls._get_client()
 
-    def teardown(self):
-        super(ElasticsearchTestCase, self).tearDown()
+    def teardown_method(self, _):
         # Hidden indices expanded in wildcards in ES 7.7
         expand_wildcards = ["open", "closed"]
         if self.es_version() >= (7, 7):

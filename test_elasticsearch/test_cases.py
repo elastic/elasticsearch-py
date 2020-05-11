@@ -25,8 +25,7 @@ class DummyTransport(object):
 
 
 class ElasticsearchTestCase(TestCase):
-    def setUp(self):
-        super(ElasticsearchTestCase, self).setUp()
+    def setup_method(self, _):
         self.client = Elasticsearch(transport_class=DummyTransport)
 
     def assert_call_count_equals(self, count):

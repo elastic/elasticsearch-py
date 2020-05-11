@@ -62,14 +62,13 @@ class InvalidActionType(Exception):
 
 
 class YamlTestCase(ElasticsearchTestCase):
-    def setUp(self):
-        super(YamlTestCase, self).setUp()
+    def setup_method(self, _):
         if hasattr(self, "_setup_code"):
             self.run_code(self._setup_code)
         self.last_response = None
         self._state = {}
 
-    def tearDown(self):
+    def teardown_method(self, m):
         if hasattr(self, "_teardown_code"):
             self.run_code(self._teardown_code)
         for repo, definition in self.client.snapshot.get_repository(
@@ -101,7 +100,7 @@ class YamlTestCase(ElasticsearchTestCase):
                 )
                 self.client.rollup.delete_job(id=rollup["config"]["id"])
 
-        super(YamlTestCase, self).tearDown()
+        super(YamlTestCase, self).teardown_method(m)
 
     def _feature_enabled(self, name):
         global XPACK_FEATURES, IMPLEMENTED_FEATURES

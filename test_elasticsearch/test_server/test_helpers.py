@@ -318,7 +318,7 @@ class TestScan(ElasticsearchTestCase):
     ]
 
     @classmethod
-    def tearDownClass(cls):
+    def teardown_class(cls):
         cls.client.transport.perform_request("DELETE", "/_search/scroll/_all")
         super(TestScan, cls).tearDownClass()
 
@@ -490,8 +490,7 @@ class TestScan(ElasticsearchTestCase):
 
 
 class TestReindex(ElasticsearchTestCase):
-    def setUp(self):
-        super(TestReindex, self).setUp()
+    def setup_method_method(self):
         bulk = []
         for x in range(100):
             bulk.append({"index": {"_index": "test_index", "_id": x}})
@@ -561,8 +560,7 @@ class TestReindex(ElasticsearchTestCase):
 
 
 class TestParentChildReindex(ElasticsearchTestCase):
-    def setUp(self):
-        super(TestParentChildReindex, self).setUp()
+    def setup_method(self):
         body = {
             "settings": {"number_of_shards": 1, "number_of_replicas": 0},
             "mappings": {

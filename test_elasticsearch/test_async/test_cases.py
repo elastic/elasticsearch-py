@@ -25,8 +25,7 @@ class AsyncDummyTransport(object):
 
 
 class AsyncElasticsearchTestCase(ElasticsearchTestCase):
-    def setUp(self):
-        super(ElasticsearchTestCase, self).setUp()
+    def setup_method(self, _):
         if not hasattr(elasticsearch, "AsyncElasticsearch"):
             raise SkipTest("This test case requires 'AsyncElasticsearch'")
         self.client = elasticsearch.AsyncElasticsearch(
