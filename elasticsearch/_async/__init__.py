@@ -16,6 +16,9 @@ class AsyncElasticsearch(Elasticsearch):
         return self
 
 
+AsyncElasticsearch.__doc__ = Elasticsearch.__doc__
+
+
 __all__ = [
     "AsyncElasticsearch",
     "AsyncConnectionPool",

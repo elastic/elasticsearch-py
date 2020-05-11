@@ -35,6 +35,10 @@ def get_client(**kwargs):
     return new_client
 
 
+def setup():
+    get_client()
+
+
 class ElasticsearchTestCase(BaseTestCase):
     @staticmethod
     def _get_client(**kwargs):

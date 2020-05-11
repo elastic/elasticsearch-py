@@ -22,11 +22,55 @@ logger = logging.getLogger("elasticsearch")
 
 
 class AsyncTransport(Transport):
+    """
+    Encapsulation of transport-related to logic. Handles instantiation of the
+    individual connections as well as creating a connection pool to hold them.
+
+    Main interface is the `perform_request` method.
+    """
+
     DEFAULT_CONNECTION_CLASS = AIOHttpConnection
     DEFAULT_CONNECTION_POOL = AsyncConnectionPool
     DUMMY_CONNECTION_POOL = AsyncDummyConnectionPool
 
     def __init__(self, hosts, *args, sniff_on_start=False, **kwargs):
+        """
+        :arg hosts: list of dictionaries, each containing keyword arguments to
+            create a `connection_class` instance
+        :arg connection_class: subclass of :class:`~elasticsearch.Connection` to use
+        :arg connection_pool_class: subclass of :class:`~elasticsearch.ConnectionPool` to use
+        :arg host_info_callback: callback responsible for taking the node information from
+            `/_cluster/nodes`, along with already extracted information, and
+            producing a list of arguments (same as `hosts` parameter)
+        :arg sniff_on_start: flag indicating whether to obtain a list of nodes
+            from the cluster at startup time
+        :arg sniffer_timeout: number of seconds between automatic sniffs
+        :arg sniff_on_connection_fail: flag controlling if connection failure triggers a sniff
+        :arg sniff_timeout: timeout used for the sniff request - it should be a
+            fast api call and we are talking potentially to more nodes so we want
+            to fail quickly. Not used during initial sniffing (if
+            ``sniff_on_start`` is on) when the connection still isn't
+            initialized.
+        :arg serializer: serializer instance
+        :arg serializers: optional dict of serializer instances that will be
+            used for deserializing data coming from the server. (key is the mimetype)
+        :arg default_mimetype: when no mimetype is specified by the server
+            response assume this mimetype, defaults to `'application/json'`
+        :arg max_retries: maximum number of retries before an exception is propagated
+        :arg retry_on_status: set of HTTP status codes on which we should retry
+            on a different node. defaults to ``(502, 503, 504)``
+        :arg retry_on_timeout: should timeout trigger a retry on different
+            node? (default `False`)
+        :arg send_get_body_as: for GET requests with body this option allows
+            you to specify an alternate way of execution for environments that
+            don't support passing bodies with GET requests. If you set this to
+            'POST' a POST method will be used instead, if to 'source' then the body
+            will be serialized and passed as a query parameter `source`.
+
+        Any extra keyword arguments will be passed to the `connection_class`
+        when creating and instance unless overridden by that connection's
+        options provided as part of the hosts parameter.
+        """
         self.sniffing_task = None
         self.loop = None
         self._async_init_called = False
@@ -189,6 +233,12 @@ class AsyncTransport(Transport):
             self.sniffing_task = self.loop.create_task(self.sniff_hosts(initial))
 
     def mark_dead(self, connection):
+        """
+        Mark a connection as dead (failed) in the connection pool. If sniffing
+        on failure is enabled this will initiate the sniffing process.
+
+        :arg connection: instance of :class:`~elasticsearch.Connection` that failed
+        """
         self.connection_pool.mark_dead(connection)
         if self.sniff_on_connection_fail:
             self.create_sniff_task()
@@ -196,13 +246,27 @@ class AsyncTransport(Transport):
     def get_connection(self):
         return self.connection_pool.get_connection()
 
-    async def close(self):
-        if self.sniffing_task:
-            self.sniffing_task.cancel()
-            self.sniffing_task = None
-        await self.connection_pool.close()
-
     async def perform_request(self, method, url, headers=None, params=None, body=None):
+        """
+        Perform the actual request. Retrieve a connection from the connection
+        pool, pass all the information to it's perform_request method and
+        return the data.
+
+        If an exception was raised, mark the connection as failed and retry (up
+        to `max_retries` times).
+
+        If the operation was successful and the connection used was previously
+        marked as dead, mark it as live, resetting it's failure count.
+
+        :arg method: HTTP method to use
+        :arg url: absolute url (without host) to target
+        :arg headers: dictionary of headers, will be handed over to the
+            underlying :class:`~elasticsearch.Connection` class
+        :arg params: dictionary of query parameters, will be handed over to the
+            underlying :class:`~elasticsearch.Connection` class for serialization
+        :arg body: body of the request, will be serialized using serializer and
+            passed to the connection
+        """
         await self._async_call()
 
         method, params, body, ignore, timeout = self._resolve_request_args(
@@ -252,3 +316,12 @@ class AsyncTransport(Transport):
                 if data:
                     data = self.deserializer.loads(data, headers.get("content-type"))
                 return data
+
+    async def close(self):
+        """
+        Explicitly closes connections
+        """
+        if self.sniffing_task:
+            self.sniffing_task.cancel()
+            self.sniffing_task = None
+        await self.connection_pool.close()

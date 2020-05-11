@@ -62,6 +62,42 @@ class AIOHttpConnection(Connection):
         loop=None,
         **kwargs,
     ):
+        """
+        Default connection class for ``AsyncElasticsearch`` using the `aiohttp` library and the http protocol.
+
+        :arg host: hostname of the node (default: localhost)
+        :arg port: port to use (integer, default: 9200)
+        :arg timeout: default timeout in seconds (float, default: 10)
+        :arg http_auth: optional http auth information as either ':' separated
+            string or a tuple
+        :arg use_ssl: use ssl for the connection if `True`
+        :arg verify_certs: whether to verify SSL certificates
+        :arg ssl_show_warn: show warning when verify certs is disabled
+        :arg ca_certs: optional path to CA bundle.
+            See https://urllib3.readthedocs.io/en/latest/security.html#using-certifi-with-urllib3
+            for instructions how to get default set
+        :arg client_cert: path to the file containing the private key and the
+            certificate, or cert only if using client_key
+        :arg client_key: path to the file containing the private key if using
+            separate cert and key files (client_cert will contain only the cert)
+        :arg ssl_version: version of the SSL protocol to use. Choices are:
+            SSLv23 (default) SSLv2 SSLv3 TLSv1 (see ``PROTOCOL_*`` constants in the
+            ``ssl`` module for exact options for your environment).
+        :arg ssl_assert_hostname: use hostname verification if not `False`
+        :arg ssl_assert_fingerprint: verify the supplied certificate fingerprint if not `None`
+        :arg maxsize: the number of connections which will be kept open to this
+            host. See https://urllib3.readthedocs.io/en/1.4/pools.html#api for more
+            information.
+        :arg headers: any custom http headers to be add to requests
+        :arg http_compress: Use gzip compression
+        :arg cloud_id: The Cloud ID from ElasticCloud. Convenient way to connect to cloud instances.
+            Other host connection params will be ignored.
+        :arg api_key: optional API Key authentication as either base64 encoded string or a tuple.
+        :arg opaque_id: Send this value in the 'X-Opaque-Id' HTTP header
+            For tracing all requests made by this transport.
+        :arg loop: asyncio Event Loop to use with aiohttp. This is set by default to the currently running loop.
+        """
+
         self.headers = {}
 
         super().__init__(
@@ -228,6 +264,9 @@ class AIOHttpConnection(Connection):
         return response.status, response.headers, raw_data
 
     async def close(self):
+        """
+        Explicitly closes connection
+        """
         if self.session:
             await self.session.close()
 
