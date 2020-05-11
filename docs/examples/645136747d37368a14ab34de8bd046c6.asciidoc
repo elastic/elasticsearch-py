@@ -1,0 +1,26 @@
+// mapping/types/date.asciidoc:35
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my_index",
+    body={"mappings": {"properties": {"date": {"type": "date"}}}},
+)
+print(resp)
+
+resp = client.index(index="my_index", id="1", body={"date": "2015-01-01"})
+print(resp)
+
+resp = client.index(
+    index="my_index", id="2", body={"date": "2015-01-01T12:10:30Z"},
+)
+print(resp)
+
+resp = client.index(
+    index="my_index", id="3", body={"date": 1420070400001},
+)
+print(resp)
+
+resp = client.search(index="my_index", body={"sort": {"date": "asc"}})
+print(resp)
+----

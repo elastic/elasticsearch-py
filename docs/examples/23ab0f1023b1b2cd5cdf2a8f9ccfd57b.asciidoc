@@ -1,0 +1,10 @@
+// indices/aliases.asciidoc:292
+
+[source, python]
+----
+resp = client.indices.create(
+    index="test1",
+    body={"mappings": {"properties": {"user": {"type": "keyword"}}}},
+)
+print(resp)
+----

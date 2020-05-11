@@ -1,0 +1,7 @@
+// cluster/health.asciidoc:143
+
+[source, python]
+----
+resp = client.cluster.health()
+print(resp)
+----

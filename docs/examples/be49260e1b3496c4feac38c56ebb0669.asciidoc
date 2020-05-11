@@ -1,7 +1,0 @@
-// search/search.asciidoc:346
-
-[source, python]
-----
-resp = client.search(index="twitter", q="user:kimchy")
-print(resp)
-----

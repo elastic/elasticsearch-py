@@ -1,7 +1,0 @@
-// search/search.asciidoc:7
-
-[source, python]
-----
-resp = client.search(index="twitter", q="tag:wow")
-print(resp)
-----

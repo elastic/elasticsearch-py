@@ -1,0 +1,13 @@
+// indices/aliases.asciidoc:245
+
+[source, python]
+----
+resp = client.indices.update_aliases(
+    body={
+        "actions": [
+            {"add": {"index": "test*", "alias": "all_test_indices"}}
+        ]
+    },
+)
+print(resp)
+----

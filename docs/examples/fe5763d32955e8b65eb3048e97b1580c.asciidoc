@@ -1,0 +1,7 @@
+// indices/update-settings.asciidoc:127
+
+[source, python]
+----
+resp = client.indices.forcemerge(index="twitter", max_num_segments="5")
+print(resp)
+----

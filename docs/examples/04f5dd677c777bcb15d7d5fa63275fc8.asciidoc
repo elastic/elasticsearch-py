@@ -1,0 +1,7 @@
+// cluster/health.asciidoc:35
+
+[source, python]
+----
+resp = client.cluster.health(wait_for_status="yellow", timeout="50s")
+print(resp)
+----
