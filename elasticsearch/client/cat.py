@@ -326,7 +326,7 @@ class CatClient(NamespacedClient):
             "GET", "/_cat/pending_tasks", params=params, headers=headers
         )
 
-    @query_params("format", "h", "help", "local", "master_timeout", "s", "size", "v")
+    @query_params("format", "h", "help", "local", "master_timeout", "s", "time", "v")
     def thread_pool(self, thread_pool_patterns=None, params=None, headers=None):
         """
         Returns cluster-wide thread pool statistics per node. By default the active,
@@ -345,8 +345,8 @@ class CatClient(NamespacedClient):
             to master node
         :arg s: Comma-separated list of column names or column aliases
             to sort by
-        :arg size: The multiplier in which to display values  Valid
-            choices: , k, m, g, t, p
+        :arg time: The unit in which to display time values  Valid
+            choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
         return self.transport.perform_request(

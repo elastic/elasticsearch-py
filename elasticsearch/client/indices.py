@@ -82,9 +82,7 @@ class IndicesClient(NamespacedClient):
             "POST", _make_path(index, "_flush"), params=params, headers=headers
         )
 
-    @query_params(
-        "master_timeout", "prefer_v2_templates", "timeout", "wait_for_active_shards"
-    )
+    @query_params("master_timeout", "timeout", "wait_for_active_shards")
     def create(self, index, body=None, params=None, headers=None):
         """
         Creates an index with optional settings and mappings.
@@ -94,8 +92,6 @@ class IndicesClient(NamespacedClient):
         :arg body: The configuration for the index (`settings` and
             `mappings`)
         :arg master_timeout: Specify timeout for connection to master
-        :arg prefer_v2_templates: favor V2 templates instead of V1
-            templates during index creation
         :arg timeout: Explicit operation timeout
         :arg wait_for_active_shards: Set the number of active shards to
             wait for before the operation returns.
@@ -979,13 +975,7 @@ class IndicesClient(NamespacedClient):
             body=body,
         )
 
-    @query_params(
-        "dry_run",
-        "master_timeout",
-        "prefer_v2_templates",
-        "timeout",
-        "wait_for_active_shards",
-    )
+    @query_params("dry_run", "master_timeout", "timeout", "wait_for_active_shards")
     def rollover(self, alias, body=None, new_index=None, params=None, headers=None):
         """
         Updates an alias to point to a new index when the existing index is considered
@@ -1000,8 +990,6 @@ class IndicesClient(NamespacedClient):
             validated but not actually performed even if a condition matches. The
             default is false
         :arg master_timeout: Specify timeout for connection to master
-        :arg prefer_v2_templates: favor V2 templates instead of V1
-            templates during automatic index creation
         :arg timeout: Explicit operation timeout
         :arg wait_for_active_shards: Set the number of active shards to
             wait for on the newly created rollover index before the operation
@@ -1299,7 +1287,7 @@ class IndicesClient(NamespacedClient):
             "GET", _make_path("_index_template", name), params=params, headers=headers
         )
 
-    @query_params("create", "master_timeout", "order")
+    @query_params("cause", "create", "master_timeout")
     def put_index_template(self, name, body, params=None, headers=None):
         """
         Creates or updates an index template.
@@ -1307,12 +1295,11 @@ class IndicesClient(NamespacedClient):
 
         :arg name: The name of the template
         :arg body: The template definition
+        :arg cause: User defined reason for creating/updating the index
+            template
         :arg create: Whether the index template should only be added if
             new or can also replace an existing one
         :arg master_timeout: Specify timeout for connection to master
-        :arg order: The order for this template when merging multiple
-            matching ones (higher numbers are merged later, overriding the lower
-            numbers)
         """
         for param in (name, body):
             if param in SKIP_IN_PATH:
@@ -1345,4 +1332,33 @@ class IndicesClient(NamespacedClient):
 
         return self.transport.perform_request(
             "HEAD", _make_path("_index_template", name), params=params, headers=headers
+        )
+
+    @query_params("cause", "create", "master_timeout")
+    def simulate_index_template(self, name, body=None, params=None, headers=None):
+        """
+        Simulate matching the given index name against the index templates in the
+        system
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+
+        :arg name: The name of the index (it must be a concrete index
+            name)
+        :arg body: New index template definition, which will be included
+            in the simulation, as if it already exists in the system
+        :arg cause: User defined reason for dry-run creating the new
+            template for simulation purposes
+        :arg create: Whether the index template we optionally defined in
+            the body should only be dry-run added if new or can also replace an
+            existing one
+        :arg master_timeout: Specify timeout for connection to master
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'name'.")
+
+        return self.transport.perform_request(
+            "POST",
+            _make_path("_index_template", "_simulate_index", name),
+            params=params,
+            headers=headers,
+            body=body,
         )
