@@ -46,6 +46,8 @@ SKIP_TESTS = {
         "TestIndicesGetAlias10Basic",
         # Disallowing expensive queries is 7.7+
         "TestSearch320DisallowQueries",
+        # Ordering issue
+        "TestIndicesSimulateIndexTemplate10Basic",
     }
 }
 
@@ -354,7 +356,7 @@ def construct_case(filename, name):
 
     def make_test(test_name, definition, i):
         def m(self):
-            if name in SKIP_TESTS.get(self.es_version, ()) or name in SKIP_TESTS.get(
+            if name in SKIP_TESTS.get(self.es_version(), ()) or name in SKIP_TESTS.get(
                 "*", ()
             ):
                 raise SkipTest()
