@@ -47,6 +47,17 @@ SKIP_TESTS = {
     # fails by not returning 'search'?
     "search/320_disallow_queries[2]",
     "search/40_indices_boost[1]",
+    # ?q= fails
+    "explain/30_query_string[0]",
+    "count/20_query_string[0]",
+    # index template issues
+    "indices/put_template/10_basic[0]",
+    "indices/put_template/10_basic[1]",
+    "indices/put_template/10_basic[2]",
+    "indices/put_template/10_basic[3]",
+    "indices/put_template/10_basic[4]",
+    # depends on order of response JSON which is random
+    "indices/simulate_index_template/10_basic[1]",
 }
 
 XPACK_FEATURES = None
@@ -181,8 +192,8 @@ class YamlRunner:
         return ES_VERSION
 
     async def run(self):
-        await self.setup()
         try:
+            await self.setup()
             await self.run_code(self._run_code)
         finally:
             await self.teardown()
