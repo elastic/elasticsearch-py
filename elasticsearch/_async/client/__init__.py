@@ -6,7 +6,7 @@
 from __future__ import unicode_literals
 import logging
 
-from ..transport import Transport
+from ..transport import AsyncTransport
 from .async_search import AsyncSearchClient
 from .autoscaling import AutoscalingClient
 from .indices import IndicesClient
@@ -169,7 +169,7 @@ class Elasticsearch(object):
 
     """
 
-    def __init__(self, hosts=None, transport_class=Transport, **kwargs):
+    def __init__(self, hosts=None, transport_class=AsyncTransport, **kwargs):
         """
         :arg hosts: list of nodes, or a single node, we should connect to.
             Node should be a dictionary ({"host": "localhost", "port": 9200}),
@@ -230,6 +230,15 @@ class Elasticsearch(object):
             # probably operating on custom transport and connection_pool, ignore
             return super(Elasticsearch, self).__repr__()
 
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *_):
+        await self.close()
+
+    async def close(self):
+        await self.transport.close()
+
     # AUTO-GENERATED-API-DEFINITIONS #
     @query_params()
     async def ping(self, params=None, headers=None):
@@ -256,7 +265,6 @@ class Elasticsearch(object):
 
     @query_params(
         "pipeline",
-        "prefer_v2_templates",
         "refresh",
         "routing",
         "timeout",
@@ -276,8 +284,6 @@ class Elasticsearch(object):
         :arg doc_type: The type of the document
         :arg pipeline: The pipeline id to preprocess incoming documents
             with
-        :arg prefer_v2_templates: favor V2 templates instead of V1
-            templates during automatic index creation
         :arg refresh: If `true` then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then
@@ -315,7 +321,6 @@ class Elasticsearch(object):
         "if_seq_no",
         "op_type",
         "pipeline",
-        "prefer_v2_templates",
         "refresh",
         "routing",
         "timeout",
@@ -342,8 +347,6 @@ class Elasticsearch(object):
             without an explicit document ID  Valid choices: index, create
         :arg pipeline: The pipeline id to preprocess incoming documents
             with
-        :arg prefer_v2_templates: favor V2 templates instead of V1
-            templates during automatic index creation
         :arg refresh: If `true` then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then
@@ -376,7 +379,6 @@ class Elasticsearch(object):
         "_source_excludes",
         "_source_includes",
         "pipeline",
-        "prefer_v2_templates",
         "refresh",
         "routing",
         "timeout",
@@ -401,8 +403,6 @@ class Elasticsearch(object):
             return from the _source field, can be overridden on each sub-request
         :arg pipeline: The pipeline id to preprocess incoming documents
             with
-        :arg prefer_v2_templates: favor V2 templates instead of V1
-            templates during automatic index creation
         :arg refresh: If `true` then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then
@@ -1169,7 +1169,6 @@ class Elasticsearch(object):
 
     @query_params(
         "max_docs",
-        "prefer_v2_templates",
         "refresh",
         "requests_per_second",
         "scroll",
@@ -1189,8 +1188,6 @@ class Elasticsearch(object):
             prototype for the index request.
         :arg max_docs: Maximum number of documents to process (default:
             all documents)
-        :arg prefer_v2_templates: favor V2 templates instead of V1
-            templates during index creation
         :arg refresh: Should the affected indexes be refreshed?
         :arg requests_per_second: The throttle to set on this request in
             sub-requests per second. -1 means no throttle.
@@ -1492,7 +1489,6 @@ class Elasticsearch(object):
         "if_primary_term",
         "if_seq_no",
         "lang",
-        "prefer_v2_templates",
         "refresh",
         "retry_on_conflict",
         "routing",
@@ -1522,8 +1518,6 @@ class Elasticsearch(object):
             operation that has changed the document has the specified sequence
             number
         :arg lang: The script language (default: painless)
-        :arg prefer_v2_templates: favor V2 templates instead of V1
-            templates during automatic index creation
         :arg refresh: If `true` then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then

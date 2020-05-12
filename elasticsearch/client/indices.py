@@ -82,9 +82,7 @@ class IndicesClient(NamespacedClient):
             "POST", _make_path(index, "_flush"), params=params, headers=headers
         )
 
-    @query_params(
-        "master_timeout", "prefer_v2_templates", "timeout", "wait_for_active_shards"
-    )
+    @query_params("master_timeout", "timeout", "wait_for_active_shards")
     def create(self, index, body=None, params=None, headers=None):
         """
         Creates an index with optional settings and mappings.
@@ -94,8 +92,6 @@ class IndicesClient(NamespacedClient):
         :arg body: The configuration for the index (`settings` and
             `mappings`)
         :arg master_timeout: Specify timeout for connection to master
-        :arg prefer_v2_templates: favor V2 templates instead of V1
-            templates during index creation
         :arg timeout: Explicit operation timeout
         :arg wait_for_active_shards: Set the number of active shards to
             wait for before the operation returns.
@@ -979,13 +975,7 @@ class IndicesClient(NamespacedClient):
             body=body,
         )
 
-    @query_params(
-        "dry_run",
-        "master_timeout",
-        "prefer_v2_templates",
-        "timeout",
-        "wait_for_active_shards",
-    )
+    @query_params("dry_run", "master_timeout", "timeout", "wait_for_active_shards")
     def rollover(self, alias, body=None, new_index=None, params=None, headers=None):
         """
         Updates an alias to point to a new index when the existing index is considered
@@ -1000,8 +990,6 @@ class IndicesClient(NamespacedClient):
             validated but not actually performed even if a condition matches. The
             default is false
         :arg master_timeout: Specify timeout for connection to master
-        :arg prefer_v2_templates: favor V2 templates instead of V1
-            templates during automatic index creation
         :arg timeout: Explicit operation timeout
         :arg wait_for_active_shards: Set the number of active shards to
             wait for on the newly created rollover index before the operation
