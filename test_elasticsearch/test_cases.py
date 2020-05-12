@@ -2,10 +2,20 @@
 # Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 # See the LICENSE file in the project root for more information
 
+import os
+import sys
 from collections import defaultdict
 from unittest import TestCase
 from unittest import SkipTest  # noqa: F401
 from elasticsearch import Elasticsearch
+
+
+# To prevent double runs of REST API tests
+# only run async tests instead of 'RequestsHttpConnection'
+# with Python 3.6+.
+ASYNC_REST_API_TESTS = os.environ.get(
+    "PYTHON_CONNECTION_CLASS"
+) == "RequestsHttpConnection" and sys.version_info >= (3, 6)
 
 
 class DummyTransport(object):

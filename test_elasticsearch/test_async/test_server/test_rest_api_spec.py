@@ -19,6 +19,7 @@ import inspect
 from elasticsearch import TransportError, RequestError, ElasticsearchDeprecationWarning
 from elasticsearch.compat import string_types
 from elasticsearch.helpers.test import _get_version
+from ...test_cases import ASYNC_REST_API_TESTS
 
 pytestmark = pytest.mark.asyncio
 
@@ -84,7 +85,7 @@ YAML_DIR = environ.get(
 
 YAML_TEST_SPECS = []
 
-if exists(YAML_DIR):
+if exists(YAML_DIR) and ASYNC_REST_API_TESTS:
     # find all the test definitions in yaml files ...
     for path, _, files in walk(YAML_DIR):
         for filename in files:

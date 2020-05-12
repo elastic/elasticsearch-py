@@ -19,7 +19,7 @@ from elasticsearch import TransportError, RequestError, ElasticsearchDeprecation
 from elasticsearch.compat import string_types
 from elasticsearch.helpers.test import _get_version
 
-from ..test_cases import SkipTest
+from ..test_cases import SkipTest, ASYNC_REST_API_TESTS
 from . import ElasticsearchTestCase
 
 # some params had to be changed in python, keep track of them so we can rename
@@ -412,7 +412,7 @@ YAML_DIR = environ.get(
 )
 
 
-if exists(YAML_DIR):
+if exists(YAML_DIR) and not ASYNC_REST_API_TESTS:
     # find all the test definitions in yaml files ...
     for (path, dirs, files) in walk(YAML_DIR):
         for filename in files:
