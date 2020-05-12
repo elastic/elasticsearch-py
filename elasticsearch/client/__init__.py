@@ -302,7 +302,6 @@ class Elasticsearch(object):
 
     @query_params(
         "pipeline",
-        "prefer_v2_templates",
         "refresh",
         "routing",
         "timeout",
@@ -322,8 +321,6 @@ class Elasticsearch(object):
         :arg doc_type: The type of the document
         :arg pipeline: The pipeline id to preprocess incoming documents
             with
-        :arg prefer_v2_templates: favor V2 templates instead of V1
-            templates during automatic index creation
         :arg refresh: If `true` then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then
@@ -361,7 +358,6 @@ class Elasticsearch(object):
         "if_seq_no",
         "op_type",
         "pipeline",
-        "prefer_v2_templates",
         "refresh",
         "routing",
         "timeout",
@@ -388,8 +384,6 @@ class Elasticsearch(object):
             without an explicit document ID  Valid choices: index, create
         :arg pipeline: The pipeline id to preprocess incoming documents
             with
-        :arg prefer_v2_templates: favor V2 templates instead of V1
-            templates during automatic index creation
         :arg refresh: If `true` then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then
@@ -422,7 +416,6 @@ class Elasticsearch(object):
         "_source_excludes",
         "_source_includes",
         "pipeline",
-        "prefer_v2_templates",
         "refresh",
         "routing",
         "timeout",
@@ -447,8 +440,6 @@ class Elasticsearch(object):
             return from the _source field, can be overridden on each sub-request
         :arg pipeline: The pipeline id to preprocess incoming documents
             with
-        :arg prefer_v2_templates: favor V2 templates instead of V1
-            templates during automatic index creation
         :arg refresh: If `true` then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then
@@ -1533,7 +1524,6 @@ class Elasticsearch(object):
         "if_primary_term",
         "if_seq_no",
         "lang",
-        "prefer_v2_templates",
         "refresh",
         "retry_on_conflict",
         "routing",
@@ -1563,8 +1553,6 @@ class Elasticsearch(object):
             operation that has changed the document has the specified sequence
             number
         :arg lang: The script language (default: painless)
-        :arg prefer_v2_templates: favor V2 templates instead of V1
-            templates during automatic index creation
         :arg refresh: If `true` then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then

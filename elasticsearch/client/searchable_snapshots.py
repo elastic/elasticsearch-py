@@ -9,6 +9,7 @@ class SearchableSnapshotsClient(NamespacedClient):
     @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable")
     def clear_cache(self, index=None, params=None, headers=None):
         """
+        Clear the cache of searchable snapshots.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-api-clear-cache.html>`_
 
         :arg index: A comma-separated list of index name to limit the
@@ -32,6 +33,7 @@ class SearchableSnapshotsClient(NamespacedClient):
     @query_params("master_timeout", "wait_for_completion")
     def mount(self, repository, snapshot, body, params=None, headers=None):
         """
+        Mount a snapshot as a searchable index.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-api-mount-snapshot.html>`_
 
         :arg repository: The name of the repository containing the
@@ -59,6 +61,7 @@ class SearchableSnapshotsClient(NamespacedClient):
     @query_params()
     def repository_stats(self, repository, params=None, headers=None):
         """
+        Retrieve usage statistics about a snapshot repository.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-repository-stats.html>`_
 
         :arg repository: The repository for which to get the stats for
@@ -76,6 +79,7 @@ class SearchableSnapshotsClient(NamespacedClient):
     @query_params()
     def stats(self, index=None, params=None, headers=None):
         """
+        Retrieve various statistics about searchable snapshots.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-api-stats.html>`_
 
         :arg index: A comma-separated list of index names
