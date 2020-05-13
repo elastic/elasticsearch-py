@@ -19,7 +19,7 @@ from elasticsearch import TransportError, RequestError, ElasticsearchDeprecation
 from elasticsearch.compat import string_types
 from elasticsearch.helpers.test import _get_version
 
-from ..test_cases import SkipTest
+from ..test_cases import SkipTest, ASYNC_REST_API_TESTS
 from . import ElasticsearchTestCase
 
 # some params had to be changed in python, keep track of them so we can rename
@@ -69,14 +69,13 @@ class InvalidActionType(Exception):
 
 
 class YamlTestCase(ElasticsearchTestCase):
-    def setUp(self):
-        super(YamlTestCase, self).setUp()
+    def setup_method(self, _):
         if hasattr(self, "_setup_code"):
             self.run_code(self._setup_code)
         self.last_response = None
         self._state = {}
 
-    def tearDown(self):
+    def teardown_method(self, m):
         if hasattr(self, "_teardown_code"):
             self.run_code(self._teardown_code)
         for repo, definition in self.client.snapshot.get_repository(
@@ -108,7 +107,7 @@ class YamlTestCase(ElasticsearchTestCase):
                 )
                 self.client.rollup.delete_job(id=rollup["config"]["id"])
 
-        super(YamlTestCase, self).tearDown()
+        super(YamlTestCase, self).teardown_method(m)
 
     def _feature_enabled(self, name):
         global XPACK_FEATURES, IMPLEMENTED_FEATURES
@@ -273,7 +272,7 @@ class YamlTestCase(ElasticsearchTestCase):
             min_version, max_version = version.split("-")
             min_version = _get_version(min_version) or (0,)
             max_version = _get_version(max_version) or (999,)
-            if min_version <= self.es_version <= max_version:
+            if min_version <= self.es_version() <= max_version:
                 raise SkipTest(reason)
 
     def run_catch(self, catch, exception):
@@ -362,7 +361,7 @@ def construct_case(filename, name):
 
     def make_test(test_name, definition, i):
         def m(self):
-            if name in SKIP_TESTS.get(self.es_version, ()) or name in SKIP_TESTS.get(
+            if name in SKIP_TESTS.get(self.es_version(), ()) or name in SKIP_TESTS.get(
                 "*", ()
             ):
                 raise SkipTest()
@@ -413,7 +412,7 @@ YAML_DIR = environ.get(
 )
 
 
-if exists(YAML_DIR):
+if exists(YAML_DIR) and not ASYNC_REST_API_TESTS:
     # find all the test definitions in yaml files ...
     for (path, dirs, files) in walk(YAML_DIR):
         for filename in files:

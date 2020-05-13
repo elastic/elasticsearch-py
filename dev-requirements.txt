@@ -3,7 +3,6 @@ pytest
 pytest-cov
 coverage
 mock
-nosexcover
 sphinx<1.7
 sphinx_rtd_theme
 jinja2
@@ -15,3 +14,8 @@ pandas
 pyyaml<5.3
 
 black; python_version>="3.6"
+
+# Async dependencies
+unasync; python_version>="3.6"
+aiohttp; python_version>="3.6"
+pytest-asyncio; python_version>="3.6"
