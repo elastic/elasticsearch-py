@@ -3,8 +3,8 @@
 Changelog
 =========
 
-7.7.0a2 (2020-04-03)
---------------------
+7.7.0 (2020-05-13)
+------------------
   * Added support for ES 7.7 APIs (See `#1812`_)
   * Added ``ElasticsearchDeprecationWarning`` which is raised when a ``Warning``
     HTTP header is sent by Elasticsearch. (See `#1179`_)

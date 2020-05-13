@@ -1141,6 +1141,7 @@ class MlClient(NamespacedClient):
     def validate(self, body, params=None, headers=None):
         """
         Validates an anomaly detection job.
+        `<https://www.elastic.co/guide/en/machine-learning/current/ml-jobs.html>`_
 
         :arg body: The job config
         """
@@ -1159,6 +1160,7 @@ class MlClient(NamespacedClient):
     def validate_detector(self, body, params=None, headers=None):
         """
         Validates an anomaly detection detector.
+        `<https://www.elastic.co/guide/en/machine-learning/current/ml-jobs.html>`_
 
         :arg body: The detector
         """
