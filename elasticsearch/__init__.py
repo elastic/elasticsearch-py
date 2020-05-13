@@ -72,7 +72,8 @@ try:
         raise ImportError
 
     from ._async.http_aiohttp import AIOHttpConnection
+    from ._async.transport import AsyncTransport
 
-    __all__ += ["AIOHttpConnection"]
+    __all__ += ["AIOHttpConnection", "AsyncTransport"]
 except (ImportError, SyntaxError):
     pass
