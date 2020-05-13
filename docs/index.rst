@@ -53,7 +53,14 @@ Installation
 Install the ``elasticsearch`` package with `pip
 <https://pypi.python.org/pypi/elasticsearch>`_::
 
-    pip install elasticsearch
+    $ python -m pip install elasticsearch
+
+If your application uses async/await in Python you can install with
+the ``async`` extra::
+
+    $ python -m pip install elasticsearch[async]
+
+Read more about `how to use asyncio with this project <async>`_.
 
 Example Usage
 -------------
@@ -257,6 +264,8 @@ APIKey Authentication
 You can configure the client to use Elasticsearch's `API Key`_ for connecting to your cluster.
 Please note this authentication method has been introduced with release of Elasticsearch ``6.7.0``.
 
+ .. code-block:: python
+
     from elasticsearch import Elasticsearch
 
     # you can use the api key tuple
@@ -374,6 +383,7 @@ Contents
    api
    xpack
    exceptions
+   async
    connection
    transports
    helpers
