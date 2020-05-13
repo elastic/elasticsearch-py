@@ -7,6 +7,6 @@
         elif scroll_id:
             params["scroll_id"] = scroll_id
 
-        return self.transport.perform_request("{{ api.method }}", "/_search/scroll", params=params, headers=headers, body=body)
+        return await self.transport.perform_request("{{ api.method }}", "/_search/scroll", params=params, headers=headers, body=body)
 {% endblock %}
 
