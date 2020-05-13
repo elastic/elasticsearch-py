@@ -3,8 +3,8 @@
 Changelog
 =========
 
-7.7.0a1 (2020-04-01)
---------------------
+7.7.0 (2020-05-13)
+------------------
 
 * Added support for ES 7.7 APIs (See `#1182`_)
 * Added ``ElasticsearchDeprecationWarning`` which is raised when a ``Warning``
@@ -16,6 +16,7 @@ Changelog
 
  .. _#1169: https://github.com/elastic/elasticsearch-py/pull/1169
  .. _#1179: https://github.com/elastic/elasticsearch-py/pull/1179
+ .. _#1180: https://github.com/elastic/elasticsearch-py/pull/1180
  .. _#1182: https://github.com/elastic/elasticsearch-py/pull/1182
 
 7.6.0 (2020-03-19)
