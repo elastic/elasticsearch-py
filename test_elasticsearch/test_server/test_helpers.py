@@ -70,7 +70,7 @@ class TestStreamingBulk(ElasticsearchTestCase):
             assert False, "exception should have been raised"
 
     def test_different_op_types(self):
-        if self.es_version < (0, 90, 1):
+        if self.es_version() < (0, 90, 1):
             raise SkipTest("update supported since 0.90.1")
         self.client.index(index="i", id=45, body={})
         self.client.index(index="i", id=42, body={})
@@ -317,10 +317,9 @@ class TestScan(ElasticsearchTestCase):
         },
     ]
 
-    @classmethod
-    def tearDownClass(cls):
-        cls.client.transport.perform_request("DELETE", "/_search/scroll/_all")
-        super(TestScan, cls).tearDownClass()
+    def teardown_method(self, m):
+        self.client.transport.perform_request("DELETE", "/_search/scroll/_all")
+        super(TestScan, self).teardown_method(m)
 
     def test_order_can_be_preserved(self):
         bulk = []
@@ -490,8 +489,7 @@ class TestScan(ElasticsearchTestCase):
 
 
 class TestReindex(ElasticsearchTestCase):
-    def setUp(self):
-        super(TestReindex, self).setUp()
+    def setup_method(self, _):
         bulk = []
         for x in range(100):
             bulk.append({"index": {"_index": "test_index", "_id": x}})
@@ -561,8 +559,7 @@ class TestReindex(ElasticsearchTestCase):
 
 
 class TestParentChildReindex(ElasticsearchTestCase):
-    def setUp(self):
-        super(TestParentChildReindex, self).setUp()
+    def setup_method(self, _):
         body = {
             "settings": {"number_of_shards": 1, "number_of_replicas": 0},
             "mappings": {
