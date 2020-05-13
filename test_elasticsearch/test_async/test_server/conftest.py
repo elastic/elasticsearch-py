@@ -57,4 +57,5 @@ async def async_client():
                 index="*", ignore=404, expand_wildcards=expand_wildcards
             )
             await client.indices.delete_template(name="*", ignore=404)
+            await client.indices.delete_index_template(name="*", ignore=404)
             await client.close()

@@ -61,6 +61,7 @@ class ElasticsearchTestCase(TestCase):
             index="*", ignore=404, expand_wildcards=expand_wildcards
         )
         self.client.indices.delete_template(name="*", ignore=404)
+        self.client.indices.delete_index_template(name="*", ignore=404)
 
     def es_version(self):
         if not hasattr(self, "_es_version"):
