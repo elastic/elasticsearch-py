@@ -6,7 +6,7 @@ import time
 from itertools import chain
 
 from .connection import Urllib3HttpConnection
-from .connection_pool import ConnectionPool, DummyConnectionPool
+from .connection_pool import ConnectionPool, DummyConnectionPool, EmptyConnectionPool
 from .serializer import JSONSerializer, Deserializer, DEFAULT_SERIALIZERS
 from .exceptions import (
     ConnectionError,
@@ -44,10 +44,12 @@ class Transport(object):
     Main interface is the `perform_request` method.
     """
 
+    DEFAULT_CONNECTION_CLASS = Urllib3HttpConnection
+
     def __init__(
         self,
         hosts,
-        connection_class=Urllib3HttpConnection,
+        connection_class=None,
         connection_pool_class=ConnectionPool,
         host_info_callback=get_host_info,
         sniff_on_start=False,
@@ -100,6 +102,8 @@ class Transport(object):
         when creating and instance unless overridden by that connection's
         options provided as part of the hosts parameter.
         """
+        if connection_class is None:
+            connection_class = self.DEFAULT_CONNECTION_CLASS
 
         # serialization config
         _serializers = DEFAULT_SERIALIZERS.copy()
@@ -127,10 +131,18 @@ class Transport(object):
         self.kwargs = kwargs
         self.hosts = hosts
 
-        # ...and instantiate them
-        self.set_connections(hosts)
-        # retain the original connection instances for sniffing
-        self.seed_connections = self.connection_pool.connections[:]
+        # Start with an empty pool specifically for `AsyncTransport`.
+        # It should never be used, will be replaced on first call to
+        # .set_connections()
+        self.connection_pool = EmptyConnectionPool()
+
+        if hosts:
+            # ...and instantiate them
+            self.set_connections(hosts)
+            # retain the original connection instances for sniffing
+            self.seed_connections = list(self.connection_pool.connections[:])
+        else:
+            self.seed_connections = []
 
         # Don't enable sniffing on Cloud instances.
         if kwargs.get("cloud_id", False):
@@ -139,6 +151,7 @@ class Transport(object):
 
         # sniffing data
         self.sniffer_timeout = sniffer_timeout
+        self.sniff_on_start = sniff_on_start
         self.sniff_on_connection_fail = sniff_on_connection_fail
         self.last_sniff = time.time()
         self.sniff_timeout = sniff_timeout
@@ -321,36 +334,9 @@ class Transport(object):
         :arg body: body of the request, will be serialized using serializer and
             passed to the connection
         """
-        if body is not None:
-            body = self.serializer.dumps(body)
-
-            # some clients or environments don't support sending GET with body
-            if method in ("HEAD", "GET") and self.send_get_body_as != "GET":
-                # send it as post instead
-                if self.send_get_body_as == "POST":
-                    method = "POST"
-
-                # or as source parameter
-                elif self.send_get_body_as == "source":
-                    if params is None:
-                        params = {}
-                    params["source"] = body
-                    body = None
-
-        if body is not None:
-            try:
-                body = body.encode("utf-8", "surrogatepass")
-            except (UnicodeDecodeError, AttributeError):
-                # bytes/str - no need to re-encode
-                pass
-
-        ignore = ()
-        timeout = None
-        if params:
-            timeout = params.pop("request_timeout", None)
-            ignore = params.pop("ignore", ())
-            if isinstance(ignore, int):
-                ignore = (ignore,)
+        method, params, body, ignore, timeout = self._resolve_request_args(
+            method, params, body
+        )
 
         for attempt in range(self.max_retries + 1):
             connection = self.get_connection()
@@ -405,3 +391,38 @@ class Transport(object):
         Explicitly closes connections
         """
         self.connection_pool.close()
+
+    def _resolve_request_args(self, method, params, body):
+        """Resolves parameters for .perform_request()"""
+        if body is not None:
+            body = self.serializer.dumps(body)
+
+            # some clients or environments don't support sending GET with body
+            if method in ("HEAD", "GET") and self.send_get_body_as != "GET":
+                # send it as post instead
+                if self.send_get_body_as == "POST":
+                    method = "POST"
+
+                # or as source parameter
+                elif self.send_get_body_as == "source":
+                    if params is None:
+                        params = {}
+                    params["source"] = body
+                    body = None
+
+        if body is not None:
+            try:
+                body = body.encode("utf-8", "surrogatepass")
+            except (UnicodeDecodeError, AttributeError):
+                # bytes/str - no need to re-encode
+                pass
+
+        ignore = ()
+        timeout = None
+        if params:
+            timeout = params.pop("request_timeout", None)
+            ignore = params.pop("ignore", ())
+            if isinstance(ignore, int):
+                ignore = (ignore,)
+
+        return method, params, body, ignore, timeout
