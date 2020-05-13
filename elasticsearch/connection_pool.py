@@ -256,8 +256,11 @@ class ConnectionPool(object):
         """
         Explicitly closes connections
         """
-        for conn in self.orig_connections:
+        for conn in self.connections:
             conn.close()
+
+    def __repr__(self):
+        return "<%s: %r>" % (type(self).__name__, self.connections)
 
 
 class DummyConnectionPool(ConnectionPool):
@@ -284,3 +287,19 @@ class DummyConnectionPool(ConnectionPool):
         pass
 
     mark_dead = mark_live = resurrect = _noop
+
+
+class EmptyConnectionPool(ConnectionPool):
+    """A connection pool that is empty. Errors out if used."""
+
+    def __init__(self, *_, **__):
+        self.connections = []
+        self.connection_opts = []
+
+    def get_connection(self):
+        raise ImproperlyConfigured("No connections were configured")
+
+    def _noop(self, *args, **kwargs):
+        pass
+
+    close = mark_dead = mark_live = resurrect = _noop
