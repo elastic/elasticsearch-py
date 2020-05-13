@@ -5,7 +5,7 @@
 import logging
 from operator import methodcaller
 
-from ..compat import map, string_types, Queue, iter, zip, get_sleep
+from ..compat import map, string_types, Queue, aiter, azip, get_sleep
 
 from elasticsearch.exceptions import TransportError
 from elasticsearch.helpers.errors import ScanError, BulkIndexError
@@ -64,14 +64,14 @@ def expand_action(data):
     return action, data.get("_source", data)
 
 
-def _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer):
+async def _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer):
     """
     Split actions into chunks by number or size, serialize them into strings in
     the process.
     """
     bulk_actions, bulk_data = [], []
     size, action_count = 0, 0
-    for action, data in actions:
+    async for action, data in actions:
         raw_data, raw_action = data, action
         action = serializer.dumps(action)
         # +1 to account for the trailing new line character
@@ -103,7 +103,7 @@ def _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer):
         yield bulk_data, bulk_actions
 
 
-def _process_bulk_chunk(
+async def _process_bulk_chunk(
     client,
     bulk_actions,
     bulk_data,
@@ -120,7 +120,7 @@ def _process_bulk_chunk(
 
     try:
         # send the actual request
-        resp = client.bulk("\n".join(bulk_actions) + "\n", *args, **kwargs)
+        resp = await client.bulk("\n".join(bulk_actions) + "\n", *args, **kwargs)
     except TransportError as e:
         # default behavior - just propagate exception
         if raise_on_exception:
@@ -150,7 +150,7 @@ def _process_bulk_chunk(
             return
 
     # go through request-response pairs and detect failures
-    for data, (op_type, item) in zip(
+    async for data, (op_type, item) in azip(
         bulk_data, map(methodcaller("popitem"), resp["items"])
     ):
         ok = 200 <= item.get("status", 500) < 300
@@ -219,13 +219,13 @@ def streaming_bulk(
     """
     sleep = get_sleep()
 
-    def actions_generator():
-        for action in iter(actions):
+    async def actions_generator():
+        async for action in aiter(actions):
             yield expand_action_callback(action)
 
-    def generator():
-        for bulk_data, bulk_actions in _chunk_actions(
-            iter(actions_generator()),
+    async def generator():
+        async for bulk_data, bulk_actions in _chunk_actions(
+            aiter(actions_generator()),
             chunk_size,
             max_chunk_bytes,
             client.transport.serializer,
@@ -234,10 +234,10 @@ def streaming_bulk(
             for attempt in range(max_retries + 1):
                 to_retry, to_retry_data = [], []
                 if attempt:
-                    sleep(min(max_backoff, initial_backoff * 2 ** (attempt - 1)))
+                    await sleep(min(max_backoff, initial_backoff * 2 ** (attempt - 1)))
 
                 try:
-                    for data, (ok, info) in zip(
+                    async for data, (ok, info) in azip(
                         bulk_data,
                         _process_bulk_chunk(
                             client,
@@ -279,10 +279,10 @@ def streaming_bulk(
                     # retry only subset of documents that didn't succeed
                     bulk_actions, bulk_data = to_retry, to_retry_data
 
-    return iter(generator())
+    return aiter(generator())
 
 
-def bulk(client, actions, stats_only=False, *args, **kwargs):
+async def bulk(client, actions, stats_only=False, *args, **kwargs):
     """
     Helper for the :meth:`~elasticsearch.Elasticsearch.bulk` api that provides
     a more human friendly interface - it consumes an iterator of actions and
@@ -317,7 +317,7 @@ def bulk(client, actions, stats_only=False, *args, **kwargs):
 
     # make streaming_bulk yield successful results so we can count them
     kwargs["yield_ok"] = True
-    for ok, item in streaming_bulk(client, actions, *args, **kwargs):
+    async for ok, item in streaming_bulk(client, actions, *args, **kwargs):
         # go through request-response pairs and detect failures
         if not ok:
             if not stats_only:
@@ -445,7 +445,7 @@ def scan(
 
     """
 
-    def generator(query, scroll_kwargs):
+    async def generator(query, scroll_kwargs):
         scroll_kwargs = scroll_kwargs or {}
 
         if not preserve_order:
@@ -453,7 +453,7 @@ def scan(
             query["sort"] = "_doc"
 
         # initial search
-        resp = client.search(
+        resp = await client.search(
             body=query,
             scroll=scroll,
             size=size,
@@ -487,19 +487,21 @@ def scan(
                                 resp["_shards"]["total"],
                             ),
                         )
-                resp = client.scroll(
+                resp = await client.scroll(
                     body={"scroll_id": scroll_id, "scroll": scroll}, **scroll_kwargs
                 )
                 scroll_id = resp.get("_scroll_id")
 
         finally:
             if scroll_id and clear_scroll:
-                client.clear_scroll(body={"scroll_id": [scroll_id]}, ignore=(404,))
+                await client.clear_scroll(
+                    body={"scroll_id": [scroll_id]}, ignore=(404,)
+                )
 
-    return iter(generator(query, scroll_kwargs))
+    return aiter(generator(query, scroll_kwargs))
 
 
-def reindex(
+async def reindex(
     client,
     source_index,
     target_index,
@@ -544,8 +546,8 @@ def reindex(
     target_client = client if target_client is None else target_client
     docs = scan(client, query=query, index=source_index, scroll=scroll, **scan_kwargs)
 
-    def _change_doc_index(hits, index):
-        for h in hits:
+    async def _change_doc_index(hits, index):
+        async for h in hits:
             h["_index"] = index
             if "fields" in h:
                 h.update(h.pop("fields"))
@@ -553,7 +555,7 @@ def reindex(
 
     kwargs = {"stats_only": True}
     kwargs.update(bulk_kwargs)
-    return bulk(
+    return await bulk(
         target_client,
         _change_doc_index(docs, target_index),
         chunk_size=chunk_size,
