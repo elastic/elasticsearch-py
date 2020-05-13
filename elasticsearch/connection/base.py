@@ -121,6 +121,7 @@ class Connection(object):
         self.use_ssl = use_ssl
         self.http_compress = http_compress or False
 
+        self.scheme = scheme
         self.hostname = host
         self.port = port
         self.host = "%s://%s" % (scheme, host)
