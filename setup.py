@@ -25,7 +25,7 @@ tests_require = [
     "pytest",
     "pytest-cov",
 ]
-async_requires = ["aiohttp>3.5.4,<4", "yarl"]
+async_requires = ["aiohttp>=3.5.4,<4", "yarl"]
 
 docs_require = ["sphinx<1.7", "sphinx_rtd_theme"]
 generate_require = ["black", "jinja2"]

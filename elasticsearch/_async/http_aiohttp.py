@@ -284,6 +284,6 @@ class AIOHttpConnection(Connection):
                 limit=self._limit,
                 verify_ssl=self._verify_certs,
                 use_dns_cache=True,
-                ssl_context=self._ssl_context,
+                ssl=self._ssl_context,
             ),
         )

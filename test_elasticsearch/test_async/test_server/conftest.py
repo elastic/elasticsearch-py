@@ -58,4 +58,5 @@ async def async_client():
             )
             await client.indices.delete_template(name="*", ignore=404)
             await client.indices.delete_index_template(name="*", ignore=404)
+            await client.indices.delete_alias(index="_all", name="_all", ignore=404)
             await client.close()
