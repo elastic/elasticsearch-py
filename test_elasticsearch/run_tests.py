@@ -5,6 +5,7 @@
 
 from __future__ import print_function
 
+import atexit
 import sys
 from os import environ
 from os.path import dirname, join, pardir, abspath, exists
@@ -61,7 +62,7 @@ def fetch_es_repo():
 
 
 def run_all(argv=None):
-    sys.exitfunc = lambda: sys.stderr.write("Shutting down....\n")
+    atexit.register(lambda: sys.stderr.write("Shutting down....\n"))
 
     # fetch yaml tests
     fetch_es_repo()
