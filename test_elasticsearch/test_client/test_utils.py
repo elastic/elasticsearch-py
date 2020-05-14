@@ -12,7 +12,7 @@ from ..test_cases import TestCase, SkipTest
 
 
 class TestQueryParams(TestCase):
-    def setUp(self):
+    def setup_method(self, _):
         self.calls = []
 
     @query_params("simple_param")

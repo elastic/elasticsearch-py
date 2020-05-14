@@ -35,7 +35,7 @@ def get_client(**kwargs):
     return new_client
 
 
-def setup():
+def setup_module():
     get_client()
 
 

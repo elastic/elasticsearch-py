@@ -6,7 +6,7 @@
 import mock
 import time
 import threading
-from nose.plugins.skip import SkipTest
+import pytest
 from elasticsearch import helpers, Elasticsearch
 from elasticsearch.serializer import JSONSerializer
 
@@ -41,7 +41,7 @@ class TestParallelBulk(TestCase):
 
         self.assertEqual(50, mock_process_bulk_chunk.call_count)
 
-    @SkipTest
+    @pytest.mark.skip
     @mock.patch(
         "elasticsearch.helpers.actions._process_bulk_chunk",
         # make sure we spend some time in the thread
@@ -60,8 +60,7 @@ class TestParallelBulk(TestCase):
 
 
 class TestChunkActions(TestCase):
-    def setUp(self):
-        super(TestChunkActions, self).setUp()
+    def setup_method(self, _):
         self.actions = [({"index": {}}, {"some": u"datá", "i": i}) for i in range(100)]
 
     def test_chunks_are_chopped_by_byte_size(self):
