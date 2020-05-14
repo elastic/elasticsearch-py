@@ -13,14 +13,17 @@ __versionstr__ = ".".join(map(str, VERSION))
 with open(join(dirname(__file__), "README")) as f:
     long_description = f.read().strip()
 
-install_requires = ["urllib3>=1.21.1", "certifi"]
+install_requires = [
+    "urllib3>=1.21.1",
+    "certifi",
+]
 tests_require = [
     "requests>=2.0.0, <3.0.0",
-    "nose",
     "coverage",
     "mock",
     "pyyaml",
-    "nosexcover",
+    "pytest",
+    "pytest-cov",
 ]
 
 docs_require = ["sphinx<1.7", "sphinx_rtd_theme"]

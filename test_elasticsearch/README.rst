@@ -34,10 +34,7 @@ To simply run the tests just execute the ``run_tests.py`` script or invoke
 
 Alternatively, if you wish to control what you are doing you have several additional options:
 
- * ``run_tests.py`` will pass any parameters specified to ``nosetests``
-
- * you can just run your favorite runner in the ``test_elasticsearch`` directory
-   (verified to work with nose and py.test) and bypass the fetch logic entirely.
+ * ``run_tests.py`` will pass any parameters specified to ``pytest``
 
  * to run a specific test, you can use ``python3 setup.py test -s <test_name>``, for example
    ``python3 setup.py test -s test_elasticsearch.test_helpers.TestParallelBulk.test_all_chunks_sent``
