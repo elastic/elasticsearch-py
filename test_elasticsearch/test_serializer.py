@@ -144,8 +144,7 @@ class TestTextSerializer(TestCase):
 
 
 class TestDeserializer(TestCase):
-    def setUp(self):
-        super(TestDeserializer, self).setUp()
+    def setup_method(self, _):
         self.de = Deserializer(DEFAULT_SERIALIZERS)
 
     def test_deserializes_json_by_default(self):
