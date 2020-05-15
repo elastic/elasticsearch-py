@@ -7,7 +7,9 @@ Dynamically generated set of TestCases based on set of yaml files describing
 some integration tests. These files are shared among all official Elasticsearch
 clients.
 """
+import sys
 import re
+import os
 from os import walk, environ
 from os.path import exists, join, dirname, pardir, relpath
 import yaml
@@ -62,6 +64,10 @@ SKIP_TESTS = {
 
 XPACK_FEATURES = None
 ES_VERSION = None
+RUN_ASYNC_REST_API_TESTS = (
+    sys.version_info >= (3, 6)
+    and os.environ.get("PYTHON_CONNECTION_CLASS") == "RequestsHttpConnection"
+)
 
 
 class YamlRunner:
@@ -77,7 +83,7 @@ class YamlRunner:
     def use_spec(self, test_spec):
         self._setup_code = test_spec.pop("setup", None)
         self._run_code = test_spec.pop("run", None)
-        self._teardown_code = test_spec.pop("teardown")
+        self._teardown_code = test_spec.pop("teardown", None)
 
     def setup(self):
         if self._setup_code:
@@ -414,6 +420,8 @@ def sync_runner(sync_client):
 
 @pytest.mark.parametrize("test_spec", YAML_TEST_SPECS)
 def test_rest_api_spec(test_spec, sync_runner):
+    if RUN_ASYNC_REST_API_TESTS:
+        pytest.skip("Skipped running sync REST API tests")
     if test_spec.get("skip", False):
         pytest.skip("Manually skipped in 'SKIP_TESTS'")
     sync_runner.use_spec(test_spec)
