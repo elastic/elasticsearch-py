@@ -5,7 +5,6 @@
                 "Calling client.tasks.get() without a task_id is deprecated "
                 "and will be removed in v8.0. Use client.tasks.list() instead.",
                 category=DeprecationWarning,
-                stacklevel=3,
             )
 
         {{ super()|trim }}
