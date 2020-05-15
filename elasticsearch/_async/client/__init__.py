@@ -6,7 +6,9 @@
 from __future__ import unicode_literals
 import logging
 
-from ..transport import Transport, TransportError
+from ..transport import Transport
+from ..exceptions import TransportError
+from ..compat import string_types, urlparse, unquote
 from .async_search import AsyncSearchClient
 from .autoscaling import AutoscalingClient
 from .indices import IndicesClient
@@ -18,7 +20,7 @@ from .remote import RemoteClient
 from .snapshot import SnapshotClient
 from .tasks import TasksClient
 from .xpack import XPackClient
-from .utils import query_params, _make_path, SKIP_IN_PATH, _bulk_body, _normalize_hosts
+from .utils import query_params, _make_path, SKIP_IN_PATH, _bulk_body
 
 # xpack APIs
 from .ccr import CcrClient
@@ -41,6 +43,51 @@ from .transform import TransformClient
 
 
 logger = logging.getLogger("elasticsearch")
+
+
+def _normalize_hosts(hosts):
+    """
+    Helper function to transform hosts argument to
+    :class:`~elasticsearch.Elasticsearch` to a list of dicts.
+    """
+    # if hosts are empty, just defer to defaults down the line
+    if hosts is None:
+        return [{}]
+
+    # passed in just one string
+    if isinstance(hosts, string_types):
+        hosts = [hosts]
+
+    out = []
+    # normalize hosts to dicts
+    for host in hosts:
+        if isinstance(host, string_types):
+            if "://" not in host:
+                host = "//%s" % host
+
+            parsed_url = urlparse(host)
+            h = {"host": parsed_url.hostname}
+
+            if parsed_url.port:
+                h["port"] = parsed_url.port
+
+            if parsed_url.scheme == "https":
+                h["port"] = parsed_url.port or 443
+                h["use_ssl"] = True
+
+            if parsed_url.username or parsed_url.password:
+                h["http_auth"] = "%s:%s" % (
+                    unquote(parsed_url.username),
+                    unquote(parsed_url.password),
+                )
+
+            if parsed_url.path and parsed_url.path != "/":
+                h["url_prefix"] = parsed_url.path
+
+            out.append(h)
+        else:
+            out.append(host)
+    return out
 
 
 class Elasticsearch(object):
@@ -228,17 +275,6 @@ class Elasticsearch(object):
         except Exception:
             # probably operating on custom transport and connection_pool, ignore
             return super(Elasticsearch, self).__repr__()
-
-    def __enter__(self):
-        if hasattr(self.transport, "_async_call"):
-            self.transport._async_call()
-        return self
-
-    def __exit__(self, *_):
-        self.close()
-
-    def close(self):
-        self.transport.close()
 
     # AUTO-GENERATED-API-DEFINITIONS #
     @query_params()
