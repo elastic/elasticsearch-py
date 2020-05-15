@@ -16,6 +16,7 @@ from click.testing import CliRunner
 from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound
+import unasync
 
 
 http = urllib3.PoolManager()
@@ -79,9 +80,8 @@ class Module:
     def parse_orig(self):
         self.orders = []
         self.header = "class C:"
-        fname = CODE_ROOT / "elasticsearch" / "client" / f"{self.namespace}.py"
-        if os.path.exists(fname):
-            with open(fname) as f:
+        if os.path.exists(self.filepath):
+            with open(self.filepath) as f:
                 content = f.read()
                 header_lines = []
                 for line in content.split("\n"):
@@ -97,7 +97,7 @@ class Module:
                             break
                 self.header = "\n".join(header_lines)
                 self.orders = re.findall(
-                    r'\n    def ([a-z_]+)\(',
+                    r'\n    (?:async )?def ([a-z_]+)\(',
                     content,
                     re.MULTILINE
                 )
@@ -113,12 +113,15 @@ class Module:
 
     def dump(self):
         self.sort()
-        fname = CODE_ROOT / "elasticsearch" / "client" / f"{self.namespace}.py"
-        with open(fname, "w") as f:
+        with open(self.filepath, "w") as f:
             f.write(self.header)
             for api in self._apis:
                 f.write(api.to_python())
-        blacken(fname)
+        blacken(self.filepath)
+
+    @property
+    def filepath(self):
+        return CODE_ROOT / f"elasticsearch/_async/client/{self.namespace}.py"
 
 
 class API:
@@ -298,6 +301,31 @@ def read_modules():
 def dump_modules(modules):
     for mod in modules.values():
         mod.dump()
+
+    # Unasync all the generated async code
+    additional_replacements = {
+        # We want to rewrite to 'Transport' instead of 'SyncTransport', etc
+        "AsyncTransport": "Transport",
+        "AsyncElasticsearch": "Elasticsearch",
+        # We don't want to rewrite this class
+        "AsyncSearchClient": "AsyncSearchClient",
+    }
+    rules = [
+        unasync.Rule(
+            fromdir="/elasticsearch/_async/client/",
+            todir="/elasticsearch/client/",
+            additional_replacements=additional_replacements
+        ),
+    ]
+
+    filepaths = []
+    for root, _, filenames in os.walk(CODE_ROOT / "elasticsearch/_async"):
+        for filename in filenames:
+            if filename.endswith(".py") and filename != "utils.py":
+                filepaths.append(os.path.join(root, filename))
+
+    unasync.unasync_files(filepaths, rules)
+    blacken(CODE_ROOT / "elasticsearch")
 
 
 if __name__ == "__main__":
