@@ -6,9 +6,7 @@
 from __future__ import unicode_literals
 import logging
 
-from ..transport import Transport
-from ..exceptions import TransportError
-from ..compat import string_types, urlparse, unquote
+from ..transport import AsyncTransport, TransportError
 from .async_search import AsyncSearchClient
 from .autoscaling import AutoscalingClient
 from .indices import IndicesClient
@@ -20,7 +18,7 @@ from .remote import RemoteClient
 from .snapshot import SnapshotClient
 from .tasks import TasksClient
 from .xpack import XPackClient
-from .utils import query_params, _make_path, SKIP_IN_PATH, _bulk_body
+from .utils import query_params, _make_path, SKIP_IN_PATH, _bulk_body, _normalize_hosts
 
 # xpack APIs
 from .ccr import CcrClient
@@ -45,52 +43,7 @@ from .transform import TransformClient
 logger = logging.getLogger("elasticsearch")
 
 
-def _normalize_hosts(hosts):
-    """
-    Helper function to transform hosts argument to
-    :class:`~elasticsearch.Elasticsearch` to a list of dicts.
-    """
-    # if hosts are empty, just defer to defaults down the line
-    if hosts is None:
-        return [{}]
-
-    # passed in just one string
-    if isinstance(hosts, string_types):
-        hosts = [hosts]
-
-    out = []
-    # normalize hosts to dicts
-    for host in hosts:
-        if isinstance(host, string_types):
-            if "://" not in host:
-                host = "//%s" % host
-
-            parsed_url = urlparse(host)
-            h = {"host": parsed_url.hostname}
-
-            if parsed_url.port:
-                h["port"] = parsed_url.port
-
-            if parsed_url.scheme == "https":
-                h["port"] = parsed_url.port or 443
-                h["use_ssl"] = True
-
-            if parsed_url.username or parsed_url.password:
-                h["http_auth"] = "%s:%s" % (
-                    unquote(parsed_url.username),
-                    unquote(parsed_url.password),
-                )
-
-            if parsed_url.path and parsed_url.path != "/":
-                h["url_prefix"] = parsed_url.path
-
-            out.append(h)
-        else:
-            out.append(host)
-    return out
-
-
-class Elasticsearch(object):
+class AsyncElasticsearch(object):
     """
     Elasticsearch low-level client. Provides a straightforward mapping from
     Python to ES REST endpoints.
@@ -215,7 +168,7 @@ class Elasticsearch(object):
 
     """
 
-    def __init__(self, hosts=None, transport_class=Transport, **kwargs):
+    def __init__(self, hosts=None, transport_class=AsyncTransport, **kwargs):
         """
         :arg hosts: list of nodes, or a single node, we should connect to.
             Node should be a dictionary ({"host": "localhost", "port": 9200}),
@@ -274,29 +227,40 @@ class Elasticsearch(object):
             return "<{cls}({cons})>".format(cls=self.__class__.__name__, cons=cons)
         except Exception:
             # probably operating on custom transport and connection_pool, ignore
-            return super(Elasticsearch, self).__repr__()
+            return super(AsyncElasticsearch, self).__repr__()
+
+    async def __aenter__(self):
+        if hasattr(self.transport, "_async_call"):
+            await self.transport._async_call()
+        return self
+
+    async def __aexit__(self, *_):
+        await self.close()
+
+    async def close(self):
+        await self.transport.close()
 
     # AUTO-GENERATED-API-DEFINITIONS #
     @query_params()
-    def ping(self, params=None, headers=None):
+    async def ping(self, params=None, headers=None):
         """
         Returns whether the cluster is running.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/index.html>`_
         """
         try:
-            return self.transport.perform_request(
+            return await self.transport.perform_request(
                 "HEAD", "/", params=params, headers=headers
             )
         except TransportError:
             return False
 
     @query_params()
-    def info(self, params=None, headers=None):
+    async def info(self, params=None, headers=None):
         """
         Returns basic information about the cluster.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/index.html>`_
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET", "/", params=params, headers=headers
         )
 
@@ -309,7 +273,7 @@ class Elasticsearch(object):
         "version_type",
         "wait_for_active_shards",
     )
-    def create(self, index, id, body, doc_type=None, params=None, headers=None):
+    async def create(self, index, id, body, doc_type=None, params=None, headers=None):
         """
         Creates a new document in the index.  Returns a 409 response when a document
         with a same ID already exists in the index.
@@ -345,7 +309,7 @@ class Elasticsearch(object):
         else:
             path = _make_path(index, doc_type, id)
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST" if id in SKIP_IN_PATH else "PUT",
             path,
             params=params,
@@ -365,7 +329,7 @@ class Elasticsearch(object):
         "version_type",
         "wait_for_active_shards",
     )
-    def index(self, index, body, id=None, params=None, headers=None):
+    async def index(self, index, body, id=None, params=None, headers=None):
         """
         Creates or updates a document in an index.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-index_.html>`_
@@ -403,7 +367,7 @@ class Elasticsearch(object):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST" if id in SKIP_IN_PATH else "PUT",
             _make_path(index, "_doc", id),
             params=params,
@@ -421,7 +385,7 @@ class Elasticsearch(object):
         "timeout",
         "wait_for_active_shards",
     )
-    def bulk(self, body, index=None, doc_type=None, params=None, headers=None):
+    async def bulk(self, body, index=None, doc_type=None, params=None, headers=None):
         """
         Allows to perform multiple index/update/delete operations in a single request.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-bulk.html>`_
@@ -456,7 +420,7 @@ class Elasticsearch(object):
             raise ValueError("Empty value passed for a required argument 'body'.")
 
         body = _bulk_body(self.transport.serializer, body)
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path(index, doc_type, "_bulk"),
             params=params,
@@ -465,7 +429,7 @@ class Elasticsearch(object):
         )
 
     @query_params()
-    def clear_scroll(self, body=None, scroll_id=None, params=None, headers=None):
+    async def clear_scroll(self, body=None, scroll_id=None, params=None, headers=None):
         """
         Explicitly clears the search context for a scroll.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-request-body.html#_clear_scroll_api>`_
@@ -481,7 +445,7 @@ class Elasticsearch(object):
         elif scroll_id:
             params["scroll_id"] = scroll_id
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "DELETE", "/_search/scroll", params=params, headers=headers, body=body
         )
 
@@ -501,7 +465,7 @@ class Elasticsearch(object):
         "routing",
         "terminate_after",
     )
-    def count(self, body=None, index=None, params=None, headers=None):
+    async def count(self, body=None, index=None, params=None, headers=None):
         """
         Returns number of documents matching a query.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-count.html>`_
@@ -538,7 +502,7 @@ class Elasticsearch(object):
         :arg terminate_after: The maximum count for each shard, upon
             reaching which the query execution will terminate early
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path(index, "_count"),
             params=params,
@@ -556,7 +520,7 @@ class Elasticsearch(object):
         "version_type",
         "wait_for_active_shards",
     )
-    def delete(self, index, id, doc_type=None, params=None, headers=None):
+    async def delete(self, index, id, doc_type=None, params=None, headers=None):
         """
         Removes a document from the index.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-delete.html>`_
@@ -592,7 +556,7 @@ class Elasticsearch(object):
         if doc_type in SKIP_IN_PATH:
             doc_type = "_doc"
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "DELETE", _make_path(index, doc_type, id), params=params, headers=headers
         )
 
@@ -630,7 +594,7 @@ class Elasticsearch(object):
         "wait_for_active_shards",
         "wait_for_completion",
     )
-    def delete_by_query(self, index, body, params=None, headers=None):
+    async def delete_by_query(self, index, body, params=None, headers=None):
         """
         Deletes documents matching the provided query.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-delete-by-query.html>`_
@@ -713,7 +677,7 @@ class Elasticsearch(object):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path(index, "_delete_by_query"),
             params=params,
@@ -722,7 +686,7 @@ class Elasticsearch(object):
         )
 
     @query_params("requests_per_second")
-    def delete_by_query_rethrottle(self, task_id, params=None, headers=None):
+    async def delete_by_query_rethrottle(self, task_id, params=None, headers=None):
         """
         Changes the number of requests per second for a particular Delete By Query
         operation.
@@ -735,7 +699,7 @@ class Elasticsearch(object):
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'task_id'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path("_delete_by_query", task_id, "_rethrottle"),
             params=params,
@@ -743,7 +707,7 @@ class Elasticsearch(object):
         )
 
     @query_params("master_timeout", "timeout")
-    def delete_script(self, id, params=None, headers=None):
+    async def delete_script(self, id, params=None, headers=None):
         """
         Deletes a script.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
@@ -755,7 +719,7 @@ class Elasticsearch(object):
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "DELETE", _make_path("_scripts", id), params=params, headers=headers
         )
 
@@ -771,7 +735,7 @@ class Elasticsearch(object):
         "version",
         "version_type",
     )
-    def exists(self, index, id, params=None, headers=None):
+    async def exists(self, index, id, params=None, headers=None):
         """
         Returns information about whether a document exists in an index.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-get.html>`_
@@ -801,7 +765,7 @@ class Elasticsearch(object):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "HEAD", _make_path(index, "_doc", id), params=params, headers=headers
         )
 
@@ -816,7 +780,7 @@ class Elasticsearch(object):
         "version",
         "version_type",
     )
-    def exists_source(self, index, id, doc_type=None, params=None, headers=None):
+    async def exists_source(self, index, id, doc_type=None, params=None, headers=None):
         """
         Returns information about whether a document source exists in an index.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-get.html>`_
@@ -846,7 +810,7 @@ class Elasticsearch(object):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "HEAD",
             _make_path(index, doc_type, id, "_source"),
             params=params,
@@ -867,7 +831,7 @@ class Elasticsearch(object):
         "routing",
         "stored_fields",
     )
-    def explain(self, index, id, body=None, params=None, headers=None):
+    async def explain(self, index, id, body=None, params=None, headers=None):
         """
         Returns information about why a specific matches (or doesn't match) a query.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-explain.html>`_
@@ -901,7 +865,7 @@ class Elasticsearch(object):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path(index, "_explain", id),
             params=params,
@@ -916,7 +880,7 @@ class Elasticsearch(object):
         "ignore_unavailable",
         "include_unmapped",
     )
-    def field_caps(self, index=None, params=None, headers=None):
+    async def field_caps(self, index=None, params=None, headers=None):
         """
         Returns the information about the capabilities of fields among multiple
         indices.
@@ -936,7 +900,7 @@ class Elasticsearch(object):
         :arg include_unmapped: Indicates whether unmapped fields should
             be included in the response.
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET", _make_path(index, "_field_caps"), params=params, headers=headers
         )
 
@@ -952,7 +916,7 @@ class Elasticsearch(object):
         "version",
         "version_type",
     )
-    def get(self, index, id, params=None, headers=None):
+    async def get(self, index, id, params=None, headers=None):
         """
         Returns a document.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-get.html>`_
@@ -982,12 +946,12 @@ class Elasticsearch(object):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET", _make_path(index, "_doc", id), params=params, headers=headers
         )
 
     @query_params("master_timeout")
-    def get_script(self, id, params=None, headers=None):
+    async def get_script(self, id, params=None, headers=None):
         """
         Returns a script.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
@@ -998,7 +962,7 @@ class Elasticsearch(object):
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET", _make_path("_scripts", id), params=params, headers=headers
         )
 
@@ -1013,7 +977,7 @@ class Elasticsearch(object):
         "version",
         "version_type",
     )
-    def get_source(self, index, id, params=None, headers=None):
+    async def get_source(self, index, id, params=None, headers=None):
         """
         Returns the source of a document.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-get.html>`_
@@ -1041,7 +1005,7 @@ class Elasticsearch(object):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET", _make_path(index, "_source", id), params=params, headers=headers
         )
 
@@ -1055,7 +1019,7 @@ class Elasticsearch(object):
         "routing",
         "stored_fields",
     )
-    def mget(self, body, index=None, params=None, headers=None):
+    async def mget(self, body, index=None, params=None, headers=None):
         """
         Allows to get multiple documents in one request.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-multi-get.html>`_
@@ -1083,7 +1047,7 @@ class Elasticsearch(object):
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path(index, "_mget"),
             params=params,
@@ -1100,7 +1064,7 @@ class Elasticsearch(object):
         "search_type",
         "typed_keys",
     )
-    def msearch(self, body, index=None, params=None, headers=None):
+    async def msearch(self, body, index=None, params=None, headers=None):
         """
         Allows to execute several search operations in one request.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-multi-search.html>`_
@@ -1137,7 +1101,7 @@ class Elasticsearch(object):
             raise ValueError("Empty value passed for a required argument 'body'.")
 
         body = _bulk_body(self.transport.serializer, body)
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path(index, "_msearch"),
             params=params,
@@ -1146,7 +1110,7 @@ class Elasticsearch(object):
         )
 
     @query_params("master_timeout", "timeout")
-    def put_script(self, id, body, context=None, params=None, headers=None):
+    async def put_script(self, id, body, context=None, params=None, headers=None):
         """
         Creates or updates a script.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
@@ -1161,7 +1125,7 @@ class Elasticsearch(object):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "PUT",
             _make_path("_scripts", id, context),
             params=params,
@@ -1172,7 +1136,7 @@ class Elasticsearch(object):
     @query_params(
         "allow_no_indices", "expand_wildcards", "ignore_unavailable", "search_type"
     )
-    def rank_eval(self, body, index=None, params=None, headers=None):
+    async def rank_eval(self, body, index=None, params=None, headers=None):
         """
         Allows to evaluate the quality of ranked search results over a set of typical
         search queries
@@ -1196,7 +1160,7 @@ class Elasticsearch(object):
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path(index, "_rank_eval"),
             params=params,
@@ -1214,7 +1178,7 @@ class Elasticsearch(object):
         "wait_for_active_shards",
         "wait_for_completion",
     )
-    def reindex(self, body, params=None, headers=None):
+    async def reindex(self, body, params=None, headers=None):
         """
         Allows to copy documents from one index to another, optionally filtering the
         source documents by a query, changing the destination index settings, or
@@ -1246,12 +1210,12 @@ class Elasticsearch(object):
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST", "/_reindex", params=params, headers=headers, body=body
         )
 
     @query_params("requests_per_second")
-    def reindex_rethrottle(self, task_id, params=None, headers=None):
+    async def reindex_rethrottle(self, task_id, params=None, headers=None):
         """
         Changes the number of requests per second for a particular Reindex operation.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-reindex.html>`_
@@ -1263,7 +1227,7 @@ class Elasticsearch(object):
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'task_id'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path("_reindex", task_id, "_rethrottle"),
             params=params,
@@ -1271,7 +1235,9 @@ class Elasticsearch(object):
         )
 
     @query_params()
-    def render_search_template(self, body=None, id=None, params=None, headers=None):
+    async def render_search_template(
+        self, body=None, id=None, params=None, headers=None
+    ):
         """
         Allows to use the Mustache language to pre-render a search definition.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-template.html#_validating_templates>`_
@@ -1279,7 +1245,7 @@ class Elasticsearch(object):
         :arg body: The search definition template and its params
         :arg id: The id of the stored search template
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path("_render", "template", id),
             params=params,
@@ -1288,14 +1254,14 @@ class Elasticsearch(object):
         )
 
     @query_params()
-    def scripts_painless_execute(self, body=None, params=None, headers=None):
+    async def scripts_painless_execute(self, body=None, params=None, headers=None):
         """
         Allows an arbitrary script to be executed and a result to be returned
         `<https://www.elastic.co/guide/en/elasticsearch/painless/master/painless-execute-api.html>`_
 
         :arg body: The script to execute
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             "/_scripts/painless/_execute",
             params=params,
@@ -1304,7 +1270,7 @@ class Elasticsearch(object):
         )
 
     @query_params("rest_total_hits_as_int", "scroll")
-    def scroll(self, body=None, scroll_id=None, params=None, headers=None):
+    async def scroll(self, body=None, scroll_id=None, params=None, headers=None):
         """
         Allows to retrieve a large numbers of results from a single search request.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-request-body.html#request-body-search-scroll>`_
@@ -1324,7 +1290,7 @@ class Elasticsearch(object):
         elif scroll_id:
             params["scroll_id"] = scroll_id
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST", "/_search/scroll", params=params, headers=headers, body=body
         )
 
@@ -1372,7 +1338,7 @@ class Elasticsearch(object):
         "typed_keys",
         "version",
     )
-    def search(self, body=None, index=None, params=None, headers=None):
+    async def search(self, body=None, index=None, params=None, headers=None):
         """
         Returns results matching a query.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-search.html>`_
@@ -1475,7 +1441,7 @@ class Elasticsearch(object):
         if "from_" in params:
             params["from"] = params.pop("from_")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path(index, "_search"),
             params=params,
@@ -1491,7 +1457,7 @@ class Elasticsearch(object):
         "preference",
         "routing",
     )
-    def search_shards(self, index=None, params=None, headers=None):
+    async def search_shards(self, index=None, params=None, headers=None):
         """
         Returns information about the indices and shards that a search request would be
         executed against.
@@ -1513,7 +1479,7 @@ class Elasticsearch(object):
             be performed on (default: random)
         :arg routing: Specific routing value
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET", _make_path(index, "_search_shards"), params=params, headers=headers
         )
 
@@ -1530,7 +1496,7 @@ class Elasticsearch(object):
         "timeout",
         "wait_for_active_shards",
     )
-    def update(self, index, id, body, doc_type=None, params=None, headers=None):
+    async def update(self, index, id, body, doc_type=None, params=None, headers=None):
         """
         Updates a document with a script or partial document.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-update.html>`_
@@ -1576,12 +1542,12 @@ class Elasticsearch(object):
         else:
             path = _make_path(index, doc_type, id, "_update")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST", path, params=params, headers=headers, body=body
         )
 
     @query_params("requests_per_second")
-    def update_by_query_rethrottle(self, task_id, params=None, headers=None):
+    async def update_by_query_rethrottle(self, task_id, params=None, headers=None):
         """
         Changes the number of requests per second for a particular Update By Query
         operation.
@@ -1594,7 +1560,7 @@ class Elasticsearch(object):
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'task_id'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path("_update_by_query", task_id, "_rethrottle"),
             params=params,
@@ -1602,22 +1568,22 @@ class Elasticsearch(object):
         )
 
     @query_params()
-    def get_script_context(self, params=None, headers=None):
+    async def get_script_context(self, params=None, headers=None):
         """
         Returns all script contexts.
         `<https://www.elastic.co/guide/en/elasticsearch/painless/master/painless-contexts.html>`_
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET", "/_script_context", params=params, headers=headers
         )
 
     @query_params()
-    def get_script_languages(self, params=None, headers=None):
+    async def get_script_languages(self, params=None, headers=None):
         """
         Returns available script types, languages and contexts
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET", "/_script_language", params=params, headers=headers
         )
 
@@ -1628,7 +1594,7 @@ class Elasticsearch(object):
         "search_type",
         "typed_keys",
     )
-    def msearch_template(self, body, index=None, params=None, headers=None):
+    async def msearch_template(self, body, index=None, params=None, headers=None):
         """
         Allows to execute several search template operations in one request.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-multi-search.html>`_
@@ -1654,7 +1620,7 @@ class Elasticsearch(object):
             raise ValueError("Empty value passed for a required argument 'body'.")
 
         body = _bulk_body(self.transport.serializer, body)
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path(index, "_msearch", "template"),
             params=params,
@@ -1676,7 +1642,7 @@ class Elasticsearch(object):
         "version",
         "version_type",
     )
-    def mtermvectors(self, body=None, index=None, params=None, headers=None):
+    async def mtermvectors(self, body=None, index=None, params=None, headers=None):
         """
         Returns multiple termvectors in one request.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-multi-termvectors.html>`_
@@ -1717,7 +1683,7 @@ class Elasticsearch(object):
         :arg version_type: Specific version type  Valid choices:
             internal, external, external_gte
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path(index, "_mtermvectors"),
             params=params,
@@ -1740,7 +1706,7 @@ class Elasticsearch(object):
         "search_type",
         "typed_keys",
     )
-    def search_template(self, body, index=None, params=None, headers=None):
+    async def search_template(self, body, index=None, params=None, headers=None):
         """
         Allows to use the Mustache language to pre-render a search definition.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-template.html>`_
@@ -1780,7 +1746,7 @@ class Elasticsearch(object):
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path(index, "_search", "template"),
             params=params,
@@ -1801,7 +1767,7 @@ class Elasticsearch(object):
         "version",
         "version_type",
     )
-    def termvectors(self, index, body=None, id=None, params=None, headers=None):
+    async def termvectors(self, index, body=None, id=None, params=None, headers=None):
         """
         Returns information and statistics about terms in the fields of a particular
         document.
@@ -1836,7 +1802,7 @@ class Elasticsearch(object):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path(index, "_termvectors", id),
             params=params,
@@ -1880,7 +1846,7 @@ class Elasticsearch(object):
         "wait_for_active_shards",
         "wait_for_completion",
     )
-    def update_by_query(self, index, body=None, params=None, headers=None):
+    async def update_by_query(self, index, body=None, params=None, headers=None):
         """
         Performs an update on every document in the index without changing the source,
         for example to pick up a mapping change.
@@ -1967,7 +1933,7 @@ class Elasticsearch(object):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path(index, "_update_by_query"),
             params=params,

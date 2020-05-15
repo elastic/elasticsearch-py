@@ -7,7 +7,7 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 class GraphClient(NamespacedClient):
     @query_params("routing", "timeout")
-    def explore(self, index, body=None, params=None, headers=None):
+    async def explore(self, index, body=None, params=None, headers=None):
         """
         Explore extracted and summarized information about the documents and terms in
         an index.
@@ -22,7 +22,7 @@ class GraphClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path(index, "_graph", "explore"),
             params=params,
