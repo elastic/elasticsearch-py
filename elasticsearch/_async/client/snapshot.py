@@ -7,7 +7,7 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 class SnapshotClient(NamespacedClient):
     @query_params("master_timeout", "wait_for_completion")
-    def create(self, repository, snapshot, body=None, params=None, headers=None):
+    async def create(self, repository, snapshot, body=None, params=None, headers=None):
         """
         Creates a snapshot in a repository.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/modules-snapshots.html>`_
@@ -24,7 +24,7 @@ class SnapshotClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "PUT",
             _make_path("_snapshot", repository, snapshot),
             params=params,
@@ -33,7 +33,7 @@ class SnapshotClient(NamespacedClient):
         )
 
     @query_params("master_timeout")
-    def delete(self, repository, snapshot, params=None, headers=None):
+    async def delete(self, repository, snapshot, params=None, headers=None):
         """
         Deletes a snapshot.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/modules-snapshots.html>`_
@@ -47,7 +47,7 @@ class SnapshotClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "DELETE",
             _make_path("_snapshot", repository, snapshot),
             params=params,
@@ -55,7 +55,7 @@ class SnapshotClient(NamespacedClient):
         )
 
     @query_params("ignore_unavailable", "master_timeout", "verbose")
-    def get(self, repository, snapshot, params=None, headers=None):
+    async def get(self, repository, snapshot, params=None, headers=None):
         """
         Returns information about a snapshot.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/modules-snapshots.html>`_
@@ -74,7 +74,7 @@ class SnapshotClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET",
             _make_path("_snapshot", repository, snapshot),
             params=params,
@@ -82,7 +82,7 @@ class SnapshotClient(NamespacedClient):
         )
 
     @query_params("master_timeout", "timeout")
-    def delete_repository(self, repository, params=None, headers=None):
+    async def delete_repository(self, repository, params=None, headers=None):
         """
         Deletes a repository.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/modules-snapshots.html>`_
@@ -96,7 +96,7 @@ class SnapshotClient(NamespacedClient):
         if repository in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'repository'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "DELETE",
             _make_path("_snapshot", repository),
             params=params,
@@ -104,7 +104,7 @@ class SnapshotClient(NamespacedClient):
         )
 
     @query_params("local", "master_timeout")
-    def get_repository(self, repository=None, params=None, headers=None):
+    async def get_repository(self, repository=None, params=None, headers=None):
         """
         Returns information about a repository.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/modules-snapshots.html>`_
@@ -115,12 +115,12 @@ class SnapshotClient(NamespacedClient):
         :arg master_timeout: Explicit operation timeout for connection
             to master node
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET", _make_path("_snapshot", repository), params=params, headers=headers
         )
 
     @query_params("master_timeout", "timeout", "verify")
-    def create_repository(self, repository, body, params=None, headers=None):
+    async def create_repository(self, repository, body, params=None, headers=None):
         """
         Creates a repository.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/modules-snapshots.html>`_
@@ -136,7 +136,7 @@ class SnapshotClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "PUT",
             _make_path("_snapshot", repository),
             params=params,
@@ -145,7 +145,7 @@ class SnapshotClient(NamespacedClient):
         )
 
     @query_params("master_timeout", "wait_for_completion")
-    def restore(self, repository, snapshot, body=None, params=None, headers=None):
+    async def restore(self, repository, snapshot, body=None, params=None, headers=None):
         """
         Restores a snapshot.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/modules-snapshots.html>`_
@@ -162,7 +162,7 @@ class SnapshotClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path("_snapshot", repository, snapshot, "_restore"),
             params=params,
@@ -171,7 +171,7 @@ class SnapshotClient(NamespacedClient):
         )
 
     @query_params("ignore_unavailable", "master_timeout")
-    def status(self, repository=None, snapshot=None, params=None, headers=None):
+    async def status(self, repository=None, snapshot=None, params=None, headers=None):
         """
         Returns information about the status of a snapshot.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/modules-snapshots.html>`_
@@ -184,7 +184,7 @@ class SnapshotClient(NamespacedClient):
         :arg master_timeout: Explicit operation timeout for connection
             to master node
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET",
             _make_path("_snapshot", repository, snapshot, "_status"),
             params=params,
@@ -192,7 +192,7 @@ class SnapshotClient(NamespacedClient):
         )
 
     @query_params("master_timeout", "timeout")
-    def verify_repository(self, repository, params=None, headers=None):
+    async def verify_repository(self, repository, params=None, headers=None):
         """
         Verifies a repository.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/modules-snapshots.html>`_
@@ -205,7 +205,7 @@ class SnapshotClient(NamespacedClient):
         if repository in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'repository'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path("_snapshot", repository, "_verify"),
             params=params,
@@ -213,7 +213,7 @@ class SnapshotClient(NamespacedClient):
         )
 
     @query_params("master_timeout", "timeout")
-    def cleanup_repository(self, repository, params=None, headers=None):
+    async def cleanup_repository(self, repository, params=None, headers=None):
         """
         Removes stale data from repository.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/clean-up-snapshot-repo-api.html>`_
@@ -226,7 +226,7 @@ class SnapshotClient(NamespacedClient):
         if repository in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'repository'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path("_snapshot", repository, "_cleanup"),
             params=params,

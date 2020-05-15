@@ -7,7 +7,7 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 class IndicesClient(NamespacedClient):
     @query_params()
-    def analyze(self, body=None, index=None, params=None, headers=None):
+    async def analyze(self, body=None, index=None, params=None, headers=None):
         """
         Performs the analysis process on a text and return the tokens breakdown of the
         text.
@@ -17,7 +17,7 @@ class IndicesClient(NamespacedClient):
             which the analysis should be performed
         :arg index: The name of the index to scope the operation
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path(index, "_analyze"),
             params=params,
@@ -26,7 +26,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable")
-    def refresh(self, index=None, params=None, headers=None):
+    async def refresh(self, index=None, params=None, headers=None):
         """
         Performs the refresh operation in one or more indices.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-refresh.html>`_
@@ -42,7 +42,7 @@ class IndicesClient(NamespacedClient):
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST", _make_path(index, "_refresh"), params=params, headers=headers
         )
 
@@ -53,7 +53,7 @@ class IndicesClient(NamespacedClient):
         "ignore_unavailable",
         "wait_if_ongoing",
     )
-    def flush(self, index=None, params=None, headers=None):
+    async def flush(self, index=None, params=None, headers=None):
         """
         Performs the flush operation on one or more indices.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-flush.html>`_
@@ -78,14 +78,14 @@ class IndicesClient(NamespacedClient):
             already executing. The default is true. If set to false the flush will
             be skipped iff if another flush operation is already running.
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST", _make_path(index, "_flush"), params=params, headers=headers
         )
 
     @query_params(
         "include_type_name", "master_timeout", "timeout", "wait_for_active_shards"
     )
-    def create(self, index, body=None, params=None, headers=None):
+    async def create(self, index, body=None, params=None, headers=None):
         """
         Creates an index with optional settings and mappings.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-create-index.html>`_
@@ -103,12 +103,12 @@ class IndicesClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "PUT", _make_path(index), params=params, headers=headers, body=body
         )
 
     @query_params("master_timeout", "timeout", "wait_for_active_shards")
-    def clone(self, index, target, body=None, params=None, headers=None):
+    async def clone(self, index, target, body=None, params=None, headers=None):
         """
         Clones an index
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-clone-index.html>`_
@@ -126,7 +126,7 @@ class IndicesClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "PUT",
             _make_path(index, "_clone", target),
             params=params,
@@ -144,7 +144,7 @@ class IndicesClient(NamespacedClient):
         "local",
         "master_timeout",
     )
-    def get(self, index, params=None, headers=None):
+    async def get(self, index, params=None, headers=None):
         """
         Returns information about one or more indices.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-get-index.html>`_
@@ -170,7 +170,7 @@ class IndicesClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET", _make_path(index), params=params, headers=headers
         )
 
@@ -182,7 +182,7 @@ class IndicesClient(NamespacedClient):
         "timeout",
         "wait_for_active_shards",
     )
-    def open(self, index, params=None, headers=None):
+    async def open(self, index, params=None, headers=None):
         """
         Opens an index.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-open-close.html>`_
@@ -204,7 +204,7 @@ class IndicesClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST", _make_path(index, "_open"), params=params, headers=headers
         )
 
@@ -216,7 +216,7 @@ class IndicesClient(NamespacedClient):
         "timeout",
         "wait_for_active_shards",
     )
-    def close(self, index, params=None, headers=None):
+    async def close(self, index, params=None, headers=None):
         """
         Closes an index.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-open-close.html>`_
@@ -238,7 +238,7 @@ class IndicesClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST", _make_path(index, "_close"), params=params, headers=headers
         )
 
@@ -249,7 +249,7 @@ class IndicesClient(NamespacedClient):
         "master_timeout",
         "timeout",
     )
-    def delete(self, index, params=None, headers=None):
+    async def delete(self, index, params=None, headers=None):
         """
         Deletes an index.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-delete-index.html>`_
@@ -269,7 +269,7 @@ class IndicesClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "DELETE", _make_path(index), params=params, headers=headers
         )
 
@@ -281,7 +281,7 @@ class IndicesClient(NamespacedClient):
         "include_defaults",
         "local",
     )
-    def exists(self, index, params=None, headers=None):
+    async def exists(self, index, params=None, headers=None):
         """
         Returns information about whether a particular index exists.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-exists.html>`_
@@ -304,12 +304,12 @@ class IndicesClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "HEAD", _make_path(index), params=params, headers=headers
         )
 
     @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable", "local")
-    def exists_type(self, index, doc_type, params=None, headers=None):
+    async def exists_type(self, index, doc_type, params=None, headers=None):
         """
         Returns information about whether a particular document type exists.
         (DEPRECATED)
@@ -333,7 +333,7 @@ class IndicesClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "HEAD",
             _make_path(index, "_mapping", doc_type),
             params=params,
@@ -348,7 +348,9 @@ class IndicesClient(NamespacedClient):
         "master_timeout",
         "timeout",
     )
-    def put_mapping(self, body, index=None, doc_type=None, params=None, headers=None):
+    async def put_mapping(
+        self, body, index=None, doc_type=None, params=None, headers=None
+    ):
         """
         Updates the index mappings.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-put-mapping.html>`_
@@ -377,7 +379,7 @@ class IndicesClient(NamespacedClient):
         if doc_type not in SKIP_IN_PATH and index in SKIP_IN_PATH:
             index = "_all"
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "PUT",
             _make_path(index, doc_type, "_mapping"),
             params=params,
@@ -393,7 +395,7 @@ class IndicesClient(NamespacedClient):
         "local",
         "master_timeout",
     )
-    def get_mapping(self, index=None, doc_type=None, params=None, headers=None):
+    async def get_mapping(self, index=None, doc_type=None, params=None, headers=None):
         """
         Returns mappings for one or more indices.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-get-mapping.html>`_
@@ -414,7 +416,7 @@ class IndicesClient(NamespacedClient):
             from master node (default: false)
         :arg master_timeout: Specify timeout for connection to master
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET",
             _make_path(index, "_mapping", doc_type),
             params=params,
@@ -422,7 +424,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params("master_timeout", "timeout")
-    def put_alias(self, index, name, body=None, params=None, headers=None):
+    async def put_alias(self, index, name, body=None, params=None, headers=None):
         """
         Creates or updates an alias.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-aliases.html>`_
@@ -440,7 +442,7 @@ class IndicesClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "PUT",
             _make_path(index, "_alias", name),
             params=params,
@@ -449,7 +451,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable", "local")
-    def exists_alias(self, name, index=None, params=None, headers=None):
+    async def exists_alias(self, name, index=None, params=None, headers=None):
         """
         Returns information about whether a particular alias exists.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-aliases.html>`_
@@ -471,12 +473,12 @@ class IndicesClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "HEAD", _make_path(index, "_alias", name), params=params, headers=headers
         )
 
     @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable", "local")
-    def get_alias(self, index=None, name=None, params=None, headers=None):
+    async def get_alias(self, index=None, name=None, params=None, headers=None):
         """
         Returns an alias.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-aliases.html>`_
@@ -495,12 +497,12 @@ class IndicesClient(NamespacedClient):
         :arg local: Return local information, do not retrieve the state
             from master node (default: false)
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET", _make_path(index, "_alias", name), params=params, headers=headers
         )
 
     @query_params("master_timeout", "timeout")
-    def update_aliases(self, body, params=None, headers=None):
+    async def update_aliases(self, body, params=None, headers=None):
         """
         Updates index aliases.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-aliases.html>`_
@@ -512,12 +514,12 @@ class IndicesClient(NamespacedClient):
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST", "/_aliases", params=params, headers=headers, body=body
         )
 
     @query_params("master_timeout", "timeout")
-    def delete_alias(self, index, name, params=None, headers=None):
+    async def delete_alias(self, index, name, params=None, headers=None):
         """
         Deletes an alias.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-aliases.html>`_
@@ -533,12 +535,12 @@ class IndicesClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "DELETE", _make_path(index, "_alias", name), params=params, headers=headers
         )
 
     @query_params("create", "include_type_name", "master_timeout", "order")
-    def put_template(self, name, body, params=None, headers=None):
+    async def put_template(self, name, body, params=None, headers=None):
         """
         Creates or updates an index template.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-templates.html>`_
@@ -558,7 +560,7 @@ class IndicesClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "PUT",
             _make_path("_template", name),
             params=params,
@@ -567,7 +569,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params("flat_settings", "local", "master_timeout")
-    def exists_template(self, name, params=None, headers=None):
+    async def exists_template(self, name, params=None, headers=None):
         """
         Returns information about whether a particular index template exists.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-templates.html>`_
@@ -583,12 +585,12 @@ class IndicesClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "HEAD", _make_path("_template", name), params=params, headers=headers
         )
 
     @query_params("flat_settings", "include_type_name", "local", "master_timeout")
-    def get_template(self, name=None, params=None, headers=None):
+    async def get_template(self, name=None, params=None, headers=None):
         """
         Returns an index template.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-templates.html>`_
@@ -603,12 +605,12 @@ class IndicesClient(NamespacedClient):
         :arg master_timeout: Explicit operation timeout for connection
             to master node
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET", _make_path("_template", name), params=params, headers=headers
         )
 
     @query_params("master_timeout", "timeout")
-    def delete_template(self, name, params=None, headers=None):
+    async def delete_template(self, name, params=None, headers=None):
         """
         Deletes an index template.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-templates.html>`_
@@ -620,7 +622,7 @@ class IndicesClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "DELETE", _make_path("_template", name), params=params, headers=headers
         )
 
@@ -633,7 +635,7 @@ class IndicesClient(NamespacedClient):
         "local",
         "master_timeout",
     )
-    def get_settings(self, index=None, name=None, params=None, headers=None):
+    async def get_settings(self, index=None, name=None, params=None, headers=None):
         """
         Returns settings for one or more indices.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-get-settings.html>`_
@@ -657,7 +659,7 @@ class IndicesClient(NamespacedClient):
             from master node (default: false)
         :arg master_timeout: Specify timeout for connection to master
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET", _make_path(index, "_settings", name), params=params, headers=headers
         )
 
@@ -670,7 +672,7 @@ class IndicesClient(NamespacedClient):
         "preserve_existing",
         "timeout",
     )
-    def put_settings(self, body, index=None, params=None, headers=None):
+    async def put_settings(self, body, index=None, params=None, headers=None):
         """
         Updates the index settings.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-update-settings.html>`_
@@ -697,7 +699,7 @@ class IndicesClient(NamespacedClient):
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "PUT",
             _make_path(index, "_settings"),
             params=params,
@@ -717,7 +719,7 @@ class IndicesClient(NamespacedClient):
         "level",
         "types",
     )
-    def stats(self, index=None, metric=None, params=None, headers=None):
+    async def stats(self, index=None, metric=None, params=None, headers=None):
         """
         Provides statistics on operations happening in an index.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-stats.html>`_
@@ -753,14 +755,14 @@ class IndicesClient(NamespacedClient):
         :arg types: A comma-separated list of document types for the
             `indexing` index metric
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET", _make_path(index, "_stats", metric), params=params, headers=headers
         )
 
     @query_params(
         "allow_no_indices", "expand_wildcards", "ignore_unavailable", "verbose"
     )
-    def segments(self, index=None, params=None, headers=None):
+    async def segments(self, index=None, params=None, headers=None):
         """
         Provides low-level information about segments in a Lucene index.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-segments.html>`_
@@ -777,7 +779,7 @@ class IndicesClient(NamespacedClient):
             should be ignored when unavailable (missing or closed)
         :arg verbose: Includes detailed memory usage by Lucene.
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET", _make_path(index, "_segments"), params=params, headers=headers
         )
 
@@ -790,7 +792,7 @@ class IndicesClient(NamespacedClient):
         "query",
         "request",
     )
-    def clear_cache(self, index=None, params=None, headers=None):
+    async def clear_cache(self, index=None, params=None, headers=None):
         """
         Clears all or specific caches for one or more indices.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-clearcache.html>`_
@@ -811,12 +813,12 @@ class IndicesClient(NamespacedClient):
         :arg query: Clear query caches
         :arg request: Clear request cache
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST", _make_path(index, "_cache", "clear"), params=params, headers=headers
         )
 
     @query_params("active_only", "detailed")
-    def recovery(self, index=None, params=None, headers=None):
+    async def recovery(self, index=None, params=None, headers=None):
         """
         Returns information about ongoing index shard recoveries.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-recovery.html>`_
@@ -828,7 +830,7 @@ class IndicesClient(NamespacedClient):
         :arg detailed: Whether to display detailed information about
             shard recovery
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET", _make_path(index, "_recovery"), params=params, headers=headers
         )
 
@@ -839,7 +841,7 @@ class IndicesClient(NamespacedClient):
         "only_ancient_segments",
         "wait_for_completion",
     )
-    def upgrade(self, index=None, params=None, headers=None):
+    async def upgrade(self, index=None, params=None, headers=None):
         """
         The _upgrade API is no longer useful and will be removed.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-upgrade.html>`_
@@ -859,12 +861,12 @@ class IndicesClient(NamespacedClient):
         :arg wait_for_completion: Specify whether the request should
             block until the all segments are upgraded (default: false)
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST", _make_path(index, "_upgrade"), params=params, headers=headers
         )
 
     @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable")
-    def get_upgrade(self, index=None, params=None, headers=None):
+    async def get_upgrade(self, index=None, params=None, headers=None):
         """
         The _upgrade API is no longer useful and will be removed.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-upgrade.html>`_
@@ -880,14 +882,14 @@ class IndicesClient(NamespacedClient):
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET", _make_path(index, "_upgrade"), params=params, headers=headers
         )
 
     @query_params(
         "allow_no_indices", "expand_wildcards", "ignore_unavailable", "status"
     )
-    def shard_stores(self, index=None, params=None, headers=None):
+    async def shard_stores(self, index=None, params=None, headers=None):
         """
         Provides store information for shard copies of indices.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-shards-stores.html>`_
@@ -906,7 +908,7 @@ class IndicesClient(NamespacedClient):
             on shards to get store information for   Valid choices: green, yellow,
             red, all
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET", _make_path(index, "_shard_stores"), params=params, headers=headers
         )
 
@@ -918,7 +920,7 @@ class IndicesClient(NamespacedClient):
         "max_num_segments",
         "only_expunge_deletes",
     )
-    def forcemerge(self, index=None, params=None, headers=None):
+    async def forcemerge(self, index=None, params=None, headers=None):
         """
         Performs the force merge operation on one or more indices.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-forcemerge.html>`_
@@ -940,14 +942,14 @@ class IndicesClient(NamespacedClient):
         :arg only_expunge_deletes: Specify whether the operation should
             only expunge deleted documents
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST", _make_path(index, "_forcemerge"), params=params, headers=headers
         )
 
     @query_params(
         "copy_settings", "master_timeout", "timeout", "wait_for_active_shards"
     )
-    def shrink(self, index, target, body=None, params=None, headers=None):
+    async def shrink(self, index, target, body=None, params=None, headers=None):
         """
         Allow to shrink an existing index into a new index with fewer primary shards.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-shrink-index.html>`_
@@ -967,7 +969,7 @@ class IndicesClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "PUT",
             _make_path(index, "_shrink", target),
             params=params,
@@ -978,7 +980,7 @@ class IndicesClient(NamespacedClient):
     @query_params(
         "copy_settings", "master_timeout", "timeout", "wait_for_active_shards"
     )
-    def split(self, index, target, body=None, params=None, headers=None):
+    async def split(self, index, target, body=None, params=None, headers=None):
         """
         Allows you to split an existing index into a new index with more primary
         shards.
@@ -999,7 +1001,7 @@ class IndicesClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "PUT",
             _make_path(index, "_split", target),
             params=params,
@@ -1014,7 +1016,9 @@ class IndicesClient(NamespacedClient):
         "timeout",
         "wait_for_active_shards",
     )
-    def rollover(self, alias, body=None, new_index=None, params=None, headers=None):
+    async def rollover(
+        self, alias, body=None, new_index=None, params=None, headers=None
+    ):
         """
         Updates an alias to point to a new index when the existing index is considered
         to be too large or too old.
@@ -1038,7 +1042,7 @@ class IndicesClient(NamespacedClient):
         if alias in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'alias'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path(alias, "_rollover", new_index),
             params=params,
@@ -1054,7 +1058,7 @@ class IndicesClient(NamespacedClient):
         "timeout",
         "wait_for_active_shards",
     )
-    def freeze(self, index, params=None, headers=None):
+    async def freeze(self, index, params=None, headers=None):
         """
         Freezes an index. A frozen index has almost no overhead on the cluster (except
         for maintaining its metadata in memory) and is read-only.
@@ -1077,7 +1081,7 @@ class IndicesClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST", _make_path(index, "_freeze"), params=params, headers=headers
         )
 
@@ -1089,7 +1093,7 @@ class IndicesClient(NamespacedClient):
         "timeout",
         "wait_for_active_shards",
     )
-    def unfreeze(self, index, params=None, headers=None):
+    async def unfreeze(self, index, params=None, headers=None):
         """
         Unfreezes an index. When a frozen index is unfrozen, the index goes through the
         normal recovery process and becomes writeable again.
@@ -1112,12 +1116,12 @@ class IndicesClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST", _make_path(index, "_unfreeze"), params=params, headers=headers
         )
 
     @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable")
-    def reload_search_analyzers(self, index, params=None, headers=None):
+    async def reload_search_analyzers(self, index, params=None, headers=None):
         """
         Reloads an index's search analyzers and their resources.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-reload-analyzers.html>`_
@@ -1136,7 +1140,7 @@ class IndicesClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET",
             _make_path(index, "_reload_search_analyzers"),
             params=params,
@@ -1151,7 +1155,7 @@ class IndicesClient(NamespacedClient):
         "include_type_name",
         "local",
     )
-    def get_field_mapping(
+    async def get_field_mapping(
         self, fields, index=None, doc_type=None, params=None, headers=None
     ):
         """
@@ -1179,7 +1183,7 @@ class IndicesClient(NamespacedClient):
         if fields in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'fields'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET",
             _make_path(index, "_mapping", doc_type, "field", fields),
             params=params,
@@ -1200,7 +1204,7 @@ class IndicesClient(NamespacedClient):
         "q",
         "rewrite",
     )
-    def validate_query(
+    async def validate_query(
         self, body=None, index=None, doc_type=None, params=None, headers=None
     ):
         """
@@ -1238,7 +1242,7 @@ class IndicesClient(NamespacedClient):
         :arg rewrite: Provide a more detailed explanation showing the
             actual Lucene query that will be executed.
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path(index, doc_type, "_validate", "query"),
             params=params,
@@ -1247,7 +1251,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params()
-    def create_data_stream(self, name, body, params=None, headers=None):
+    async def create_data_stream(self, name, body, params=None, headers=None):
         """
         Creates or updates a data stream
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/data-streams.html>`_
@@ -1259,7 +1263,7 @@ class IndicesClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "PUT",
             _make_path("_data_stream", name),
             params=params,
@@ -1268,7 +1272,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params()
-    def delete_data_stream(self, name, params=None, headers=None):
+    async def delete_data_stream(self, name, params=None, headers=None):
         """
         Deletes a data stream.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/data-streams.html>`_
@@ -1278,12 +1282,12 @@ class IndicesClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "DELETE", _make_path("_data_stream", name), params=params, headers=headers
         )
 
     @query_params()
-    def get_data_streams(self, name=None, params=None, headers=None):
+    async def get_data_streams(self, name=None, params=None, headers=None):
         """
         Returns data streams.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/data-streams.html>`_
@@ -1291,12 +1295,12 @@ class IndicesClient(NamespacedClient):
         :arg name: The name or wildcard expression of the requested data
             streams
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET", _make_path("_data_streams", name), params=params, headers=headers
         )
 
     @query_params("master_timeout", "timeout")
-    def delete_index_template(self, name, params=None, headers=None):
+    async def delete_index_template(self, name, params=None, headers=None):
         """
         Deletes an index template.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-templates.html>`_
@@ -1308,7 +1312,7 @@ class IndicesClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "DELETE",
             _make_path("_index_template", name),
             params=params,
@@ -1316,7 +1320,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params("flat_settings", "local", "master_timeout")
-    def get_index_template(self, name=None, params=None, headers=None):
+    async def get_index_template(self, name=None, params=None, headers=None):
         """
         Returns an index template.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-templates.html>`_
@@ -1329,12 +1333,12 @@ class IndicesClient(NamespacedClient):
         :arg master_timeout: Explicit operation timeout for connection
             to master node
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET", _make_path("_index_template", name), params=params, headers=headers
         )
 
     @query_params("cause", "create", "master_timeout")
-    def put_index_template(self, name, body, params=None, headers=None):
+    async def put_index_template(self, name, body, params=None, headers=None):
         """
         Creates or updates an index template.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-templates.html>`_
@@ -1351,7 +1355,7 @@ class IndicesClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "PUT",
             _make_path("_index_template", name),
             params=params,
@@ -1360,7 +1364,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params("flat_settings", "local", "master_timeout")
-    def exists_index_template(self, name, params=None, headers=None):
+    async def exists_index_template(self, name, params=None, headers=None):
         """
         Returns information about whether a particular index template exists.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/indices-templates.html>`_
@@ -1376,12 +1380,12 @@ class IndicesClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "HEAD", _make_path("_index_template", name), params=params, headers=headers
         )
 
     @query_params("cause", "create", "master_timeout")
-    def simulate_index_template(self, name, body=None, params=None, headers=None):
+    async def simulate_index_template(self, name, body=None, params=None, headers=None):
         """
         Simulate matching the given index name against the index templates in the
         system
@@ -1401,7 +1405,7 @@ class IndicesClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path("_index_template", "_simulate_index", name),
             params=params,
@@ -1410,7 +1414,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable")
-    def flush_synced(self, index=None, params=None, headers=None):
+    async def flush_synced(self, index=None, params=None, headers=None):
         """
         Performs a synced flush operation on one or more indices. Synced flush is
         deprecated and will be removed in 8.0. Use flush instead
@@ -1427,7 +1431,7 @@ class IndicesClient(NamespacedClient):
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path(index, "_flush", "synced"),
             params=params,
