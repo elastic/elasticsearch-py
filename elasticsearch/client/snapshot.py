@@ -215,7 +215,7 @@ class SnapshotClient(NamespacedClient):
     def cleanup_repository(self, repository, params=None, headers=None):
         """
         Removes stale data from repository.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/clean-up-snapshot-repo-api.html>`_
 
         :arg repository: A repository name
         :arg master_timeout: Explicit operation timeout for connection

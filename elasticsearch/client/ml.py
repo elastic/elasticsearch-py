@@ -115,13 +115,19 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    def delete_expired_data(self, params=None, headers=None):
+    def delete_expired_data(self, body=None, params=None, headers=None):
         """
         Deletes expired and unused machine learning data.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-expired-data.html>`_
+
+        :arg body: deleting expired data parameters
         """
         return self.transport.perform_request(
-            "DELETE", "/_ml/_delete_expired_data", params=params, headers=headers
+            "DELETE",
+            "/_ml/_delete_expired_data",
+            params=params,
+            headers=headers,
+            body=body,
         )
 
     @query_params()
@@ -1012,6 +1018,7 @@ class MlClient(NamespacedClient):
     def validate(self, body, params=None, headers=None):
         """
         Validates an anomaly detection job.
+        `<https://www.elastic.co/guide/en/machine-learning/current/ml-jobs.html>`_
 
         :arg body: The job config
         """
@@ -1030,6 +1037,7 @@ class MlClient(NamespacedClient):
     def validate_detector(self, body, params=None, headers=None):
         """
         Validates an anomaly detection detector.
+        `<https://www.elastic.co/guide/en/machine-learning/current/ml-jobs.html>`_
 
         :arg body: The detector
         """

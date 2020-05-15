@@ -1236,19 +1236,6 @@ class IndicesClient(NamespacedClient):
             "DELETE", _make_path("_data_stream", name), params=params, headers=headers
         )
 
-    @query_params()
-    def get_data_streams(self, name=None, params=None, headers=None):
-        """
-        Returns data streams.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
-
-        :arg name: The name or wildcard expression of the requested data
-            streams
-        """
-        return self.transport.perform_request(
-            "GET", _make_path("_data_streams", name), params=params, headers=headers
-        )
-
     @query_params("master_timeout", "timeout")
     def delete_index_template(self, name, params=None, headers=None):
         """
@@ -1358,6 +1345,43 @@ class IndicesClient(NamespacedClient):
         return self.transport.perform_request(
             "POST",
             _make_path("_index_template", "_simulate_index", name),
+            params=params,
+            headers=headers,
+            body=body,
+        )
+
+    @query_params()
+    def get_data_stream(self, name=None, params=None, headers=None):
+        """
+        Returns data streams.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
+
+        :arg name: The name or wildcard expression of the requested data
+            streams
+        """
+        return self.transport.perform_request(
+            "GET", _make_path("_data_stream", name), params=params, headers=headers
+        )
+
+    @query_params("cause", "create", "master_timeout")
+    def simulate_template(self, body=None, name=None, params=None, headers=None):
+        """
+        Simulate resolving the given template name or body
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+
+        :arg body: New index template definition to be simulated, if no
+            index template name is specified
+        :arg name: The name of the index template
+        :arg cause: User defined reason for dry-run creating the new
+            template for simulation purposes
+        :arg create: Whether the index template we optionally defined in
+            the body should only be dry-run added if new or can also replace an
+            existing one
+        :arg master_timeout: Specify timeout for connection to master
+        """
+        return self.transport.perform_request(
+            "POST",
+            _make_path("_index_template", "_simulate", name),
             params=params,
             headers=headers,
             body=body,
