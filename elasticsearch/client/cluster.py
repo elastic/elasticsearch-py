@@ -243,7 +243,7 @@ class ClusterClient(NamespacedClient):
     def delete_component_template(self, name, params=None, headers=None):
         """
         Deletes a component template
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-template.html>`_
 
         :arg name: The name of the template
         :arg master_timeout: Specify timeout for connection to master
@@ -263,7 +263,7 @@ class ClusterClient(NamespacedClient):
     def get_component_template(self, name=None, params=None, headers=None):
         """
         Returns one or more component templates
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-template.html>`_
 
         :arg name: The comma separated names of the component templates
         :arg local: Return local information, do not retrieve the state
@@ -282,7 +282,7 @@ class ClusterClient(NamespacedClient):
     def put_component_template(self, name, body, params=None, headers=None):
         """
         Creates or updates a component template
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-template.html>`_
 
         :arg name: The name of the template
         :arg body: The template definition
@@ -307,7 +307,7 @@ class ClusterClient(NamespacedClient):
     def exists_component_template(self, name, params=None, headers=None):
         """
         Returns information about whether a particular component template exist
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-template.html>`_
 
         :arg name: The name of the template
         :arg local: Return local information, do not retrieve the state
