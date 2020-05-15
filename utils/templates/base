@@ -1,6 +1,6 @@
 
     @query_params({{ api.query_params|map("tojson")|join(", ")}})
-    def {{ api.name }}(self, {% include "func_params" %}):
+    async def {{ api.name }}(self, {% include "func_params" %}):
         """
         {% if api.description %}
         {{ api.description|replace("\n", " ")|wordwrap(wrapstring="\n        ") }}
@@ -24,6 +24,6 @@
         body = _bulk_body(self.transport.serializer, body)
         {% endif %}
         {% block request %}
-        return self.transport.perform_request("{{ api.method }}", {% include "url" %}, params=params, headers=headers{% if api.body %}, body=body{% endif %})
+        return await self.transport.perform_request("{{ api.method }}", {% include "url" %}, params=params, headers=headers{% if api.body %}, body=body{% endif %})
         {% endblock %}
 

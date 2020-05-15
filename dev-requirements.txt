@@ -18,3 +18,4 @@ black; python_version>="3.6"
 # Requirements for testing [async] extra
 aiohttp; python_version>="3.6"
 pytest-asyncio; python_version>="3.6"
+unasync; python_version>="3.6"
