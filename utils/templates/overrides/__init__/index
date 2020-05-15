@@ -1,6 +1,6 @@
 {% extends "base" %}
 {% block request %}
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST" if id in SKIP_IN_PATH else "PUT",
             _make_path(index, "_doc", id),
             params=params,
