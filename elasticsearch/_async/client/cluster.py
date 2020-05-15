@@ -19,7 +19,7 @@ class ClusterClient(NamespacedClient):
         "wait_for_nodes",
         "wait_for_status",
     )
-    def health(self, index=None, params=None, headers=None):
+    async def health(self, index=None, params=None, headers=None):
         """
         Returns basic information about the health of the cluster.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-health.html>`_
@@ -49,7 +49,7 @@ class ClusterClient(NamespacedClient):
         :arg wait_for_status: Wait until cluster is in a specific state
             Valid choices: green, yellow, red
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET",
             _make_path("_cluster", "health", index),
             params=params,
@@ -57,7 +57,7 @@ class ClusterClient(NamespacedClient):
         )
 
     @query_params("local", "master_timeout")
-    def pending_tasks(self, params=None, headers=None):
+    async def pending_tasks(self, params=None, headers=None):
         """
         Returns a list of any cluster-level changes (e.g. create index, update mapping,
         allocate or fail shard) which have not yet been executed.
@@ -67,7 +67,7 @@ class ClusterClient(NamespacedClient):
             from master node (default: false)
         :arg master_timeout: Specify timeout for connection to master
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET", "/_cluster/pending_tasks", params=params, headers=headers
         )
 
@@ -81,7 +81,7 @@ class ClusterClient(NamespacedClient):
         "wait_for_metadata_version",
         "wait_for_timeout",
     )
-    def state(self, metric=None, index=None, params=None, headers=None):
+    async def state(self, metric=None, index=None, params=None, headers=None):
         """
         Returns a comprehensive information about the state of the cluster.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-state.html>`_
@@ -112,7 +112,7 @@ class ClusterClient(NamespacedClient):
         if index and metric in SKIP_IN_PATH:
             metric = "_all"
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET",
             _make_path("_cluster", "state", metric, index),
             params=params,
@@ -120,7 +120,7 @@ class ClusterClient(NamespacedClient):
         )
 
     @query_params("flat_settings", "timeout")
-    def stats(self, node_id=None, params=None, headers=None):
+    async def stats(self, node_id=None, params=None, headers=None):
         """
         Returns high-level overview of cluster statistics.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-stats.html>`_
@@ -133,7 +133,7 @@ class ClusterClient(NamespacedClient):
             false)
         :arg timeout: Explicit operation timeout
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET",
             "/_cluster/stats"
             if node_id in SKIP_IN_PATH
@@ -145,7 +145,7 @@ class ClusterClient(NamespacedClient):
     @query_params(
         "dry_run", "explain", "master_timeout", "metric", "retry_failed", "timeout"
     )
-    def reroute(self, body=None, params=None, headers=None):
+    async def reroute(self, body=None, params=None, headers=None):
         """
         Allows to manually change the allocation of individual shards in the cluster.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-reroute.html>`_
@@ -165,12 +165,12 @@ class ClusterClient(NamespacedClient):
             due to too many subsequent allocation failures
         :arg timeout: Explicit operation timeout
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST", "/_cluster/reroute", params=params, headers=headers, body=body
         )
 
     @query_params("flat_settings", "include_defaults", "master_timeout", "timeout")
-    def get_settings(self, params=None, headers=None):
+    async def get_settings(self, params=None, headers=None):
         """
         Returns cluster settings.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-update-settings.html>`_
@@ -183,12 +183,12 @@ class ClusterClient(NamespacedClient):
             to master node
         :arg timeout: Explicit operation timeout
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET", "/_cluster/settings", params=params, headers=headers
         )
 
     @query_params("flat_settings", "master_timeout", "timeout")
-    def put_settings(self, body, params=None, headers=None):
+    async def put_settings(self, body, params=None, headers=None):
         """
         Updates the cluster settings.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-update-settings.html>`_
@@ -204,22 +204,22 @@ class ClusterClient(NamespacedClient):
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "PUT", "/_cluster/settings", params=params, headers=headers, body=body
         )
 
     @query_params()
-    def remote_info(self, params=None, headers=None):
+    async def remote_info(self, params=None, headers=None):
         """
         Returns the information about configured remote clusters.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-remote-info.html>`_
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET", "/_remote/info", params=params, headers=headers
         )
 
     @query_params("include_disk_info", "include_yes_decisions")
-    def allocation_explain(self, body=None, params=None, headers=None):
+    async def allocation_explain(self, body=None, params=None, headers=None):
         """
         Provides explanations for shard allocations in the cluster.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-allocation-explain.html>`_
@@ -231,7 +231,7 @@ class ClusterClient(NamespacedClient):
         :arg include_yes_decisions: Return 'YES' decisions in
             explanation (default: false)
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             "/_cluster/allocation/explain",
             params=params,
@@ -240,10 +240,10 @@ class ClusterClient(NamespacedClient):
         )
 
     @query_params("master_timeout", "timeout")
-    def delete_component_template(self, name, params=None, headers=None):
+    async def delete_component_template(self, name, params=None, headers=None):
         """
         Deletes a component template
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-template.html>`_
 
         :arg name: The name of the template
         :arg master_timeout: Specify timeout for connection to master
@@ -252,7 +252,7 @@ class ClusterClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "DELETE",
             _make_path("_component_template", name),
             params=params,
@@ -260,10 +260,10 @@ class ClusterClient(NamespacedClient):
         )
 
     @query_params("local", "master_timeout")
-    def get_component_template(self, name=None, params=None, headers=None):
+    async def get_component_template(self, name=None, params=None, headers=None):
         """
         Returns one or more component templates
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-template.html>`_
 
         :arg name: The comma separated names of the component templates
         :arg local: Return local information, do not retrieve the state
@@ -271,7 +271,7 @@ class ClusterClient(NamespacedClient):
         :arg master_timeout: Explicit operation timeout for connection
             to master node
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET",
             _make_path("_component_template", name),
             params=params,
@@ -279,10 +279,10 @@ class ClusterClient(NamespacedClient):
         )
 
     @query_params("create", "master_timeout", "timeout")
-    def put_component_template(self, name, body, params=None, headers=None):
+    async def put_component_template(self, name, body, params=None, headers=None):
         """
         Creates or updates a component template
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-template.html>`_
 
         :arg name: The name of the template
         :arg body: The template definition
@@ -295,7 +295,7 @@ class ClusterClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "PUT",
             _make_path("_component_template", name),
             params=params,
@@ -304,10 +304,10 @@ class ClusterClient(NamespacedClient):
         )
 
     @query_params("local", "master_timeout")
-    def exists_component_template(self, name, params=None, headers=None):
+    async def exists_component_template(self, name, params=None, headers=None):
         """
         Returns information about whether a particular component template exist
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-template.html>`_
 
         :arg name: The name of the template
         :arg local: Return local information, do not retrieve the state
@@ -318,7 +318,7 @@ class ClusterClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "HEAD",
             _make_path("_component_template", name),
             params=params,
@@ -326,7 +326,7 @@ class ClusterClient(NamespacedClient):
         )
 
     @query_params("wait_for_removal")
-    def delete_voting_config_exclusions(self, params=None, headers=None):
+    async def delete_voting_config_exclusions(self, params=None, headers=None):
         """
         Clears cluster voting config exclusions.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/voting-config-exclusions.html>`_
@@ -335,7 +335,7 @@ class ClusterClient(NamespacedClient):
             excluded nodes to be removed from the cluster before clearing the voting
             configuration exclusions list.  Default: True
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "DELETE",
             "/_cluster/voting_config_exclusions",
             params=params,
@@ -343,7 +343,7 @@ class ClusterClient(NamespacedClient):
         )
 
     @query_params("node_ids", "node_names", "timeout")
-    def post_voting_config_exclusions(self, params=None, headers=None):
+    async def post_voting_config_exclusions(self, params=None, headers=None):
         """
         Updates the cluster voting config exclusions by node ids or node names.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/voting-config-exclusions.html>`_
@@ -356,6 +356,6 @@ class ClusterClient(NamespacedClient):
             not also specify ?node_ids.
         :arg timeout: Explicit operation timeout  Default: 30s
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST", "/_cluster/voting_config_exclusions", params=params, headers=headers
         )

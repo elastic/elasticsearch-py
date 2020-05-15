@@ -7,7 +7,7 @@ from .utils import NamespacedClient, query_params, SKIP_IN_PATH
 
 class SqlClient(NamespacedClient):
     @query_params()
-    def clear_cursor(self, body, params=None, headers=None):
+    async def clear_cursor(self, body, params=None, headers=None):
         """
         Clears the SQL cursor
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/sql-pagination.html>`_
@@ -18,12 +18,12 @@ class SqlClient(NamespacedClient):
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST", "/_sql/close", params=params, headers=headers, body=body
         )
 
     @query_params("format")
-    def query(self, body, params=None, headers=None):
+    async def query(self, body, params=None, headers=None):
         """
         Executes a SQL request
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/sql-rest-overview.html>`_
@@ -36,12 +36,12 @@ class SqlClient(NamespacedClient):
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST", "/_sql", params=params, headers=headers, body=body
         )
 
     @query_params()
-    def translate(self, body, params=None, headers=None):
+    async def translate(self, body, params=None, headers=None):
         """
         Translates SQL into Elasticsearch queries
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/sql-translate.html>`_
@@ -51,6 +51,6 @@ class SqlClient(NamespacedClient):
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST", "/_sql/translate", params=params, headers=headers, body=body
         )

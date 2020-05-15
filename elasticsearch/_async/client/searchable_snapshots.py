@@ -7,7 +7,7 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 class SearchableSnapshotsClient(NamespacedClient):
     @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable")
-    def clear_cache(self, index=None, params=None, headers=None):
+    async def clear_cache(self, index=None, params=None, headers=None):
         """
         Clear the cache of searchable snapshots.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-api-clear-cache.html>`_
@@ -23,7 +23,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path(index, "_searchable_snapshots", "cache", "clear"),
             params=params,
@@ -31,7 +31,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         )
 
     @query_params("master_timeout", "wait_for_completion")
-    def mount(self, repository, snapshot, body, params=None, headers=None):
+    async def mount(self, repository, snapshot, body, params=None, headers=None):
         """
         Mount a snapshot as a searchable index.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-api-mount-snapshot.html>`_
@@ -50,7 +50,7 @@ class SearchableSnapshotsClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path("_snapshot", repository, snapshot, "_mount"),
             params=params,
@@ -59,7 +59,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         )
 
     @query_params()
-    def repository_stats(self, repository, params=None, headers=None):
+    async def repository_stats(self, repository, params=None, headers=None):
         """
         Retrieve usage statistics about a snapshot repository.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-repository-stats.html>`_
@@ -69,7 +69,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         if repository in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'repository'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET",
             _make_path("_snapshot", repository, "_stats"),
             params=params,
@@ -77,14 +77,14 @@ class SearchableSnapshotsClient(NamespacedClient):
         )
 
     @query_params()
-    def stats(self, index=None, params=None, headers=None):
+    async def stats(self, index=None, params=None, headers=None):
         """
         Retrieve various statistics about searchable snapshots.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-api-stats.html>`_
 
         :arg index: A comma-separated list of index names
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET",
             _make_path(index, "_searchable_snapshots", "stats"),
             params=params,
