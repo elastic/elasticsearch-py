@@ -34,6 +34,7 @@ IMPLEMENTED_FEATURES = {
     "catch_unauthorized",
     "default_shards",
     "warnings",
+    "allowed_warnings",
 }
 
 # broken YAML tests on some releases
@@ -150,6 +151,7 @@ class YamlRunner:
         headers = action.pop("headers", None)
         catch = action.pop("catch", None)
         warn = action.pop("warnings", ())
+        allowed_warnings = action.pop("allowed_warnings", ())
         assert len(action) == 1
 
         method, args = list(action.items())[0]
@@ -189,11 +191,12 @@ class YamlRunner:
             str(w.message)
             for w in caught_warnings
             if w.category == ElasticsearchDeprecationWarning
+            and str(w.message) not in allowed_warnings
         ]
 
         # Sorting removes the issue with order raised. We only care about
         # if all warnings are raised in the single API call.
-        if sorted(warn) != sorted(caught_warnings):
+        if warn and sorted(warn) != sorted(caught_warnings):
             raise AssertionError(
                 "Expected warnings not equal to actual warnings: expected=%r actual=%r"
                 % (warn, caught_warnings)
