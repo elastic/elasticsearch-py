@@ -7,6 +7,6 @@
     parameters:
     - string:
         name: branch_specifier
-        default: refs/heads/7.7
+        default: refs/heads/7.8
         description: the Git branch specifier to build (&lt;branchName&gt;, &lt;tagName&gt;,
           &lt;commitId&gt;, etc.)
