@@ -83,11 +83,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params(
-        "include_type_name",
-        "master_timeout",
-        "prefer_v2_templates",
-        "timeout",
-        "wait_for_active_shards",
+        "include_type_name", "master_timeout", "timeout", "wait_for_active_shards"
     )
     def create(self, index, body=None, params=None, headers=None):
         """
@@ -100,8 +96,6 @@ class IndicesClient(NamespacedClient):
         :arg include_type_name: Whether a type should be expected in the
             body of the mappings.
         :arg master_timeout: Specify timeout for connection to master
-        :arg prefer_v2_templates: favor V2 templates instead of V1
-            templates during index creation
         :arg timeout: Explicit operation timeout
         :arg wait_for_active_shards: Set the number of active shards to
             wait for before the operation returns.
@@ -1145,7 +1139,6 @@ class IndicesClient(NamespacedClient):
         "dry_run",
         "include_type_name",
         "master_timeout",
-        "prefer_v2_templates",
         "timeout",
         "wait_for_active_shards",
     )
@@ -1165,8 +1158,6 @@ class IndicesClient(NamespacedClient):
         :arg include_type_name: Whether a type should be included in the
             body of the mappings.
         :arg master_timeout: Specify timeout for connection to master
-        :arg prefer_v2_templates: favor V2 templates instead of V1
-            templates during automatic index creation
         :arg timeout: Explicit operation timeout
         :arg wait_for_active_shards: Set the number of active shards to
             wait for on the newly created rollover index before the operation
@@ -1316,19 +1307,6 @@ class IndicesClient(NamespacedClient):
             "DELETE", _make_path("_data_stream", name), params=params, headers=headers
         )
 
-    @query_params()
-    def get_data_streams(self, name=None, params=None, headers=None):
-        """
-        Returns data streams.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/data-streams.html>`_
-
-        :arg name: The name or wildcard expression of the requested data
-            streams
-        """
-        return self.transport.perform_request(
-            "GET", _make_path("_data_streams", name), params=params, headers=headers
-        )
-
     @query_params("master_timeout", "timeout")
     def delete_index_template(self, name, params=None, headers=None):
         """
@@ -1438,6 +1416,43 @@ class IndicesClient(NamespacedClient):
         return self.transport.perform_request(
             "POST",
             _make_path("_index_template", "_simulate_index", name),
+            params=params,
+            headers=headers,
+            body=body,
+        )
+
+    @query_params()
+    def get_data_stream(self, name=None, params=None, headers=None):
+        """
+        Returns data streams.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/data-streams.html>`_
+
+        :arg name: The name or wildcard expression of the requested data
+            streams
+        """
+        return self.transport.perform_request(
+            "GET", _make_path("_data_stream", name), params=params, headers=headers
+        )
+
+    @query_params("cause", "create", "master_timeout")
+    def simulate_template(self, body=None, name=None, params=None, headers=None):
+        """
+        Simulate resolving the given template name or body
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-templates.html>`_
+
+        :arg body: New index template definition to be simulated, if no
+            index template name is specified
+        :arg name: The name of the index template
+        :arg cause: User defined reason for dry-run creating the new
+            template for simulation purposes
+        :arg create: Whether the index template we optionally defined in
+            the body should only be dry-run added if new or can also replace an
+            existing one
+        :arg master_timeout: Specify timeout for connection to master
+        """
+        return self.transport.perform_request(
+            "POST",
+            _make_path("_index_template", "_simulate", name),
             params=params,
             headers=headers,
             body=body,

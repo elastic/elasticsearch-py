@@ -5,9 +5,9 @@
 # flake8: noqa
 from __future__ import absolute_import
 
-VERSION = (7, 8, 0)
+VERSION = (7, 9, 0)
 __version__ = VERSION
-__versionstr__ = "7.8.0"
+__versionstr__ = "7.9.0a1"
 
 import logging
 import warnings
