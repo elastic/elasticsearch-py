@@ -1,12 +1,12 @@
 ---
 - job:
-    name: elastic+elasticsearch-py+7.x
-    display-name: 'elastic / elasticsearch-py # 7.x'
-    description: Testing the elasticsearch-py 7.x branch.
+    name: elastic+elasticsearch-py+6.x
+    display-name: 'elastic / elasticsearch-py # 6.x'
+    description: Testing the elasticsearch-py 6.x branch.
     junit_results: "junit/*-junit.xml"
     parameters:
     - string:
         name: branch_specifier
-        default: refs/heads/7.x
+        default: refs/heads/6.x
         description: the Git branch specifier to build (&lt;branchName&gt;, &lt;tagName&gt;,
           &lt;commitId&gt;, etc.)
