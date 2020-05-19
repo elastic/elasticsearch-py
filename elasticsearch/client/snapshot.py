@@ -10,7 +10,7 @@ class SnapshotClient(NamespacedClient):
     def create(self, repository, snapshot, body=None, params=None, headers=None):
         """
         Creates a snapshot in a repository.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/modules-snapshots.html>`_
 
         :arg repository: A repository name
         :arg snapshot: A snapshot name
@@ -36,7 +36,7 @@ class SnapshotClient(NamespacedClient):
     def delete(self, repository, snapshot, params=None, headers=None):
         """
         Deletes a snapshot.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/modules-snapshots.html>`_
 
         :arg repository: A repository name
         :arg snapshot: A snapshot name
@@ -58,7 +58,7 @@ class SnapshotClient(NamespacedClient):
     def get(self, repository, snapshot, params=None, headers=None):
         """
         Returns information about a snapshot.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/modules-snapshots.html>`_
 
         :arg repository: A repository name
         :arg snapshot: A comma-separated list of snapshot names
@@ -85,7 +85,7 @@ class SnapshotClient(NamespacedClient):
     def delete_repository(self, repository, params=None, headers=None):
         """
         Deletes a repository.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/modules-snapshots.html>`_
 
         :arg repository: A comma-separated list of repository names
         :arg master_timeout: Explicit operation timeout for connection
@@ -106,7 +106,7 @@ class SnapshotClient(NamespacedClient):
     def get_repository(self, repository=None, params=None, headers=None):
         """
         Returns information about a repository.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/modules-snapshots.html>`_
 
         :arg repository: A comma-separated list of repository names
         :arg local: Return local information, do not retrieve the state
@@ -122,7 +122,7 @@ class SnapshotClient(NamespacedClient):
     def create_repository(self, repository, body, params=None, headers=None):
         """
         Creates a repository.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/modules-snapshots.html>`_
 
         :arg repository: A repository name
         :arg body: The repository definition
@@ -147,7 +147,7 @@ class SnapshotClient(NamespacedClient):
     def restore(self, repository, snapshot, body=None, params=None, headers=None):
         """
         Restores a snapshot.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/modules-snapshots.html>`_
 
         :arg repository: A repository name
         :arg snapshot: A snapshot name
@@ -173,7 +173,7 @@ class SnapshotClient(NamespacedClient):
     def status(self, repository=None, snapshot=None, params=None, headers=None):
         """
         Returns information about the status of a snapshot.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/modules-snapshots.html>`_
 
         :arg repository: A repository name
         :arg snapshot: A comma-separated list of snapshot names
@@ -194,7 +194,7 @@ class SnapshotClient(NamespacedClient):
     def verify_repository(self, repository, params=None, headers=None):
         """
         Verifies a repository.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/modules-snapshots.html>`_
 
         :arg repository: A repository name
         :arg master_timeout: Explicit operation timeout for connection
@@ -215,7 +215,7 @@ class SnapshotClient(NamespacedClient):
     def cleanup_repository(self, repository, params=None, headers=None):
         """
         Removes stale data from repository.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/clean-up-snapshot-repo-api.html>`_
 
         :arg repository: A repository name
         :arg master_timeout: Explicit operation timeout for connection

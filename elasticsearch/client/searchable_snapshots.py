@@ -10,7 +10,7 @@ class SearchableSnapshotsClient(NamespacedClient):
     def clear_cache(self, index=None, params=None, headers=None):
         """
         Clear the cache of searchable snapshots.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/searchable-snapshots-api-clear-cache.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/searchable-snapshots-api-clear-cache.html>`_
 
         :arg index: A comma-separated list of index name to limit the
             operation
@@ -34,7 +34,7 @@ class SearchableSnapshotsClient(NamespacedClient):
     def mount(self, repository, snapshot, body, params=None, headers=None):
         """
         Mount a snapshot as a searchable index.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/searchable-snapshots-api-mount-snapshot.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/searchable-snapshots-api-mount-snapshot.html>`_
 
         :arg repository: The name of the repository containing the
             snapshot of the index to mount
@@ -62,7 +62,7 @@ class SearchableSnapshotsClient(NamespacedClient):
     def repository_stats(self, repository, params=None, headers=None):
         """
         Retrieve usage statistics about a snapshot repository.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/searchable-snapshots-repository-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/searchable-snapshots-repository-stats.html>`_
 
         :arg repository: The repository for which to get the stats for
         """
@@ -80,7 +80,7 @@ class SearchableSnapshotsClient(NamespacedClient):
     def stats(self, index=None, params=None, headers=None):
         """
         Retrieve various statistics about searchable snapshots.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/searchable-snapshots-api-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/searchable-snapshots-api-stats.html>`_
 
         :arg index: A comma-separated list of index names
         """

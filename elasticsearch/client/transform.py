@@ -10,7 +10,7 @@ class TransformClient(NamespacedClient):
     def delete_transform(self, transform_id, params=None, headers=None):
         """
         Deletes an existing transform.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/delete-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/delete-transform.html>`_
 
         :arg transform_id: The id of the transform to delete
         :arg force: When `true`, the transform is deleted regardless of
@@ -33,7 +33,7 @@ class TransformClient(NamespacedClient):
     def get_transform(self, transform_id=None, params=None, headers=None):
         """
         Retrieves configuration information for transforms.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/get-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/get-transform.html>`_
 
         :arg transform_id: The id or comma delimited list of id
             expressions of the transforms to get, '_all' or '*' implies get all
@@ -60,7 +60,7 @@ class TransformClient(NamespacedClient):
     def get_transform_stats(self, transform_id, params=None, headers=None):
         """
         Retrieves usage information for transforms.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/get-transform-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/get-transform-stats.html>`_
 
         :arg transform_id: The id of the transform for which to get
             stats. '_all' or '*' implies all transforms
@@ -91,7 +91,7 @@ class TransformClient(NamespacedClient):
     def preview_transform(self, body, params=None, headers=None):
         """
         Previews a transform.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/preview-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/preview-transform.html>`_
 
         :arg body: The definition for the transform to preview
         """
@@ -106,7 +106,7 @@ class TransformClient(NamespacedClient):
     def put_transform(self, transform_id, body, params=None, headers=None):
         """
         Instantiates a transform.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/put-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/put-transform.html>`_
 
         :arg transform_id: The id of the new transform.
         :arg body: The transform definition
@@ -129,7 +129,7 @@ class TransformClient(NamespacedClient):
     def start_transform(self, transform_id, params=None, headers=None):
         """
         Starts one or more transforms.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/start-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/start-transform.html>`_
 
         :arg transform_id: The id of the transform to start
         :arg timeout: Controls the time to wait for the transform to
@@ -157,7 +157,7 @@ class TransformClient(NamespacedClient):
     def stop_transform(self, transform_id, params=None, headers=None):
         """
         Stops one or more transforms.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/stop-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/stop-transform.html>`_
 
         :arg transform_id: The id of the transform to stop
         :arg allow_no_match: Whether to ignore if a wildcard expression
@@ -188,7 +188,7 @@ class TransformClient(NamespacedClient):
     def update_transform(self, transform_id, body, params=None, headers=None):
         """
         Updates certain properties of a transform.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/update-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/update-transform.html>`_
 
         :arg transform_id: The id of the transform.
         :arg body: The update transform definition
