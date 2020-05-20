@@ -5,20 +5,17 @@
 from .utils import NamespacedClient, query_params, _make_path
 
 
-class MigrationClient(NamespacedClient):
+class DeprecationClient(NamespacedClient):
     @query_params()
-    async def deprecations(self, index=None, params=None, headers=None):
+    async def info(self, index=None, params=None, headers=None):
         """
-        Retrieves information about different cluster, node, and index level settings
-        that use deprecated features that will be removed or changed in the next major
-        version.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/migration-api-deprecation.html>`_
+        `<http://www.elastic.co/guide/en/migration/7.x/migration-api-deprecation.html>`_
 
         :arg index: Index pattern
         """
         return await self.transport.perform_request(
             "GET",
-            _make_path(index, "_migration", "deprecations"),
+            _make_path(index, "_xpack", "migration", "deprecations"),
             params=params,
             headers=headers,
         )

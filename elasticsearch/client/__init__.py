@@ -6,9 +6,7 @@
 from __future__ import unicode_literals
 import logging
 
-from ..transport import Transport
-from ..exceptions import TransportError
-from ..compat import string_types, urlparse, unquote
+from ..transport import Transport, TransportError
 from .indices import IndicesClient
 from .ingest import IngestClient
 from .cluster import ClusterClient

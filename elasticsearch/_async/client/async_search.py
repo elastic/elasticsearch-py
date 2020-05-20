@@ -7,27 +7,27 @@ from .utils import NamespacedClient, SKIP_IN_PATH, query_params, _make_path
 
 class AsyncSearchClient(NamespacedClient):
     @query_params()
-    def delete(self, id, params=None, headers=None):
+    async def delete(self, id, params=None, headers=None):
         """
         Deletes an async search by ID. If the search is still running, the search
         request will be cancelled. Otherwise, the saved search results are deleted.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/async-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/async-search.html>`_
 
         :arg id: The async search ID
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "DELETE", _make_path("_async_search", id), params=params, headers=headers
         )
 
     @query_params("keep_alive", "typed_keys", "wait_for_completion_timeout")
-    def get(self, id, params=None, headers=None):
+    async def get(self, id, params=None, headers=None):
         """
         Retrieves the results of a previously submitted async search request given its
         ID.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/async-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/async-search.html>`_
 
         :arg id: The async search ID
         :arg keep_alive: Specify the time interval in which the results
@@ -40,7 +40,7 @@ class AsyncSearchClient(NamespacedClient):
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET", _make_path("_async_search", id), params=params, headers=headers
         )
 
@@ -87,10 +87,10 @@ class AsyncSearchClient(NamespacedClient):
         "version",
         "wait_for_completion_timeout",
     )
-    def submit(self, body=None, index=None, params=None, headers=None):
+    async def submit(self, body=None, index=None, params=None, headers=None):
         """
         Executes a search request asynchronously.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/async-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/async-search.html>`_
 
         :arg body: The search definition using the Query DSL
         :arg index: A comma-separated list of index names to search; use
@@ -125,7 +125,7 @@ class AsyncSearchClient(NamespacedClient):
             closed, hidden, none, all  Default: open
         :arg explain: Specify whether to return detailed information
             about score computation as part of a hit
-        :arg from\\_: Starting offset (default: 0)
+        :arg from_: Starting offset (default: 0)
         :arg ignore_throttled: Whether specified concrete, expanded or
             aliased indices should be ignored when throttled
         :arg ignore_unavailable: Whether specified concrete indices
@@ -182,7 +182,7 @@ class AsyncSearchClient(NamespacedClient):
         if "from_" in params:
             params["from"] = params.pop("from_")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path(index, "_async_search"),
             params=params,

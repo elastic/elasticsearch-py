@@ -7,17 +7,17 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 class EnrichClient(NamespacedClient):
     @query_params()
-    def delete_policy(self, name, params=None, headers=None):
+    async def delete_policy(self, name, params=None, headers=None):
         """
         Deletes an existing enrich policy and its enrich index.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-enrich-policy-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/delete-enrich-policy-api.html>`_
 
         :arg name: The name of the enrich policy
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "DELETE",
             _make_path("_enrich", "policy", name),
             params=params,
@@ -25,10 +25,10 @@ class EnrichClient(NamespacedClient):
         )
 
     @query_params("wait_for_completion")
-    def execute_policy(self, name, params=None, headers=None):
+    async def execute_policy(self, name, params=None, headers=None):
         """
         Creates the enrich index for an existing enrich policy.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/execute-enrich-policy-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/execute-enrich-policy-api.html>`_
 
         :arg name: The name of the enrich policy
         :arg wait_for_completion: Should the request should block until
@@ -37,7 +37,7 @@ class EnrichClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "PUT",
             _make_path("_enrich", "policy", name, "_execute"),
             params=params,
@@ -45,22 +45,22 @@ class EnrichClient(NamespacedClient):
         )
 
     @query_params()
-    def get_policy(self, name=None, params=None, headers=None):
+    async def get_policy(self, name=None, params=None, headers=None):
         """
         Gets information about an enrich policy.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-enrich-policy-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/get-enrich-policy-api.html>`_
 
         :arg name: A comma-separated list of enrich policy names
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET", _make_path("_enrich", "policy", name), params=params, headers=headers
         )
 
     @query_params()
-    def put_policy(self, name, body, params=None, headers=None):
+    async def put_policy(self, name, body, params=None, headers=None):
         """
         Creates a new enrich policy.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-enrich-policy-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/put-enrich-policy-api.html>`_
 
         :arg name: The name of the enrich policy
         :arg body: The enrich policy to register
@@ -69,7 +69,7 @@ class EnrichClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "PUT",
             _make_path("_enrich", "policy", name),
             params=params,
@@ -78,12 +78,12 @@ class EnrichClient(NamespacedClient):
         )
 
     @query_params()
-    def stats(self, params=None, headers=None):
+    async def stats(self, params=None, headers=None):
         """
         Gets enrich coordinator statistics and information about enrich policies that
         are currently executing.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/enrich-stats-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/enrich-stats-api.html>`_
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET", "/_enrich/_stats", params=params, headers=headers
         )
