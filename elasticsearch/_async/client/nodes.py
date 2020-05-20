@@ -7,12 +7,12 @@ from .utils import NamespacedClient, query_params, _make_path
 
 class NodesClient(NamespacedClient):
     @query_params("timeout")
-    def reload_secure_settings(
+    async def reload_secure_settings(
         self, body=None, node_id=None, params=None, headers=None
     ):
         """
         Reloads secure settings.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/secure-settings.html#reloadable-secure-settings>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/secure-settings.html#reloadable-secure-settings>`_
 
         :arg body: An object containing the password for the
             elasticsearch keystore
@@ -21,7 +21,7 @@ class NodesClient(NamespacedClient):
             all cluster nodes.
         :arg timeout: Explicit operation timeout
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path("_nodes", node_id, "reload_secure_settings"),
             params=params,
@@ -30,10 +30,10 @@ class NodesClient(NamespacedClient):
         )
 
     @query_params("flat_settings", "timeout")
-    def info(self, node_id=None, metric=None, params=None, headers=None):
+    async def info(self, node_id=None, metric=None, params=None, headers=None):
         """
         Returns information about nodes in the cluster.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-info.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/cluster-nodes-info.html>`_
 
         :arg node_id: A comma-separated list of node IDs or names to
             limit the returned information; use `_local` to return information from
@@ -46,17 +46,70 @@ class NodesClient(NamespacedClient):
             false)
         :arg timeout: Explicit operation timeout
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET", _make_path("_nodes", node_id, metric), params=params, headers=headers
+        )
+
+    @query_params(
+        "completion_fields",
+        "fielddata_fields",
+        "fields",
+        "groups",
+        "include_segment_file_sizes",
+        "level",
+        "timeout",
+        "types",
+    )
+    async def stats(
+        self, node_id=None, metric=None, index_metric=None, params=None, headers=None
+    ):
+        """
+        Returns statistical information about nodes in the cluster.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/cluster-nodes-stats.html>`_
+
+        :arg node_id: A comma-separated list of node IDs or names to
+            limit the returned information; use `_local` to return information from
+            the node you're connecting to, leave empty to get information from all
+            nodes
+        :arg metric: Limit the information returned to the specified
+            metrics  Valid choices: _all, breaker, fs, http, indices, jvm, os,
+            process, thread_pool, transport, discovery
+        :arg index_metric: Limit the information returned for `indices`
+            metric to the specific index metrics. Isn't used if `indices` (or `all`)
+            metric isn't specified.  Valid choices: _all, completion, docs,
+            fielddata, query_cache, flush, get, indexing, merge, request_cache,
+            refresh, search, segments, store, warmer, suggest
+        :arg completion_fields: A comma-separated list of fields for
+            `fielddata` and `suggest` index metric (supports wildcards)
+        :arg fielddata_fields: A comma-separated list of fields for
+            `fielddata` index metric (supports wildcards)
+        :arg fields: A comma-separated list of fields for `fielddata`
+            and `completion` index metric (supports wildcards)
+        :arg groups: A comma-separated list of search groups for
+            `search` index metric
+        :arg include_segment_file_sizes: Whether to report the
+            aggregated disk usage of each one of the Lucene index files (only
+            applies if segment stats are requested)
+        :arg level: Return indices stats aggregated at index, node or
+            shard level  Valid choices: indices, node, shards  Default: node
+        :arg timeout: Explicit operation timeout
+        :arg types: A comma-separated list of document types for the
+            `indexing` index metric
+        """
+        return await self.transport.perform_request(
+            "GET",
+            _make_path("_nodes", node_id, "stats", metric, index_metric),
+            params=params,
+            headers=headers,
         )
 
     @query_params(
         "doc_type", "ignore_idle_threads", "interval", "snapshots", "threads", "timeout"
     )
-    def hot_threads(self, node_id=None, params=None, headers=None):
+    async def hot_threads(self, node_id=None, params=None, headers=None):
         """
         Returns information about hot threads on each node in the cluster.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-hot-threads.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/cluster-nodes-hot-threads.html>`_
 
         :arg node_id: A comma-separated list of node IDs or names to
             limit the returned information; use `_local` to return information from
@@ -78,7 +131,7 @@ class NodesClient(NamespacedClient):
         if "doc_type" in params:
             params["type"] = params.pop("doc_type")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET",
             _make_path("_nodes", node_id, "hot_threads"),
             params=params,
@@ -86,10 +139,10 @@ class NodesClient(NamespacedClient):
         )
 
     @query_params("timeout")
-    def usage(self, node_id=None, metric=None, params=None, headers=None):
+    async def usage(self, node_id=None, metric=None, params=None, headers=None):
         """
         Returns low-level information about REST actions usage on nodes.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-usage.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/cluster-nodes-usage.html>`_
 
         :arg node_id: A comma-separated list of node IDs or names to
             limit the returned information; use `_local` to return information from
@@ -99,62 +152,9 @@ class NodesClient(NamespacedClient):
             metrics  Valid choices: _all, rest_actions
         :arg timeout: Explicit operation timeout
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET",
             _make_path("_nodes", node_id, "usage", metric),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params(
-        "completion_fields",
-        "fielddata_fields",
-        "fields",
-        "groups",
-        "include_segment_file_sizes",
-        "level",
-        "timeout",
-        "types",
-    )
-    def stats(
-        self, node_id=None, metric=None, index_metric=None, params=None, headers=None
-    ):
-        """
-        Returns statistical information about nodes in the cluster.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-stats.html>`_
-
-        :arg node_id: A comma-separated list of node IDs or names to
-            limit the returned information; use `_local` to return information from
-            the node you're connecting to, leave empty to get information from all
-            nodes
-        :arg metric: Limit the information returned to the specified
-            metrics  Valid choices: _all, breaker, fs, http, indices, jvm, os,
-            process, thread_pool, transport, discovery
-        :arg index_metric: Limit the information returned for `indices`
-            metric to the specific index metrics. Isn't used if `indices` (or `all`)
-            metric isn't specified.  Valid choices: _all, completion, docs,
-            fielddata, query_cache, flush, get, indexing, merge, request_cache,
-            refresh, search, segments, store, warmer, suggest, bulk
-        :arg completion_fields: A comma-separated list of fields for
-            `fielddata` and `suggest` index metric (supports wildcards)
-        :arg fielddata_fields: A comma-separated list of fields for
-            `fielddata` index metric (supports wildcards)
-        :arg fields: A comma-separated list of fields for `fielddata`
-            and `completion` index metric (supports wildcards)
-        :arg groups: A comma-separated list of search groups for
-            `search` index metric
-        :arg include_segment_file_sizes: Whether to report the
-            aggregated disk usage of each one of the Lucene index files (only
-            applies if segment stats are requested)
-        :arg level: Return indices stats aggregated at index, node or
-            shard level  Valid choices: indices, node, shards  Default: node
-        :arg timeout: Explicit operation timeout
-        :arg types: A comma-separated list of document types for the
-            `indexing` index metric
-        """
-        return self.transport.perform_request(
-            "GET",
-            _make_path("_nodes", node_id, "stats", metric, index_metric),
             params=params,
             headers=headers,
         )

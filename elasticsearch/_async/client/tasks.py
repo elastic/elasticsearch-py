@@ -2,6 +2,7 @@
 # Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 # See the LICENSE file in the project root for more information
 
+import warnings
 from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
 
 
@@ -15,10 +16,10 @@ class TasksClient(NamespacedClient):
         "timeout",
         "wait_for_completion",
     )
-    def list(self, params=None, headers=None):
+    async def list(self, params=None, headers=None):
         """
         Returns a list of tasks.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/tasks.html>`_
 
         :arg actions: A comma-separated list of actions that should be
             returned. Leave empty to return all.
@@ -34,15 +35,15 @@ class TasksClient(NamespacedClient):
         :arg wait_for_completion: Wait for the matching tasks to
             complete (default: false)
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET", "/_tasks", params=params, headers=headers
         )
 
     @query_params("actions", "nodes", "parent_task_id", "wait_for_completion")
-    def cancel(self, task_id=None, params=None, headers=None):
+    async def cancel(self, task_id=None, params=None, headers=None):
         """
         Cancels a task, if it can be cancelled through an API.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/tasks.html>`_
 
         :arg task_id: Cancel the task with specified task id
             (node_id:task_number)
@@ -57,7 +58,7 @@ class TasksClient(NamespacedClient):
             cancellation of the task and its descendant tasks is completed. Defaults
             to false
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path("_tasks", task_id, "_cancel"),
             params=params,
@@ -65,10 +66,10 @@ class TasksClient(NamespacedClient):
         )
 
     @query_params("timeout", "wait_for_completion")
-    def get(self, task_id, params=None, headers=None):
+    async def get(self, task_id=None, params=None, headers=None):
         """
         Returns information about a task.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/tasks.html>`_
 
         :arg task_id: Return the task with specified id
             (node_id:task_number)
@@ -77,8 +78,13 @@ class TasksClient(NamespacedClient):
             complete (default: false)
         """
         if task_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'task_id'.")
+            warnings.warn(
+                "Calling client.tasks.get() without a task_id is deprecated "
+                "and will be removed in v8.0. Use client.tasks.list() instead.",
+                category=DeprecationWarning,
+                stacklevel=3,
+            )
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET", _make_path("_tasks", task_id), params=params, headers=headers
         )

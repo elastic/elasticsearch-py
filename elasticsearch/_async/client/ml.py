@@ -7,11 +7,11 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH, _bu
 
 class MlClient(NamespacedClient):
     @query_params("allow_no_jobs", "force", "timeout")
-    def close_job(self, job_id, body=None, params=None, headers=None):
+    async def close_job(self, job_id, body=None, params=None, headers=None):
         """
         Closes one or more anomaly detection jobs. A job can be opened and closed
         multiple times throughout its lifecycle.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-close-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-close-job.html>`_
 
         :arg job_id: The name of the job to close
         :arg body: The URL params optionally sent in the body
@@ -25,7 +25,7 @@ class MlClient(NamespacedClient):
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path("_ml", "anomaly_detectors", job_id, "_close"),
             params=params,
@@ -34,10 +34,10 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    def delete_calendar(self, calendar_id, params=None, headers=None):
+    async def delete_calendar(self, calendar_id, params=None, headers=None):
         """
         Deletes a calendar.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-calendar.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-delete-calendar.html>`_
 
         :arg calendar_id: The ID of the calendar to delete
         """
@@ -46,7 +46,7 @@ class MlClient(NamespacedClient):
                 "Empty value passed for a required argument 'calendar_id'."
             )
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "DELETE",
             _make_path("_ml", "calendars", calendar_id),
             params=params,
@@ -54,10 +54,12 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    def delete_calendar_event(self, calendar_id, event_id, params=None, headers=None):
+    async def delete_calendar_event(
+        self, calendar_id, event_id, params=None, headers=None
+    ):
         """
         Deletes scheduled events from a calendar.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-calendar-event.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-delete-calendar-event.html>`_
 
         :arg calendar_id: The ID of the calendar to modify
         :arg event_id: The ID of the event to remove from the calendar
@@ -66,7 +68,7 @@ class MlClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "DELETE",
             _make_path("_ml", "calendars", calendar_id, "events", event_id),
             params=params,
@@ -74,10 +76,10 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    def delete_calendar_job(self, calendar_id, job_id, params=None, headers=None):
+    async def delete_calendar_job(self, calendar_id, job_id, params=None, headers=None):
         """
         Deletes anomaly detection jobs from a calendar.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-calendar-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-delete-calendar-job.html>`_
 
         :arg calendar_id: The ID of the calendar to modify
         :arg job_id: The ID of the job to remove from the calendar
@@ -86,7 +88,7 @@ class MlClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "DELETE",
             _make_path("_ml", "calendars", calendar_id, "jobs", job_id),
             params=params,
@@ -94,10 +96,10 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("force")
-    def delete_datafeed(self, datafeed_id, params=None, headers=None):
+    async def delete_datafeed(self, datafeed_id, params=None, headers=None):
         """
         Deletes an existing datafeed.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-datafeed.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-delete-datafeed.html>`_
 
         :arg datafeed_id: The ID of the datafeed to delete
         :arg force: True if the datafeed should be forcefully deleted
@@ -107,7 +109,7 @@ class MlClient(NamespacedClient):
                 "Empty value passed for a required argument 'datafeed_id'."
             )
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "DELETE",
             _make_path("_ml", "datafeeds", datafeed_id),
             params=params,
@@ -115,27 +117,33 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    def delete_expired_data(self, params=None, headers=None):
+    async def delete_expired_data(self, body=None, params=None, headers=None):
         """
         Deletes expired and unused machine learning data.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-expired-data.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-delete-expired-data.html>`_
+
+        :arg body: deleting expired data parameters
         """
-        return self.transport.perform_request(
-            "DELETE", "/_ml/_delete_expired_data", params=params, headers=headers
+        return await self.transport.perform_request(
+            "DELETE",
+            "/_ml/_delete_expired_data",
+            params=params,
+            headers=headers,
+            body=body,
         )
 
     @query_params()
-    def delete_filter(self, filter_id, params=None, headers=None):
+    async def delete_filter(self, filter_id, params=None, headers=None):
         """
         Deletes a filter.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-filter.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-delete-filter.html>`_
 
         :arg filter_id: The ID of the filter to delete
         """
         if filter_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'filter_id'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "DELETE",
             _make_path("_ml", "filters", filter_id),
             params=params,
@@ -143,10 +151,12 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("allow_no_forecasts", "timeout")
-    def delete_forecast(self, job_id, forecast_id=None, params=None, headers=None):
+    async def delete_forecast(
+        self, job_id, forecast_id=None, params=None, headers=None
+    ):
         """
         Deletes forecasts from a machine learning job.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-forecast.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-delete-forecast.html>`_
 
         :arg job_id: The ID of the job from which to delete forecasts
         :arg forecast_id: The ID of the forecast to delete, can be comma
@@ -159,7 +169,7 @@ class MlClient(NamespacedClient):
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "DELETE",
             _make_path("_ml", "anomaly_detectors", job_id, "_forecast", forecast_id),
             params=params,
@@ -167,10 +177,10 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("force", "wait_for_completion")
-    def delete_job(self, job_id, params=None, headers=None):
+    async def delete_job(self, job_id, params=None, headers=None):
         """
         Deletes an existing anomaly detection job.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-delete-job.html>`_
 
         :arg job_id: The ID of the job to delete
         :arg force: True if the job should be forcefully deleted
@@ -180,7 +190,7 @@ class MlClient(NamespacedClient):
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "DELETE",
             _make_path("_ml", "anomaly_detectors", job_id),
             params=params,
@@ -188,10 +198,12 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    def delete_model_snapshot(self, job_id, snapshot_id, params=None, headers=None):
+    async def delete_model_snapshot(
+        self, job_id, snapshot_id, params=None, headers=None
+    ):
         """
         Deletes an existing model snapshot.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-snapshot.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-delete-snapshot.html>`_
 
         :arg job_id: The ID of the job to fetch
         :arg snapshot_id: The ID of the snapshot to delete
@@ -200,7 +212,7 @@ class MlClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "DELETE",
             _make_path(
                 "_ml", "anomaly_detectors", job_id, "model_snapshots", snapshot_id
@@ -225,11 +237,11 @@ class MlClient(NamespacedClient):
         "timestamp_field",
         "timestamp_format",
     )
-    def find_file_structure(self, body, params=None, headers=None):
+    async def find_file_structure(self, body, params=None, headers=None):
         """
         Finds the structure of a text file. The text file must contain data that is
         suitable to be ingested into Elasticsearch.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-find-file-structure.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-find-file-structure.html>`_
 
         :arg body: The contents of the file to be analyzed
         :arg charset: Optional parameter to specify the character set of
@@ -268,7 +280,7 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for a required argument 'body'.")
 
         body = _bulk_body(self.transport.serializer, body)
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             "/_ml/find_file_structure",
             params=params,
@@ -277,10 +289,10 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("advance_time", "calc_interim", "end", "skip_time", "start")
-    def flush_job(self, job_id, body=None, params=None, headers=None):
+    async def flush_job(self, job_id, body=None, params=None, headers=None):
         """
         Forces any buffered data to be processed by the job.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-flush-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-flush-job.html>`_
 
         :arg job_id: The name of the job to flush
         :arg body: Flush parameters
@@ -298,7 +310,7 @@ class MlClient(NamespacedClient):
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path("_ml", "anomaly_detectors", job_id, "_flush"),
             params=params,
@@ -307,10 +319,10 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("duration", "expires_in")
-    def forecast(self, job_id, params=None, headers=None):
+    async def forecast(self, job_id, params=None, headers=None):
         """
         Predicts the future behavior of a time series by using its historical behavior.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-forecast.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-forecast.html>`_
 
         :arg job_id: The ID of the job to forecast for
         :arg duration: The duration of the forecast
@@ -320,7 +332,7 @@ class MlClient(NamespacedClient):
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path("_ml", "anomaly_detectors", job_id, "_forecast"),
             params=params,
@@ -338,10 +350,12 @@ class MlClient(NamespacedClient):
         "sort",
         "start",
     )
-    def get_buckets(self, job_id, body=None, timestamp=None, params=None, headers=None):
+    async def get_buckets(
+        self, job_id, body=None, timestamp=None, params=None, headers=None
+    ):
         """
         Retrieves anomaly detection job results for one or more buckets.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-bucket.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-get-bucket.html>`_
 
         :arg job_id: ID of the job to get bucket results from
         :arg body: Bucket selection details if not provided in URI
@@ -352,7 +366,7 @@ class MlClient(NamespacedClient):
         :arg end: End time filter for buckets
         :arg exclude_interim: Exclude interim results
         :arg expand: Include anomaly records
-        :arg from\\_: skips a number of buckets
+        :arg from_: skips a number of buckets
         :arg size: specifies a max number of buckets to get
         :arg sort: Sort buckets by a particular field
         :arg start: Start time filter for buckets
@@ -364,7 +378,7 @@ class MlClient(NamespacedClient):
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path(
                 "_ml", "anomaly_detectors", job_id, "results", "buckets", timestamp
@@ -375,14 +389,14 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("end", "from_", "job_id", "size", "start")
-    def get_calendar_events(self, calendar_id, params=None, headers=None):
+    async def get_calendar_events(self, calendar_id, params=None, headers=None):
         """
         Retrieves information about the scheduled events in calendars.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-calendar-event.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-get-calendar-event.html>`_
 
         :arg calendar_id: The ID of the calendar containing the events
         :arg end: Get events before this time
-        :arg from\\_: Skips a number of events
+        :arg from_: Skips a number of events
         :arg job_id: Get events for the job. When this option is used
             calendar_id must be '_all'
         :arg size: Specifies a max number of events to get
@@ -397,7 +411,7 @@ class MlClient(NamespacedClient):
                 "Empty value passed for a required argument 'calendar_id'."
             )
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET",
             _make_path("_ml", "calendars", calendar_id, "events"),
             params=params,
@@ -405,22 +419,24 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("from_", "size")
-    def get_calendars(self, body=None, calendar_id=None, params=None, headers=None):
+    async def get_calendars(
+        self, body=None, calendar_id=None, params=None, headers=None
+    ):
         """
         Retrieves configuration information for calendars.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-calendar.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-get-calendar.html>`_
 
         :arg body: The from and size parameters optionally sent in the
             body
         :arg calendar_id: The ID of the calendar to fetch
-        :arg from\\_: skips a number of calendars
+        :arg from_: skips a number of calendars
         :arg size: specifies a max number of calendars to get
         """
         # from is a reserved word so it cannot be used, use from_ instead
         if "from_" in params:
             params["from"] = params.pop("from_")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path("_ml", "calendars", calendar_id),
             params=params,
@@ -428,18 +444,50 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
+    @query_params("from_", "size")
+    async def get_categories(
+        self, job_id, body=None, category_id=None, params=None, headers=None
+    ):
+        """
+        Retrieves anomaly detection job results for one or more categories.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-get-category.html>`_
+
+        :arg job_id: The name of the job
+        :arg body: Category selection details if not provided in URI
+        :arg category_id: The identifier of the category definition of
+            interest
+        :arg from_: skips a number of categories
+        :arg size: specifies a max number of categories to get
+        """
+        # from is a reserved word so it cannot be used, use from_ instead
+        if "from_" in params:
+            params["from"] = params.pop("from_")
+
+        if job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'job_id'.")
+
+        return await self.transport.perform_request(
+            "POST",
+            _make_path(
+                "_ml", "anomaly_detectors", job_id, "results", "categories", category_id
+            ),
+            params=params,
+            headers=headers,
+            body=body,
+        )
+
     @query_params("allow_no_datafeeds")
-    def get_datafeed_stats(self, datafeed_id=None, params=None, headers=None):
+    async def get_datafeed_stats(self, datafeed_id=None, params=None, headers=None):
         """
         Retrieves usage information for datafeeds.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-datafeed-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-get-datafeed-stats.html>`_
 
         :arg datafeed_id: The ID of the datafeeds stats to fetch
         :arg allow_no_datafeeds: Whether to ignore if a wildcard
             expression matches no datafeeds. (This includes `_all` string or when no
             datafeeds have been specified)
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET",
             _make_path("_ml", "datafeeds", datafeed_id, "_stats"),
             params=params,
@@ -447,17 +495,17 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("allow_no_datafeeds")
-    def get_datafeeds(self, datafeed_id=None, params=None, headers=None):
+    async def get_datafeeds(self, datafeed_id=None, params=None, headers=None):
         """
         Retrieves configuration information for datafeeds.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-datafeed.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-get-datafeed.html>`_
 
         :arg datafeed_id: The ID of the datafeeds to fetch
         :arg allow_no_datafeeds: Whether to ignore if a wildcard
             expression matches no datafeeds. (This includes `_all` string or when no
             datafeeds have been specified)
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET",
             _make_path("_ml", "datafeeds", datafeed_id),
             params=params,
@@ -465,20 +513,20 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("from_", "size")
-    def get_filters(self, filter_id=None, params=None, headers=None):
+    async def get_filters(self, filter_id=None, params=None, headers=None):
         """
         Retrieves filters.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-filter.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-get-filter.html>`_
 
         :arg filter_id: The ID of the filter to fetch
-        :arg from\\_: skips a number of filters
+        :arg from_: skips a number of filters
         :arg size: specifies a max number of filters to get
         """
         # from is a reserved word so it cannot be used, use from_ instead
         if "from_" in params:
             params["from"] = params.pop("from_")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET",
             _make_path("_ml", "filters", filter_id),
             params=params,
@@ -495,10 +543,10 @@ class MlClient(NamespacedClient):
         "sort",
         "start",
     )
-    def get_influencers(self, job_id, body=None, params=None, headers=None):
+    async def get_influencers(self, job_id, body=None, params=None, headers=None):
         """
         Retrieves anomaly detection job results for one or more influencers.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-influencer.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-get-influencer.html>`_
 
         :arg job_id: Identifier for the anomaly detection job
         :arg body: Influencer selection criteria
@@ -506,7 +554,7 @@ class MlClient(NamespacedClient):
             order
         :arg end: end timestamp for the requested influencers
         :arg exclude_interim: Exclude interim results
-        :arg from\\_: skips a number of influencers
+        :arg from_: skips a number of influencers
         :arg influencer_score: influencer score threshold for the
             requested influencers
         :arg size: specifies a max number of influencers to get
@@ -520,7 +568,7 @@ class MlClient(NamespacedClient):
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path("_ml", "anomaly_detectors", job_id, "results", "influencers"),
             params=params,
@@ -529,17 +577,17 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("allow_no_jobs")
-    def get_job_stats(self, job_id=None, params=None, headers=None):
+    async def get_job_stats(self, job_id=None, params=None, headers=None):
         """
         Retrieves usage information for anomaly detection jobs.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-job-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-get-job-stats.html>`_
 
         :arg job_id: The ID of the jobs stats to fetch
         :arg allow_no_jobs: Whether to ignore if a wildcard expression
             matches no jobs. (This includes `_all` string or when no jobs have been
             specified)
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET",
             _make_path("_ml", "anomaly_detectors", job_id, "_stats"),
             params=params,
@@ -547,21 +595,58 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("allow_no_jobs")
-    def get_jobs(self, job_id=None, params=None, headers=None):
+    async def get_jobs(self, job_id=None, params=None, headers=None):
         """
         Retrieves configuration information for anomaly detection jobs.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-get-job.html>`_
 
         :arg job_id: The ID of the jobs to fetch
         :arg allow_no_jobs: Whether to ignore if a wildcard expression
             matches no jobs. (This includes `_all` string or when no jobs have been
             specified)
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET",
             _make_path("_ml", "anomaly_detectors", job_id),
             params=params,
             headers=headers,
+        )
+
+    @query_params("desc", "end", "from_", "size", "sort", "start")
+    async def get_model_snapshots(
+        self, job_id, body=None, snapshot_id=None, params=None, headers=None
+    ):
+        """
+        Retrieves information about model snapshots.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-get-snapshot.html>`_
+
+        :arg job_id: The ID of the job to fetch
+        :arg body: Model snapshot selection criteria
+        :arg snapshot_id: The ID of the snapshot to fetch
+        :arg desc: True if the results should be sorted in descending
+            order
+        :arg end: The filter 'end' query parameter
+        :arg from_: Skips a number of documents
+        :arg size: The default number of documents returned in queries
+            as a string.
+        :arg sort: Name of the field to sort on
+        :arg start: The filter 'start' query parameter
+        """
+        # from is a reserved word so it cannot be used, use from_ instead
+        if "from_" in params:
+            params["from"] = params.pop("from_")
+
+        if job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'job_id'.")
+
+        return await self.transport.perform_request(
+            "POST",
+            _make_path(
+                "_ml", "anomaly_detectors", job_id, "model_snapshots", snapshot_id
+            ),
+            params=params,
+            headers=headers,
+            body=body,
         )
 
     @query_params(
@@ -573,11 +658,11 @@ class MlClient(NamespacedClient):
         "start",
         "top_n",
     )
-    def get_overall_buckets(self, job_id, body=None, params=None, headers=None):
+    async def get_overall_buckets(self, job_id, body=None, params=None, headers=None):
         """
         Retrieves overall bucket results that summarize the bucket results of multiple
         anomaly detection jobs.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-overall-buckets.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-get-overall-buckets.html>`_
 
         :arg job_id: The job IDs for which to calculate overall bucket
             results
@@ -602,7 +687,7 @@ class MlClient(NamespacedClient):
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path(
                 "_ml", "anomaly_detectors", job_id, "results", "overall_buckets"
@@ -622,17 +707,17 @@ class MlClient(NamespacedClient):
         "sort",
         "start",
     )
-    def get_records(self, job_id, body=None, params=None, headers=None):
+    async def get_records(self, job_id, body=None, params=None, headers=None):
         """
         Retrieves anomaly records for an anomaly detection job.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-record.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-get-record.html>`_
 
         :arg job_id: The ID of the job
         :arg body: Record selection criteria
         :arg desc: Set the sort direction
         :arg end: End time filter for records
         :arg exclude_interim: Exclude interim results
-        :arg from\\_: skips a number of records
+        :arg from_: skips a number of records
         :arg record_score: Returns records with anomaly scores greater
             or equal than this value
         :arg size: specifies a max number of records to get
@@ -646,7 +731,7 @@ class MlClient(NamespacedClient):
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path("_ml", "anomaly_detectors", job_id, "results", "records"),
             params=params,
@@ -655,27 +740,27 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    def info(self, params=None, headers=None):
+    async def info(self, params=None, headers=None):
         """
         Returns defaults and limits used by machine learning.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-ml-info.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/get-ml-info.html>`_
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET", "/_ml/info", params=params, headers=headers
         )
 
     @query_params()
-    def open_job(self, job_id, params=None, headers=None):
+    async def open_job(self, job_id, params=None, headers=None):
         """
         Opens one or more anomaly detection jobs.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-open-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-open-job.html>`_
 
         :arg job_id: The ID of the job to open
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path("_ml", "anomaly_detectors", job_id, "_open"),
             params=params,
@@ -683,10 +768,10 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    def post_calendar_events(self, calendar_id, body, params=None, headers=None):
+    async def post_calendar_events(self, calendar_id, body, params=None, headers=None):
         """
         Posts scheduled events in a calendar.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-post-calendar-event.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-post-calendar-event.html>`_
 
         :arg calendar_id: The ID of the calendar to modify
         :arg body: A list of events
@@ -695,7 +780,7 @@ class MlClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path("_ml", "calendars", calendar_id, "events"),
             params=params,
@@ -704,10 +789,10 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("reset_end", "reset_start")
-    def post_data(self, job_id, body, params=None, headers=None):
+    async def post_data(self, job_id, body, params=None, headers=None):
         """
         Sends data to an anomaly detection job for analysis.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-post-data.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-post-data.html>`_
 
         :arg job_id: The name of the job receiving the data
         :arg body: The data to process
@@ -721,7 +806,7 @@ class MlClient(NamespacedClient):
                 raise ValueError("Empty value passed for a required argument.")
 
         body = _bulk_body(self.transport.serializer, body)
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path("_ml", "anomaly_detectors", job_id, "_data"),
             params=params,
@@ -730,10 +815,10 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    def preview_datafeed(self, datafeed_id, params=None, headers=None):
+    async def preview_datafeed(self, datafeed_id, params=None, headers=None):
         """
         Previews a datafeed.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-preview-datafeed.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-preview-datafeed.html>`_
 
         :arg datafeed_id: The ID of the datafeed to preview
         """
@@ -742,7 +827,7 @@ class MlClient(NamespacedClient):
                 "Empty value passed for a required argument 'datafeed_id'."
             )
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET",
             _make_path("_ml", "datafeeds", datafeed_id, "_preview"),
             params=params,
@@ -750,10 +835,10 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    def put_calendar(self, calendar_id, body=None, params=None, headers=None):
+    async def put_calendar(self, calendar_id, body=None, params=None, headers=None):
         """
         Instantiates a calendar.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-put-calendar.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-put-calendar.html>`_
 
         :arg calendar_id: The ID of the calendar to create
         :arg body: The calendar details
@@ -763,7 +848,7 @@ class MlClient(NamespacedClient):
                 "Empty value passed for a required argument 'calendar_id'."
             )
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "PUT",
             _make_path("_ml", "calendars", calendar_id),
             params=params,
@@ -772,10 +857,10 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    def put_calendar_job(self, calendar_id, job_id, params=None, headers=None):
+    async def put_calendar_job(self, calendar_id, job_id, params=None, headers=None):
         """
         Adds an anomaly detection job to a calendar.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-put-calendar-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-put-calendar-job.html>`_
 
         :arg calendar_id: The ID of the calendar to modify
         :arg job_id: The ID of the job to add to the calendar
@@ -784,7 +869,7 @@ class MlClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "PUT",
             _make_path("_ml", "calendars", calendar_id, "jobs", job_id),
             params=params,
@@ -794,10 +879,10 @@ class MlClient(NamespacedClient):
     @query_params(
         "allow_no_indices", "expand_wildcards", "ignore_throttled", "ignore_unavailable"
     )
-    def put_datafeed(self, datafeed_id, body, params=None, headers=None):
+    async def put_datafeed(self, datafeed_id, body, params=None, headers=None):
         """
         Instantiates a datafeed.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-put-datafeed.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-put-datafeed.html>`_
 
         :arg datafeed_id: The ID of the datafeed to create
         :arg body: The datafeed config
@@ -815,7 +900,7 @@ class MlClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "PUT",
             _make_path("_ml", "datafeeds", datafeed_id),
             params=params,
@@ -824,10 +909,10 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    def put_filter(self, filter_id, body, params=None, headers=None):
+    async def put_filter(self, filter_id, body, params=None, headers=None):
         """
         Instantiates a filter.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-put-filter.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-put-filter.html>`_
 
         :arg filter_id: The ID of the filter to create
         :arg body: The filter details
@@ -836,7 +921,7 @@ class MlClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "PUT",
             _make_path("_ml", "filters", filter_id),
             params=params,
@@ -845,10 +930,10 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    def put_job(self, job_id, body, params=None, headers=None):
+    async def put_job(self, job_id, body, params=None, headers=None):
         """
         Instantiates an anomaly detection job.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-put-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-put-job.html>`_
 
         :arg job_id: The ID of the job to create
         :arg body: The job
@@ -857,7 +942,7 @@ class MlClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "PUT",
             _make_path("_ml", "anomaly_detectors", job_id),
             params=params,
@@ -865,27 +950,60 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
+    @query_params("delete_intervening_results")
+    async def revert_model_snapshot(
+        self, job_id, snapshot_id, body=None, params=None, headers=None
+    ):
+        """
+        Reverts to a specific snapshot.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-revert-snapshot.html>`_
+
+        :arg job_id: The ID of the job to fetch
+        :arg snapshot_id: The ID of the snapshot to revert to
+        :arg body: Reversion options
+        :arg delete_intervening_results: Should we reset the results
+            back to the time of the snapshot?
+        """
+        for param in (job_id, snapshot_id):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
+
+        return await self.transport.perform_request(
+            "POST",
+            _make_path(
+                "_ml",
+                "anomaly_detectors",
+                job_id,
+                "model_snapshots",
+                snapshot_id,
+                "_revert",
+            ),
+            params=params,
+            headers=headers,
+            body=body,
+        )
+
     @query_params("enabled", "timeout")
-    def set_upgrade_mode(self, params=None, headers=None):
+    async def set_upgrade_mode(self, params=None, headers=None):
         """
         Sets a cluster wide upgrade_mode setting that prepares machine learning indices
         for an upgrade.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-set-upgrade-mode.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-set-upgrade-mode.html>`_
 
         :arg enabled: Whether to enable upgrade_mode ML setting or not.
             Defaults to false.
         :arg timeout: Controls the time to wait before action times out.
             Defaults to 30 seconds
         """
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST", "/_ml/set_upgrade_mode", params=params, headers=headers
         )
 
     @query_params("end", "start", "timeout")
-    def start_datafeed(self, datafeed_id, body=None, params=None, headers=None):
+    async def start_datafeed(self, datafeed_id, body=None, params=None, headers=None):
         """
         Starts one or more datafeeds.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-start-datafeed.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-start-datafeed.html>`_
 
         :arg datafeed_id: The ID of the datafeed to start
         :arg body: The start datafeed parameters
@@ -900,7 +1018,7 @@ class MlClient(NamespacedClient):
                 "Empty value passed for a required argument 'datafeed_id'."
             )
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path("_ml", "datafeeds", datafeed_id, "_start"),
             params=params,
@@ -909,10 +1027,10 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("allow_no_datafeeds", "force", "timeout")
-    def stop_datafeed(self, datafeed_id, params=None, headers=None):
+    async def stop_datafeed(self, datafeed_id, params=None, headers=None):
         """
         Stops one or more datafeeds.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-stop-datafeed.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-stop-datafeed.html>`_
 
         :arg datafeed_id: The ID of the datafeed to stop
         :arg allow_no_datafeeds: Whether to ignore if a wildcard
@@ -927,7 +1045,7 @@ class MlClient(NamespacedClient):
                 "Empty value passed for a required argument 'datafeed_id'."
             )
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path("_ml", "datafeeds", datafeed_id, "_stop"),
             params=params,
@@ -937,10 +1055,10 @@ class MlClient(NamespacedClient):
     @query_params(
         "allow_no_indices", "expand_wildcards", "ignore_throttled", "ignore_unavailable"
     )
-    def update_datafeed(self, datafeed_id, body, params=None, headers=None):
+    async def update_datafeed(self, datafeed_id, body, params=None, headers=None):
         """
         Updates certain properties of a datafeed.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-update-datafeed.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-update-datafeed.html>`_
 
         :arg datafeed_id: The ID of the datafeed to update
         :arg body: The datafeed update settings
@@ -958,7 +1076,7 @@ class MlClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path("_ml", "datafeeds", datafeed_id, "_update"),
             params=params,
@@ -967,10 +1085,10 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    def update_filter(self, filter_id, body, params=None, headers=None):
+    async def update_filter(self, filter_id, body, params=None, headers=None):
         """
         Updates the description of a filter, adds items, or removes items.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-update-filter.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-update-filter.html>`_
 
         :arg filter_id: The ID of the filter to update
         :arg body: The filter update
@@ -979,7 +1097,7 @@ class MlClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path("_ml", "filters", filter_id, "_update"),
             params=params,
@@ -988,10 +1106,10 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    def update_job(self, job_id, body, params=None, headers=None):
+    async def update_job(self, job_id, body, params=None, headers=None):
         """
         Updates certain properties of an anomaly detection job.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-update-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-update-job.html>`_
 
         :arg job_id: The ID of the job to create
         :arg body: The job update settings
@@ -1000,7 +1118,7 @@ class MlClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path("_ml", "anomaly_detectors", job_id, "_update"),
             params=params,
@@ -1009,16 +1127,48 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    def validate(self, body, params=None, headers=None):
+    async def update_model_snapshot(
+        self, job_id, snapshot_id, body, params=None, headers=None
+    ):
+        """
+        Updates certain properties of a snapshot.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-update-snapshot.html>`_
+
+        :arg job_id: The ID of the job to fetch
+        :arg snapshot_id: The ID of the snapshot to update
+        :arg body: The model snapshot properties to update
+        """
+        for param in (job_id, snapshot_id, body):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
+
+        return await self.transport.perform_request(
+            "POST",
+            _make_path(
+                "_ml",
+                "anomaly_detectors",
+                job_id,
+                "model_snapshots",
+                snapshot_id,
+                "_update",
+            ),
+            params=params,
+            headers=headers,
+            body=body,
+        )
+
+    @query_params()
+    async def validate(self, body, params=None, headers=None):
         """
         Validates an anomaly detection job.
+        `<https://www.elastic.co/guide/en/machine-learning/current/ml-jobs.html>`_
 
         :arg body: The job config
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             "/_ml/anomaly_detectors/_validate",
             params=params,
@@ -1027,16 +1177,17 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    def validate_detector(self, body, params=None, headers=None):
+    async def validate_detector(self, body, params=None, headers=None):
         """
         Validates an anomaly detection detector.
+        `<https://www.elastic.co/guide/en/machine-learning/current/ml-jobs.html>`_
 
         :arg body: The detector
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             "/_ml/anomaly_detectors/_validate/detector",
             params=params,
@@ -1045,10 +1196,10 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("force")
-    def delete_data_frame_analytics(self, id, params=None, headers=None):
+    async def delete_data_frame_analytics(self, id, params=None, headers=None):
         """
         Deletes an existing data frame analytics job.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-dfanalytics.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/delete-dfanalytics.html>`_
 
         :arg id: The ID of the data frame analytics to delete
         :arg force: True if the job should be forcefully deleted
@@ -1056,7 +1207,7 @@ class MlClient(NamespacedClient):
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "DELETE",
             _make_path("_ml", "data_frame", "analytics", id),
             params=params,
@@ -1064,17 +1215,17 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    def evaluate_data_frame(self, body, params=None, headers=None):
+    async def evaluate_data_frame(self, body, params=None, headers=None):
         """
         Evaluates the data frame analytics for an annotated index.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/evaluate-dfanalytics.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/evaluate-dfanalytics.html>`_
 
         :arg body: The evaluation definition
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             "/_ml/data_frame/_evaluate",
             params=params,
@@ -1083,16 +1234,16 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("allow_no_match", "from_", "size")
-    def get_data_frame_analytics(self, id=None, params=None, headers=None):
+    async def get_data_frame_analytics(self, id=None, params=None, headers=None):
         """
         Retrieves configuration information for data frame analytics jobs.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-dfanalytics.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/get-dfanalytics.html>`_
 
         :arg id: The ID of the data frame analytics to fetch
         :arg allow_no_match: Whether to ignore if a wildcard expression
             matches no data frame analytics. (This includes `_all` string or when no
             data frame analytics have been specified)  Default: True
-        :arg from\\_: skips a number of analytics
+        :arg from_: skips a number of analytics
         :arg size: specifies a max number of analytics to get  Default:
             100
         """
@@ -1100,7 +1251,7 @@ class MlClient(NamespacedClient):
         if "from_" in params:
             params["from"] = params.pop("from_")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET",
             _make_path("_ml", "data_frame", "analytics", id),
             params=params,
@@ -1108,16 +1259,16 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("allow_no_match", "from_", "size")
-    def get_data_frame_analytics_stats(self, id=None, params=None, headers=None):
+    async def get_data_frame_analytics_stats(self, id=None, params=None, headers=None):
         """
         Retrieves usage information for data frame analytics jobs.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-dfanalytics-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/get-dfanalytics-stats.html>`_
 
         :arg id: The ID of the data frame analytics stats to fetch
         :arg allow_no_match: Whether to ignore if a wildcard expression
             matches no data frame analytics. (This includes `_all` string or when no
             data frame analytics have been specified)  Default: True
-        :arg from\\_: skips a number of analytics
+        :arg from_: skips a number of analytics
         :arg size: specifies a max number of analytics to get  Default:
             100
         """
@@ -1125,7 +1276,7 @@ class MlClient(NamespacedClient):
         if "from_" in params:
             params["from"] = params.pop("from_")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET",
             _make_path("_ml", "data_frame", "analytics", id, "_stats"),
             params=params,
@@ -1133,10 +1284,10 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    def put_data_frame_analytics(self, id, body, params=None, headers=None):
+    async def put_data_frame_analytics(self, id, body, params=None, headers=None):
         """
         Instantiates a data frame analytics job.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-dfanalytics.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/put-dfanalytics.html>`_
 
         :arg id: The ID of the data frame analytics to create
         :arg body: The data frame analytics configuration
@@ -1145,7 +1296,7 @@ class MlClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "PUT",
             _make_path("_ml", "data_frame", "analytics", id),
             params=params,
@@ -1154,10 +1305,12 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("timeout")
-    def start_data_frame_analytics(self, id, body=None, params=None, headers=None):
+    async def start_data_frame_analytics(
+        self, id, body=None, params=None, headers=None
+    ):
         """
         Starts a data frame analytics job.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/start-dfanalytics.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/start-dfanalytics.html>`_
 
         :arg id: The ID of the data frame analytics to start
         :arg body: The start data frame analytics parameters
@@ -1167,7 +1320,7 @@ class MlClient(NamespacedClient):
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path("_ml", "data_frame", "analytics", id, "_start"),
             params=params,
@@ -1176,10 +1329,10 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("allow_no_match", "force", "timeout")
-    def stop_data_frame_analytics(self, id, body=None, params=None, headers=None):
+    async def stop_data_frame_analytics(self, id, body=None, params=None, headers=None):
         """
         Stops one or more data frame analytics jobs.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/stop-dfanalytics.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/stop-dfanalytics.html>`_
 
         :arg id: The ID of the data frame analytics to stop
         :arg body: The stop data frame analytics parameters
@@ -1194,7 +1347,7 @@ class MlClient(NamespacedClient):
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             _make_path("_ml", "data_frame", "analytics", id, "_stop"),
             params=params,
@@ -1203,22 +1356,41 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    def delete_trained_model(self, model_id, params=None, headers=None):
+    async def delete_trained_model(self, model_id, params=None, headers=None):
         """
         Deletes an existing trained inference model that is currently not referenced by
         an ingest pipeline.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-inference.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/delete-inference.html>`_
 
         :arg model_id: The ID of the trained model to delete
         """
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'model_id'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "DELETE",
             _make_path("_ml", "inference", model_id),
             params=params,
             headers=headers,
+        )
+
+    @query_params()
+    async def explain_data_frame_analytics(
+        self, body=None, id=None, params=None, headers=None
+    ):
+        """
+        Explains a data frame analytics config.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/explain-dfanalytics.html>`_
+
+        :arg body: The data frame analytics config to explain
+        :arg id: The ID of the data frame analytics to explain
+        """
+        return await self.transport.perform_request(
+            "POST",
+            _make_path("_ml", "data_frame", "analytics", id, "_explain"),
+            params=params,
+            headers=headers,
+            body=body,
         )
 
     @query_params(
@@ -1229,10 +1401,10 @@ class MlClient(NamespacedClient):
         "size",
         "tags",
     )
-    def get_trained_models(self, model_id=None, params=None, headers=None):
+    async def get_trained_models(self, model_id=None, params=None, headers=None):
         """
         Retrieves configuration information for a trained inference model.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-inference.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/get-inference.html>`_
 
         :arg model_id: The ID of the trained models to fetch
         :arg allow_no_match: Whether to ignore if a wildcard expression
@@ -1241,7 +1413,7 @@ class MlClient(NamespacedClient):
         :arg decompress_definition: Should the model definition be
             decompressed into valid JSON or returned in a custom compressed format.
             Defaults to true.  Default: True
-        :arg from\\_: skips a number of trained models
+        :arg from_: skips a number of trained models
         :arg include_model_definition: Should the full model definition
             be included in the results. These definitions can be large. So be
             cautious when including them. Defaults to false.
@@ -1254,7 +1426,7 @@ class MlClient(NamespacedClient):
         if "from_" in params:
             params["from"] = params.pop("from_")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET",
             _make_path("_ml", "inference", model_id),
             params=params,
@@ -1262,16 +1434,16 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("allow_no_match", "from_", "size")
-    def get_trained_models_stats(self, model_id=None, params=None, headers=None):
+    async def get_trained_models_stats(self, model_id=None, params=None, headers=None):
         """
         Retrieves usage information for trained inference models.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-inference-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/get-inference-stats.html>`_
 
         :arg model_id: The ID of the trained models stats to fetch
         :arg allow_no_match: Whether to ignore if a wildcard expression
             matches no trained models. (This includes `_all` string or when no
             trained models have been specified)  Default: True
-        :arg from\\_: skips a number of trained models
+        :arg from_: skips a number of trained models
         :arg size: specifies a max number of trained models to get
             Default: 100
         """
@@ -1279,7 +1451,7 @@ class MlClient(NamespacedClient):
         if "from_" in params:
             params["from"] = params.pop("from_")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "GET",
             _make_path("_ml", "inference", model_id, "_stats"),
             params=params,
@@ -1287,10 +1459,10 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    def put_trained_model(self, model_id, body, params=None, headers=None):
+    async def put_trained_model(self, model_id, body, params=None, headers=None):
         """
         Creates an inference trained model.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-inference.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/put-inference.html>`_
 
         :arg model_id: The ID of the trained models to store
         :arg body: The trained model configuration
@@ -1299,7 +1471,7 @@ class MlClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "PUT",
             _make_path("_ml", "inference", model_id),
             params=params,
@@ -1308,10 +1480,10 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    def estimate_model_memory(self, body, params=None, headers=None):
+    async def estimate_model_memory(self, body, params=None, headers=None):
         """
         Estimates the model memory
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-apis.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-apis.html>`_
 
         :arg body: The analysis config, plus cardinality estimates for
             fields it references
@@ -1319,161 +1491,9 @@ class MlClient(NamespacedClient):
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return self.transport.perform_request(
+        return await self.transport.perform_request(
             "POST",
             "/_ml/anomaly_detectors/_estimate_model_memory",
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params()
-    def explain_data_frame_analytics(
-        self, body=None, id=None, params=None, headers=None
-    ):
-        """
-        Explains a data frame analytics config.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/explain-dfanalytics.html>`_
-
-        :arg body: The data frame analytics config to explain
-        :arg id: The ID of the data frame analytics to explain
-        """
-        return self.transport.perform_request(
-            "POST",
-            _make_path("_ml", "data_frame", "analytics", id, "_explain"),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params("from_", "size")
-    def get_categories(
-        self, job_id, body=None, category_id=None, params=None, headers=None
-    ):
-        """
-        Retrieves anomaly detection job results for one or more categories.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-category.html>`_
-
-        :arg job_id: The name of the job
-        :arg body: Category selection details if not provided in URI
-        :arg category_id: The identifier of the category definition of
-            interest
-        :arg from\\_: skips a number of categories
-        :arg size: specifies a max number of categories to get
-        """
-        # from is a reserved word so it cannot be used, use from_ instead
-        if "from_" in params:
-            params["from"] = params.pop("from_")
-
-        if job_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'job_id'.")
-
-        return self.transport.perform_request(
-            "POST",
-            _make_path(
-                "_ml", "anomaly_detectors", job_id, "results", "categories", category_id
-            ),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params("desc", "end", "from_", "size", "sort", "start")
-    def get_model_snapshots(
-        self, job_id, body=None, snapshot_id=None, params=None, headers=None
-    ):
-        """
-        Retrieves information about model snapshots.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-snapshot.html>`_
-
-        :arg job_id: The ID of the job to fetch
-        :arg body: Model snapshot selection criteria
-        :arg snapshot_id: The ID of the snapshot to fetch
-        :arg desc: True if the results should be sorted in descending
-            order
-        :arg end: The filter 'end' query parameter
-        :arg from\\_: Skips a number of documents
-        :arg size: The default number of documents returned in queries
-            as a string.
-        :arg sort: Name of the field to sort on
-        :arg start: The filter 'start' query parameter
-        """
-        # from is a reserved word so it cannot be used, use from_ instead
-        if "from_" in params:
-            params["from"] = params.pop("from_")
-
-        if job_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'job_id'.")
-
-        return self.transport.perform_request(
-            "POST",
-            _make_path(
-                "_ml", "anomaly_detectors", job_id, "model_snapshots", snapshot_id
-            ),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params("delete_intervening_results")
-    def revert_model_snapshot(
-        self, job_id, snapshot_id, body=None, params=None, headers=None
-    ):
-        """
-        Reverts to a specific snapshot.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-revert-snapshot.html>`_
-
-        :arg job_id: The ID of the job to fetch
-        :arg snapshot_id: The ID of the snapshot to revert to
-        :arg body: Reversion options
-        :arg delete_intervening_results: Should we reset the results
-            back to the time of the snapshot?
-        """
-        for param in (job_id, snapshot_id):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return self.transport.perform_request(
-            "POST",
-            _make_path(
-                "_ml",
-                "anomaly_detectors",
-                job_id,
-                "model_snapshots",
-                snapshot_id,
-                "_revert",
-            ),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params()
-    def update_model_snapshot(
-        self, job_id, snapshot_id, body, params=None, headers=None
-    ):
-        """
-        Updates certain properties of a snapshot.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-update-snapshot.html>`_
-
-        :arg job_id: The ID of the job to fetch
-        :arg snapshot_id: The ID of the snapshot to update
-        :arg body: The model snapshot properties to update
-        """
-        for param in (job_id, snapshot_id, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return self.transport.perform_request(
-            "POST",
-            _make_path(
-                "_ml",
-                "anomaly_detectors",
-                job_id,
-                "model_snapshots",
-                snapshot_id,
-                "_update",
-            ),
             params=params,
             headers=headers,
             body=body,
