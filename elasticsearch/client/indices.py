@@ -33,8 +33,8 @@ class IndicesClient(NamespacedClient):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
+            concrete indices that are open, closed or both.   Valid choices: open,
+            closed, hidden, none, all   Default: open
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         """
@@ -60,8 +60,8 @@ class IndicesClient(NamespacedClient):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
+            concrete indices that are open, closed or both.   Valid choices: open,
+            closed, hidden, none, all   Default: open
         :arg force: Whether a flush should be forced even if it is not
             necessarily needed ie. if no changes will be committed to the index.
             This is useful if transaction log IDs should be incremented even if no
@@ -149,8 +149,8 @@ class IndicesClient(NamespacedClient):
         :arg allow_no_indices: Ignore if a wildcard expression resolves
             to no concrete indices (default: false)
         :arg expand_wildcards: Whether wildcard expressions should get
-            expanded to open or closed indices (default: open)  Valid choices: open,
-            closed, hidden, none, all  Default: open
+            expanded to open or closed indices (default: open)   Valid choices:
+            open, closed, hidden, none, all   Default: open
         :arg flat_settings: Return settings in flat format (default:
             false)
         :arg ignore_unavailable: Ignore unavailable indexes (default:
@@ -188,8 +188,8 @@ class IndicesClient(NamespacedClient):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: closed
+            concrete indices that are open, closed or both.   Valid choices: open,
+            closed, hidden, none, all   Default: closed
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         :arg master_timeout: Specify timeout for connection to master
@@ -222,8 +222,8 @@ class IndicesClient(NamespacedClient):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
+            concrete indices that are open, closed or both.   Valid choices: open,
+            closed, hidden, none, all   Default: open
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         :arg master_timeout: Specify timeout for connection to master
@@ -255,8 +255,8 @@ class IndicesClient(NamespacedClient):
         :arg allow_no_indices: Ignore if a wildcard expression resolves
             to no concrete indices (default: false)
         :arg expand_wildcards: Whether wildcard expressions should get
-            expanded to open or closed indices (default: open)  Valid choices: open,
-            closed, hidden, none, all  Default: open
+            expanded to open or closed indices (default: open)   Valid choices:
+            open, closed, hidden, none, all   Default: open
         :arg ignore_unavailable: Ignore unavailable indexes (default:
             false)
         :arg master_timeout: Specify timeout for connection to master
@@ -286,8 +286,8 @@ class IndicesClient(NamespacedClient):
         :arg allow_no_indices: Ignore if a wildcard expression resolves
             to no concrete indices (default: false)
         :arg expand_wildcards: Whether wildcard expressions should get
-            expanded to open or closed indices (default: open)  Valid choices: open,
-            closed, hidden, none, all  Default: open
+            expanded to open or closed indices (default: open)   Valid choices:
+            open, closed, hidden, none, all   Default: open
         :arg flat_settings: Return settings in flat format (default:
             false)
         :arg ignore_unavailable: Ignore unavailable indexes (default:
@@ -318,8 +318,8 @@ class IndicesClient(NamespacedClient):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
+            concrete indices that are open, closed or both.   Valid choices: open,
+            closed, hidden, none, all   Default: open
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         :arg local: Return local information, do not retrieve the state
@@ -358,8 +358,8 @@ class IndicesClient(NamespacedClient):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
+            concrete indices that are open, closed or both.   Valid choices: open,
+            closed, hidden, none, all   Default: open
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         :arg include_type_name: Whether a type should be expected in the
@@ -400,8 +400,8 @@ class IndicesClient(NamespacedClient):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
+            concrete indices that are open, closed or both.   Valid choices: open,
+            closed, hidden, none, all   Default: open
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         :arg include_type_name: Whether to add the type name to the
@@ -439,8 +439,8 @@ class IndicesClient(NamespacedClient):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
+            concrete indices that are open, closed or both.   Valid choices: open,
+            closed, hidden, none, all   Default: open
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         :arg include_defaults: Whether the default mapping values should
@@ -500,8 +500,8 @@ class IndicesClient(NamespacedClient):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: all
+            concrete indices that are open, closed or both.   Valid choices: open,
+            closed, hidden, none, all   Default: all
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         :arg local: Return local information, do not retrieve the state
@@ -527,8 +527,8 @@ class IndicesClient(NamespacedClient):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: all
+            concrete indices that are open, closed or both.   Valid choices: open,
+            closed, hidden, none, all   Default: all
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         :arg local: Return local information, do not retrieve the state
@@ -684,8 +684,8 @@ class IndicesClient(NamespacedClient):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: all
+            concrete indices that are open, closed or both.   Valid choices: open,
+            closed, hidden, none, all   Default: all
         :arg flat_settings: Return settings in flat format (default:
             false)
         :arg ignore_unavailable: Whether specified concrete indices
@@ -721,8 +721,8 @@ class IndicesClient(NamespacedClient):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
+            concrete indices that are open, closed or both.   Valid choices: open,
+            closed, hidden, none, all   Default: open
         :arg flat_settings: Return settings in flat format (default:
             false)
         :arg ignore_unavailable: Whether specified concrete indices
@@ -764,21 +764,21 @@ class IndicesClient(NamespacedClient):
         :arg index: A comma-separated list of index names; use `_all` or
             empty string to perform the operation on all indices
         :arg metric: Limit the information returned the specific
-            metrics.  Valid choices: _all, completion, docs, fielddata, query_cache,
-            flush, get, indexing, merge, request_cache, refresh, search, segments,
-            store, warmer, suggest
+            metrics.   Valid choices: _all, completion, docs, fielddata,
+            query_cache, flush, get, indexing, merge, request_cache, refresh,
+            search, segments, store, warmer, suggest
         :arg completion_fields: A comma-separated list of fields for
             `fielddata` and `suggest` index metric (supports wildcards)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
+            concrete indices that are open, closed or both.   Valid choices: open,
+            closed, hidden, none, all   Default: open
         :arg fielddata_fields: A comma-separated list of fields for
             `fielddata` index metric (supports wildcards)
         :arg fields: A comma-separated list of fields for `fielddata`
             and `completion` index metric (supports wildcards)
         :arg forbid_closed_indices: If set to false stats will also
             collected from closed indices if explicitly specified or if
-            expand_wildcards expands to closed indices  Default: True
+            expand_wildcards expands to closed indices    Default: True
         :arg groups: A comma-separated list of search groups for
             `search` index metric
         :arg include_segment_file_sizes: Whether to report the
@@ -788,7 +788,7 @@ class IndicesClient(NamespacedClient):
             will include stats for segments that are not currently loaded into
             memory
         :arg level: Return stats aggregated at cluster, index or shard
-            level  Valid choices: cluster, indices, shards  Default: indices
+            level   Valid choices: cluster, indices, shards   Default: indices
         :arg types: A comma-separated list of document types for the
             `indexing` index metric
         """
@@ -810,8 +810,8 @@ class IndicesClient(NamespacedClient):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
+            concrete indices that are open, closed or both.   Valid choices: open,
+            closed, hidden, none, all   Default: open
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         :arg verbose: Includes detailed memory usage by Lucene.
@@ -857,12 +857,12 @@ class IndicesClient(NamespacedClient):
             queries should be analyzed (default: false)
         :arg analyzer: The analyzer to use for the query string
         :arg default_operator: The default operator for query string
-            query (AND or OR)  Valid choices: AND, OR  Default: OR
+            query (AND or OR)   Valid choices: AND, OR   Default: OR
         :arg df: The field to use as default where no field prefix is
             given in the query string
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
+            concrete indices that are open, closed or both.   Valid choices: open,
+            closed, hidden, none, all   Default: open
         :arg explain: Return detailed information about the error
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
@@ -900,8 +900,8 @@ class IndicesClient(NamespacedClient):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
+            concrete indices that are open, closed or both.   Valid choices: open,
+            closed, hidden, none, all   Default: open
         :arg fielddata: Clear field data
         :arg fields: A comma-separated list of fields to clear when
             using the `fielddata` parameter (default: all)
@@ -949,8 +949,8 @@ class IndicesClient(NamespacedClient):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
+            concrete indices that are open, closed or both.   Valid choices: open,
+            closed, hidden, none, all   Default: open
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         :arg only_ancient_segments: If true, only ancient (an older
@@ -974,8 +974,8 @@ class IndicesClient(NamespacedClient):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
+            concrete indices that are open, closed or both.   Valid choices: open,
+            closed, hidden, none, all   Default: open
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         """
@@ -996,8 +996,8 @@ class IndicesClient(NamespacedClient):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, none, all  Default: open
+            concrete indices that are open, closed or both.   Valid choices: open,
+            closed, none, all   Default: open
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         """
@@ -1022,12 +1022,12 @@ class IndicesClient(NamespacedClient):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
+            concrete indices that are open, closed or both.   Valid choices: open,
+            closed, hidden, none, all   Default: open
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         :arg status: A comma-separated list of statuses used to filter
-            on shards to get store information for  Valid choices: green, yellow,
+            on shards to get store information for   Valid choices: green, yellow,
             red, all
         """
         return self.transport.perform_request(
@@ -1053,8 +1053,8 @@ class IndicesClient(NamespacedClient):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
+            concrete indices that are open, closed or both.   Valid choices: open,
+            closed, hidden, none, all   Default: open
         :arg flush: Specify whether the index should be flushed after
             performing the operation (default: true)
         :arg ignore_unavailable: Whether specified concrete indices
@@ -1189,8 +1189,8 @@ class IndicesClient(NamespacedClient):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: closed
+            concrete indices that are open, closed or both.   Valid choices: open,
+            closed, hidden, none, all   Default: closed
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         :arg master_timeout: Specify timeout for connection to master
@@ -1224,8 +1224,8 @@ class IndicesClient(NamespacedClient):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: closed
+            concrete indices that are open, closed or both.   Valid choices: open,
+            closed, hidden, none, all   Default: closed
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         :arg master_timeout: Specify timeout for connection to master
@@ -1252,8 +1252,8 @@ class IndicesClient(NamespacedClient):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
+            concrete indices that are open, closed or both.   Valid choices: open,
+            closed, hidden, none, all   Default: open
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         """
