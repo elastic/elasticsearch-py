@@ -341,14 +341,12 @@ class Elasticsearch(object):
                 raise ValueError("Empty value passed for a required argument.")
 
         if doc_type in SKIP_IN_PATH:
-            doc_type = "_doc"
+            path = _make_path(index, "_create", id)
+        else:
+            path = _make_path(index, doc_type, id, "_create")
 
         return self.transport.perform_request(
-            "PUT",
-            _make_path(index, doc_type, id, "_create"),
-            params=params,
-            headers=headers,
-            body=body,
+            "PUT", path, params=params, headers=headers, body=body
         )
 
     @query_params(
@@ -916,14 +914,12 @@ class Elasticsearch(object):
                 raise ValueError("Empty value passed for a required argument.")
 
         if doc_type in SKIP_IN_PATH:
-            doc_type = "_doc"
+            path = _make_path(index, "_explain", id)
+        else:
+            path = _make_path(index, doc_type, id, "_explain")
 
         return self.transport.perform_request(
-            "POST",
-            _make_path(index, doc_type, id, "_explain"),
-            params=params,
-            headers=headers,
-            body=body,
+            "POST", path, params=params, headers=headers, body=body
         )
 
     @query_params(
@@ -1066,13 +1062,12 @@ class Elasticsearch(object):
                 raise ValueError("Empty value passed for a required argument.")
 
         if doc_type in SKIP_IN_PATH:
-            doc_type = "_doc"
+            path = _make_path(index, "_source", id)
+        else:
+            path = _make_path(index, doc_type, id, "_source")
 
         return self.transport.perform_request(
-            "GET",
-            _make_path(index, doc_type, id, "_source"),
-            params=params,
-            headers=headers,
+            "GET", path, params=params, headers=headers
         )
 
     @query_params(
@@ -1607,14 +1602,12 @@ class Elasticsearch(object):
                 raise ValueError("Empty value passed for a required argument.")
 
         if doc_type in SKIP_IN_PATH:
-            doc_type = "_doc"
+            path = _make_path(index, "_update", id)
+        else:
+            path = _make_path(index, doc_type, id, "_update")
 
         return self.transport.perform_request(
-            "POST",
-            _make_path(index, doc_type, id, "_update"),
-            params=params,
-            headers=headers,
-            body=body,
+            "POST", path, params=params, headers=headers, body=body
         )
 
     @query_params("requests_per_second")
@@ -1761,12 +1754,13 @@ class Elasticsearch(object):
         :arg version_type: Specific version type   Valid choices:
             internal, external, external_gte, force
         """
+        if doc_type in SKIP_IN_PATH:
+            path = _make_path(index, "_mtermvectors")
+        else:
+            path = _make_path(index, doc_type, "_mtermvectors")
+
         return self.transport.perform_request(
-            "POST",
-            _make_path(index, doc_type, "_mtermvectors"),
-            params=params,
-            headers=headers,
-            body=body,
+            "POST", path, params=params, headers=headers, body=body
         )
 
     @query_params(
@@ -1888,14 +1882,12 @@ class Elasticsearch(object):
             raise ValueError("Empty value passed for a required argument 'index'.")
 
         if doc_type in SKIP_IN_PATH:
-            doc_type = "_doc"
+            path = _make_path(index, "_termvectors", id)
+        else:
+            path = _make_path(index, doc_type, id, "_termvectors")
 
         return self.transport.perform_request(
-            "POST",
-            _make_path(index, doc_type, id, "_termvectors"),
-            params=params,
-            headers=headers,
-            body=body,
+            "POST", path, params=params, headers=headers, body=body
         )
 
     @query_params(
