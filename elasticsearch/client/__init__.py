@@ -1851,14 +1851,12 @@ class Elasticsearch(object):
                 raise ValueError("Empty value passed for a required argument.")
 
         if doc_type in SKIP_IN_PATH:
-            doc_type = "_doc"
+            path = _make_path(index, "_update", id)
+        else:
+            path = _make_path(index, doc_type, id, "_update")
 
         return self.transport.perform_request(
-            "POST",
-            _make_path(index, doc_type, id, "_update"),
-            params=params,
-            headers=headers,
-            body=body,
+            "POST", path, params=params, headers=headers, body=body
         )
 
     @query_params(
