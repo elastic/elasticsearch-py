@@ -33,7 +33,7 @@ class CcrClient(NamespacedClient):
             that must be active before returning. Defaults to 0. Set to `all` for
             all shard copies, otherwise set to any non-negative value less than or
             equal to the total number of copies for the shard (number of replicas +
-            1)  Default: 0
+            1)    Default: 0
         """
         for param in (index, body):
             if param in SKIP_IN_PATH:

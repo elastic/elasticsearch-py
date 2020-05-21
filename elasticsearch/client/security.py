@@ -25,7 +25,7 @@ class SecurityClient(NamespacedClient):
         :arg refresh: If `true` (the default) then refresh the affected
             shards to make this operation visible to search, if `wait_for` then wait
             for a refresh to make this operation visible to search, if `false` then
-            do nothing with refreshes.  Valid choices: true, false, wait_for
+            do nothing with refreshes.   Valid choices: true, false, wait_for
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
@@ -87,7 +87,7 @@ class SecurityClient(NamespacedClient):
         :arg refresh: If `true` (the default) then refresh the affected
             shards to make this operation visible to search, if `wait_for` then wait
             for a refresh to make this operation visible to search, if `false` then
-            do nothing with refreshes.  Valid choices: true, false, wait_for
+            do nothing with refreshes.   Valid choices: true, false, wait_for
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
@@ -107,7 +107,7 @@ class SecurityClient(NamespacedClient):
         :arg refresh: If `true` (the default) then refresh the affected
             shards to make this operation visible to search, if `wait_for` then wait
             for a refresh to make this operation visible to search, if `false` then
-            do nothing with refreshes.  Valid choices: true, false, wait_for
+            do nothing with refreshes.   Valid choices: true, false, wait_for
         """
         for param in (application, name):
             if param in SKIP_IN_PATH:
@@ -130,7 +130,7 @@ class SecurityClient(NamespacedClient):
         :arg refresh: If `true` (the default) then refresh the affected
             shards to make this operation visible to search, if `wait_for` then wait
             for a refresh to make this operation visible to search, if `false` then
-            do nothing with refreshes.  Valid choices: true, false, wait_for
+            do nothing with refreshes.   Valid choices: true, false, wait_for
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
@@ -152,7 +152,7 @@ class SecurityClient(NamespacedClient):
         :arg refresh: If `true` (the default) then refresh the affected
             shards to make this operation visible to search, if `wait_for` then wait
             for a refresh to make this operation visible to search, if `false` then
-            do nothing with refreshes.  Valid choices: true, false, wait_for
+            do nothing with refreshes.   Valid choices: true, false, wait_for
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
@@ -174,7 +174,7 @@ class SecurityClient(NamespacedClient):
         :arg refresh: If `true` (the default) then refresh the affected
             shards to make this operation visible to search, if `wait_for` then wait
             for a refresh to make this operation visible to search, if `false` then
-            do nothing with refreshes.  Valid choices: true, false, wait_for
+            do nothing with refreshes.   Valid choices: true, false, wait_for
         """
         if username in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'username'.")
@@ -196,7 +196,7 @@ class SecurityClient(NamespacedClient):
         :arg refresh: If `true` (the default) then refresh the affected
             shards to make this operation visible to search, if `wait_for` then wait
             for a refresh to make this operation visible to search, if `false` then
-            do nothing with refreshes.  Valid choices: true, false, wait_for
+            do nothing with refreshes.   Valid choices: true, false, wait_for
         """
         if username in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'username'.")
@@ -218,7 +218,7 @@ class SecurityClient(NamespacedClient):
         :arg refresh: If `true` (the default) then refresh the affected
             shards to make this operation visible to search, if `wait_for` then wait
             for a refresh to make this operation visible to search, if `false` then
-            do nothing with refreshes.  Valid choices: true, false, wait_for
+            do nothing with refreshes.   Valid choices: true, false, wait_for
         """
         if username in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'username'.")
@@ -396,7 +396,7 @@ class SecurityClient(NamespacedClient):
         :arg refresh: If `true` (the default) then refresh the affected
             shards to make this operation visible to search, if `wait_for` then wait
             for a refresh to make this operation visible to search, if `false` then
-            do nothing with refreshes.  Valid choices: true, false, wait_for
+            do nothing with refreshes.   Valid choices: true, false, wait_for
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
@@ -416,7 +416,7 @@ class SecurityClient(NamespacedClient):
         :arg refresh: If `true` (the default) then refresh the affected
             shards to make this operation visible to search, if `wait_for` then wait
             for a refresh to make this operation visible to search, if `false` then
-            do nothing with refreshes.  Valid choices: true, false, wait_for
+            do nothing with refreshes.   Valid choices: true, false, wait_for
         """
         for param in (name, body):
             if param in SKIP_IN_PATH:
@@ -441,7 +441,7 @@ class SecurityClient(NamespacedClient):
         :arg refresh: If `true` (the default) then refresh the affected
             shards to make this operation visible to search, if `wait_for` then wait
             for a refresh to make this operation visible to search, if `false` then
-            do nothing with refreshes.  Valid choices: true, false, wait_for
+            do nothing with refreshes.   Valid choices: true, false, wait_for
         """
         for param in (name, body):
             if param in SKIP_IN_PATH:
@@ -467,7 +467,7 @@ class SecurityClient(NamespacedClient):
         :arg refresh: If `true` (the default) then refresh the affected
             shards to make this operation visible to search, if `wait_for` then wait
             for a refresh to make this operation visible to search, if `false` then
-            do nothing with refreshes.  Valid choices: true, false, wait_for
+            do nothing with refreshes.   Valid choices: true, false, wait_for
         """
         for param in (username, body):
             if param in SKIP_IN_PATH:
