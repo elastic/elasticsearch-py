@@ -174,9 +174,7 @@ class Connection(object):
                 warning_messages.append(header)
 
         for message in warning_messages:
-            warnings.warn(
-                message, category=ElasticsearchDeprecationWarning, stacklevel=6
-            )
+            warnings.warn(message, category=ElasticsearchDeprecationWarning)
 
     def _pretty_json(self, data):
         # pretty JSON in tracer curl logs
