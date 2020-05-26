@@ -37,6 +37,7 @@ docker run \
   --env "ELASTICSEARCH_HOST=${ELASTICSEARCH_URL}" \
   --env "TEST_SUITE=${TEST_SUITE}" \
   --env "PYTHON_CONNECTION_CLASS=${PYTHON_CONNECTION_CLASS}" \
+  --env "TEST_TYPE=server" \
   --name elasticsearch-py \
   --rm \
   --volume `pwd`:/code/elasticsearch-py \

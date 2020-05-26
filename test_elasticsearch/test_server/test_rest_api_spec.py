@@ -423,11 +423,11 @@ def sync_runner(sync_client):
     return YamlRunner(sync_client)
 
 
-@pytest.mark.parametrize("test_spec", YAML_TEST_SPECS)
-def test_rest_api_spec(test_spec, sync_runner):
-    if RUN_ASYNC_REST_API_TESTS:
-        pytest.skip("Skipped running sync REST API tests")
-    if test_spec.get("skip", False):
-        pytest.skip("Manually skipped in 'SKIP_TESTS'")
-    sync_runner.use_spec(test_spec)
-    sync_runner.run()
+if not RUN_ASYNC_REST_API_TESTS:
+
+    @pytest.mark.parametrize("test_spec", YAML_TEST_SPECS)
+    def test_rest_api_spec(test_spec, sync_runner):
+        if test_spec.get("skip", False):
+            pytest.skip("Manually skipped in 'SKIP_TESTS'")
+        sync_runner.use_spec(test_spec)
+        sync_runner.run()

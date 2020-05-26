@@ -64,8 +64,9 @@ def fetch_es_repo():
 def run_all(argv=None):
     atexit.register(lambda: sys.stderr.write("Shutting down....\n"))
 
-    # fetch yaml tests
-    fetch_es_repo()
+    # fetch yaml tests anywhere that's not GitHub Actions
+    if "GITHUB_ACTION" not in environ:
+        fetch_es_repo()
 
     # always insert coverage when running tests
     if argv is None:
@@ -81,10 +82,32 @@ def run_all(argv=None):
             "-vv",
         ]
 
+        ignores = []
+        # Python 3.6+ is required for async
         if sys.version_info < (3, 6):
-            argv.append("--ignore=test_elasticsearch/test_async/")
+            ignores.append("test_elasticsearch/test_async/")
 
-        argv.append(abspath(dirname(__file__)),)
+        # GitHub Actions, run non-server tests
+        if "GITHUB_ACTION" in environ:
+            ignores.extend(
+                [
+                    "test_elasticsearch/test_server/",
+                    "test_elasticsearch/test_async/test_server/",
+                ]
+            )
+        if ignores:
+            argv.extend(["--ignore=%s" % ignore for ignore in ignores])
+
+        # Jenkins, only run server tests
+        if environ.get("TEST_TYPE") == "server":
+            test_dir = abspath(dirname(__file__))
+            argv.append(join(test_dir, "test_server"))
+            if sys.version_info >= (3, 6):
+                argv.append(join(test_dir, "test_async/test_server"))
+
+        # Not in CI, run all tests specified.
+        else:
+            argv.append(abspath(dirname(__file__)))
 
     exit_code = 0
     try:
