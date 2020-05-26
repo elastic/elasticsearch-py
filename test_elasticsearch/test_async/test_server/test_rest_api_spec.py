@@ -200,11 +200,11 @@ def async_runner(async_client):
     return AsyncYamlRunner(async_client)
 
 
-@pytest.mark.parametrize("test_spec", YAML_TEST_SPECS)
-async def test_rest_api_spec(test_spec, async_runner):
-    if not RUN_ASYNC_REST_API_TESTS:
-        pytest.skip("Skipped running async REST API tests")
-    if test_spec.get("skip", False):
-        pytest.skip("Manually skipped in 'SKIP_TESTS'")
-    async_runner.use_spec(test_spec)
-    await async_runner.run()
+if RUN_ASYNC_REST_API_TESTS:
+
+    @pytest.mark.parametrize("test_spec", YAML_TEST_SPECS)
+    async def test_rest_api_spec(test_spec, async_runner):
+        if test_spec.get("skip", False):
+            pytest.skip("Manually skipped in 'SKIP_TESTS'")
+        async_runner.use_spec(test_spec)
+        await async_runner.run()
