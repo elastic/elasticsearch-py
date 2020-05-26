@@ -181,7 +181,7 @@ class MlClient(NamespacedClient):
         :arg job_id: The ID of the job to delete
         :arg force: True if the job should be forcefully deleted
         :arg wait_for_completion: Should this request wait until the
-            operation has completed before returning  Default: True
+            operation has completed before returning    Default: True
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
@@ -247,7 +247,7 @@ class MlClient(NamespacedClient):
         :arg explain: Whether to include a commentary on how the
             structure was derived
         :arg format: Optional parameter to specify the high level file
-            format  Valid choices: ndjson, xml, delimited, semi_structured_text
+            format   Valid choices: ndjson, xml, delimited, semi_structured_text
         :arg grok_pattern: Optional parameter to specify the Grok
             pattern that should be used to extract fields from messages in a semi-
             structured text file
@@ -257,7 +257,7 @@ class MlClient(NamespacedClient):
             permitted in a single message when lines are merged to create messages.
             Default: 10000
         :arg lines_to_sample: How many lines of the file should be
-            included in the analysis  Default: 1000
+            included in the analysis    Default: 1000
         :arg quote: Optional parameter to specify the quote character
             for a delimited file - must be a single character
         :arg should_trim_fields: Optional parameter to specify whether
@@ -879,7 +879,7 @@ class MlClient(NamespacedClient):
         :arg allow_no_indices: Ignore if the source indices expressions
             resolves to no concrete indices (default: true)
         :arg expand_wildcards: Whether source index expressions should
-            get expanded to open or closed indices (default: open)  Valid choices:
+            get expanded to open or closed indices (default: open)   Valid choices:
             open, closed, hidden, none, all
         :arg ignore_throttled: Ignore indices that are marked as
             throttled (default: true)
@@ -1055,7 +1055,7 @@ class MlClient(NamespacedClient):
         :arg allow_no_indices: Ignore if the source indices expressions
             resolves to no concrete indices (default: true)
         :arg expand_wildcards: Whether source index expressions should
-            get expanded to open or closed indices (default: open)  Valid choices:
+            get expanded to open or closed indices (default: open)   Valid choices:
             open, closed, hidden, none, all
         :arg ignore_throttled: Ignore indices that are marked as
             throttled (default: true)
@@ -1232,10 +1232,10 @@ class MlClient(NamespacedClient):
         :arg id: The ID of the data frame analytics to fetch
         :arg allow_no_match: Whether to ignore if a wildcard expression
             matches no data frame analytics. (This includes `_all` string or when no
-            data frame analytics have been specified)  Default: True
+            data frame analytics have been specified)    Default: True
         :arg from_: skips a number of analytics
-        :arg size: specifies a max number of analytics to get  Default:
-            100
+        :arg size: specifies a max number of analytics to get
+            Default: 100
         """
         # from is a reserved word so it cannot be used, use from_ instead
         if "from_" in params:
@@ -1257,10 +1257,10 @@ class MlClient(NamespacedClient):
         :arg id: The ID of the data frame analytics stats to fetch
         :arg allow_no_match: Whether to ignore if a wildcard expression
             matches no data frame analytics. (This includes `_all` string or when no
-            data frame analytics have been specified)  Default: True
+            data frame analytics have been specified)    Default: True
         :arg from_: skips a number of analytics
-        :arg size: specifies a max number of analytics to get  Default:
-            100
+        :arg size: specifies a max number of analytics to get
+            Default: 100
         """
         # from is a reserved word so it cannot be used, use from_ instead
         if "from_" in params:
@@ -1397,10 +1397,10 @@ class MlClient(NamespacedClient):
         :arg model_id: The ID of the trained models to fetch
         :arg allow_no_match: Whether to ignore if a wildcard expression
             matches no trained models. (This includes `_all` string or when no
-            trained models have been specified)  Default: True
+            trained models have been specified)    Default: True
         :arg decompress_definition: Should the model definition be
             decompressed into valid JSON or returned in a custom compressed format.
-            Defaults to true.  Default: True
+            Defaults to true.    Default: True
         :arg from_: skips a number of trained models
         :arg include_model_definition: Should the full model definition
             be included in the results. These definitions can be large. So be
@@ -1430,7 +1430,7 @@ class MlClient(NamespacedClient):
         :arg model_id: The ID of the trained models stats to fetch
         :arg allow_no_match: Whether to ignore if a wildcard expression
             matches no trained models. (This includes `_all` string or when no
-            trained models have been specified)  Default: True
+            trained models have been specified)    Default: True
         :arg from_: skips a number of trained models
         :arg size: specifies a max number of trained models to get
             Default: 100

@@ -32,7 +32,7 @@ class EnrichClient(NamespacedClient):
 
         :arg name: The name of the enrich policy
         :arg wait_for_completion: Should the request should block until
-            the execution is complete.  Default: True
+            the execution is complete.    Default: True
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
