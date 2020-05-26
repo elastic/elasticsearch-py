@@ -3,6 +3,16 @@
 Changelog
 =========
 
+7.7.1 (2020-05-26)
+------------------
+
+* Updated ``create``, ``update``, ``explain``, ``get_source``,
+  and ``termvectors`` APIs to use non-deprecated Elasticsearch
+  API routes when ``doc_type`` is not specified to suppress
+  deprecation warnings (See `#1253`_)
+
+ .. _#1253: https://github.com/elastic/elasticsearch-py/pull/1253
+
 7.7.0 (2020-05-13)
 ------------------
 
