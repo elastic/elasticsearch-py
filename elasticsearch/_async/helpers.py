@@ -2,13 +2,18 @@
 # Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 # See the LICENSE file in the project root for more information
 
-from operator import methodcaller
-import time
+import asyncio
 
 from ..exceptions import TransportError
-from ..compat import map, string_types, Queue
+from ..compat import map
 
-from .errors import ScanError, BulkIndexError
+from ..helpers.actions import (
+    _ActionChunker,
+    _process_bulk_chunk_error,
+    _process_bulk_chunk_success,
+    expand_action,
+)
+from ..helpers.errors import ScanError
 
 import logging
 
@@ -16,108 +21,7 @@ import logging
 logger = logging.getLogger("elasticsearch.helpers")
 
 
-def expand_action(data):
-    """
-    From one document or action definition passed in by the user extract the
-    action/data lines needed for elasticsearch's
-    :meth:`~elasticsearch.Elasticsearch.bulk` api.
-    """
-    # when given a string, assume user wants to index raw json
-    if isinstance(data, string_types):
-        return '{"index":{}}', data
-
-    # make sure we don't alter the action
-    data = data.copy()
-    op_type = data.pop("_op_type", "index")
-    action = {op_type: {}}
-    for key in (
-        "_id",
-        "_index",
-        "_parent",
-        "_percolate",
-        "_retry_on_conflict",
-        "_routing",
-        "_timestamp",
-        "_type",
-        "_version",
-        "_version_type",
-        "parent",
-        "pipeline",
-        "retry_on_conflict",
-        "routing",
-        "version",
-        "version_type",
-    ):
-        if key in data:
-            if key in [
-                "_parent",
-                "_retry_on_conflict",
-                "_routing",
-                "_version",
-                "_version_type",
-            ]:
-                action[op_type][key[1:]] = data.pop(key)
-            else:
-                action[op_type][key] = data.pop(key)
-
-    # no data payload for delete
-    if op_type == "delete":
-        return action, None
-
-    return action, data.get("_source", data)
-
-
-class _ActionChunker:
-    def __init__(self, chunk_size, max_chunk_bytes, serializer):
-        self.chunk_size = chunk_size
-        self.max_chunk_bytes = max_chunk_bytes
-        self.serializer = serializer
-
-        self.size = 0
-        self.action_count = 0
-        self.bulk_actions = []
-        self.bulk_data = []
-
-    def feed(self, action, data):
-        ret = None
-        raw_data, raw_action = data, action
-        action = self.serializer.dumps(action)
-        # +1 to account for the trailing new line character
-        cur_size = len(action.encode("utf-8")) + 1
-
-        if data is not None:
-            data = self.serializer.dumps(data)
-            cur_size += len(data.encode("utf-8")) + 1
-
-        # full chunk, send it and start a new one
-        if self.bulk_actions and (
-            self.size + cur_size > self.max_chunk_bytes
-            or self.action_count == self.chunk_size
-        ):
-            ret = (self.bulk_data, self.bulk_actions)
-            self.bulk_actions, self.bulk_data = [], []
-            self.size, self.action_count = 0, 0
-
-        self.bulk_actions.append(action)
-        if data is not None:
-            self.bulk_actions.append(data)
-            self.bulk_data.append((raw_action, raw_data))
-        else:
-            self.bulk_data.append((raw_action,))
-
-        self.size += cur_size
-        self.action_count += 1
-        return ret
-
-    def flush(self):
-        ret = None
-        if self.bulk_actions:
-            ret = (self.bulk_data, self.bulk_actions)
-            self.bulk_actions, self.bulk_data = [], []
-        return ret
-
-
-def _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer):
+async def _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer):
     """
     Split actions into chunks by number or size, serialize them into strings in
     the process.
@@ -125,7 +29,7 @@ def _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer):
     chunker = _ActionChunker(
         chunk_size=chunk_size, max_chunk_bytes=max_chunk_bytes, serializer=serializer
     )
-    for action, data in actions:
+    async for action, data in actions:
         ret = chunker.feed(action, data)
         if ret:
             yield ret
@@ -134,61 +38,7 @@ def _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer):
         yield ret
 
 
-def _process_bulk_chunk_success(resp, bulk_data, raise_on_error=True):
-    # if raise on error is set, we need to collect errors per chunk before raising them
-    errors = []
-
-    # go through request-response pairs and detect failures
-    for data, (op_type, item) in zip(
-        bulk_data, map(methodcaller("popitem"), resp["items"])
-    ):
-        ok = 200 <= item.get("status", 500) < 300
-        if not ok and raise_on_error:
-            # include original document source
-            if len(data) > 1:
-                item["data"] = data[1]
-            errors.append({op_type: item})
-
-        if ok or not errors:
-            # if we are not just recording all errors to be able to raise
-            # them all at once, yield items individually
-            yield ok, {op_type: item}
-
-    if errors:
-        raise BulkIndexError("%i document(s) failed to index." % len(errors), errors)
-
-
-def _process_bulk_chunk_error(
-    error, bulk_data, raise_on_exception=True, raise_on_error=True
-):
-    # default behavior - just propagate exception
-    if raise_on_exception:
-        raise error
-
-    # if we are not propagating, mark all actions in current chunk as failed
-    err_message = str(error)
-    exc_errors = []
-
-    for data in bulk_data:
-        # collect all the information about failed actions
-        op_type, action = data[0].copy().popitem()
-        info = {"error": err_message, "status": error.status_code, "exception": error}
-        if op_type != "delete":
-            info["data"] = data[1]
-        info.update(action)
-        exc_errors.append({op_type: info})
-
-    # emulate standard behavior for failed actions
-    if raise_on_error:
-        raise BulkIndexError(
-            "%i document(s) failed to index." % len(exc_errors), exc_errors
-        )
-    else:
-        for err in exc_errors:
-            yield False, err
-
-
-def _process_bulk_chunk(
+async def _process_bulk_chunk(
     client,
     bulk_actions,
     bulk_data,
@@ -202,7 +52,7 @@ def _process_bulk_chunk(
     """
     try:
         # send the actual request
-        resp = client.bulk("\n".join(bulk_actions) + "\n", *args, **kwargs)
+        resp = await client.bulk("\n".join(bulk_actions) + "\n", *args, **kwargs)
     except TransportError as e:
         gen = _process_bulk_chunk_error(
             error=e,
@@ -218,7 +68,33 @@ def _process_bulk_chunk(
         yield item
 
 
-def streaming_bulk(
+def aiter(x):
+    """Turns an async iterable or iterable into an async iterator"""
+    if hasattr(x, "__anext__"):
+        return x
+    elif hasattr(x, "__aiter__"):
+        return x.__aiter__()
+
+    async def f():
+        for item in x:
+            yield item
+
+    return f().__aiter__()
+
+
+async def azip(*iterables):
+    """Zips async iterables and iterables into an async iterator
+    with the same behavior as zip()
+    """
+    aiters = [aiter(x) for x in iterables]
+    try:
+        while True:
+            yield tuple([await x.__anext__() for x in aiters])
+    except StopAsyncIteration:
+        pass
+
+
+async def async_streaming_bulk(
     client,
     actions,
     chunk_size=500,
@@ -237,18 +113,18 @@ def streaming_bulk(
     """
     Streaming bulk consumes actions from the iterable passed in and yields
     results per action. For non-streaming usecases use
-    :func:`~elasticsearch.helpers.bulk` which is a wrapper around streaming
+    :func:`~elasticsearch.helpers.async_bulk` which is a wrapper around streaming
     bulk that returns summary information about the bulk operation once the
     entire input is consumed and sent.
 
     If you specify ``max_retries`` it will also retry any documents that were
     rejected with a ``429`` status code. To do this it will wait (**by calling
-    time.sleep which will block**) for ``initial_backoff`` seconds and then,
+    asyncio.sleep**) for ``initial_backoff`` seconds and then,
     every subsequent rejection for the same chunk, for double the time every
     time up to ``max_backoff`` seconds.
 
-    :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use
-    :arg actions: iterable containing the actions to be executed
+    :arg client: instance of :class:`~elasticsearch.AsyncElasticsearch` to use
+    :arg actions: iterable or async iterable containing the actions to be executed
     :arg chunk_size: number of docs in one chunk sent to es (default: 500)
     :arg max_chunk_bytes: the maximum size of the request in bytes (default: 100MB)
     :arg raise_on_error: raise ``BulkIndexError`` containing errors (as `.errors`)
@@ -266,19 +142,24 @@ def streaming_bulk(
     :arg max_backoff: maximum number of seconds a retry will wait
     :arg yield_ok: if set to False will skip successful documents in the output
     """
-    actions = map(expand_action_callback, actions)
 
-    for bulk_data, bulk_actions in _chunk_actions(
-        actions, chunk_size, max_chunk_bytes, client.transport.serializer
+    async def map_actions():
+        async for item in aiter(actions):
+            yield expand_action_callback(item)
+
+    async for bulk_data, bulk_actions in _chunk_actions(
+        map_actions(), chunk_size, max_chunk_bytes, client.transport.serializer
     ):
 
         for attempt in range(max_retries + 1):
             to_retry, to_retry_data = [], []
             if attempt:
-                time.sleep(min(max_backoff, initial_backoff * 2 ** (attempt - 1)))
+                await asyncio.sleep(
+                    min(max_backoff, initial_backoff * 2 ** (attempt - 1))
+                )
 
             try:
-                for data, (ok, info) in zip(
+                async for data, (ok, info) in azip(
                     bulk_data,
                     _process_bulk_chunk(
                         client,
@@ -322,32 +203,32 @@ def streaming_bulk(
                 bulk_actions, bulk_data = to_retry, to_retry_data
 
 
-def bulk(client, actions, stats_only=False, *args, **kwargs):
+async def async_bulk(client, actions, stats_only=False, *args, **kwargs):
     """
-    Helper for the :meth:`~elasticsearch.Elasticsearch.bulk` api that provides
+    Helper for the :meth:`~elasticsearch.AsyncElasticsearch.bulk` api that provides
     a more human friendly interface - it consumes an iterator of actions and
     sends them to elasticsearch in chunks. It returns a tuple with summary
     information - number of successfully executed actions and either list of
     errors or number of errors if ``stats_only`` is set to ``True``. Note that
     by default we raise a ``BulkIndexError`` when we encounter an error so
-    options like ``stats_only`` only apply when ``raise_on_error`` is set to
+    options like ``stats_only`` only+ apply when ``raise_on_error`` is set to
     ``False``.
 
     When errors are being collected original document data is included in the
     error dictionary which can lead to an extra high memory usage. If you need
     to process a lot of data and want to ignore/collect errors please consider
-    using the :func:`~elasticsearch.helpers.streaming_bulk` helper which will
+    using the :func:`~elasticsearch.helpers.async_streaming_bulk` helper which will
     just return the errors and not store them in memory.
 
 
-    :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use
+    :arg client: instance of :class:`~elasticsearch.AsyncElasticsearch` to use
     :arg actions: iterator containing the actions
     :arg stats_only: if `True` only report number of successful/failed
         operations instead of just number of successful and a list of error responses
 
     Any additional keyword arguments will be passed to
-    :func:`~elasticsearch.helpers.streaming_bulk` which is used to execute
-    the operation, see :func:`~elasticsearch.helpers.streaming_bulk` for more
+    :func:`~elasticsearch.helpers.async_streaming_bulk` which is used to execute
+    the operation, see :func:`~elasticsearch.helpers.async_streaming_bulk` for more
     accepted parameters.
     """
     success, failed = 0, 0
@@ -357,7 +238,7 @@ def bulk(client, actions, stats_only=False, *args, **kwargs):
 
     # make streaming_bulk yield successful results so we can count them
     kwargs["yield_ok"] = True
-    for ok, item in streaming_bulk(client, actions, *args, **kwargs):
+    async for ok, item in async_streaming_bulk(client, actions, *args, **kwargs):
         # go through request-response pairs and detect failures
         if not ok:
             if not stats_only:
@@ -369,71 +250,7 @@ def bulk(client, actions, stats_only=False, *args, **kwargs):
     return success, failed if stats_only else errors
 
 
-def parallel_bulk(
-    client,
-    actions,
-    thread_count=4,
-    chunk_size=500,
-    max_chunk_bytes=100 * 1024 * 1024,
-    queue_size=4,
-    expand_action_callback=expand_action,
-    *args,
-    **kwargs
-):
-    """
-    Parallel version of the bulk helper run in multiple threads at once.
-
-    :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use
-    :arg actions: iterator containing the actions
-    :arg thread_count: size of the threadpool to use for the bulk requests
-    :arg chunk_size: number of docs in one chunk sent to es (default: 500)
-    :arg max_chunk_bytes: the maximum size of the request in bytes (default: 100MB)
-    :arg raise_on_error: raise ``BulkIndexError`` containing errors (as `.errors`)
-        from the execution of the last chunk when some occur. By default we raise.
-    :arg raise_on_exception: if ``False`` then don't propagate exceptions from
-        call to ``bulk`` and just report the items that failed as failed.
-    :arg expand_action_callback: callback executed on each action passed in,
-        should return a tuple containing the action line and the data line
-        (`None` if data line should be omitted).
-    :arg queue_size: size of the task queue between the main thread (producing
-        chunks to send) and the processing threads.
-    """
-    # Avoid importing multiprocessing unless parallel_bulk is used
-    # to avoid exceptions on restricted environments like App Engine
-    from multiprocessing.pool import ThreadPool
-
-    actions = map(expand_action_callback, actions)
-
-    class BlockingPool(ThreadPool):
-        def _setup_queues(self):
-            super(BlockingPool, self)._setup_queues()
-            # The queue must be at least the size of the number of threads to
-            # prevent hanging when inserting sentinel values during teardown.
-            self._inqueue = Queue(max(queue_size, thread_count))
-            self._quick_put = self._inqueue.put
-
-    pool = BlockingPool(thread_count)
-
-    try:
-        for result in pool.imap(
-            lambda bulk_chunk: list(
-                _process_bulk_chunk(
-                    client, bulk_chunk[1], bulk_chunk[0], *args, **kwargs
-                )
-            ),
-            _chunk_actions(
-                actions, chunk_size, max_chunk_bytes, client.transport.serializer
-            ),
-        ):
-            for item in result:
-                yield item
-
-    finally:
-        pool.close()
-        pool.join()
-
-
-def scan(
+async def async_scan(
     client,
     query=None,
     scroll="5m",
@@ -447,7 +264,7 @@ def scan(
 ):
     """
     Simple abstraction on top of the
-    :meth:`~elasticsearch.Elasticsearch.scroll` api - a simple iterator that
+    :meth:`~elasticsearch.AsyncElasticsearch.scroll` api - a simple iterator that
     yields all hits as returned by underlining scroll requests.
 
     By default scan does not return results in any pre-determined order. To
@@ -456,8 +273,8 @@ def scan(
     may be an expensive operation and will negate the performance benefits of
     using ``scan``.
 
-    :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use
-    :arg query: body for the :meth:`~elasticsearch.Elasticsearch.search` api
+    :arg client: instance of :class:`~elasticsearch.AsyncElasticsearch` to use
+    :arg query: body for the :meth:`~elasticsearch.AsyncElasticsearch.search` api
     :arg scroll: Specify how long a consistent view of the index should be
         maintained for scrolled search
     :arg raise_on_error: raises an exception (``ScanError``) if an error is
@@ -472,12 +289,12 @@ def scan(
         scroll API at the end of the method on completion or error, defaults
         to true.
     :arg scroll_kwargs: additional kwargs to be passed to
-        :meth:`~elasticsearch.Elasticsearch.scroll`
+        :meth:`~elasticsearch.AsyncElasticsearch.scroll`
 
     Any additional keyword arguments will be passed to the initial
-    :meth:`~elasticsearch.Elasticsearch.search` call::
+    :meth:`~elasticsearch.AsyncElasticsearch.search` call::
 
-        scan(es,
+        async_scan(es,
             query={"query": {"match": {"title": "python"}}},
             index="orders-*",
             doc_type="books"
@@ -491,7 +308,7 @@ def scan(
         query["sort"] = "_doc"
 
     # initial search
-    resp = client.search(
+    resp = await client.search(
         body=query, scroll=scroll, size=size, request_timeout=request_timeout, **kwargs
     )
     scroll_id = resp.get("_scroll_id")
@@ -521,17 +338,17 @@ def scan(
                             resp["_shards"]["total"],
                         ),
                     )
-            resp = client.scroll(
+            resp = await client.scroll(
                 body={"scroll_id": scroll_id, "scroll": scroll}, **scroll_kwargs
             )
             scroll_id = resp.get("_scroll_id")
 
     finally:
         if scroll_id and clear_scroll:
-            client.clear_scroll(body={"scroll_id": [scroll_id]}, ignore=(404,))
+            await client.clear_scroll(body={"scroll_id": [scroll_id]}, ignore=(404,))
 
 
-def reindex(
+async def async_reindex(
     client,
     source_index,
     target_index,
@@ -548,7 +365,7 @@ def reindex(
     to another, potentially (if `target_client` is specified) on a different cluster.
     If you don't specify the query you will reindex all the documents.
 
-    Since ``2.3`` a :meth:`~elasticsearch.Elasticsearch.reindex` api is
+    Since ``2.3`` a :meth:`~elasticsearch.AsyncElasticsearch.reindex` api is
     available as part of elasticsearch itself. It is recommended to use the api
     instead of this helper wherever possible. The helper is here mostly for
     backwards compatibility and for situations where more flexibility is
@@ -558,26 +375,28 @@ def reindex(
 
         This helper doesn't transfer mappings, just the data.
 
-    :arg client: instance of :class:`~elasticsearch.Elasticsearch` to use (for
+    :arg client: instance of :class:`~elasticsearch.AsyncElasticsearch` to use (for
         read if `target_client` is specified as well)
     :arg source_index: index (or list of indices) to read documents from
     :arg target_index: name of the index in the target cluster to populate
-    :arg query: body for the :meth:`~elasticsearch.Elasticsearch.search` api
+    :arg query: body for the :meth:`~elasticsearch.AsyncElasticsearch.search` api
     :arg target_client: optional, is specified will be used for writing (thus
         enabling reindex between clusters)
     :arg chunk_size: number of docs in one chunk sent to es (default: 500)
     :arg scroll: Specify how long a consistent view of the index should be
         maintained for scrolled search
     :arg scan_kwargs: additional kwargs to be passed to
-        :func:`~elasticsearch.helpers.scan`
+        :func:`~elasticsearch.helpers.async_scan`
     :arg bulk_kwargs: additional kwargs to be passed to
-        :func:`~elasticsearch.helpers.bulk`
+        :func:`~elasticsearch.helpers.async_bulk`
     """
     target_client = client if target_client is None else target_client
-    docs = scan(client, query=query, index=source_index, scroll=scroll, **scan_kwargs)
+    docs = async_scan(
+        client, query=query, index=source_index, scroll=scroll, **scan_kwargs
+    )
 
-    def _change_doc_index(hits, index):
-        for h in hits:
+    async def _change_doc_index(hits, index):
+        async for h in hits:
             h["_index"] = index
             if "fields" in h:
                 h.update(h.pop("fields"))
@@ -585,7 +404,7 @@ def reindex(
 
     kwargs = {"stats_only": True}
     kwargs.update(bulk_kwargs)
-    return bulk(
+    return await async_bulk(
         target_client,
         _change_doc_index(docs, target_index),
         chunk_size=chunk_size,
