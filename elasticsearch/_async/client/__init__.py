@@ -6,11 +6,7 @@
 from __future__ import unicode_literals
 import logging
 
-from ..transport import Transport
-from ..exceptions import TransportError
-from ..compat import string_types, urlparse, unquote
-from .async_search import AsyncSearchClient
-from .autoscaling import AutoscalingClient
+from ..transport import AsyncTransport, TransportError
 from .indices import IndicesClient
 from .ingest import IngestClient
 from .cluster import ClusterClient
@@ -20,10 +16,14 @@ from .remote import RemoteClient
 from .snapshot import SnapshotClient
 from .tasks import TasksClient
 from .xpack import XPackClient
-from .utils import query_params, _make_path, SKIP_IN_PATH, _bulk_body
+from .utils import query_params, _make_path, SKIP_IN_PATH, _bulk_body, _normalize_hosts
 
 # xpack APIs
+from .async_search import AsyncSearchClient
+from .autoscaling import AutoscalingClient
 from .ccr import CcrClient
+from .data_frame import Data_FrameClient
+from .deprecation import DeprecationClient
 from .eql import EqlClient
 from .graph import GraphClient
 from .ilm import IlmClient
@@ -45,52 +45,7 @@ from .transform import TransformClient
 logger = logging.getLogger("elasticsearch")
 
 
-def _normalize_hosts(hosts):
-    """
-    Helper function to transform hosts argument to
-    :class:`~elasticsearch.Elasticsearch` to a list of dicts.
-    """
-    # if hosts are empty, just defer to defaults down the line
-    if hosts is None:
-        return [{}]
-
-    # passed in just one string
-    if isinstance(hosts, string_types):
-        hosts = [hosts]
-
-    out = []
-    # normalize hosts to dicts
-    for host in hosts:
-        if isinstance(host, string_types):
-            if "://" not in host:
-                host = "//%s" % host
-
-            parsed_url = urlparse(host)
-            h = {"host": parsed_url.hostname}
-
-            if parsed_url.port:
-                h["port"] = parsed_url.port
-
-            if parsed_url.scheme == "https":
-                h["port"] = parsed_url.port or 443
-                h["use_ssl"] = True
-
-            if parsed_url.username or parsed_url.password:
-                h["http_auth"] = "%s:%s" % (
-                    unquote(parsed_url.username),
-                    unquote(parsed_url.password),
-                )
-
-            if parsed_url.path and parsed_url.path != "/":
-                h["url_prefix"] = parsed_url.path
-
-            out.append(h)
-        else:
-            out.append(host)
-    return out
-
-
-class Elasticsearch(object):
+class AsyncElasticsearch(object):
     """
     Elasticsearch low-level client. Provides a straightforward mapping from
     Python to ES REST endpoints.
@@ -215,7 +170,7 @@ class Elasticsearch(object):
 
     """
 
-    def __init__(self, hosts=None, transport_class=Transport, **kwargs):
+    def __init__(self, hosts=None, transport_class=AsyncTransport, **kwargs):
         """
         :arg hosts: list of nodes, or a single node, we should connect to.
             Node should be a dictionary ({"host": "localhost", "port": 9200}),
@@ -233,8 +188,6 @@ class Elasticsearch(object):
         self.transport = transport_class(_normalize_hosts(hosts), **kwargs)
 
         # namespaced clients for compatibility with API names
-        self.async_search = AsyncSearchClient(self)
-        self.autoscaling = AutoscalingClient(self)
         self.indices = IndicesClient(self)
         self.ingest = IngestClient(self)
         self.cluster = ClusterClient(self)
@@ -245,8 +198,12 @@ class Elasticsearch(object):
         self.tasks = TasksClient(self)
 
         self.xpack = XPackClient(self)
-        self.eql = EqlClient(self)
+        self.async_search = AsyncSearchClient(self)
+        self.autoscaling = AutoscalingClient(self)
         self.ccr = CcrClient(self)
+        self.data_frame = Data_FrameClient(self)
+        self.deprecation = DeprecationClient(self)
+        self.eql = EqlClient(self)
         self.graph = GraphClient(self)
         self.ilm = IlmClient(self)
         self.indices = IndicesClient(self)
@@ -274,7 +231,18 @@ class Elasticsearch(object):
             return "<{cls}({cons})>".format(cls=self.__class__.__name__, cons=cons)
         except Exception:
             # probably operating on custom transport and connection_pool, ignore
-            return super(Elasticsearch, self).__repr__()
+            return super(AsyncElasticsearch, self).__repr__()
+
+    async def __aenter__(self):
+        if hasattr(self.transport, "_async_call"):
+            await self.transport._async_call()
+        return self
+
+    async def __aexit__(self, *_):
+        await self.close()
+
+    async def close(self):
+        await self.transport.close()
 
     # AUTO-GENERATED-API-DEFINITIONS #
     @query_params()
