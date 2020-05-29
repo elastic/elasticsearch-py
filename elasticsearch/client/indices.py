@@ -1201,7 +1201,7 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params()
-    def create_data_stream(self, name, body, params=None, headers=None):
+    def create_data_stream(self, name, body=None, params=None, headers=None):
         """
         Creates or updates a data stream
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
@@ -1209,9 +1209,8 @@ class IndicesClient(NamespacedClient):
         :arg name: The name of the data stream
         :arg body: The data stream definition
         """
-        for param in (name, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'name'.")
 
         return self.transport.perform_request(
             "PUT",

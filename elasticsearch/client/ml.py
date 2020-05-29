@@ -312,7 +312,7 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("duration", "expires_in")
+    @query_params("duration", "expires_in", "max_model_memory")
     def forecast(self, job_id, params=None, headers=None):
         """
         Predicts the future behavior of a time series by using its historical behavior.
@@ -322,6 +322,8 @@ class MlClient(NamespacedClient):
         :arg duration: The duration of the forecast
         :arg expires_in: The time interval after which the forecast
             expires. Expired forecasts will be deleted at the first opportunity.
+        :arg max_model_memory: The max memory able to be used by the
+            forecast. Default is 20mb.
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
@@ -1232,6 +1234,7 @@ class MlClient(NamespacedClient):
     @query_params(
         "allow_no_match",
         "decompress_definition",
+        "for_export",
         "from_",
         "include_model_definition",
         "size",
@@ -1249,6 +1252,8 @@ class MlClient(NamespacedClient):
         :arg decompress_definition: Should the model definition be
             decompressed into valid JSON or returned in a custom compressed format.
             Defaults to true.  Default: True
+        :arg for_export: Omits fields that are illegal to set on model
+            PUT
         :arg from\\_: skips a number of trained models
         :arg include_model_definition: Should the full model definition
             be included in the results. These definitions can be large. So be

@@ -87,7 +87,8 @@ class SnapshotClient(NamespacedClient):
         Deletes a repository.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
 
-        :arg repository: A comma-separated list of repository names
+        :arg repository: Name of the snapshot repository to unregister.
+            Wildcard (`*`) patterns are supported.
         :arg master_timeout: Explicit operation timeout for connection
             to master node
         :arg timeout: Explicit operation timeout

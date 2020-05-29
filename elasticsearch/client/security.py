@@ -275,7 +275,7 @@ class SecurityClient(NamespacedClient):
         Retrieves roles in the native realm.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-role.html>`_
 
-        :arg name: Role name
+        :arg name: A comma-separated list of role names
         """
         return self.transport.perform_request(
             "GET", _make_path("_security", "role", name), params=params, headers=headers
@@ -287,7 +287,7 @@ class SecurityClient(NamespacedClient):
         Retrieves role mappings.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-role-mapping.html>`_
 
-        :arg name: Role-Mapping name
+        :arg name: A comma-separated list of role-mapping names
         """
         return self.transport.perform_request(
             "GET",
