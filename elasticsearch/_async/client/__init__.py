@@ -238,6 +238,7 @@ class AsyncElasticsearch(object):
         await self.close()
 
     async def close(self):
+        """Closes the Transport and all internal connections"""
         await self.transport.close()
 
     # AUTO-GENERATED-API-DEFINITIONS #
