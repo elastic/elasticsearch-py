@@ -53,7 +53,14 @@ Installation
 Install the ``elasticsearch`` package with `pip
 <https://pypi.python.org/pypi/elasticsearch>`_::
 
-    pip install elasticsearch
+    $ python -m pip install elasticsearch
+
+If your application uses async/await in Python you can install with
+the ``async`` extra::
+
+    $ python -m pip install elasticsearch[async]
+
+Read more about `how to use asyncio with this project <async>`_.
 
 Example Usage
 -------------
@@ -143,7 +150,9 @@ The client can be configured to inspect the cluster state to get a list of
 nodes upon startup, periodically and/or on failure. See
 :class:`~elasticsearch.Transport` parameters for details.
 
-Some example configurations::
+Some example configurations:
+
+ .. code-block:: python
 
     from elasticsearch import Elasticsearch
 
@@ -374,6 +383,7 @@ Contents
    api
    xpack
    exceptions
+   async
    connection
    transports
    helpers

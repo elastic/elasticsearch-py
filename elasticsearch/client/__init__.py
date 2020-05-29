@@ -242,6 +242,7 @@ class Elasticsearch(object):
         self.close()
 
     def close(self):
+        """Closes the Transport and all internal connections"""
         self.transport.close()
 
     # AUTO-GENERATED-API-DEFINITIONS #
