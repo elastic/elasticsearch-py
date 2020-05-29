@@ -293,11 +293,11 @@ class AsyncElasticsearch(object):
         :arg refresh: If `true` then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then
-            do nothing with refreshes.   Valid choices: true, false, wait_for
+            do nothing with refreshes.  Valid choices: true, false, wait_for
         :arg routing: Specific routing value
         :arg timeout: Explicit operation timeout
         :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type   Valid choices:
+        :arg version_type: Specific version type  Valid choices:
             internal, external, external_gte
         :arg wait_for_active_shards: Sets the number of shard copies
             that must be active before proceeding with the index operation. Defaults
@@ -349,17 +349,17 @@ class AsyncElasticsearch(object):
             number
         :arg op_type: Explicit operation type. Defaults to `index` for
             requests with an explicit document ID, and to `create`for requests
-            without an explicit document ID   Valid choices: index, create
+            without an explicit document ID  Valid choices: index, create
         :arg pipeline: The pipeline id to preprocess incoming documents
             with
         :arg refresh: If `true` then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then
-            do nothing with refreshes.   Valid choices: true, false, wait_for
+            do nothing with refreshes.  Valid choices: true, false, wait_for
         :arg routing: Specific routing value
         :arg timeout: Explicit operation timeout
         :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type   Valid choices:
+        :arg version_type: Specific version type  Valid choices:
             internal, external, external_gte
         :arg wait_for_active_shards: Sets the number of shard copies
             that must be active before proceeding with the index operation. Defaults
@@ -414,7 +414,7 @@ class AsyncElasticsearch(object):
         :arg refresh: If `true` then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then
-            do nothing with refreshes.   Valid choices: true, false, wait_for
+            do nothing with refreshes.  Valid choices: true, false, wait_for
         :arg routing: Specific routing value
         :arg timeout: Explicit operation timeout
         :arg wait_for_active_shards: Sets the number of shard copies
@@ -492,12 +492,12 @@ class AsyncElasticsearch(object):
             queries should be analyzed (default: false)
         :arg analyzer: The analyzer to use for the query string
         :arg default_operator: The default operator for query string
-            query (AND or OR)   Valid choices: AND, OR   Default: OR
+            query (AND or OR)  Valid choices: AND, OR  Default: OR
         :arg df: The field to use as default where no field prefix is
             given in the query string
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.   Valid choices: open,
-            closed, hidden, none, all   Default: open
+            concrete indices that are open, closed or both.  Valid choices: open,
+            closed, hidden, none, all  Default: open
         :arg ignore_throttled: Whether specified concrete, expanded or
             aliased indices should be ignored when throttled
         :arg ignore_unavailable: Whether specified concrete indices
@@ -548,11 +548,11 @@ class AsyncElasticsearch(object):
         :arg refresh: If `true` then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then
-            do nothing with refreshes.   Valid choices: true, false, wait_for
+            do nothing with refreshes.  Valid choices: true, false, wait_for
         :arg routing: Specific routing value
         :arg timeout: Explicit operation timeout
         :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type   Valid choices:
+        :arg version_type: Specific version type  Valid choices:
             internal, external, external_gte, force
         :arg wait_for_active_shards: Sets the number of shard copies
             that must be active before proceeding with the delete operation.
@@ -631,14 +631,14 @@ class AsyncElasticsearch(object):
             queries should be analyzed (default: false)
         :arg analyzer: The analyzer to use for the query string
         :arg conflicts: What to do when the delete by query hits version
-            conflicts?   Valid choices: abort, proceed   Default: abort
+            conflicts?  Valid choices: abort, proceed  Default: abort
         :arg default_operator: The default operator for query string
-            query (AND or OR)   Valid choices: AND, OR   Default: OR
+            query (AND or OR)  Valid choices: AND, OR  Default: OR
         :arg df: The field to use as default where no field prefix is
             given in the query string
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.   Valid choices: open,
-            closed, hidden, none, all   Default: open
+            concrete indices that are open, closed or both.  Valid choices: open,
+            closed, hidden, none, all  Default: open
         :arg from_: Starting offset (default: 0)
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
@@ -658,15 +658,15 @@ class AsyncElasticsearch(object):
         :arg scroll: Specify how long a consistent view of the index
             should be maintained for scrolled search
         :arg scroll_size: Size on the scroll request powering the delete
-            by query    Default: 100
+            by query  Default: 100
         :arg search_timeout: Explicit timeout for each search request.
             Defaults to no timeout.
-        :arg search_type: Search operation type   Valid choices:
+        :arg search_type: Search operation type  Valid choices:
             query_then_fetch, dfs_query_then_fetch
         :arg size: Deprecated, please use `max_docs` instead
         :arg slices: The number of slices this task should be divided
             into. Defaults to 1, meaning the task isn't sliced into subtasks. Can be
-            set to `auto`.    Default: 1
+            set to `auto`.  Default: 1
         :arg sort: A comma-separated list of <field>:<direction> pairs
         :arg stats: Specific 'tag' of the request for logging and
             statistical purposes
@@ -674,7 +674,7 @@ class AsyncElasticsearch(object):
             for each shard, upon reaching which the query execution will terminate
             early.
         :arg timeout: Time each individual bulk request should wait for
-            shards that are unavailable.    Default: 1m
+            shards that are unavailable.  Default: 1m
         :arg version: Specify whether to return document version as part
             of a hit
         :arg wait_for_active_shards: Sets the number of shard copies
@@ -684,7 +684,7 @@ class AsyncElasticsearch(object):
             or equal to the total number of copies for the shard (number of replicas
             + 1)
         :arg wait_for_completion: Should the request should block until
-            the delete by query is complete.    Default: True
+            the delete by query is complete.  Default: True
         """
         # from is a reserved word so it cannot be used, use from_ instead
         if "from_" in params:
@@ -777,7 +777,7 @@ class AsyncElasticsearch(object):
         :arg stored_fields: A comma-separated list of stored fields to
             return in the response
         :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type   Valid choices:
+        :arg version_type: Specific version type  Valid choices:
             internal, external, external_gte, force
         """
         for param in (index, id):
@@ -825,7 +825,7 @@ class AsyncElasticsearch(object):
             performing the operation
         :arg routing: Specific routing value
         :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type   Valid choices:
+        :arg version_type: Specific version type  Valid choices:
             internal, external, external_gte, force
         """
         for param in (index, id):
@@ -874,7 +874,7 @@ class AsyncElasticsearch(object):
             queries in the query string query should be analyzed (default: false)
         :arg analyzer: The analyzer for the query string query
         :arg default_operator: The default operator for query string
-            query (AND or OR)   Valid choices: AND, OR   Default: OR
+            query (AND or OR)  Valid choices: AND, OR  Default: OR
         :arg df: The default field for query string query (default:
             _all)
         :arg lenient: Specify whether format-based query failures (such
@@ -918,8 +918,8 @@ class AsyncElasticsearch(object):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.   Valid choices: open,
-            closed, hidden, none, all   Default: open
+            concrete indices that are open, closed or both.  Valid choices: open,
+            closed, hidden, none, all  Default: open
         :arg fields: A comma-separated list of field names
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
@@ -967,7 +967,7 @@ class AsyncElasticsearch(object):
         :arg stored_fields: A comma-separated list of stored fields to
             return in the response
         :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type   Valid choices:
+        :arg version_type: Specific version type  Valid choices:
             internal, external, external_gte, force
         """
         for param in (index, id):
@@ -1031,7 +1031,7 @@ class AsyncElasticsearch(object):
             performing the operation
         :arg routing: Specific routing value
         :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type   Valid choices:
+        :arg version_type: Specific version type  Valid choices:
             internal, external, external_gte, force
         """
         for param in (index, id):
@@ -1116,13 +1116,13 @@ class AsyncElasticsearch(object):
             as default
         :arg ccs_minimize_roundtrips: Indicates whether network round-
             trips should be minimized as part of cross-cluster search requests
-            execution    Default: true
+            execution  Default: true
         :arg max_concurrent_searches: Controls the maximum number of
             concurrent searches the multi search api will execute
         :arg max_concurrent_shard_requests: The number of concurrent
             shard requests each sub search executes concurrently per node. This
             value should be used to limit the impact of the search on the cluster in
-            order to limit the number of concurrent shard requests    Default: 5
+            order to limit the number of concurrent shard requests  Default: 5
         :arg pre_filter_shard_size: A threshold that enforces a pre-
             filter roundtrip to prefilter search shards based on query rewriting if
             the number of shards the search request expands to exceeds the
@@ -1132,7 +1132,7 @@ class AsyncElasticsearch(object):
             shard bounds and the query are disjoint.
         :arg rest_total_hits_as_int: Indicates whether hits.total should
             be rendered as an integer or an object in the rest search response
-        :arg search_type: Search operation type   Valid choices:
+        :arg search_type: Search operation type  Valid choices:
             query_then_fetch, query_and_fetch, dfs_query_then_fetch,
             dfs_query_and_fetch
         :arg typed_keys: Specify whether aggregation and suggester names
@@ -1191,11 +1191,11 @@ class AsyncElasticsearch(object):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.   Valid choices: open,
-            closed, hidden, none, all   Default: open
+            concrete indices that are open, closed or both.  Valid choices: open,
+            closed, hidden, none, all  Default: open
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
-        :arg search_type: Search operation type   Valid choices:
+        :arg search_type: Search operation type  Valid choices:
             query_then_fetch, dfs_query_then_fetch
         """
         if body in SKIP_IN_PATH:
@@ -1237,16 +1237,16 @@ class AsyncElasticsearch(object):
             Default: 5m
         :arg slices: The number of slices this task should be divided
             into. Defaults to 1, meaning the task isn't sliced into subtasks. Can be
-            set to `auto`.    Default: 1
+            set to `auto`.  Default: 1
         :arg timeout: Time each individual bulk request should wait for
-            shards that are unavailable.    Default: 1m
+            shards that are unavailable.  Default: 1m
         :arg wait_for_active_shards: Sets the number of shard copies
             that must be active before proceeding with the reindex operation.
             Defaults to 1, meaning the primary shard only. Set to `all` for all
             shard copies, otherwise set to any non-negative value less than or equal
             to the total number of copies for the shard (number of replicas + 1)
         :arg wait_for_completion: Should the request should block until
-            the reindex is complete.    Default: True
+            the reindex is complete.  Default: True
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
@@ -1401,7 +1401,7 @@ class AsyncElasticsearch(object):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg allow_partial_search_results: Indicate if an error should
-            be returned if there is a partial search failure or timeout    Default:
+            be returned if there is a partial search failure or timeout  Default:
             True
         :arg analyze_wildcard: Specify whether wildcard and prefix
             queries should be analyzed (default: false)
@@ -1413,16 +1413,16 @@ class AsyncElasticsearch(object):
             Default: 512
         :arg ccs_minimize_roundtrips: Indicates whether network round-
             trips should be minimized as part of cross-cluster search requests
-            execution    Default: true
+            execution  Default: true
         :arg default_operator: The default operator for query string
-            query (AND or OR)   Valid choices: AND, OR   Default: OR
+            query (AND or OR)  Valid choices: AND, OR  Default: OR
         :arg df: The field to use as default where no field prefix is
             given in the query string
         :arg docvalue_fields: A comma-separated list of fields to return
             as the docvalue representation of a field for each hit
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.   Valid choices: open,
-            closed, hidden, none, all   Default: open
+            concrete indices that are open, closed or both.  Valid choices: open,
+            closed, hidden, none, all  Default: open
         :arg explain: Specify whether to return detailed information
             about score computation as part of a hit
         :arg from_: Starting offset (default: 0)
@@ -1435,7 +1435,7 @@ class AsyncElasticsearch(object):
         :arg max_concurrent_shard_requests: The number of concurrent
             shard requests per node this search executes concurrently. This value
             should be used to limit the impact of the search on the cluster in order
-            to limit the number of concurrent shard requests    Default: 5
+            to limit the number of concurrent shard requests  Default: 5
         :arg pre_filter_shard_size: A threshold that enforces a pre-
             filter roundtrip to prefilter search shards based on query rewriting if
             the number of shards the search request expands to exceeds the
@@ -1453,7 +1453,7 @@ class AsyncElasticsearch(object):
         :arg routing: A comma-separated list of specific routing values
         :arg scroll: Specify how long a consistent view of the index
             should be maintained for scrolled search
-        :arg search_type: Search operation type   Valid choices:
+        :arg search_type: Search operation type  Valid choices:
             query_then_fetch, dfs_query_then_fetch
         :arg seq_no_primary_term: Specify whether to return sequence
             number and primary term of the last modification of each hit
@@ -1464,8 +1464,8 @@ class AsyncElasticsearch(object):
         :arg stored_fields: A comma-separated list of stored fields to
             return as part of a hit
         :arg suggest_field: Specify which field to use for suggestions
-        :arg suggest_mode: Specify suggest mode   Valid choices:
-            missing, popular, always   Default: missing
+        :arg suggest_mode: Specify suggest mode  Valid choices: missing,
+            popular, always  Default: missing
         :arg suggest_size: How many suggestions to return in response
         :arg suggest_text: The source text for which the suggestions
             should be returned
@@ -1514,8 +1514,8 @@ class AsyncElasticsearch(object):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.   Valid choices: open,
-            closed, hidden, none, all   Default: open
+            concrete indices that are open, closed or both.  Valid choices: open,
+            closed, hidden, none, all  Default: open
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         :arg local: Return local information, do not retrieve the state
@@ -1567,7 +1567,7 @@ class AsyncElasticsearch(object):
         :arg refresh: If `true` then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then
-            do nothing with refreshes.   Valid choices: true, false, wait_for
+            do nothing with refreshes.  Valid choices: true, false, wait_for
         :arg retry_on_conflict: Specify how many times should the
             operation be retried when a conflict occurs (default: 0)
         :arg routing: Specific routing value
@@ -1654,12 +1654,12 @@ class AsyncElasticsearch(object):
             as default
         :arg ccs_minimize_roundtrips: Indicates whether network round-
             trips should be minimized as part of cross-cluster search requests
-            execution    Default: true
+            execution  Default: true
         :arg max_concurrent_searches: Controls the maximum number of
             concurrent searches the multi search api will execute
         :arg rest_total_hits_as_int: Indicates whether hits.total should
             be rendered as an integer or an object in the rest search response
-        :arg search_type: Search operation type   Valid choices:
+        :arg search_type: Search operation type  Valid choices:
             query_then_fetch, query_and_fetch, dfs_query_then_fetch,
             dfs_query_and_fetch
         :arg typed_keys: Specify whether aggregation and suggester names
@@ -1706,7 +1706,7 @@ class AsyncElasticsearch(object):
         :arg field_statistics: Specifies if document count, sum of
             document frequencies and sum of total term frequencies should be
             returned. Applies to all returned documents unless otherwise specified
-            in body "params" or "docs".    Default: True
+            in body "params" or "docs".  Default: True
         :arg fields: A comma-separated list of fields to return. Applies
             to all returned documents unless otherwise specified in body "params" or
             "docs".
@@ -1714,13 +1714,13 @@ class AsyncElasticsearch(object):
             define ids as parameter or set "ids" or "docs" in the request body
         :arg offsets: Specifies if term offsets should be returned.
             Applies to all returned documents unless otherwise specified in body
-            "params" or "docs".    Default: True
+            "params" or "docs".  Default: True
         :arg payloads: Specifies if term payloads should be returned.
             Applies to all returned documents unless otherwise specified in body
-            "params" or "docs".    Default: True
+            "params" or "docs".  Default: True
         :arg positions: Specifies if term positions should be returned.
             Applies to all returned documents unless otherwise specified in body
-            "params" or "docs".    Default: True
+            "params" or "docs".  Default: True
         :arg preference: Specify the node or shard the operation should
             be performed on (default: random) .Applies to all returned documents
             unless otherwise specified in body "params" or "docs".
@@ -1732,7 +1732,7 @@ class AsyncElasticsearch(object):
             document frequency should be returned. Applies to all returned documents
             unless otherwise specified in body "params" or "docs".
         :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type   Valid choices:
+        :arg version_type: Specific version type  Valid choices:
             internal, external, external_gte, force
         """
         if doc_type in SKIP_IN_PATH:
@@ -1776,10 +1776,10 @@ class AsyncElasticsearch(object):
             string or when no indices have been specified)
         :arg ccs_minimize_roundtrips: Indicates whether network round-
             trips should be minimized as part of cross-cluster search requests
-            execution    Default: true
+            execution  Default: true
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.   Valid choices: open,
-            closed, hidden, none, all   Default: open
+            concrete indices that are open, closed or both.  Valid choices: open,
+            closed, hidden, none, all  Default: open
         :arg explain: Specify whether to return detailed information
             about score computation as part of a hit
         :arg ignore_throttled: Whether specified concrete, expanded or
@@ -1794,7 +1794,7 @@ class AsyncElasticsearch(object):
         :arg routing: A comma-separated list of specific routing values
         :arg scroll: Specify how long a consistent view of the index
             should be maintained for scrolled search
-        :arg search_type: Search operation type   Valid choices:
+        :arg search_type: Search operation type  Valid choices:
             query_then_fetch, query_and_fetch, dfs_query_then_fetch,
             dfs_query_and_fetch
         :arg typed_keys: Specify whether aggregation and suggester names
@@ -1840,7 +1840,7 @@ class AsyncElasticsearch(object):
             should be supplied.
         :arg field_statistics: Specifies if document count, sum of
             document frequencies and sum of total term frequencies should be
-            returned.    Default: True
+            returned.  Default: True
         :arg fields: A comma-separated list of fields to return.
         :arg offsets: Specifies if term offsets should be returned.
             Default: True
@@ -1856,7 +1856,7 @@ class AsyncElasticsearch(object):
         :arg term_statistics: Specifies if total term frequency and
             document frequency should be returned.
         :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type   Valid choices:
+        :arg version_type: Specific version type  Valid choices:
             internal, external, external_gte, force
         """
         if index in SKIP_IN_PATH:
@@ -1934,14 +1934,14 @@ class AsyncElasticsearch(object):
             queries should be analyzed (default: false)
         :arg analyzer: The analyzer to use for the query string
         :arg conflicts: What to do when the update by query hits version
-            conflicts?   Valid choices: abort, proceed   Default: abort
+            conflicts?  Valid choices: abort, proceed  Default: abort
         :arg default_operator: The default operator for query string
-            query (AND or OR)   Valid choices: AND, OR   Default: OR
+            query (AND or OR)  Valid choices: AND, OR  Default: OR
         :arg df: The field to use as default where no field prefix is
             given in the query string
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.   Valid choices: open,
-            closed, hidden, none, all   Default: open
+            concrete indices that are open, closed or both.  Valid choices: open,
+            closed, hidden, none, all  Default: open
         :arg from_: Starting offset (default: 0)
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
@@ -1963,15 +1963,15 @@ class AsyncElasticsearch(object):
         :arg scroll: Specify how long a consistent view of the index
             should be maintained for scrolled search
         :arg scroll_size: Size on the scroll request powering the update
-            by query    Default: 100
+            by query  Default: 100
         :arg search_timeout: Explicit timeout for each search request.
             Defaults to no timeout.
-        :arg search_type: Search operation type   Valid choices:
+        :arg search_type: Search operation type  Valid choices:
             query_then_fetch, dfs_query_then_fetch
         :arg size: Deprecated, please use `max_docs` instead
         :arg slices: The number of slices this task should be divided
             into. Defaults to 1, meaning the task isn't sliced into subtasks. Can be
-            set to `auto`.    Default: 1
+            set to `auto`.  Default: 1
         :arg sort: A comma-separated list of <field>:<direction> pairs
         :arg stats: Specific 'tag' of the request for logging and
             statistical purposes
@@ -1979,7 +1979,7 @@ class AsyncElasticsearch(object):
             for each shard, upon reaching which the query execution will terminate
             early.
         :arg timeout: Time each individual bulk request should wait for
-            shards that are unavailable.    Default: 1m
+            shards that are unavailable.  Default: 1m
         :arg version: Specify whether to return document version as part
             of a hit
         :arg version_type: Should the document increment the version
@@ -1991,7 +1991,7 @@ class AsyncElasticsearch(object):
             or equal to the total number of copies for the shard (number of replicas
             + 1)
         :arg wait_for_completion: Should the request should block until
-            the update by query operation is complete.    Default: True
+            the update by query operation is complete.  Default: True
         """
         # from is a reserved word so it cannot be used, use from_ instead
         if "from_" in params:

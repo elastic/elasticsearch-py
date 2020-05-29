@@ -105,7 +105,7 @@ class AsyncSearchClient(NamespacedClient):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg allow_partial_search_results: Indicate if an error should
-            be returned if there is a partial search failure or timeout    Default:
+            be returned if there is a partial search failure or timeout  Default:
             True
         :arg analyze_wildcard: Specify whether wildcard and prefix
             queries should be analyzed (default: false)
@@ -113,16 +113,16 @@ class AsyncSearchClient(NamespacedClient):
         :arg batched_reduce_size: The number of shard results that
             should be reduced at once on the coordinating node. This value should be
             used as the granularity at which progress results will be made
-            available.    Default: 5
+            available.  Default: 5
         :arg default_operator: The default operator for query string
-            query (AND or OR)   Valid choices: AND, OR   Default: OR
+            query (AND or OR)  Valid choices: AND, OR  Default: OR
         :arg df: The field to use as default where no field prefix is
             given in the query string
         :arg docvalue_fields: A comma-separated list of fields to return
             as the docvalue representation of a field for each hit
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.   Valid choices: open,
-            closed, hidden, none, all   Default: open
+            concrete indices that are open, closed or both.  Valid choices: open,
+            closed, hidden, none, all  Default: open
         :arg explain: Specify whether to return detailed information
             about score computation as part of a hit
         :arg from_: Starting offset (default: 0)
@@ -131,7 +131,7 @@ class AsyncSearchClient(NamespacedClient):
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         :arg keep_alive: Update the time interval in which the results
-            (partial or final) for this search will be available    Default: 5d
+            (partial or final) for this search will be available  Default: 5d
         :arg keep_on_completion: Control whether the response should be
             stored in the cluster if it completed within the provided
             [wait_for_completion] time (default: false)
@@ -140,14 +140,14 @@ class AsyncSearchClient(NamespacedClient):
         :arg max_concurrent_shard_requests: The number of concurrent
             shard requests per node this search executes concurrently. This value
             should be used to limit the impact of the search on the cluster in order
-            to limit the number of concurrent shard requests    Default: 5
+            to limit the number of concurrent shard requests  Default: 5
         :arg preference: Specify the node or shard the operation should
             be performed on (default: random)
         :arg q: Query in the Lucene query string syntax
         :arg request_cache: Specify if request cache should be used for
             this request or not, defaults to true
         :arg routing: A comma-separated list of specific routing values
-        :arg search_type: Search operation type   Valid choices:
+        :arg search_type: Search operation type  Valid choices:
             query_then_fetch, dfs_query_then_fetch
         :arg seq_no_primary_term: Specify whether to return sequence
             number and primary term of the last modification of each hit
@@ -158,8 +158,8 @@ class AsyncSearchClient(NamespacedClient):
         :arg stored_fields: A comma-separated list of stored fields to
             return as part of a hit
         :arg suggest_field: Specify which field to use for suggestions
-        :arg suggest_mode: Specify suggest mode   Valid choices:
-            missing, popular, always   Default: missing
+        :arg suggest_mode: Specify suggest mode  Valid choices: missing,
+            popular, always  Default: missing
         :arg suggest_size: How many suggestions to return in response
         :arg suggest_text: The source text for which the suggestions
             should be returned
@@ -176,7 +176,7 @@ class AsyncSearchClient(NamespacedClient):
         :arg version: Specify whether to return document version as part
             of a hit
         :arg wait_for_completion_timeout: Specify the time that the
-            request should block waiting for the final response    Default: 1s
+            request should block waiting for the final response  Default: 1s
         """
         # from is a reserved word so it cannot be used, use from_ instead
         if "from_" in params:
