@@ -18,8 +18,8 @@ class SearchableSnapshotsClient(NamespacedClient):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.   Valid choices: open,
-            closed, none, all   Default: open
+            concrete indices that are open, closed or both.  Valid choices: open,
+            closed, none, all  Default: open
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         """

@@ -26,10 +26,10 @@ class ClusterClient(NamespacedClient):
 
         :arg index: Limit the information returned to a specific index
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.   Valid choices: open,
-            closed, hidden, none, all   Default: all
+            concrete indices that are open, closed or both.  Valid choices: open,
+            closed, hidden, none, all  Default: all
         :arg level: Specify the level of detail for returned information
-            Valid choices: cluster, indices, shards   Default: cluster
+            Valid choices: cluster, indices, shards  Default: cluster
         :arg local: Return local information, do not retrieve the state
             from master node (default: false)
         :arg master_timeout: Explicit operation timeout for connection
@@ -38,8 +38,8 @@ class ClusterClient(NamespacedClient):
         :arg wait_for_active_shards: Wait until the specified number of
             shards is active
         :arg wait_for_events: Wait until all currently queued events
-            with the given priority are processed   Valid choices: immediate,
-            urgent, high, normal, low, languid
+            with the given priority are processed  Valid choices: immediate, urgent,
+            high, normal, low, languid
         :arg wait_for_no_initializing_shards: Whether to wait until
             there are no initializing shards in the cluster
         :arg wait_for_no_relocating_shards: Whether to wait until there
@@ -87,7 +87,7 @@ class ClusterClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/cluster-state.html>`_
 
         :arg metric: Limit the information returned to the specified
-            metrics   Valid choices: _all, blocks, metadata, nodes, routing_table,
+            metrics  Valid choices: _all, blocks, metadata, nodes, routing_table,
             routing_nodes, master_node, version
         :arg index: A comma-separated list of index names; use `_all` or
             empty string to perform the operation on all indices
@@ -95,8 +95,8 @@ class ClusterClient(NamespacedClient):
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
         :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.   Valid choices: open,
-            closed, hidden, none, all   Default: open
+            concrete indices that are open, closed or both.  Valid choices: open,
+            closed, hidden, none, all  Default: open
         :arg flat_settings: Return settings in flat format (default:
             false)
         :arg ignore_unavailable: Whether specified concrete indices
@@ -159,7 +159,7 @@ class ClusterClient(NamespacedClient):
         :arg master_timeout: Explicit operation timeout for connection
             to master node
         :arg metric: Limit the information returned to the specified
-            metrics. Defaults to all but metadata   Valid choices: _all, blocks,
+            metrics. Defaults to all but metadata  Valid choices: _all, blocks,
             metadata, nodes, routing_table, master_node, version
         :arg retry_failed: Retries allocation of shards that are blocked
             due to too many subsequent allocation failures
@@ -333,7 +333,7 @@ class ClusterClient(NamespacedClient):
 
         :arg wait_for_removal: Specifies whether to wait for all
             excluded nodes to be removed from the cluster before clearing the voting
-            configuration exclusions list.    Default: True
+            configuration exclusions list.  Default: True
         """
         return self.transport.perform_request(
             "DELETE",
@@ -354,7 +354,7 @@ class ClusterClient(NamespacedClient):
         :arg node_names: A comma-separated list of the names of the
             nodes to exclude from the voting configuration. If specified, you may
             not also specify ?node_ids.
-        :arg timeout: Explicit operation timeout    Default: 30s
+        :arg timeout: Explicit operation timeout  Default: 30s
         """
         return self.transport.perform_request(
             "POST", "/_cluster/voting_config_exclusions", params=params, headers=headers

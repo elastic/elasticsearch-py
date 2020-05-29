@@ -157,7 +157,7 @@ class WatcherClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.8/watcher-api-stats.html>`_
 
         :arg metric: Controls what additional stat metrics should be
-            include in the response   Valid choices: _all, queued_watches,
+            include in the response  Valid choices: _all, queued_watches,
             current_watches, pending_watches
         :arg emit_stacktraces: Emits stack traces of currently running
             watches
