@@ -6,6 +6,7 @@ Changelog
 7.8.0a1 (2020-05-29)
 --------------------
 
+* Added support for ES 7.8 APIs
 * Added support for async/await with asyncio via
   ``AsyncElasticsearch``. See documentation on
   `Using Asyncio with Elasticsearch <https://elasticsearch-py.readthedocs.io/en/master/async.html>`_
