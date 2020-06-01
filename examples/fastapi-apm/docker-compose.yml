@@ -1,0 +1,103 @@
+version: '2.2'
+services:
+  apm-server:
+    image: docker.elastic.co/apm/apm-server:7.6.2
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
+    cap_add: ["CHOWN", "DAC_OVERRIDE", "SETGID", "SETUID"]
+    cap_drop: ["ALL"]
+    ports:
+    - 8200:8200
+    networks:
+    - elastic
+    command: >
+       apm-server -e
+         -E apm-server.rum.enabled=true
+         -E setup.kibana.host=kibana:5601
+         -E setup.template.settings.index.number_of_replicas=0
+         -E apm-server.kibana.enabled=true
+         -E apm-server.kibana.host=kibana:5601
+         -E output.elasticsearch.hosts=["elasticsearch:9200"]
+    healthcheck:
+      interval: 30s
+      retries: 12
+      test: curl --write-out 'HTTP %{http_code}' --fail --silent --output /dev/null http://localhost:8200/
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.6.2
+    environment:
+    - bootstrap.memory_lock=true
+    - cluster.name=docker-cluster
+    - cluster.routing.allocation.disk.threshold_enabled=false
+    - discovery.type=single-node
+    - ES_JAVA_OPTS=-XX:UseAVX=2 -Xms1g -Xmx1g
+    ulimits:
+      memlock:
+        hard: -1
+        soft: -1
+    volumes:
+    - esdata:/usr/share/elasticsearch/data
+    ports:
+    - 9200:9200
+    networks:
+    - elastic
+    healthcheck:
+      interval: 30s
+      retries: 10
+      test: curl -s http://localhost:9200/_cluster/health | grep -vq '"status":"red"'
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.6.2
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    ports:
+    - 5601:5601
+    networks:
+    - elastic
+    healthcheck:
+      interval: 30s
+      retries: 20
+      test: curl --write-out 'HTTP %{http_code}' --fail --silent --output /dev/null http://localhost:5601/api/status
+
+  app:
+    container_name: app
+    build:
+      dockerfile: ${PWD}/dockerfiles/Dockerfile.app
+      context: ${PWD}
+    depends_on:
+      - apm-server
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    ports:
+    - 9292:9292
+    networks:
+    - elastic
+    healthcheck:
+      interval: 30s
+      retries: 20
+      test: curl --write-out 'HTTP %{http_code}' --fail --silent --output /dev/null http://localhost:9292/
+
+  ping:
+    container_name: ping
+    build:
+      dockerfile: ${PWD}/dockerfiles/Dockerfile.ping
+      context: ${PWD}
+    depends_on:
+      - app
+    networks:
+    - elastic
+
+volumes:
+  esdata:
+    driver: local
+
+networks:
+  elastic:
+    driver: bridge
