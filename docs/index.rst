@@ -67,19 +67,19 @@ Example Usage
 
 ::
 
-    from locasticsearch import Locasticsearch
+    from elasticsearch import Elasticsearch
     from datetime import datetime
 
-    es = Locasticsearch()
+    es = Elasticsearch()
 
     doc = {
         "author": "kimchy",
         "text": "Elasticsearch: cool. bonsai cool.",
         "timestamp": datetime(2010, 10, 10, 10, 10, 10),
     }
-    res = es.index(index="test-index", doc_type="tweet", id=1, body=doc)
+    res = es.index(index="test-index", id=1, body=doc)
 
-    res = es.get(index="test-index", doc_type="tweet", id=1)
+    res = es.get(index="test-index", id=1)
     print(res["_source"])
 
     es.indices.refresh(index="test-index")
