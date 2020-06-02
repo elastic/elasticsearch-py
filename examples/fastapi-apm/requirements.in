@@ -1,0 +1,4 @@
+fastapi
+elasticsearch[async]==7.8.0a1
+elastic-apm
+uvicorn
