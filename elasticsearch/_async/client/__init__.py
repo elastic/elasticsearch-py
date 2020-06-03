@@ -832,11 +832,13 @@ class AsyncElasticsearch(object):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
+        if doc_type in SKIP_IN_PATH:
+            path = _make_path(index, "_source", id)
+        else:
+            path = _make_path(index, doc_type, id, "_source")
+
         return await self.transport.perform_request(
-            "HEAD",
-            _make_path(index, doc_type, id, "_source"),
-            params=params,
-            headers=headers,
+            "HEAD", path, params=params, headers=headers
         )
 
     @query_params(
