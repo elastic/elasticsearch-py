@@ -1,0 +1,9 @@
+{% extends "base" %}
+{% block request %}
+        if doc_type in SKIP_IN_PATH:
+            path = _make_path(index, "_source", id)
+        else:
+            path = _make_path(index, doc_type, id, "_source")
+
+        return await self.transport.perform_request("{{ api.method }}", path, params=params, headers=headers)
+{% endblock %}
