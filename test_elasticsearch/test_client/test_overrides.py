@@ -52,6 +52,15 @@ class TestOverriddenUrlTargets(ElasticsearchTestCase):
         self.client.get_source(index="test-index", doc_type="test-type", id="test-id")
         self.assert_url_called("GET", "/test-index/test-type/test-id/_source")
 
+    def test_exists_source(self):
+        self.client.exists_source(index="test-index", id="test-id")
+        self.assert_url_called("HEAD", "/test-index/_source/test-id")
+
+        self.client.exists_source(
+            index="test-index", doc_type="test-type", id="test-id"
+        )
+        self.assert_url_called("HEAD", "/test-index/test-type/test-id/_source")
+
     def test_index(self):
         self.client.index(index="test-index", body={})
         self.assert_url_called("POST", "/test-index/_doc")

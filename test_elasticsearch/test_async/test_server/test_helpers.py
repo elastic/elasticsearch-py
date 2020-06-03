@@ -712,6 +712,7 @@ class TestParentChildReindex:
             "_primary_term": 1,
             "_seq_no": 0,
             "_source": {"question_answer": "question"},
+            "_type": "_doc",
             "_version": 1,
             "found": True,
         } == q
@@ -727,6 +728,7 @@ class TestParentChildReindex:
                 "some": "data",
                 "question_answer": {"name": "answer", "parent": 42},
             },
+            "_type": "_doc",
             "_version": 1,
             "found": True,
         } == q
