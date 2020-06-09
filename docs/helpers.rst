@@ -3,8 +3,7 @@
 Helpers
 =======
 
-Collection of simple helper functions that abstract some specifics or the raw
-API.
+Collection of simple helper functions that abstract some specifics of the raw API.
 
 
 Bulk helpers
