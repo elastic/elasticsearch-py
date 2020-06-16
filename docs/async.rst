@@ -160,7 +160,7 @@ Bulk and Streaming Bulk
         for word in mywords:
             yield {
                 "_index": "mywords",
-                "doc": {"word": word},
+                "word": word,
             }
 
     async def main():
