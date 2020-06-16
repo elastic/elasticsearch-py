@@ -3,8 +3,7 @@
 Helpers
 =======
 
-Collection of simple helper functions that abstract some specifics or the raw
-API.
+Collection of simple helper functions that abstract some specifics of the raw API.
 
 
 Bulk helpers
@@ -83,8 +82,7 @@ document is like ``{"word": "<myword>"}``.
         for word in mywords:
             yield {
                 "_index": "mywords",
-                "_type": "document",
-                "doc": {"word": word},
+                "word": word,
             }
 
     bulk(es, gendata())

@@ -5,22 +5,24 @@ Official low-level client for Elasticsearch. Its goal is to provide common
 ground for all Elasticsearch-related code in Python; because of this it tries
 to be opinion-free and very extendable.
 
-For a more high level client library with more limited scope, have a look at
-`elasticsearch-dsl`_ - a more pythonic library sitting on top of
-``elasticsearch-py``.
 
-It provides a more convenient and idiomatic way to write and manipulate
-`queries`_. It stays close to the Elasticsearch JSON DSL, mirroring its
-terminology and structure while exposing the whole range of the DSL from Python
-either directly using defined classes or a queryset-like expressions.
+Installation
+------------
 
-It also provides an optional `persistence layer`_ for working with documents as
-Python objects in an ORM-like fashion: defining mappings, retrieving and saving
-documents, wrapping the document data in user-defined classes.
+Install the ``elasticsearch`` package with `pip
+<https://pypi.org/project/elasticsearch>`_::
 
-.. _elasticsearch-dsl: https://elasticsearch-dsl.readthedocs.io/
-.. _queries: https://elasticsearch-dsl.readthedocs.io/en/latest/search_dsl.html
-.. _persistence layer: https://elasticsearch-dsl.readthedocs.io/en/latest/persistence.html#doctype
+    $ python -m pip install elasticsearch
+
+If your application uses async/await in Python you can install with
+the ``async`` extra::
+
+    $ python -m pip install elasticsearch[async]
+
+Read more about `how to use asyncio with this project <async>`_.
+
+ .. _async: https://elasticsearch-py.readthedocs.io/en/master/async.html
+
 
 Compatibility
 -------------
@@ -57,14 +59,6 @@ The recommended way to set your requirements in your `setup.py` or
 
 If you have a need to have multiple versions installed at the same time older
 versions are also released as ``elasticsearch2`` and ``elasticsearch5``.
-
-Installation
-------------
-
-Install the ``elasticsearch`` package with `pip
-<https://pypi.python.org/pypi/elasticsearch>`_::
-
-    pip install elasticsearch
 
 
 Example use
@@ -117,7 +111,6 @@ Using SSL Context with a self-signed cert use-case::
     >>> es.info()
 
 
-
 Features
 --------
 
@@ -135,10 +128,31 @@ The client's features include:
  * pluggable architecture
 
 
+Elasticsearch-DSL
+-----------------
+
+For a more high level client library with more limited scope, have a look at
+`elasticsearch-dsl`_ - a more pythonic library sitting on top of
+``elasticsearch-py``.
+
+`elasticsearch-dsl`_ provides a more convenient and idiomatic way to write and manipulate
+`queries`_ by mirroring the terminology and structure of Elasticsearch JSON DSL
+while exposing the whole range of the DSL from Python
+either directly using defined classes or a queryset-like expressions.
+
+It also provides an optional `persistence layer`_ for working with documents as
+Python objects in an ORM-like fashion: defining mappings, retrieving and saving
+documents, wrapping the document data in user-defined classes.
+
+.. _elasticsearch-dsl: https://elasticsearch-dsl.readthedocs.io/
+.. _queries: https://elasticsearch-dsl.readthedocs.io/en/latest/search_dsl.html
+.. _persistence layer: https://elasticsearch-dsl.readthedocs.io/en/latest/persistence.html#doctype
+
+
 License
 -------
 
-Copyright 2019 Elasticsearch
+Copyright 2020 Elasticsearch B.V
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -152,7 +166,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
-Build status
+Build Status
 ------------
 .. image:: https://readthedocs.org/projects/elasticsearch-py/badge/?version=latest&style=flat
    :target: https://elasticsearch-py.readthedocs.io/en/master/
