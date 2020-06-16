@@ -5,11 +5,22 @@ Official low-level client for Elasticsearch. Its goal is to provide common
 ground for all Elasticsearch-related code in Python; because of this it tries
 to be opinion-free and very extendable.
 
-For a more high level client library with more limited scope, have a look at
-`elasticsearch-dsl`_ - it is a more pythonic library sitting on top of
-``elasticsearch-py``.
 
-.. _elasticsearch-dsl: https://elasticsearch-dsl.readthedocs.io/
+Installation
+------------
+
+Install the ``elasticsearch`` package with `pip
+<https://pypi.org/project/elasticsearch>`_::
+
+    $ python -m pip install elasticsearch
+
+If your application uses async/await in Python you can install with
+the ``async`` extra::
+
+    $ python -m pip install elasticsearch[async]
+
+Read more about `how to use asyncio with this project <async>`_.
+
 
 Compatibility
 -------------
@@ -47,20 +58,6 @@ The recommended way to set your requirements in your `setup.py` or
 If you have a need to have multiple versions installed at the same time older
 versions are also released as ``elasticsearch2``, ``elasticsearch5`` and ``elasticsearch6``.
 
-Installation
-------------
-
-Install the ``elasticsearch`` package with `pip
-<https://pypi.python.org/pypi/elasticsearch>`_::
-
-    $ python -m pip install elasticsearch
-
-If your application uses async/await in Python you can install with
-the ``async`` extra::
-
-    $ python -m pip install elasticsearch[async]
-
-Read more about `how to use asyncio with this project <async>`_.
 
 Example Usage
 -------------
@@ -260,7 +257,7 @@ or the port value encoded within ``cloud_id``.  Using Cloud ID also disables sni
         http_auth=("elastic", "<password>"),
     )
 
-APIKey Authentication
+API Key Authentication
 ~~~~~~~~~~~~~~~~~~~~~~
 
 You can configure the client to use Elasticsearch's `API Key`_ for connecting to your cluster.
@@ -374,6 +371,28 @@ However, you can implement your own custom serializer::
 
 .. _JSONSerializer: https://github.com/elastic/elasticsearch-py/blob/master/elasticsearch/serializer.py#L24
 
+
+Elasticsearch-DSL
+-----------------
+
+For a more high level client library with more limited scope, have a look at
+`elasticsearch-dsl`_ - a more pythonic library sitting on top of
+``elasticsearch-py``.
+
+`elasticsearch-dsl`_ provides a more convenient and idiomatic way to write and manipulate
+`queries`_ by mirroring the terminology and structure of Elasticsearch JSON DSL
+while exposing the whole range of the DSL from Python
+either directly using defined classes or a queryset-like expressions.
+
+It also provides an optional `persistence layer`_ for working with documents as
+Python objects in an ORM-like fashion: defining mappings, retrieving and saving
+documents, wrapping the document data in user-defined classes.
+
+.. _elasticsearch-dsl: https://elasticsearch-dsl.readthedocs.io/
+.. _queries: https://elasticsearch-dsl.readthedocs.io/en/latest/search_dsl.html
+.. _persistence layer: https://elasticsearch-dsl.readthedocs.io/en/latest/persistence.html#doctype
+
+
 Contents
 --------
 
@@ -389,10 +408,11 @@ Contents
    helpers
    Changelog
 
+
 License
 -------
 
-Copyright 2018 Elasticsearch
+Copyright 2020 Elasticsearch B.V
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
