@@ -1052,7 +1052,7 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("force")
+    @query_params("force", "timeout")
     def delete_data_frame_analytics(self, id, params=None, headers=None):
         """
         Deletes an existing data frame analytics job.
@@ -1060,6 +1060,8 @@ class MlClient(NamespacedClient):
 
         :arg id: The ID of the data frame analytics to delete
         :arg force: True if the job should be forcefully deleted
+        :arg timeout: Controls the time to wait until a job is deleted.
+            Defaults to 1 minute
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
