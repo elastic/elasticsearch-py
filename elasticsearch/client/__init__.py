@@ -7,21 +7,24 @@ from __future__ import unicode_literals
 import logging
 
 from ..transport import Transport, TransportError
+from .utils import query_params, _make_path, SKIP_IN_PATH, _bulk_body, _normalize_hosts
+
 from .async_search import AsyncSearchClient
 from .autoscaling import AutoscalingClient
+from .cat import CatClient
+from .cluster import ClusterClient
+from .dangling_indices import DanglingIndicesClient
 from .indices import IndicesClient
 from .ingest import IngestClient
-from .cluster import ClusterClient
-from .cat import CatClient
 from .nodes import NodesClient
 from .remote import RemoteClient
 from .snapshot import SnapshotClient
 from .tasks import TasksClient
-from .xpack import XPackClient
-from .utils import query_params, _make_path, SKIP_IN_PATH, _bulk_body, _normalize_hosts
 
 # xpack APIs
+from .xpack import XPackClient
 from .ccr import CcrClient
+from .enrich import EnrichClient
 from .eql import EqlClient
 from .graph import GraphClient
 from .ilm import IlmClient
@@ -30,14 +33,13 @@ from .migration import MigrationClient
 from .ml import MlClient
 from .monitoring import MonitoringClient
 from .rollup import RollupClient
+from .searchable_snapshots import SearchableSnapshotsClient
 from .security import SecurityClient
+from .slm import SlmClient
 from .sql import SqlClient
 from .ssl import SslClient
-from .watcher import WatcherClient
-from .enrich import EnrichClient
-from .searchable_snapshots import SearchableSnapshotsClient
-from .slm import SlmClient
 from .transform import TransformClient
+from .watcher import WatcherClient
 
 
 logger = logging.getLogger("elasticsearch")
@@ -188,18 +190,20 @@ class Elasticsearch(object):
         # namespaced clients for compatibility with API names
         self.async_search = AsyncSearchClient(self)
         self.autoscaling = AutoscalingClient(self)
+        self.cat = CatClient(self)
+        self.cluster = ClusterClient(self)
         self.indices = IndicesClient(self)
         self.ingest = IngestClient(self)
-        self.cluster = ClusterClient(self)
-        self.cat = CatClient(self)
         self.nodes = NodesClient(self)
         self.remote = RemoteClient(self)
         self.snapshot = SnapshotClient(self)
         self.tasks = TasksClient(self)
 
         self.xpack = XPackClient(self)
-        self.eql = EqlClient(self)
         self.ccr = CcrClient(self)
+        self.dangling_indices = DanglingIndicesClient(self)
+        self.enrich = EnrichClient(self)
+        self.eql = EqlClient(self)
         self.graph = GraphClient(self)
         self.ilm = IlmClient(self)
         self.indices = IndicesClient(self)
@@ -208,14 +212,13 @@ class Elasticsearch(object):
         self.ml = MlClient(self)
         self.monitoring = MonitoringClient(self)
         self.rollup = RollupClient(self)
+        self.searchable_snapshots = SearchableSnapshotsClient(self)
         self.security = SecurityClient(self)
+        self.slm = SlmClient(self)
         self.sql = SqlClient(self)
         self.ssl = SslClient(self)
-        self.watcher = WatcherClient(self)
-        self.enrich = EnrichClient(self)
-        self.searchable_snapshots = SearchableSnapshotsClient(self)
-        self.slm = SlmClient(self)
         self.transform = TransformClient(self)
+        self.watcher = WatcherClient(self)
 
     def __repr__(self):
         try:
@@ -881,12 +884,13 @@ class Elasticsearch(object):
         "ignore_unavailable",
         "include_unmapped",
     )
-    def field_caps(self, index=None, params=None, headers=None):
+    def field_caps(self, body=None, index=None, params=None, headers=None):
         """
         Returns the information about the capabilities of fields among multiple
         indices.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-field-caps.html>`_
 
+        :arg body: An index filter specified with the Query DSL
         :arg index: A comma-separated list of index names; use `_all` or
             empty string to perform the operation on all indices
         :arg allow_no_indices: Whether to ignore if a wildcard indices
@@ -902,7 +906,11 @@ class Elasticsearch(object):
             be included in the response.
         """
         return self.transport.perform_request(
-            "GET", _make_path(index, "_field_caps"), params=params, headers=headers
+            "POST",
+            _make_path(index, "_field_caps"),
+            params=params,
+            headers=headers,
+            body=body,
         )
 
     @query_params(

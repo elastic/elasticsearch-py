@@ -170,7 +170,8 @@ class AsyncSearchClient(NamespacedClient):
         :arg track_scores: Whether to calculate and return scores even
             if they are not used for sorting
         :arg track_total_hits: Indicate if the number of documents that
-            match the query should be tracked
+            match the query should be tracked. A number can also be specified, to
+            accurately track the total hit count up to the number.
         :arg typed_keys: Specify whether aggregation and suggester names
             should be prefixed by their respective types in the response
         :arg version: Specify whether to return document version as part

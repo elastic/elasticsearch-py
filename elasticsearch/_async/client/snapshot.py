@@ -35,11 +35,11 @@ class SnapshotClient(NamespacedClient):
     @query_params("master_timeout")
     async def delete(self, repository, snapshot, params=None, headers=None):
         """
-        Deletes a snapshot.
+        Deletes one or more snapshots.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
 
         :arg repository: A repository name
-        :arg snapshot: A snapshot name
+        :arg snapshot: A comma-separated list of snapshot names
         :arg master_timeout: Explicit operation timeout for connection
             to master node
         """
