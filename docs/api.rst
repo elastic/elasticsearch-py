@@ -143,3 +143,9 @@ Tasks
 
 .. autoclass:: TasksClient
    :members:
+
+Dangling Indices
+----------------
+
+.. autoclass:: DanglingIndicesClient
+   :members:

@@ -1385,3 +1385,22 @@ class IndicesClient(NamespacedClient):
             headers=headers,
             body=body,
         )
+
+    @query_params("expand_wildcards")
+    def resolve_index(self, name, params=None, headers=None):
+        """
+        Returns information about any matching indices, aliases, and data streams
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-resolve-index.html>`_
+
+        :arg name: A comma-separated list of names or wildcard
+            expressions
+        :arg expand_wildcards: Whether wildcard expressions should get
+            expanded to open or closed indices (default: open)  Valid choices: open,
+            closed, hidden, none, all  Default: open
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'name'.")
+
+        return self.transport.perform_request(
+            "GET", _make_path("_resolve", "index", name), params=params, headers=headers
+        )

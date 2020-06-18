@@ -114,17 +114,23 @@ class MlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
-    def delete_expired_data(self, body=None, params=None, headers=None):
+    @query_params("requests_per_second", "timeout")
+    def delete_expired_data(self, body=None, job_id=None, params=None, headers=None):
         """
         Deletes expired and unused machine learning data.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-expired-data.html>`_
 
         :arg body: deleting expired data parameters
+        :arg job_id: The ID of the job(s) to perform expired data
+            hygiene for
+        :arg requests_per_second: The desired requests per second for
+            the deletion processes.
+        :arg timeout: How long can the underlying delete processes run
+            until they are canceled
         """
         return self.transport.perform_request(
             "DELETE",
-            "/_ml/_delete_expired_data",
+            _make_path("_ml", "_delete_expired_data", job_id),
             params=params,
             headers=headers,
             body=body,
@@ -1054,7 +1060,7 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("force")
+    @query_params("force", "timeout")
     def delete_data_frame_analytics(self, id, params=None, headers=None):
         """
         Deletes an existing data frame analytics job.
@@ -1062,6 +1068,8 @@ class MlClient(NamespacedClient):
 
         :arg id: The ID of the data frame analytics to delete
         :arg force: True if the job should be forcefully deleted
+        :arg timeout: Controls the time to wait until a job is deleted.
+            Defaults to 1 minute
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
@@ -1359,7 +1367,7 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("from_", "size")
+    @query_params("from_", "partition_field_value", "size")
     def get_categories(
         self, job_id, body=None, category_id=None, params=None, headers=None
     ):
@@ -1372,6 +1380,9 @@ class MlClient(NamespacedClient):
         :arg category_id: The identifier of the category definition of
             interest
         :arg from\\_: skips a number of categories
+        :arg partition_field_value: Specifies the partition to retrieve
+            categories for. This is optional, and should never be used for jobs
+            where per-partition categorization is disabled.
         :arg size: specifies a max number of categories to get
         """
         # from is a reserved word so it cannot be used, use from_ instead
