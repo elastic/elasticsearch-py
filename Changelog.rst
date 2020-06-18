@@ -3,6 +3,26 @@
 Changelog
 =========
 
+7.8.0 (2020-06-18)
+------------------
+
+* Added support for ES 7.8 APIs
+* Added support for async/await with asyncio via
+  ``AsyncElasticsearch``. See documentation on
+  `using Asyncio with Elasticsearch <https://elasticsearch-py.readthedocs.io/en/master/async.html>`_
+  for more information (See `#1232`_, `#1235`_, `#1236`_)
+* Added async helpers ``async_bulk``, ``async_streaming_bulk``,
+  ``async_scan``, and ``async_reindex`` (See `#1260`_)
+* Updated ``exists_source`` API to use non-deprecated Elasticsearch
+  API routes when ``doc_type`` is not specified to suppress
+  deprecation warnings (See `#1272`_)
+
+ .. _#1232: https://github.com/elastic/elasticsearch-py/pull/1232
+ .. _#1235: https://github.com/elastic/elasticsearch-py/pull/1235
+ .. _#1236: https://github.com/elastic/elasticsearch-py/pull/1236
+ .. _#1260: https://github.com/elastic/elasticsearch-py/pull/1260
+ .. _#1272: https://github.com/elastic/elasticsearch-py/pull/1272
+
 7.7.1 (2020-05-26)
 ------------------
 
