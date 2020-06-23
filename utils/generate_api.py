@@ -97,9 +97,7 @@ class Module:
                             break
                 self.header = "\n".join(header_lines)
                 self.orders = re.findall(
-                    r'\n    (?:async )?def ([a-z_]+)\(',
-                    content,
-                    re.MULTILINE
+                    r"\n    (?:async )?def ([a-z_]+)\(", content, re.MULTILINE
                 )
 
     def _position(self, api):
@@ -154,7 +152,11 @@ class API:
 
             # Try setting doc refs like 'current' and 'master' to our branches ref.
             if BRANCH_NAME is not None:
-                revised_url = re.sub("/elasticsearch/reference/[^/]+/", f"/elasticsearch/reference/{BRANCH_NAME}/", self.doc_url)
+                revised_url = re.sub(
+                    "/elasticsearch/reference/[^/]+/",
+                    f"/elasticsearch/reference/{BRANCH_NAME}/",
+                    self.doc_url,
+                )
                 if is_valid_url(revised_url):
                     self.doc_url = revised_url
                 else:
@@ -193,9 +195,11 @@ class API:
         return chain(
             ((p, parts[p]) for p in parts if parts[p]["required"]),
             (("body", self.body),) if self.body else (),
-            ((p, parts[p]) for p in parts
-             if not parts[p]["required"]
-             and p not in params),
+            (
+                (p, parts[p])
+                for p in parts
+                if not parts[p]["required"] and p not in params
+            ),
             sorted(params.items(), key=lambda x: (x[0] not in parts, x[0])),
         )
 
@@ -314,7 +318,7 @@ def dump_modules(modules):
         unasync.Rule(
             fromdir="/elasticsearch/_async/client/",
             todir="/elasticsearch/client/",
-            additional_replacements=additional_replacements
+            additional_replacements=additional_replacements,
         ),
     ]
 
