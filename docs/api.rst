@@ -31,6 +31,7 @@ raised. You can see other exception and error states in :ref:`exceptions`. If
 you do not wish an exception to be raised you can always pass in an ``ignore``
 parameter with either a single status code that should be ignored or a list of
 them
+
 .. code-block:: python
 
     from elasticsearch import Elasticsearch

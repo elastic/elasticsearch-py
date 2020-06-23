@@ -202,3 +202,15 @@ saves it to a destination index.
 .. autoclass:: TransformClient
    :members:
 
+
+Deprecation APIs
+-----------------
+
+`Deprecation API <https://www.elastic.co/guide/en/elasticsearch/reference/master/migration-api-deprecation.html>`_
+used to retrieve information about different cluster, node, and index level settings that use deprecated features
+that will be removed or changed in the next major version.
+
+.. py:module:: elasticsearch.client.deprecation
+
+.. autoclass:: DeprecationClient
+   :members:
