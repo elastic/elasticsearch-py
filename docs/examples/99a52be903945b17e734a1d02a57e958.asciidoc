@@ -1,4 +1,4 @@
-// mapping.asciidoc:250
+// mapping.asciidoc:260
 
 [source, python]
 ----

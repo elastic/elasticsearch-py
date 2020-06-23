@@ -1,0 +1,7 @@
+// docs/delete.asciidoc:127
+
+[source, python]
+----
+resp = client.delete(index="twitter", id="1", timeout="5m")
+print(resp)
+----

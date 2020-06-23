@@ -1,0 +1,7 @@
+// cat/indices.asciidoc:94
+
+[source, python]
+----
+resp = client.cat.indices(index="twi*", v=True, s="index")
+print(resp)
+----

@@ -1,0 +1,7 @@
+// api-conventions.asciidoc:273
+
+[source, python]
+----
+resp = client.cluster.state(filter_path="routing_table.indices.**.state")
+print(resp)
+----

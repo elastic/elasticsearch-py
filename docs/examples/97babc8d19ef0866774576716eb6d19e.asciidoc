@@ -1,0 +1,16 @@
+// docs/update-by-query.asciidoc:720
+
+[source, python]
+----
+resp = client.update_by_query(
+    index="test", refresh=True, conflicts="proceed",
+)
+print(resp)
+
+resp = client.search(
+    index="test",
+    filter_path="hits.total",
+    body={"query": {"match": {"flag": "foo"}}},
+)
+print(resp)
+----

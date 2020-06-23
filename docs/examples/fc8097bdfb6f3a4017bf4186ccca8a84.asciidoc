@@ -1,0 +1,45 @@
+// mapping/params/multi-fields.asciidoc:75
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my_index",
+    body={
+        "mappings": {
+            "properties": {
+                "text": {
+                    "type": "text",
+                    "fields": {
+                        "english": {"type": "text", "analyzer": "english"}
+                    },
+                }
+            }
+        }
+    },
+)
+print(resp)
+
+resp = client.index(
+    index="my_index", id="1", body={"text": "quick brown fox"},
+)
+print(resp)
+
+resp = client.index(
+    index="my_index", id="2", body={"text": "quick brown foxes"},
+)
+print(resp)
+
+resp = client.search(
+    index="my_index",
+    body={
+        "query": {
+            "multi_match": {
+                "query": "quick brown foxes",
+                "fields": ["text", "text.english"],
+                "type": "most_fields",
+            }
+        }
+    },
+)
+print(resp)
+----

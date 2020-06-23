@@ -1,4 +1,4 @@
-// search/request/sort.asciidoc:370
+// search/request/sort.asciidoc:369
 
 [source, python]
 ----

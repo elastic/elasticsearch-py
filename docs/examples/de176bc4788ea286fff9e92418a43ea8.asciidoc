@@ -1,4 +1,4 @@
-// indices/aliases.asciidoc:264
+// indices/aliases.asciidoc:270
 
 [source, python]
 ----

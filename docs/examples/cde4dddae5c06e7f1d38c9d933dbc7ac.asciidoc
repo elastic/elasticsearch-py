@@ -1,0 +1,7 @@
+// docs/update-by-query.asciidoc:319
+
+[source, python]
+----
+resp = client.update_by_query(index=["twitter", "blog"])
+print(resp)
+----

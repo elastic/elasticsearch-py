@@ -1,0 +1,13 @@
+// docs/update-by-query.asciidoc:348
+
+[source, python]
+----
+resp = client.update_by_query(
+    index="twitter",
+    body={
+        "script": {"source": "ctx._source.likes++", "lang": "painless"},
+        "query": {"term": {"user": "kimchy"}},
+    },
+)
+print(resp)
+----

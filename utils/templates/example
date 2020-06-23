@@ -1,7 +1,7 @@
 {% for src in parsed_sources %}
 resp = client.{{ src.api }}(
 {% for key, val in src.params.items() %}
-    {{ key }}={{val}},
+    {{ key }}={{ val }},
 {% endfor %}
 {% if src.body %}
     body={{ src.body }},

@@ -3,7 +3,7 @@
 [source, python]
 ----
 resp = client.delete_by_query(
-    index="twitter,blog", body={"query": {"match_all": {}}},
+    index=["twitter", "blog"], body={"query": {"match_all": {}}},
 )
 print(resp)
 ----

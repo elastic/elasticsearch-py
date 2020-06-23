@@ -1,0 +1,7 @@
+// indices/get-mapping.asciidoc:10
+
+[source, python]
+----
+resp = client.indices.get_mapping(index="twitter")
+print(resp)
+----

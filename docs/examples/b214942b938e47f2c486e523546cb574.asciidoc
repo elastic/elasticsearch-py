@@ -1,4 +1,4 @@
-// mapping/types/nested.asciidoc:55
+// mapping/types/nested.asciidoc:58
 
 [source, python]
 ----
