@@ -1,0 +1,7 @@
+// search/request/scroll.asciidoc:148
+
+[source, python]
+----
+resp = client.nodes.stats(metric="indices", index_metric="search")
+print(resp)
+----

@@ -1,0 +1,7 @@
+// api-conventions.asciidoc:298
+
+[source, python]
+----
+resp = client.count(filter_path="-_shards")
+print(resp)
+----

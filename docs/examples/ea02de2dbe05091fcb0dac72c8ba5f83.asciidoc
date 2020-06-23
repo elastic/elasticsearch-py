@@ -1,0 +1,12 @@
+// docs/update-by-query.asciidoc:586
+
+[source, python]
+----
+resp = client.update_by_query(
+    index="twitter",
+    refresh=True,
+    slices="5",
+    body={"script": {"source": "ctx._source['extra'] = 'test'"}},
+)
+print(resp)
+----

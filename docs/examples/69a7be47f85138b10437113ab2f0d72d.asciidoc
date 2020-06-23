@@ -3,7 +3,10 @@
 [source, python]
 ----
 resp = client.get(
-    index="twitter", id="2", routing="user1", stored_fields="tags,counter",
+    index="twitter",
+    id="2",
+    routing="user1",
+    stored_fields=["tags", "counter"],
 )
 print(resp)
 ----

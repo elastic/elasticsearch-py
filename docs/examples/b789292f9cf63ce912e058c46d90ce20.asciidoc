@@ -1,0 +1,20 @@
+// aggregations/bucket/datehistogram-aggregation.asciidoc:119
+
+[source, python]
+----
+resp = client.search(
+    index="sales",
+    size="0",
+    body={
+        "aggs": {
+            "sales_over_time": {
+                "date_histogram": {
+                    "field": "date",
+                    "calendar_interval": "month",
+                }
+            }
+        }
+    },
+)
+print(resp)
+----

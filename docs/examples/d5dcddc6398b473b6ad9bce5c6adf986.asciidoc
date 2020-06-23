@@ -1,0 +1,7 @@
+// search/request/scroll.asciidoc:95
+
+[source, python]
+----
+resp = client.search(scroll="1m", body={"sort": ["_doc"]})
+print(resp)
+----

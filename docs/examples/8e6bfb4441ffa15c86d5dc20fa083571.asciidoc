@@ -1,0 +1,9 @@
+// setup/logging-config.asciidoc:155
+
+[source, python]
+----
+resp = client.cluster.put_settings(
+    body={"transient": {"logger.org.elasticsearch.transport": "trace"}},
+)
+print(resp)
+----

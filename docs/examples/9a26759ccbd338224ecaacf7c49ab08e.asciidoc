@@ -1,9 +1,0 @@
-// search/request/from-size.asciidoc:14
-
-[source, python]
-----
-resp = client.search(
-    body={"from": 0, "size": 10, "query": {"term": {"user": "kimchy"}}},
-)
-print(resp)
-----

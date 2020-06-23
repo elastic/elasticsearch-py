@@ -1,0 +1,40 @@
+// docs/update-by-query.asciidoc:655
+
+[source, python]
+----
+resp = client.indices.create(
+    index="test",
+    body={
+        "mappings": {
+            "dynamic": False,
+            "properties": {"text": {"type": "text"}},
+        }
+    },
+)
+print(resp)
+
+resp = client.index(
+    index="test",
+    refresh=True,
+    body={"text": "words words", "flag": "bar"},
+)
+print(resp)
+
+resp = client.index(
+    index="test",
+    refresh=True,
+    body={"text": "words words", "flag": "foo"},
+)
+print(resp)
+
+resp = client.indices.put_mapping(
+    index="test",
+    body={
+        "properties": {
+            "text": {"type": "text"},
+            "flag": {"type": "text", "analyzer": "keyword"},
+        }
+    },
+)
+print(resp)
+----

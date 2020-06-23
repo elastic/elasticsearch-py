@@ -1,0 +1,22 @@
+// docs/update-by-query.asciidoc:530
+
+[source, python]
+----
+resp = client.update_by_query(
+    index="twitter",
+    body={
+        "slice": {"id": 0, "max": 2},
+        "script": {"source": "ctx._source['extra'] = 'test'"},
+    },
+)
+print(resp)
+
+resp = client.update_by_query(
+    index="twitter",
+    body={
+        "slice": {"id": 1, "max": 2},
+        "script": {"source": "ctx._source['extra'] = 'test'"},
+    },
+)
+print(resp)
+----

@@ -9,7 +9,7 @@ resp = client.indices.create(index="twitter-2")
 print(resp)
 
 resp = client.indices.put_mapping(
-    index="twitter-1,twitter-2",
+    index=["twitter-1", "twitter-2"],
     body={"properties": {"user_name": {"type": "text"}}},
 )
 print(resp)

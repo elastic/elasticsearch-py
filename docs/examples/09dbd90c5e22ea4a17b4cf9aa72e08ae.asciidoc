@@ -1,0 +1,10 @@
+// api-conventions.asciidoc:222
+
+[source, python]
+----
+resp = client.search(
+    q="elasticsearch",
+    filter_path=["took", "hits.hits._id", "hits.hits._score"],
+)
+print(resp)
+----

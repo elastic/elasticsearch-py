@@ -1,0 +1,12 @@
+// api-conventions.asciidoc:317
+
+[source, python]
+----
+resp = client.cluster.state(
+    filter_path=[
+        "metadata.indices.*.state",
+        "-metadata.indices.logstash-*",
+    ],
+)
+print(resp)
+----

@@ -1,0 +1,10 @@
+// api-conventions.asciidoc:79
+
+[source, python]
+----
+resp = client.search(
+    index="%3Clogstash-%7Bnow%2Fd%7D%3E",
+    body={"query": {"match": {"test": "data"}}},
+)
+print(resp)
+----

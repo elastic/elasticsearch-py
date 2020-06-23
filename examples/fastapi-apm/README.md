@@ -22,7 +22,7 @@ and a script to ping the web app with different endpoints.
 
 The following services will be available:
 
-- Kibana:              http://localhost:5061
+- Kibana:              http://localhost:5601
 - Elasticsearch:       http://localhost:9200
 - APM Server:          http://localhost:8200
 - FastAPI app:         http://localhost:9292

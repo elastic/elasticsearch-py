@@ -1,0 +1,16 @@
+// docs/update-by-query.asciidoc:389
+
+[source, python]
+----
+resp = client.ingest.put_pipeline(
+    id="set-foo",
+    body={
+        "description": "sets foo",
+        "processors": [{"set": {"field": "foo", "value": "bar"}}],
+    },
+)
+print(resp)
+
+resp = client.update_by_query(index="twitter", pipeline="set-foo")
+print(resp)
+----

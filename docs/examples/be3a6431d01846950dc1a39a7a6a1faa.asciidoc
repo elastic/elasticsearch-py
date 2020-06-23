@@ -1,4 +1,4 @@
-// docs/delete-by-query.asciidoc:640
+// docs/update-by-query.asciidoc:471
 
 [source, python]
 ----

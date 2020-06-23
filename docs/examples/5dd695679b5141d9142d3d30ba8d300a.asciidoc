@@ -1,0 +1,11 @@
+// aggregations/metrics/valuecount-aggregation.asciidoc:13
+
+[source, python]
+----
+resp = client.search(
+    index="sales",
+    size="0",
+    body={"aggs": {"types_count": {"value_count": {"field": "type"}}}},
+)
+print(resp)
+----
