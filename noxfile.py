@@ -43,5 +43,7 @@ def lint(session):
 
 @nox.session()
 def docs(session):
+    session.install(".")
     session.install("-rdev-requirements.txt", "sphinx-rtd-theme")
+
     session.run("sphinx-build", "docs/", "docs/_build", "-b", "html")
