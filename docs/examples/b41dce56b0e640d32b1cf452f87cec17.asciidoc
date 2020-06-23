@@ -1,0 +1,12 @@
+// search/request/scroll.asciidoc:63
+
+[source, python]
+----
+resp = client.scroll(
+    body={
+        "scroll": "1m",
+        "scroll_id": "DXF1ZXJ5QW5kRmV0Y2gBAAAAAAAAAD4WYm9laVYtZndUQlNsdDcwakFMNjU1QQ==",
+    },
+)
+print(resp)
+----

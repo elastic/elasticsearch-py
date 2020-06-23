@@ -1,0 +1,17 @@
+// search/suggesters.asciidoc:51
+
+[source, python]
+----
+resp = client.search(
+    body={
+        "suggest": {
+            "my-suggest-1": {
+                "text": "tring out Elasticsearch",
+                "term": {"field": "message"},
+            },
+            "my-suggest-2": {"text": "kmichy", "term": {"field": "user"}},
+        }
+    },
+)
+print(resp)
+----

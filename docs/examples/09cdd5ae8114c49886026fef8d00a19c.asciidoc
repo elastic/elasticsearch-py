@@ -1,0 +1,10 @@
+// indices/get-mapping.asciidoc:70
+
+[source, python]
+----
+resp = client.indices.get_mapping(index="_all")
+print(resp)
+
+resp = client.indices.get_mapping()
+print(resp)
+----

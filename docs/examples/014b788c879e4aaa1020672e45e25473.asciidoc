@@ -1,0 +1,13 @@
+// search.asciidoc:72
+
+[source, python]
+----
+resp = client.cluster.put_settings(
+    body={
+        "transient": {
+            "cluster.routing.use_adaptive_replica_selection": False
+        }
+    },
+)
+print(resp)
+----

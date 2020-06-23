@@ -1,0 +1,9 @@
+// api-conventions.asciidoc:603
+
+[source, python]
+----
+resp = client.search(
+    index="twitter", size="surprise_me", error_trace="true",
+)
+print(resp)
+----

@@ -71,6 +71,23 @@ files_to_generate = [
     "mapping/params/fielddata.asciidoc",
     "search/count.asciidoc",
     "mapping/types/keyword.asciidoc",
+    "docs/update-by-query.asciidoc",
+    "search/suggesters.asciidoc",
+    "api-conventions.asciidoc",
+    "cat/indices.asciidoc",
+    "query-dsl/match-phrase-query.asciidoc",
+    "indices/get-index.asciidoc",
+    "setup/logging-config.asciidoc",
+    "docs/delete.asciidoc",
+    "aggregations/metrics/valuecount-aggregation.asciidoc",
+    "indices/get-mapping.asciidoc",
+    "aggregations/bucket/filter-aggregation.asciidoc",
+    "aggregations/bucket/datehistogram-aggregation.asciidoc",
+    "mapping/types/numeric.asciidoc",
+    "search/request/scroll.asciidoc",
+    "mapping/fields/id-field.asciidoc",
+    "search.asciidoc",
+    "mapping/params/multi-fields.asciidoc",
 ]
 
 
@@ -110,6 +127,8 @@ def main():
         for src in exm["parsed_source"]:
             params = (src.get("params") or {}).copy()
             params.update(src.get("query") or {})
+            params = {k: (list(v.split(",")) if isinstance(v, str) and "," in v else v) for k, v in params.items()}
+
             parsed_sources.append(
                 ParsedSource(
                     api=src["api"],

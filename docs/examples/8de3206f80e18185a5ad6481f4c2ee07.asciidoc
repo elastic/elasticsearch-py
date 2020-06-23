@@ -1,0 +1,21 @@
+// aggregations/bucket/datehistogram-aggregation.asciidoc:431
+
+[source, python]
+----
+resp = client.search(
+    index="my_index",
+    size="0",
+    body={
+        "aggs": {
+            "by_day": {
+                "date_histogram": {
+                    "field": "date",
+                    "calendar_interval": "day",
+                    "time_zone": "-01:00",
+                }
+            }
+        }
+    },
+)
+print(resp)
+----

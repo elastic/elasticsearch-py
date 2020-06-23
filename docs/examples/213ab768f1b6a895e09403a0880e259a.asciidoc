@@ -1,0 +1,22 @@
+// aggregations/metrics/valuecount-aggregation.asciidoc:65
+
+[source, python]
+----
+resp = client.search(
+    index="sales",
+    size="0",
+    body={
+        "aggs": {
+            "types_count": {
+                "value_count": {
+                    "script": {
+                        "id": "my_script",
+                        "params": {"field": "type"},
+                    }
+                }
+            }
+        }
+    },
+)
+print(resp)
+----

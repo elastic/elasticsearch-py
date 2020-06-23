@@ -1,0 +1,7 @@
+// docs/update-by-query.asciidoc:327
+
+[source, python]
+----
+resp = client.update_by_query(index="twitter", routing="1")
+print(resp)
+----

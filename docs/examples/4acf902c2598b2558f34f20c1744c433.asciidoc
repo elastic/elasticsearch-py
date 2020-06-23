@@ -1,0 +1,12 @@
+// docs/update-by-query.asciidoc:557
+
+[source, python]
+----
+resp = client.indices.refresh()
+print(resp)
+
+resp = client.search(
+    index="twitter", size="0", q="extra:test", filter_path="hits.total",
+)
+print(resp)
+----

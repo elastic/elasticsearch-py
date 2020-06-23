@@ -1,0 +1,24 @@
+// search/request/scroll.asciidoc:206
+
+[source, python]
+----
+resp = client.search(
+    index="twitter",
+    scroll="1m",
+    body={
+        "slice": {"id": 0, "max": 2},
+        "query": {"match": {"title": "elasticsearch"}},
+    },
+)
+print(resp)
+
+resp = client.search(
+    index="twitter",
+    scroll="1m",
+    body={
+        "slice": {"id": 1, "max": 2},
+        "query": {"match": {"title": "elasticsearch"}},
+    },
+)
+print(resp)
+----

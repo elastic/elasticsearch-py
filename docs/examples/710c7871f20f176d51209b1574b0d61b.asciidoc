@@ -2,6 +2,8 @@
 
 [source, python]
 ----
-resp = client.get(index="twitter", id="1", stored_fields="tags,counter")
+resp = client.get(
+    index="twitter", id="1", stored_fields=["tags", "counter"],
+)
 print(resp)
 ----
