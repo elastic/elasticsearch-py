@@ -1,0 +1,9 @@
+// docs/update-by-query.asciidoc:510
+
+[source, python]
+----
+resp = client.update_by_query_rethrottle(
+    task_id="r1A2WoRbTwKZ516z6NEs5A:36619", requests_per_second="-1",
+)
+print(resp)
+----

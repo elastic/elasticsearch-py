@@ -1,0 +1,13 @@
+// search/request/from-size.asciidoc:22
+
+[source, python]
+----
+resp = client.search(
+    body={
+        "from": 5,
+        "size": 20,
+        "query": {"term": {"user.id": "8a4f500d"}},
+    },
+)
+print(resp)
+----

@@ -1,0 +1,20 @@
+// search.asciidoc:32
+
+[source, python]
+----
+resp = client.search(
+    index="twitter",
+    routing="kimchy",
+    body={
+        "query": {
+            "bool": {
+                "must": {
+                    "query_string": {"query": "some query string here"}
+                },
+                "filter": {"term": {"user": "kimchy"}},
+            }
+        }
+    },
+)
+print(resp)
+----

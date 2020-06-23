@@ -1,0 +1,22 @@
+// aggregations/bucket/datehistogram-aggregation.asciidoc:669
+
+[source, python]
+----
+resp = client.search(
+    index="sales",
+    size="0",
+    body={
+        "aggs": {
+            "dayOfWeek": {
+                "terms": {
+                    "script": {
+                        "lang": "painless",
+                        "source": "doc['date'].value.dayOfWeekEnum.value",
+                    }
+                }
+            }
+        }
+    },
+)
+print(resp)
+----

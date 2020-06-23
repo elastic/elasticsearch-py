@@ -1,0 +1,35 @@
+// mapping/params/multi-fields.asciidoc:10
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my_index",
+    body={
+        "mappings": {
+            "properties": {
+                "city": {
+                    "type": "text",
+                    "fields": {"raw": {"type": "keyword"}},
+                }
+            }
+        }
+    },
+)
+print(resp)
+
+resp = client.index(index="my_index", id="1", body={"city": "New York"})
+print(resp)
+
+resp = client.index(index="my_index", id="2", body={"city": "York"})
+print(resp)
+
+resp = client.search(
+    index="my_index",
+    body={
+        "query": {"match": {"city": "york"}},
+        "sort": {"city.raw": "asc"},
+        "aggs": {"Cities": {"terms": {"field": "city.raw"}}},
+    },
+)
+print(resp)
+----

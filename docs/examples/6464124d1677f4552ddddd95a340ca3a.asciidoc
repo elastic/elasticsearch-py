@@ -1,0 +1,30 @@
+// api-conventions.asciidoc:344
+
+[source, python]
+----
+resp = client.index(
+    index="library",
+    refresh=True,
+    body={"title": "Book #1", "rating": 200.1},
+)
+print(resp)
+
+resp = client.index(
+    index="library",
+    refresh=True,
+    body={"title": "Book #2", "rating": 1.7},
+)
+print(resp)
+
+resp = client.index(
+    index="library",
+    refresh=True,
+    body={"title": "Book #3", "rating": 0.1},
+)
+print(resp)
+
+resp = client.search(
+    filter_path="hits.hits._source", _source="title", sort="rating:desc",
+)
+print(resp)
+----

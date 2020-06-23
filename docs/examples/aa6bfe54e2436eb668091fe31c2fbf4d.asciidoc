@@ -1,0 +1,37 @@
+// aggregations/bucket/datehistogram-aggregation.asciidoc:502
+
+[source, python]
+----
+resp = client.index(
+    index="my_index",
+    id="1",
+    refresh=True,
+    body={"date": "2015-10-01T05:30:00Z"},
+)
+print(resp)
+
+resp = client.index(
+    index="my_index",
+    id="2",
+    refresh=True,
+    body={"date": "2015-10-01T06:30:00Z"},
+)
+print(resp)
+
+resp = client.search(
+    index="my_index",
+    size="0",
+    body={
+        "aggs": {
+            "by_day": {
+                "date_histogram": {
+                    "field": "date",
+                    "calendar_interval": "day",
+                    "offset": "+6h",
+                }
+            }
+        }
+    },
+)
+print(resp)
+----

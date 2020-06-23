@@ -1,0 +1,7 @@
+// indices/get-index.asciidoc:10
+
+[source, python]
+----
+resp = client.indices.get(index="twitter")
+print(resp)
+----

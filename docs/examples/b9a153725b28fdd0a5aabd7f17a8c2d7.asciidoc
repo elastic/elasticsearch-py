@@ -1,0 +1,7 @@
+// api-conventions.asciidoc:377
+
+[source, python]
+----
+resp = client.indices.get_settings(index="twitter", flat_settings="true")
+print(resp)
+----
