@@ -13,15 +13,12 @@ from typing import List, Iterator
 from itertools import chain
 
 
-lines_to_keep = [
-    "# -*- coding: utf-8 -*-\n",
-    "#!/usr/bin/env python\n"
-]
+lines_to_keep = ["# -*- coding: utf-8 -*-\n", "#!/usr/bin/env python\n"]
 license_header_lines = [
     "# Licensed to Elasticsearch B.V under one or more agreements.\n",
     "# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.\n",
     "# See the LICENSE file in the project root for more information\n",
-    "\n"
+    "\n",
 ]
 
 
@@ -51,7 +48,9 @@ def does_file_need_fix(filepath: str) -> bool:
                 break
             elif line not in lines_to_keep:
                 return True
-        for header_line, line in zip(license_header_lines, chain((first_license_line,), f)):
+        for header_line, line in zip(
+            license_header_lines, chain((first_license_line,), f)
+        ):
             if line != header_line:
                 return True
     return False
@@ -85,7 +84,10 @@ def main():
         if no_license_headers:
             print("No license header found in:")
             cwd = os.getcwd()
-            [print(f" - {os.path.relpath(filepath, cwd)}") for filepath in no_license_headers]
+            [
+                print(f" - {os.path.relpath(filepath, cwd)}")
+                for filepath in no_license_headers
+            ]
             sys.exit(1)
         else:
             print("All files had license header")
