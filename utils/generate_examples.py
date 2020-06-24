@@ -127,7 +127,10 @@ def main():
         for src in exm["parsed_source"]:
             params = (src.get("params") or {}).copy()
             params.update(src.get("query") or {})
-            params = {k: (list(v.split(",")) if isinstance(v, str) and "," in v else v) for k, v in params.items()}
+            params = {
+                k: (list(v.split(",")) if isinstance(v, str) and "," in v else v)
+                for k, v in params.items()
+            }
 
             parsed_sources.append(
                 ParsedSource(

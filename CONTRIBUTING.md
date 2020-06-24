@@ -30,7 +30,7 @@ To run the code generation make sure you have pre-requisites installed:
 Then you should be able to run the code generation by invoking:
 
 ```
-python utils/generate_api.py
+$ python utils/generate_api.py
 ```
 
 
@@ -45,10 +45,17 @@ The process for contributing to any of the Elasticsearch repositories is similar
    assure our users of the origin and continuing existence of the code. You only
    need to sign the CLA once.
 
-2. Run the test suite to ensure your changes do not break existing code:
+2. Run the linter and test suite to ensure your changes do not break existing code:
 
     ````
-    python setup.py test
+    # Install Nox for task management
+    $ python -m pip install nox
+    
+    # Auto-format and lint your changes
+    $ nox -s blacken
+   
+    # Run the test suite
+    $ python setup.py test
     ````
 
    See the README file in `test_elasticsearch` directory for more information on
@@ -68,4 +75,3 @@ The process for contributing to any of the Elasticsearch repositories is similar
 Then sit back and wait. There will probably be a discussion about the pull
 request and, if any changes are needed, we would love to work with you to get
 your pull request merged into elasticsearch-py.
-

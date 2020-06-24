@@ -35,9 +35,9 @@ jobs:
           python-version: 3.7
       - name: Install dependencies
         run: |
-          python3.7 -m pip install tox
+          python3.7 -m pip install nox
       - name: Lint the code
-        run: tox -e lint
+        run: nox -s lint
 
   docs:
     runs-on: ubuntu-latest
@@ -50,9 +50,9 @@ jobs:
           python-version: 3.7
       - name: Install dependencies
         run: |
-          python3.7 -m pip install tox
+          python3.7 -m pip install nox
       - name: Build the docs
-        run: tox -e docs
+        run: nox -s docs
 
   test-linux:
     runs-on: ubuntu-latest
