@@ -9,7 +9,9 @@ it to the constructor of :class:`~elasticsearch.Elasticsearch` as
 :class:`~elasticsearch.connection.RequestsHttpConnection` requires ``requests``
 to be installed.
 
-For example to use the ``requests``-based connection just import it and use it::
+For example to use the ``requests``-based connection just import it and use it:
+
+.. code-block:: python
 
     from elasticsearch import Elasticsearch, RequestsHttpConnection
     es = Elasticsearch(connection_class=RequestsHttpConnection)
