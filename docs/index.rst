@@ -10,14 +10,14 @@ Installation
 ------------
 
 Install the ``elasticsearch`` package with `pip
-<https://pypi.org/project/elasticsearch>`_
+<https://pypi.org/project/elasticsearch>`_:
 
 .. code-block:: console
 
     $ python -m pip install elasticsearch
 
 If your application uses async/await in Python you can install with
-the ``async`` extra
+the ``async`` extra:
 
 .. code-block:: console
 
@@ -45,7 +45,7 @@ For **Elasticsearch 2.0** and later, use the major version 2 (``2.x.y``) of the
 library, and so on.
 
 The recommended way to set your requirements in your `setup.py` or
-`requirements.txt` is
+`requirements.txt` is:
 
 .. code-block:: python
 
@@ -183,7 +183,7 @@ location.
 
 By default we allow ``urllib3`` to open up to 10 connections to each node, if
 your application calls for more parallelism, use the ``maxsize`` parameter to
-raise the limit
+raise the limit:
 
 .. code-block:: python
 
@@ -202,7 +202,7 @@ SSL and Authentication
 ~~~~~~~~~~~~~~~~~~~~~~
 
 You can configure the client to use ``SSL`` for connecting to your
-elasticsearch cluster, including certificate verification and HTTP auth
+elasticsearch cluster, including certificate verification and HTTP auth:
 
 .. code-block:: python
 
@@ -320,7 +320,7 @@ your configuration this might be something you don't want or break completely.
 In some environments (notably on Google App Engine) your HTTP requests might be
 restricted so that ``GET`` requests won't accept body. In that case use the
 ``send_get_body_as`` parameter of :class:`~elasticsearch.Transport` to send all
-bodies via post
+bodies via post:
 
 .. code-block:: python
 
@@ -344,7 +344,7 @@ Running on AWS with IAM
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If you want to use this client with IAM based authentication on AWS you can use
-the `requests-aws4auth`_ package
+the `requests-aws4auth`_ package:
 
 .. code-block:: python
 

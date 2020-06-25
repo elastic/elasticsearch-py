@@ -46,7 +46,7 @@ Run Elasticsearch in a Container
 
 To run elasticsearch in a container, optionally set the ``ES_VERSION``
 environment evariable to either 5.4, 5.3 or 2.4. ``ES_VERSION`` is defaulted to
-``latest``.  Then run ./start_elasticsearch.sh
+``latest``.  Then run ./start_elasticsearch.sh:
 
 .. code-block:: console
 
@@ -56,7 +56,7 @@ environment evariable to either 5.4, 5.3 or 2.4. ``ES_VERSION`` is defaulted to
 
 This will run a version for Elasticsearch in a Docker container suitable for
 running the tests. To check that elasticsearch is running first wait for a
-``healthy`` status in ``docker ps``
+``healthy`` status in ``docker ps``:
 
 .. code-block:: console
 

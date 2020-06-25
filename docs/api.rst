@@ -30,7 +30,7 @@ elasticsearch returns a 2XX response. Otherwise an instance of
 raised. You can see other exception and error states in :ref:`exceptions`. If
 you do not wish an exception to be raised you can always pass in an ``ignore``
 parameter with either a single status code that should be ignored or a list of
-them
+them:
 
 .. code-block:: python
 
@@ -51,7 +51,7 @@ Global timeout can be set when constructing the client (see
 :class:`~elasticsearch.Connection`'s ``timeout`` parameter) or on a per-request
 basis using ``request_timeout`` (float value in seconds) as part of any API
 call, this value will get passed to the ``perform_request`` method of the
-connection class
+connection class:
 
 .. code-block:: python
 
@@ -89,14 +89,14 @@ Response Filtering
 ~~~~~~~~~~~~~~~~~~
 
 The ``filter_path`` parameter is used to reduce the response returned by
-elasticsearch.  For example, to only return ``_id`` and ``_type``, do
+elasticsearch.  For example, to only return ``_id`` and ``_type``, do:
 
 .. code-block:: python
 
     es.search(index='test-index', filter_path=['hits.hits._id', 'hits.hits._type'])
 
 It also supports the ``*`` wildcard character to match any field or part of a
-field's name
+field's name:
 
 .. code-block:: python
 
