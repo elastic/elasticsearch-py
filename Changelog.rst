@@ -46,7 +46,6 @@ Changelog
 
  .. _#1169: https://github.com/elastic/elasticsearch-py/pull/1169
  .. _#1179: https://github.com/elastic/elasticsearch-py/pull/1179
- .. _#1180: https://github.com/elastic/elasticsearch-py/pull/1180
  .. _#1182: https://github.com/elastic/elasticsearch-py/pull/1182
 
 7.6.0 (2020-03-19)

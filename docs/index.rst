@@ -10,12 +10,16 @@ Installation
 ------------
 
 Install the ``elasticsearch`` package with `pip
-<https://pypi.org/project/elasticsearch>`_::
+<https://pypi.org/project/elasticsearch>`_:
+
+.. code-block:: console
 
     $ python -m pip install elasticsearch
 
 If your application uses async/await in Python you can install with
-the ``async`` extra::
+the ``async`` extra:
+
+.. code-block:: console
 
     $ python -m pip install elasticsearch[async]
 
@@ -41,7 +45,9 @@ For **Elasticsearch 2.0** and later, use the major version 2 (``2.x.y``) of the
 library, and so on.
 
 The recommended way to set your requirements in your `setup.py` or
-`requirements.txt` is::
+`requirements.txt` is:
+
+.. code-block:: python
 
     # Elasticsearch 7.x
     elasticsearch>=7.0.0,<8.0.0
@@ -62,7 +68,7 @@ versions are also released as ``elasticsearch2``, ``elasticsearch5`` and ``elast
 Example Usage
 -------------
 
-::
+.. code-block:: python
 
     from datetime import datetime
     from elasticsearch import Elasticsearch
@@ -177,7 +183,9 @@ location.
 
 By default we allow ``urllib3`` to open up to 10 connections to each node, if
 your application calls for more parallelism, use the ``maxsize`` parameter to
-raise the limit::
+raise the limit:
+
+.. code-block:: python
 
     # allow up to 25 connections to each node
     es = Elasticsearch(["host1", "host2"], maxsize=25)
@@ -194,7 +202,9 @@ SSL and Authentication
 ~~~~~~~~~~~~~~~~~~~~~~
 
 You can configure the client to use ``SSL`` for connecting to your
-elasticsearch cluster, including certificate verification and HTTP auth::
+elasticsearch cluster, including certificate verification and HTTP auth:
+
+.. code-block:: python
 
     from elasticsearch import Elasticsearch
 
@@ -310,7 +320,9 @@ your configuration this might be something you don't want or break completely.
 In some environments (notably on Google App Engine) your HTTP requests might be
 restricted so that ``GET`` requests won't accept body. In that case use the
 ``send_get_body_as`` parameter of :class:`~elasticsearch.Transport` to send all
-bodies via post::
+bodies via post:
+
+.. code-block:: python
 
     from elasticsearch import Elasticsearch
     es = Elasticsearch(send_get_body_as='POST')
@@ -320,7 +332,8 @@ Compression
 When using capacity-constrained networks (low throughput), it may be handy to enable
 compression. This is especially useful when doing bulk loads or inserting large
 documents. This will configure compression.
-::
+
+.. code-block:: python
 
    from elasticsearch import Elasticsearch
    es = Elasticsearch(hosts, http_compress=True)
@@ -331,7 +344,9 @@ Running on AWS with IAM
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 If you want to use this client with IAM based authentication on AWS you can use
-the `requests-aws4auth`_ package::
+the `requests-aws4auth`_ package:
+
+.. code-block:: python
 
     from elasticsearch import Elasticsearch, RequestsHttpConnection
     from requests_aws4auth import AWS4Auth
@@ -357,7 +372,9 @@ Custom serializers
 ~~~~~~~~~~~~~~~~~~
 
 By default, `JSONSerializer`_ is used to encode all outgoing requests.
-However, you can implement your own custom serializer::
+However, you can implement your own custom serializer
+
+.. code-block:: python
 
    from elasticsearch.serializer import JSONSerializer
 

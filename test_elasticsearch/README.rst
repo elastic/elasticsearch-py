@@ -26,7 +26,7 @@ To simply run the tests just execute the ``run_tests.py`` script or invoke
  * ``TEST_ES_REPO`` - path to the elasticsearch repo, by default it will look in
     the same directory as ``elasticsearch-py`` is in. It will not be used if
     ``TEST_ES_YAML_DIR`` is specified directly.
- 
+
  * ``TEST_ES_NOFETCH`` - controls if we should fetch new updates to elasticsearch
    repo and reset it's version to the sha used to build the current es server.
    Defaults to ``False`` which means we will fetch the elasticsearch repo and
@@ -46,15 +46,19 @@ Run Elasticsearch in a Container
 
 To run elasticsearch in a container, optionally set the ``ES_VERSION``
 environment evariable to either 5.4, 5.3 or 2.4. ``ES_VERSION`` is defaulted to
-``latest``.  Then run ./start_elasticsearch.sh::
+``latest``.  Then run ./start_elasticsearch.sh:
 
-    export ES_VERSION=5.4
-    ./start_elasticsearch.sh
+.. code-block:: console
+
+   $ export ES_VERSION=5.4
+   $ ./start_elasticsearch.sh
 
 
 This will run a version for Elasticsearch in a Docker container suitable for
 running the tests. To check that elasticsearch is running first wait for a
-``healthy`` status in ``docker ps``::
+``healthy`` status in ``docker ps``:
+
+.. code-block:: console
 
     $ docker ps
     CONTAINER ID        IMAGE                      COMMAND                  CREATED             STATUS                   PORTS                              NAMES
