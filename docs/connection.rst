@@ -49,7 +49,9 @@ If you have complex SSL logic for connecting to Elasticsearch using an `SSLConte
 might be more helpful. You can create one natively using the python SSL library with the
 `create_default_context` (https://docs.python.org/3/library/ssl.html#ssl.create_default_context) method.
 
-To create an `SSLContext` object you only need to use one of cafile, capath or cadata::
+To create an `SSLContext` object you only need to use one of cafile, capath or cadata:
+
+.. code-block:: python
 
     >>> from ssl import create_default_context
     >>> context = create_default_context(cafile=None, capath=None, cadata=None)

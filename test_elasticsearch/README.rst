@@ -26,7 +26,7 @@ The behavior is driven by environmental variables:
  * ``TEST_ES_REPO`` - path to the elasticsearch repo, by default it will look in
     the same directory as ``elasticsearch-py`` is in. It will not be used if
     ``TEST_ES_YAML_DIR`` is specified directly.
- 
+
  * ``TEST_ES_NOFETCH`` - controls if we should fetch new updates to elasticsearch
    repo and reset it's version to the sha used to build the current es server.
    Defaults to ``False`` which means we will fetch the elasticsearch repo and
@@ -57,7 +57,9 @@ environment variable to 7.5, 7.5-SNAPSHOT. Then run ./.ci/run_elasticsearch.sh::
 
 This will run a version for Elasticsearch in a Docker container suitable for
 running the tests. To check that elasticsearch is running first wait for a
-``healthy`` status in ``docker ps``::
+``healthy`` status in ``docker ps``:
+
+.. code-block:: console
 
     $ docker ps
     CONTAINER ID        IMAGE                      COMMAND                  CREATED             STATUS                   PORTS                              NAMES
