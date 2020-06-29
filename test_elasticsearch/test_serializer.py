@@ -93,6 +93,11 @@ class TestJSONSerializer(TestCase):
             JSONSerializer().dumps({"d": np.zeros((2, 2), dtype=np.uint8)}),
         )
 
+    def test_serializes_numpy_nan_to_nan(self):
+        self.assertEqual(
+            '{"d":NaN}', JSONSerializer().dumps({"d": np.nan}),
+        )
+
     def test_serializes_pandas_timestamp(self):
         self.assertEqual(
             '{"d":"2010-10-01T02:30:00"}',
@@ -111,6 +116,11 @@ class TestJSONSerializer(TestCase):
         self.assertEqual(
             '{"d":null}', JSONSerializer().dumps({"d": pd.NA}),
         )
+
+    def test_raises_serialization_error_pandas_nat(self):
+        if not hasattr(pd, "NaT"):
+            raise SkipTest("pandas.NaT required")
+        self.assertRaises(SerializationError, JSONSerializer().dumps, {"d": pd.NaT})
 
     def test_serializes_pandas_category(self):
         cat = pd.Categorical(["a", "c", "b", "a"], categories=["a", "b", "c"])
