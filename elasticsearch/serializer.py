@@ -67,7 +67,7 @@ class JSONSerializer(object):
     mimetype = "application/json"
 
     def default(self, data):
-        if isinstance(data, TIME_TYPES):
+        if isinstance(data, TIME_TYPES) and getattr(pd, "NaT", None) is not data:
             return data.isoformat()
         elif isinstance(data, uuid.UUID):
             return str(data)
@@ -87,7 +87,7 @@ class JSONSerializer(object):
         if pd:
             if isinstance(data, (pd.Series, pd.Categorical)):
                 return data.tolist()
-            elif hasattr(pd, "NA") and pd.isna(data):
+            elif data is getattr(pd, "NA", None):
                 return None
 
         raise TypeError("Unable to serialize %r (type: %s)" % (data, type(data)))
