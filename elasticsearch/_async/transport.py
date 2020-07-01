@@ -5,6 +5,7 @@
 import asyncio
 import logging
 from itertools import chain
+import sys
 
 from .compat import get_running_loop
 from .http_aiohttp import AIOHttpConnection
@@ -162,9 +163,13 @@ class AsyncTransport(Transport):
         done = ()
         try:
             while tasks:
+                # The 'loop' keyword is deprecated in 3.8+ so don't
+                # pass it to asyncio.wait() unless we're on <=3.7
+                wait_kwargs = {"loop": self.loop} if sys.version_info < (3, 8) else {}
+
                 # execute sniff requests in parallel, wait for first to return
                 done, tasks = await asyncio.wait(
-                    tasks, return_when=asyncio.FIRST_COMPLETED, loop=self.loop
+                    tasks, return_when=asyncio.FIRST_COMPLETED, **wait_kwargs
                 )
                 # go through all the finished tasks
                 for t in done:
