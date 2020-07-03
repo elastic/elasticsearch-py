@@ -500,7 +500,9 @@ def scan(
     scroll_kwargs = scroll_kwargs or {}
 
     if not preserve_order:
-        query = query.copy() if isinstance(query, dict) else eval(query) if query else {}
+        query = (
+            query.copy() if isinstance(query, dict) else eval(query) if query else {}
+        )
         query["sort"] = "_doc"
 
     # initial search

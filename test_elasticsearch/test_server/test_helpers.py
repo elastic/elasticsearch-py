@@ -499,7 +499,7 @@ class TestScan(ElasticsearchTestCase):
                 )
             )
             spy.assert_not_called()
-            
+
     def test_search_on_str(self):
         bulk = []
         for x in range(4):
@@ -507,12 +507,9 @@ class TestScan(ElasticsearchTestCase):
             bulk.append({"value": x})
         self.client.bulk(bulk, refresh=True)
         myscan = helpers.scan(
-                self.client,
-                index='test_index',
-                query='{"query": {"match_all": {}}}')
-        self.assertCountEqual(
-                range(4),
-                [doc['_source']['value'] for doc in myscan])
+            self.client, index="test_index", query='{"query": {"match_all": {}}}'
+        )
+        self.assertCountEqual(range(4), [doc["_source"]["value"] for doc in myscan])
 
 
 class TestReindex(ElasticsearchTestCase):
