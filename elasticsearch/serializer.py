@@ -1,6 +1,19 @@
-# Licensed to Elasticsearch B.V under one or more agreements.
-# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
-# See the LICENSE file in the project root for more information
+#  Licensed to Elasticsearch B.V. under one or more contributor
+#  license agreements. See the NOTICE file distributed with
+#  this work for additional information regarding copyright
+#  ownership. Elasticsearch B.V. licenses this file to you under
+#  the Apache License, Version 2.0 (the "License"); you may
+#  not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+# 	http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing,
+#  software distributed under the License is distributed on an
+#  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#  KIND, either express or implied.  See the License for the
+#  specific language governing permissions and limitations
+#  under the License.
 
 try:
     import simplejson as json
@@ -67,7 +80,7 @@ class JSONSerializer(object):
     mimetype = "application/json"
 
     def default(self, data):
-        if isinstance(data, TIME_TYPES):
+        if isinstance(data, TIME_TYPES) and getattr(pd, "NaT", None) is not data:
             return data.isoformat()
         elif isinstance(data, uuid.UUID):
             return str(data)
@@ -87,7 +100,7 @@ class JSONSerializer(object):
         if pd:
             if isinstance(data, (pd.Series, pd.Categorical)):
                 return data.tolist()
-            elif hasattr(pd, "NA") and pd.isna(data):
+            elif data is getattr(pd, "NA", None):
                 return None
 
         raise TypeError("Unable to serialize %r (type: %s)" % (data, type(data)))

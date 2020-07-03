@@ -1,7 +1,20 @@
 # -*- coding: utf-8 -*-
-# Licensed to Elasticsearch B.V under one or more agreements.
-# Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
-# See the LICENSE file in the project root for more information
+#  Licensed to Elasticsearch B.V. under one or more contributor
+#  license agreements. See the NOTICE file distributed with
+#  this work for additional information regarding copyright
+#  ownership. Elasticsearch B.V. licenses this file to you under
+#  the Apache License, Version 2.0 (the "License"); you may
+#  not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+# 	http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing,
+#  software distributed under the License is distributed on an
+#  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#  KIND, either express or implied.  See the License for the
+#  specific language governing permissions and limitations
+#  under the License.
 
 import sys
 import uuid
@@ -93,6 +106,11 @@ class TestJSONSerializer(TestCase):
             JSONSerializer().dumps({"d": np.zeros((2, 2), dtype=np.uint8)}),
         )
 
+    def test_serializes_numpy_nan_to_nan(self):
+        self.assertEqual(
+            '{"d":NaN}', JSONSerializer().dumps({"d": np.nan}),
+        )
+
     def test_serializes_pandas_timestamp(self):
         self.assertEqual(
             '{"d":"2010-10-01T02:30:00"}',
@@ -111,6 +129,11 @@ class TestJSONSerializer(TestCase):
         self.assertEqual(
             '{"d":null}', JSONSerializer().dumps({"d": pd.NA}),
         )
+
+    def test_raises_serialization_error_pandas_nat(self):
+        if not hasattr(pd, "NaT"):
+            raise SkipTest("pandas.NaT required")
+        self.assertRaises(SerializationError, JSONSerializer().dumps, {"d": pd.NaT})
 
     def test_serializes_pandas_category(self):
         cat = pd.Categorical(["a", "c", "b", "a"], categories=["a", "b", "c"])
