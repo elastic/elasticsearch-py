@@ -60,6 +60,8 @@ def expand_action(data):
         "routing",
         "version",
         "version_type",
+        "if_seq_no",
+        "if_primary_term",
     ):
         if key in data:
             if key in [
