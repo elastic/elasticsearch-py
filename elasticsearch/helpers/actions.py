@@ -524,14 +524,25 @@ def scan(
                     resp["_shards"]["skipped"],
                     resp["_shards"]["total"],
                 )
+
+                resp_failures = resp['_shards'].get('failures')
+                failures = []
+                if resp_failures is not None:
+                    for resp_failure in resp_failures:
+                        failure = "Failure type[%s] received with reason: %s" % \
+                                  (resp_failure["reason"]['type'], resp_failure["reason"]['reason'])
+                        failures.append(failure)
+                        logger.warning(failure)
                 if raise_on_error:
                     raise ScanError(
                         scroll_id,
-                        "Scroll request has only succeeded on %d (+%d skiped) shards out of %d."
+                        "Scroll request has only succeeded on %d (+%d skiped) shards out of %d.\n"
+                        "%s"
                         % (
                             resp["_shards"]["successful"],
                             resp["_shards"]["skipped"],
                             resp["_shards"]["total"],
+                            ''.join(failures)
                         ),
                     )
             resp = client.scroll(
