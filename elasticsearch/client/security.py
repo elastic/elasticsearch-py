@@ -508,3 +508,23 @@ class SecurityClient(NamespacedClient):
         return self.transport.perform_request(
             "GET", "/_security/privilege/_builtin", params=params, headers=headers
         )
+
+    @query_params()
+    def clear_cached_privileges(self, application, params=None, headers=None):
+        """
+        Evicts application privileges from the native application privileges cache.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-clear-privilege-cache.html>`_
+
+        :arg application: A comma-separated list of application names
+        """
+        if application in SKIP_IN_PATH:
+            raise ValueError(
+                "Empty value passed for a required argument 'application'."
+            )
+
+        return self.transport.perform_request(
+            "POST",
+            _make_path("_security", "privilege", application, "_clear_cache"),
+            params=params,
+            headers=headers,
+        )

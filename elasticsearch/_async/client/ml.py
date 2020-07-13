@@ -1529,3 +1529,24 @@ class MlClient(NamespacedClient):
             headers=headers,
             body=body,
         )
+
+    @query_params()
+    async def update_data_frame_analytics(self, id, body, params=None, headers=None):
+        """
+        Updates certain properties of a data frame analytics job.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/update-dfanalytics.html>`_
+
+        :arg id: The ID of the data frame analytics to update
+        :arg body: The data frame analytics settings to update
+        """
+        for param in (id, body):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
+
+        return await self.transport.perform_request(
+            "POST",
+            _make_path("_ml", "data_frame", "analytics", id, "_update"),
+            params=params,
+            headers=headers,
+            body=body,
+        )

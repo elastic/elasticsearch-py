@@ -1239,7 +1239,8 @@ class IndicesClient(NamespacedClient):
         Deletes a data stream.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
 
-        :arg name: The name of the data stream
+        :arg name: A comma-separated list of data streams to delete; use
+            `*` to delete all data streams
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
@@ -1368,8 +1369,8 @@ class IndicesClient(NamespacedClient):
         Returns data streams.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
 
-        :arg name: The name or wildcard expression of the requested data
-            streams
+        :arg name: A comma-separated list of data streams to get; use
+            `*` to get all data streams
         """
         return self.transport.perform_request(
             "GET", _make_path("_data_stream", name), params=params, headers=headers
@@ -1416,4 +1417,38 @@ class IndicesClient(NamespacedClient):
 
         return self.transport.perform_request(
             "GET", _make_path("_resolve", "index", name), params=params, headers=headers
+        )
+
+    @query_params(
+        "allow_no_indices",
+        "expand_wildcards",
+        "ignore_unavailable",
+        "master_timeout",
+        "timeout",
+    )
+    def add_block(self, index, block, params=None, headers=None):
+        """
+        Adds a block to an index.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-blocks.html>`_
+
+        :arg index: A comma separated list of indices to add a block to
+        :arg block: The block to add (one of read, write, read_only or
+            metadata)
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+            expression resolves into no concrete indices. (This includes `_all`
+            string or when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to
+            concrete indices that are open, closed or both.  Valid choices: open,
+            closed, hidden, none, all  Default: open
+        :arg ignore_unavailable: Whether specified concrete indices
+            should be ignored when unavailable (missing or closed)
+        :arg master_timeout: Specify timeout for connection to master
+        :arg timeout: Explicit operation timeout
+        """
+        for param in (index, block):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
+
+        return self.transport.perform_request(
+            "PUT", _make_path(index, "_block", block), params=params, headers=headers
         )
