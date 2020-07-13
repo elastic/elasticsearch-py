@@ -23,12 +23,14 @@ class XPackClient(NamespacedClient):
         return getattr(self.client, attr_name)
 
     # AUTO-GENERATED-API-DEFINITIONS #
-    @query_params("categories")
+    @query_params("accept_enterprise", "categories")
     async def info(self, params=None, headers=None):
         """
         Retrieves information about the installed X-Pack features.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/info-api.html>`_
 
+        :arg accept_enterprise: Supported for backwards compatibility
+            with 7.x. If this param is used it must be set to true
         :arg categories: Comma-separated list of info categories. Can be
             any of: build, license, features
         """
