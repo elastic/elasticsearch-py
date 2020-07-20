@@ -316,20 +316,26 @@ class AsyncTransport(Transport):
                     retry = True
 
                 if retry:
-                    # only mark as dead if we are retrying
-                    self.mark_dead(connection)
+                    try:
+                        # only mark as dead if we are retrying
+                        self.mark_dead(connection)
+                    except TransportError:
+                        # If sniffing on failure, it could fail too. Catch the
+                        # exception not to interrupt the retries.
+                        pass
                     # raise exception on last retry
                     if attempt == self.max_retries:
-                        raise
+                        raise e
                 else:
-                    raise
+                    raise e
 
             else:
+                # connection didn't fail, confirm it's live status
+                self.connection_pool.mark_live(connection)
+
                 if method == "HEAD":
                     return 200 <= status < 300
 
-                # connection didn't fail, confirm it's live status
-                self.connection_pool.mark_live(connection)
                 if data:
                     data = self.deserializer.loads(data, headers.get("content-type"))
                 return data
