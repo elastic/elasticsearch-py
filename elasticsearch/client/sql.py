@@ -23,7 +23,7 @@ class SqlClient(NamespacedClient):
     def clear_cursor(self, body, params=None, headers=None):
         """
         Clears the SQL cursor
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/sql-pagination.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/sql-pagination.html>`_
 
         :arg body: Specify the cursor value in the `cursor` element to
             clean the cursor.
@@ -39,7 +39,7 @@ class SqlClient(NamespacedClient):
     def query(self, body, params=None, headers=None):
         """
         Executes a SQL request
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/sql-rest-overview.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/sql-rest-overview.html>`_
 
         :arg body: Use the `query` element to start a query. Use the
             `cursor` element to continue a query.
@@ -57,7 +57,7 @@ class SqlClient(NamespacedClient):
     def translate(self, body, params=None, headers=None):
         """
         Translates SQL into Elasticsearch queries
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/sql-translate.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/sql-translate.html>`_
 
         :arg body: Specify the query in the `query` element.
         """

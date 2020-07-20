@@ -22,7 +22,7 @@ class DeprecationClient(NamespacedClient):
     @query_params()
     async def info(self, index=None, params=None, headers=None):
         """
-        `<http://www.elastic.co/guide/en/migration/7.x/migration-api-deprecation.html>`_
+        `<https://www.elastic.co/guide/en/migration/7.x/migration-api-deprecation.html>`_
 
         :arg index: Index pattern
         """

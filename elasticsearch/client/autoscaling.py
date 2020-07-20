@@ -24,7 +24,7 @@ class AutoscalingClient(NamespacedClient):
         """
         Gets the current autoscaling decision based on the configured autoscaling
         policy, indicating whether or not autoscaling is needed.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/autoscaling-get-autoscaling-decision.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/autoscaling-get-autoscaling-decision.html>`_
         """
         return self.transport.perform_request(
             "GET", "/_autoscaling/decision", params=params, headers=headers
@@ -34,7 +34,7 @@ class AutoscalingClient(NamespacedClient):
     def delete_autoscaling_policy(self, name, params=None, headers=None):
         """
         Deletes an autoscaling policy.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/autoscaling-delete-autoscaling-policy.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/autoscaling-delete-autoscaling-policy.html>`_
 
         :arg name: the name of the autoscaling policy
         """
@@ -52,7 +52,7 @@ class AutoscalingClient(NamespacedClient):
     def get_autoscaling_policy(self, name, params=None, headers=None):
         """
         Retrieves an autoscaling policy.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/autoscaling-get-autoscaling-policy.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/autoscaling-get-autoscaling-policy.html>`_
 
         :arg name: the name of the autoscaling policy
         """
@@ -70,7 +70,7 @@ class AutoscalingClient(NamespacedClient):
     def put_autoscaling_policy(self, name, body, params=None, headers=None):
         """
         Creates a new autoscaling policy.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/autoscaling-put-autoscaling-policy.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/autoscaling-put-autoscaling-policy.html>`_
 
         :arg name: the name of the autoscaling policy
         :arg body: the specification of the autoscaling policy

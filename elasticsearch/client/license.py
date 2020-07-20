@@ -23,7 +23,7 @@ class LicenseClient(NamespacedClient):
     def delete(self, params=None, headers=None):
         """
         Deletes licensing information for the cluster
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/delete-license.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/delete-license.html>`_
         """
         return self.transport.perform_request(
             "DELETE", "/_license", params=params, headers=headers
@@ -33,7 +33,7 @@ class LicenseClient(NamespacedClient):
     def get(self, params=None, headers=None):
         """
         Retrieves licensing information for the cluster
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/get-license.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/get-license.html>`_
 
         :arg accept_enterprise: If the active license is an enterprise
             license, return type as 'enterprise' (default: false)
@@ -48,7 +48,7 @@ class LicenseClient(NamespacedClient):
     def get_basic_status(self, params=None, headers=None):
         """
         Retrieves information about the status of the basic license.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/get-basic-status.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/get-basic-status.html>`_
         """
         return self.transport.perform_request(
             "GET", "/_license/basic_status", params=params, headers=headers
@@ -58,7 +58,7 @@ class LicenseClient(NamespacedClient):
     def get_trial_status(self, params=None, headers=None):
         """
         Retrieves information about the status of the trial license.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/get-trial-status.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/get-trial-status.html>`_
         """
         return self.transport.perform_request(
             "GET", "/_license/trial_status", params=params, headers=headers
@@ -68,7 +68,7 @@ class LicenseClient(NamespacedClient):
     def post(self, body=None, params=None, headers=None):
         """
         Updates the license for the cluster.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/update-license.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/update-license.html>`_
 
         :arg body: licenses to be installed
         :arg acknowledge: whether the user has acknowledged acknowledge
@@ -82,7 +82,7 @@ class LicenseClient(NamespacedClient):
     def post_start_basic(self, params=None, headers=None):
         """
         Starts an indefinite basic license.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/start-basic.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/start-basic.html>`_
 
         :arg acknowledge: whether the user has acknowledged acknowledge
             messages (default: false)
@@ -95,7 +95,7 @@ class LicenseClient(NamespacedClient):
     def post_start_trial(self, params=None, headers=None):
         """
         starts a limited time trial license.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/start-trial.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/start-trial.html>`_
 
         :arg acknowledge: whether the user has acknowledged acknowledge
             messages (default: false)
