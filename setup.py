@@ -55,6 +55,11 @@ setup(
     author_email="honza.kral@gmail.com, nick@nicklang.com",
     maintainer="Seth Michael Larson",
     maintainer_email="seth.larson@elastic.co",
+    project_urls={
+        "Documentation": "https://elasticsearch-py.readthedocs.io",
+        "Source Code": "https://github.com/elastic/elasticsearch-py",
+        "Issue Tracker": "https://github.com/elastic/elasticsearch-py/issues",
+    },
     packages=find_packages(where=".", exclude=("test_elasticsearch*",)),
     classifiers=[
         "Development Status :: 5 - Production/Stable",
