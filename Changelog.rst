@@ -3,6 +3,18 @@
 Changelog
 =========
 
+7.9.0a1 (2020-07-20)
+--------------------
+
+* Added support for ES 7.9 APIs
+* Fixed retries to not raise an error when ``sniff_on_connection_error=True``
+  and a ``TransportError`` is raised during the sniff step. Instead the
+  retry will continue or the error that triggered the retry will be raised
+  (See `#1279`_ and `#1326`_)
+
+ .. _#1326: https://github.com/elastic/elasticsearch-py/pull/1326
+ .. _#1279: https://github.com/elastic/elasticsearch-py/pull/1279
+
 7.8.0 (2020-06-18)
 ------------------
 
