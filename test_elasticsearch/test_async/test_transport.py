@@ -18,13 +18,14 @@
 
 from __future__ import unicode_literals
 import asyncio
+import json
 from mock import patch
 import pytest
 
 from elasticsearch import AsyncTransport
 from elasticsearch.connection import Connection
 from elasticsearch.connection_pool import DummyConnectionPool
-from elasticsearch.exceptions import ConnectionError
+from elasticsearch.exceptions import ConnectionError, TransportError
 
 
 pytestmark = pytest.mark.asyncio
@@ -273,16 +274,17 @@ class TestTransport:
         assert 0 == len(t.connection_pool.connections)
 
     async def test_resurrected_connection_will_be_marked_as_live_on_success(self):
-        t = AsyncTransport([{}, {}], connection_class=DummyConnection)
-        await t._async_call()
-        con1 = t.connection_pool.get_connection()
-        con2 = t.connection_pool.get_connection()
-        t.connection_pool.mark_dead(con1)
-        t.connection_pool.mark_dead(con2)
+        for method in ("GET", "HEAD"):
+            t = AsyncTransport([{}, {}], connection_class=DummyConnection)
+            await t._async_call()
+            con1 = t.connection_pool.get_connection()
+            con2 = t.connection_pool.get_connection()
+            t.connection_pool.mark_dead(con1)
+            t.connection_pool.mark_dead(con2)
 
-        await t.perform_request("GET", "/")
-        assert 1 == len(t.connection_pool.connections)
-        assert 1 == len(t.connection_pool.dead_count)
+            await t.perform_request(method, "/")
+            assert 1 == len(t.connection_pool.connections)
+            assert 1 == len(t.connection_pool.dead_count)
 
     async def test_sniff_will_use_seed_connections(self):
         t = AsyncTransport([{"data": CLUSTER_NODES}], connection_class=DummyConnection)
@@ -367,6 +369,25 @@ class TestTransport:
         assert connection_error
         assert 1 == len(t.connection_pool.connections)
         assert "http://1.1.1.1:123" == t.get_connection().host
+
+    @patch("elasticsearch._async.transport.AsyncTransport.sniff_hosts")
+    async def test_sniff_on_fail_failing_does_not_prevent_retires(self, sniff_hosts):
+        sniff_hosts.side_effect = [TransportError("sniff failed")]
+        t = AsyncTransport(
+            [{"exception": ConnectionError("abandon ship")}, {"data": CLUSTER_NODES}],
+            connection_class=DummyConnection,
+            sniff_on_connection_fail=True,
+            max_retries=3,
+            randomize_hosts=False,
+        )
+        await t._async_init()
+
+        conn_err, conn_data = t.connection_pool.connections
+        response = await t.perform_request("GET", "/")
+        assert json.loads(CLUSTER_NODES) == response
+        assert 1 == sniff_hosts.call_count
+        assert 1 == len(conn_err.calls)
+        assert 1 == len(conn_data.calls)
 
     async def test_sniff_after_n_seconds(self, event_loop):
         t = AsyncTransport(
