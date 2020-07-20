@@ -378,13 +378,18 @@ class Transport(object):
                     retry = True
 
                 if retry:
-                    # only mark as dead if we are retrying
-                    self.mark_dead(connection)
+                    try:
+                        # only mark as dead if we are retrying
+                        self.mark_dead(connection)
+                    except TransportError:
+                        # If sniffing on failure, it could fail too. Catch the
+                        # exception not to interrupt the retries.
+                        pass
                     # raise exception on last retry
                     if attempt == self.max_retries:
-                        raise
+                        raise e
                 else:
-                    raise
+                    raise e
 
             else:
                 # connection didn't fail, confirm it's live status

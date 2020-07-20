@@ -17,13 +17,14 @@
 #  under the License.
 
 from __future__ import unicode_literals
+import json
 import time
 from mock import patch
 
 from elasticsearch.transport import Transport, get_host_info
 from elasticsearch.connection import Connection
 from elasticsearch.connection_pool import DummyConnectionPool
-from elasticsearch.exceptions import ConnectionError
+from elasticsearch.exceptions import ConnectionError, TransportError
 
 from .test_cases import TestCase
 
@@ -254,15 +255,16 @@ class TestTransport(TestCase):
         self.assertEqual(0, len(t.connection_pool.connections))
 
     def test_resurrected_connection_will_be_marked_as_live_on_success(self):
-        t = Transport([{}, {}], connection_class=DummyConnection)
-        con1 = t.connection_pool.get_connection()
-        con2 = t.connection_pool.get_connection()
-        t.connection_pool.mark_dead(con1)
-        t.connection_pool.mark_dead(con2)
+        for method in ("GET", "HEAD"):
+            t = Transport([{}, {}], connection_class=DummyConnection)
+            con1 = t.connection_pool.get_connection()
+            con2 = t.connection_pool.get_connection()
+            t.connection_pool.mark_dead(con1)
+            t.connection_pool.mark_dead(con2)
 
-        t.perform_request("GET", "/")
-        self.assertEqual(1, len(t.connection_pool.connections))
-        self.assertEqual(1, len(t.connection_pool.dead_count))
+            t.perform_request(method, "/")
+            self.assertEqual(1, len(t.connection_pool.connections))
+            self.assertEqual(1, len(t.connection_pool.dead_count))
 
     def test_sniff_will_use_seed_connections(self):
         t = Transport([{"data": CLUSTER_NODES}], connection_class=DummyConnection)
@@ -329,6 +331,24 @@ class TestTransport(TestCase):
         self.assertRaises(ConnectionError, t.perform_request, "GET", "/")
         self.assertEqual(1, len(t.connection_pool.connections))
         self.assertEqual("http://1.1.1.1:123", t.get_connection().host)
+
+    @patch("elasticsearch.transport.Transport.sniff_hosts")
+    def test_sniff_on_fail_failing_does_not_prevent_retires(self, sniff_hosts):
+        sniff_hosts.side_effect = [TransportError("sniff failed")]
+        t = Transport(
+            [{"exception": ConnectionError("abandon ship")}, {"data": CLUSTER_NODES}],
+            connection_class=DummyConnection,
+            sniff_on_connection_fail=True,
+            max_retries=3,
+            randomize_hosts=False,
+        )
+
+        conn_err, conn_data = t.connection_pool.connections
+        response = t.perform_request("GET", "/")
+        self.assertEqual(json.loads(CLUSTER_NODES), response)
+        self.assertEqual(1, sniff_hosts.call_count)
+        self.assertEqual(1, len(conn_err.calls))
+        self.assertEqual(1, len(conn_data.calls))
 
     def test_sniff_after_n_seconds(self):
         t = Transport(
