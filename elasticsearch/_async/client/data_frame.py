@@ -72,6 +72,7 @@ class Data_FrameClient(NamespacedClient):
             "GET",
             _make_path("_data_frame", "transforms", transform_id, "_stats"),
             params=params,
+            headers=headers,
         )
 
     @query_params()

@@ -24,7 +24,7 @@ class IndicesClient(NamespacedClient):
         """
         Performs the analysis process on a text and return the tokens breakdown of the
         text.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-analyze.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-analyze.html>`_
 
         :arg body: Define analyzer/tokenizer parameters and the text on
             which the analysis should be performed
@@ -42,7 +42,7 @@ class IndicesClient(NamespacedClient):
     async def refresh(self, index=None, params=None, headers=None):
         """
         Performs the refresh operation in one or more indices.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-refresh.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-refresh.html>`_
 
         :arg index: A comma-separated list of index names; use `_all` or
             empty string to perform the operation on all indices
@@ -69,7 +69,7 @@ class IndicesClient(NamespacedClient):
     async def flush(self, index=None, params=None, headers=None):
         """
         Performs the flush operation on one or more indices.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-flush.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-flush.html>`_
 
         :arg index: A comma-separated list of index names; use `_all` or
             empty string for all indices
@@ -101,7 +101,7 @@ class IndicesClient(NamespacedClient):
     async def create(self, index, body=None, params=None, headers=None):
         """
         Creates an index with optional settings and mappings.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-create-index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-create-index.html>`_
 
         :arg index: The name of the index
         :arg body: The configuration for the index (`settings` and
@@ -124,7 +124,7 @@ class IndicesClient(NamespacedClient):
     async def clone(self, index, target, body=None, params=None, headers=None):
         """
         Clones an index
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-clone-index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-clone-index.html>`_
 
         :arg index: The name of the source index to clone
         :arg target: The name of the target index to clone into
@@ -160,7 +160,7 @@ class IndicesClient(NamespacedClient):
     async def get(self, index, params=None, headers=None):
         """
         Returns information about one or more indices.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-get-index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-get-index.html>`_
 
         :arg index: A comma-separated list of index names
         :arg allow_no_indices: Ignore if a wildcard expression resolves
@@ -198,7 +198,7 @@ class IndicesClient(NamespacedClient):
     async def open(self, index, params=None, headers=None):
         """
         Opens an index.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-open-close.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-open-close.html>`_
 
         :arg index: A comma separated list of indices to open
         :arg allow_no_indices: Whether to ignore if a wildcard indices
@@ -232,7 +232,7 @@ class IndicesClient(NamespacedClient):
     async def close(self, index, params=None, headers=None):
         """
         Closes an index.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-open-close.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-open-close.html>`_
 
         :arg index: A comma separated list of indices to close
         :arg allow_no_indices: Whether to ignore if a wildcard indices
@@ -265,7 +265,7 @@ class IndicesClient(NamespacedClient):
     async def delete(self, index, params=None, headers=None):
         """
         Deletes an index.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-delete-index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-delete-index.html>`_
 
         :arg index: A comma-separated list of indices to delete; use
             `_all` or `*` string to delete all indices
@@ -297,7 +297,7 @@ class IndicesClient(NamespacedClient):
     async def exists(self, index, params=None, headers=None):
         """
         Returns information about whether a particular index exists.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-exists.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-exists.html>`_
 
         :arg index: A comma-separated list of index names
         :arg allow_no_indices: Ignore if a wildcard expression resolves
@@ -326,7 +326,7 @@ class IndicesClient(NamespacedClient):
         """
         Returns information about whether a particular document type exists.
         (DEPRECATED)
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-types-exists.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-types-exists.html>`_
 
         :arg index: A comma-separated list of index names; use `_all` to
             check the types across all indices
@@ -367,7 +367,7 @@ class IndicesClient(NamespacedClient):
     ):
         """
         Updates the index mappings.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-put-mapping.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-put-mapping.html>`_
 
         :arg body: The mapping definition
         :arg index: A comma-separated list of index names the mapping
@@ -414,7 +414,7 @@ class IndicesClient(NamespacedClient):
     async def get_mapping(self, index=None, doc_type=None, params=None, headers=None):
         """
         Returns mappings for one or more indices.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-get-mapping.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-get-mapping.html>`_
 
         :arg index: A comma-separated list of index names
         :arg doc_type: A comma-separated list of document types
@@ -452,7 +452,7 @@ class IndicesClient(NamespacedClient):
     ):
         """
         Returns mapping for one or more fields.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-get-field-mapping.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-get-field-mapping.html>`_
 
         :arg fields: A comma-separated list of fields
         :arg index: A comma-separated list of index names
@@ -486,7 +486,7 @@ class IndicesClient(NamespacedClient):
     async def put_alias(self, index, name, body=None, params=None, headers=None):
         """
         Creates or updates an alias.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-aliases.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-aliases.html>`_
 
         :arg index: A comma-separated list of index names the alias
             should point to (supports wildcards); use `_all` to perform the
@@ -513,7 +513,7 @@ class IndicesClient(NamespacedClient):
     async def exists_alias(self, name, index=None, params=None, headers=None):
         """
         Returns information about whether a particular alias exists.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-aliases.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-aliases.html>`_
 
         :arg name: A comma-separated list of alias names to return
         :arg index: A comma-separated list of index names to filter
@@ -540,7 +540,7 @@ class IndicesClient(NamespacedClient):
     async def get_alias(self, index=None, name=None, params=None, headers=None):
         """
         Returns an alias.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-aliases.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-aliases.html>`_
 
         :arg index: A comma-separated list of index names to filter
             aliases
@@ -564,7 +564,7 @@ class IndicesClient(NamespacedClient):
     async def update_aliases(self, body, params=None, headers=None):
         """
         Updates index aliases.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-aliases.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-aliases.html>`_
 
         :arg body: The definition of `actions` to perform
         :arg master_timeout: Specify timeout for connection to master
@@ -581,7 +581,7 @@ class IndicesClient(NamespacedClient):
     async def delete_alias(self, index, name, params=None, headers=None):
         """
         Deletes an alias.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-aliases.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-aliases.html>`_
 
         :arg index: A comma-separated list of index names (supports
             wildcards); use `_all` for all indices
@@ -602,7 +602,7 @@ class IndicesClient(NamespacedClient):
     async def put_template(self, name, body, params=None, headers=None):
         """
         Creates or updates an index template.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-templates.html>`_
 
         :arg name: The name of the template
         :arg body: The template definition
@@ -631,7 +631,7 @@ class IndicesClient(NamespacedClient):
     async def exists_template(self, name, params=None, headers=None):
         """
         Returns information about whether a particular index template exists.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-templates.html>`_
 
         :arg name: The comma separated names of the index templates
         :arg flat_settings: Return settings in flat format (default:
@@ -652,7 +652,7 @@ class IndicesClient(NamespacedClient):
     async def get_template(self, name=None, params=None, headers=None):
         """
         Returns an index template.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-templates.html>`_
 
         :arg name: The comma separated names of the index templates
         :arg flat_settings: Return settings in flat format (default:
@@ -672,7 +672,7 @@ class IndicesClient(NamespacedClient):
     async def delete_template(self, name, params=None, headers=None):
         """
         Deletes an index template.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-templates.html>`_
 
         :arg name: The name of the template
         :arg master_timeout: Specify timeout for connection to master
@@ -697,7 +697,7 @@ class IndicesClient(NamespacedClient):
     async def get_settings(self, index=None, name=None, params=None, headers=None):
         """
         Returns settings for one or more indices.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-get-settings.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-get-settings.html>`_
 
         :arg index: A comma-separated list of index names; use `_all` or
             empty string to perform the operation on all indices
@@ -734,7 +734,7 @@ class IndicesClient(NamespacedClient):
     async def put_settings(self, body, index=None, params=None, headers=None):
         """
         Updates the index settings.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-update-settings.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-update-settings.html>`_
 
         :arg body: The index settings to be updated
         :arg index: A comma-separated list of index names; use `_all` or
@@ -781,7 +781,7 @@ class IndicesClient(NamespacedClient):
     async def stats(self, index=None, metric=None, params=None, headers=None):
         """
         Provides statistics on operations happening in an index.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-stats.html>`_
 
         :arg index: A comma-separated list of index names; use `_all` or
             empty string to perform the operation on all indices
@@ -824,7 +824,7 @@ class IndicesClient(NamespacedClient):
     async def segments(self, index=None, params=None, headers=None):
         """
         Provides low-level information about segments in a Lucene index.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-segments.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-segments.html>`_
 
         :arg index: A comma-separated list of index names; use `_all` or
             empty string to perform the operation on all indices
@@ -861,7 +861,7 @@ class IndicesClient(NamespacedClient):
     ):
         """
         Allows a user to validate a potentially expensive query without executing it.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/search-validate.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/search-validate.html>`_
 
         :arg body: The query definition specified with the Query DSL
         :arg index: A comma-separated list of index names to restrict
@@ -914,7 +914,7 @@ class IndicesClient(NamespacedClient):
     async def clear_cache(self, index=None, params=None, headers=None):
         """
         Clears all or specific caches for one or more indices.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-clearcache.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-clearcache.html>`_
 
         :arg index: A comma-separated list of index name to limit the
             operation
@@ -940,7 +940,7 @@ class IndicesClient(NamespacedClient):
     async def recovery(self, index=None, params=None, headers=None):
         """
         Returns information about ongoing index shard recoveries.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-recovery.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-recovery.html>`_
 
         :arg index: A comma-separated list of index names; use `_all` or
             empty string to perform the operation on all indices
@@ -963,7 +963,7 @@ class IndicesClient(NamespacedClient):
     async def upgrade(self, index=None, params=None, headers=None):
         """
         The _upgrade API is no longer useful and will be removed.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-upgrade.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-upgrade.html>`_
 
         :arg index: A comma-separated list of index names; use `_all` or
             empty string to perform the operation on all indices
@@ -988,7 +988,7 @@ class IndicesClient(NamespacedClient):
     async def get_upgrade(self, index=None, params=None, headers=None):
         """
         The _upgrade API is no longer useful and will be removed.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-upgrade.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-upgrade.html>`_
 
         :arg index: A comma-separated list of index names; use `_all` or
             empty string to perform the operation on all indices
@@ -1010,7 +1010,7 @@ class IndicesClient(NamespacedClient):
         """
         Performs a synced flush operation on one or more indices. Synced flush is
         deprecated and will be removed in 8.0. Use flush instead
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-synced-flush-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-synced-flush-api.html>`_
 
         :arg index: A comma-separated list of index names; use `_all` or
             empty string for all indices
@@ -1036,7 +1036,7 @@ class IndicesClient(NamespacedClient):
     async def shard_stores(self, index=None, params=None, headers=None):
         """
         Provides store information for shard copies of indices.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-shards-stores.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-shards-stores.html>`_
 
         :arg index: A comma-separated list of index names; use `_all` or
             empty string to perform the operation on all indices
@@ -1067,7 +1067,7 @@ class IndicesClient(NamespacedClient):
     async def forcemerge(self, index=None, params=None, headers=None):
         """
         Performs the force merge operation on one or more indices.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-forcemerge.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-forcemerge.html>`_
 
         :arg index: A comma-separated list of index names; use `_all` or
             empty string to perform the operation on all indices
@@ -1096,7 +1096,7 @@ class IndicesClient(NamespacedClient):
     async def shrink(self, index, target, body=None, params=None, headers=None):
         """
         Allow to shrink an existing index into a new index with fewer primary shards.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-shrink-index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-shrink-index.html>`_
 
         :arg index: The name of the source index to shrink
         :arg target: The name of the target index to shrink into
@@ -1128,7 +1128,7 @@ class IndicesClient(NamespacedClient):
         """
         Allows you to split an existing index into a new index with more primary
         shards.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-split-index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-split-index.html>`_
 
         :arg index: The name of the source index to split
         :arg target: The name of the target index to split into
@@ -1166,7 +1166,7 @@ class IndicesClient(NamespacedClient):
         """
         Updates an alias to point to a new index when the existing index is considered
         to be too large or too old.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-rollover-index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-rollover-index.html>`_
 
         :arg alias: The name of the alias to rollover
         :arg body: The conditions that needs to be met for executing
@@ -1206,7 +1206,7 @@ class IndicesClient(NamespacedClient):
         """
         Freezes an index. A frozen index has almost no overhead on the cluster (except
         for maintaining its metadata in memory) and is read-only.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/freeze-index-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/freeze-index-api.html>`_
 
         :arg index: The name of the index to freeze
         :arg allow_no_indices: Whether to ignore if a wildcard indices
@@ -1241,7 +1241,7 @@ class IndicesClient(NamespacedClient):
         """
         Unfreezes an index. When a frozen index is unfrozen, the index goes through the
         normal recovery process and becomes writeable again.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/unfreeze-index-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/unfreeze-index-api.html>`_
 
         :arg index: The name of the index to unfreeze
         :arg allow_no_indices: Whether to ignore if a wildcard indices
@@ -1268,7 +1268,7 @@ class IndicesClient(NamespacedClient):
     async def reload_search_analyzers(self, index, params=None, headers=None):
         """
         Reloads an index's search analyzers and their resources.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-reload-analyzers.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-reload-analyzers.html>`_
 
         :arg index: A comma-separated list of index names to reload
             analyzers for
@@ -1295,7 +1295,7 @@ class IndicesClient(NamespacedClient):
     async def create_data_stream(self, name, body=None, params=None, headers=None):
         """
         Creates or updates a data stream
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/data-streams.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/data-streams.html>`_
 
         :arg name: The name of the data stream
         :arg body: The data stream definition
@@ -1315,7 +1315,7 @@ class IndicesClient(NamespacedClient):
     async def delete_data_stream(self, name, params=None, headers=None):
         """
         Deletes a data stream.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/data-streams.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/data-streams.html>`_
 
         :arg name: A comma-separated list of data streams to delete; use
             `*` to delete all data streams
@@ -1331,7 +1331,7 @@ class IndicesClient(NamespacedClient):
     async def delete_index_template(self, name, params=None, headers=None):
         """
         Deletes an index template.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-templates.html>`_
 
         :arg name: The name of the template
         :arg master_timeout: Specify timeout for connection to master
@@ -1351,7 +1351,7 @@ class IndicesClient(NamespacedClient):
     async def exists_index_template(self, name, params=None, headers=None):
         """
         Returns information about whether a particular index template exists.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-templates.html>`_
 
         :arg name: The name of the template
         :arg flat_settings: Return settings in flat format (default:
@@ -1372,7 +1372,7 @@ class IndicesClient(NamespacedClient):
     async def get_index_template(self, name=None, params=None, headers=None):
         """
         Returns an index template.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-templates.html>`_
 
         :arg name: The comma separated names of the index templates
         :arg flat_settings: Return settings in flat format (default:
@@ -1390,7 +1390,7 @@ class IndicesClient(NamespacedClient):
     async def put_index_template(self, name, body, params=None, headers=None):
         """
         Creates or updates an index template.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-templates.html>`_
 
         :arg name: The name of the template
         :arg body: The template definition
@@ -1417,7 +1417,7 @@ class IndicesClient(NamespacedClient):
         """
         Simulate matching the given index name against the index templates in the
         system
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-templates.html>`_
 
         :arg name: The name of the index (it must be a concrete index
             name)
@@ -1445,7 +1445,7 @@ class IndicesClient(NamespacedClient):
     async def get_data_stream(self, name=None, params=None, headers=None):
         """
         Returns data streams.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/data-streams.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/data-streams.html>`_
 
         :arg name: A comma-separated list of data streams to get; use
             `*` to get all data streams
@@ -1458,7 +1458,7 @@ class IndicesClient(NamespacedClient):
     async def simulate_template(self, body=None, name=None, params=None, headers=None):
         """
         Simulate resolving the given template name or body
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-templates.html>`_
 
         :arg body: New index template definition to be simulated, if no
             index template name is specified
@@ -1535,7 +1535,7 @@ class IndicesClient(NamespacedClient):
     async def data_streams_stats(self, name=None, params=None, headers=None):
         """
         Provides statistics on operations happening in a data stream.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/data-streams.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/data-streams.html>`_
 
         :arg name: A comma-separated list of data stream names; use
             `_all` or empty string to perform the operation on all data streams
