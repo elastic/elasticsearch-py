@@ -30,7 +30,7 @@
         wipe-workspace: 'True'
     triggers:
     - github
-    - timed: '@daily'
+    - timed: 'H */12 * * *'
     axes:
     - axis:
         type: slave
