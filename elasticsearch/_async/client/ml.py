@@ -1150,7 +1150,7 @@ class MlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("allow_no_match", "from_", "size")
+    @query_params("allow_no_match", "from_", "size", "verbose")
     async def get_data_frame_analytics_stats(self, id=None, params=None, headers=None):
         """
         Retrieves usage information for data frame analytics jobs.
@@ -1163,6 +1163,7 @@ class MlClient(NamespacedClient):
         :arg from\\_: skips a number of analytics
         :arg size: specifies a max number of analytics to get  Default:
             100
+        :arg verbose: whether the stats response should be verbose
         """
         # from is a reserved word so it cannot be used, use from_ instead
         if "from_" in params:

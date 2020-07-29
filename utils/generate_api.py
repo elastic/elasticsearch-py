@@ -152,7 +152,9 @@ class API:
             self.doc_url = definition["documentation"]
         else:
             # set as attribute so it may be overriden by Module.add
-            self.description = definition["documentation"].get("description", "")
+            self.description = (
+                definition["documentation"].get("description", "").strip()
+            )
             self.doc_url = definition["documentation"].get("url", "")
 
         # Filter out bad URL refs like 'TODO'
