@@ -1527,7 +1527,7 @@ class IndicesClient(NamespacedClient):
             "PUT", _make_path(index, "_block", block), params=params, headers=headers
         )
 
-    @query_params("expand_wildcards", "forbid_closed_indices")
+    @query_params()
     def data_streams_stats(self, name=None, params=None, headers=None):
         """
         Provides statistics on operations happening in a data stream.
@@ -1535,12 +1535,6 @@ class IndicesClient(NamespacedClient):
 
         :arg name: A comma-separated list of data stream names; use
             `_all` or empty string to perform the operation on all data streams
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
-        :arg forbid_closed_indices: If set to false stats will also
-            collected from closed indices if explicitly specified or if
-            expand_wildcards expands to closed indices  Default: True
         """
         return self.transport.perform_request(
             "GET",
