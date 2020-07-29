@@ -360,6 +360,7 @@ class IndicesClient(NamespacedClient):
         "include_type_name",
         "master_timeout",
         "timeout",
+        "write_index_only",
     )
     async def put_mapping(
         self, body, index=None, doc_type=None, params=None, headers=None
@@ -385,6 +386,8 @@ class IndicesClient(NamespacedClient):
             body of the mappings.
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
+        :arg write_index_only: When true, applies mappings only to the
+            write index of an alias or data stream
         """
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
@@ -1526,4 +1529,20 @@ class IndicesClient(NamespacedClient):
 
         return await self.transport.perform_request(
             "PUT", _make_path(index, "_block", block), params=params, headers=headers
+        )
+
+    @query_params()
+    async def data_streams_stats(self, name=None, params=None, headers=None):
+        """
+        Provides statistics on operations happening in a data stream.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/data-streams.html>`_
+
+        :arg name: A comma-separated list of data stream names; use
+            `_all` or empty string to perform the operation on all data streams
+        """
+        return await self.transport.perform_request(
+            "GET",
+            _make_path("_data_stream", name, "_stats"),
+            params=params,
+            headers=headers,
         )

@@ -340,6 +340,7 @@ class AsyncElasticsearch(object):
         "op_type",
         "pipeline",
         "refresh",
+        "require_alias",
         "routing",
         "timeout",
         "version",
@@ -372,6 +373,8 @@ class AsyncElasticsearch(object):
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then
             do nothing with refreshes.  Valid choices: true, false, wait_for
+        :arg require_alias: When true, requires destination to be an
+            alias. Default is false
         :arg routing: Specific routing value
         :arg timeout: Explicit operation timeout
         :arg version: Explicit version number for concurrency control
@@ -404,6 +407,7 @@ class AsyncElasticsearch(object):
         "_source_includes",
         "pipeline",
         "refresh",
+        "require_alias",
         "routing",
         "timeout",
         "wait_for_active_shards",
@@ -431,6 +435,8 @@ class AsyncElasticsearch(object):
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then
             do nothing with refreshes.  Valid choices: true, false, wait_for
+        :arg require_alias: Sets require_alias for all incoming
+            documents. Defaults to unset (false)
         :arg routing: Specific routing value
         :arg timeout: Explicit operation timeout
         :arg wait_for_active_shards: Sets the number of shard copies
@@ -1798,6 +1804,7 @@ class AsyncElasticsearch(object):
         "if_seq_no",
         "lang",
         "refresh",
+        "require_alias",
         "retry_on_conflict",
         "routing",
         "timeout",
@@ -1830,6 +1837,8 @@ class AsyncElasticsearch(object):
             this operation visible to search, if `wait_for` then wait for a refresh
             to make this operation visible to search, if `false` (the default) then
             do nothing with refreshes.  Valid choices: true, false, wait_for
+        :arg require_alias: When true, requires destination is an alias.
+            Default is false
         :arg retry_on_conflict: Specify how many times should the
             operation be retried when a conflict occurs (default: 0)
         :arg routing: Specific routing value
