@@ -15,6 +15,13 @@ Changelog
  .. _#1326: https://github.com/elastic/elasticsearch-py/pull/1326
  .. _#1279: https://github.com/elastic/elasticsearch-py/pull/1279
 
+7.8.1 (2020-07-30)
+------------------
+
+* Added the ``accept_enterprise`` parameter to ``xpack.info`` API (See `#1337`_)
+
+ .. _#1337: https://github.com/elastic/elasticsearch-py/pull/1337
+
 7.8.0 (2020-06-18)
 ------------------
 
