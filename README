@@ -19,9 +19,7 @@ the ``async`` extra::
 
     $ python -m pip install elasticsearch[async]
 
-Read more about `how to use asyncio with this project <async>`_.
-
- .. _async: https://elasticsearch-py.readthedocs.io/en/master/async.html
+Read more about `how to use asyncio with this project <https://elasticsearch-py.readthedocs.io/en/master/async.html>`_.
 
 
 Compatibility
