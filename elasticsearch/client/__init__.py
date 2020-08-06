@@ -453,7 +453,7 @@ class Elasticsearch(object):
     def clear_scroll(self, body=None, scroll_id=None, params=None, headers=None):
         """
         Explicitly clears the search context for a scroll.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/search-request-body.html#_clear_scroll_api>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/clear-scroll-api.html>`_
 
         :arg body: A comma-separated list of scroll IDs to clear if none
             was specified via the scroll_id parameter
