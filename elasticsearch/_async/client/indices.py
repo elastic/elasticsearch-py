@@ -1292,23 +1292,18 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params()
-    async def create_data_stream(self, name, body=None, params=None, headers=None):
+    async def create_data_stream(self, name, params=None, headers=None):
         """
-        Creates or updates a data stream
+        Creates a data stream
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/data-streams.html>`_
 
         :arg name: The name of the data stream
-        :arg body: The data stream definition
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
         return await self.transport.perform_request(
-            "PUT",
-            _make_path("_data_stream", name),
-            params=params,
-            headers=headers,
-            body=body,
+            "PUT", _make_path("_data_stream", name), params=params, headers=headers
         )
 
     @query_params()
@@ -1482,7 +1477,7 @@ class IndicesClient(NamespacedClient):
     async def resolve_index(self, name, params=None, headers=None):
         """
         Returns information about any matching indices, aliases, and data streams
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-resolve-index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/indices-resolve-index-api.html>`_
 
         :arg name: A comma-separated list of names or wildcard
             expressions
@@ -1507,7 +1502,7 @@ class IndicesClient(NamespacedClient):
     async def add_block(self, index, block, params=None, headers=None):
         """
         Adds a block to an index.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-blocks.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.9/index-modules-blocks.html>`_
 
         :arg index: A comma separated list of indices to add a block to
         :arg block: The block to add (one of read, write, read_only or
