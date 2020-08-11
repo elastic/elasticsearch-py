@@ -50,6 +50,7 @@ def expand_action(data):
         "_percolate",
         "_retry_on_conflict",
         "_routing",
+        "_source",
         "_timestamp",
         "_type",
         "_version",
