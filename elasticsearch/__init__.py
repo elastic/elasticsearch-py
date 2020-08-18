@@ -20,7 +20,7 @@ from __future__ import absolute_import
 
 VERSION = (7, 9, 0)
 __version__ = VERSION
-__versionstr__ = "7.9.0a1"
+__versionstr__ = "7.9.0"
 
 import sys
 import logging
