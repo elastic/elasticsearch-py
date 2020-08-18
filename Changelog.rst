@@ -3,8 +3,8 @@
 Changelog
 =========
 
-7.9.0a1 (2020-07-20)
---------------------
+7.9.0 (2020-08-18)
+------------------
 
 * Added support for ES 7.9 APIs
 * Fixed retries to not raise an error when ``sniff_on_connection_error=True``
