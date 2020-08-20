@@ -29,8 +29,8 @@ class XPackClient(NamespacedClient):
         Retrieves information about the installed X-Pack features.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/info-api.html>`_
 
-        :arg accept_enterprise: Supported for backwards compatibility
-            with 7.x. If this param is used it must be set to true
+        :arg accept_enterprise: If this param is used it must be set to
+            true
         :arg categories: Comma-separated list of info categories. Can be
             any of: build, license, features
         """

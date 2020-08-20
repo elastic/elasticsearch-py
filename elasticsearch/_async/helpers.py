@@ -17,6 +17,7 @@
 
 import asyncio
 
+from .client import AsyncElasticsearch  # noqa
 from ..exceptions import TransportError
 from ..compat import map
 
