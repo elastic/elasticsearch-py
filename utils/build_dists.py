@@ -100,6 +100,11 @@ def test_dist(dist):
         # Install aiohttp and see that async is now available
         run(venv_python, "-m", "pip", "install", "aiohttp")
         run(venv_python, "-c", f"from {dist_name} import AsyncElasticsearch")
+        run(
+            venv_python,
+            "-c",
+            f"from {dist_name}.helpers import async_scan, async_bulk, async_streaming_bulk, async_reindex",
+        )
 
         # Ensure that the namespaces are correct for the dist
         for suffix in ("", "1", "2", "5", "6", "7", "8", "9", "10"):
