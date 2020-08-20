@@ -81,6 +81,7 @@ class AIOHttpConnection(Connection):
 
         :arg host: hostname of the node (default: localhost)
         :arg port: port to use (integer, default: 9200)
+        :arg url_prefix: optional url prefix for elasticsearch
         :arg timeout: default timeout in seconds (float, default: 10)
         :arg http_auth: optional http auth information as either ':' separated
             string or a tuple
@@ -200,7 +201,7 @@ class AIOHttpConnection(Connection):
             await self._create_aiohttp_session()
 
         orig_body = body
-        url_path = url
+        url_path = self.url_prefix + url
         if params:
             query_string = urlencode(params)
         else:
@@ -219,7 +220,7 @@ class AIOHttpConnection(Connection):
             scheme=self.scheme,
             host=self.hostname,
             port=self.port,
-            path=url,
+            path=url_path,
             query_string=query_string,
             encoded=True,
         )
