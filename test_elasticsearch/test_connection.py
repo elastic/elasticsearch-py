@@ -363,7 +363,7 @@ class TestUrllib3Connection(TestCase):
 
         self.assertIsInstance(con.pool, urllib3.HTTPSConnectionPool)
 
-    def nowarn_when_test_uses_https_if_verify_certs_is_off(self):
+    def test_nowarn_when_uses_https_if_verify_certs_is_off(self):
         with warnings.catch_warnings(record=True) as w:
             con = Urllib3HttpConnection(
                 use_ssl=True, verify_certs=False, ssl_show_warn=False
@@ -591,7 +591,7 @@ class TestRequestsConnection(TestCase):
         self.assertEqual("GET", request.method)
         self.assertEqual(None, request.body)
 
-    def nowarn_when_test_uses_https_if_verify_certs_is_off(self):
+    def test_nowarn_when_uses_https_if_verify_certs_is_off(self):
         with warnings.catch_warnings(record=True) as w:
             con = self._get_mock_connection(
                 {
