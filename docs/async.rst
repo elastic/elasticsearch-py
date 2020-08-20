@@ -4,24 +4,19 @@ Using Asyncio with Elasticsearch
  .. py:module:: elasticsearch
 
 Starting in ``elasticsearch-py`` v7.8.0 for Python 3.6+ the ``elasticsearch`` package supports async/await with
-`Asyncio <https://docs.python.org/3/library/asyncio.html>`_. Install the package with the ``async``
-extra to install the `aiohttp <https://docs.aiohttp.org>`_ HTTP client and other dependencies
-required for async support:
+`Asyncio <https://docs.python.org/3/library/asyncio.html>`_ and `Aiohttp <https://docs.aiohttp.org>`_.
+You can either install ``aiohttp`` directly or use the ``[async]`` extra:
 
  .. code-block:: bash
+
+    $ python -m pip install elasticsearch>=7.8.0 aiohttp
+
+    # - OR -
 
     $ python -m pip install elasticsearch[async]>=7.8.0
 
-The same version specifiers for following the Elastic Stack apply to
-the ``async`` extra:
-
- .. code-block:: bash
-
-    # Elasticsearch 7.x
-    $ python -m pip install elasticsearch[async]>=7,<8
-
  .. note::
-    Async functionality is a new feature of this library in v7.8.0 so
+    Async functionality is a new feature of this library in v7.8.0+ so
     `please open an issue <https://github.com/elastic/elasticsearch-py/issues>`_
     if you find an issue or have a question about async support.
 
@@ -50,6 +45,66 @@ and are used in the same way as other APIs, just with an extra ``await``:
     loop.run_until_complete(main())
 
 All APIs that are available under the sync client are also available under the async client.
+
+ASGI Applications and Elastic APM
+---------------------------------
+
+`ASGI <https://asgi.readthedocs.io>`_ (Asynchronous Server Gateway Interface) is a new way to
+serve Python web applications making use of async I/O to achieve better performance.
+Some examples of ASGI frameworks include FastAPI, Django 3.0+, and Starlette.
+If you're using one of these frameworks along with Elasticsearch then you
+should be using :py:class:`~elasticsearch.AsyncElasticsearch` to avoid blocking
+the event loop with synchronous network calls for optimal performance.
+
+`Elastic APM <https://www.elastic.co/guide/en/apm/agent/python/current/index.html>`_
+also supports tracing of async Elasticsearch queries just the same as
+synchronous queries. For an example on how to configure ``AsyncElasticsearch`` with
+a popular ASGI framework `FastAPI <https://fastapi.tiangolo.com/>`_ and APM tracing
+there is a `pre-built example <https://github.com/elastic/elasticsearch-py/tree/master/examples/fastapi-apm>`_
+in the ``examples/fastapi-apm`` directory.
+
+Frequently Asked Questions
+--------------------------
+
+NameError / ImportError when importing ``AsyncElasticsearch``?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If when trying to use ``AsyncElasticsearch`` and you're receiving a ``NameError`` or ``ImportError``
+you should ensure that you're running Python 3.6+ (check with ``$ python --version``) and
+that you have ``aiohttp`` installed in your environment (check with ``$ python -m pip freeze | grep aiohttp``).
+If either of the above conditions is not met then async support won't be available.
+
+What about the ``elasticsearch-async`` package?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Previously asyncio was supported separately via the `elasticsearch-async <https://github.com/elastic/elasticsearch-py-async>`_
+package. The ``elasticsearch-async`` package has been deprecated in favor of
+``AsyncElasticsearch`` provided by the ``elasticsearch`` package
+in v7.8 and onwards.
+
+Receiving 'Unclosed client session / connector' warning?
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This warning is created by ``aiohttp`` when an open HTTP connection is
+garbage collected. You'll typically run into this when closing your application.
+To resolve the issue ensure that :meth:`~elasticsearch.AsyncElasticsearch.close`
+is called before the :py:class:`~elasticsearch.AsyncElasticsearch` instance is garbage collected.
+
+For example if using FastAPI that might look like this:
+
+ .. code-block:: python
+
+    from fastapi import FastAPI
+    from elasticsearch import AsyncElasticsearch
+
+    app = FastAPI()
+    es = AsyncElasticsearch()
+
+    # This gets called once the app is shutting down.
+    @app.on_event("shutdown")
+    async def app_shutdown():
+        await es.close()
+
 
 Async Helpers
 -------------
@@ -145,49 +200,6 @@ Reindex
 ~~~~~~~
 
  .. autofunction:: async_reindex
-
-
-Frequently Asked Questions
---------------------------
-
-NameError / ImportError when importing ``AsyncElasticsearch``?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-If when trying to use ``AsyncElasticsearch`` and you're receiving a ``NameError`` or ``ImportError``
-you should ensure that you're installing via the ``elasticsearch[async]`` extra given above.
-The ``AsyncElasticsearch`` name won't be available unless ``aiohttp`` and other async dependencies
-are installed and you're using Python 3.6 or later.
-
-What about the ``elasticsearch-async`` package?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Previously asyncio was supported separately via the `elasticsearch-async <https://github.com/elastic/elasticsearch-py-async>`_ package.
-elasticsearch-async has been deprecated in favor of ``elasticsearch`` async support.
-For Elasticsearch 7.x and later you must install
-``elasticsearch[async]`` and use ``elasticsearch.AsyncElasticsearch()``.
-
-Receiving 'Unclosed client session / connector' warning?
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-This warning is created by ``aiohttp`` when an open HTTP connection is
-garbage collected. You'll typically run into this when closing your application.
-To resolve the issue ensure that :meth:`~elasticsearch.AsyncElasticsearch.close`
-is called before the :py:class:`~elasticsearch.AsyncElasticsearch` instance is garbage collected.
-
-For example if using FastAPI that might look like this:
-
- .. code-block:: python
-
-    from fastapi import FastAPI
-    from elasticsearch import AsyncElasticsearch
-
-    app = FastAPI()
-    es = AsyncElasticsearch()
-
-    # This gets called once the app is shutting down.
-    @app.on_event("shutdown")
-    async def app_shutdown():
-        await es.close()
 
 
 API Reference
