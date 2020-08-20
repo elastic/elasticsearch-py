@@ -3,6 +3,15 @@
 Changelog
 =========
 
+7.9.1 (2020-08-19)
+------------------
+
+* Fixed the import of async helpers which were not available in 7.9.0 (`#1353`_)
+* Added support for ``url_prefix`` when using ``AIOHttpConnection`` (`#1357`_)
+
+ .. _#1353: https://github.com/elastic/elasticsearch-py/pull/1353
+ .. _#1357: https://github.com/elastic/elasticsearch-py/pull/1357
+
 7.9.0 (2020-08-18)
 ------------------
 
