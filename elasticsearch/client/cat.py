@@ -585,7 +585,9 @@ class CatClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("allow_no_datafeeds", "format", "h", "help", "s", "time", "v")
+    @query_params(
+        "allow_no_datafeeds", "allow_no_match", "format", "h", "help", "s", "time", "v"
+    )
     def ml_datafeeds(self, datafeed_id=None, params=None, headers=None):
         """
         Gets configuration and usage information about datafeeds.
@@ -595,6 +597,9 @@ class CatClient(NamespacedClient):
         :arg allow_no_datafeeds: Whether to ignore if a wildcard
             expression matches no datafeeds. (This includes `_all` string or when no
             datafeeds have been specified)
+        :arg allow_no_match: Whether to ignore if a wildcard expression
+            matches no datafeeds. (This includes `_all` string or when no datafeeds
+            have been specified)
         :arg format: a short version of the Accept header, e.g. json,
             yaml
         :arg h: Comma-separated list of column names to display
@@ -612,7 +617,17 @@ class CatClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("allow_no_jobs", "bytes", "format", "h", "help", "s", "time", "v")
+    @query_params(
+        "allow_no_jobs",
+        "allow_no_match",
+        "bytes",
+        "format",
+        "h",
+        "help",
+        "s",
+        "time",
+        "v",
+    )
     def ml_jobs(self, job_id=None, params=None, headers=None):
         """
         Gets configuration and usage information about anomaly detection jobs.
@@ -620,6 +635,9 @@ class CatClient(NamespacedClient):
 
         :arg job_id: The ID of the jobs stats to fetch
         :arg allow_no_jobs: Whether to ignore if a wildcard expression
+            matches no jobs. (This includes `_all` string or when no jobs have been
+            specified)
+        :arg allow_no_match: Whether to ignore if a wildcard expression
             matches no jobs. (This includes `_all` string or when no jobs have been
             specified)
         :arg bytes: The unit in which to display byte values  Valid

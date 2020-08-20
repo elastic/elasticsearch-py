@@ -324,7 +324,7 @@ class Elasticsearch(object):
         if doc_type in SKIP_IN_PATH:
             path = _make_path(index, "_create", id)
         else:
-            path = _make_path(index, doc_type, id)
+            path = _make_path(index, doc_type, id, "_create")
 
         return self.transport.perform_request(
             "POST" if id in SKIP_IN_PATH else "PUT",
@@ -455,7 +455,7 @@ class Elasticsearch(object):
     def clear_scroll(self, body=None, scroll_id=None, params=None, headers=None):
         """
         Explicitly clears the search context for a scroll.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-request-body.html#_clear_scroll_api>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/clear-scroll-api.html>`_
 
         :arg body: A comma-separated list of scroll IDs to clear if none
             was specified via the scroll_id parameter
