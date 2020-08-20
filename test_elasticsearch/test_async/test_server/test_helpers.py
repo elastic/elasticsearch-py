@@ -387,11 +387,14 @@ class MockResponse:
         return self.resp
 
 
-class TestScan(object):
-    async def teardown_method(self, async_client):
-        await async_client.transport.perform_request("DELETE", "/_search/scroll/_all")
+@pytest.fixture(scope="function")
+async def scan_teardown(async_client):
+    yield
+    async_client.clear_scroll(scroll_id="_all")
 
-    async def test_order_can_be_preserved(self, async_client):
+
+class TestScan(object):
+    async def test_order_can_be_preserved(self, async_client, scan_teardown):
         bulk = []
         for x in range(100):
             bulk.append({"index": {"_index": "test_index", "_id": x}})
@@ -412,7 +415,7 @@ class TestScan(object):
         assert list(map(str, range(100))) == list(d["_id"] for d in docs)
         assert list(range(100)) == list(d["_source"]["answer"] for d in docs)
 
-    async def test_all_documents_are_read(self, async_client):
+    async def test_all_documents_are_read(self, async_client, scan_teardown):
         bulk = []
         for x in range(100):
             bulk.append({"index": {"_index": "test_index", "_id": x}})
@@ -428,7 +431,7 @@ class TestScan(object):
         assert set(map(str, range(100))) == set(d["_id"] for d in docs)
         assert set(range(100)) == set(d["_source"]["answer"] for d in docs)
 
-    async def test_scroll_error(self, async_client):
+    async def test_scroll_error(self, async_client, scan_teardown):
         bulk = []
         for x in range(4):
             bulk.append({"index": {"_index": "test_index"}})
@@ -464,7 +467,7 @@ class TestScan(object):
             assert len(data) == 3
             assert data[-1] == {"scroll_data": 42}
 
-    async def test_initial_search_error(self, async_client):
+    async def test_initial_search_error(self, async_client, scan_teardown):
         with patch.object(async_client, "clear_scroll", new_callable=AsyncMock):
             with patch.object(
                 async_client,
@@ -516,7 +519,7 @@ class TestScan(object):
                         assert data == [{"search_data": 1}]
                         assert mock_scroll.calls == []
 
-    async def test_no_scroll_id_fast_route(self, async_client):
+    async def test_no_scroll_id_fast_route(self, async_client, scan_teardown):
         with patch.object(async_client, "search", MockResponse({"no": "_scroll_id"})):
             with patch.object(async_client, "scroll") as scroll_mock:
                 with patch.object(async_client, "clear_scroll") as clear_mock:
@@ -532,7 +535,7 @@ class TestScan(object):
                     clear_mock.assert_not_called()
 
     @patch("elasticsearch._async.helpers.logger")
-    async def test_logger(self, logger_mock, async_client):
+    async def test_logger(self, logger_mock, async_client, scan_teardown):
         bulk = []
         for x in range(4):
             bulk.append({"index": {"_index": "test_index"}})
@@ -573,7 +576,7 @@ class TestScan(object):
                 5,
             )
 
-    async def test_clear_scroll(self, async_client):
+    async def test_clear_scroll(self, async_client, scan_teardown):
         bulk = []
         for x in range(4):
             bulk.append({"index": {"_index": "test_index"}})
