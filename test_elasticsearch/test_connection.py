@@ -176,7 +176,7 @@ class TestUrllib3Connection(TestCase):
             )
 
         con = Urllib3HttpConnection(use_ssl=True, ssl_context=context)
-        self.assertEqual(len(con.pool.conn_kw.keys()), 1)
+        self.assertIn(len(con.pool.conn_kw.keys()), [1, 2])
         self.assertIsInstance(con.pool.conn_kw["ssl_context"], ssl.SSLContext)
         self.assertTrue(con.use_ssl)
 

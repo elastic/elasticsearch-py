@@ -87,6 +87,10 @@ class Urllib3HttpConnection(Connection):
     :arg maxsize: the number of connections which will be kept open to this
         host. See https://urllib3.readthedocs.io/en/1.4/pools.html#api for more
         information.
+    :arg source_address: tuple of (host, port) for the socket to bind as a source address
+        before making the connection. An host of '' or port 0 tells the OS to use the default.
+        See https://urllib3.readthedocs.io/en/latest/reference/index.html#module-urllib3.connection
+        for more information.
     :arg headers: any custom http headers to be add to requests
     :arg http_compress: Use gzip compression
     :arg cloud_id: The Cloud ID from ElasticCloud. Convenient way to connect to cloud instances.
@@ -111,6 +115,7 @@ class Urllib3HttpConnection(Connection):
         ssl_assert_hostname=None,
         ssl_assert_fingerprint=None,
         maxsize=10,
+        source_address=("", 0),
         headers=None,
         ssl_context=None,
         http_compress=None,
@@ -209,7 +214,12 @@ class Urllib3HttpConnection(Connection):
                     urllib3.disable_warnings()
 
         self.pool = pool_class(
-            self.hostname, port=self.port, timeout=self.timeout, maxsize=maxsize, **kw
+            self.hostname,
+            port=self.port,
+            timeout=self.timeout,
+            maxsize=maxsize,
+            source_address=source_address,
+            **kw
         )
 
     def perform_request(
