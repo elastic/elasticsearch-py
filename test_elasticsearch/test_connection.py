@@ -534,7 +534,9 @@ class TestRequestsConnection(TestCase):
         self.assertNotIn("accept-encoding", req.headers)
 
     def test_http_compression(self):
-        con = self._get_mock_connection({"http_compress": True},)
+        con = self._get_mock_connection(
+            {"http_compress": True},
+        )
 
         self.assertTrue(con.http_compress)
 
