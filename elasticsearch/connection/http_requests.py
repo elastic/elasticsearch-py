@@ -110,7 +110,10 @@ class RequestsHttpConnection(Connection):
                 http_auth = tuple(http_auth.split(":", 1))
             self.session.auth = http_auth
 
-        self.base_url = "%s%s" % (self.host, self.url_prefix,)
+        self.base_url = "%s%s" % (
+            self.host,
+            self.url_prefix,
+        )
         self.session.verify = verify_certs
         if not client_key:
             self.session.cert = client_cert

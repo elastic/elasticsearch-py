@@ -312,7 +312,9 @@ class AIOHttpConnection(Connection):
             cookie_jar=aiohttp.DummyCookieJar(),
             response_class=ESClientResponse,
             connector=aiohttp.TCPConnector(
-                limit=self._limit, use_dns_cache=True, ssl=self._ssl_context,
+                limit=self._limit,
+                use_dns_cache=True,
+                ssl=self._ssl_context,
             ),
         )
 
