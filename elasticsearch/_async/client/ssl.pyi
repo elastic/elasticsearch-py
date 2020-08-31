@@ -15,12 +15,20 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from ...client.utils import (  # noqa
-    _make_path,
-    _normalize_hosts,
-    _escape,
-    _bulk_body,
-    query_params,
-    SKIP_IN_PATH,
-    NamespacedClient as NamespacedClient,
-)
+from typing import Any, Mapping, Optional, Union, Collection
+from .utils import NamespacedClient
+
+class SslClient(NamespacedClient):
+    async def certificates(
+        self,
+        pretty: Optional[bool] = ...,
+        human: Optional[bool] = ...,
+        error_trace: Optional[bool] = ...,
+        format: Optional[str] = ...,
+        filter_path: Optional[Union[str, Collection[str]]] = ...,
+        request_timeout: Optional[Union[int, float]] = ...,
+        ignore: Optional[Union[int, Collection[int]]] = ...,
+        opaque_id: Optional[str] = ...,
+        params: Optional[Mapping[str, Any]] = ...,
+        headers: Optional[Mapping[str, str]] = ...,
+    ) -> Any: ...

@@ -15,12 +15,18 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from ...client.utils import (  # noqa
-    _make_path,
-    _normalize_hosts,
-    _escape,
-    _bulk_body,
-    query_params,
-    SKIP_IN_PATH,
-    NamespacedClient as NamespacedClient,
-)
+from typing import Any, Mapping, Optional, Union, Collection
+from .utils import NamespacedClient
+
+class RemoteClient(NamespacedClient):
+    async def info(
+        self,
+        timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        human: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        format: Optional[str] = None,
+        filter_path: Optional[Union[str, Collection[str]]] = None,
+        params: Optional[Mapping[str, Any]] = None,
+        headers: Optional[Mapping[str, str]] = None,
+    ) -> Any: ...

@@ -1972,3 +1972,40 @@ class AsyncElasticsearch(object):
             headers=headers,
             body=body,
         )
+
+    @query_params()
+    async def close_point_in_time(self, body=None, params=None, headers=None):
+        """
+        Close a point in time
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time.html>`_
+
+        :arg body: a point-in-time id to close
+        """
+        return await self.transport.perform_request(
+            "DELETE", "/_pit", params=params, headers=headers, body=body
+        )
+
+    @query_params(
+        "expand_wildcards", "ignore_unavailable", "keep_alive", "preference", "routing"
+    )
+    async def open_point_in_time(self, index=None, params=None, headers=None):
+        """
+        Open a point in time that can be used in subsequent searches
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time.html>`_
+
+        :arg index: A comma-separated list of index names to open point
+            in time; use `_all` or empty string to perform the operation on all
+            indices
+        :arg expand_wildcards: Whether to expand wildcard expression to
+            concrete indices that are open, closed or both.  Valid choices: open,
+            closed, hidden, none, all  Default: open
+        :arg ignore_unavailable: Whether specified concrete indices
+            should be ignored when unavailable (missing or closed)
+        :arg keep_alive: Specific the time to live for the point in time
+        :arg preference: Specify the node or shard the operation should
+            be performed on (default: random)
+        :arg routing: Specific routing value
+        """
+        return await self.transport.perform_request(
+            "POST", _make_path(index, "_pit"), params=params, headers=headers
+        )
