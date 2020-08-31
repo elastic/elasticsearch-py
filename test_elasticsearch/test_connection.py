@@ -42,6 +42,12 @@ from elasticsearch import __versionstr__
 from .test_cases import TestCase, SkipTest
 
 
+CLOUD_ID_PORT_443 = "cluster:d2VzdGV1cm9wZS5henVyZS5lbGFzdGljLWNsb3VkLmNvbTo0NDMkZTdkZTlmMTM0NWU0NDkwMjgzZDkwM2JlNWI2ZjkxOWUk"
+CLOUD_ID_KIBANA = "cluster:d2VzdGV1cm9wZS5henVyZS5lbGFzdGljLWNsb3VkLmNvbSQ4YWY3ZWUzNTQyMGY0NThlOTAzMDI2YjQwNjQwODFmMiQyMDA2MTU1NmM1NDA0OTg2YmZmOTU3ZDg0YTZlYjUxZg=="
+CLOUD_ID_PORT_AND_KIBANA = "cluster:d2VzdGV1cm9wZS5henVyZS5lbGFzdGljLWNsb3VkLmNvbTo5MjQzJGM2NjM3ZjMxMmM1MjQzY2RhN2RlZDZlOTllM2QyYzE5JA=="
+CLOUD_ID_NO_PORT_OR_KIBANA = "cluster:d2VzdGV1cm9wZS5henVyZS5lbGFzdGljLWNsb3VkLmNvbSRlN2RlOWYxMzQ1ZTQ0OTAyODNkOTAzYmU1YjZmOTE5ZSQ="
+
+
 def gzip_decompress(data):
     buf = gzip.GzipFile(fileobj=io.BytesIO(data), mode="rb")
     return buf.read()
@@ -50,9 +56,7 @@ def gzip_decompress(data):
 class TestBaseConnection(TestCase):
     def test_parse_cloud_id(self):
         # Embedded port in cloud_id
-        con = Connection(
-            cloud_id="cluster:d2VzdGV1cm9wZS5henVyZS5lbGFzdGljLWNsb3VkLmNvbTo5MjQzJGM2NjM3ZjMxMmM1MjQzY2RhN2RlZDZlOTllM2QyYzE5"
-        )
+        con = Connection(cloud_id=CLOUD_ID_PORT_AND_KIBANA)
         self.assertEqual(
             con.host,
             "https://c6637f312c5243cda7ded6e99e3d2c19.westeurope.azure.elastic-cloud.com:9243",
@@ -65,7 +69,7 @@ class TestBaseConnection(TestCase):
 
         # Embedded port but overridden
         con = Connection(
-            cloud_id="cluster:d2VzdGV1cm9wZS5henVyZS5lbGFzdGljLWNsb3VkLmNvbTo5MjQzJGM2NjM3ZjMxMmM1MjQzY2RhN2RlZDZlOTllM2QyYzE5",
+            cloud_id=CLOUD_ID_PORT_AND_KIBANA,
             port=443,
         )
         self.assertEqual(
@@ -79,9 +83,7 @@ class TestBaseConnection(TestCase):
         )
 
         # Port is 443, removed by default.
-        con = Connection(
-            cloud_id="cluster:d2VzdGV1cm9wZS5henVyZS5lbGFzdGljLWNsb3VkLmNvbSRlN2RlOWYxMzQ1ZTQ0OTAyODNkOTAzYmU1YjZmOTE5ZQ=="
-        )
+        con = Connection(cloud_id=CLOUD_ID_PORT_443)
         self.assertEqual(
             con.host,
             "https://e7de9f1345e4490283d903be5b6f919e.westeurope.azure.elastic-cloud.com",
@@ -93,9 +95,7 @@ class TestBaseConnection(TestCase):
         )
 
         # No port, contains Kibana UUID
-        con = Connection(
-            cloud_id="cluster:d2VzdGV1cm9wZS5henVyZS5lbGFzdGljLWNsb3VkLmNvbSQ4YWY3ZWUzNTQyMGY0NThlOTAzMDI2YjQwNjQwODFmMiQyMDA2MTU1NmM1NDA0OTg2YmZmOTU3ZDg0YTZlYjUxZg=="
-        )
+        con = Connection(cloud_id=CLOUD_ID_KIBANA)
         self.assertEqual(
             con.host,
             "https://8af7ee35420f458e903026b4064081f2.westeurope.azure.elastic-cloud.com",
