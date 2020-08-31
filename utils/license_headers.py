@@ -21,6 +21,7 @@ error out if 'fix' would have changed the file.
 """
 
 import os
+import re
 import sys
 from typing import List, Iterator
 from itertools import chain
@@ -64,7 +65,7 @@ def find_files_to_fix(sources: List[str]) -> Iterator[str]:
 
 
 def does_file_need_fix(filepath: str) -> bool:
-    if not filepath.endswith(".py"):
+    if not re.search(r"\.pyi?$", filepath):
         return False
     with open(filepath, mode="r") as f:
         first_license_line = None

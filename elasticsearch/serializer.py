@@ -63,7 +63,17 @@ except ImportError:
     pd = None
 
 
-class TextSerializer(object):
+class Serializer(object):
+    mimetype = ""
+
+    def loads(self, s):
+        raise NotImplementedError
+
+    def dumps(self, data):
+        raise NotImplementedError()
+
+
+class TextSerializer(Serializer):
     mimetype = "text/plain"
 
     def loads(self, s):
@@ -76,7 +86,7 @@ class TextSerializer(object):
         raise SerializationError("Cannot serialize %r into text." % data)
 
 
-class JSONSerializer(object):
+class JSONSerializer(Serializer):
     mimetype = "application/json"
 
     def default(self, data):
