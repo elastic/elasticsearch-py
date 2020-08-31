@@ -47,16 +47,33 @@ def blacken(session):
 
 @nox.session()
 def lint(session):
-    session.install("flake8", "black")
+    session.install("flake8", "black", "mypy")
 
     session.run("black", "--target-version=py27", "--check", *SOURCE_FILES)
     session.run("flake8", *SOURCE_FILES)
     session.run("python", "utils/license_headers.py", "check", *SOURCE_FILES)
 
+    # Workaround to make '-r' to still work despite uninstalling aiohttp below.
+    session.run("python", "-m", "pip", "install", "aiohttp")
+
+    # Run mypy on the package and then the type examples separately for
+    # the two different mypy use-cases, ourselves and our users.
+    session.run("mypy", "--strict", "elasticsearch/")
+    session.run("mypy", "--strict", "test_elasticsearch/test_types/")
+
+    # Make sure we don't require aiohttp to be installed for users to
+    # receive type hint information from mypy.
+    session.run("python", "-m", "pip", "uninstall", "--yes", "aiohttp", "yarl")
+    session.run("mypy", "--strict", "elasticsearch/")
+    session.run("mypy", "--strict", "test_elasticsearch/test_types/sync_types.py")
+
 
 @nox.session()
 def docs(session):
     session.install(".")
-    session.install("-rdev-requirements.txt", "sphinx-rtd-theme")
+    session.install(
+        "-rdev-requirements.txt", "sphinx-rtd-theme", "sphinx-autodoc-typehints"
+    )
+    session.run("python", "-m", "pip", "install", "sphinx-autodoc-typehints")
 
     session.run("sphinx-build", "docs/sphinx/", "docs/sphinx/_build", "-b", "html")

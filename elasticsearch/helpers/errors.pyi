@@ -15,17 +15,13 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+from typing import List, Any
 from ..exceptions import ElasticsearchException
-
 
 class BulkIndexError(ElasticsearchException):
     @property
-    def errors(self):
-        """ List of errors from execution of the last chunk. """
-        return self.args[1]
-
+    def errors(self) -> List[Any]: ...
 
 class ScanError(ElasticsearchException):
-    def __init__(self, scroll_id, *args, **kwargs):
-        super(ScanError, self).__init__(*args, **kwargs)  # type: ignore
-        self.scroll_id = scroll_id
+    scroll_id: str
+    def __init__(self, scroll_id: str, *args: Any, **kwargs: Any) -> None: ...

@@ -15,17 +15,27 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from ..exceptions import ElasticsearchException
+from typing import Optional, Any, Mapping
+import requests
+from .base import Connection
 
-
-class BulkIndexError(ElasticsearchException):
-    @property
-    def errors(self):
-        """ List of errors from execution of the last chunk. """
-        return self.args[1]
-
-
-class ScanError(ElasticsearchException):
-    def __init__(self, scroll_id, *args, **kwargs):
-        super(ScanError, self).__init__(*args, **kwargs)  # type: ignore
-        self.scroll_id = scroll_id
+class RequestsHttpConnection(Connection):
+    session: requests.Session
+    def __init__(
+        self,
+        host: str = ...,
+        port: Optional[int] = ...,
+        http_auth: Optional[Any] = ...,
+        use_ssl: bool = ...,
+        verify_certs: bool = ...,
+        ssl_show_warn: bool = ...,
+        ca_certs: Optional[Any] = ...,
+        client_cert: Optional[Any] = ...,
+        client_key: Optional[Any] = ...,
+        headers: Optional[Mapping[str, str]] = ...,
+        http_compress: Optional[bool] = ...,
+        cloud_id: Optional[str] = ...,
+        api_key: Optional[Any] = ...,
+        opaque_id: Optional[str] = ...,
+        **kwargs: Any
+    ) -> None: ...
