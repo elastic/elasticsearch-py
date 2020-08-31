@@ -15,17 +15,10 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from ..exceptions import ElasticsearchException
+from .base import Connection
 
-
-class BulkIndexError(ElasticsearchException):
-    @property
-    def errors(self):
-        """ List of errors from execution of the last chunk. """
-        return self.args[1]
-
-
-class ScanError(ElasticsearchException):
-    def __init__(self, scroll_id, *args, **kwargs):
-        super(ScanError, self).__init__(*args, **kwargs)  # type: ignore
-        self.scroll_id = scroll_id
+class PoolingConnection(Connection):
+    def _make_connection(self) -> Connection: ...
+    def _get_connection(self) -> Connection: ...
+    def _release_connection(self, con: Connection) -> None: ...
+    def close(self) -> None: ...

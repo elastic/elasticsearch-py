@@ -15,6 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+# type: ignore
+
 import time
 import os
 from unittest import TestCase, SkipTest

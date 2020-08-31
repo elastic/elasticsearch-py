@@ -61,6 +61,9 @@ setup(
         "Issue Tracker": "https://github.com/elastic/elasticsearch-py/issues",
     },
     packages=find_packages(where=".", exclude=("test_elasticsearch*",)),
+    package_data={"elasticsearch": ["py.typed"]},
+    include_package_data=True,
+    zip_safe=False,
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "License :: OSI Approved :: Apache Software License",

@@ -7,6 +7,7 @@ include README.rst
 include README
 include tox.ini
 include setup.py
+recursive-include elasticsearch* py.typed
 recursive-include docs *
 
 prune docs/_build

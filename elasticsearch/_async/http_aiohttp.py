@@ -18,13 +18,9 @@
 import asyncio
 import ssl
 import os
-import urllib3
+import urllib3  # type: ignore
 import warnings
-
-import aiohttp
-import yarl
-from aiohttp.client_exceptions import ServerFingerprintMismatch, ServerTimeoutError
-
+from ._extra_imports import aiohttp_exceptions, aiohttp, yarl
 from .compat import get_running_loop
 from ..connection import Connection
 from ..compat import urlencode
@@ -52,7 +48,26 @@ except ImportError:
     pass
 
 
-class AIOHttpConnection(Connection):
+class AsyncConnection(Connection):
+    """Base class for Async HTTP connection implementations"""
+
+    async def perform_request(
+        self,
+        method,
+        url,
+        params=None,
+        body=None,
+        timeout=None,
+        ignore=(),
+        headers=None,
+    ):
+        raise NotImplementedError()
+
+    async def close(self):
+        raise NotImplementedError()
+
+
+class AIOHttpConnection(AsyncConnection):
     def __init__(
         self,
         host="localhost",
@@ -199,6 +214,7 @@ class AIOHttpConnection(Connection):
     ):
         if self.session is None:
             await self._create_aiohttp_session()
+        assert self.session is not None
 
         orig_body = body
         url_path = self.url_prefix + url
@@ -260,11 +276,18 @@ class AIOHttpConnection(Connection):
 
         except Exception as e:
             self.log_request_fail(
-                method, url, url_path, orig_body, self.loop.time() - start, exception=e
+                method,
+                str(url),
+                url_path,
+                orig_body,
+                self.loop.time() - start,
+                exception=e,
             )
-            if isinstance(e, ServerFingerprintMismatch):
+            if isinstance(e, aiohttp_exceptions.ServerFingerprintMismatch):
                 raise SSLError("N/A", str(e), e)
-            if isinstance(e, (asyncio.TimeoutError, ServerTimeoutError)):
+            if isinstance(
+                e, (asyncio.TimeoutError, aiohttp_exceptions.ServerTimeoutError)
+            ):
                 raise ConnectionTimeout("TIMEOUT", str(e), e)
             raise ConnectionError("N/A", str(e), e)
 
@@ -276,7 +299,7 @@ class AIOHttpConnection(Connection):
         if not (200 <= response.status < 300) and response.status not in ignore:
             self.log_request_fail(
                 method,
-                url,
+                str(url),
                 url_path,
                 orig_body,
                 duration,
@@ -286,7 +309,7 @@ class AIOHttpConnection(Connection):
             self._raise_error(response.status, raw_data)
 
         self.log_request_success(
-            method, url, url_path, orig_body, response.status, raw_data, duration
+            method, str(url), url_path, orig_body, response.status, raw_data, duration
         )
 
         return response.status, response.headers, raw_data
@@ -312,9 +335,7 @@ class AIOHttpConnection(Connection):
             cookie_jar=aiohttp.DummyCookieJar(),
             response_class=ESClientResponse,
             connector=aiohttp.TCPConnector(
-                limit=self._limit,
-                use_dns_cache=True,
-                ssl=self._ssl_context,
+                limit=self._limit, use_dns_cache=True, ssl=self._ssl_context
             ),
         )
 

@@ -17,9 +17,9 @@
 
 import time
 import ssl
-import urllib3
-from urllib3.exceptions import ReadTimeoutError, SSLError as UrllibSSLError
-from urllib3.util.retry import Retry
+import urllib3  # type: ignore
+from urllib3.exceptions import ReadTimeoutError, SSLError as UrllibSSLError  # type: ignore
+from urllib3.util.retry import Retry  # type: ignore
 import warnings
 
 from .base import Connection

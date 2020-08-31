@@ -15,17 +15,30 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from ..exceptions import ElasticsearchException
+import sys
+from typing import Tuple
 
+PY2: bool
+string_types: Tuple[type, ...]
 
-class BulkIndexError(ElasticsearchException):
-    @property
-    def errors(self):
-        """ List of errors from execution of the last chunk. """
-        return self.args[1]
+if sys.version_info[0] == 2:
+    from urllib import (
+        quote_plus as quote_plus,
+        quote as quote,
+        urlencode as urlencode,
+        unquote as unquote,
+    )
+    from urlparse import urlparse as urlparse
+    from itertools import imap as map
+    from Queue import Queue as Queue
+else:
+    from urllib.parse import (
+        quote as quote,
+        quote_plus as quote_plus,
+        urlencode as urlencode,
+        urlparse as urlparse,
+        unquote as unquote,
+    )
 
-
-class ScanError(ElasticsearchException):
-    def __init__(self, scroll_id, *args, **kwargs):
-        super(ScanError, self).__init__(*args, **kwargs)  # type: ignore
-        self.scroll_id = scroll_id
+    map = map
+    from queue import Queue as Queue

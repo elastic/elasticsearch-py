@@ -84,10 +84,15 @@ try:
     if sys.version_info < (3, 6):
         raise ImportError
 
-    from ._async.http_aiohttp import AIOHttpConnection
+    from ._async.http_aiohttp import AIOHttpConnection, AsyncConnection
     from ._async.transport import AsyncTransport
     from ._async.client import AsyncElasticsearch
 
-    __all__ += ["AIOHttpConnection", "AsyncTransport", "AsyncElasticsearch"]
+    __all__ += [
+        "AIOHttpConnection",
+        "AsyncConnection",
+        "AsyncTransport",
+        "AsyncElasticsearch",
+    ]
 except (ImportError, SyntaxError):
     pass
