@@ -19,7 +19,7 @@ from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH, _bu
 
 
 class MlClient(NamespacedClient):
-    @query_params("allow_no_jobs", "force", "timeout")
+    @query_params("allow_no_jobs", "allow_no_match", "force", "timeout")
     def close_job(self, job_id, body=None, params=None, headers=None):
         """
         Closes one or more anomaly detection jobs. A job can be opened and closed
@@ -29,6 +29,9 @@ class MlClient(NamespacedClient):
         :arg job_id: The name of the job to close
         :arg body: The URL params optionally sent in the body
         :arg allow_no_jobs: Whether to ignore if a wildcard expression
+            matches no jobs. (This includes `_all` string or when no jobs have been
+            specified)
+        :arg allow_no_match: Whether to ignore if a wildcard expression
             matches no jobs. (This includes `_all` string or when no jobs have been
             specified)
         :arg force: True if the job should be forcefully closed
@@ -490,7 +493,7 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("allow_no_datafeeds")
+    @query_params("allow_no_datafeeds", "allow_no_match")
     def get_datafeed_stats(self, datafeed_id=None, params=None, headers=None):
         """
         Retrieves usage information for datafeeds.
@@ -500,6 +503,9 @@ class MlClient(NamespacedClient):
         :arg allow_no_datafeeds: Whether to ignore if a wildcard
             expression matches no datafeeds. (This includes `_all` string or when no
             datafeeds have been specified)
+        :arg allow_no_match: Whether to ignore if a wildcard expression
+            matches no datafeeds. (This includes `_all` string or when no datafeeds
+            have been specified)
         """
         return self.transport.perform_request(
             "GET",
@@ -508,7 +514,7 @@ class MlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("allow_no_datafeeds")
+    @query_params("allow_no_datafeeds", "allow_no_match")
     def get_datafeeds(self, datafeed_id=None, params=None, headers=None):
         """
         Retrieves configuration information for datafeeds.
@@ -518,6 +524,9 @@ class MlClient(NamespacedClient):
         :arg allow_no_datafeeds: Whether to ignore if a wildcard
             expression matches no datafeeds. (This includes `_all` string or when no
             datafeeds have been specified)
+        :arg allow_no_match: Whether to ignore if a wildcard expression
+            matches no datafeeds. (This includes `_all` string or when no datafeeds
+            have been specified)
         """
         return self.transport.perform_request(
             "GET",
@@ -590,7 +599,7 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("allow_no_jobs")
+    @query_params("allow_no_jobs", "allow_no_match")
     def get_job_stats(self, job_id=None, params=None, headers=None):
         """
         Retrieves usage information for anomaly detection jobs.
@@ -598,6 +607,9 @@ class MlClient(NamespacedClient):
 
         :arg job_id: The ID of the jobs stats to fetch
         :arg allow_no_jobs: Whether to ignore if a wildcard expression
+            matches no jobs. (This includes `_all` string or when no jobs have been
+            specified)
+        :arg allow_no_match: Whether to ignore if a wildcard expression
             matches no jobs. (This includes `_all` string or when no jobs have been
             specified)
         """
@@ -608,7 +620,7 @@ class MlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("allow_no_jobs")
+    @query_params("allow_no_jobs", "allow_no_match")
     def get_jobs(self, job_id=None, params=None, headers=None):
         """
         Retrieves configuration information for anomaly detection jobs.
@@ -616,6 +628,9 @@ class MlClient(NamespacedClient):
 
         :arg job_id: The ID of the jobs to fetch
         :arg allow_no_jobs: Whether to ignore if a wildcard expression
+            matches no jobs. (This includes `_all` string or when no jobs have been
+            specified)
+        :arg allow_no_match: Whether to ignore if a wildcard expression
             matches no jobs. (This includes `_all` string or when no jobs have been
             specified)
         """
@@ -665,6 +680,7 @@ class MlClient(NamespacedClient):
 
     @query_params(
         "allow_no_jobs",
+        "allow_no_match",
         "bucket_span",
         "end",
         "exclude_interim",
@@ -683,6 +699,9 @@ class MlClient(NamespacedClient):
         :arg body: Overall bucket selection details if not provided in
             URI
         :arg allow_no_jobs: Whether to ignore if a wildcard expression
+            matches no jobs. (This includes `_all` string or when no jobs have been
+            specified)
+        :arg allow_no_match: Whether to ignore if a wildcard expression
             matches no jobs. (This includes `_all` string or when no jobs have been
             specified)
         :arg bucket_span: The span of the overall buckets. Defaults to
@@ -1040,16 +1059,20 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("allow_no_datafeeds", "force", "timeout")
-    def stop_datafeed(self, datafeed_id, params=None, headers=None):
+    @query_params("allow_no_datafeeds", "allow_no_match", "force", "timeout")
+    def stop_datafeed(self, datafeed_id, body=None, params=None, headers=None):
         """
         Stops one or more datafeeds.
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-stop-datafeed.html>`_
 
         :arg datafeed_id: The ID of the datafeed to stop
+        :arg body: The URL params optionally sent in the body
         :arg allow_no_datafeeds: Whether to ignore if a wildcard
             expression matches no datafeeds. (This includes `_all` string or when no
             datafeeds have been specified)
+        :arg allow_no_match: Whether to ignore if a wildcard expression
+            matches no datafeeds. (This includes `_all` string or when no datafeeds
+            have been specified)
         :arg force: True if the datafeed should be forcefully stopped.
         :arg timeout: Controls the time to wait until a datafeed has
             stopped. Default to 20 seconds
@@ -1064,6 +1087,7 @@ class MlClient(NamespacedClient):
             _make_path("_ml", "datafeeds", datafeed_id, "_stop"),
             params=params,
             headers=headers,
+            body=body,
         )
 
     @query_params(
@@ -1413,6 +1437,7 @@ class MlClient(NamespacedClient):
         "decompress_definition",
         "for_export",
         "from_",
+        "include",
         "include_model_definition",
         "size",
         "tags",
@@ -1432,6 +1457,9 @@ class MlClient(NamespacedClient):
         :arg for_export: Omits fields that are illegal to set on model
             PUT
         :arg from_: skips a number of trained models
+        :arg include: A comma-separate list of fields to optionally
+            include. Valid options are 'definition' and 'total_feature_importance'.
+            Default is none.
         :arg include_model_definition: Should the full model definition
             be included in the results. These definitions can be large. So be
             cautious when including them. Defaults to false.
