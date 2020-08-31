@@ -61,6 +61,16 @@ XPACK_PATH = (
     / "rest-api-spec"
     / "api"
 )
+GLOBAL_QUERY_PARAMS = {
+    "pretty": "Optional[bool]",
+    "human": "Optional[bool]",
+    "error_trace": "Optional[bool]",
+    "format": "Optional[str]",
+    "filter_path": "Optional[Union[str, Collection[str]]]",
+    "request_timeout": "Optional[Union[int, float]]",
+    "ignore": "Optional[Union[int, Collection[int]]]",
+    "opaque_id": "Optional[str]",
+}
 
 jinja_env = Environment(
     loader=FileSystemLoader([CODE_ROOT / "utils" / "templates"]),
@@ -77,14 +87,19 @@ def blacken(filename):
 
 @lru_cache()
 def is_valid_url(url):
-    return http.request("HEAD", url).status == 200
+    return 200 <= http.request("HEAD", url).status < 400
 
 
 class Module:
-    def __init__(self, namespace):
+    def __init__(self, namespace, is_pyi=False):
         self.namespace = namespace
+        self.is_pyi = is_pyi
         self._apis = []
         self.parse_orig()
+
+        if not is_pyi:
+            self.pyi = Module(namespace, is_pyi=True)
+            self.pyi.orders = self.orders[:]
 
     def add(self, api):
         self._apis.append(api)
@@ -127,17 +142,23 @@ class Module:
             f.write(self.header)
             for api in self._apis:
                 f.write(api.to_python())
-        blacken(self.filepath)
+
+        if not self.is_pyi:
+            self.pyi.dump()
 
     @property
     def filepath(self):
-        return CODE_ROOT / f"elasticsearch/_async/client/{self.namespace}.py"
+        return (
+            CODE_ROOT
+            / f"elasticsearch/_async/client/{self.namespace}.py{'i' if self.is_pyi else ''}"
+        )
 
 
 class API:
-    def __init__(self, namespace, name, definition):
+    def __init__(self, namespace, name, definition, is_pyi=False):
         self.namespace = namespace
         self.name = name
+        self.is_pyi = is_pyi
 
         # overwrite the dict to maintain key order
         definition["params"] = {
@@ -186,6 +207,7 @@ class API:
             parts[p]["required"] = all(
                 p in url.get("parts", {}) for url in self._def["url"]["paths"]
             )
+            parts[p]["type"] = "Any"
 
             # This piece of logic corresponds to calling
             # client.tasks.get() w/o a task_id which was erroneously
@@ -240,6 +262,19 @@ class API:
         )
 
     @property
+    def all_func_params(self):
+        """Parameters that will be in the '@query_params' decorator list
+        and parameters that will be in the function signature.
+        This doesn't include
+        """
+        params = list(self._def.get("params", {}).keys())
+        for url in self._def["url"]["paths"]:
+            params.extend(url.get("parts", {}).keys())
+        if self.body:
+            params.append("body")
+        return params
+
+    @property
     def path(self):
         return max(
             (path for path in self._def["url"]["paths"]),
@@ -285,12 +320,18 @@ class API:
         return required
 
     def to_python(self):
-        try:
-            t = jinja_env.get_template(f"overrides/{self.namespace}/{self.name}")
-        except TemplateNotFound:
-            t = jinja_env.get_template("base")
+        if self.is_pyi:
+            t = jinja_env.get_template("base_pyi")
+        else:
+            try:
+                t = jinja_env.get_template(f"overrides/{self.namespace}/{self.name}")
+            except TemplateNotFound:
+                t = jinja_env.get_template("base")
+
         return t.render(
-            api=self, substitutions={v: k for k, v in SUBSTITUTIONS.items()}
+            api=self,
+            substitutions={v: k for k, v in SUBSTITUTIONS.items()},
+            global_query_params=GLOBAL_QUERY_PARAMS,
         )
 
 
@@ -319,6 +360,7 @@ def read_modules():
                 modules[namespace] = Module(namespace)
 
             modules[namespace].add(API(namespace, name, api))
+            modules[namespace].pyi.add(API(namespace, name, api, is_pyi=True))
 
     return modules
 
@@ -346,7 +388,14 @@ def dump_modules(modules):
     filepaths = []
     for root, _, filenames in os.walk(CODE_ROOT / "elasticsearch/_async"):
         for filename in filenames:
-            if filename.endswith(".py") and filename != "utils.py":
+            if (
+                filename.rpartition(".")[-1]
+                in (
+                    "py",
+                    "pyi",
+                )
+                and not filename.startswith("utils.py")
+            ):
                 filepaths.append(os.path.join(root, filename))
 
     unasync.unasync_files(filepaths, rules)
