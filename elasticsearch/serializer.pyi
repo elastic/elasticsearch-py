@@ -15,17 +15,30 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from ..exceptions import ElasticsearchException
+from typing import Optional, Any, Dict
 
+class Serializer(object):
+    mimetype: str
+    def loads(self, s: str) -> Any: ...
+    def dumps(self, data: Any) -> str: ...
 
-class BulkIndexError(ElasticsearchException):
-    @property
-    def errors(self):
-        """ List of errors from execution of the last chunk. """
-        return self.args[1]
+class TextSerializer(Serializer):
+    mimetype: str
+    def loads(self, s: str) -> Any: ...
+    def dumps(self, data: Any) -> str: ...
 
+class JSONSerializer(Serializer):
+    mimetype: str
+    def default(self, data: Any) -> Any: ...
+    def loads(self, s: str) -> Any: ...
+    def dumps(self, data: Any) -> str: ...
 
-class ScanError(ElasticsearchException):
-    def __init__(self, scroll_id, *args, **kwargs):
-        super(ScanError, self).__init__(*args, **kwargs)  # type: ignore
-        self.scroll_id = scroll_id
+DEFAULT_SERIALIZERS: Dict[str, Serializer]
+
+class Deserializer(object):
+    def __init__(
+        self,
+        serializers: Dict[str, Serializer],
+        default_mimetype: str = ...,
+    ) -> None: ...
+    def loads(self, s: str, mimetype: Optional[str] = ...) -> Any: ...

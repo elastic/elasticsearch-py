@@ -223,6 +223,18 @@ class Connection(object):
                 self._pretty_json(response).replace("\n", "\n#") if response else "",
             )
 
+    def perform_request(
+        self,
+        method,
+        url,
+        params=None,
+        body=None,
+        timeout=None,
+        ignore=(),
+        headers=None,
+    ):
+        raise NotImplementedError()
+
     def log_request_success(
         self, method, full_url, path, body, status_code, response, duration
     ):

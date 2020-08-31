@@ -15,17 +15,17 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from ..exceptions import ElasticsearchException
+from typing import Any, Tuple
+from unittest import TestCase
+from ..client import Elasticsearch
 
+def get_test_client(nowait: bool = ..., **kwargs: Any) -> Elasticsearch: ...
+def _get_version(version_string: str) -> Tuple[int, ...]: ...
 
-class BulkIndexError(ElasticsearchException):
-    @property
-    def errors(self):
-        """ List of errors from execution of the last chunk. """
-        return self.args[1]
-
-
-class ScanError(ElasticsearchException):
-    def __init__(self, scroll_id, *args, **kwargs):
-        super(ScanError, self).__init__(*args, **kwargs)  # type: ignore
-        self.scroll_id = scroll_id
+class ElasticsearchTestCase(TestCase):
+    @staticmethod
+    def _get_client() -> Elasticsearch: ...
+    @classmethod
+    def setup_class(cls) -> None: ...
+    def teardown_method(self, _: Any) -> None: ...
+    def es_version(self) -> Tuple[int, ...]: ...
