@@ -535,7 +535,7 @@ def scan(
                         ),
                     )
             resp = client.scroll(
-                body={"scroll_id": scroll_id, "scroll": scroll}, **scroll_kwargs
+                body={"scroll_id": scroll_id, "scroll": scroll}, headers=kwargs.get('headers', None), **scroll_kwargs
             )
             scroll_id = resp.get("_scroll_id")
 
