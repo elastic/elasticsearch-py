@@ -541,7 +541,7 @@ def scan(
 
     finally:
         if scroll_id and clear_scroll:
-            client.clear_scroll(body={"scroll_id": [scroll_id]}, ignore=(404,))
+            client.clear_scroll(body={"scroll_id": [scroll_id]}, ignore=(404,), headers=kwargs.get('headers', None))
 
 
 def reindex(
