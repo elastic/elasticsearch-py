@@ -535,13 +535,20 @@ def scan(
                         ),
                     )
             resp = client.scroll(
-                body={"scroll_id": scroll_id, "scroll": scroll}, headers=kwargs.get('headers', None), **scroll_kwargs
+                body={"scroll_id": scroll_id, "scroll": scroll},
+                headers=kwargs.get("headers", None),
+                **scroll_kwargs
             )
             scroll_id = resp.get("_scroll_id")
 
     finally:
         if scroll_id and clear_scroll:
-            client.clear_scroll(body={"scroll_id": [scroll_id]}, ignore=(404,), headers=kwargs.get('headers', None))
+            client.clear_scroll(
+                body={"scroll_id": [scroll_id]},
+                ignore=(404,),
+                headers=kwargs.get("headers", None),
+                **scroll_kwargs
+            )
 
 
 def reindex(
