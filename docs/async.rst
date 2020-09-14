@@ -151,7 +151,7 @@ Bulk and Streaming Bulk
 
     import asyncio
     from elasticsearch import AsyncElasticsearch
-    from elasticsearch.helpers import async_bulk
+    from elasticsearch.helpers import async_streaming_bulk
 
     es = AsyncElasticsearch()
 
