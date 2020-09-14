@@ -527,7 +527,7 @@ def scan(
                 if raise_on_error:
                     raise ScanError(
                         scroll_id,
-                        "Scroll request has only succeeded on %d (+%d skiped) shards out of %d."
+                        "Scroll request has only succeeded on %d (+%d skipped) shards out of %d."
                         % (
                             resp["_shards"]["successful"],
                             resp["_shards"]["skipped"],
