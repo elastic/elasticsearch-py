@@ -128,8 +128,41 @@ def test_dist(dist):
 
 def main():
     run("rm", "-rf", "build/", "dist/", "*.egg-info", ".eggs")
-    run("python", "setup.py", "sdist", "bdist_wheel")
 
+    # Grab the major version to be used as a suffix.
+    setup_py_path = os.path.join(base_dir, "setup.py")
+    with open(setup_py_path) as f:
+        major_version = re.search(r"^VERSION = \((\d+),", f.read(), re.M).group(1)
+
+    for suffix in ("", major_version):
+        run("rm", "-rf", "build/", "*.egg-info", ".eggs")
+
+        # Rename the module to fit the suffix.
+        shutil.move(
+            os.path.join(base_dir, "elasticsearch"),
+            os.path.join(base_dir, "elasticsearch%s" % suffix),
+        )
+
+        # Rewrite setup.py with the new name.
+        with open(setup_py_path) as f:
+            setup_py = f.read()
+        with open(setup_py_path, "w") as f:
+            f.truncate()
+            f.write(
+                setup_py.replace(
+                    'name="elasticsearch",', 'name="elasticsearch%s",' % suffix
+                )
+            )
+
+        # Build the sdist/wheels
+        run("python", "setup.py", "sdist", "bdist_wheel")
+
+        # Clean up everything.
+        run("git", "checkout", "--", "setup.py", "elasticsearch/")
+        if suffix:
+            run("rm", "-rf", "elasticsearch%s/" % suffix)
+
+    # Test everything that got created
     for dist in os.listdir(os.path.join(base_dir, "dist")):
         test_dist(os.path.join(base_dir, "dist", dist))
 
