@@ -59,4 +59,4 @@ def docs(session):
     session.install(".")
     session.install("-rdev-requirements.txt", "sphinx-rtd-theme")
 
-    session.run("sphinx-build", "docs/", "docs/_build", "-b", "html")
+    session.run("sphinx-build", "docs/sphinx/", "docs/sphinx/_build", "-b", "html")
