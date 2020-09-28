@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Mapping, Optional, Union, Collection
+from typing import Any, MutableMapping, Optional, Union, Collection
 from .utils import NamespacedClient
 
 class RemoteClient(NamespacedClient):
@@ -27,6 +27,6 @@ class RemoteClient(NamespacedClient):
         error_trace: Optional[bool] = None,
         format: Optional[str] = None,
         filter_path: Optional[Union[str, Collection[str]]] = None,
-        params: Optional[Mapping[str, Any]] = None,
-        headers: Optional[Mapping[str, str]] = None,
+        params: Optional[MutableMapping[str, Any]] = None,
+        headers: Optional[MutableMapping[str, str]] = None,
     ) -> Any: ...

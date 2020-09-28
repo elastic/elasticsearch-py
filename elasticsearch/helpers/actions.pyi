@@ -27,6 +27,7 @@ from typing import (
     List,
     Collection,
     Callable,
+    Dict,
 )
 import logging
 from ..client import Elasticsearch
@@ -34,7 +35,7 @@ from ..serializer import Serializer
 
 logger: logging.Logger
 
-def expand_action(data: Any) -> Tuple[str, Any]: ...
+def expand_action(data: Any) -> Tuple[Dict[str, Any], Optional[Any]]: ...
 def _chunk_actions(
     actions: Any, chunk_size: int, max_chunk_bytes: int, serializer: Serializer
 ) -> Generator[Any, None, None]: ...
@@ -53,7 +54,7 @@ def streaming_bulk(
     chunk_size: int = ...,
     max_chunk_bytes: int = ...,
     raise_on_error: bool = ...,
-    expand_action_callback: Callable[[Any], Tuple[str, Any]] = ...,
+    expand_action_callback: Callable[[Any], Tuple[Dict[str, Any], Optional[Any]]] = ...,
     raise_on_exception: bool = ...,
     max_retries: int = ...,
     initial_backoff: Union[float, int] = ...,
@@ -76,7 +77,7 @@ def parallel_bulk(
     chunk_size: int = ...,
     max_chunk_bytes: int = ...,
     queue_size: int = ...,
-    expand_action_callback: Callable[[Any], Tuple[str, Any]] = ...,
+    expand_action_callback: Callable[[Any], Tuple[Dict[str, Any], Optional[Any]]] = ...,
     *args: Any,
     **kwargs: Any
 ) -> Generator[Tuple[bool, Any], None, None]: ...

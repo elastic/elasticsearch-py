@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Mapping, Optional, Union, Collection
+from typing import Any, MutableMapping, Optional, Union, Collection
 from .utils import NamespacedClient
 
 class IndicesClient(NamespacedClient):
@@ -31,8 +31,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def refresh(
         self,
@@ -48,8 +48,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def flush(
         self,
@@ -67,8 +67,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def create(
         self,
@@ -85,8 +85,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def clone(
         self,
@@ -104,8 +104,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def get(
         self,
@@ -125,8 +125,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def open(
         self,
@@ -145,8 +145,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def close(
         self,
@@ -165,8 +165,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def delete(
         self,
@@ -184,8 +184,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def exists(
         self,
@@ -204,8 +204,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> bool: ...
     def exists_type(
         self,
@@ -223,8 +223,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> bool: ...
     def put_mapping(
         self,
@@ -244,8 +244,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def get_mapping(
         self,
@@ -263,8 +263,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def put_alias(
         self,
@@ -281,8 +281,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def exists_alias(
         self,
@@ -300,8 +300,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> bool: ...
     def get_alias(
         self,
@@ -319,8 +319,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def update_aliases(
         self,
@@ -335,8 +335,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def delete_alias(
         self,
@@ -352,8 +352,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def put_template(
         self,
@@ -370,8 +370,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def exists_template(
         self,
@@ -387,8 +387,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> bool: ...
     def get_template(
         self,
@@ -404,8 +404,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def delete_template(
         self,
@@ -420,8 +420,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def get_settings(
         self,
@@ -442,8 +442,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def put_settings(
         self,
@@ -464,8 +464,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def stats(
         self,
@@ -489,8 +489,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def segments(
         self,
@@ -507,8 +507,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def clear_cache(
         self,
@@ -528,8 +528,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def recovery(
         self,
@@ -544,8 +544,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def upgrade(
         self,
@@ -563,8 +563,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def get_upgrade(
         self,
@@ -580,8 +580,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def shard_stores(
         self,
@@ -598,8 +598,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def forcemerge(
         self,
@@ -618,8 +618,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def shrink(
         self,
@@ -637,8 +637,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def split(
         self,
@@ -656,8 +656,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def rollover(
         self,
@@ -676,8 +676,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def freeze(
         self,
@@ -696,8 +696,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def unfreeze(
         self,
@@ -716,8 +716,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def reload_search_analyzers(
         self,
@@ -733,8 +733,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def get_field_mapping(
         self,
@@ -753,8 +753,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def validate_query(
         self,
@@ -781,8 +781,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def create_data_stream(
         self,
@@ -795,8 +795,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def delete_data_stream(
         self,
@@ -809,8 +809,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def delete_index_template(
         self,
@@ -825,8 +825,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def get_index_template(
         self,
@@ -842,8 +842,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def put_index_template(
         self,
@@ -860,8 +860,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def exists_index_template(
         self,
@@ -877,8 +877,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> bool: ...
     def simulate_index_template(
         self,
@@ -895,8 +895,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def get_data_stream(
         self,
@@ -909,8 +909,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def simulate_template(
         self,
@@ -927,8 +927,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def resolve_index(
         self,
@@ -942,8 +942,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def add_block(
         self,
@@ -962,8 +962,8 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def data_streams_stats(
         self,
@@ -976,6 +976,6 @@ class IndicesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
