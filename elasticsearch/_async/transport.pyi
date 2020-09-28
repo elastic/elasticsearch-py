@@ -63,8 +63,8 @@ class AsyncTransport(object):
             [Dict[str, Any], Dict[str, Any]], Optional[Dict[str, Any]]
         ] = ...,
         sniff_on_start: bool = ...,
-        sniffer_timeout: Optional[Union[float, int]] = ...,
-        sniff_timeout: Union[float, int] = ...,
+        sniffer_timeout: Optional[float] = ...,
+        sniff_timeout: float = ...,
         sniff_on_connection_fail: bool = ...,
         serializer: Serializer = ...,
         serializers: Optional[Mapping[str, Serializer]] = ...,
@@ -87,5 +87,5 @@ class AsyncTransport(object):
         headers: Optional[Mapping[str, str]] = ...,
         params: Optional[Mapping[str, Any]] = ...,
         body: Optional[Any] = ...,
-    ) -> Union[bool, str]: ...
+    ) -> Union[bool, Any]: ...
     async def close(self) -> None: ...

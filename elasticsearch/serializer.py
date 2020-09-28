@@ -67,7 +67,7 @@ class Serializer(object):
     mimetype = ""
 
     def loads(self, s):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def dumps(self, data):
         raise NotImplementedError()
