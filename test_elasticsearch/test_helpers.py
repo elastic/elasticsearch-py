@@ -76,6 +76,103 @@ class TestChunkActions(TestCase):
     def setup_method(self, _):
         self.actions = [({"index": {}}, {"some": u"datá", "i": i}) for i in range(100)]
 
+    def test_expand_action(self):
+        self.assertEqual(helpers.expand_action({}), ({"index": {}}, {}))
+        self.assertEqual(
+            helpers.expand_action({"key": "val"}), ({"index": {}}, {"key": "val"})
+        )
+
+    def test_expand_action_actions(self):
+        self.assertEqual(
+            helpers.expand_action(
+                {"_op_type": "delete", "_id": "id", "_index": "index"}
+            ),
+            ({"delete": {"_id": "id", "_index": "index"}}, None),
+        )
+        self.assertEqual(
+            helpers.expand_action(
+                {"_op_type": "update", "_id": "id", "_index": "index", "key": "val"}
+            ),
+            ({"update": {"_id": "id", "_index": "index"}}, {"key": "val"}),
+        )
+        self.assertEqual(
+            helpers.expand_action(
+                {"_op_type": "create", "_id": "id", "_index": "index", "key": "val"}
+            ),
+            ({"create": {"_id": "id", "_index": "index"}}, {"key": "val"}),
+        )
+        self.assertEqual(
+            helpers.expand_action(
+                {
+                    "_op_type": "create",
+                    "_id": "id",
+                    "_index": "index",
+                    "_source": {"key": "val"},
+                }
+            ),
+            ({"create": {"_id": "id", "_index": "index"}}, {"key": "val"}),
+        )
+
+    def test_expand_action_options(self):
+        for option in (
+            "_id",
+            "_index",
+            "_percolate",
+            "_timestamp",
+            "_type",
+            "if_seq_no",
+            "if_primary_term",
+            "parent",
+            "pipeline",
+            "retry_on_conflict",
+            "routing",
+            "version",
+            "version_type",
+            ("_parent", "parent"),
+            ("_retry_on_conflict", "retry_on_conflict"),
+            ("_routing", "routing"),
+            ("_version", "version"),
+            ("_version_type", "version_type"),
+            ("_if_seq_no", "if_seq_no"),
+            ("_if_primary_term", "if_primary_term"),
+        ):
+            if isinstance(option, str):
+                action_option = option
+            else:
+                option, action_option = option
+            self.assertEqual(
+                helpers.expand_action({"key": "val", option: 0}),
+                ({"index": {action_option: 0}}, {"key": "val"}),
+            )
+
+    def test__source_metadata_or_source(self):
+        self.assertEqual(
+            helpers.expand_action({"_source": {"key": "val"}}),
+            ({"index": {}}, {"key": "val"}),
+        )
+
+        self.assertEqual(
+            helpers.expand_action(
+                {"_source": ["key"], "key": "val", "_op_type": "update"}
+            ),
+            ({"update": {"_source": ["key"]}}, {"key": "val"}),
+        )
+
+        self.assertEqual(
+            helpers.expand_action(
+                {"_source": True, "key": "val", "_op_type": "update"}
+            ),
+            ({"update": {"_source": True}}, {"key": "val"}),
+        )
+
+        # This case is only to ensure backwards compatibility with old functionality.
+        self.assertEqual(
+            helpers.expand_action(
+                {"_source": {"key2": "val2"}, "key": "val", "_op_type": "update"}
+            ),
+            ({"update": {}}, {"key2": "val2"}),
+        )
+
     def test_chunks_are_chopped_by_byte_size(self):
         self.assertEqual(
             100,
