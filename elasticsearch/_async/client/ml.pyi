@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Mapping, Optional, Union, Collection
+from typing import Any, MutableMapping, Optional, Union, Collection
 from .utils import NamespacedClient
 
 class MlClient(NamespacedClient):
@@ -35,8 +35,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def delete_calendar(
         self,
@@ -49,8 +49,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def delete_calendar_event(
         self,
@@ -64,8 +64,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def delete_calendar_job(
         self,
@@ -79,8 +79,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def delete_datafeed(
         self,
@@ -94,8 +94,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def delete_expired_data(
         self,
@@ -111,8 +111,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def delete_filter(
         self,
@@ -125,8 +125,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def delete_forecast(
         self,
@@ -142,8 +142,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def delete_job(
         self,
@@ -158,8 +158,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def delete_model_snapshot(
         self,
@@ -173,8 +173,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def find_file_structure(
         self,
@@ -200,8 +200,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def flush_job(
         self,
@@ -220,8 +220,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def forecast(
         self,
@@ -237,8 +237,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def get_buckets(
         self,
@@ -262,8 +262,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def get_calendar_events(
         self,
@@ -281,8 +281,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def get_calendars(
         self,
@@ -298,8 +298,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def get_datafeed_stats(
         self,
@@ -314,8 +314,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def get_datafeeds(
         self,
@@ -330,8 +330,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def get_filters(
         self,
@@ -346,8 +346,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def get_influencers(
         self,
@@ -369,8 +369,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def get_job_stats(
         self,
@@ -385,8 +385,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def get_jobs(
         self,
@@ -401,8 +401,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def get_overall_buckets(
         self,
@@ -424,8 +424,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def get_records(
         self,
@@ -447,8 +447,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def info(
         self,
@@ -460,8 +460,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def open_job(
         self,
@@ -474,8 +474,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def post_calendar_events(
         self,
@@ -489,8 +489,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def post_data(
         self,
@@ -506,8 +506,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def preview_datafeed(
         self,
@@ -520,8 +520,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def put_calendar(
         self,
@@ -535,8 +535,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def put_calendar_job(
         self,
@@ -550,8 +550,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def put_datafeed(
         self,
@@ -569,8 +569,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def put_filter(
         self,
@@ -584,8 +584,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def put_job(
         self,
@@ -599,8 +599,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def set_upgrade_mode(
         self,
@@ -614,8 +614,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def start_datafeed(
         self,
@@ -632,8 +632,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def stop_datafeed(
         self,
@@ -651,8 +651,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def update_datafeed(
         self,
@@ -670,8 +670,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def update_filter(
         self,
@@ -685,8 +685,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def update_job(
         self,
@@ -700,8 +700,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def validate(
         self,
@@ -714,8 +714,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def validate_detector(
         self,
@@ -728,8 +728,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def delete_data_frame_analytics(
         self,
@@ -744,8 +744,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def evaluate_data_frame(
         self,
@@ -758,8 +758,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def get_data_frame_analytics(
         self,
@@ -775,8 +775,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def get_data_frame_analytics_stats(
         self,
@@ -793,8 +793,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def put_data_frame_analytics(
         self,
@@ -808,8 +808,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def start_data_frame_analytics(
         self,
@@ -824,8 +824,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def stop_data_frame_analytics(
         self,
@@ -842,8 +842,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def delete_trained_model(
         self,
@@ -856,8 +856,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def get_trained_models(
         self,
@@ -866,6 +866,7 @@ class MlClient(NamespacedClient):
         decompress_definition: Optional[Any] = ...,
         for_export: Optional[Any] = ...,
         from_: Optional[Any] = ...,
+        include: Optional[Any] = ...,
         include_model_definition: Optional[Any] = ...,
         size: Optional[Any] = ...,
         tags: Optional[Any] = ...,
@@ -877,8 +878,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def get_trained_models_stats(
         self,
@@ -894,8 +895,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def put_trained_model(
         self,
@@ -909,8 +910,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def estimate_model_memory(
         self,
@@ -923,8 +924,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def explain_data_frame_analytics(
         self,
@@ -938,8 +939,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def get_categories(
         self,
@@ -957,8 +958,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def get_model_snapshots(
         self,
@@ -979,8 +980,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def revert_model_snapshot(
         self,
@@ -996,8 +997,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def update_model_snapshot(
         self,
@@ -1012,8 +1013,8 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def update_data_frame_analytics(
         self,
@@ -1027,6 +1028,6 @@ class MlClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...

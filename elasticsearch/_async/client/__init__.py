@@ -1977,7 +1977,7 @@ class AsyncElasticsearch(object):
     async def close_point_in_time(self, body=None, params=None, headers=None):
         """
         Close a point in time
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html>`_
 
         :arg body: a point-in-time id to close
         """
@@ -1991,7 +1991,7 @@ class AsyncElasticsearch(object):
     async def open_point_in_time(self, index=None, params=None, headers=None):
         """
         Open a point in time that can be used in subsequent searches
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html>`_
 
         :arg index: A comma-separated list of index names to open point
             in time; use `_all` or empty string to perform the operation on all

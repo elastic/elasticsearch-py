@@ -16,7 +16,6 @@
 #  under the License.
 
 from typing import (
-    AsyncIterator,
     AsyncGenerator,
     Optional,
     Union,
@@ -27,6 +26,7 @@ from typing import (
     Iterable,
     AsyncIterable,
     List,
+    Dict,
     Collection,
     Callable,
 )
@@ -60,7 +60,7 @@ def async_streaming_bulk(
     chunk_size: int = ...,
     max_chunk_bytes: int = ...,
     raise_on_error: bool = ...,
-    expand_action_callback: Callable[[Any], Tuple[str, Any]] = ...,
+    expand_action_callback: Callable[[Any], Tuple[Dict[str, Any], Optional[Any]]] = ...,
     raise_on_exception: bool = ...,
     max_retries: int = ...,
     initial_backoff: Union[float, int] = ...,

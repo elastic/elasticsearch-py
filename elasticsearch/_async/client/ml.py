@@ -1296,6 +1296,7 @@ class MlClient(NamespacedClient):
         "decompress_definition",
         "for_export",
         "from_",
+        "include",
         "include_model_definition",
         "size",
         "tags",
@@ -1315,6 +1316,9 @@ class MlClient(NamespacedClient):
         :arg for_export: Omits fields that are illegal to set on model
             PUT
         :arg from\\_: skips a number of trained models
+        :arg include: A comma-separate list of fields to optionally
+            include. Valid options are 'definition' and 'total_feature_importance'.
+            Default is none.
         :arg include_model_definition: Should the full model definition
             be included in the results. These definitions can be large. So be
             cautious when including them. Defaults to false.

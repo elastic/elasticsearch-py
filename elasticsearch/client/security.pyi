@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Mapping, Optional, Union, Collection
+from typing import Any, MutableMapping, Optional, Union, Collection
 from .utils import NamespacedClient
 
 class SecurityClient(NamespacedClient):
@@ -29,8 +29,8 @@ class SecurityClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def change_password(
         self,
@@ -45,8 +45,8 @@ class SecurityClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def clear_cached_realms(
         self,
@@ -60,8 +60,8 @@ class SecurityClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def clear_cached_roles(
         self,
@@ -74,8 +74,8 @@ class SecurityClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def create_api_key(
         self,
@@ -89,8 +89,8 @@ class SecurityClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def delete_privileges(
         self,
@@ -105,8 +105,8 @@ class SecurityClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def delete_role(
         self,
@@ -120,8 +120,8 @@ class SecurityClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def delete_role_mapping(
         self,
@@ -135,8 +135,8 @@ class SecurityClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def delete_user(
         self,
@@ -150,8 +150,8 @@ class SecurityClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def disable_user(
         self,
@@ -165,8 +165,8 @@ class SecurityClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def enable_user(
         self,
@@ -180,8 +180,8 @@ class SecurityClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def get_api_key(
         self,
@@ -198,8 +198,8 @@ class SecurityClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def get_privileges(
         self,
@@ -213,8 +213,8 @@ class SecurityClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def get_role(
         self,
@@ -227,8 +227,8 @@ class SecurityClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def get_role_mapping(
         self,
@@ -241,8 +241,8 @@ class SecurityClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def get_token(
         self,
@@ -255,8 +255,8 @@ class SecurityClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def get_user(
         self,
@@ -269,8 +269,8 @@ class SecurityClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def get_user_privileges(
         self,
@@ -282,8 +282,8 @@ class SecurityClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def has_privileges(
         self,
@@ -297,8 +297,8 @@ class SecurityClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def invalidate_api_key(
         self,
@@ -311,8 +311,8 @@ class SecurityClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def invalidate_token(
         self,
@@ -325,8 +325,8 @@ class SecurityClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def put_privileges(
         self,
@@ -340,8 +340,8 @@ class SecurityClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def put_role(
         self,
@@ -356,8 +356,8 @@ class SecurityClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def put_role_mapping(
         self,
@@ -372,8 +372,8 @@ class SecurityClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def put_user(
         self,
@@ -388,8 +388,8 @@ class SecurityClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def get_builtin_privileges(
         self,
@@ -401,8 +401,8 @@ class SecurityClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     def clear_cached_privileges(
         self,
@@ -415,6 +415,6 @@ class SecurityClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
-        params: Optional[Mapping[str, Any]] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
