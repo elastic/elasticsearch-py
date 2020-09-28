@@ -40,13 +40,13 @@ class ConnectionPool(object):
     orig_connections: Tuple[Connection, ...]
     dead: PriorityQueue
     dead_count: Dict[Connection, int]
-    dead_timeout: Union[float, int]
-    timeout_cutoff: Union[float, int]
+    dead_timeout: float
+    timeout_cutoff: int
     selector: ConnectionSelector
     def __init__(
         self,
         connections: Sequence[Tuple[Connection, Any]],
-        dead_timeout: int = ...,
+        dead_timeout: float = ...,
         timeout_cutoff: int = ...,
         selector_class: Type[ConnectionSelector] = ...,
         randomize_hosts: bool = ...,

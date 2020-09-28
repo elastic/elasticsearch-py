@@ -20,5 +20,5 @@
   {% endif %}
 {% endfor %}
 
-params: Optional[Mapping[str, Any]]=...,
-headers: Optional[Mapping[str, str]]=...
+params: Optional[MutableMapping[str, Any]]=...,
+headers: Optional[MutableMapping[str, str]]=...

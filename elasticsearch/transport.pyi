@@ -56,7 +56,7 @@ class Transport(object):
     last_sniff: float
     sniff_timeout: Optional[float]
     host_info_callback: Callable[
-        [Dict[str, Any], Optional[Dict[str, Any]]], Dict[str, Any]
+        [Dict[str, Any], Optional[Dict[str, Any]]], Optional[Dict[str, Any]]
     ]
     def __init__(
         self,
@@ -64,11 +64,11 @@ class Transport(object):
         connection_class: Optional[Type[Any]] = ...,
         connection_pool_class: Type[ConnectionPool] = ...,
         host_info_callback: Callable[
-            [Dict[str, Any], Dict[str, Any]], Optional[Dict[str, Any]]
+            [Dict[str, Any], Optional[Dict[str, Any]]], Optional[Dict[str, Any]]
         ] = ...,
         sniff_on_start: bool = ...,
-        sniffer_timeout: Optional[Union[float, int]] = ...,
-        sniff_timeout: Union[float, int] = ...,
+        sniffer_timeout: Optional[float] = ...,
+        sniff_timeout: float = ...,
         sniff_on_connection_fail: bool = ...,
         serializer: Serializer = ...,
         serializers: Optional[Mapping[str, Serializer]] = ...,
@@ -91,5 +91,5 @@ class Transport(object):
         headers: Optional[Mapping[str, str]] = ...,
         params: Optional[Mapping[str, Any]] = ...,
         body: Optional[Any] = ...,
-    ) -> Union[str, bool]: ...
+    ) -> Union[bool, Any]: ...
     def close(self) -> None: ...
