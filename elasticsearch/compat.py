@@ -32,6 +32,12 @@ else:
     map = map
     from queue import Queue
 
+try:
+    from collections.abs import Mapping
+except ImportError:
+    from collections import Mapping
+
+
 __all__ = [
     "string_types",
     "quote_plus",
@@ -41,4 +47,5 @@ __all__ = [
     "urlparse",
     "map",
     "Queue",
+    "Mapping",
 ]
