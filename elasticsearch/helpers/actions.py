@@ -19,7 +19,7 @@ from operator import methodcaller
 import time
 
 from ..exceptions import TransportError
-from ..compat import map, string_types, Queue
+from ..compat import map, string_types, Queue, Mapping
 
 from .errors import ScanError, BulkIndexError
 
@@ -43,9 +43,22 @@ def expand_action(data):
     data = data.copy()
     op_type = data.pop("_op_type", "index")
     action = {op_type: {}}
+
+    # If '_source' is a dict use it for source
+    # otherwise if op_type == 'update' then
+    # '_source' should be in the metadata.
+    if (
+        op_type == "update"
+        and "_source" in data
+        and not isinstance(data["_source"], Mapping)
+    ):
+        action[op_type]["_source"] = data.pop("_source")
+
     for key in (
         "_id",
         "_index",
+        "_if_seq_no",
+        "_if_primary_term",
         "_parent",
         "_percolate",
         "_retry_on_conflict",
@@ -54,6 +67,8 @@ def expand_action(data):
         "_type",
         "_version",
         "_version_type",
+        "if_seq_no",
+        "if_primary_term",
         "parent",
         "pipeline",
         "retry_on_conflict",
@@ -62,13 +77,15 @@ def expand_action(data):
         "version_type",
     ):
         if key in data:
-            if key in [
+            if key in {
+                "_if_seq_no",
+                "_if_primary_term",
                 "_parent",
                 "_retry_on_conflict",
                 "_routing",
                 "_version",
                 "_version_type",
-            ]:
+            }:
                 action[op_type][key[1:]] = data.pop(key)
             else:
                 action[op_type][key] = data.pop(key)
