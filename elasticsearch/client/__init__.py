@@ -54,7 +54,6 @@ from .ssl import SslClient
 from .transform import TransformClient
 from .watcher import WatcherClient
 
-
 logger = logging.getLogger("elasticsearch")
 
 
@@ -485,6 +484,7 @@ class Elasticsearch(object):
         "min_score",
         "preference",
         "q",
+        "request_cache",
         "routing",
         "terminate_after",
     )
@@ -521,6 +521,8 @@ class Elasticsearch(object):
         :arg preference: Specify the node or shard the operation should
             be performed on (default: random)
         :arg q: Query in the Lucene query string syntax
+        :arg request_cache: Specify if request cache should be used for
+            this request or not, defaults to index level setting
         :arg routing: A comma-separated list of specific routing values
         :arg terminate_after: The maximum count for each shard, upon
             reaching which the query execution will terminate early
