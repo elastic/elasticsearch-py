@@ -27,6 +27,8 @@ import warnings
 from requests.auth import AuthBase
 from platform import python_version
 
+import pytest
+
 from elasticsearch.exceptions import (
     TransportError,
     ConflictError,
@@ -753,6 +755,19 @@ class TestRequestsConnection(TestCase):
         req, resp = logger.debug.call_args_list
         self.assertEqual('> {"example": "body"}', req[0][0] % req[0][1:])
         self.assertEqual("< {}", resp[0][0] % resp[0][1:])
+
+        con = self._get_mock_connection(
+            connection_params={"http_compress": True},
+            status_code=500,
+            response_body=b'{"hello":"world"}',
+        )
+        with pytest.raises(TransportError):
+            con.perform_request("GET", "/", body=b'{"example": "body2"}')
+
+        self.assertEqual(4, logger.debug.call_count)
+        _, _, req, resp = logger.debug.call_args_list
+        self.assertEqual('> {"example": "body2"}', req[0][0] % req[0][1:])
+        self.assertEqual('< {"hello":"world"}', resp[0][0] % resp[0][1:])
 
     def test_defaults(self):
         con = self._get_mock_connection()
