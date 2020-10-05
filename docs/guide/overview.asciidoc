@@ -1,0 +1,142 @@
+[[overview]]
+== Overview
+
+This is the official low-level Python client for {es}. Its goal is to provide 
+common ground for all {es}-related code in Python. For this reason, the client 
+is designed to be unopinionated and extendable. Full documentation is available 
+on https://elasticsearch-py.readthedocs.io[Read the Docs].
+
+
+[discrete]
+=== Compatibility
+
+Current development happens in the master branch.
+
+The library is compatible with all Elasticsearch versions since `0.90.x` but you
+**have to use a matching major version**:
+
+For **Elasticsearch 7.0** and later, use the major version 7 (`7.x.y`) of the
+library.
+
+For **Elasticsearch 6.0** and later, use the major version 6 (``6.x.y`) of the
+library.
+
+For **Elasticsearch 5.0** and later, use the major version 5 (`5.x.y`) of the
+library.
+
+For **Elasticsearch 2.0** and later, use the major version 2 (`2.x.y`) of the
+library, and so on.
+
+The recommended way to set your requirements in your `setup.py` or
+`requirements.txt` is::
+
+    # Elasticsearch 7.x
+    elasticsearch>=7,<8
+
+    # Elasticsearch 6.x
+    elasticsearch>=6,<7
+
+    # Elasticsearch 5.x
+    elasticsearch>=5,<6
+
+    # Elasticsearch 2.x
+    elasticsearch>=2,<3
+
+If you have a need to have multiple versions installed at the same time older
+versions are also released as ``elasticsearch2`` and ``elasticsearch5``.
+
+
+[discrete]
+=== Example use
+
+Simple use-case:
+
+[source,python]
+------------------------------------
+>>> from datetime import datetime
+>>> from elasticsearch import Elasticsearch
+
+# By default we connect to localhost:9200
+>>> es = Elasticsearch()
+
+# Datetimes will be serialized...
+>>> es.index(index="my-index-000001", doc_type="test-type", id=42, body={"any": "data", "timestamp": datetime.now()})
+{'_id': '42', '_index': 'my-index-000001', '_type': 'test-type', '_version': 1, 'ok': True}
+
+# ...but not deserialized
+>>> es.get(index="my-index-000001", doc_type="test-type", id=42)['_source']
+{'any': 'data', 'timestamp': '2013-05-12T19:45:31.804229'}
+------------------------------------
+
+[NOTE]
+All the API calls map the raw REST API as closely as possible, including
+the distinction between required and optional arguments to the calls. This
+means that the code makes distinction between positional and keyword arguments;
+we, however, recommend that people use keyword arguments for all calls for
+consistency and safety.
+
+
+[discrete]
+=== Features
+
+The client's features include:
+
+* Translating basic Python data types to and from JSON
+
+* Configurable automatic discovery of cluster nodes
+
+* Persistent connections
+
+* Load balancing (with pluggable selection strategy) across all available nodes
+
+* Failed connection penalization (time based - failed connections won't be
+  retried until a timeout is reached)
+
+* Thread safety
+
+* Pluggable architecture
+
+The client also contains a convenient set of
+https://elasticsearch-py.readthedocs.org/en/master/helpers.html[helpers] for
+some of the more engaging tasks like bulk indexing and reindexing.
+
+
+[discrete]
+=== Elasticsearch DSL
+
+For a more high level client library with more limited scope, have a look at
+https://elasticsearch-dsl.readthedocs.org/[elasticsearch-dsl] - a more Pythonic library
+sitting on top of `elasticsearch-py`.
+
+It provides a more convenient and idiomatic way to write and manipulate
+https://elasticsearch-dsl.readthedocs.org/en/latest/search_dsl.html[queries]. It
+stays close to the Elasticsearch JSON DSL, mirroring its terminology and
+structure while exposing the whole range of the DSL from Python either directly
+using defined classes or a queryset-like expressions.
+
+It also provides an optional
+https://elasticsearch-dsl.readthedocs.org/en/latest/persistence.html#doctype[persistence
+layer] for working with documents as Python objects in an ORM-like fashion:
+defining mappings, retrieving and saving documents, wrapping the document data
+in user-defined classes.
+
+
+[discrete]
+=== License
+
+Licensed to Elasticsearch B.V. under one or more contributor
+license agreements. See the NOTICE file distributed with
+this work for additional information regarding copyright
+ownership. Elasticsearch B.V. licenses this file to you under
+the Apache License, Version 2.0 (the "License"); you may
+not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing,
+software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+KIND, either express or implied.  See the License for the
+specific language governing permissions and limitations
+under the License.
