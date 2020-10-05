@@ -1,10 +1,10 @@
 [[overview]]
 == Overview
 
-this is the official low-level Python client for {es}. Its goal is to provide 
+This is the official low-level Python client for {es}. Its goal is to provide 
 common ground for all {es}-related code in Python. For this reason, the client 
 is designed to be unopinionated and extendable. Full documentation is available 
-at https://elasticsearch-py.readthedocs.io
+on https://elasticsearch-py.readthedocs.io[Read the Docs].
 
 
 [discrete]
