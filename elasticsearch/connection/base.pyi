@@ -88,9 +88,9 @@ class Connection(object):
         method: str,
         full_url: str,
         path: str,
-        body: str,
+        body: Optional[bytes],
         status_code: int,
-        response: bytes,
+        response: str,
         duration: float,
     ) -> None: ...
     def log_request_fail(
@@ -98,10 +98,10 @@ class Connection(object):
         method: str,
         full_url: str,
         path: str,
-        body: str,
+        body: Optional[bytes],
         duration: float,
         status_code: Optional[int] = ...,
-        response: Optional[bytes] = ...,
+        response: Optional[str] = ...,
         exception: Optional[Exception] = ...,
     ) -> None: ...
     def _raise_error(self, status_code: int, raw_data: str) -> NoReturn: ...

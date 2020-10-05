@@ -166,7 +166,7 @@ class RequestsHttpConnection(Connection):
                 method,
                 url,
                 prepared_request.path_url,
-                body,
+                orig_body,
                 time.time() - start,
                 exception=e,
             )
