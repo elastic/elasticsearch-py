@@ -19,9 +19,9 @@
 from os.path import join, dirname
 from setuptools import setup, find_packages
 
-VERSION = (7, 9, 0)
+VERSION = (7, 10, 0)
 __version__ = VERSION
-__versionstr__ = "7.9.0a1"
+__versionstr__ = "7.10.0a1"
 
 with open(join(dirname(__file__), "README")) as f:
     long_description = f.read().strip()

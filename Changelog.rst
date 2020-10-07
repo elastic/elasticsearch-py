@@ -3,6 +3,52 @@
 Changelog
 =========
 
+7.10.0a1 (2020-10-07)
+---------------------
+
+* Added support for Elasticsearch 7.10 APIs
+* Added basic type stubs for static type checking and IDE auto-complete of API parameters (`#1297`_)
+* Added support for `Optimistic Concurrency Control options`_
+  (``_if_seq_no``/``_if_primary_term``) to bulk helpers (`#1387`_)
+* Added support for passing ``_source`` with ``"_op_type": "update"``
+  bulk helpers (`#1387`_)
+* Fixed bug where ``Connection.log_request_failure()`` call would receive the compressed
+  HTTP body rather than uncompressed when an error is raised for ``RequestsHttpConnection`` (`#1394`_)
+
+ .. _Optimistic Concurrency Control options: https://www.elastic.co/guide/en/elasticsearch/reference/current/optimistic-concurrency-control.html
+ .. _#1394: https://github.com/elastic/elasticsearch-py/pull/1394
+ .. _#1387: https://github.com/elastic/elasticsearch-py/pull/1387
+ .. _#1297: https://github.com/elastic/elasticsearch-py/pull/1297
+
+
+7.9.1 (2020-08-19)
+------------------
+
+* Fixed the import of async helpers which were not available in 7.9.0 (`#1353`_)
+* Added support for ``url_prefix`` when using ``AIOHttpConnection`` (`#1357`_)
+
+ .. _#1353: https://github.com/elastic/elasticsearch-py/pull/1353
+ .. _#1357: https://github.com/elastic/elasticsearch-py/pull/1357
+
+7.9.0 (2020-08-18)
+------------------
+
+* Added support for ES 7.9 APIs
+* Fixed retries to not raise an error when ``sniff_on_connection_error=True``
+  and a ``TransportError`` is raised during the sniff step. Instead the
+  retry will continue or the error that triggered the retry will be raised
+  (See `#1279`_ and `#1326`_)
+
+ .. _#1326: https://github.com/elastic/elasticsearch-py/pull/1326
+ .. _#1279: https://github.com/elastic/elasticsearch-py/pull/1279
+
+7.8.1 (2020-07-30)
+------------------
+
+* Added the ``accept_enterprise`` parameter to ``xpack.info`` API (See `#1337`_)
+
+ .. _#1337: https://github.com/elastic/elasticsearch-py/pull/1337
+
 7.8.0 (2020-06-18)
 ------------------
 
