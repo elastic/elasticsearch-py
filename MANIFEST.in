@@ -5,12 +5,11 @@ include LICENSE
 include MANIFEST.in
 include README.rst
 include README
-include tox.ini
 include setup.py
 recursive-include elasticsearch* py.typed
-recursive-include docs *
+recursive-include docs/sphinx *
 
-prune docs/_build
+prune docs/sphinx/_build
 prune test_elasticsearch
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
