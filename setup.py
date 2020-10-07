@@ -21,7 +21,7 @@ from setuptools import setup, find_packages
 
 VERSION = (8, 0, 0)
 __version__ = VERSION
-__versionstr__ = ".".join(map(str, VERSION))
+__versionstr__ = "8.0.0.dev0"
 
 with open(join(dirname(__file__), "README")) as f:
     long_description = f.read().strip()

@@ -20,7 +20,7 @@ from __future__ import absolute_import
 
 VERSION = (8, 0, 0)
 __version__ = VERSION
-__versionstr__ = ".".join(map(str, VERSION))
+__versionstr__ = "8.0.0.dev0"
 
 import sys
 import logging
