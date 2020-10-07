@@ -1399,7 +1399,7 @@ class MlClient(NamespacedClient):
         """
         Deletes an existing trained inference model that is currently not referenced by
         an ingest pipeline.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/delete-inference.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/delete-trained-models.html>`_
 
         :arg model_id: The ID of the trained model to delete
         """
@@ -1408,7 +1408,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "DELETE",
-            _make_path("_ml", "inference", model_id),
+            _make_path("_ml", "trained_models", model_id),
             params=params,
             headers=headers,
         )
@@ -1445,7 +1445,7 @@ class MlClient(NamespacedClient):
     def get_trained_models(self, model_id=None, params=None, headers=None):
         """
         Retrieves configuration information for a trained inference model.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/get-inference.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/get-trained-models.html>`_
 
         :arg model_id: The ID of the trained models to fetch
         :arg allow_no_match: Whether to ignore if a wildcard expression
@@ -1474,7 +1474,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "GET",
-            _make_path("_ml", "inference", model_id),
+            _make_path("_ml", "trained_models", model_id),
             params=params,
             headers=headers,
         )
@@ -1483,7 +1483,7 @@ class MlClient(NamespacedClient):
     def get_trained_models_stats(self, model_id=None, params=None, headers=None):
         """
         Retrieves usage information for trained inference models.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/get-inference-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/get-trained-models-stats.html>`_
 
         :arg model_id: The ID of the trained models stats to fetch
         :arg allow_no_match: Whether to ignore if a wildcard expression
@@ -1499,7 +1499,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "GET",
-            _make_path("_ml", "inference", model_id, "_stats"),
+            _make_path("_ml", "trained_models", model_id, "_stats"),
             params=params,
             headers=headers,
         )
@@ -1508,7 +1508,7 @@ class MlClient(NamespacedClient):
     def put_trained_model(self, model_id, body, params=None, headers=None):
         """
         Creates an inference trained model.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/put-inference.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/put-trained-models.html>`_
 
         :arg model_id: The ID of the trained models to store
         :arg body: The trained model configuration
@@ -1519,7 +1519,7 @@ class MlClient(NamespacedClient):
 
         return self.transport.perform_request(
             "PUT",
-            _make_path("_ml", "inference", model_id),
+            _make_path("_ml", "trained_models", model_id),
             params=params,
             headers=headers,
             body=body,

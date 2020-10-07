@@ -530,3 +530,22 @@ class SecurityClient(NamespacedClient):
             params=params,
             headers=headers,
         )
+
+    @query_params()
+    async def clear_api_key_cache(self, ids, params=None, headers=None):
+        """
+        Clear a subset or all entries from the API key cache.
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/security-api-clear-api-key-cache.html>`_
+
+        :arg ids: A comma-separated list of IDs of API keys to clear
+            from the cache
+        """
+        if ids in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'ids'.")
+
+        return await self.transport.perform_request(
+            "POST",
+            _make_path("_security", "api_key", ids, "_clear_cache"),
+            params=params,
+            headers=headers,
+        )
