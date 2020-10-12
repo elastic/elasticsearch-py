@@ -143,3 +143,4 @@ cython_debug/
 # elasticsearch files
 test_elasticsearch/cover
 test_elasticsearch/local.py
+.ci/output
