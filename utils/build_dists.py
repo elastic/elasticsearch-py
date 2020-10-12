@@ -127,12 +127,15 @@ def test_dist(dist):
 
 
 def main():
+    run("git", "checkout", "--", "setup.py", "elasticsearch/")
     run("rm", "-rf", "build/", "dist/", "*.egg-info", ".eggs")
 
     # Grab the major version to be used as a suffix.
     setup_py_path = os.path.join(base_dir, "setup.py")
-    with open(setup_py_path) as f:
-        major_version = re.search(r"^VERSION = \((\d+),", f.read(), re.M).group(1)
+    with open(os.path.join(base_dir, "elasticsearch/__init__.py")) as f:
+        major_version = re.search(
+            r"^__versionstr__\s+=\s+[\"\'](\d+)\.", f.read(), re.M
+        ).group(1)
 
     for suffix in ("", major_version):
         run("rm", "-rf", "build/", "*.egg-info", ".eggs")
@@ -148,9 +151,11 @@ def main():
             setup_py = f.read()
         with open(setup_py_path, "w") as f:
             f.truncate()
+            assert 'package_name = "elasticsearch"' in setup_py
             f.write(
                 setup_py.replace(
-                    'name="elasticsearch",', 'name="elasticsearch%s",' % suffix
+                    'package_name = "elasticsearch"',
+                    'package_name = "elasticsearch%s"' % suffix,
                 )
             )
 

@@ -18,7 +18,7 @@ jobs:
           python3.7 -m pip install setuptools wheel twine
       - name: Build packages
         run: |
-          python3.7 setup.py sdist bdist_wheel
+          python3.7 utils/build_dists.py
       - name: Check packages
         run: |
           set -exo pipefail;
