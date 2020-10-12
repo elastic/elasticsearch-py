@@ -16,15 +16,27 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from os.path import join, dirname
+import re
+from os.path import abspath, join, dirname
 from setuptools import setup, find_packages
 
-VERSION = (8, 0, 0)
-__version__ = VERSION
-__versionstr__ = "8.0.0.dev0"
 
-with open(join(dirname(__file__), "README")) as f:
+package_name = "elasticsearch"
+base_dir = abspath(dirname(__file__))
+
+with open(join(base_dir, package_name, "__init__.py")) as f:
+    package_version = re.search(
+        r"__versionstr__\s+=\s+[\"\']([^\"\']+)[\"\']", f.read()
+    ).group(1)
+
+with open(join(base_dir, "README")) as f:
     long_description = f.read().strip()
+
+packages = [
+    package
+    for package in find_packages(where=".", exclude=("test_elasticsearch*",))
+    if package == package_name or package.startswith(package_name + ".")
+]
 
 install_requires = [
     "urllib3>=1.21.1",
@@ -44,13 +56,13 @@ docs_require = ["sphinx<1.7", "sphinx_rtd_theme"]
 generate_require = ["black", "jinja2"]
 
 setup(
-    name="elasticsearch",
+    name=package_name,
     description="Python client for Elasticsearch",
     license="Apache-2.0",
     url="https://github.com/elastic/elasticsearch-py",
     long_description=long_description,
     long_description_content_type="text/x-rst",
-    version=__versionstr__,
+    version=package_version,
     author="Honza Král, Nick Lang",
     author_email="honza.kral@gmail.com, nick@nicklang.com",
     maintainer="Seth Michael Larson",
@@ -60,7 +72,7 @@ setup(
         "Source Code": "https://github.com/elastic/elasticsearch-py",
         "Issue Tracker": "https://github.com/elastic/elasticsearch-py/issues",
     },
-    packages=find_packages(where=".", exclude=("test_elasticsearch*",)),
+    packages=packages,
     package_data={"elasticsearch": ["py.typed"]},
     include_package_data=True,
     zip_safe=False,
