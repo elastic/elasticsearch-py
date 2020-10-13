@@ -41,3 +41,16 @@ class TestBulk:
 
         assert response["errors"] is False
         assert len(response["items"]) == 1
+
+
+class TestYarlMissing:
+    async def test_aiohttp_connection_works_without_yarl(
+        self, async_client, monkeypatch
+    ):
+        # This is a defensive test case for if aiohttp suddenly stops using yarl.
+        from elasticsearch._async import http_aiohttp
+
+        monkeypatch.setattr(http_aiohttp, "yarl", False)
+
+        resp = await async_client.info(pretty=True)
+        assert isinstance(resp, dict)
