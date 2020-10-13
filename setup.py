@@ -27,7 +27,7 @@ with open(join(dirname(__file__), "README")) as f:
     long_description = f.read().strip()
 
 install_requires = [
-    "urllib3>=1.21.1",
+    "urllib3>=1.21.1, <2",
     "certifi",
 ]
 tests_require = [
@@ -38,7 +38,7 @@ tests_require = [
     "pytest",
     "pytest-cov",
 ]
-async_require = ["aiohttp>=3,<4", "yarl"]
+async_require = ["aiohttp>=3,<4"]
 
 docs_require = ["sphinx<1.7", "sphinx_rtd_theme"]
 generate_require = ["black", "jinja2"]
