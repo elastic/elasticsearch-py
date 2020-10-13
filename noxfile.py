@@ -63,7 +63,7 @@ def lint(session):
 
     # Make sure we don't require aiohttp to be installed for users to
     # receive type hint information from mypy.
-    session.run("python", "-m", "pip", "uninstall", "--yes", "aiohttp", "yarl")
+    session.run("python", "-m", "pip", "uninstall", "--yes", "aiohttp")
     session.run("mypy", "--strict", "elasticsearch/")
     session.run("mypy", "--strict", "test_elasticsearch/test_types/sync_types.py")
 
