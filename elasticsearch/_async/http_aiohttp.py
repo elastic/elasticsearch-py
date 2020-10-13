@@ -231,15 +231,30 @@ class AIOHttpConnection(AsyncConnection):
             method = "GET"
             is_head = True
 
-        # Provide correct URL object to avoid string parsing in low-level code
-        url = yarl.URL.build(
-            scheme=self.scheme,
-            host=self.hostname,
-            port=self.port,
-            path=url_path,
-            query_string=query_string,
-            encoded=True,
-        )
+        # Top-tier tip-toeing happening here. Basically
+        # because Pip's old resolver is bad and wipes out
+        # strict pins in favor of non-strict pins of extras
+        # our [async] extra overrides aiohttp's pin of
+        # yarl. yarl released breaking changes, aiohttp pinned
+        # defensively afterwards, but our users don't get
+        # that nice pin that aiohttp set. :( So to play around
+        # this super-defensively we try to import yarl, if we can't
+        # then we pass a string into ClientSession.request() instead.
+        if yarl:
+            # Provide correct URL object to avoid string parsing in low-level code
+            url = yarl.URL.build(
+                scheme=self.scheme,
+                host=self.hostname,
+                port=self.port,
+                path=url_path,
+                query_string=query_string,
+                encoded=True,
+            )
+        else:
+            url = self.url_prefix + url
+            if query_string:
+                url = "%s?%s" % (url, query_string)
+            url = self.host + url
 
         timeout = aiohttp.ClientTimeout(
             total=timeout if timeout is not None else self.timeout
