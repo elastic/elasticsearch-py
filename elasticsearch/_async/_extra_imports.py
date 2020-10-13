@@ -31,6 +31,14 @@
 
 import aiohttp
 import aiohttp.client_exceptions as aiohttp_exceptions
-import yarl
+
+
+# We do this because we don't explicitly require 'yarl'
+# within our [async] extra any more.
+# See AIOHttpConnection.request() for more information why.
+try:
+    import yarl
+except ImportError:
+    yarl = False
 
 __all__ = ["aiohttp", "aiohttp_exceptions", "yarl"]
