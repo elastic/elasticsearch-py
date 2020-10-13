@@ -154,7 +154,7 @@ class AuthorizationException(TransportError):
 
 
 class ElasticsearchDeprecationWarning(Warning):
-    """ Warning that is raised when a deprecated option
+    """Warning that is raised when a deprecated option
     is flagged via the 'Warning' HTTP header.
     """
 
