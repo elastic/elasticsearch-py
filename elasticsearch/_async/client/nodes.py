@@ -25,7 +25,7 @@ class NodesClient(NamespacedClient):
     ):
         """
         Reloads secure settings.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/secure-settings.html#reloadable-secure-settings>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/secure-settings.html#reloadable-secure-settings>`_
 
         :arg body: An object containing the password for the
             elasticsearch keystore
@@ -46,7 +46,7 @@ class NodesClient(NamespacedClient):
     async def info(self, node_id=None, metric=None, params=None, headers=None):
         """
         Returns information about nodes in the cluster.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/cluster-nodes-info.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/cluster-nodes-info.html>`_
 
         :arg node_id: A comma-separated list of node IDs or names to
             limit the returned information; use `_local` to return information from
@@ -78,7 +78,7 @@ class NodesClient(NamespacedClient):
     ):
         """
         Returns statistical information about nodes in the cluster.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/cluster-nodes-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/cluster-nodes-stats.html>`_
 
         :arg node_id: A comma-separated list of node IDs or names to
             limit the returned information; use `_local` to return information from
@@ -122,7 +122,7 @@ class NodesClient(NamespacedClient):
     async def hot_threads(self, node_id=None, params=None, headers=None):
         """
         Returns information about hot threads on each node in the cluster.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/cluster-nodes-hot-threads.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/cluster-nodes-hot-threads.html>`_
 
         :arg node_id: A comma-separated list of node IDs or names to
             limit the returned information; use `_local` to return information from
@@ -155,7 +155,7 @@ class NodesClient(NamespacedClient):
     async def usage(self, node_id=None, metric=None, params=None, headers=None):
         """
         Returns low-level information about REST actions usage on nodes.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/cluster-nodes-usage.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/cluster-nodes-usage.html>`_
 
         :arg node_id: A comma-separated list of node IDs or names to
             limit the returned information; use `_local` to return information from

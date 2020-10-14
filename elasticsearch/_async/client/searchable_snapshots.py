@@ -23,7 +23,7 @@ class SearchableSnapshotsClient(NamespacedClient):
     async def clear_cache(self, index=None, params=None, headers=None):
         """
         Clear the cache of searchable snapshots.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/searchable-snapshots-apis.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/searchable-snapshots-apis.html>`_
 
         :arg index: A comma-separated list of index name to limit the
             operation
@@ -47,7 +47,7 @@ class SearchableSnapshotsClient(NamespacedClient):
     async def mount(self, repository, snapshot, body, params=None, headers=None):
         """
         Mount a snapshot as a searchable index.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/searchable-snapshots-api-mount-snapshot.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/searchable-snapshots-api-mount-snapshot.html>`_
 
         :arg repository: The name of the repository containing the
             snapshot of the index to mount
@@ -75,7 +75,7 @@ class SearchableSnapshotsClient(NamespacedClient):
     async def repository_stats(self, repository, params=None, headers=None):
         """
         DEPRECATED: This API is replaced by the Repositories Metering API.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/searchable-snapshots-apis.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/searchable-snapshots-apis.html>`_
 
         :arg repository: The repository for which to get the stats for
         """
@@ -93,7 +93,7 @@ class SearchableSnapshotsClient(NamespacedClient):
     async def stats(self, index=None, params=None, headers=None):
         """
         Retrieve various statistics about searchable snapshots.
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/searchable-snapshots-apis.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/searchable-snapshots-apis.html>`_
 
         :arg index: A comma-separated list of index names
         """
