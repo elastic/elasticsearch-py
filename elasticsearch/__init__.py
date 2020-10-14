@@ -18,7 +18,7 @@
 # flake8: noqa
 from __future__ import absolute_import
 
-__versionstr__ = "7.10.0+dev"
+__versionstr__ = "7.10.0a1"
 
 import re
 import sys
