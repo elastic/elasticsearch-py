@@ -21,6 +21,7 @@ from .utils import NamespacedClient
 class RemoteClient(NamespacedClient):
     async def info(
         self,
+        *,
         timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
         human: Optional[bool] = None,

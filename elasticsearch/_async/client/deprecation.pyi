@@ -21,6 +21,7 @@ from .utils import NamespacedClient
 class DeprecationClient(NamespacedClient):
     async def info(
         self,
+        *,
         index: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,

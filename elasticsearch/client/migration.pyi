@@ -21,6 +21,7 @@ from .utils import NamespacedClient
 class MigrationClient(NamespacedClient):
     def deprecations(
         self,
+        *,
         index: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -31,5 +32,5 @@ class MigrationClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
