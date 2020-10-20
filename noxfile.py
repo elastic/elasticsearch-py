@@ -59,7 +59,8 @@ def lint(session):
     # Run mypy on the package and then the type examples separately for
     # the two different mypy use-cases, ourselves and our users.
     session.run("mypy", "--strict", "elasticsearch/")
-    session.run("mypy", "--strict", "test_elasticsearch/test_types/")
+    session.run("mypy", "--strict", "test_elasticsearch/test_types/sync_types.py")
+    session.run("mypy", "--strict", "test_elasticsearch/test_types/async_types.py")
 
     # Make sure we don't require aiohttp to be installed for users to
     # receive type hint information from mypy.
