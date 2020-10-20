@@ -23,6 +23,7 @@ class DanglingIndicesClient(NamespacedClient):
     async def delete_dangling_index(self, index_uuid, params=None, headers=None):
         """
         Deletes the specified dangling index
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-gateway-dangling-indices.html>`_
 
         :arg index_uuid: The UUID of the dangling index
@@ -45,6 +46,7 @@ class DanglingIndicesClient(NamespacedClient):
     async def import_dangling_index(self, index_uuid, params=None, headers=None):
         """
         Imports the specified dangling index
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-gateway-dangling-indices.html>`_
 
         :arg index_uuid: The UUID of the dangling index
@@ -64,6 +66,7 @@ class DanglingIndicesClient(NamespacedClient):
     async def list_dangling_indices(self, params=None, headers=None):
         """
         Returns all dangling indices.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-gateway-dangling-indices.html>`_
         """
         return await self.transport.perform_request(

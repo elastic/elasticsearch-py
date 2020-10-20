@@ -22,6 +22,7 @@ class SlmClient(NamespacedClient):
     async def delete_lifecycle(
         self,
         policy_id: Any,
+        *,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -31,11 +32,12 @@ class SlmClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     async def execute_lifecycle(
         self,
         policy_id: Any,
+        *,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -45,10 +47,11 @@ class SlmClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     async def execute_retention(
         self,
+        *,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -58,10 +61,11 @@ class SlmClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     async def get_lifecycle(
         self,
+        *,
         policy_id: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -72,10 +76,11 @@ class SlmClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     async def get_stats(
         self,
+        *,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -85,11 +90,12 @@ class SlmClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     async def put_lifecycle(
         self,
         policy_id: Any,
+        *,
         body: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -100,10 +106,11 @@ class SlmClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     async def get_status(
         self,
+        *,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -113,10 +120,11 @@ class SlmClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     async def start(
         self,
+        *,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -126,10 +134,11 @@ class SlmClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     async def stop(
         self,
+        *,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -139,5 +148,5 @@ class SlmClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...

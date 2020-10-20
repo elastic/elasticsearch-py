@@ -24,6 +24,7 @@ class AsyncSearchClient(NamespacedClient):
         """
         Deletes an async search by ID. If the search is still running, the search
         request will be cancelled. Otherwise, the saved search results are deleted.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/async-search.html>`_
 
         :arg id: The async search ID
@@ -40,6 +41,7 @@ class AsyncSearchClient(NamespacedClient):
         """
         Retrieves the results of a previously submitted async search request given its
         ID.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/async-search.html>`_
 
         :arg id: The async search ID
@@ -103,6 +105,7 @@ class AsyncSearchClient(NamespacedClient):
     def submit(self, body=None, index=None, params=None, headers=None):
         """
         Executes a search request asynchronously.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/async-search.html>`_
 
         :arg body: The search definition using the Query DSL

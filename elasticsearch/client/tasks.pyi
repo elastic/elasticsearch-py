@@ -21,6 +21,7 @@ from .utils import NamespacedClient
 class TasksClient(NamespacedClient):
     def list(
         self,
+        *,
         actions: Optional[Any] = ...,
         detailed: Optional[Any] = ...,
         group_by: Optional[Any] = ...,
@@ -37,10 +38,11 @@ class TasksClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def cancel(
         self,
+        *,
         task_id: Optional[Any] = ...,
         actions: Optional[Any] = ...,
         nodes: Optional[Any] = ...,
@@ -55,11 +57,12 @@ class TasksClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def get(
         self,
         task_id: Any,
+        *,
         timeout: Optional[Any] = ...,
         wait_for_completion: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -71,5 +74,5 @@ class TasksClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...

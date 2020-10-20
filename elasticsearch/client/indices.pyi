@@ -21,6 +21,7 @@ from .utils import NamespacedClient
 class IndicesClient(NamespacedClient):
     def analyze(
         self,
+        *,
         body: Optional[Any] = ...,
         index: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -32,10 +33,11 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def refresh(
         self,
+        *,
         index: Optional[Any] = ...,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
@@ -49,10 +51,11 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def flush(
         self,
+        *,
         index: Optional[Any] = ...,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
@@ -68,11 +71,12 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def create(
         self,
         index: Any,
+        *,
         body: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
@@ -86,12 +90,13 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def clone(
         self,
         index: Any,
         target: Any,
+        *,
         body: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
@@ -105,11 +110,12 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def get(
         self,
         index: Any,
+        *,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
         flat_settings: Optional[Any] = ...,
@@ -126,11 +132,12 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def open(
         self,
         index: Any,
+        *,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
         ignore_unavailable: Optional[Any] = ...,
@@ -146,11 +153,12 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def close(
         self,
         index: Any,
+        *,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
         ignore_unavailable: Optional[Any] = ...,
@@ -166,11 +174,12 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def delete(
         self,
         index: Any,
+        *,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
         ignore_unavailable: Optional[Any] = ...,
@@ -185,11 +194,12 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def exists(
         self,
         index: Any,
+        *,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
         flat_settings: Optional[Any] = ...,
@@ -205,12 +215,13 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> bool: ...
     def exists_type(
         self,
         index: Any,
         doc_type: Any,
+        *,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
         ignore_unavailable: Optional[Any] = ...,
@@ -224,11 +235,12 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> bool: ...
     def put_mapping(
         self,
         index: Any,
+        *,
         body: Any,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
@@ -245,10 +257,11 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def get_mapping(
         self,
+        *,
         index: Optional[Any] = ...,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
@@ -264,12 +277,13 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def put_alias(
         self,
         index: Any,
         name: Any,
+        *,
         body: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
@@ -282,11 +296,12 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def exists_alias(
         self,
         name: Any,
+        *,
         index: Optional[Any] = ...,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
@@ -301,10 +316,11 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> bool: ...
     def get_alias(
         self,
+        *,
         index: Optional[Any] = ...,
         name: Optional[Any] = ...,
         allow_no_indices: Optional[Any] = ...,
@@ -320,10 +336,11 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def update_aliases(
         self,
+        *,
         body: Any,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
@@ -336,12 +353,13 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def delete_alias(
         self,
         index: Any,
         name: Any,
+        *,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -353,11 +371,12 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def put_template(
         self,
         name: Any,
+        *,
         body: Any,
         create: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
@@ -371,11 +390,12 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def exists_template(
         self,
         name: Any,
+        *,
         flat_settings: Optional[Any] = ...,
         local: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
@@ -388,10 +408,11 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> bool: ...
     def get_template(
         self,
+        *,
         name: Optional[Any] = ...,
         flat_settings: Optional[Any] = ...,
         local: Optional[Any] = ...,
@@ -405,11 +426,12 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def delete_template(
         self,
         name: Any,
+        *,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -421,10 +443,11 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def get_settings(
         self,
+        *,
         index: Optional[Any] = ...,
         name: Optional[Any] = ...,
         allow_no_indices: Optional[Any] = ...,
@@ -443,10 +466,11 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def put_settings(
         self,
+        *,
         body: Any,
         index: Optional[Any] = ...,
         allow_no_indices: Optional[Any] = ...,
@@ -465,10 +489,11 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def stats(
         self,
+        *,
         index: Optional[Any] = ...,
         metric: Optional[Any] = ...,
         completion_fields: Optional[Any] = ...,
@@ -490,10 +515,11 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def segments(
         self,
+        *,
         index: Optional[Any] = ...,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
@@ -508,10 +534,11 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def clear_cache(
         self,
+        *,
         index: Optional[Any] = ...,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
@@ -529,10 +556,11 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def recovery(
         self,
+        *,
         index: Optional[Any] = ...,
         active_only: Optional[Any] = ...,
         detailed: Optional[Any] = ...,
@@ -545,10 +573,11 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def upgrade(
         self,
+        *,
         index: Optional[Any] = ...,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
@@ -564,10 +593,11 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def get_upgrade(
         self,
+        *,
         index: Optional[Any] = ...,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
@@ -581,10 +611,11 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def shard_stores(
         self,
+        *,
         index: Optional[Any] = ...,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
@@ -599,10 +630,11 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def forcemerge(
         self,
+        *,
         index: Optional[Any] = ...,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
@@ -619,12 +651,13 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def shrink(
         self,
         index: Any,
         target: Any,
+        *,
         body: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
@@ -638,12 +671,13 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def split(
         self,
         index: Any,
         target: Any,
+        *,
         body: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
@@ -657,11 +691,12 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def rollover(
         self,
         alias: Any,
+        *,
         body: Optional[Any] = ...,
         new_index: Optional[Any] = ...,
         dry_run: Optional[Any] = ...,
@@ -677,11 +712,12 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def freeze(
         self,
         index: Any,
+        *,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
         ignore_unavailable: Optional[Any] = ...,
@@ -697,11 +733,12 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def unfreeze(
         self,
         index: Any,
+        *,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
         ignore_unavailable: Optional[Any] = ...,
@@ -717,11 +754,12 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def reload_search_analyzers(
         self,
         index: Any,
+        *,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
         ignore_unavailable: Optional[Any] = ...,
@@ -734,11 +772,12 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def get_field_mapping(
         self,
         fields: Any,
+        *,
         index: Optional[Any] = ...,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
@@ -754,10 +793,11 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def validate_query(
         self,
+        *,
         body: Optional[Any] = ...,
         index: Optional[Any] = ...,
         doc_type: Optional[Any] = ...,
@@ -782,11 +822,12 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def create_data_stream(
         self,
         name: Any,
+        *,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -796,11 +837,12 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def delete_data_stream(
         self,
         name: Any,
+        *,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -810,11 +852,12 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def delete_index_template(
         self,
         name: Any,
+        *,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -826,10 +869,11 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def get_index_template(
         self,
+        *,
         name: Optional[Any] = ...,
         flat_settings: Optional[Any] = ...,
         local: Optional[Any] = ...,
@@ -843,11 +887,12 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def put_index_template(
         self,
         name: Any,
+        *,
         body: Any,
         cause: Optional[Any] = ...,
         create: Optional[Any] = ...,
@@ -861,11 +906,12 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def exists_index_template(
         self,
         name: Any,
+        *,
         flat_settings: Optional[Any] = ...,
         local: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
@@ -878,11 +924,12 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> bool: ...
     def simulate_index_template(
         self,
         name: Any,
+        *,
         body: Optional[Any] = ...,
         cause: Optional[Any] = ...,
         create: Optional[Any] = ...,
@@ -896,10 +943,11 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def get_data_stream(
         self,
+        *,
         name: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -910,10 +958,11 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def simulate_template(
         self,
+        *,
         body: Optional[Any] = ...,
         name: Optional[Any] = ...,
         cause: Optional[Any] = ...,
@@ -928,11 +977,12 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def resolve_index(
         self,
         name: Any,
+        *,
         expand_wildcards: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -943,12 +993,13 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def add_block(
         self,
         index: Any,
         block: Any,
+        *,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
         ignore_unavailable: Optional[Any] = ...,
@@ -963,10 +1014,11 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def data_streams_stats(
         self,
+        *,
         name: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -977,5 +1029,5 @@ class IndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...

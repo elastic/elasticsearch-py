@@ -22,6 +22,7 @@ class EnrichClient(NamespacedClient):
     def delete_policy(
         self,
         name: Any,
+        *,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -31,11 +32,12 @@ class EnrichClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def execute_policy(
         self,
         name: Any,
+        *,
         wait_for_completion: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -46,10 +48,11 @@ class EnrichClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def get_policy(
         self,
+        *,
         name: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -60,11 +63,12 @@ class EnrichClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def put_policy(
         self,
         name: Any,
+        *,
         body: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -75,10 +79,11 @@ class EnrichClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def stats(
         self,
+        *,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -88,5 +93,5 @@ class EnrichClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...

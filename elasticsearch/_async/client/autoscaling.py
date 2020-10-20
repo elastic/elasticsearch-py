@@ -24,6 +24,7 @@ class AutoscalingClient(NamespacedClient):
         """
         Gets the current autoscaling decision based on the configured autoscaling
         policy, indicating whether or not autoscaling is needed.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/autoscaling-get-autoscaling-decision.html>`_
         """
         return await self.transport.perform_request(
@@ -34,6 +35,7 @@ class AutoscalingClient(NamespacedClient):
     async def delete_autoscaling_policy(self, name, params=None, headers=None):
         """
         Deletes an autoscaling policy.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/autoscaling-delete-autoscaling-policy.html>`_
 
         :arg name: the name of the autoscaling policy
@@ -52,6 +54,7 @@ class AutoscalingClient(NamespacedClient):
     async def put_autoscaling_policy(self, name, body, params=None, headers=None):
         """
         Creates a new autoscaling policy.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/autoscaling-put-autoscaling-policy.html>`_
 
         :arg name: the name of the autoscaling policy
@@ -73,6 +76,7 @@ class AutoscalingClient(NamespacedClient):
     async def get_autoscaling_policy(self, name, params=None, headers=None):
         """
         Retrieves an autoscaling policy.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/autoscaling-get-autoscaling-policy.html>`_
 
         :arg name: the name of the autoscaling policy

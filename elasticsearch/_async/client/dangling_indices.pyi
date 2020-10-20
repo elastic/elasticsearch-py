@@ -22,6 +22,7 @@ class DanglingIndicesClient(NamespacedClient):
     async def delete_dangling_index(
         self,
         index_uuid: Any,
+        *,
         accept_data_loss: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
@@ -34,11 +35,12 @@ class DanglingIndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     async def import_dangling_index(
         self,
         index_uuid: Any,
+        *,
         accept_data_loss: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
@@ -51,10 +53,11 @@ class DanglingIndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     async def list_dangling_indices(
         self,
+        *,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -64,5 +67,5 @@ class DanglingIndicesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...

@@ -23,6 +23,7 @@ class SqlClient(NamespacedClient):
     async def clear_cursor(self, body, params=None, headers=None):
         """
         Clears the SQL cursor
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/sql-pagination.html>`_
 
         :arg body: Specify the cursor value in the `cursor` element to
@@ -39,6 +40,7 @@ class SqlClient(NamespacedClient):
     async def query(self, body, params=None, headers=None):
         """
         Executes a SQL request
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/sql-rest-overview.html>`_
 
         :arg body: Use the `query` element to start a query. Use the
@@ -57,6 +59,7 @@ class SqlClient(NamespacedClient):
     async def translate(self, body, params=None, headers=None):
         """
         Translates SQL into Elasticsearch queries
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/sql-translate.html>`_
 
         :arg body: Specify the query in the `query` element.

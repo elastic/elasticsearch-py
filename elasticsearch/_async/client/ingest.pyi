@@ -21,6 +21,7 @@ from .utils import NamespacedClient
 class IngestClient(NamespacedClient):
     async def get_pipeline(
         self,
+        *,
         id: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -32,11 +33,12 @@ class IngestClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     async def put_pipeline(
         self,
         id: Any,
+        *,
         body: Any,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
@@ -49,11 +51,12 @@ class IngestClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     async def delete_pipeline(
         self,
         id: Any,
+        *,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -65,10 +68,11 @@ class IngestClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     async def simulate(
         self,
+        *,
         body: Any,
         id: Optional[Any] = ...,
         verbose: Optional[Any] = ...,
@@ -81,10 +85,11 @@ class IngestClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     async def processor_grok(
         self,
+        *,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -94,5 +99,5 @@ class IngestClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...

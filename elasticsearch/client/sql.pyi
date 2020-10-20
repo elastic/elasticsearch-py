@@ -21,6 +21,7 @@ from .utils import NamespacedClient
 class SqlClient(NamespacedClient):
     def clear_cursor(
         self,
+        *,
         body: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -31,10 +32,11 @@ class SqlClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def query(
         self,
+        *,
         body: Any,
         format: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -45,10 +47,11 @@ class SqlClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def translate(
         self,
+        *,
         body: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -59,5 +62,5 @@ class SqlClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...

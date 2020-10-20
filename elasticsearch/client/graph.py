@@ -24,6 +24,7 @@ class GraphClient(NamespacedClient):
         """
         Explore extracted and summarized information about the documents and terms in
         an index.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/graph-explore-api.html>`_
 
         :arg index: A comma-separated list of index names to search; use

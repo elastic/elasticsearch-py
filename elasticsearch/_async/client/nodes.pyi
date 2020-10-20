@@ -21,6 +21,7 @@ from .utils import NamespacedClient
 class NodesClient(NamespacedClient):
     async def reload_secure_settings(
         self,
+        *,
         body: Optional[Any] = ...,
         node_id: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
@@ -33,10 +34,11 @@ class NodesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     async def info(
         self,
+        *,
         node_id: Optional[Any] = ...,
         metric: Optional[Any] = ...,
         flat_settings: Optional[Any] = ...,
@@ -50,10 +52,11 @@ class NodesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     async def hot_threads(
         self,
+        *,
         node_id: Optional[Any] = ...,
         doc_type: Optional[Any] = ...,
         ignore_idle_threads: Optional[Any] = ...,
@@ -70,10 +73,11 @@ class NodesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     async def usage(
         self,
+        *,
         node_id: Optional[Any] = ...,
         metric: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
@@ -86,10 +90,11 @@ class NodesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     async def stats(
         self,
+        *,
         node_id: Optional[Any] = ...,
         metric: Optional[Any] = ...,
         index_metric: Optional[Any] = ...,
@@ -110,5 +115,5 @@ class NodesClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...

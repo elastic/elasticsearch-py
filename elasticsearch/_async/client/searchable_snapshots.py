@@ -23,6 +23,7 @@ class SearchableSnapshotsClient(NamespacedClient):
     async def clear_cache(self, index=None, params=None, headers=None):
         """
         Clear the cache of searchable snapshots.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-apis.html>`_
 
         :arg index: A comma-separated list of index name to limit the
@@ -47,6 +48,7 @@ class SearchableSnapshotsClient(NamespacedClient):
     async def mount(self, repository, snapshot, body, params=None, headers=None):
         """
         Mount a snapshot as a searchable index.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-api-mount-snapshot.html>`_
 
         :arg repository: The name of the repository containing the
@@ -75,6 +77,7 @@ class SearchableSnapshotsClient(NamespacedClient):
     async def stats(self, index=None, params=None, headers=None):
         """
         Retrieve various statistics about searchable snapshots.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-apis.html>`_
 
         :arg index: A comma-separated list of index names

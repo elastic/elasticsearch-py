@@ -23,6 +23,7 @@ class SnapshotClient(NamespacedClient):
     def create(self, repository, snapshot, body=None, params=None, headers=None):
         """
         Creates a snapshot in a repository.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
 
         :arg repository: A repository name
@@ -49,6 +50,7 @@ class SnapshotClient(NamespacedClient):
     def delete(self, repository, snapshot, params=None, headers=None):
         """
         Deletes one or more snapshots.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
 
         :arg repository: A repository name
@@ -71,6 +73,7 @@ class SnapshotClient(NamespacedClient):
     def get(self, repository, snapshot, params=None, headers=None):
         """
         Returns information about a snapshot.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
 
         :arg repository: A repository name
@@ -98,6 +101,7 @@ class SnapshotClient(NamespacedClient):
     def delete_repository(self, repository, params=None, headers=None):
         """
         Deletes a repository.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
 
         :arg repository: Name of the snapshot repository to unregister.
@@ -120,6 +124,7 @@ class SnapshotClient(NamespacedClient):
     def get_repository(self, repository=None, params=None, headers=None):
         """
         Returns information about a repository.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
 
         :arg repository: A comma-separated list of repository names
@@ -136,6 +141,7 @@ class SnapshotClient(NamespacedClient):
     def create_repository(self, repository, body, params=None, headers=None):
         """
         Creates a repository.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
 
         :arg repository: A repository name
@@ -161,6 +167,7 @@ class SnapshotClient(NamespacedClient):
     def restore(self, repository, snapshot, body=None, params=None, headers=None):
         """
         Restores a snapshot.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
 
         :arg repository: A repository name
@@ -187,6 +194,7 @@ class SnapshotClient(NamespacedClient):
     def status(self, repository=None, snapshot=None, params=None, headers=None):
         """
         Returns information about the status of a snapshot.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
 
         :arg repository: A repository name
@@ -208,6 +216,7 @@ class SnapshotClient(NamespacedClient):
     def verify_repository(self, repository, params=None, headers=None):
         """
         Verifies a repository.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
 
         :arg repository: A repository name
@@ -229,6 +238,7 @@ class SnapshotClient(NamespacedClient):
     def cleanup_repository(self, repository, params=None, headers=None):
         """
         Removes stale data from repository.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/clean-up-snapshot-repo-api.html>`_
 
         :arg repository: A repository name
@@ -244,4 +254,32 @@ class SnapshotClient(NamespacedClient):
             _make_path("_snapshot", repository, "_cleanup"),
             params=params,
             headers=headers,
+        )
+
+    @query_params("master_timeout")
+    def clone(
+        self, repository, snapshot, target_snapshot, body, params=None, headers=None
+    ):
+        """
+        Clones indices from one snapshot into another snapshot in the same repository.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+
+        :arg repository: A repository name
+        :arg snapshot: The name of the snapshot to clone from
+        :arg target_snapshot: The name of the cloned snapshot to create
+        :arg body: The snapshot clone definition
+        :arg master_timeout: Explicit operation timeout for connection
+            to master node
+        """
+        for param in (repository, snapshot, target_snapshot, body):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
+
+        return self.transport.perform_request(
+            "PUT",
+            _make_path("_snapshot", repository, snapshot, "_clone", target_snapshot),
+            params=params,
+            headers=headers,
+            body=body,
         )

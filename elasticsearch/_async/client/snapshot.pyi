@@ -23,6 +23,7 @@ class SnapshotClient(NamespacedClient):
         self,
         repository: Any,
         snapshot: Any,
+        *,
         body: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
         wait_for_completion: Optional[Any] = ...,
@@ -35,12 +36,13 @@ class SnapshotClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     async def delete(
         self,
         repository: Any,
         snapshot: Any,
+        *,
         master_timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -51,12 +53,13 @@ class SnapshotClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     async def get(
         self,
         repository: Any,
         snapshot: Any,
+        *,
         ignore_unavailable: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
         verbose: Optional[Any] = ...,
@@ -69,11 +72,12 @@ class SnapshotClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     async def delete_repository(
         self,
         repository: Any,
+        *,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -85,10 +89,11 @@ class SnapshotClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     async def get_repository(
         self,
+        *,
         repository: Optional[Any] = ...,
         local: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
@@ -101,11 +106,12 @@ class SnapshotClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     async def create_repository(
         self,
         repository: Any,
+        *,
         body: Any,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
@@ -119,12 +125,13 @@ class SnapshotClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     async def restore(
         self,
         repository: Any,
         snapshot: Any,
+        *,
         body: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
         wait_for_completion: Optional[Any] = ...,
@@ -137,10 +144,11 @@ class SnapshotClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     async def status(
         self,
+        *,
         repository: Optional[Any] = ...,
         snapshot: Optional[Any] = ...,
         ignore_unavailable: Optional[Any] = ...,
@@ -154,11 +162,12 @@ class SnapshotClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     async def verify_repository(
         self,
         repository: Any,
+        *,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -170,11 +179,12 @@ class SnapshotClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     async def cleanup_repository(
         self,
         repository: Any,
+        *,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -186,5 +196,24 @@ class SnapshotClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
+    ) -> Any: ...
+    async def clone(
+        self,
+        repository: Any,
+        snapshot: Any,
+        target_snapshot: Any,
+        *,
+        body: Any,
+        master_timeout: Optional[Any] = ...,
+        pretty: Optional[bool] = ...,
+        human: Optional[bool] = ...,
+        error_trace: Optional[bool] = ...,
+        format: Optional[str] = ...,
+        filter_path: Optional[Union[str, Collection[str]]] = ...,
+        request_timeout: Optional[Union[int, float]] = ...,
+        ignore: Optional[Union[int, Collection[int]]] = ...,
+        opaque_id: Optional[str] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...

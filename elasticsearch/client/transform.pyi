@@ -22,6 +22,7 @@ class TransformClient(NamespacedClient):
     def delete_transform(
         self,
         transform_id: Any,
+        *,
         force: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -32,12 +33,14 @@ class TransformClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def get_transform(
         self,
+        *,
         transform_id: Optional[Any] = ...,
         allow_no_match: Optional[Any] = ...,
+        exclude_generated: Optional[Any] = ...,
         from_: Optional[Any] = ...,
         size: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -49,11 +52,12 @@ class TransformClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def get_transform_stats(
         self,
         transform_id: Any,
+        *,
         allow_no_match: Optional[Any] = ...,
         from_: Optional[Any] = ...,
         size: Optional[Any] = ...,
@@ -66,10 +70,11 @@ class TransformClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def preview_transform(
         self,
+        *,
         body: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -80,11 +85,12 @@ class TransformClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def put_transform(
         self,
         transform_id: Any,
+        *,
         body: Any,
         defer_validation: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -96,11 +102,12 @@ class TransformClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def start_transform(
         self,
         transform_id: Any,
+        *,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -111,11 +118,12 @@ class TransformClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def stop_transform(
         self,
         transform_id: Any,
+        *,
         allow_no_match: Optional[Any] = ...,
         force: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
@@ -130,11 +138,12 @@ class TransformClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def update_transform(
         self,
         transform_id: Any,
+        *,
         body: Any,
         defer_validation: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -146,5 +155,5 @@ class TransformClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
