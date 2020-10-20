@@ -24,6 +24,7 @@ class MlClient(NamespacedClient):
         """
         Closes one or more anomaly detection jobs. A job can be opened and closed
         multiple times throughout its lifecycle.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-close-job.html>`_
 
         :arg job_id: The name of the job to close
@@ -53,6 +54,7 @@ class MlClient(NamespacedClient):
     async def delete_calendar(self, calendar_id, params=None, headers=None):
         """
         Deletes a calendar.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-delete-calendar.html>`_
 
         :arg calendar_id: The ID of the calendar to delete
@@ -75,6 +77,7 @@ class MlClient(NamespacedClient):
     ):
         """
         Deletes scheduled events from a calendar.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-delete-calendar-event.html>`_
 
         :arg calendar_id: The ID of the calendar to modify
@@ -95,6 +98,7 @@ class MlClient(NamespacedClient):
     async def delete_calendar_job(self, calendar_id, job_id, params=None, headers=None):
         """
         Deletes anomaly detection jobs from a calendar.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-delete-calendar-job.html>`_
 
         :arg calendar_id: The ID of the calendar to modify
@@ -115,6 +119,7 @@ class MlClient(NamespacedClient):
     async def delete_datafeed(self, datafeed_id, params=None, headers=None):
         """
         Deletes an existing datafeed.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-delete-datafeed.html>`_
 
         :arg datafeed_id: The ID of the datafeed to delete
@@ -138,6 +143,7 @@ class MlClient(NamespacedClient):
     ):
         """
         Deletes expired and unused machine learning data.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-delete-expired-data.html>`_
 
         :arg body: deleting expired data parameters
@@ -160,6 +166,7 @@ class MlClient(NamespacedClient):
     async def delete_filter(self, filter_id, params=None, headers=None):
         """
         Deletes a filter.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-delete-filter.html>`_
 
         :arg filter_id: The ID of the filter to delete
@@ -180,6 +187,7 @@ class MlClient(NamespacedClient):
     ):
         """
         Deletes forecasts from a machine learning job.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-delete-forecast.html>`_
 
         :arg job_id: The ID of the job from which to delete forecasts
@@ -204,6 +212,7 @@ class MlClient(NamespacedClient):
     async def delete_job(self, job_id, params=None, headers=None):
         """
         Deletes an existing anomaly detection job.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-delete-job.html>`_
 
         :arg job_id: The ID of the job to delete
@@ -227,6 +236,7 @@ class MlClient(NamespacedClient):
     ):
         """
         Deletes an existing model snapshot.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-delete-snapshot.html>`_
 
         :arg job_id: The ID of the job to fetch
@@ -265,6 +275,7 @@ class MlClient(NamespacedClient):
         """
         Finds the structure of a text file. The text file must contain data that is
         suitable to be ingested into Elasticsearch.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-find-file-structure.html>`_
 
         :arg body: The contents of the file to be analyzed
@@ -316,6 +327,7 @@ class MlClient(NamespacedClient):
     async def flush_job(self, job_id, body=None, params=None, headers=None):
         """
         Forces any buffered data to be processed by the job.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-flush-job.html>`_
 
         :arg job_id: The name of the job to flush
@@ -346,6 +358,7 @@ class MlClient(NamespacedClient):
     async def forecast(self, job_id, params=None, headers=None):
         """
         Predicts the future behavior of a time series by using its historical behavior.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-forecast.html>`_
 
         :arg job_id: The ID of the job to forecast for
@@ -381,6 +394,7 @@ class MlClient(NamespacedClient):
     ):
         """
         Retrieves anomaly detection job results for one or more buckets.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-get-bucket.html>`_
 
         :arg job_id: ID of the job to get bucket results from
@@ -418,6 +432,7 @@ class MlClient(NamespacedClient):
     async def get_calendar_events(self, calendar_id, params=None, headers=None):
         """
         Retrieves information about the scheduled events in calendars.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-get-calendar-event.html>`_
 
         :arg calendar_id: The ID of the calendar containing the events
@@ -450,6 +465,7 @@ class MlClient(NamespacedClient):
     ):
         """
         Retrieves configuration information for calendars.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-get-calendar.html>`_
 
         :arg body: The from and size parameters optionally sent in the
@@ -476,6 +492,7 @@ class MlClient(NamespacedClient):
     ):
         """
         Retrieves anomaly detection job results for one or more categories.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-get-category.html>`_
 
         :arg job_id: The name of the job
@@ -509,6 +526,7 @@ class MlClient(NamespacedClient):
     async def get_datafeed_stats(self, datafeed_id=None, params=None, headers=None):
         """
         Retrieves usage information for datafeeds.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-get-datafeed-stats.html>`_
 
         :arg datafeed_id: The ID of the datafeeds stats to fetch
@@ -530,6 +548,7 @@ class MlClient(NamespacedClient):
     async def get_datafeeds(self, datafeed_id=None, params=None, headers=None):
         """
         Retrieves configuration information for datafeeds.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-get-datafeed.html>`_
 
         :arg datafeed_id: The ID of the datafeeds to fetch
@@ -551,6 +570,7 @@ class MlClient(NamespacedClient):
     async def get_filters(self, filter_id=None, params=None, headers=None):
         """
         Retrieves filters.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-get-filter.html>`_
 
         :arg filter_id: The ID of the filter to fetch
@@ -581,6 +601,7 @@ class MlClient(NamespacedClient):
     async def get_influencers(self, job_id, body=None, params=None, headers=None):
         """
         Retrieves anomaly detection job results for one or more influencers.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-get-influencer.html>`_
 
         :arg job_id: Identifier for the anomaly detection job
@@ -615,6 +636,7 @@ class MlClient(NamespacedClient):
     async def get_job_stats(self, job_id=None, params=None, headers=None):
         """
         Retrieves usage information for anomaly detection jobs.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-get-job-stats.html>`_
 
         :arg job_id: The ID of the jobs stats to fetch
@@ -636,6 +658,7 @@ class MlClient(NamespacedClient):
     async def get_jobs(self, job_id=None, params=None, headers=None):
         """
         Retrieves configuration information for anomaly detection jobs.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-get-job.html>`_
 
         :arg job_id: The ID of the jobs to fetch
@@ -659,6 +682,7 @@ class MlClient(NamespacedClient):
     ):
         """
         Retrieves information about model snapshots.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-get-snapshot.html>`_
 
         :arg job_id: The ID of the job to fetch
@@ -704,6 +728,7 @@ class MlClient(NamespacedClient):
         """
         Retrieves overall bucket results that summarize the bucket results of multiple
         anomaly detection jobs.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-get-overall-buckets.html>`_
 
         :arg job_id: The job IDs for which to calculate overall bucket
@@ -755,6 +780,7 @@ class MlClient(NamespacedClient):
     async def get_records(self, job_id, body=None, params=None, headers=None):
         """
         Retrieves anomaly records for an anomaly detection job.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-get-record.html>`_
 
         :arg job_id: The ID of the job
@@ -788,6 +814,7 @@ class MlClient(NamespacedClient):
     async def info(self, params=None, headers=None):
         """
         Returns defaults and limits used by machine learning.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/get-ml-info.html>`_
         """
         return await self.transport.perform_request(
@@ -798,6 +825,7 @@ class MlClient(NamespacedClient):
     async def open_job(self, job_id, params=None, headers=None):
         """
         Opens one or more anomaly detection jobs.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-open-job.html>`_
 
         :arg job_id: The ID of the job to open
@@ -816,6 +844,7 @@ class MlClient(NamespacedClient):
     async def post_calendar_events(self, calendar_id, body, params=None, headers=None):
         """
         Posts scheduled events in a calendar.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-post-calendar-event.html>`_
 
         :arg calendar_id: The ID of the calendar to modify
@@ -837,6 +866,7 @@ class MlClient(NamespacedClient):
     async def post_data(self, job_id, body, params=None, headers=None):
         """
         Sends data to an anomaly detection job for analysis.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-post-data.html>`_
 
         :arg job_id: The name of the job receiving the data
@@ -863,6 +893,7 @@ class MlClient(NamespacedClient):
     async def preview_datafeed(self, datafeed_id, params=None, headers=None):
         """
         Previews a datafeed.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-preview-datafeed.html>`_
 
         :arg datafeed_id: The ID of the datafeed to preview
@@ -883,6 +914,7 @@ class MlClient(NamespacedClient):
     async def put_calendar(self, calendar_id, body=None, params=None, headers=None):
         """
         Instantiates a calendar.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-put-calendar.html>`_
 
         :arg calendar_id: The ID of the calendar to create
@@ -905,6 +937,7 @@ class MlClient(NamespacedClient):
     async def put_calendar_job(self, calendar_id, job_id, params=None, headers=None):
         """
         Adds an anomaly detection job to a calendar.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-put-calendar-job.html>`_
 
         :arg calendar_id: The ID of the calendar to modify
@@ -927,6 +960,7 @@ class MlClient(NamespacedClient):
     async def put_datafeed(self, datafeed_id, body, params=None, headers=None):
         """
         Instantiates a datafeed.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-put-datafeed.html>`_
 
         :arg datafeed_id: The ID of the datafeed to create
@@ -957,6 +991,7 @@ class MlClient(NamespacedClient):
     async def put_filter(self, filter_id, body, params=None, headers=None):
         """
         Instantiates a filter.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-put-filter.html>`_
 
         :arg filter_id: The ID of the filter to create
@@ -978,6 +1013,7 @@ class MlClient(NamespacedClient):
     async def put_job(self, job_id, body, params=None, headers=None):
         """
         Instantiates an anomaly detection job.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-put-job.html>`_
 
         :arg job_id: The ID of the job to create
@@ -1001,6 +1037,7 @@ class MlClient(NamespacedClient):
     ):
         """
         Reverts to a specific snapshot.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-revert-snapshot.html>`_
 
         :arg job_id: The ID of the job to fetch
@@ -1033,6 +1070,7 @@ class MlClient(NamespacedClient):
         """
         Sets a cluster wide upgrade_mode setting that prepares machine learning indices
         for an upgrade.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-set-upgrade-mode.html>`_
 
         :arg enabled: Whether to enable upgrade_mode ML setting or not.
@@ -1048,6 +1086,7 @@ class MlClient(NamespacedClient):
     async def start_datafeed(self, datafeed_id, body=None, params=None, headers=None):
         """
         Starts one or more datafeeds.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-start-datafeed.html>`_
 
         :arg datafeed_id: The ID of the datafeed to start
@@ -1075,6 +1114,7 @@ class MlClient(NamespacedClient):
     async def stop_datafeed(self, datafeed_id, body=None, params=None, headers=None):
         """
         Stops one or more datafeeds.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-stop-datafeed.html>`_
 
         :arg datafeed_id: The ID of the datafeed to stop
@@ -1108,6 +1148,7 @@ class MlClient(NamespacedClient):
     async def update_datafeed(self, datafeed_id, body, params=None, headers=None):
         """
         Updates certain properties of a datafeed.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-update-datafeed.html>`_
 
         :arg datafeed_id: The ID of the datafeed to update
@@ -1138,6 +1179,7 @@ class MlClient(NamespacedClient):
     async def update_filter(self, filter_id, body, params=None, headers=None):
         """
         Updates the description of a filter, adds items, or removes items.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-update-filter.html>`_
 
         :arg filter_id: The ID of the filter to update
@@ -1159,6 +1201,7 @@ class MlClient(NamespacedClient):
     async def update_job(self, job_id, body, params=None, headers=None):
         """
         Updates certain properties of an anomaly detection job.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-update-job.html>`_
 
         :arg job_id: The ID of the job to create
@@ -1182,6 +1225,7 @@ class MlClient(NamespacedClient):
     ):
         """
         Updates certain properties of a snapshot.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-update-snapshot.html>`_
 
         :arg job_id: The ID of the job to fetch
@@ -1211,6 +1255,7 @@ class MlClient(NamespacedClient):
     async def validate(self, body, params=None, headers=None):
         """
         Validates an anomaly detection job.
+
         `<https://www.elastic.co/guide/en/machine-learning/current/ml-jobs.html>`_
 
         :arg body: The job config
@@ -1230,6 +1275,7 @@ class MlClient(NamespacedClient):
     async def validate_detector(self, body, params=None, headers=None):
         """
         Validates an anomaly detection detector.
+
         `<https://www.elastic.co/guide/en/machine-learning/current/ml-jobs.html>`_
 
         :arg body: The detector
@@ -1249,6 +1295,7 @@ class MlClient(NamespacedClient):
     async def delete_data_frame_analytics(self, id, params=None, headers=None):
         """
         Deletes an existing data frame analytics job.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/delete-dfanalytics.html>`_
 
         :arg id: The ID of the data frame analytics to delete
@@ -1270,6 +1317,7 @@ class MlClient(NamespacedClient):
     async def evaluate_data_frame(self, body, params=None, headers=None):
         """
         Evaluates the data frame analytics for an annotated index.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/evaluate-dfanalytics.html>`_
 
         :arg body: The evaluation definition
@@ -1289,6 +1337,7 @@ class MlClient(NamespacedClient):
     async def get_data_frame_analytics(self, id=None, params=None, headers=None):
         """
         Retrieves configuration information for data frame analytics jobs.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/get-dfanalytics.html>`_
 
         :arg id: The ID of the data frame analytics to fetch
@@ -1314,6 +1363,7 @@ class MlClient(NamespacedClient):
     async def get_data_frame_analytics_stats(self, id=None, params=None, headers=None):
         """
         Retrieves usage information for data frame analytics jobs.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/get-dfanalytics-stats.html>`_
 
         :arg id: The ID of the data frame analytics stats to fetch
@@ -1340,6 +1390,7 @@ class MlClient(NamespacedClient):
     async def put_data_frame_analytics(self, id, body, params=None, headers=None):
         """
         Instantiates a data frame analytics job.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/put-dfanalytics.html>`_
 
         :arg id: The ID of the data frame analytics to create
@@ -1363,6 +1414,7 @@ class MlClient(NamespacedClient):
     ):
         """
         Starts a data frame analytics job.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/start-dfanalytics.html>`_
 
         :arg id: The ID of the data frame analytics to start
@@ -1385,6 +1437,7 @@ class MlClient(NamespacedClient):
     async def stop_data_frame_analytics(self, id, body=None, params=None, headers=None):
         """
         Stops one or more data frame analytics jobs.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/stop-dfanalytics.html>`_
 
         :arg id: The ID of the data frame analytics to stop
@@ -1413,6 +1466,7 @@ class MlClient(NamespacedClient):
         """
         Deletes an existing trained inference model that is currently not referenced by
         an ingest pipeline.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/delete-trained-models.html>`_
 
         :arg model_id: The ID of the trained model to delete
@@ -1433,6 +1487,7 @@ class MlClient(NamespacedClient):
     ):
         """
         Explains a data frame analytics config.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/explain-dfanalytics.html>`_
 
         :arg body: The data frame analytics config to explain
@@ -1459,6 +1514,7 @@ class MlClient(NamespacedClient):
     async def get_trained_models(self, model_id=None, params=None, headers=None):
         """
         Retrieves configuration information for a trained inference model.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/get-trained-models.html>`_
 
         :arg model_id: The ID of the trained models to fetch
@@ -1497,6 +1553,7 @@ class MlClient(NamespacedClient):
     async def get_trained_models_stats(self, model_id=None, params=None, headers=None):
         """
         Retrieves usage information for trained inference models.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/get-trained-models-stats.html>`_
 
         :arg model_id: The ID of the trained models stats to fetch
@@ -1522,6 +1579,7 @@ class MlClient(NamespacedClient):
     async def put_trained_model(self, model_id, body, params=None, headers=None):
         """
         Creates an inference trained model.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/put-trained-models.html>`_
 
         :arg model_id: The ID of the trained models to store
@@ -1543,6 +1601,7 @@ class MlClient(NamespacedClient):
     async def estimate_model_memory(self, body, params=None, headers=None):
         """
         Estimates the model memory
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/ml-apis.html>`_
 
         :arg body: The analysis config, plus cardinality estimates for
@@ -1563,6 +1622,7 @@ class MlClient(NamespacedClient):
     async def update_data_frame_analytics(self, id, body, params=None, headers=None):
         """
         Updates certain properties of a data frame analytics job.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/update-dfanalytics.html>`_
 
         :arg id: The ID of the data frame analytics to update

@@ -24,6 +24,7 @@ class CatClient(NamespacedClient):
         """
         Shows information about currently configured aliases to indices including
         filter and routing infos.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/cat-alias.html>`_
 
         :arg name: A comma-separated list of alias names to return
@@ -49,6 +50,7 @@ class CatClient(NamespacedClient):
         """
         Provides a snapshot of how many shards are allocated to each data node and how
         much disk space they are using.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/cat-allocation.html>`_
 
         :arg node_id: A comma-separated list of node IDs or names to
@@ -79,6 +81,7 @@ class CatClient(NamespacedClient):
         """
         Provides quick access to the document count of the entire cluster, or
         individual indices.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/cat-count.html>`_
 
         :arg index: A comma-separated list of index names to limit the
@@ -99,6 +102,7 @@ class CatClient(NamespacedClient):
     async def health(self, params=None, headers=None):
         """
         Returns a concise representation of the cluster health.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/cat-health.html>`_
 
         :arg format: a short version of the Accept header, e.g. json,
@@ -120,6 +124,7 @@ class CatClient(NamespacedClient):
     async def help(self, params=None, headers=None):
         """
         Returns help for the Cat APIs.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/cat.html>`_
 
         :arg help: Return help information
@@ -149,6 +154,7 @@ class CatClient(NamespacedClient):
         """
         Returns information about indices: number of primaries and replicas, document
         counts, disk size, ...
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/cat-indices.html>`_
 
         :arg index: A comma-separated list of index names to limit the
@@ -187,6 +193,7 @@ class CatClient(NamespacedClient):
     async def master(self, params=None, headers=None):
         """
         Returns information about the master node.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/cat-master.html>`_
 
         :arg format: a short version of the Accept header, e.g. json,
@@ -220,6 +227,7 @@ class CatClient(NamespacedClient):
     async def nodes(self, params=None, headers=None):
         """
         Returns basic statistics about performance of cluster nodes.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/cat-nodes.html>`_
 
         :arg bytes: The unit in which to display byte values  Valid
@@ -250,6 +258,7 @@ class CatClient(NamespacedClient):
     async def recovery(self, index=None, params=None, headers=None):
         """
         Returns information about index shard recoveries, both on-going completed.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/cat-recovery.html>`_
 
         :arg index: Comma-separated list or wildcard expression of index
@@ -280,6 +289,7 @@ class CatClient(NamespacedClient):
     async def shards(self, index=None, params=None, headers=None):
         """
         Provides a detailed view of shard allocation on nodes.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/cat-shards.html>`_
 
         :arg index: A comma-separated list of index names to limit the
@@ -308,6 +318,7 @@ class CatClient(NamespacedClient):
     async def segments(self, index=None, params=None, headers=None):
         """
         Provides low-level information about the segments in the shards of an index.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/cat-segments.html>`_
 
         :arg index: A comma-separated list of index names to limit the
@@ -330,6 +341,7 @@ class CatClient(NamespacedClient):
     async def pending_tasks(self, params=None, headers=None):
         """
         Returns a concise representation of the cluster pending tasks.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/cat-pending-tasks.html>`_
 
         :arg format: a short version of the Accept header, e.g. json,
@@ -355,6 +367,7 @@ class CatClient(NamespacedClient):
         """
         Returns cluster-wide thread pool statistics per node. By default the active,
         queue and rejected statistics are returned for all thread pools.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/cat-thread-pool.html>`_
 
         :arg thread_pool_patterns: A comma-separated list of regular-
@@ -385,6 +398,7 @@ class CatClient(NamespacedClient):
         """
         Shows how much heap memory is currently being used by fielddata on every data
         node in the cluster.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/cat-fielddata.html>`_
 
         :arg fields: A comma-separated list of fields to return in the
@@ -410,6 +424,7 @@ class CatClient(NamespacedClient):
     async def plugins(self, params=None, headers=None):
         """
         Returns information about installed plugins across nodes node.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/cat-plugins.html>`_
 
         :arg format: a short version of the Accept header, e.g. json,
@@ -432,6 +447,7 @@ class CatClient(NamespacedClient):
     async def nodeattrs(self, params=None, headers=None):
         """
         Returns information about custom node attributes.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/cat-nodeattrs.html>`_
 
         :arg format: a short version of the Accept header, e.g. json,
@@ -454,6 +470,7 @@ class CatClient(NamespacedClient):
     async def repositories(self, params=None, headers=None):
         """
         Returns information about snapshot repositories registered in the cluster.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/cat-repositories.html>`_
 
         :arg format: a short version of the Accept header, e.g. json,
@@ -478,6 +495,7 @@ class CatClient(NamespacedClient):
     async def snapshots(self, repository=None, params=None, headers=None):
         """
         Returns all snapshots in a specific repository.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/cat-snapshots.html>`_
 
         :arg repository: Name of repository from which to fetch the
@@ -519,6 +537,7 @@ class CatClient(NamespacedClient):
         """
         Returns information about the tasks currently executing on one or more nodes in
         the cluster.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/tasks.html>`_
 
         :arg actions: A comma-separated list of actions that should be
@@ -548,6 +567,7 @@ class CatClient(NamespacedClient):
     async def templates(self, name=None, params=None, headers=None):
         """
         Returns information about existing templates.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/cat-templates.html>`_
 
         :arg name: A pattern that returned template names must match
@@ -571,6 +591,7 @@ class CatClient(NamespacedClient):
     async def ml_data_frame_analytics(self, id=None, params=None, headers=None):
         """
         Gets configuration and usage information about data frame analytics jobs.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/cat-dfanalytics.html>`_
 
         :arg id: The ID of the data frame analytics to fetch
@@ -602,6 +623,7 @@ class CatClient(NamespacedClient):
     async def ml_datafeeds(self, datafeed_id=None, params=None, headers=None):
         """
         Gets configuration and usage information about datafeeds.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/cat-datafeeds.html>`_
 
         :arg datafeed_id: The ID of the datafeeds stats to fetch
@@ -642,6 +664,7 @@ class CatClient(NamespacedClient):
     async def ml_jobs(self, job_id=None, params=None, headers=None):
         """
         Gets configuration and usage information about anomaly detection jobs.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/cat-anomaly-detectors.html>`_
 
         :arg job_id: The ID of the jobs stats to fetch
@@ -685,6 +708,7 @@ class CatClient(NamespacedClient):
     async def ml_trained_models(self, model_id=None, params=None, headers=None):
         """
         Gets configuration and usage information about inference trained models.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/cat-trained-model.html>`_
 
         :arg model_id: The ID of the trained models stats to fetch
@@ -723,6 +747,7 @@ class CatClient(NamespacedClient):
     async def transforms(self, transform_id=None, params=None, headers=None):
         """
         Gets configuration and usage information about transforms.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/cat-transforms.html>`_
 
         :arg transform_id: The id of the transform for which to get

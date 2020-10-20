@@ -22,6 +22,7 @@ class AsyncSearchClient(NamespacedClient):
     async def delete(
         self,
         id: Any,
+        *,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -31,11 +32,12 @@ class AsyncSearchClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     async def get(
         self,
         id: Any,
+        *,
         keep_alive: Optional[Any] = ...,
         typed_keys: Optional[Any] = ...,
         wait_for_completion_timeout: Optional[Any] = ...,
@@ -48,10 +50,11 @@ class AsyncSearchClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     async def submit(
         self,
+        *,
         body: Optional[Any] = ...,
         index: Optional[Any] = ...,
         _source: Optional[Any] = ...,
@@ -104,5 +107,5 @@ class AsyncSearchClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...

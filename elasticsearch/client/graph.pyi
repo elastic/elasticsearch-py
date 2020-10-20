@@ -22,6 +22,7 @@ class GraphClient(NamespacedClient):
     def explore(
         self,
         index: Any,
+        *,
         body: Optional[Any] = ...,
         doc_type: Optional[Any] = ...,
         routing: Optional[Any] = ...,
@@ -35,5 +36,5 @@ class GraphClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
