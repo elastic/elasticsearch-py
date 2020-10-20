@@ -22,6 +22,7 @@ class Data_FrameClient(NamespacedClient):
     async def delete_data_frame_transform(
         self,
         transform_id: Any,
+        *,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -35,6 +36,7 @@ class Data_FrameClient(NamespacedClient):
     ) -> Any: ...
     async def get_data_frame_transform(
         self,
+        *,
         transform_id: Optional[Any] = ...,
         from_: Optional[Any] = ...,
         size: Optional[Any] = ...,
@@ -52,6 +54,7 @@ class Data_FrameClient(NamespacedClient):
     async def get_data_frame_transform_stats(
         self,
         transform_id: Optional[Any],
+        *,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -65,6 +68,7 @@ class Data_FrameClient(NamespacedClient):
     ) -> Any: ...
     async def preview_data_frame_transform(
         self,
+        *,
         body: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -80,6 +84,7 @@ class Data_FrameClient(NamespacedClient):
     async def put_data_frame_transform(
         self,
         transform_id: Any,
+        *,
         body: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -95,6 +100,7 @@ class Data_FrameClient(NamespacedClient):
     async def start_data_frame_transform(
         self,
         transform_id: Any,
+        *,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -110,6 +116,7 @@ class Data_FrameClient(NamespacedClient):
     async def stop_data_frame_transform(
         self,
         transform_id: Any,
+        *,
         timeout: Optional[Any] = ...,
         wait_for_completion: Optional[Any] = ...,
         pretty: Optional[bool] = ...,

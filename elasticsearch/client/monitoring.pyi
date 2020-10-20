@@ -21,6 +21,7 @@ from .utils import NamespacedClient
 class MonitoringClient(NamespacedClient):
     def bulk(
         self,
+        *,
         body: Any,
         doc_type: Optional[Any] = ...,
         interval: Optional[Any] = ...,
@@ -35,5 +36,5 @@ class MonitoringClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
