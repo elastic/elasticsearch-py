@@ -73,7 +73,7 @@ setup(
         "Issue Tracker": "https://github.com/elastic/elasticsearch-py/issues",
     },
     packages=packages,
-    package_data={"elasticsearch": ["py.typed"]},
+    package_data={"elasticsearch": ["py.typed", "*.pyi"]},
     include_package_data=True,
     zip_safe=False,
     classifiers=[
