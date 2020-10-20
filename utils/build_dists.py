@@ -66,7 +66,7 @@ def test_dist(dist):
         # Build the venv and install the dist
         run("python", "-m", "venv", os.path.join(tmp_dir, "venv"))
         venv_python = os.path.join(tmp_dir, "venv/bin/python")
-        run(venv_python, "-m", "pip", "install", "-U", "pip")
+        run(venv_python, "-m", "pip", "install", "-U", "pip", "mypy")
         run(venv_python, "-m", "pip", "install", dist)
 
         # Test the sync namespaces
@@ -106,6 +106,17 @@ def test_dist(dist):
             f"from {dist_name}.helpers import async_scan, async_bulk, async_streaming_bulk, async_reindex",
         )
 
+        # Only need to test 'async_types' for non-aliased package
+        # since 'aliased_types' tests both async and sync.
+        if dist_name == "elasticsearch":
+            run(
+                venv_python,
+                "-m",
+                "mypy",
+                "--strict",
+                os.path.join(base_dir, "test_elasticsearch/test_types/async_types.py"),
+            )
+
         # Ensure that the namespaces are correct for the dist
         for suffix in ("", "1", "2", "5", "6", "7", "8", "9", "10"):
             distx_name = f"elasticsearch{suffix}"
@@ -114,6 +125,27 @@ def test_dist(dist):
                 "-c",
                 f"import {distx_name}",
                 expect_exit_code=256 if distx_name != dist_name else 0,
+            )
+
+        # Check that sync types work for 'elasticsearch' and
+        # that aliased types work for 'elasticsearchX'
+        if dist_name == "elasticsearch":
+            run(
+                venv_python,
+                "-m",
+                "mypy",
+                "--strict",
+                os.path.join(base_dir, "test_elasticsearch/test_types/sync_types.py"),
+            )
+        else:
+            run(
+                venv_python,
+                "-m",
+                "mypy",
+                "--strict",
+                os.path.join(
+                    base_dir, "test_elasticsearch/test_types/aliased_types.py"
+                ),
             )
 
         # Uninstall the dist, see that we can't import things anymore
