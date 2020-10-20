@@ -2,6 +2,8 @@
   {% if info.required %}{{ p }}: {{ info.type }}, {% endif %}
 {% endfor %}
 
+*,
+
 {% if api.body %}
   body{% if not api.body.required %}: Optional[Any]=...{% else %}: Any{% endif %},
 {% endif %}
