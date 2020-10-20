@@ -27,6 +27,7 @@ class XPackClient(NamespacedClient):
     async def info(self, params=None, headers=None):
         """
         Retrieves information about the installed X-Pack features.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/info-api.html>`_
 
         :arg accept_enterprise: If this param is used it must be set to
@@ -42,6 +43,7 @@ class XPackClient(NamespacedClient):
     async def usage(self, params=None, headers=None):
         """
         Retrieves usage information about the installed X-Pack features.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/usage-api.html>`_
 
         :arg master_timeout: Specify timeout for watch write operation

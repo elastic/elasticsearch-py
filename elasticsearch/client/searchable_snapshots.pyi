@@ -21,6 +21,7 @@ from .utils import NamespacedClient
 class SearchableSnapshotsClient(NamespacedClient):
     def clear_cache(
         self,
+        *,
         index: Optional[Any] = ...,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
@@ -34,12 +35,13 @@ class SearchableSnapshotsClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def mount(
         self,
         repository: Any,
         snapshot: Any,
+        *,
         body: Any,
         master_timeout: Optional[Any] = ...,
         wait_for_completion: Optional[Any] = ...,
@@ -52,10 +54,11 @@ class SearchableSnapshotsClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def stats(
         self,
+        *,
         index: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -66,5 +69,5 @@ class SearchableSnapshotsClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...

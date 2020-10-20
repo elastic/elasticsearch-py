@@ -23,6 +23,7 @@ class CcrClient(NamespacedClient):
     def delete_auto_follow_pattern(self, name, params=None, headers=None):
         """
         Deletes auto-follow patterns.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ccr-delete-auto-follow-pattern.html>`_
 
         :arg name: The name of the auto follow pattern.
@@ -41,6 +42,7 @@ class CcrClient(NamespacedClient):
     def follow(self, index, body, params=None, headers=None):
         """
         Creates a new follower index configured to follow the referenced leader index.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ccr-put-follow.html>`_
 
         :arg index: The name of the follower index
@@ -69,6 +71,7 @@ class CcrClient(NamespacedClient):
         """
         Retrieves information about all follower indices, including parameters and
         status for each follower index
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ccr-get-follow-info.html>`_
 
         :arg index: A comma-separated list of index patterns; use `_all`
@@ -86,6 +89,7 @@ class CcrClient(NamespacedClient):
         """
         Retrieves follower stats. return shard-level stats about the following tasks
         associated with each shard for the specified indices.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ccr-get-follow-stats.html>`_
 
         :arg index: A comma-separated list of index patterns; use `_all`
@@ -102,6 +106,7 @@ class CcrClient(NamespacedClient):
     def forget_follower(self, index, body, params=None, headers=None):
         """
         Removes the follower retention leases from the leader.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ccr-post-forget-follower.html>`_
 
         :arg index: the name of the leader index for which specified
@@ -128,6 +133,7 @@ class CcrClient(NamespacedClient):
         """
         Gets configured auto-follow patterns. Returns the specified auto-follow pattern
         collection.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ccr-get-auto-follow-pattern.html>`_
 
         :arg name: The name of the auto follow pattern.
@@ -144,6 +150,7 @@ class CcrClient(NamespacedClient):
         """
         Pauses a follower index. The follower index will not fetch any additional
         operations from the leader index.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ccr-post-pause-follow.html>`_
 
         :arg index: The name of the follower index that should pause
@@ -165,6 +172,7 @@ class CcrClient(NamespacedClient):
         Creates a new named collection of auto-follow patterns against a specified
         remote cluster. Newly created indices on the remote cluster matching any of the
         specified patterns will be automatically configured as follower indices.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ccr-put-auto-follow-pattern.html>`_
 
         :arg name: The name of the auto follow pattern.
@@ -186,6 +194,7 @@ class CcrClient(NamespacedClient):
     def resume_follow(self, index, body=None, params=None, headers=None):
         """
         Resumes a follower index that has been paused
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ccr-post-resume-follow.html>`_
 
         :arg index: The name of the follow index to resume following.
@@ -207,6 +216,7 @@ class CcrClient(NamespacedClient):
     def stats(self, params=None, headers=None):
         """
         Gets all stats related to cross-cluster replication.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ccr-get-stats.html>`_
         """
         return self.transport.perform_request(
@@ -218,6 +228,7 @@ class CcrClient(NamespacedClient):
         """
         Stops the following task associated with a follower index and removes index
         metadata and settings associated with cross-cluster replication.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ccr-post-unfollow.html>`_
 
         :arg index: The name of the follower index that should be turned
@@ -237,6 +248,7 @@ class CcrClient(NamespacedClient):
     def pause_auto_follow_pattern(self, name, params=None, headers=None):
         """
         Pauses an auto-follow pattern
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ccr-pause-auto-follow-pattern.html>`_
 
         :arg name: The name of the auto follow pattern that should pause
@@ -256,6 +268,7 @@ class CcrClient(NamespacedClient):
     def resume_auto_follow_pattern(self, name, params=None, headers=None):
         """
         Resumes an auto-follow pattern that has been paused
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ccr-resume-auto-follow-pattern.html>`_
 
         :arg name: The name of the auto follow pattern to resume

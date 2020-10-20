@@ -24,6 +24,7 @@ class SecurityClient(NamespacedClient):
         """
         Enables authentication as a user and retrieve information about the
         authenticated user.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-authenticate.html>`_
         """
         return self.transport.perform_request(
@@ -34,6 +35,7 @@ class SecurityClient(NamespacedClient):
     def change_password(self, body, username=None, params=None, headers=None):
         """
         Changes the passwords of users in the native realm and built-in users.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-change-password.html>`_
 
         :arg body: the new password for the user
@@ -60,6 +62,7 @@ class SecurityClient(NamespacedClient):
         """
         Evicts users from the user cache. Can completely clear the cache or evict
         specific users.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-clear-cache.html>`_
 
         :arg realms: Comma-separated list of realms to clear
@@ -80,6 +83,7 @@ class SecurityClient(NamespacedClient):
     def clear_cached_roles(self, name, params=None, headers=None):
         """
         Evicts roles from the native role cache.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-clear-role-cache.html>`_
 
         :arg name: Role name
@@ -98,6 +102,7 @@ class SecurityClient(NamespacedClient):
     def create_api_key(self, body, params=None, headers=None):
         """
         Creates an API key for access without requiring basic authentication.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-create-api-key.html>`_
 
         :arg body: The api key request to create an API key
@@ -117,6 +122,7 @@ class SecurityClient(NamespacedClient):
     def delete_privileges(self, application, name, params=None, headers=None):
         """
         Removes application privileges.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-delete-privilege.html>`_
 
         :arg application: Application name
@@ -141,6 +147,7 @@ class SecurityClient(NamespacedClient):
     def delete_role(self, name, params=None, headers=None):
         """
         Removes roles in the native realm.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-delete-role.html>`_
 
         :arg name: Role name
@@ -163,6 +170,7 @@ class SecurityClient(NamespacedClient):
     def delete_role_mapping(self, name, params=None, headers=None):
         """
         Removes role mappings.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-delete-role-mapping.html>`_
 
         :arg name: Role-mapping name
@@ -185,6 +193,7 @@ class SecurityClient(NamespacedClient):
     def delete_user(self, username, params=None, headers=None):
         """
         Deletes users from the native realm.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-delete-user.html>`_
 
         :arg username: username
@@ -207,6 +216,7 @@ class SecurityClient(NamespacedClient):
     def disable_user(self, username, params=None, headers=None):
         """
         Disables users in the native realm.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-disable-user.html>`_
 
         :arg username: The username of the user to disable
@@ -229,6 +239,7 @@ class SecurityClient(NamespacedClient):
     def enable_user(self, username, params=None, headers=None):
         """
         Enables users in the native realm.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-enable-user.html>`_
 
         :arg username: The username of the user to enable
@@ -251,6 +262,7 @@ class SecurityClient(NamespacedClient):
     def get_api_key(self, params=None, headers=None):
         """
         Retrieves information for one or more API keys.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-api-key.html>`_
 
         :arg id: API key id of the API key to be retrieved
@@ -270,6 +282,7 @@ class SecurityClient(NamespacedClient):
     def get_privileges(self, application=None, name=None, params=None, headers=None):
         """
         Retrieves application privileges.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-privileges.html>`_
 
         :arg application: Application name
@@ -286,6 +299,7 @@ class SecurityClient(NamespacedClient):
     def get_role(self, name=None, params=None, headers=None):
         """
         Retrieves roles in the native realm.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-role.html>`_
 
         :arg name: A comma-separated list of role names
@@ -298,6 +312,7 @@ class SecurityClient(NamespacedClient):
     def get_role_mapping(self, name=None, params=None, headers=None):
         """
         Retrieves role mappings.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-role-mapping.html>`_
 
         :arg name: A comma-separated list of role-mapping names
@@ -313,6 +328,7 @@ class SecurityClient(NamespacedClient):
     def get_token(self, body, params=None, headers=None):
         """
         Creates a bearer token for access without requiring basic authentication.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-token.html>`_
 
         :arg body: The token request to get
@@ -328,6 +344,7 @@ class SecurityClient(NamespacedClient):
     def get_user(self, username=None, params=None, headers=None):
         """
         Retrieves information about users in the native realm and built-in users.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-user.html>`_
 
         :arg username: A comma-separated list of usernames
@@ -343,6 +360,7 @@ class SecurityClient(NamespacedClient):
     def get_user_privileges(self, params=None, headers=None):
         """
         Retrieves application privileges.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-privileges.html>`_
         """
         return self.transport.perform_request(
@@ -353,6 +371,7 @@ class SecurityClient(NamespacedClient):
     def has_privileges(self, body, user=None, params=None, headers=None):
         """
         Determines whether the specified user has a specified list of privileges.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-has-privileges.html>`_
 
         :arg body: The privileges to test
@@ -373,6 +392,7 @@ class SecurityClient(NamespacedClient):
     def invalidate_api_key(self, body, params=None, headers=None):
         """
         Invalidates one or more API keys.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-invalidate-api-key.html>`_
 
         :arg body: The api key request to invalidate API key(s)
@@ -388,6 +408,7 @@ class SecurityClient(NamespacedClient):
     def invalidate_token(self, body, params=None, headers=None):
         """
         Invalidates one or more access tokens or refresh tokens.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-invalidate-token.html>`_
 
         :arg body: The token to invalidate
@@ -407,6 +428,7 @@ class SecurityClient(NamespacedClient):
     def put_privileges(self, body, params=None, headers=None):
         """
         Adds or updates application privileges.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-put-privileges.html>`_
 
         :arg body: The privilege(s) to add
@@ -426,6 +448,7 @@ class SecurityClient(NamespacedClient):
     def put_role(self, name, body, params=None, headers=None):
         """
         Adds and updates roles in the native realm.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-put-role.html>`_
 
         :arg name: Role name
@@ -451,6 +474,7 @@ class SecurityClient(NamespacedClient):
     def put_role_mapping(self, name, body, params=None, headers=None):
         """
         Creates and updates role mappings.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-put-role-mapping.html>`_
 
         :arg name: Role-mapping name
@@ -477,6 +501,7 @@ class SecurityClient(NamespacedClient):
         """
         Adds and updates users in the native realm. These users are commonly referred
         to as native users.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-put-user.html>`_
 
         :arg username: The username of the User
@@ -503,6 +528,7 @@ class SecurityClient(NamespacedClient):
         """
         Retrieves the list of cluster privileges and index privileges that are
         available in this version of Elasticsearch.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-builtin-privileges.html>`_
         """
         return self.transport.perform_request(
@@ -513,6 +539,7 @@ class SecurityClient(NamespacedClient):
     def clear_cached_privileges(self, application, params=None, headers=None):
         """
         Evicts application privileges from the native application privileges cache.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-clear-privilege-cache.html>`_
 
         :arg application: A comma-separated list of application names
@@ -527,4 +554,48 @@ class SecurityClient(NamespacedClient):
             _make_path("_security", "privilege", application, "_clear_cache"),
             params=params,
             headers=headers,
+        )
+
+    @query_params()
+    def clear_api_key_cache(self, ids, params=None, headers=None):
+        """
+        Clear a subset or all entries from the API key cache.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-clear-api-key-cache.html>`_
+
+        :arg ids: A comma-separated list of IDs of API keys to clear
+            from the cache
+        """
+        if ids in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'ids'.")
+
+        return self.transport.perform_request(
+            "POST",
+            _make_path("_security", "api_key", ids, "_clear_cache"),
+            params=params,
+            headers=headers,
+        )
+
+    @query_params("refresh")
+    def grant_api_key(self, body, params=None, headers=None):
+        """
+        Creates an API key on behalf of another user.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-grant-api-key.html>`_
+
+        :arg body: The api key request to create an API key
+        :arg refresh: If `true` (the default) then refresh the affected
+            shards to make this operation visible to search, if `wait_for` then wait
+            for a refresh to make this operation visible to search, if `false` then
+            do nothing with refreshes.  Valid choices: true, false, wait_for
+        """
+        if body in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'body'.")
+
+        return self.transport.perform_request(
+            "POST",
+            "/_security/api_key/grant",
+            params=params,
+            headers=headers,
+            body=body,
         )

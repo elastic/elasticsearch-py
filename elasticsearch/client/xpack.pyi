@@ -24,6 +24,7 @@ class XPackClient(NamespacedClient):
     # AUTO-GENERATED-API-DEFINITIONS #
     def info(
         self,
+        *,
         accept_enterprise: Optional[Any] = ...,
         categories: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -35,10 +36,11 @@ class XPackClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def usage(
         self,
+        *,
         master_timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -49,5 +51,5 @@ class XPackClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...

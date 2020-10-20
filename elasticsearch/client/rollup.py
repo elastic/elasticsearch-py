@@ -23,6 +23,7 @@ class RollupClient(NamespacedClient):
     def delete_job(self, id, params=None, headers=None):
         """
         Deletes an existing rollup job.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-delete-job.html>`_
 
         :arg id: The ID of the job to delete
@@ -38,6 +39,7 @@ class RollupClient(NamespacedClient):
     def get_jobs(self, id=None, params=None, headers=None):
         """
         Retrieves the configuration, stats, and status of rollup jobs.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-get-job.html>`_
 
         :arg id: The ID of the job(s) to fetch. Accepts glob patterns,
@@ -52,6 +54,7 @@ class RollupClient(NamespacedClient):
         """
         Returns the capabilities of any rollup jobs that have been configured for a
         specific index or index pattern.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-get-rollup-caps.html>`_
 
         :arg id: The ID of the index to check rollup capabilities on, or
@@ -66,6 +69,7 @@ class RollupClient(NamespacedClient):
         """
         Returns the rollup capabilities of all jobs inside of a rollup index (e.g. the
         index where rollup data is stored).
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-get-rollup-index-caps.html>`_
 
         :arg index: The rollup index or index pattern to obtain rollup
@@ -82,6 +86,7 @@ class RollupClient(NamespacedClient):
     def put_job(self, id, body, params=None, headers=None):
         """
         Creates a rollup job.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-put-job.html>`_
 
         :arg id: The ID of the job to create
@@ -103,6 +108,7 @@ class RollupClient(NamespacedClient):
     def rollup_search(self, index, body, doc_type=None, params=None, headers=None):
         """
         Enables searching rolled-up data using the standard query DSL.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-search.html>`_
 
         :arg index: The indices or index-pattern(s) (containing rollup
@@ -130,6 +136,7 @@ class RollupClient(NamespacedClient):
     def start_job(self, id, params=None, headers=None):
         """
         Starts an existing, stopped rollup job.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-start-job.html>`_
 
         :arg id: The ID of the job to start
@@ -148,6 +155,7 @@ class RollupClient(NamespacedClient):
     def stop_job(self, id, params=None, headers=None):
         """
         Stops an existing, started rollup job.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-stop-job.html>`_
 
         :arg id: The ID of the job to stop
