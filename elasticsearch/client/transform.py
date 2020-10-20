@@ -23,6 +23,7 @@ class TransformClient(NamespacedClient):
     def delete_transform(self, transform_id, params=None, headers=None):
         """
         Deletes an existing transform.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/delete-transform.html>`_
 
         :arg transform_id: The id of the transform to delete
@@ -46,6 +47,7 @@ class TransformClient(NamespacedClient):
     def get_transform(self, transform_id=None, params=None, headers=None):
         """
         Retrieves configuration information for transforms.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/get-transform.html>`_
 
         :arg transform_id: The id or comma delimited list of id
@@ -73,6 +75,7 @@ class TransformClient(NamespacedClient):
     def get_transform_stats(self, transform_id, params=None, headers=None):
         """
         Retrieves usage information for transforms.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/get-transform-stats.html>`_
 
         :arg transform_id: The id of the transform for which to get
@@ -104,6 +107,7 @@ class TransformClient(NamespacedClient):
     def preview_transform(self, body, params=None, headers=None):
         """
         Previews a transform.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/preview-transform.html>`_
 
         :arg body: The definition for the transform to preview
@@ -119,6 +123,7 @@ class TransformClient(NamespacedClient):
     def put_transform(self, transform_id, body, params=None, headers=None):
         """
         Instantiates a transform.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/put-transform.html>`_
 
         :arg transform_id: The id of the new transform.
@@ -142,6 +147,7 @@ class TransformClient(NamespacedClient):
     def start_transform(self, transform_id, params=None, headers=None):
         """
         Starts one or more transforms.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/start-transform.html>`_
 
         :arg transform_id: The id of the transform to start
@@ -170,6 +176,7 @@ class TransformClient(NamespacedClient):
     def stop_transform(self, transform_id, params=None, headers=None):
         """
         Stops one or more transforms.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/stop-transform.html>`_
 
         :arg transform_id: The id of the transform to stop
@@ -201,6 +208,7 @@ class TransformClient(NamespacedClient):
     def update_transform(self, transform_id, body, params=None, headers=None):
         """
         Updates certain properties of a transform.
+
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/update-transform.html>`_
 
         :arg transform_id: The id of the transform.

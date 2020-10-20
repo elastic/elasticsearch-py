@@ -21,6 +21,7 @@ from .utils import NamespacedClient
 class ClusterClient(NamespacedClient):
     def health(
         self,
+        *,
         index: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
         level: Optional[Any] = ...,
@@ -42,10 +43,11 @@ class ClusterClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def pending_tasks(
         self,
+        *,
         local: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -57,10 +59,11 @@ class ClusterClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def state(
         self,
+        *,
         metric: Optional[Any] = ...,
         index: Optional[Any] = ...,
         allow_no_indices: Optional[Any] = ...,
@@ -80,10 +83,11 @@ class ClusterClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def stats(
         self,
+        *,
         node_id: Optional[Any] = ...,
         flat_settings: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
@@ -96,10 +100,11 @@ class ClusterClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def reroute(
         self,
+        *,
         body: Optional[Any] = ...,
         dry_run: Optional[Any] = ...,
         explain: Optional[Any] = ...,
@@ -116,10 +121,11 @@ class ClusterClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def get_settings(
         self,
+        *,
         flat_settings: Optional[Any] = ...,
         include_defaults: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
@@ -133,10 +139,11 @@ class ClusterClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def put_settings(
         self,
+        *,
         body: Any,
         flat_settings: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
@@ -150,10 +157,11 @@ class ClusterClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def remote_info(
         self,
+        *,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -163,10 +171,11 @@ class ClusterClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def allocation_explain(
         self,
+        *,
         body: Optional[Any] = ...,
         include_disk_info: Optional[Any] = ...,
         include_yes_decisions: Optional[Any] = ...,
@@ -179,11 +188,12 @@ class ClusterClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def delete_component_template(
         self,
         name: Any,
+        *,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -195,10 +205,11 @@ class ClusterClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def get_component_template(
         self,
+        *,
         name: Optional[Any] = ...,
         local: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
@@ -211,11 +222,12 @@ class ClusterClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def put_component_template(
         self,
         name: Any,
+        *,
         body: Any,
         create: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
@@ -229,11 +241,12 @@ class ClusterClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def exists_component_template(
         self,
         name: Any,
+        *,
         local: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -245,10 +258,11 @@ class ClusterClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> bool: ...
     def delete_voting_config_exclusions(
         self,
+        *,
         wait_for_removal: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -259,10 +273,11 @@ class ClusterClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def post_voting_config_exclusions(
         self,
+        *,
         node_ids: Optional[Any] = ...,
         node_names: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
@@ -275,5 +290,5 @@ class ClusterClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...

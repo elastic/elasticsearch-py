@@ -22,6 +22,7 @@ class EqlClient(NamespacedClient):
     def search(
         self,
         index: Any,
+        *,
         body: Any,
         keep_alive: Optional[Any] = ...,
         keep_on_completion: Optional[Any] = ...,
@@ -35,11 +36,12 @@ class EqlClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def delete(
         self,
         id: Any,
+        *,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -49,11 +51,12 @@ class EqlClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
     def get(
         self,
         id: Any,
+        *,
         keep_alive: Optional[Any] = ...,
         wait_for_completion_timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -65,5 +68,5 @@ class EqlClient(NamespacedClient):
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
