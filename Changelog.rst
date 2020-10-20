@@ -3,11 +3,11 @@
 Changelog
 =========
 
-7.10.0a1 (2020-10-14)
+7.10.0a2 (2020-10-20)
 ---------------------
 
 * Added support for Elasticsearch 7.10 APIs
-* Added basic type stubs for static type checking and IDE auto-complete of API parameters (`#1297`_)
+* Added basic type stubs for static type checking and IDE auto-complete of API parameters (`#1297`_, `#1406`_)
 * Added support for `Optimistic Concurrency Control options`_
   (``_if_seq_no``/``_if_primary_term``) to bulk helpers (`#1387`_)
 * Added support for passing ``_source`` with ``"_op_type": "update"``
@@ -19,6 +19,7 @@ Changelog
   install with ``--use-feature=2020-resolver``. Users should see no changes. (`#1401`_)
 
  .. _Optimistic Concurrency Control options: https://www.elastic.co/guide/en/elasticsearch/reference/current/optimistic-concurrency-control.html
+ .. _#1406: https://github.com/elastic/elasticsearch-py/pull/1406
  .. _#1401: https://github.com/elastic/elasticsearch-py/pull/1401
  .. _#1394: https://github.com/elastic/elasticsearch-py/pull/1394
  .. _#1387: https://github.com/elastic/elasticsearch-py/pull/1387
