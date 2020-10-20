@@ -6,6 +6,7 @@
         {{ api.description|replace("\n", " ")|wordwrap(wrapstring="\n        ") }}
         {% endif %}
         {% if api.doc_url %}
+
         `<{{ api.doc_url }}>`_
         {% endif %}
         {% if api.params|list|length %}
