@@ -26,6 +26,11 @@ class RollupClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-delete-job.html>`_
 
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
         :arg id: The ID of the job to delete
         """
         if id in SKIP_IN_PATH:
@@ -42,6 +47,11 @@ class RollupClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-get-job.html>`_
 
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
         :arg id: The ID of the job(s) to fetch. Accepts glob patterns,
             or left blank for all jobs
         """
@@ -57,6 +67,11 @@ class RollupClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-get-rollup-caps.html>`_
 
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
         :arg id: The ID of the index to check rollup capabilities on, or
             left blank for all jobs
         """
@@ -71,6 +86,11 @@ class RollupClient(NamespacedClient):
         index where rollup data is stored).
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-get-rollup-index-caps.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
 
         :arg index: The rollup index or index pattern to obtain rollup
             capabilities from.
@@ -88,6 +108,11 @@ class RollupClient(NamespacedClient):
         Creates a rollup job.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-put-job.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
 
         :arg id: The ID of the job to create
         :arg body: The job configuration
@@ -112,6 +137,11 @@ class RollupClient(NamespacedClient):
         Enables searching rolled-up data using the standard query DSL.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-search.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
 
         :arg index: The indices or index-pattern(s) (containing rollup
             or regular data) that should be searched
@@ -141,6 +171,11 @@ class RollupClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-start-job.html>`_
 
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
         :arg id: The ID of the job to start
         """
         if id in SKIP_IN_PATH:
@@ -159,6 +194,11 @@ class RollupClient(NamespacedClient):
         Stops an existing, started rollup job.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-stop-job.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
 
         :arg id: The ID of the job to stop
         :arg timeout: Block for (at maximum) the specified duration

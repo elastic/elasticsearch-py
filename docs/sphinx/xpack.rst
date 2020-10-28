@@ -8,209 +8,170 @@ reporting, and graph capabilities into one easy-to-install package.
 While the X-Pack components are designed to work together seamlessly, you can
 easily enable or disable the features you want to use.
 
+.. py:module:: elasticsearch.client
 
-Info
-----
 
-`X-Pack info <https://www.elastic.co/guide/en/elasticsearch/reference/master/info-api.html>`_
+X-Pack Info
+-----------
+
+`X-Pack Info API <https://www.elastic.co/guide/en/elasticsearch/reference/master/info-api.html>`_
 provides general info about the installed X-Pack.
-
-.. py:module:: elasticsearch.client.xpack
 
 .. autoclass:: XPackClient
    :members:
 
+Cross-Cluster Replication
+-------------------------
 
-Graph Explore APIs
-------------------
-
-`Graph Explore API <https://www.elastic.co/guide/en/elasticsearch/reference/master/graph-explore-api.html>`_
-enables you to extract and summarize information about the documents and terms in your Elasticsearch index.
-
-.. py:module:: elasticsearch.client.graph
-
-
-.. autoclass:: GraphClient
-   :members:
-
-Licensing APIs
---------------
-
-`Licensing API <https://www.elastic.co/guide/en/elasticsearch/reference/master/licensing-apis.html>`_
-can be used to manage your licences.
-
-
-.. py:module:: elasticsearch.client.license
-
-
-.. autoclass:: LicenseClient
-   :members:
-
-Machine Learning APIs
----------------------
-
-`Machine Learning <https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-apis.html>`_
-can be useful for discovering new patterns about your data. For a more detailed explanation
-about X-Pack's machine learning please refer to the official documentation.
-
-
-.. py:module:: elasticsearch.client.ml
-
-
-.. autoclass:: MlClient
-   :members:
-
-Security APIs
--------------
-
-`Security API <https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api.html>`_
-can be used to help secure your Elasticsearch cluster. Integrating with LDAP and Active Directory.
-
-.. py:module:: elasticsearch.client.security
-
-
-.. autoclass:: SecurityClient
-   :members:
-
-Watcher APIs
--------------
-
-`Watcher API <https://www.elastic.co/guide/en/elasticsearch/reference/master/watcher-api.html>`_
-can be used to notify you when certain pre-defined thresholds have happened.
-
-.. py:module:: elasticsearch.client.watcher
-
-.. autoclass:: WatcherClient
-   :members:
-
-
-Migration APIs
----------------
-
-`Migration API <https://www.elastic.co/guide/en/elasticsearch/reference/master/migration-api.html>`_
-helps simplify upgrading X-Pack indices from one version to another.
-
-.. py:module:: elasticsearch.client.migration
-
-.. autoclass:: MigrationClient
-   :members:
-
-
-Enrich APIs
-------------
-
-`Enrich API <https://www.elastic.co/guide/en/elasticsearch/reference/master/enrich-apis.html>`_
-can be used to add data from your existing indices to incoming documents during ingest.
-
-.. py:module:: elasticsearch.client.enrich
-
-.. autoclass:: EnrichClient
-   :members:
-
-SQL APIs
---------
-
-The `SQL REST API <https://www.elastic.co/guide/en/elasticsearch/reference/master/sql-rest.html>`_
-accepts SQL in a JSON document, executes it, and returns the results.
-
-.. py:module:: elasticsearch.client.sql
-
-.. autoclass:: SqlClient
-   :members:
-
-Cross-Cluster Replication APIs
--------------------------------
-
-`Cross-Cluster Replication API <https://www.elastic.co/guide/en/elasticsearch/reference/master/ccr-apis.html>`_
-used to perform cross-cluster replication operations.
-
-.. py:module:: elasticsearch.client.ccr
+`Cross-Cluster Replication APIs <https://www.elastic.co/guide/en/elasticsearch/reference/master/ccr-apis.html>`_
+are used to perform cross-cluster replication operations.
 
 .. autoclass:: CcrClient
    :members:
 
+Enrich
+------
 
-Monitoring APIs
+`Enrich APIs <https://www.elastic.co/guide/en/elasticsearch/reference/master/enrich-apis.html>`_
+can be used to add data from your existing indices to incoming documents during ingest.
+
+.. autoclass:: EnrichClient
+   :members:
+
+EQL
+---
+
+`EQL APIs <https://www.elastic.co/guide/en/elasticsearch/reference/master/eql.html>`_
+accept EQL to query event-based time series data, such as logs, metrics, and traces.
+
+.. autoclass:: EqlClient
+   :members:
+
+Graph Explore
+-------------
+
+`Graph Explore API <https://www.elastic.co/guide/en/elasticsearch/reference/master/graph-explore-api.html>`_
+enables you to extract and summarize information about the documents and terms in your Elasticsearch index.
+
+.. autoclass:: GraphClient
+   :members:
+
+Index Lifecycle Management (ILM)
+--------------------------------
+
+`Index Lifecycle Management APIs <https://www.elastic.co/guide/en/elasticsearch/reference/master/index-lifecycle-management-api.html>`_
+used to set up policies to automatically manage the index lifecycle.
+
+.. autoclass:: IlmClient
+   :members:
+
+Licensing
+---------
+
+`License APIs <https://www.elastic.co/guide/en/elasticsearch/reference/master/licensing-apis.html>`_
+can be used to manage your licences.
+
+.. autoclass:: LicenseClient
+   :members:
+
+Machine Learning
 ----------------
+
+`Machine Learning APIs <https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-apis.html>`_
+can be useful for discovering new patterns about your data. For a more detailed explanation
+about X-Pack's machine learning please refer to the official documentation.
+
+.. autoclass:: MlClient
+   :members:
+
+Migration
+---------
+
+`Migration API <https://www.elastic.co/guide/en/elasticsearch/reference/master/migration-api.html>`_
+helps simplify upgrading X-Pack indices from one version to another.
+
+.. autoclass:: MigrationClient
+   :members:
+
+Monitoring
+----------
 
 `Monitoring API <https://www.elastic.co/guide/en/elasticsearch/reference/master/es-monitoring.html>`_
 used to collect data from the Elasticsearch nodes, Logstash nodes, Kibana instances, and Beats in your cluster.
 
-.. py:module:: elasticsearch.client.monitoring
-
 .. autoclass:: MonitoringClient
    :members:
 
-
-Rollup APIs
-------------
+Rollup
+------
 
 `Rollup API <https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-apis.html>`_
 enables searching through rolled-up data using the standard query DSL.
 
-.. py:module:: elasticsearch.client.rollup
-
 .. autoclass:: RollupClient
    :members:
 
+Searchable Snapshots
+--------------------
 
-Snapshot Lifecycle Management APIs
+`Searchable Snapshots API <https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-apis.html>`_
+used to perform searchable snapshots operations.
+
+.. autoclass:: SearchableSnapshotsClient
+   :members:
+
+Security
+--------
+
+`Security API <https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api.html>`_
+can be used to help secure your Elasticsearch cluster. Integrating with LDAP and Active Directory.
+
+.. autoclass:: SecurityClient
+   :members:
+
+Snapshot Lifecycle Management (SLM)
 -----------------------------------
 
 `Snapshot Lifecycle Management API <https://www.elastic.co/guide/en/elasticsearch/reference/master/snapshot-lifecycle-management-api.html>`_
 can be used to set up policies to automatically take snapshots and control how long they are retained.
 
-.. py:module:: elasticsearch.client.slm
-
 .. autoclass:: SlmClient
    :members:
 
+SQL
+---
 
-Searchable Snapshots APIs
--------------------------
+The `SQL REST API <https://www.elastic.co/guide/en/elasticsearch/reference/master/sql-rest.html>`_
+accepts SQL in a JSON document, executes it, and returns the results.
 
-`Searchable Snapshots API <https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-apis.html>`_
-used to perform searchable snapshots operations.
-
-.. py:module:: elasticsearch.client.searchable_snapshots
-
-.. autoclass:: SearchableSnapshotsClient
+.. autoclass:: SqlClient
    :members:
 
-
-Index Lifecycle Management APIs
---------------------------------
-
-`Index Lifecycle Management API <https://www.elastic.co/guide/en/elasticsearch/reference/master/index-lifecycle-management-api.html>`_
-used to set up policies to automatically manage the index lifecycle.
-
-.. py:module:: elasticsearch.client.ilm
-
-.. autoclass:: IlmClient
-   :members:
-
-
-Transform APIs
+SSL Certificate
 ---------------
+
+`SSL Certificate API <https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-ssl.html>`_
+enables you to retrieve information about the X.509 certificates that are used
+to encrypt communications in your Elasticsearch cluster.
+
+.. autoclass:: SslClient
+   :members:
+
+Transform
+---------
 
 `Transform API <https://www.elastic.co/guide/en/elasticsearch/reference/master/transform-apis.html>`_
 manages transformation operations from grabbing data from source indices, transforms it, and
 saves it to a destination index.
 
-.. py:module:: elasticsearch.client.transform
-
 .. autoclass:: TransformClient
    :members:
 
+Watcher
+-------
 
-Deprecation APIs
------------------
+`Watcher APIs <https://www.elastic.co/guide/en/elasticsearch/reference/master/watcher-api.html>`_
+can be used to notify you when certain pre-defined thresholds have happened.
 
-`Deprecation API <https://www.elastic.co/guide/en/elasticsearch/reference/master/migration-api-deprecation.html>`_
-used to retrieve information about different cluster, node, and index level settings that use deprecated features
-that will be removed or changed in the next major version.
-
-.. py:module:: elasticsearch.client.deprecation
-
-.. autoclass:: DeprecationClient
+.. autoclass:: WatcherClient
    :members:

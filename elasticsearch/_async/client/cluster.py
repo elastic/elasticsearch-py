@@ -268,6 +268,11 @@ class ClusterClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-template.html>`_
 
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
         :arg name: The name of the template
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
@@ -289,6 +294,11 @@ class ClusterClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-template.html>`_
 
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
         :arg name: The comma separated names of the component templates
         :arg local: Return local information, do not retrieve the state
             from master node (default: false)
@@ -308,6 +318,11 @@ class ClusterClient(NamespacedClient):
         Creates or updates a component template
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-template.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
 
         :arg name: The name of the template
         :arg body: The template definition
@@ -334,6 +349,11 @@ class ClusterClient(NamespacedClient):
         Returns information about whether a particular component template exist
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-template.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
 
         :arg name: The name of the template
         :arg local: Return local information, do not retrieve the state

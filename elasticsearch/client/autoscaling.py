@@ -20,23 +20,16 @@ from .utils import NamespacedClient, query_params, SKIP_IN_PATH, _make_path
 
 class AutoscalingClient(NamespacedClient):
     @query_params()
-    def get_autoscaling_decision(self, params=None, headers=None):
-        """
-        Gets the current autoscaling decision based on the configured autoscaling
-        policy, indicating whether or not autoscaling is needed.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/autoscaling-get-autoscaling-decision.html>`_
-        """
-        return self.transport.perform_request(
-            "GET", "/_autoscaling/decision", params=params, headers=headers
-        )
-
-    @query_params()
     def delete_autoscaling_policy(self, name, params=None, headers=None):
         """
         Deletes an autoscaling policy.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/autoscaling-delete-autoscaling-policy.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
 
         :arg name: the name of the autoscaling policy
         """
@@ -56,6 +49,11 @@ class AutoscalingClient(NamespacedClient):
         Creates a new autoscaling policy.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/autoscaling-put-autoscaling-policy.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
 
         :arg name: the name of the autoscaling policy
         :arg body: the specification of the autoscaling policy
@@ -79,6 +77,11 @@ class AutoscalingClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/autoscaling-get-autoscaling-policy.html>`_
 
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
         :arg name: the name of the autoscaling policy
         """
         if name in SKIP_IN_PATH:
@@ -89,4 +92,21 @@ class AutoscalingClient(NamespacedClient):
             _make_path("_autoscaling", "policy", name),
             params=params,
             headers=headers,
+        )
+
+    @query_params()
+    def get_autoscaling_capacity(self, params=None, headers=None):
+        """
+        Gets the current autoscaling capacity based on the configured autoscaling
+        policy.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/autoscaling-get-autoscaling-capacity.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+        """
+        return self.transport.perform_request(
+            "GET", "/_autoscaling/capacity", params=params, headers=headers
         )

@@ -15,7 +15,7 @@ consistency and safety**.
     ``from`` and ``doc_type`` instead of ``type`` as parameter names.
 
 
-Global options
+Global Options
 --------------
 
 Some parameters are added by the client itself and can be used in all API
@@ -110,6 +110,30 @@ Elasticsearch
 
 .. py:module:: elasticsearch.client
 
+Async Search
+------------
+
+.. autoclass:: AsyncSearchClient
+   :members:
+
+Cat
+---
+
+.. autoclass:: CatClient
+   :members:
+
+Cluster
+-------
+
+.. autoclass:: ClusterClient
+   :members:
+
+Dangling Indices
+----------------
+
+.. autoclass:: DanglingIndicesClient
+   :members:
+
 Indices
 -------
 
@@ -122,22 +146,19 @@ Ingest
 .. autoclass:: IngestClient
    :members:
 
-Cluster
--------
-
-.. autoclass:: ClusterClient
-   :members:
-
 Nodes
 -----
 
 .. autoclass:: NodesClient
    :members:
 
-Cat
----
+Remote
+------
 
-.. autoclass:: CatClient
+`Remote Cluster Info API <https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-remote-info.html>`_
+allows you to retrieve all of the configured remote cluster information.
+
+.. autoclass:: RemoteClient
    :members:
 
 Snapshot
@@ -150,10 +171,4 @@ Tasks
 -----
 
 .. autoclass:: TasksClient
-   :members:
-
-Dangling Indices
-----------------
-
-.. autoclass:: DanglingIndicesClient
    :members:
