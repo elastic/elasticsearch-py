@@ -20,6 +20,15 @@ provides general info about the installed X-Pack.
 .. autoclass:: XPackClient
    :members:
 
+Autoscaling
+-----------
+
+`Autoscaling API <https://www.elastic.co/guide/en/elasticsearch/reference/7.x/autoscaling-apis.html>`_
+is used to perform autoscaling operations.
+
+.. autoclass:: AutoscalingClient
+   :members:
+
 Cross-Cluster Replication
 -------------------------
 
