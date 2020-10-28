@@ -69,4 +69,5 @@ def sync_client():
             )
             client.indices.delete_template(name="*", ignore=404)
             client.indices.delete_index_template(name="*", ignore=404)
+            client.snapshot.delete_repository(repository="*", ignore=404)
             client.transport.close()

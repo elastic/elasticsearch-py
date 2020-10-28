@@ -65,8 +65,7 @@ def fetch_es_repo():
     # fetch new commits to be sure...
     print("Fetching elasticsearch repo...")
     subprocess.check_call(
-        "cd %s && git fetch https://github.com/elasticsearch/elasticsearch.git"
-        % repo_path,
+        "cd %s && git fetch https://github.com/elastic/elasticsearch.git" % repo_path,
         shell=True,
     )
     # reset to the version fron info()
