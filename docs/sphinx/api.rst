@@ -152,15 +152,6 @@ Nodes
 .. autoclass:: NodesClient
    :members:
 
-Remote
-------
-
-`Remote Cluster Info API <https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-remote-info.html>`_
-allows you to retrieve all of the configured remote cluster information.
-
-.. autoclass:: RemoteClient
-   :members:
-
 Snapshot
 --------
 
