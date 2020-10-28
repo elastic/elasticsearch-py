@@ -1340,6 +1340,11 @@ class Elasticsearch(object):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/search-rank-eval.html>`_
 
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
         :arg body: The ranking evaluation search definition, including
             search requests, document ratings and ranking metric definition.
         :arg index: A comma-separated list of index names to search; use
@@ -1458,6 +1463,11 @@ class Elasticsearch(object):
         Allows an arbitrary script to be executed and a result to be returned
 
         `<https://www.elastic.co/guide/en/elasticsearch/painless/master/painless-execute-api.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
 
         :arg body: The script to execute
         """
@@ -2050,6 +2060,11 @@ class Elasticsearch(object):
         Returns all script contexts.
 
         `<https://www.elastic.co/guide/en/elasticsearch/painless/master/painless-contexts.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
         """
         return self.transport.perform_request(
             "GET", "/_script_context", params=params, headers=headers
@@ -2061,6 +2076,11 @@ class Elasticsearch(object):
         Returns available script types, languages and contexts
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/modules-scripting.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
         """
         return self.transport.perform_request(
             "GET", "/_script_language", params=params, headers=headers

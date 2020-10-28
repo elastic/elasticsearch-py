@@ -1368,6 +1368,11 @@ class IndicesClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/indices-templates.html>`_
 
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
         :arg name: The name of the template
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
@@ -1388,6 +1393,11 @@ class IndicesClient(NamespacedClient):
         Returns information about whether a particular index template exists.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/indices-templates.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
 
         :arg name: The name of the template
         :arg flat_settings: Return settings in flat format (default:
@@ -1411,6 +1421,11 @@ class IndicesClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/indices-templates.html>`_
 
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
         :arg name: The comma separated names of the index templates
         :arg flat_settings: Return settings in flat format (default:
             false)
@@ -1429,6 +1444,11 @@ class IndicesClient(NamespacedClient):
         Creates or updates an index template.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/indices-templates.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
 
         :arg name: The name of the template
         :arg body: The template definition
@@ -1457,6 +1477,11 @@ class IndicesClient(NamespacedClient):
         system
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/indices-templates.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
 
         :arg name: The name of the index (it must be a concrete index
             name)
@@ -1501,6 +1526,11 @@ class IndicesClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/indices-templates.html>`_
 
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
         :arg body: New index template definition to be simulated, if no
             index template name is specified
         :arg name: The name of the index template
@@ -1525,6 +1555,11 @@ class IndicesClient(NamespacedClient):
         Returns information about any matching indices, aliases, and data streams
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.10/indices-resolve-index-api.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
 
         :arg name: A comma-separated list of names or wildcard
             expressions

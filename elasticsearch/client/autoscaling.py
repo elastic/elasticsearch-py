@@ -26,6 +26,11 @@ class AutoscalingClient(NamespacedClient):
         policy, indicating whether or not autoscaling is needed.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/autoscaling-get-autoscaling-decision.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
         """
         return self.transport.perform_request(
             "GET", "/_autoscaling/decision", params=params, headers=headers
@@ -37,6 +42,11 @@ class AutoscalingClient(NamespacedClient):
         Deletes an autoscaling policy.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/autoscaling-delete-autoscaling-policy.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
 
         :arg name: the name of the autoscaling policy
         """
@@ -57,6 +67,11 @@ class AutoscalingClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/autoscaling-get-autoscaling-policy.html>`_
 
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
         :arg name: the name of the autoscaling policy
         """
         if name in SKIP_IN_PATH:
@@ -75,6 +90,11 @@ class AutoscalingClient(NamespacedClient):
         Creates a new autoscaling policy.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/autoscaling-put-autoscaling-policy.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
 
         :arg name: the name of the autoscaling policy
         :arg body: the specification of the autoscaling policy
