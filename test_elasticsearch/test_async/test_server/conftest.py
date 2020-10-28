@@ -71,21 +71,4 @@ async def async_client():
             )
             await client.indices.delete_template(name="*", ignore=404)
             await client.indices.delete_index_template(name="*", ignore=404)
-
-            # Delete all snapshots and repositories
-            for repository in await client.snapshot.get_repository(
-                repository="*", ignore=404
-            ):
-                for snapshot in (
-                    await client.snapshot.get(
-                        repository=repository, snapshot="_all", ignore=404
-                    )
-                )["responses"]:
-                    await client.snapshot.delete(
-                        repository=repository, snapshot=snapshot, ignore=404
-                    )
-                await client.snapshot.delete_repository(
-                    repository=repository, ignore=404
-                )
-
             await client.close()
