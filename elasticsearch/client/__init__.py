@@ -30,7 +30,6 @@ from .dangling_indices import DanglingIndicesClient
 from .indices import IndicesClient
 from .ingest import IngestClient
 from .nodes import NodesClient
-from .remote import RemoteClient
 from .snapshot import SnapshotClient
 from .tasks import TasksClient
 
@@ -208,7 +207,6 @@ class Elasticsearch(object):
         self.indices = IndicesClient(self)
         self.ingest = IngestClient(self)
         self.nodes = NodesClient(self)
-        self.remote = RemoteClient(self)
         self.snapshot = SnapshotClient(self)
         self.tasks = TasksClient(self)
 
