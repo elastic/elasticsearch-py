@@ -71,8 +71,12 @@ def sync_client():
             client.indices.delete_index_template(name="*", ignore=404)
 
             # Delete all snapshots and repositories
-            for repository in client.snapshot.get_repository(repository="*", ignore=404):
-                for snapshot in client.snapshot.get(repository=repository, snapshot="_all")["responses"]:
+            for repository in client.snapshot.get_repository(
+                repository="*", ignore=404
+            ):
+                for snapshot in client.snapshot.get(
+                    repository=repository, snapshot="_all"
+                )["responses"]:
                     client.snapshot.delete(repository=repository, snapshot=snapshot)
                 client.snapshot.delete_repository(repository=repository)
 
