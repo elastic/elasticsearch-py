@@ -71,4 +71,5 @@ async def async_client():
             )
             await client.indices.delete_template(name="*", ignore=404)
             await client.indices.delete_index_template(name="*", ignore=404)
+            await client.snapshot.delete_repository(repository="*", ignore=404)
             await client.close()
