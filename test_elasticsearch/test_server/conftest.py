@@ -75,9 +75,11 @@ def sync_client():
                 repository="*", ignore=404
             ):
                 for snapshot in client.snapshot.get(
-                    repository=repository, snapshot="_all"
+                    repository=repository, snapshot="_all", ignore=404
                 )["responses"]:
-                    client.snapshot.delete(repository=repository, snapshot=snapshot)
-                client.snapshot.delete_repository(repository=repository)
+                    client.snapshot.delete(
+                        repository=repository, snapshot=snapshot, ignore=404
+                    )
+                client.snapshot.delete_repository(repository=repository, ignore=404)
 
             client.transport.close()

@@ -77,11 +77,15 @@ async def async_client():
                 repository="*", ignore=404
             ):
                 for snapshot in (
-                    await client.snapshot.get(repository=repository, snapshot="_all")
+                    await client.snapshot.get(
+                        repository=repository, snapshot="_all", ignore=404
+                    )
                 )["responses"]:
                     await client.snapshot.delete(
-                        repository=repository, snapshot=snapshot
+                        repository=repository, snapshot=snapshot, ignore=404
                     )
-                await client.snapshot.delete_repository(repository=repository)
+                await client.snapshot.delete_repository(
+                    repository=repository, ignore=404
+                )
 
             await client.close()
