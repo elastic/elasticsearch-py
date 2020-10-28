@@ -19,20 +19,6 @@ from typing import Any, MutableMapping, Optional, Union, Collection
 from .utils import NamespacedClient
 
 class AutoscalingClient(NamespacedClient):
-    async def get_autoscaling_decision(
-        self,
-        *,
-        pretty: Optional[bool] = ...,
-        human: Optional[bool] = ...,
-        error_trace: Optional[bool] = ...,
-        format: Optional[str] = ...,
-        filter_path: Optional[Union[str, Collection[str]]] = ...,
-        request_timeout: Optional[Union[int, float]] = ...,
-        ignore: Optional[Union[int, Collection[int]]] = ...,
-        opaque_id: Optional[str] = ...,
-        params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...
-    ) -> Any: ...
     async def delete_autoscaling_policy(
         self,
         name: Any,
@@ -67,6 +53,20 @@ class AutoscalingClient(NamespacedClient):
     async def get_autoscaling_policy(
         self,
         name: Any,
+        *,
+        pretty: Optional[bool] = ...,
+        human: Optional[bool] = ...,
+        error_trace: Optional[bool] = ...,
+        format: Optional[str] = ...,
+        filter_path: Optional[Union[str, Collection[str]]] = ...,
+        request_timeout: Optional[Union[int, float]] = ...,
+        ignore: Optional[Union[int, Collection[int]]] = ...,
+        opaque_id: Optional[str] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
+    ) -> Any: ...
+    async def get_autoscaling_capacity(
+        self,
         *,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
