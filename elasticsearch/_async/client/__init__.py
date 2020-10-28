@@ -30,7 +30,6 @@ from .dangling_indices import DanglingIndicesClient
 from .indices import IndicesClient
 from .ingest import IngestClient
 from .nodes import NodesClient
-from .remote import RemoteClient
 from .snapshot import SnapshotClient
 from .tasks import TasksClient
 
@@ -208,7 +207,6 @@ class AsyncElasticsearch(object):
         self.indices = IndicesClient(self)
         self.ingest = IngestClient(self)
         self.nodes = NodesClient(self)
-        self.remote = RemoteClient(self)
         self.snapshot = SnapshotClient(self)
         self.tasks = TasksClient(self)
 
@@ -1192,6 +1190,11 @@ class AsyncElasticsearch(object):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-rank-eval.html>`_
 
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
         :arg body: The ranking evaluation search definition, including
             search requests, document ratings and ranking metric definition.
         :arg index: A comma-separated list of index names to search; use
@@ -1312,6 +1315,11 @@ class AsyncElasticsearch(object):
         Allows an arbitrary script to be executed and a result to be returned
 
         `<https://www.elastic.co/guide/en/elasticsearch/painless/master/painless-execute-api.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
 
         :arg body: The script to execute
         """
@@ -1636,6 +1644,11 @@ class AsyncElasticsearch(object):
         Returns all script contexts.
 
         `<https://www.elastic.co/guide/en/elasticsearch/painless/master/painless-contexts.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
         """
         return await self.transport.perform_request(
             "GET", "/_script_context", params=params, headers=headers
@@ -1647,6 +1660,11 @@ class AsyncElasticsearch(object):
         Returns available script types, languages and contexts
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
         """
         return await self.transport.perform_request(
             "GET", "/_script_language", params=params, headers=headers

@@ -26,6 +26,11 @@ class SearchableSnapshotsClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-apis.html>`_
 
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
         :arg index: A comma-separated list of index name to limit the
             operation
         :arg allow_no_indices: Whether to ignore if a wildcard indices
@@ -50,6 +55,11 @@ class SearchableSnapshotsClient(NamespacedClient):
         Mount a snapshot as a searchable index.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-api-mount-snapshot.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
 
         :arg repository: The name of the repository containing the
             snapshot of the index to mount
@@ -79,6 +89,11 @@ class SearchableSnapshotsClient(NamespacedClient):
         Retrieve various statistics about searchable snapshots.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-apis.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
 
         :arg index: A comma-separated list of index names
         """

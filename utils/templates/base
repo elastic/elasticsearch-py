@@ -9,6 +9,13 @@
 
         `<{{ api.doc_url }}>`_
         {% endif %}
+        {% if api.stability != "stable" %}
+
+        .. warning::
+        
+            This API is **{{ api.stability }}** so may include breaking changes
+            or be removed in a future version
+        {% endif %}
         {% if api.params|list|length %}
 
         {% for p, info in api.params %}

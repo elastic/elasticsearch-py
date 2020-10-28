@@ -169,6 +169,8 @@ class API:
         self._def = definition
         self.description = ""
         self.doc_url = ""
+        self.stability = self._def.get("stability", "stable")
+
         if isinstance(definition["documentation"], str):
             self.doc_url = definition["documentation"]
         else:
