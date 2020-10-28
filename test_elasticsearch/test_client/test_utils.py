@@ -40,6 +40,12 @@ class TestMakePath(TestCase):
             "/some-index/type/%E4%B8%AD%E6%96%87", _make_path("some-index", "type", id)
         )
 
+    def test_handles_whitespace_character(self):
+        id = "One Example"
+        self.assertEquals(
+            "/some-index/type/One%20Example", _make_path("some-index", "type", id)
+        )
+
 
 class TestEscape(TestCase):
     def test_handles_ascii(self):
