@@ -21,7 +21,6 @@ some integration tests. These files are shared among all official Elasticsearch
 clients.
 """
 import pytest
-from shutil import rmtree
 import warnings
 import inspect
 
@@ -60,11 +59,16 @@ class AsyncYamlRunner(YamlRunner):
         for repo, definition in (
             await self.client.snapshot.get_repository(repository="_all")
         ).items():
-            await self.client.snapshot.delete_repository(repository=repo)
-            if definition["type"] == "fs":
-                rmtree(
-                    "/tmp/%s" % definition["settings"]["location"], ignore_errors=True
+            snapshots = (
+                await self.client.snapshot.get(
+                    repository=repo, snapshot="_all", ignore=404
                 )
+            ).get("snapshots", [])
+            for snapshot in snapshots:
+                await self.client.snapshot.delete(
+                    repository=repo, snapshot=snapshot["snapshot"], ignore=404
+                )
+            await self.client.snapshot.delete_repository(repository=repo)
 
         # stop and remove all ML stuff
         if await self._feature_enabled("ml"):
