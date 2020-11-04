@@ -23,6 +23,7 @@ Only requires 'name' in 'setup.py' and the directory to be changed.
 import tempfile
 import os
 import shlex
+import sys
 import re
 import contextlib
 import shutil
@@ -163,11 +164,50 @@ def main():
     run("rm", "-rf", "build/", "dist/", "*.egg-info", ".eggs")
 
     # Grab the major version to be used as a suffix.
-    setup_py_path = os.path.join(base_dir, "setup.py")
-    with open(os.path.join(base_dir, "elasticsearch/__init__.py")) as f:
-        major_version = re.search(
-            r"^__versionstr__\s+=\s+[\"\'](\d+)\.", f.read(), re.M
+    version_path = os.path.join(base_dir, "elasticsearch/_version.py")
+    with open(version_path) as f:
+        version = re.search(
+            r"^__versionstr__\s+=\s+[\"\']([^\"\']+)[\"\']", f.read(), re.M
         ).group(1)
+    major_version = version.split(".")[0]
+
+    # If we're handed a version from the build manager we
+    # should check that the version is correct or write
+    # a new one.
+    if len(sys.argv) >= 2:
+        # 'build_version' is what the release manager wants,
+        # 'expect_version' is what we're expecting to compare
+        # the package version to before building the dists.
+        build_version = expect_version = sys.argv[1]
+
+        # '-SNAPSHOT' means we're making a pre-release.
+        if "-SNAPSHOT" in build_version:
+            # If there's no +dev already (as is the case on dev
+            # branches like 7.x, master) then we need to add one.
+            if not version.endswith("+dev"):
+                version = version + "+dev"
+            expect_version = expect_version.replace("-SNAPSHOT", "")
+            if expect_version.endswith(".x"):
+                expect_version = expect_version[:-2]
+
+            # For snapshots we ensure that the version in the package
+            # at least *starts* with the version. This is to support
+            # build_version='7.x-SNAPSHOT'.
+            if not version.startswith(expect_version):
+                print(
+                    "Version of package (%s) didn't match the "
+                    "expected release version (%s)" % (version, build_version)
+                )
+                exit(1)
+
+        # A release that will be tagged, we want
+        # there to be no '+dev', etc.
+        elif expect_version != version:
+            print(
+                "Version of package (%s) didn't match the "
+                "expected release version (%s)" % (version, build_version)
+            )
+            exit(1)
 
     for suffix in ("", major_version):
         run("rm", "-rf", "build/", "*.egg-info", ".eggs")
@@ -178,7 +218,21 @@ def main():
             os.path.join(base_dir, "elasticsearch%s" % suffix),
         )
 
+        # Ensure that the version within 'elasticsearch/_version.py' is correct.
+        version_path = os.path.join(base_dir, f"elasticsearch{suffix}/_version.py")
+        with open(version_path) as f:
+            version_data = f.read()
+        version_data = re.sub(
+            r"__versionstr__ = \"[^\"]+\"",
+            '__versionstr__ = "%s"' % version,
+            version_data,
+        )
+        with open(version_path, "w") as f:
+            f.truncate()
+            f.write(version_data)
+
         # Rewrite setup.py with the new name.
+        setup_py_path = os.path.join(base_dir, "setup.py")
         with open(setup_py_path) as f:
             setup_py = f.read()
         with open(setup_py_path, "w") as f:
@@ -200,7 +254,9 @@ def main():
             run("rm", "-rf", "elasticsearch%s/" % suffix)
 
     # Test everything that got created
-    for dist in os.listdir(os.path.join(base_dir, "dist")):
+    dists = os.listdir(os.path.join(base_dir, "dist"))
+    assert len(dists) == 4
+    for dist in dists:
         test_dist(os.path.join(base_dir, "dist", dist))
 
     # After this run 'python -m twine upload dist/*'

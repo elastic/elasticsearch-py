@@ -24,7 +24,7 @@ from setuptools import setup, find_packages
 package_name = "elasticsearch"
 base_dir = abspath(dirname(__file__))
 
-with open(join(base_dir, package_name, "__init__.py")) as f:
+with open(join(base_dir, package_name, "_version.py")) as f:
     package_version = re.search(
         r"__versionstr__\s+=\s+[\"\']([^\"\']+)[\"\']", f.read()
     ).group(1)

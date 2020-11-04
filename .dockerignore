@@ -3,3 +3,5 @@ example
 venv
 .git
 .tox
+.nox
+.*_cache
