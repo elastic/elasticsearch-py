@@ -407,6 +407,7 @@ class Elasticsearch(object):
         "routing",
         "timeout",
         "wait_for_active_shards",
+        "master_timeout",
     )
     def bulk(self, body, index=None, doc_type=None, params=None, headers=None):
         """
