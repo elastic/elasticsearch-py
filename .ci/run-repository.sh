@@ -40,6 +40,5 @@ docker run \
   --env "TEST_TYPE=server" \
   --name elasticsearch-py \
   --rm \
-  --volume `pwd`:/code/elasticsearch-py \
   elastic/elasticsearch-py \
   python setup.py test

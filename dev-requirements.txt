@@ -14,6 +14,7 @@ pandas
 pyyaml<5.3
 
 black; python_version>="3.6"
+twine
 
 # Requirements for testing [async] extra
 aiohttp; python_version>="3.6"
