@@ -40,7 +40,7 @@ def blacken(session):
     session.install("black")
 
     session.run("black", "--target-version=py27", *SOURCE_FILES)
-    session.run("python", "utils/license_headers.py", "fix", *SOURCE_FILES)
+    session.run("python", "utils/license-headers.py", "fix", *SOURCE_FILES)
 
     lint(session)
 
@@ -51,7 +51,7 @@ def lint(session):
 
     session.run("black", "--target-version=py27", "--check", *SOURCE_FILES)
     session.run("flake8", *SOURCE_FILES)
-    session.run("python", "utils/license_headers.py", "check", *SOURCE_FILES)
+    session.run("python", "utils/license-headers.py", "check", *SOURCE_FILES)
 
     # Workaround to make '-r' to still work despite uninstalling aiohttp below.
     session.run("python", "-m", "pip", "install", "aiohttp")
