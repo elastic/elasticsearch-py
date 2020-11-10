@@ -161,7 +161,7 @@ def test_dist(dist):
 
 def main():
     run("git", "checkout", "--", "setup.py", "elasticsearch/")
-    run("rm", "-rf", "build/", "dist/", "*.egg-info", ".eggs")
+    run("rm", "-rf", "build/", "dist/*", "*.egg-info", ".eggs")
 
     # Grab the major version to be used as a suffix.
     version_path = os.path.join(base_dir, "elasticsearch/_version.py")
@@ -258,6 +258,7 @@ def main():
     assert len(dists) == 4
     for dist in dists:
         test_dist(os.path.join(base_dir, "dist", dist))
+    os.system("chmod a+w dist/*")
 
     # After this run 'python -m twine upload dist/*'
     print(
