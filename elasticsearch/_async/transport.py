@@ -132,7 +132,7 @@ class AsyncTransport(Transport):
             await self._async_init()
 
         if self.sniffer_timeout:
-            if self.loop.time() >= self.last_sniff + self.sniff_timeout:
+            if self.loop.time() >= self.last_sniff + self.sniffer_timeout:
                 self.create_sniff_task()
 
     async def _get_node_info(self, conn, initial):
