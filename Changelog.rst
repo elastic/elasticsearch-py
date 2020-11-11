@@ -3,8 +3,8 @@
 Changelog
 =========
 
-7.10.0a2 (2020-10-20)
----------------------
+7.10.0 (2020-11-11)
+-------------------
 
 * Added support for Elasticsearch 7.10 APIs
 * Added basic type stubs for static type checking and IDE auto-complete of API parameters (`#1297`_, `#1406`_)
@@ -14,11 +14,13 @@ Changelog
   bulk helpers (`#1387`_)
 * Fixed bug where ``Connection.log_request_failure()`` call would receive the compressed
   HTTP body rather than uncompressed when an error is raised for ``RequestsHttpConnection`` (`#1394`_)
+* Fix a typo in AsyncTransport where ``sniff_timeout`` was used instead of ``sniffer_timeout`` (`#1431`_)
 * Removed explicit ``yarl`` dependency from ``[async]`` extra to avoid issue where pip
   would override ``aiohttp``'s pin of ``yarl``. This is not a problem if you
   install with ``--use-feature=2020-resolver``. Users should see no changes. (`#1401`_)
 
  .. _Optimistic Concurrency Control options: https://www.elastic.co/guide/en/elasticsearch/reference/current/optimistic-concurrency-control.html
+ .. _#1431: https://github.com/elastic/elasticsearch-py/pull/1431
  .. _#1406: https://github.com/elastic/elasticsearch-py/pull/1406
  .. _#1401: https://github.com/elastic/elasticsearch-py/pull/1401
  .. _#1394: https://github.com/elastic/elasticsearch-py/pull/1394
