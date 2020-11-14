@@ -18,23 +18,17 @@
 
 import sys
 import uuid
-
 from datetime import datetime
 from decimal import Decimal
 
 import numpy as np
 import pandas as pd
+from elasticsearch.exceptions import ImproperlyConfigured, SerializationError
+from elasticsearch.serializer import (DEFAULT_SERIALIZERS, CSVSerializer,
+                                      Deserializer, JSONSerializer,
+                                      TextSerializer)
 
-from elasticsearch.serializer import (
-    JSONSerializer,
-    Deserializer,
-    DEFAULT_SERIALIZERS,
-    TextSerializer,
-    CSVSerializer,
-)
-from elasticsearch.exceptions import SerializationError, ImproperlyConfigured
-
-from .test_cases import TestCase, SkipTest
+from .test_cases import SkipTest, TestCase
 
 
 class TestJSONSerializer(TestCase):
@@ -174,7 +168,7 @@ class TestTextSerializer(TestCase):
 class TestCSVSerializer(TestCase):
     def test_csv_text(self):
         self.assertEqual(
-            'name,age\nelastic,100', CSVSerializer().dumps('name,age\nelastic,100'))
+            r"name,age\nelastic,100", CSVSerializer().dumps(r"name,age\nelastic,100"))
 
     def test_raises_serialization_error_on_dump_error(self):
         self.assertRaises(SerializationError, CSVSerializer().dumps, {})
@@ -198,7 +192,7 @@ class TestDeserializer(TestCase):
 
     def test_deserializes_csv_with_correct_ct(self):
         self.assertEqual(
-            'name,age\nelastic,100', self.de.loads('name,age\nelastic,100', "text/csv")
+            r"name,age\nelastic,100", self.de.loads(r"name,age\nelastic,100", "text/csv")
         )
 
     def test_raises_serialization_error_on_unknown_mimetype(self):
