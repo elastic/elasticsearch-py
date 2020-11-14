@@ -186,6 +186,11 @@ class TestDeserializer(TestCase):
             self.de.loads('{"some":"data"}', "text/plain; charset=whatever"),
         )
 
+    def test_deserializes_csv_with_correct_ct(self):
+        self.assertEqual(
+            'name,age\nelastic,100', self.de.loads('name,age\nelastic,100', "text/csv")
+        )
+
     def test_raises_serialization_error_on_unknown_mimetype(self):
         self.assertRaises(SerializationError, self.de.loads, "{}", "text/html")
 
