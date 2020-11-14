@@ -134,9 +134,22 @@ class JSONSerializer(Serializer):
             raise SerializationError(data, e)
 
 
+class CSVSerializer(object):
+    mimetype = "text/csv"
+
+    def loads(self, s):
+        return s
+
+    def dumps(self, data):
+        if isinstance(data, string_types):
+            return data
+        raise SerializationError("Cannot serialize %r into csv." % data)
+
+
 DEFAULT_SERIALIZERS = {
     JSONSerializer.mimetype: JSONSerializer(),
     TextSerializer.mimetype: TextSerializer(),
+    CSVSerializer.mimetype: CSVSerializer(),
 }
 
 
