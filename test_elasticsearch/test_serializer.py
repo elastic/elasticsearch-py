@@ -30,6 +30,7 @@ from elasticsearch.serializer import (
     Deserializer,
     DEFAULT_SERIALIZERS,
     TextSerializer,
+    CSVSerializer,
 )
 from elasticsearch.exceptions import SerializationError, ImproperlyConfigured
 
@@ -168,6 +169,14 @@ class TestTextSerializer(TestCase):
 
     def test_raises_serialization_error_on_dump_error(self):
         self.assertRaises(SerializationError, TextSerializer().dumps, {})
+
+
+class TestCSVSerializer(TestCase):
+    def test_csv_text(self):
+        self.assertEqual(r"boo,foo\ndata,100", CSVSerializer().dumps(r"boo,foo\ndata,100"))
+
+    def test_raises_serialization_error_on_dump_error(self):
+        self.assertRaises(SerializationError, CSVSerializer().dumps, {})
 
 
 class TestDeserializer(TestCase):
