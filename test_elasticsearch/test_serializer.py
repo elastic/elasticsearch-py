@@ -174,7 +174,7 @@ class TestTextSerializer(TestCase):
 class TestCSVSerializer(TestCase):
     def test_csv_text(self):
         self.assertEqual(
-            'name,age\nelastic,100', CSVSerializer().dumps('name,age\nelastic,100'))
+            "name,age\nelastic,100", CSVSerializer().dumps("name,age\nelastic,100"))
 
     def test_raises_serialization_error_on_dump_error(self):
         self.assertRaises(SerializationError, CSVSerializer().dumps, {})
@@ -198,7 +198,7 @@ class TestDeserializer(TestCase):
 
     def test_deserializes_csv_with_correct_ct(self):
         self.assertEqual(
-            'name,age\nelastic,100', self.de.loads('name,age\nelastic,100', "text/csv")
+            "name,age\nelastic,100", self.de.loads("name,age\nelastic,100", "text/csv")
         )
 
     def test_raises_serialization_error_on_unknown_mimetype(self):
