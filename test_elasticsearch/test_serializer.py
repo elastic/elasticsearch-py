@@ -18,17 +18,23 @@
 
 import sys
 import uuid
+
 from datetime import datetime
 from decimal import Decimal
 
 import numpy as np
 import pandas as pd
-from elasticsearch.exceptions import ImproperlyConfigured, SerializationError
-from elasticsearch.serializer import (DEFAULT_SERIALIZERS, CSVSerializer,
-                                      Deserializer, JSONSerializer,
-                                      TextSerializer)
 
-from .test_cases import SkipTest, TestCase
+from elasticsearch.serializer import (
+    JSONSerializer,
+    Deserializer,
+    DEFAULT_SERIALIZERS,
+    TextSerializer,
+    CSVSerializer,
+)
+from elasticsearch.exceptions import SerializationError, ImproperlyConfigured
+
+from .test_cases import TestCase, SkipTest
 
 
 class TestJSONSerializer(TestCase):
@@ -188,11 +194,6 @@ class TestDeserializer(TestCase):
         self.assertEqual(
             '{"some":"data"}',
             self.de.loads('{"some":"data"}', "text/plain; charset=whatever"),
-        )
-
-    def test_deserializes_csv_with_correct_ct(self):
-        self.assertEqual(
-            r"name,age\nelastic,100", self.de.loads(r"name,age\nelastic,100", "text/csv")
         )
 
     def test_raises_serialization_error_on_unknown_mimetype(self):
