@@ -198,8 +198,8 @@ raise the limit:
     ``fork``. Note that Python's ``multiprocessing`` module uses ``fork`` to
     create new processes on POSIX systems.
 
-SSL and Authentication
-~~~~~~~~~~~~~~~~~~~~~~
+TLS/SSL and Authentication
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 You can configure the client to use ``SSL`` for connecting to your
 elasticsearch cluster, including certificate verification and HTTP auth:
@@ -304,7 +304,54 @@ an issue) it also just uses ``localhost:9200`` as the address instead of the
 actual address of the host. If the trace logger has not been configured
 already it is set to `propagate=False` so it needs to be activated separately.
 
-.. _logging library: http://docs.python.org/3.3/library/logging.html
+.. _logging library: http://docs.python.org/3/library/logging.html
+
+Type Hints
+~~~~~~~~~~
+
+Starting in ``elasticsearch-py`` v7.10.0 the library now ships with `type hints`_
+and supports basic static type analysis with tools like `Mypy`_ and `Pyright`_.
+
+If we write a script that has a type error like using ``request_timeout`` with
+a ``str`` argument instead of ``float`` and then run Mypy on the script:
+
+.. code-block:: python
+
+    # script.py
+    from elasticsearch import Elasticsearch
+
+    es = Elasticsearch(...)
+    es.search(
+        index="test-index",
+        request_timeout="5"  # type error!
+    )
+
+    # $ mypy script.py
+    # script.py:5: error: Argument "request_timeout" to "search" of "Elasticsearch" has 
+    #                     incompatible type "str"; expected "Union[int, float, None]"
+    # Found 1 error in 1 file (checked 1 source file)
+
+For now many parameter types for API methods aren't specific to
+a type (ie they are of type ``typing.Any``) but in the future
+they will be tightened for even better static type checking.
+
+Type hints also allow tools like your IDE to check types and provide better
+auto-complete functionality.
+
+.. warning::
+
+    The type hints for API methods like ``search`` don't match the function signature
+    that can be found in the source code. Type hints represent optimal usage of the
+    API methods. Using keyword arguments is highly recommended so all optional parameters
+    and ``body`` are keyword-only in type hints.
+
+    JetBrains PyCharm will use the warning ``Unexpected argument`` to denote that the
+    parameter may be keyword-only.
+
+.. _type hints: https://www.python.org/dev/peps/pep-0484
+.. _mypy: http://mypy-lang.org
+.. _pyright: https://github.com/microsoft/pyright
+
 
 Environment considerations
 --------------------------
@@ -317,18 +364,9 @@ functionality - the cluster would supply the client with IP addresses to
 directly connect to the cluster, circumventing the load balancer. Depending on
 your configuration this might be something you don't want or break completely.
 
-In some environments (notably on Google App Engine) your HTTP requests might be
-restricted so that ``GET`` requests won't accept body. In that case use the
-``send_get_body_as`` parameter of :class:`~elasticsearch.Transport` to send all
-bodies via post:
-
-.. code-block:: python
-
-    from elasticsearch import Elasticsearch
-    es = Elasticsearch(send_get_body_as='POST')
-
 Compression
 ~~~~~~~~~~~
+
 When using capacity-constrained networks (low throughput), it may be handy to enable
 compression. This is especially useful when doing bulk loads or inserting large
 documents. This will configure compression.
@@ -341,7 +379,7 @@ documents. This will configure compression.
 Compression is enabled by default when connecting to Elastic Cloud via ``cloud_id``.
 
 Running on AWS with IAM
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
 
 If you want to use this client with IAM based authentication on AWS you can use
 the `requests-aws4auth`_ package:
@@ -452,4 +490,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
