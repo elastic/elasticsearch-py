@@ -18,12 +18,12 @@
 # flake8: noqa
 from __future__ import absolute_import
 
-__versionstr__ = "8.0.0+dev"
-
 import re
 import sys
 import logging
 import warnings
+
+from ._version import __versionstr__
 
 _major, _minor, _patch = [
     int(x) for x in re.search(r"^(\d+)\.(\d+)\.(\d+)", __versionstr__).groups()

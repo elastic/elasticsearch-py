@@ -5,11 +5,14 @@ set -eo pipefail
 BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 BASE_DIR="$( dirname "$BASE_DIR" )"
 
-if [[ "$1" != "release" ]]; then
-  echo "Must be called ./.ci/make.sh release [version]"
-  exit 1
+if [[ "$1" == "assemble" ]]; then
+  mkdir -p $BASE_DIR/.ci/output
+  docker build . --tag elastic/elasticsearch-py -f .ci/Dockerfile
+  docker run --rm -it -v $BASE_DIR/.ci/output:/code/elasticsearch-py/dist \
+    elastic/elasticsearch-py \
+    python /code/elasticsearch-py/utils/build-dists.py $2
+  exit 0
 fi
 
-python $BASE_DIR/utils/build_dists.py
-mkdir -p $BASE_DIR/.ci/output
-cp $BASE_DIR/dist/* $BASE_DIR/.ci/output/
+echo "Must be called with '.ci/make.sh [command]"
+exit 1
