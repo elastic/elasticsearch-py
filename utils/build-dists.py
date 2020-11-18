@@ -180,15 +180,23 @@ def main():
         # the package version to before building the dists.
         build_version = expect_version = sys.argv[1]
 
-        # '-SNAPSHOT' means we're making a pre-release.
-        if "-SNAPSHOT" in build_version:
-            # If there's no +dev already (as is the case on dev
-            # branches like 7.x, master) then we need to add one.
-            if not version.endswith("+dev"):
+        # Any prefixes in the version specifier mean we're making
+        # a pre-release which will modify __versionstr__ locally
+        # and not produce a git tag.
+        if any(x in build_version for x in ("-SNAPSHOT", "-rc", "-alpha", "-beta")):
+            # If a snapshot, then we add '+dev'
+            if "-SNAPSHOT" in build_version:
                 version = version + "+dev"
-            expect_version = expect_version.replace("-SNAPSHOT", "")
+            # alpha/beta/rc -> aN/bN/rcN
+            else:
+                pre_number = re.search(r"-(a|b|rc)(?:lpha|eta|)(\d+)$", expect_version)
+                version = version + pre_number.group(1) + pre_number.group(2)
+
+            expect_version = re.sub(
+                r"-(?:SNAPSHOT|alpha\d+|beta\d+|rc\d+)$", "", expect_version
+            )
             if expect_version.endswith(".x"):
-                expect_version = expect_version[:-2]
+                expect_version = expect_version[:-1]
 
             # For snapshots we ensure that the version in the package
             # at least *starts* with the version. This is to support
