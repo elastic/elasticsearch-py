@@ -33,7 +33,7 @@ else:
     from queue import Queue
 
 try:
-    from collections.abs import Mapping
+    from collections.abc import Mapping
 except ImportError:
     from collections import Mapping
 
