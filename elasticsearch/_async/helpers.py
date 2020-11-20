@@ -332,24 +332,28 @@ async def async_scan(
             for hit in resp["hits"]["hits"]:
                 yield hit
 
+            # Default to 0 if the value isn't included in the response
+            shards_successful = resp["_shards"].get("successful", 0)
+            shards_skipped = resp["_shards"].get("skipped", 0)
+            shards_total = resp["_shards"].get("total", 0)
+
             # check if we have any errors
-            if (resp["_shards"]["successful"] + resp["_shards"]["skipped"]) < resp[
-                "_shards"
-            ]["total"]:
+            if (shards_successful + shards_skipped) < shards_total:
+                shards_message = "Scroll request has only succeeded on %d (+%d skipped) shards out of %d."
                 logger.warning(
-                    "Scroll request has only succeeded on %d (+%d skipped) shards out of %d.",
-                    resp["_shards"]["successful"],
-                    resp["_shards"]["skipped"],
-                    resp["_shards"]["total"],
+                    shards_message,
+                    shards_successful,
+                    shards_skipped,
+                    shards_total,
                 )
                 if raise_on_error:
                     raise ScanError(
                         scroll_id,
-                        "Scroll request has only succeeded on %d (+%d skipped) shards out of %d."
+                        shards_message
                         % (
-                            resp["_shards"]["successful"],
-                            resp["_shards"]["skipped"],
-                            resp["_shards"]["total"],
+                            shards_successful,
+                            shards_skipped,
+                            shards_total,
                         ),
                     )
             resp = await client.scroll(
