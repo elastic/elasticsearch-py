@@ -8,7 +8,7 @@ BASE_DIR="$( dirname "$BASE_DIR" )"
 if [[ "$1" == "assemble" ]]; then
   mkdir -p $BASE_DIR/.ci/output
   docker build . --tag elastic/elasticsearch-py -f .ci/Dockerfile
-  docker run --rm -it -v $BASE_DIR/.ci/output:/code/elasticsearch-py/dist \
+  docker run --rm -v $BASE_DIR/.ci/output:/code/elasticsearch-py/dist \
     elastic/elasticsearch-py \
     python /code/elasticsearch-py/utils/build-dists.py $2
   exit 0
