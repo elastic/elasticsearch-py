@@ -193,7 +193,7 @@ def main():
                 version = version + pre_number.group(1) + pre_number.group(2)
 
             expect_version = re.sub(
-                r"-(?:SNAPSHOT|alpha\d+|beta\d+|rc\d+)$", "", expect_version
+                r"(?:-(?:SNAPSHOT|alpha\d+|beta\d+|rc\d+))+$", "", expect_version
             )
             if expect_version.endswith(".x"):
                 expect_version = expect_version[:-1]
