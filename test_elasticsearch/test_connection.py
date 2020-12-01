@@ -150,6 +150,17 @@ class TestBaseConnection(TestCase):
 
         self.assertEqual([str(w.message) for w in warn], ["warning", "folded"])
 
+    def test_ipv6_host_and_port(self):
+        for kwargs, expected_host in [
+            ({"host": "::1"}, "http://[::1]:9200"),
+            ({"host": "::1", "port": 443}, "http://[::1]:443"),
+            ({"host": "::1", "use_ssl": True}, "https://[::1]:9200"),
+            ({"host": "127.0.0.1", "port": 1234}, "http://127.0.0.1:1234"),
+            ({"host": "localhost", "use_ssl": True}, "https://localhost:9200"),
+        ]:
+            conn = Connection(**kwargs)
+            assert conn.host == expected_host
+
 
 class TestUrllib3Connection(TestCase):
     def _get_mock_connection(self, connection_params={}, response_body=b"{}"):
