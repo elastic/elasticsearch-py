@@ -137,7 +137,10 @@ class Connection(object):
         self.scheme = scheme
         self.hostname = host
         self.port = port
-        self.host = "%s://%s" % (scheme, host)
+        if ":" in host:  # IPv6
+            self.host = "%s://[%s]" % (scheme, host)
+        else:
+            self.host = "%s://%s" % (scheme, host)
         if self.port is not None:
             self.host += ":%s" % self.port
         if url_prefix:
