@@ -386,7 +386,7 @@ class MockResponse:
 @pytest.fixture(scope="function")
 async def scan_teardown(async_client):
     yield
-    async_client.clear_scroll(scroll_id="_all")
+    await async_client.clear_scroll(scroll_id="_all")
 
 
 class TestScan(object):
