@@ -19,6 +19,7 @@ import os
 import time
 import pytest
 import elasticsearch
+from ..utils import wipe_cluster
 
 
 @pytest.fixture(scope="function")
@@ -26,7 +27,7 @@ def sync_client():
     client = None
     try:
         kw = {
-            "timeout": 30,
+            "timeout": 3,
             "ca_certs": ".ci/certs/ca.pem",
             "connection_class": getattr(
                 elasticsearch,
@@ -53,20 +54,5 @@ def sync_client():
 
     finally:
         if client:
-            version = tuple(
-                [
-                    int(x) if x.isdigit() else 999
-                    for x in (client.info())["version"]["number"].split(".")
-                ]
-            )
-
-            expand_wildcards = ["open", "closed"]
-            if version >= (7, 7):
-                expand_wildcards.append("hidden")
-
-            client.indices.delete(
-                index="*", ignore=404, expand_wildcards=expand_wildcards
-            )
-            client.indices.delete_template(name="*", ignore=404)
-            client.indices.delete_index_template(name="*", ignore=404)
-            client.transport.close()
+            wipe_cluster(client)
+            client.close()
