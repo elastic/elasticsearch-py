@@ -19,6 +19,7 @@ import os
 import pytest
 import asyncio
 import elasticsearch
+from ...utils import wipe_cluster
 
 pytestmark = pytest.mark.asyncio
 
@@ -31,7 +32,7 @@ async def async_client():
             pytest.skip("test requires 'AsyncElasticsearch'")
 
         kw = {
-            "timeout": 30,
+            "timeout": 3,
             "ca_certs": ".ci/certs/ca.pem",
             "connection_class": elasticsearch.AIOHttpConnection,
         }
@@ -55,20 +56,5 @@ async def async_client():
 
     finally:
         if client:
-            version = tuple(
-                [
-                    int(x) if x.isdigit() else 999
-                    for x in (await client.info())["version"]["number"].split(".")
-                ]
-            )
-
-            expand_wildcards = ["open", "closed"]
-            if version >= (7, 7):
-                expand_wildcards.append("hidden")
-
-            await client.indices.delete(
-                index="*", ignore=404, expand_wildcards=expand_wildcards
-            )
-            await client.indices.delete_template(name="*", ignore=404)
-            await client.indices.delete_index_template(name="*", ignore=404)
+            wipe_cluster(client)
             await client.close()
