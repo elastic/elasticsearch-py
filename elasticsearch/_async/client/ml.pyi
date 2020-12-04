@@ -1094,3 +1094,21 @@ class MlClient(NamespacedClient):
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
+    async def upgrade_job_snapshot(
+        self,
+        job_id: Any,
+        snapshot_id: Any,
+        *,
+        timeout: Optional[Any] = ...,
+        wait_for_completion: Optional[Any] = ...,
+        pretty: Optional[bool] = ...,
+        human: Optional[bool] = ...,
+        error_trace: Optional[bool] = ...,
+        format: Optional[str] = ...,
+        filter_path: Optional[Union[str, Collection[str]]] = ...,
+        request_timeout: Optional[Union[int, float]] = ...,
+        ignore: Optional[Union[int, Collection[int]]] = ...,
+        opaque_id: Optional[str] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
+    ) -> Any: ...

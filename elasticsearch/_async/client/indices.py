@@ -992,7 +992,7 @@ class IndicesClient(NamespacedClient):
     )
     async def upgrade(self, index=None, params=None, headers=None):
         """
-        The _upgrade API is no longer useful and will be removed.
+        DEPRECATED Upgrades to the current version of Lucene.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-upgrade.html>`_
 
@@ -1018,7 +1018,7 @@ class IndicesClient(NamespacedClient):
     @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable")
     async def get_upgrade(self, index=None, params=None, headers=None):
         """
-        The _upgrade API is no longer useful and will be removed.
+        DEPRECATED Returns a progress status of current upgrade.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-upgrade.html>`_
 
@@ -1348,7 +1348,7 @@ class IndicesClient(NamespacedClient):
             "PUT", _make_path("_data_stream", name), params=params, headers=headers
         )
 
-    @query_params()
+    @query_params("expand_wildcards")
     async def delete_data_stream(self, name, params=None, headers=None):
         """
         Deletes a data stream.
@@ -1357,6 +1357,9 @@ class IndicesClient(NamespacedClient):
 
         :arg name: A comma-separated list of data streams to delete; use
             `*` to delete all data streams
+        :arg expand_wildcards: Whether wildcard expressions should get
+            expanded to open or closed indices (default: open)  Valid choices: open,
+            closed, hidden, none, all  Default: open
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
@@ -1371,11 +1374,6 @@ class IndicesClient(NamespacedClient):
         Deletes an index template.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-templates.html>`_
-
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
 
         :arg name: The name of the template
         :arg master_timeout: Specify timeout for connection to master
@@ -1397,11 +1395,6 @@ class IndicesClient(NamespacedClient):
         Returns information about whether a particular index template exists.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-templates.html>`_
-
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
 
         :arg name: The name of the template
         :arg flat_settings: Return settings in flat format (default:
@@ -1425,11 +1418,6 @@ class IndicesClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-templates.html>`_
 
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
-
         :arg name: The comma separated names of the index templates
         :arg flat_settings: Return settings in flat format (default:
             false)
@@ -1448,11 +1436,6 @@ class IndicesClient(NamespacedClient):
         Creates or updates an index template.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-templates.html>`_
-
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
 
         :arg name: The name of the template
         :arg body: The template definition
@@ -1482,11 +1465,6 @@ class IndicesClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-templates.html>`_
 
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
-
         :arg name: The name of the index (it must be a concrete index
             name)
         :arg body: New index template definition, which will be included
@@ -1509,7 +1487,7 @@ class IndicesClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params("expand_wildcards")
     async def get_data_stream(self, name=None, params=None, headers=None):
         """
         Returns data streams.
@@ -1518,6 +1496,9 @@ class IndicesClient(NamespacedClient):
 
         :arg name: A comma-separated list of data streams to get; use
             `*` to get all data streams
+        :arg expand_wildcards: Whether wildcard expressions should get
+            expanded to open or closed indices (default: open)  Valid choices: open,
+            closed, hidden, none, all  Default: open
         """
         return await self.transport.perform_request(
             "GET", _make_path("_data_stream", name), params=params, headers=headers
@@ -1529,11 +1510,6 @@ class IndicesClient(NamespacedClient):
         Simulate resolving the given template name or body
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/indices-templates.html>`_
-
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
 
         :arg body: New index template definition to be simulated, if no
             index template name is specified
