@@ -56,42 +56,6 @@ class AsyncYamlRunner(YamlRunner):
         if self._teardown_code:
             await self.run_code(self._teardown_code)
 
-        for repo, definition in (
-            await self.client.snapshot.get_repository(repository="_all")
-        ).items():
-            snapshots = (
-                await self.client.snapshot.get(
-                    repository=repo, snapshot="_all", ignore=404
-                )
-            ).get("snapshots", [])
-            for snapshot in snapshots:
-                await self.client.snapshot.delete(
-                    repository=repo, snapshot=snapshot["snapshot"], ignore=404
-                )
-            await self.client.snapshot.delete_repository(repository=repo)
-
-        # stop and remove all ML stuff
-        if await self._feature_enabled("ml"):
-            await self.client.ml.stop_datafeed(datafeed_id="*", force=True)
-            for feed in (await self.client.ml.get_datafeeds(datafeed_id="*"))[
-                "datafeeds"
-            ]:
-                await self.client.ml.delete_datafeed(datafeed_id=feed["datafeed_id"])
-
-            await self.client.ml.close_job(job_id="*", force=True)
-            for job in (await self.client.ml.get_jobs(job_id="*"))["jobs"]:
-                await self.client.ml.delete_job(
-                    job_id=job["job_id"], wait_for_completion=True, force=True
-                )
-
-        # stop and remove all Rollup jobs
-        if await self._feature_enabled("rollup"):
-            for rollup in (await self.client.rollup.get_jobs(id="*"))["jobs"]:
-                await self.client.rollup.stop_job(
-                    id=rollup["config"]["id"], wait_for_completion=True
-                )
-                await self.client.rollup.delete_job(id=rollup["config"]["id"])
-
     async def es_version(self):
         global ES_VERSION
         if ES_VERSION is None:
