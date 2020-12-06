@@ -201,3 +201,20 @@ class WatcherClient(NamespacedClient):
         return self.transport.perform_request(
             "POST", "/_watcher/_stop", params=params, headers=headers
         )
+
+    @query_params()
+    def query_watches(self, body=None, params=None, headers=None):
+        """
+        Retrieves stored watches.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/watcher-api-query-watches.html>`_
+
+        :arg body: From, size, query, sort and search_after
+        """
+        return self.transport.perform_request(
+            "POST",
+            "/_watcher/_query/watches",
+            params=params,
+            headers=headers,
+            body=body,
+        )

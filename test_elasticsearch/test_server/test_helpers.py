@@ -500,6 +500,33 @@ class TestScan(ElasticsearchTestCase):
             )
             spy.assert_not_called()
 
+    def test_shards_no_skipped_field(self):
+        with patch.object(self, "client") as client_mock:
+            client_mock.search.return_value = {
+                "_scroll_id": "dummy_id",
+                "_shards": {"successful": 5, "total": 5},
+                "hits": {"hits": [{"search_data": 1}]},
+            }
+            client_mock.scroll.side_effect = [
+                {
+                    "_scroll_id": "dummy_id",
+                    "_shards": {"successful": 5, "total": 5},
+                    "hits": {"hits": [{"scroll_data": 42}]},
+                },
+                {
+                    "_scroll_id": "dummy_id",
+                    "_shards": {"successful": 5, "total": 5},
+                    "hits": {"hits": []},
+                },
+            ]
+
+            data = list(
+                helpers.scan(
+                    self.client, index="test_index", size=2, raise_on_error=True
+                )
+            )
+            self.assertEqual(data, [{"search_data": 1}, {"scroll_data": 42}])
+
 
 class TestReindex(ElasticsearchTestCase):
     def setup_method(self, _):

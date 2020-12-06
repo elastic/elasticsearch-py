@@ -853,60 +853,6 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params(
-        "allow_no_indices",
-        "expand_wildcards",
-        "ignore_unavailable",
-        "only_ancient_segments",
-        "wait_for_completion",
-    )
-    async def upgrade(self, index=None, params=None, headers=None):
-        """
-        DEPRECATED Upgrades to the current version of Lucene.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-upgrade.html>`_
-
-        :arg index: A comma-separated list of index names; use `_all` or
-            empty string to perform the operation on all indices
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
-        :arg ignore_unavailable: Whether specified concrete indices
-            should be ignored when unavailable (missing or closed)
-        :arg only_ancient_segments: If true, only ancient (an older
-            Lucene major release) segments will be upgraded
-        :arg wait_for_completion: Specify whether the request should
-            block until the all segments are upgraded (default: false)
-        """
-        return await self.transport.perform_request(
-            "POST", _make_path(index, "_upgrade"), params=params, headers=headers
-        )
-
-    @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable")
-    async def get_upgrade(self, index=None, params=None, headers=None):
-        """
-        DEPRECATED Returns a progress status of current upgrade.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-upgrade.html>`_
-
-        :arg index: A comma-separated list of index names; use `_all` or
-            empty string to perform the operation on all indices
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
-        :arg ignore_unavailable: Whether specified concrete indices
-            should be ignored when unavailable (missing or closed)
-        """
-        return await self.transport.perform_request(
-            "GET", _make_path(index, "_upgrade"), params=params, headers=headers
-        )
-
-    @query_params(
         "allow_no_indices", "expand_wildcards", "ignore_unavailable", "status"
     )
     async def shard_stores(self, index=None, params=None, headers=None):
@@ -1274,7 +1220,7 @@ class IndicesClient(NamespacedClient):
             "PUT", _make_path("_data_stream", name), params=params, headers=headers
         )
 
-    @query_params()
+    @query_params("expand_wildcards")
     async def delete_data_stream(self, name, params=None, headers=None):
         """
         Deletes a data stream.
@@ -1283,6 +1229,9 @@ class IndicesClient(NamespacedClient):
 
         :arg name: A comma-separated list of data streams to delete; use
             `*` to delete all data streams
+        :arg expand_wildcards: Whether wildcard expressions should get
+            expanded to open or closed indices (default: open)  Valid choices: open,
+            closed, hidden, none, all  Default: open
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
@@ -1297,11 +1246,6 @@ class IndicesClient(NamespacedClient):
         Deletes an index template.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
-
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
 
         :arg name: The name of the template
         :arg master_timeout: Specify timeout for connection to master
@@ -1324,11 +1268,6 @@ class IndicesClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
 
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
-
         :arg name: The comma separated names of the index templates
         :arg flat_settings: Return settings in flat format (default:
             false)
@@ -1347,11 +1286,6 @@ class IndicesClient(NamespacedClient):
         Creates or updates an index template.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
-
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
 
         :arg name: The name of the template
         :arg body: The template definition
@@ -1380,11 +1314,6 @@ class IndicesClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
 
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
-
         :arg name: The name of the template
         :arg flat_settings: Return settings in flat format (default:
             false)
@@ -1408,11 +1337,6 @@ class IndicesClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
 
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
-
         :arg name: The name of the index (it must be a concrete index
             name)
         :arg body: New index template definition, which will be included
@@ -1435,7 +1359,7 @@ class IndicesClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params("expand_wildcards")
     async def get_data_stream(self, name=None, params=None, headers=None):
         """
         Returns data streams.
@@ -1444,6 +1368,9 @@ class IndicesClient(NamespacedClient):
 
         :arg name: A comma-separated list of data streams to get; use
             `*` to get all data streams
+        :arg expand_wildcards: Whether wildcard expressions should get
+            expanded to open or closed indices (default: open)  Valid choices: open,
+            closed, hidden, none, all  Default: open
         """
         return await self.transport.perform_request(
             "GET", _make_path("_data_stream", name), params=params, headers=headers
@@ -1455,11 +1382,6 @@ class IndicesClient(NamespacedClient):
         Simulate resolving the given template name or body
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
-
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
 
         :arg body: New index template definition to be simulated, if no
             index template name is specified
@@ -1552,6 +1474,25 @@ class IndicesClient(NamespacedClient):
         return await self.transport.perform_request(
             "GET",
             _make_path("_data_stream", name, "_stats"),
+            params=params,
+            headers=headers,
+        )
+
+    @query_params()
+    async def migrate_to_data_stream(self, name, params=None, headers=None):
+        """
+        Migrates an alias to a data stream
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
+
+        :arg name: The name of the alias to migrate
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'name'.")
+
+        return await self.transport.perform_request(
+            "POST",
+            _make_path("_data_stream", "_migrate", name),
             params=params,
             headers=headers,
         )

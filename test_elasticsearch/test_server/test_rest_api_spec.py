@@ -53,29 +53,9 @@ IMPLEMENTED_FEATURES = {
 
 # broken YAML tests on some releases
 SKIP_TESTS = {
-    # can't figure out the expand_wildcards=open issue?
     "indices/get_alias/10_basic[23]",
-    # [interval] on [date_histogram] is deprecated, use [fixed_interval] or [calendar_interval] in the future.
-    "search/aggregation/230_composite[6]",
-    "search/aggregation/250_moving_fn[1]",
-    # fails by not returning 'search'?
-    "search/320_disallow_queries[2]",
-    "search/40_indices_boost[1]",
-    # ?q= fails
-    "explain/30_query_string[0]",
-    "count/20_query_string[0]",
-    # index template issues
-    "indices/put_template/10_basic[0]",
-    "indices/put_template/10_basic[1]",
-    "indices/put_template/10_basic[2]",
-    "indices/put_template/10_basic[3]",
-    "indices/put_template/10_basic[4]",
-    # depends on order of response JSON which is random
-    "indices/simulate_index_template/10_basic[1]",
-    # body: null? body is {}
     "indices/simulate_index_template/10_basic[2]",
-    # can't figure out a snapshot issue, so just skipping this pesky test.
-    "snapshot/clone/10_basic[1]",
+    "search/aggregation/250_moving_fn[1]",
 }
 
 
@@ -109,38 +89,6 @@ class YamlRunner:
     def teardown(self):
         if self._teardown_code:
             self.run_code(self._teardown_code)
-
-        for repo, definition in (
-            self.client.snapshot.get_repository(repository="_all")
-        ).items():
-            snapshots = self.client.snapshot.get(
-                repository=repo, snapshot="_all", ignore=404
-            ).get("snapshots", [])
-            for snapshot in snapshots:
-                self.client.snapshot.delete(
-                    repository=repo, snapshot=snapshot["snapshot"], ignore=404
-                )
-            self.client.snapshot.delete_repository(repository=repo)
-
-        # stop and remove all ML stuff
-        if self._feature_enabled("ml"):
-            self.client.ml.stop_datafeed(datafeed_id="*", force=True)
-            for feed in (self.client.ml.get_datafeeds(datafeed_id="*"))["datafeeds"]:
-                self.client.ml.delete_datafeed(datafeed_id=feed["datafeed_id"])
-
-            self.client.ml.close_job(job_id="*", force=True)
-            for job in (self.client.ml.get_jobs(job_id="*"))["jobs"]:
-                self.client.ml.delete_job(
-                    job_id=job["job_id"], wait_for_completion=True, force=True
-                )
-
-        # stop and remove all Rollup jobs
-        if self._feature_enabled("rollup"):
-            for rollup in (self.client.rollup.get_jobs(id="*"))["jobs"]:
-                self.client.rollup.stop_job(
-                    id=rollup["config"]["id"], wait_for_completion=True
-                )
-                self.client.rollup.delete_job(id=rollup["config"]["id"])
 
     def es_version(self):
         global ES_VERSION

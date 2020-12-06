@@ -575,44 +575,6 @@ class IndicesClient(NamespacedClient):
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
-    def upgrade(
-        self,
-        *,
-        index: Optional[Any] = ...,
-        allow_no_indices: Optional[Any] = ...,
-        expand_wildcards: Optional[Any] = ...,
-        ignore_unavailable: Optional[Any] = ...,
-        only_ancient_segments: Optional[Any] = ...,
-        wait_for_completion: Optional[Any] = ...,
-        pretty: Optional[bool] = ...,
-        human: Optional[bool] = ...,
-        error_trace: Optional[bool] = ...,
-        format: Optional[str] = ...,
-        filter_path: Optional[Union[str, Collection[str]]] = ...,
-        request_timeout: Optional[Union[int, float]] = ...,
-        ignore: Optional[Union[int, Collection[int]]] = ...,
-        opaque_id: Optional[str] = ...,
-        params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...
-    ) -> Any: ...
-    def get_upgrade(
-        self,
-        *,
-        index: Optional[Any] = ...,
-        allow_no_indices: Optional[Any] = ...,
-        expand_wildcards: Optional[Any] = ...,
-        ignore_unavailable: Optional[Any] = ...,
-        pretty: Optional[bool] = ...,
-        human: Optional[bool] = ...,
-        error_trace: Optional[bool] = ...,
-        format: Optional[str] = ...,
-        filter_path: Optional[Union[str, Collection[str]]] = ...,
-        request_timeout: Optional[Union[int, float]] = ...,
-        ignore: Optional[Union[int, Collection[int]]] = ...,
-        opaque_id: Optional[str] = ...,
-        params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...
-    ) -> Any: ...
     def shard_stores(
         self,
         *,
@@ -843,6 +805,7 @@ class IndicesClient(NamespacedClient):
         self,
         name: Any,
         *,
+        expand_wildcards: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -949,6 +912,7 @@ class IndicesClient(NamespacedClient):
         self,
         *,
         name: Optional[Any] = ...,
+        expand_wildcards: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -1020,6 +984,21 @@ class IndicesClient(NamespacedClient):
         self,
         *,
         name: Optional[Any] = ...,
+        pretty: Optional[bool] = ...,
+        human: Optional[bool] = ...,
+        error_trace: Optional[bool] = ...,
+        format: Optional[str] = ...,
+        filter_path: Optional[Union[str, Collection[str]]] = ...,
+        request_timeout: Optional[Union[int, float]] = ...,
+        ignore: Optional[Union[int, Collection[int]]] = ...,
+        opaque_id: Optional[str] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
+    ) -> Any: ...
+    def migrate_to_data_stream(
+        self,
+        name: Any,
+        *,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,

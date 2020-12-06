@@ -143,7 +143,6 @@ class CatClient(NamespacedClient):
         "health",
         "help",
         "include_unloaded_segments",
-        "local",
         "master_timeout",
         "pri",
         "s",
@@ -174,8 +173,6 @@ class CatClient(NamespacedClient):
         :arg include_unloaded_segments: If set to true segment stats
             will include stats for segments that are not currently loaded into
             memory
-        :arg local: Return local information, do not retrieve the state
-            from master node (default: false)
         :arg master_timeout: Explicit operation timeout for connection
             to master node
         :arg pri: Set to true to return stats only for primary shards
@@ -272,9 +269,7 @@ class CatClient(NamespacedClient):
             "GET", _make_path("_cat", "recovery", index), params=params, headers=headers
         )
 
-    @query_params(
-        "bytes", "format", "h", "help", "local", "master_timeout", "s", "time", "v"
-    )
+    @query_params("bytes", "format", "h", "help", "master_timeout", "s", "time", "v")
     async def shards(self, index=None, params=None, headers=None):
         """
         Provides a detailed view of shard allocation on nodes.
@@ -289,8 +284,6 @@ class CatClient(NamespacedClient):
             yaml
         :arg h: Comma-separated list of column names to display
         :arg help: Return help information
-        :arg local: Return local information, do not retrieve the state
-            from master node (default: false)
         :arg master_timeout: Explicit operation timeout for connection
             to master node
         :arg s: Comma-separated list of column names or column aliases

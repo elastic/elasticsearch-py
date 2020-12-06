@@ -1701,3 +1701,35 @@ class MlClient(NamespacedClient):
             headers=headers,
             body=body,
         )
+
+    @query_params("timeout", "wait_for_completion")
+    def upgrade_job_snapshot(self, job_id, snapshot_id, params=None, headers=None):
+        """
+        Upgrades a given job snapshot to the current major version.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-upgrade-job-model-snapshot.html>`_
+
+        :arg job_id: The ID of the job
+        :arg snapshot_id: The ID of the snapshot
+        :arg timeout: How long should the API wait for the job to be
+            opened and the old snapshot to be loaded.
+        :arg wait_for_completion: Should the request wait until the task
+            is complete before responding to the caller. Default is false.
+        """
+        for param in (job_id, snapshot_id):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
+
+        return self.transport.perform_request(
+            "POST",
+            _make_path(
+                "_ml",
+                "anomaly_detectors",
+                job_id,
+                "model_snapshots",
+                snapshot_id,
+                "_upgrade",
+            ),
+            params=params,
+            headers=headers,
+        )
