@@ -35,6 +35,11 @@ class TasksClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/tasks.html>`_
 
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
         :arg actions: A comma-separated list of actions that should be
             returned. Leave empty to return all.
         :arg detailed: Return detailed task information (default: false)
@@ -59,6 +64,11 @@ class TasksClient(NamespacedClient):
         Cancels a task, if it can be cancelled through an API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/tasks.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
 
         :arg task_id: Cancel the task with specified task id
             (node_id:task_number)
@@ -86,6 +96,11 @@ class TasksClient(NamespacedClient):
         Returns information about a task.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/tasks.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
 
         :arg task_id: Return the task with specified id
             (node_id:task_number)
