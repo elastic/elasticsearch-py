@@ -1601,3 +1601,23 @@ class IndicesClient(NamespacedClient):
             params=params,
             headers=headers,
         )
+
+    @query_params()
+    def promote_data_stream(self, name, params=None, headers=None):
+        """
+        Promotes a data stream from a replicated data stream managed by CCR to a
+        regular data stream
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/data-streams.html>`_
+
+        :arg name: The name of the data stream
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'name'.")
+
+        return self.transport.perform_request(
+            "POST",
+            _make_path("_data_stream", "_promote", name),
+            params=params,
+            headers=headers,
+        )
