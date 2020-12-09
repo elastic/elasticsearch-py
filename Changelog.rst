@@ -3,6 +3,21 @@
 Changelog
 =========
 
+7.10.1 (2020-12-09)
+-------------------
+
+* Fixed issue where the Scan helper would fail if a ``scroll`` response returned
+  without a value for ``_shards.skipped`` (`#1451`_)
+* Fixed handling of IPv6 hosts with a port in the computed ``Connection.host`` property (`#1460`_)
+* Fixed documented task management API stability, should have been as "experimental" (`#1471`_)
+* Changed deprecated ``collections.Mapping`` in favor of
+  ``collections.abc.Mapping`` for Python 3.9 (`#1443`_)
+
+ .. _#1443: https://github.com/elastic/elasticsearch-py/pull/1443
+ .. _#1451: https://github.com/elastic/elasticsearch-py/pull/1451
+ .. _#1460: https://github.com/elastic/elasticsearch-py/pull/1460
+ .. _#1471: https://github.com/elastic/elasticsearch-py/pull/1471
+
 7.10.0 (2020-11-11)
 -------------------
 
