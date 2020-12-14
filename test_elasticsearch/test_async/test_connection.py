@@ -17,6 +17,7 @@
 #  under the License.
 
 import ssl
+import re
 import gzip
 import io
 from mock import patch
@@ -316,3 +317,43 @@ class TestAIOHttpConnection:
         con = await self._get_mock_connection(response_body=buf)
         status, headers, data = await con.perform_request("GET", "/")
         assert u"你好\uda6a" == data
+
+    async def test_meta_header_value(self):
+        con = await self._get_mock_connection()
+        assert con.meta_header is True
+
+        await con.perform_request("GET", "/", body=b"{}")
+
+        _, kwargs = con.session.request.call_args
+        headers = kwargs["headers"]
+        assert re.match(
+            r"^es=[0-9]+\.[0-9]+\.[0-9]+p?,py=[0-9]+\.[0-9]+\.[0-9]+p?,"
+            r"t=[0-9]+\.[0-9]+\.[0-9]+p?,ai=[0-9]+\.[0-9]+\.[0-9]+p?$",
+            headers["x-elastic-client-meta"],
+        )
+
+        con = await self._get_mock_connection()
+        assert con.meta_header is True
+
+        await con.perform_request(
+            "GET", "/", body=b"{}", params={"_client_meta": (("h", "bp"),)}
+        )
+
+        (method, url), kwargs = con.session.request.call_args
+        headers = kwargs["headers"]
+        assert method == "GET"
+        assert str(url) == "http://localhost:9200/"
+        assert re.match(
+            r"^es=[0-9]+\.[0-9]+\.[0-9]+p?,py=[0-9]+\.[0-9]+\.[0-9]+p?,"
+            r"t=[0-9]+\.[0-9]+\.[0-9]+p?,ai=[0-9]+\.[0-9]+\.[0-9]+p?,h=bp$",
+            headers["x-elastic-client-meta"],
+        )
+
+        con = await self._get_mock_connection(connection_params={"meta_header": False})
+        assert con.meta_header is False
+
+        await con.perform_request("GET", "/", body=b"{}")
+
+        _, kwargs = con.session.request.call_args
+        headers = kwargs["headers"]
+        assert "x-elastic-client-meta" not in (x.lower() for x in headers)

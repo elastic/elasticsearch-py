@@ -25,7 +25,7 @@ try:
 except ImportError:
     REQUESTS_AVAILABLE = False
 
-from .base import Connection
+from .base import Connection, _get_client_meta_header, _python_to_meta_version
 from ..exceptions import (
     ConnectionError,
     ImproperlyConfigured,
@@ -142,12 +142,24 @@ class RequestsHttpConnection(Connection):
         url = self.base_url + url
         headers = headers or {}
         if params:
-            url = "%s?%s" % (url, urlencode(params or {}))
+            # Pop client metadata from parameters, if any.
+            client_meta = params.pop("_client_meta", ())
+        else:
+            client_meta = ()
+        if params:
+            url = "%s?%s" % (url, urlencode(params))
 
         orig_body = body
         if self.http_compress and body:
             body = self._gzip_compress(body)
             headers["content-encoding"] = "gzip"
+
+        # Create meta header for requests
+        if self.meta_header:
+            client_meta = (
+                ("rq", _python_to_meta_version(requests.__version__)),
+            ) + client_meta
+            headers["x-elastic-client-meta"] = _get_client_meta_header(client_meta)
 
         start = time.time()
         request = requests.Request(method=method, headers=headers, url=url, data=body)

@@ -40,7 +40,12 @@ from elasticsearch.connection import (
     RequestsHttpConnection,
     Urllib3HttpConnection,
 )
-from elasticsearch import __versionstr__
+from elasticsearch.connection.base import (
+    _get_client_meta_header,
+    _python_to_meta_version,
+)
+
+from elasticsearch import __version__, __versionstr__
 from .test_cases import TestCase, SkipTest
 
 
@@ -160,6 +165,32 @@ class TestBaseConnection(TestCase):
         ]:
             conn = Connection(**kwargs)
             assert conn.host == expected_host
+
+    def test_meta_header(self):
+        conn = Connection(meta_header=True)
+        assert conn.meta_header is True
+        conn = Connection(meta_header=False)
+        assert conn.meta_header is False
+
+        with pytest.raises(TypeError) as e:
+            Connection(meta_header=1)
+        assert str(e.value) == "meta_header must be of type bool"
+
+    def test_get_client_meta_header(self):
+        meta_header = _get_client_meta_header()
+        assert ("es=%s" % (".".join(str(x) for x in __version__),)) in meta_header
+        assert ("t=%s" % (".".join(str(x) for x in __version__),)) in meta_header
+        assert ("py=%s" % python_version()) in meta_header
+
+        meta_header = _get_client_meta_header((("h", "bp"),))
+        assert meta_header.endswith(",h=bp")
+
+        meta_header = _get_client_meta_header((("ur", "1.26.3"), ("h", "bp")))
+        assert meta_header.endswith(",ur=1.26.3,h=bp")
+
+    def test_python_to_meta_version(self):
+        assert _python_to_meta_version("1.26.3") == "1.26.3"
+        assert _python_to_meta_version("7.10.1a1") == "7.10.1p"
 
 
 class TestUrllib3Connection(TestCase):
@@ -433,6 +464,45 @@ class TestUrllib3Connection(TestCase):
         con = self._get_mock_connection(response_body=buf)
         status, headers, data = con.perform_request("GET", "/")
         self.assertEqual(u"你好\uda6a", data)
+
+    def test_meta_header_value(self):
+        con = self._get_mock_connection()
+        self.assertTrue(con.meta_header)
+
+        con.perform_request("GET", "/", body=b"{}")
+
+        _, kwargs = con.pool.urlopen.call_args
+        headers = kwargs["headers"]
+        assert re.match(
+            r"^es=[0-9]+\.[0-9]+\.[0-9]+p?,py=[0-9]+\.[0-9]+\.[0-9]+p?,"
+            r"t=[0-9]+\.[0-9]+\.[0-9]+p?,ur=[0-9]+\.[0-9]+\.[0-9]+p?$",
+            headers["x-elastic-client-meta"],
+        )
+
+        con = self._get_mock_connection({"meta_header": True})
+        self.assertTrue(con.meta_header)
+
+        con.perform_request(
+            "GET", "/", body=b"{}", params={"_client_meta": (("h", "bp"),)}
+        )
+
+        args, kwargs = con.pool.urlopen.call_args
+        headers = kwargs["headers"]
+        assert args == ("GET", "/", b"{}")
+        assert re.match(
+            r"^es=[0-9]+\.[0-9]+\.[0-9]+p?,py=[0-9]+\.[0-9]+\.[0-9]+p?,"
+            r"t=[0-9]+\.[0-9]+\.[0-9]+p?,ur=[0-9]+\.[0-9]+\.[0-9]+p?,h=bp$",
+            headers["x-elastic-client-meta"],
+        )
+
+        con = self._get_mock_connection({"meta_header": False})
+        self.assertFalse(con.meta_header)
+
+        con.perform_request("GET", "/", body=b"{}")
+
+        _, kwargs = con.pool.urlopen.call_args
+        headers = kwargs["headers"]
+        assert "x-elastic-client-meta" not in (x.lower() for x in headers)
 
 
 class TestRequestsConnection(TestCase):
@@ -835,3 +905,42 @@ class TestRequestsConnection(TestCase):
         con = self._get_mock_connection(response_body=buf)
         status, headers, data = con.perform_request("GET", "/")
         self.assertEqual(u"你好\uda6a", data)
+
+    def test_meta_header_value(self):
+        con = self._get_mock_connection()
+        self.assertTrue(con.meta_header)
+
+        con.perform_request("GET", "/", body=b"{}")
+
+        args, _ = con.session.send.call_args
+        headers = args[0].headers
+        assert re.match(
+            r"^es=[0-9]+\.[0-9]+\.[0-9]+p?,py=[0-9]+\.[0-9]+\.[0-9]+p?,"
+            r"t=[0-9]+\.[0-9]+\.[0-9]+p?,rq=[0-9]+\.[0-9]+\.[0-9]+p?$",
+            headers["x-elastic-client-meta"],
+        )
+
+        con = self._get_mock_connection()
+        self.assertTrue(con.meta_header)
+
+        con.perform_request(
+            "GET", "/", body=b"{}", params={"_client_meta": (("h", "bp"),)}
+        )
+
+        args, _ = con.session.send.call_args
+        headers = args[0].headers
+        assert args[0].url == "http://localhost:9200/"
+        assert re.match(
+            r"^es=[0-9]+\.[0-9]+\.[0-9]+p?,py=[0-9]+\.[0-9]+\.[0-9]+p?,"
+            r"t=[0-9]+\.[0-9]+\.[0-9]+p?,rq=[0-9]+\.[0-9]+\.[0-9]+p?,h=bp$",
+            headers["x-elastic-client-meta"],
+        )
+
+        con = self._get_mock_connection({"meta_header": False})
+        self.assertFalse(con.meta_header)
+
+        con.perform_request("GET", "/", body=b"{}")
+
+        args, _ = con.session.send.call_args
+        headers = args[0].headers
+        assert "x-elastic-client-meta" not in (x.lower() for x in headers)
