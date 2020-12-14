@@ -16,6 +16,7 @@
 #  under the License.
 
 import time
+from platform import python_version
 from itertools import chain
 
 from .connection import Urllib3HttpConnection
@@ -27,6 +28,7 @@ from .exceptions import (
     SerializationError,
     ConnectionTimeout,
 )
+from .utils import _client_meta_version
 
 
 def get_host_info(node_info, host):
@@ -74,6 +76,7 @@ class Transport(object):
         retry_on_status=(502, 503, 504),
         retry_on_timeout=False,
         send_get_body_as="GET",
+        meta_header=True,
         **kwargs
     ):
         """
@@ -108,11 +111,15 @@ class Transport(object):
             don't support passing bodies with GET requests. If you set this to
             'POST' a POST method will be used instead, if to 'source' then the body
             will be serialized and passed as a query parameter `source`.
+        :arg meta_header: If True will send the 'X-Elastic-Client-Meta' HTTP header containing
+            simple client metadata. Setting to False will disable the header. Defaults to True.
 
         Any extra keyword arguments will be passed to the `connection_class`
         when creating and instance unless overridden by that connection's
         options provided as part of the hosts parameter.
         """
+        if not isinstance(meta_header, bool):
+            raise TypeError("meta_header must be of type bool")
 
         # serialization config
         _serializers = DEFAULT_SERIALIZERS.copy()
@@ -128,6 +135,7 @@ class Transport(object):
         self.retry_on_timeout = retry_on_timeout
         self.retry_on_status = retry_on_status
         self.send_get_body_as = send_get_body_as
+        self.meta_header = meta_header
 
         # data serializer
         self.serializer = serializer
@@ -161,6 +169,22 @@ class Transport(object):
 
         if sniff_on_start:
             self.sniff_hosts(True)
+
+        # Create the default metadata for the x-elastic-client-meta
+        # HTTP header. Only requires adding the (service, service_version)
+        # tuple to the beginning of the client_meta
+        from . import __versionstr__
+
+        self._client_meta = (
+            ("es", _client_meta_version(__versionstr__)),
+            ("py", _client_meta_version(python_version())),
+            ("t", _client_meta_version(__versionstr__)),
+        )
+
+        # Grab the 'HTTP_CLIENT_META' property from the connection class
+        http_client_meta = getattr(connection_class, "HTTP_CLIENT_META", None)
+        if http_client_meta:
+            self._client_meta += (http_client_meta,)
 
     def add_connection(self, host):
         """
@@ -356,6 +380,16 @@ class Transport(object):
             ignore = params.pop("ignore", ())
             if isinstance(ignore, int):
                 ignore = (ignore,)
+            client_meta = params.pop("__elastic_client_meta", ())
+        else:
+            client_meta = ()
+
+        if self.meta_header:
+            headers = headers or {}
+            client_meta = self._client_meta + client_meta
+            headers["x-elastic-client-meta"] = ",".join(
+                "%s=%s" % (k, v) for k, v in client_meta
+            )
 
         for attempt in range(self.max_retries + 1):
             connection = self.get_connection()
