@@ -21,13 +21,13 @@ from typing import (
     Union,
     Optional,
     Mapping,
+    MutableMapping,
     Tuple,
     List,
     NoReturn,
     Dict,
     Sequence,
     Any,
-    AnyStr,
     Collection,
 )
 
@@ -44,6 +44,7 @@ class Connection(object):
     host: str
     url_prefix: str
     timeout: Optional[Union[float, int]]
+    meta_header: bool
     def __init__(
         self,
         host: str = ...,
@@ -56,6 +57,7 @@ class Connection(object):
         cloud_id: Optional[str] = ...,
         api_key: Optional[Union[Tuple[str, str], List[str], str]] = ...,
         opaque_id: Optional[str] = ...,
+        meta_header: bool = ...,
         **kwargs: Any
     ) -> None: ...
     def __repr__(self) -> str: ...
@@ -77,11 +79,11 @@ class Connection(object):
         self,
         method: str,
         url: str,
-        params: Optional[Mapping[str, Any]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
         body: Optional[bytes] = ...,
         timeout: Optional[Union[int, float]] = ...,
         ignore: Collection[int] = ...,
-        headers: Optional[Mapping[str, str]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Tuple[int, Mapping[str, str], str]: ...
     def log_request_success(
         self,
