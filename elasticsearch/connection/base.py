@@ -21,6 +21,7 @@ import gzip
 import io
 import re
 from platform import python_version
+import sys
 import warnings
 
 try:
@@ -65,6 +66,8 @@ class Connection(object):
     :arg cloud_id: The Cloud ID from ElasticCloud. Convenient way to connect to cloud instances.
     :arg opaque_id: Send this value in the 'X-Opaque-Id' HTTP header
         For tracing all requests made by this transport.
+    :arg meta_header: If True will send the 'X-Elastic-Client-Meta' HTTP header containing
+        simple client metadata. Setting to False will disable the header. Defaults to True.
     """
 
     def __init__(
@@ -79,6 +82,7 @@ class Connection(object):
         cloud_id=None,
         api_key=None,
         opaque_id=None,
+        meta_header=True,
         **kwargs
     ):
 
@@ -147,6 +151,10 @@ class Connection(object):
             url_prefix = "/" + url_prefix.strip("/")
         self.url_prefix = url_prefix
         self.timeout = timeout
+
+        if not isinstance(meta_header, bool):
+            raise TypeError("meta_header must be of type bool")
+        self.meta_header = meta_header
 
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.host)
@@ -329,3 +337,25 @@ class Connection(object):
             s = "{0}:{1}".format(api_key[0], api_key[1]).encode("utf-8")
             return "ApiKey " + binascii.b2a_base64(s).rstrip(b"\r\n").decode("utf-8")
         return "ApiKey " + api_key
+
+
+def _python_to_meta_version(version):
+    """Transforms a Python package version to one
+    compatible with 'X-Elastic-Client-Meta'. Essentially
+    replaces any pre-release information with a 'p' suffix.
+    """
+    version, version_pre = re.match(r"^([0-9.]+)(.*)$", version).groups()
+    if version_pre:
+        version += "p"
+    return version
+
+
+def _get_client_meta_header(client_meta=()):
+    """Builds an 'X-Elastic-Client-Meta' HTTP header"""
+    es_version = _python_to_meta_version(__versionstr__)
+    py_version = python_version() + ("p" if sys.version_info[3] != "final" else "")
+    # First three values have to be 'service', 'language', 'transport'
+    client_meta = (("es", es_version), ("py", py_version), ("t", es_version)) + tuple(
+        client_meta
+    )
+    return ",".join("%s=%s" % (k, v) for k, v in client_meta)
