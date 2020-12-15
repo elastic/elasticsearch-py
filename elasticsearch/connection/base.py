@@ -21,7 +21,6 @@ import gzip
 import io
 import re
 from platform import python_version
-import sys
 import warnings
 
 try:
@@ -344,7 +343,9 @@ def _python_to_meta_version(version):
     compatible with 'X-Elastic-Client-Meta'. Essentially
     replaces any pre-release information with a 'p' suffix.
     """
-    version, version_pre = re.match(r"^([0-9.]+)(.*)$", version).groups()
+    version, version_pre = re.match(
+        r"^([0-9][0-9.]*[0-9]|[0-9])(.*)$", version
+    ).groups()
     if version_pre:
         version += "p"
     return version
@@ -353,7 +354,7 @@ def _python_to_meta_version(version):
 def _get_client_meta_header(client_meta=()):
     """Builds an 'X-Elastic-Client-Meta' HTTP header"""
     es_version = _python_to_meta_version(__versionstr__)
-    py_version = python_version() + ("p" if sys.version_info[3] != "final" else "")
+    py_version = _python_to_meta_version(python_version())
     # First three values have to be 'service', 'language', 'transport'
     client_meta = (("es", es_version), ("py", py_version), ("t", es_version)) + tuple(
         client_meta
