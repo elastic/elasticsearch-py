@@ -55,13 +55,18 @@ jobs:
         run: nox -s docs
 
   test-linux:
-    runs-on: ubuntu-latest
-
     strategy:
       fail-fast: false
       matrix:
         python-version: [2.7, 3.5, 3.6, 3.7, 3.8, 3.9]
+        experimental: [false]
+        include:
+          - python-version: 3.9-dev
+            experimental: true
 
+    runs-on: ubuntu-latest
+    name: test-${{ matrix.python-version }}
+    continue-on-error: ${{ matrix.experimental }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v1
