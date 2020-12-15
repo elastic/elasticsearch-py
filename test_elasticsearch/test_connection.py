@@ -180,7 +180,7 @@ class TestBaseConnection(TestCase):
         meta_header = _get_client_meta_header()
         assert ("es=%s" % (".".join(str(x) for x in __version__),)) in meta_header
         assert ("t=%s" % (".".join(str(x) for x in __version__),)) in meta_header
-        assert ("py=%s" % python_version()) in meta_header
+        assert ("py=%s" % _python_to_meta_version(python_version())) in meta_header
 
         meta_header = _get_client_meta_header((("h", "bp"),))
         assert meta_header.endswith(",h=bp")
@@ -191,6 +191,7 @@ class TestBaseConnection(TestCase):
     def test_python_to_meta_version(self):
         assert _python_to_meta_version("1.26.3") == "1.26.3"
         assert _python_to_meta_version("7.10.1a1") == "7.10.1p"
+        assert _python_to_meta_version("7.10.a1") == "7.10p"
 
 
 class TestUrllib3Connection(TestCase):
