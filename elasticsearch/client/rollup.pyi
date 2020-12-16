@@ -149,6 +149,7 @@ class RollupClient(NamespacedClient):
     def rollup(
         self,
         index: Any,
+        rollup_index: Any,
         *,
         body: Any,
         pretty: Optional[bool] = ...,

@@ -216,22 +216,23 @@ class RollupClient(NamespacedClient):
         )
 
     @query_params()
-    def rollup(self, index, body, params=None, headers=None):
+    def rollup(self, index, rollup_index, body, params=None, headers=None):
         """
         Rollup an index
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/rollup-api.html>`_
 
         :arg index: The index to roll up
+        :arg rollup_index: The name of the rollup index to create
         :arg body: The rollup configuration
         """
-        for param in (index, body):
+        for param in (index, rollup_index, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
         return self.transport.perform_request(
             "POST",
-            _make_path(index, "_rollup"),
+            _make_path(index, "_rollup", rollup_index),
             params=params,
             headers=headers,
             body=body,
