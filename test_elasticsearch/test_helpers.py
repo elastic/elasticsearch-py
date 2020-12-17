@@ -208,15 +208,15 @@ class TestChunkActions(TestCase):
     def test_add_helper_meta_to_kwargs(self):
         self.assertEqual(
             actions._add_helper_meta_to_kwargs({}, "b"),
-            {"params": {"_client_meta": (("h", "b"),)}},
+            {"params": {"__elastic_client_meta": (("h", "b"),)}},
         )
         self.assertEqual(
             actions._add_helper_meta_to_kwargs({"params": {}}, "b"),
-            {"params": {"_client_meta": (("h", "b"),)}},
+            {"params": {"__elastic_client_meta": (("h", "b"),)}},
         )
         self.assertEqual(
             actions._add_helper_meta_to_kwargs({"params": {"key": "value"}}, "b"),
-            {"params": {"_client_meta": (("h", "b"),), "key": "value"}},
+            {"params": {"__elastic_client_meta": (("h", "b"),), "key": "value"}},
         )
 
 

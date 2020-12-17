@@ -19,6 +19,7 @@
 from __future__ import unicode_literals
 import json
 import time
+import pytest
 from mock import patch
 
 from elasticsearch.transport import Transport, get_host_info
@@ -120,7 +121,7 @@ class TestTransport(TestCase):
         self.assertIsInstance(t.connection_pool, DummyConnectionPool)
 
     def test_request_timeout_extracted_from_params_and_passed(self):
-        t = Transport([{}], connection_class=DummyConnection)
+        t = Transport([{}], meta_header=False, connection_class=DummyConnection)
 
         t.perform_request("GET", "/", params={"request_timeout": 42})
         self.assertEqual(1, len(t.get_connection().calls))
@@ -131,7 +132,9 @@ class TestTransport(TestCase):
         )
 
     def test_opaque_id(self):
-        t = Transport([{}], opaque_id="app-1", connection_class=DummyConnection)
+        t = Transport(
+            [{}], opaque_id="app-1", meta_header=False, connection_class=DummyConnection
+        )
 
         t.perform_request("GET", "/")
         self.assertEqual(1, len(t.get_connection().calls))
@@ -151,7 +154,7 @@ class TestTransport(TestCase):
         )
 
     def test_request_with_custom_user_agent_header(self):
-        t = Transport([{}], connection_class=DummyConnection)
+        t = Transport([{}], meta_header=False, connection_class=DummyConnection)
 
         t.perform_request("GET", "/", headers={"user-agent": "my-custom-value/1.2.3"})
         self.assertEqual(1, len(t.get_connection().calls))
@@ -179,6 +182,43 @@ class TestTransport(TestCase):
         t.perform_request("GET", "/", body={})
         self.assertEqual(1, len(t.get_connection().calls))
         self.assertEqual(("POST", "/", None, b"{}"), t.get_connection().calls[0][0])
+
+    def test_client_meta_header(self):
+        t = Transport([{}], connection_class=DummyConnection)
+
+        t.perform_request("GET", "/", body={})
+        self.assertEqual(1, len(t.get_connection().calls))
+        headers = t.get_connection().calls[0][1]["headers"]
+        self.assertRegexpMatches(
+            headers["x-elastic-client-meta"], r"^es=[0-9.]+p?,py=[0-9.]+p?,t=[0-9.]+p?$"
+        )
+
+        class DummyConnectionWithMeta(DummyConnection):
+            HTTP_CLIENT_META = ("dm", "1.2.3")
+
+        t = Transport([{}], connection_class=DummyConnectionWithMeta)
+
+        t.perform_request("GET", "/", body={}, headers={"Custom": "header"})
+        self.assertEqual(1, len(t.get_connection().calls))
+        headers = t.get_connection().calls[0][1]["headers"]
+        self.assertRegexpMatches(
+            headers["x-elastic-client-meta"],
+            r"^es=[0-9.]+p?,py=[0-9.]+p?,t=[0-9.]+p?,dm=1.2.3$",
+        )
+        self.assertEqual(headers["Custom"], "header")
+
+    def test_client_meta_header_not_sent(self):
+        t = Transport([{}], meta_header=False, connection_class=DummyConnection)
+
+        t.perform_request("GET", "/", body={})
+        self.assertEqual(1, len(t.get_connection().calls))
+        headers = t.get_connection().calls[0][1]["headers"]
+        self.assertIs(headers, None)
+
+    def test_meta_header_type_error(self):
+        with pytest.raises(TypeError) as e:
+            Transport([{}], meta_header=1)
+        assert str(e.value) == "meta_header must be of type bool"
 
     def test_body_gets_encoded_into_bytes(self):
         t = Transport([{}], connection_class=DummyConnection)
