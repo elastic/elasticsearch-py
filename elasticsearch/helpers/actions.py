@@ -252,7 +252,7 @@ def _process_bulk_chunk(
 
 def _add_helper_meta_to_kwargs(kwargs, helper_meta):
     params = (kwargs or {}).pop("params", {})
-    params["_client_meta"] = (("h", helper_meta),)
+    params["__elastic_client_meta"] = (("h", helper_meta),)
     kwargs["params"] = params
     return kwargs
 
@@ -575,7 +575,7 @@ def scan(
             client.clear_scroll(
                 body={"scroll_id": [scroll_id]},
                 ignore=(404,),
-                params={"_client_meta": (("h", "s"),)},
+                params={"__elastic_client_meta": (("h", "s"),)},
             )
 
 
