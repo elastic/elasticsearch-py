@@ -363,7 +363,11 @@ async def async_scan(
 
     finally:
         if scroll_id and clear_scroll:
-            await client.clear_scroll(body={"scroll_id": [scroll_id]}, ignore=(404,))
+            await client.clear_scroll(
+                body={"scroll_id": [scroll_id]},
+                ignore=(404,),
+                params={"__elastic_client_meta": (("h", "s"),)},
+            )
 
 
 async def async_reindex(

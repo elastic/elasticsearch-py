@@ -18,14 +18,7 @@
 import time
 import warnings
 
-try:
-    import requests
-
-    REQUESTS_AVAILABLE = True
-except ImportError:
-    REQUESTS_AVAILABLE = False
-
-from .base import Connection, _get_client_meta_header, _python_to_meta_version
+from .base import Connection
 from ..exceptions import (
     ConnectionError,
     ImproperlyConfigured,
@@ -33,6 +26,16 @@ from ..exceptions import (
     SSLError,
 )
 from ..compat import urlencode, string_types
+from ..utils import _client_meta_version
+
+try:
+    import requests
+
+    REQUESTS_AVAILABLE = True
+    _REQUESTS_META_VERSION = _client_meta_version(requests.__version__)
+except ImportError:
+    REQUESTS_AVAILABLE = False
+    _REQUESTS_META_VERSION = ""
 
 
 class RequestsHttpConnection(Connection):
@@ -58,6 +61,8 @@ class RequestsHttpConnection(Connection):
     :arg opaque_id: Send this value in the 'X-Opaque-Id' HTTP header
         For tracing all requests made by this transport.
     """
+
+    HTTP_CLIENT_META = ("rq", _REQUESTS_META_VERSION)
 
     def __init__(
         self,
@@ -142,24 +147,12 @@ class RequestsHttpConnection(Connection):
         url = self.base_url + url
         headers = headers or {}
         if params:
-            # Pop client metadata from parameters, if any.
-            client_meta = params.pop("_client_meta", ())
-        else:
-            client_meta = ()
-        if params:
             url = "%s?%s" % (url, urlencode(params))
 
         orig_body = body
         if self.http_compress and body:
             body = self._gzip_compress(body)
             headers["content-encoding"] = "gzip"
-
-        # Create meta header for requests
-        if self.meta_header:
-            client_meta = (
-                ("rq", _python_to_meta_version(requests.__version__)),
-            ) + client_meta
-            headers["x-elastic-client-meta"] = _get_client_meta_header(client_meta)
 
         start = time.time()
         request = requests.Request(method=method, headers=headers, url=url, data=body)
