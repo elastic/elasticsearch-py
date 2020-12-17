@@ -22,7 +22,7 @@ from urllib3.exceptions import ReadTimeoutError, SSLError as UrllibSSLError  # t
 from urllib3.util.retry import Retry  # type: ignore
 import warnings
 
-from .base import Connection, _get_client_meta_header, _python_to_meta_version
+from .base import Connection
 from ..exceptions import (
     ConnectionError,
     ImproperlyConfigured,
@@ -30,6 +30,7 @@ from ..exceptions import (
     SSLError,
 )
 from ..compat import urlencode
+from ..utils import _client_meta_version
 
 # sentinel value for `verify_certs` and `ssl_show_warn`.
 # This is used to detect if a user is passing in a value
@@ -95,6 +96,8 @@ class Urllib3HttpConnection(Connection):
     :arg opaque_id: Send this value in the 'X-Opaque-Id' HTTP header
         For tracing all requests made by this transport.
     """
+
+    HTTP_CLIENT_META = ("ur", _client_meta_version(urllib3.__version__))
 
     def __init__(
         self,
@@ -216,11 +219,6 @@ class Urllib3HttpConnection(Connection):
         self, method, url, params=None, body=None, timeout=None, ignore=(), headers=None
     ):
         url = self.url_prefix + url
-        # Pop client metadata from parameters, if any.
-        if params:
-            client_meta = tuple(params.pop("_client_meta", ()))
-        else:
-            client_meta = ()
         if params:
             url = "%s?%s" % (url, urlencode(params))
 
@@ -247,15 +245,6 @@ class Urllib3HttpConnection(Connection):
             if self.http_compress and body:
                 body = self._gzip_compress(body)
                 request_headers["content-encoding"] = "gzip"
-
-            # Create meta header for urllib3
-            if self.meta_header:
-                client_meta = (
-                    ("ur", _python_to_meta_version(urllib3.__version__)),
-                ) + client_meta
-                request_headers["x-elastic-client-meta"] = _get_client_meta_header(
-                    client_meta
-                )
 
             response = self.pool.urlopen(
                 method, url, body, retries=Retry(False), headers=request_headers, **kw
