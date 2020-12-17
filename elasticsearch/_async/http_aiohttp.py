@@ -24,8 +24,6 @@ from ._extra_imports import aiohttp_exceptions, aiohttp, yarl
 from .compat import get_running_loop
 from ..connection.base import (
     Connection,
-    _get_client_meta_header,
-    _python_to_meta_version,
 )
 from ..compat import urlencode
 from ..exceptions import (
@@ -34,6 +32,7 @@ from ..exceptions import (
     ImproperlyConfigured,
     SSLError,
 )
+from ..utils import _client_meta_version
 
 
 # sentinel value for `verify_certs`.
@@ -72,6 +71,9 @@ class AsyncConnection(Connection):
 
 
 class AIOHttpConnection(AsyncConnection):
+
+    HTTP_CLIENT_META = ("ai", _client_meta_version(aiohttp.__version__))
+
     def __init__(
         self,
         host="localhost",
@@ -223,11 +225,6 @@ class AIOHttpConnection(AsyncConnection):
         orig_body = body
         url_path = self.url_prefix + url
         if params:
-            # Pop client metadata from parameters, if any.
-            client_meta = tuple(params.pop("_client_meta", ()))
-        else:
-            client_meta = ()
-        if params:
             query_string = urlencode(params)
         else:
             query_string = ""
@@ -276,13 +273,6 @@ class AIOHttpConnection(AsyncConnection):
         if self.http_compress and body:
             body = self._gzip_compress(body)
             req_headers["content-encoding"] = "gzip"
-
-        # Create meta header for aiohttp
-        if self.meta_header:
-            client_meta = (
-                ("ai", _python_to_meta_version(aiohttp.__version__)),
-            ) + client_meta
-            req_headers["x-elastic-client-meta"] = _get_client_meta_header(client_meta)
 
         start = self.loop.time()
         try:
