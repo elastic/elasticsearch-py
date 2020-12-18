@@ -217,7 +217,6 @@ class Elasticsearch(object):
         self.eql = EqlClient(self)
         self.graph = GraphClient(self)
         self.ilm = IlmClient(self)
-        self.indices = IndicesClient(self)
         self.license = LicenseClient(self)
         self.migration = MigrationClient(self)
         self.ml = MlClient(self)
