@@ -45,6 +45,7 @@ class Connection(object):
     url_prefix: str
     timeout: Optional[Union[float, int]]
     meta_header: bool
+    http_compress_level: int
     def __init__(
         self,
         host: str = ...,
@@ -58,6 +59,7 @@ class Connection(object):
         api_key: Optional[Union[Tuple[str, str], List[str], str]] = ...,
         opaque_id: Optional[str] = ...,
         meta_header: bool = ...,
+        http_compress_level: int = ...,
         **kwargs: Any
     ) -> None: ...
     def __repr__(self) -> str: ...

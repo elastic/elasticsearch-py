@@ -52,5 +52,6 @@ class Urllib3HttpConnection(Connection):
         api_key: Optional[Any] = ...,
         opaque_id: Optional[str] = ...,
         meta_header: bool = ...,
+        http_compress_level: int = ...,
         **kwargs: Any
     ) -> None: ...

@@ -56,6 +56,7 @@ class AIOHttpConnection(AsyncConnection):
         api_key: Optional[Any] = ...,
         opaque_id: Optional[str] = ...,
         meta_header: bool = ...,
+        http_compress_level: int = ...,
         loop: Any = ...,
         **kwargs: Any,
     ) -> None: ...
