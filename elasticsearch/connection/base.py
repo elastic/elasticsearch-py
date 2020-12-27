@@ -82,6 +82,7 @@ class Connection(object):
         api_key=None,
         opaque_id=None,
         meta_header=True,
+        http_compress_level=9,
         **kwargs
     ):
 
@@ -136,6 +137,7 @@ class Connection(object):
             use_ssl = True
         self.use_ssl = use_ssl
         self.http_compress = http_compress or False
+        self.http_compress_level = http_compress_level
 
         self.scheme = scheme
         self.hostname = host
@@ -168,7 +170,9 @@ class Connection(object):
 
     def _gzip_compress(self, body):
         buf = io.BytesIO()
-        with gzip.GzipFile(fileobj=buf, mode="wb") as f:
+        with gzip.GzipFile(
+            fileobj=buf, mode="wb", compresslevel=self.http_compress_level
+        ) as f:
             f.write(body)
         return buf.getvalue()
 

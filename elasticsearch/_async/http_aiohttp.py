@@ -94,6 +94,7 @@ class AIOHttpConnection(AsyncConnection):
         cloud_id=None,
         api_key=None,
         opaque_id=None,
+        http_compress_level=9,
         loop=None,
         **kwargs,
     ):
@@ -145,7 +146,8 @@ class AIOHttpConnection(AsyncConnection):
             cloud_id=cloud_id,
             api_key=api_key,
             opaque_id=opaque_id,
-            **kwargs,
+            http_compress_level=http_compress_level,
+            **kwargs
         )
 
         if http_auth is not None:
