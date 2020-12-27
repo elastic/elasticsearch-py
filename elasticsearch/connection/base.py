@@ -171,7 +171,7 @@ class Connection(object):
     def _gzip_compress(self, body):
         buf = io.BytesIO()
         with gzip.GzipFile(
-                fileobj=buf, mode="wb", compresslevel=self.http_compress_level
+            fileobj=buf, mode="wb", compresslevel=self.http_compress_level
         ) as f:
             f.write(body)
         return buf.getvalue()
