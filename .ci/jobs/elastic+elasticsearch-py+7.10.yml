@@ -3,7 +3,7 @@
     name: elastic+elasticsearch-py+7.10
     display-name: 'elastic / elasticsearch-py # 7.10'
     description: Testing the elasticsearch-py 7.10 branch.
-    junit_results: "*-junit.xml"
+    junit_results: "junit/*-junit.xml"
     parameters:
     - string:
         name: branch_specifier
