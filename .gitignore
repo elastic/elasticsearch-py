@@ -144,3 +144,4 @@ cython_debug/
 test_elasticsearch/cover
 test_elasticsearch/local.py
 .ci/output
+junit/
