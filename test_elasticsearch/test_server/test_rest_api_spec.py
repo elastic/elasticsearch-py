@@ -56,6 +56,7 @@ SKIP_TESTS = {
     "indices/get_alias/10_basic[23]",
     "indices/simulate_index_template/10_basic[2]",
     "search/aggregation/250_moving_fn[1]",
+    "search/highlight/20_fvh[3]",
 }
 
 
