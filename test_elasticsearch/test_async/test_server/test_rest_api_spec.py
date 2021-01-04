@@ -24,7 +24,7 @@ import pytest
 import warnings
 import inspect
 
-from elasticsearch import RequestError, ElasticsearchDeprecationWarning
+from elasticsearch import RequestError, ElasticsearchWarning
 from elasticsearch.helpers.test import _get_version
 from ...test_server.test_rest_api_spec import (
     YamlRunner,
@@ -111,7 +111,7 @@ class AsyncYamlRunner(YamlRunner):
         for k in args:
             args[k] = self._resolve(args[k])
 
-        warnings.simplefilter("always", category=ElasticsearchDeprecationWarning)
+        warnings.simplefilter("always", category=ElasticsearchWarning)
         with warnings.catch_warnings(record=True) as caught_warnings:
             try:
                 self.last_response = await api(**args)
@@ -129,7 +129,7 @@ class AsyncYamlRunner(YamlRunner):
         caught_warnings = [
             str(w.message)
             for w in caught_warnings
-            if w.category == ElasticsearchDeprecationWarning
+            if w.category == ElasticsearchWarning
             and str(w.message) not in allowed_warnings
         ]
 
