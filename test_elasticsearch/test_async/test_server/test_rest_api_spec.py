@@ -16,7 +16,7 @@
 #  under the License.
 
 """
-Dynamically generated set of TestCases based on set of yaml files decribing
+Dynamically generated set of TestCases based on set of yaml files describing
 some integration tests. These files are shared among all official Elasticsearch
 clients.
 """
