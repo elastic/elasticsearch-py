@@ -31,7 +31,7 @@ except ImportError:
 from ..exceptions import (
     TransportError,
     ImproperlyConfigured,
-    ElasticsearchDeprecationWarning,
+    ElasticsearchWarning,
     HTTP_EXCEPTIONS,
 )
 from .. import __versionstr__
@@ -197,7 +197,7 @@ class Connection(object):
                 warning_messages.append(header)
 
         for message in warning_messages:
-            warnings.warn(message, category=ElasticsearchDeprecationWarning)
+            warnings.warn(message, category=ElasticsearchWarning)
 
     def _pretty_json(self, data):
         # pretty JSON in tracer curl logs
