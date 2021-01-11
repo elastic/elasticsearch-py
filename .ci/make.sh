@@ -11,7 +11,7 @@ if [[ "$1" == "assemble" ]]; then
   docker run --rm -v $BASE_DIR/.ci/output:/code/elasticsearch-py/dist \
     elastic/elasticsearch-py \
     python /code/elasticsearch-py/utils/build-dists.py $2
-    cd ./.ci/output && tar -cvf elasticsearch-py-$2.tar.gz * && cd -
+  cd ./.ci/output && tar -czvf elasticsearch-py-$2.tar.gz * && cd -
   exit 0
 fi
 
