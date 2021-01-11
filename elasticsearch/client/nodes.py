@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import NamespacedClient, query_params, _make_path
+from .utils import NamespacedClient, _make_path, query_params
 
 
 class NodesClient(NamespacedClient):
@@ -152,10 +152,10 @@ class NodesClient(NamespacedClient):
             metric to the specific index metrics. Isn't used if `indices` (or `all`)
             metric isn't specified.  Valid choices: _all, completion, docs,
             fielddata, query_cache, flush, get, indexing, merge, request_cache,
-            refresh, search, segments, store, warmer, suggest, bulk
-        :arg completion_fields: A comma-separated list of fields for
-            `fielddata` and `suggest` index metric (supports wildcards)
-        :arg fielddata_fields: A comma-separated list of fields for
+            refresh, search, segments, store, warmer, bulk
+        :arg completion_fields: A comma-separated list of fields for the
+            `completion` index metric (supports wildcards)
+        :arg fielddata_fields: A comma-separated list of fields for the
             `fielddata` index metric (supports wildcards)
         :arg fields: A comma-separated list of fields for `fielddata`
             and `completion` index metric (supports wildcards)

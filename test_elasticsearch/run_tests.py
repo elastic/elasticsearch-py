@@ -19,10 +19,10 @@
 from __future__ import print_function
 
 import atexit
+import subprocess
 import sys
 from os import environ
-from os.path import dirname, join, pardir, abspath, exists
-import subprocess
+from os.path import abspath, dirname, exists, join, pardir
 
 
 def fetch_es_repo():
@@ -51,8 +51,8 @@ def fetch_es_repo():
     if environ.get("TEST_ES_NOFETCH", False):
         return
 
-    from test_elasticsearch.test_server import get_client
     from test_elasticsearch.test_cases import SkipTest
+    from test_elasticsearch.test_server import get_client
 
     # find out the sha of the running es
     try:

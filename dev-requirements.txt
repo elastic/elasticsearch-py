@@ -13,6 +13,7 @@ pandas
 # not amending that requirement to the package. :(
 pyyaml<5.3
 
+isort
 black; python_version>="3.6"
 twine
 

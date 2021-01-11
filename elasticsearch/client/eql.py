@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import NamespacedClient, SKIP_IN_PATH, query_params, _make_path
+from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 
 
 class EqlClient(NamespacedClient):
@@ -25,11 +25,6 @@ class EqlClient(NamespacedClient):
         Returns results matching a query expressed in Event Query Language (EQL)
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/eql-search-api.html>`_
-
-        .. warning::
-
-            This API is **beta** so may include breaking changes
-            or be removed in a future version
 
         :arg index: The name of the index to scope the operation
         :arg body: Eql request body. Use the `query` to limit the query
@@ -62,11 +57,6 @@ class EqlClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/eql-search-api.html>`_
 
-        .. warning::
-
-            This API is **beta** so may include breaking changes
-            or be removed in a future version
-
         :arg id: The async search ID
         """
         if id in SKIP_IN_PATH:
@@ -83,11 +73,6 @@ class EqlClient(NamespacedClient):
         search
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/eql-search-api.html>`_
-
-        .. warning::
-
-            This API is **beta** so may include breaking changes
-            or be removed in a future version
 
         :arg id: The async search ID
         :arg keep_alive: Update the time interval in which the results

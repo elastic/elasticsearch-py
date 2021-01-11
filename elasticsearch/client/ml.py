@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH, _bulk_body
+from .utils import SKIP_IN_PATH, NamespacedClient, _bulk_body, _make_path, query_params
 
 
 class MlClient(NamespacedClient):
@@ -245,79 +245,6 @@ class MlClient(NamespacedClient):
             ),
             params=params,
             headers=headers,
-        )
-
-    @query_params(
-        "charset",
-        "column_names",
-        "delimiter",
-        "explain",
-        "format",
-        "grok_pattern",
-        "has_header_row",
-        "line_merge_size_limit",
-        "lines_to_sample",
-        "quote",
-        "should_trim_fields",
-        "timeout",
-        "timestamp_field",
-        "timestamp_format",
-    )
-    def find_file_structure(self, body, params=None, headers=None):
-        """
-        Finds the structure of a text file. The text file must contain data that is
-        suitable to be ingested into Elasticsearch.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-find-file-structure.html>`_
-
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
-
-        :arg body: The contents of the file to be analyzed
-        :arg charset: Optional parameter to specify the character set of
-            the file
-        :arg column_names: Optional parameter containing a comma
-            separated list of the column names for a delimited file
-        :arg delimiter: Optional parameter to specify the delimiter
-            character for a delimited file - must be a single character
-        :arg explain: Whether to include a commentary on how the
-            structure was derived
-        :arg format: Optional parameter to specify the high level file
-            format  Valid choices: ndjson, xml, delimited, semi_structured_text
-        :arg grok_pattern: Optional parameter to specify the Grok
-            pattern that should be used to extract fields from messages in a semi-
-            structured text file
-        :arg has_header_row: Optional parameter to specify whether a
-            delimited file includes the column names in its first row
-        :arg line_merge_size_limit: Maximum number of characters
-            permitted in a single message when lines are merged to create messages.
-            Default: 10000
-        :arg lines_to_sample: How many lines of the file should be
-            included in the analysis  Default: 1000
-        :arg quote: Optional parameter to specify the quote character
-            for a delimited file - must be a single character
-        :arg should_trim_fields: Optional parameter to specify whether
-            the values between delimiters in a delimited file should have whitespace
-            trimmed from them
-        :arg timeout: Timeout after which the analysis will be aborted
-            Default: 25s
-        :arg timestamp_field: Optional parameter to specify the
-            timestamp field in the file
-        :arg timestamp_format: Optional parameter to specify the
-            timestamp format in the file - may be either a Joda or Java time format
-        """
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
-
-        body = _bulk_body(self.transport.serializer, body)
-        return self.transport.perform_request(
-            "POST",
-            "/_ml/find_file_structure",
-            params=params,
-            headers=headers,
-            body=body,
         )
 
     @query_params("advance_time", "calc_interim", "end", "skip_time", "start")

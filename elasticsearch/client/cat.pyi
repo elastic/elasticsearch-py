@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, MutableMapping, Optional, Union, Collection
+from typing import Any, Collection, MutableMapping, Optional, Union
+
 from .utils import NamespacedClient
 
 class CatClient(NamespacedClient):
@@ -319,6 +320,7 @@ class CatClient(NamespacedClient):
         format: Optional[Any] = ...,
         h: Optional[Any] = ...,
         help: Optional[Any] = ...,
+        include_bootstrap: Optional[Any] = ...,
         local: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
         s: Optional[Any] = ...,
@@ -403,8 +405,8 @@ class CatClient(NamespacedClient):
         format: Optional[Any] = ...,
         h: Optional[Any] = ...,
         help: Optional[Any] = ...,
-        node_id: Optional[Any] = ...,
-        parent_task: Optional[Any] = ...,
+        nodes: Optional[Any] = ...,
+        parent_task_id: Optional[Any] = ...,
         s: Optional[Any] = ...,
         time: Optional[Any] = ...,
         v: Optional[Any] = ...,

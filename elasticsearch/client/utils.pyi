@@ -18,16 +18,17 @@
 from __future__ import unicode_literals
 
 from typing import (
-    Collection,
     Any,
-    Optional,
-    Union,
+    Callable,
+    Collection,
     Dict,
     List,
+    Optional,
     Tuple,
-    Callable,
     TypeVar,
+    Union,
 )
+
 from ..client import Elasticsearch
 from ..serializer import Serializer
 from ..transport import Transport

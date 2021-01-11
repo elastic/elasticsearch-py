@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
+from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 
 
 class IndicesClient(NamespacedClient):
@@ -744,13 +744,13 @@ class IndicesClient(NamespacedClient):
         :arg metric: Limit the information returned the specific
             metrics.  Valid choices: _all, completion, docs, fielddata, query_cache,
             flush, get, indexing, merge, request_cache, refresh, search, segments,
-            store, warmer, suggest, bulk
-        :arg completion_fields: A comma-separated list of fields for
-            `fielddata` and `suggest` index metric (supports wildcards)
+            store, warmer, bulk
+        :arg completion_fields: A comma-separated list of fields for the
+            `completion` index metric (supports wildcards)
         :arg expand_wildcards: Whether to expand wildcard expression to
             concrete indices that are open, closed or both.  Valid choices: open,
             closed, hidden, none, all  Default: open
-        :arg fielddata_fields: A comma-separated list of fields for
+        :arg fielddata_fields: A comma-separated list of fields for the
             `fielddata` index metric (supports wildcards)
         :arg fields: A comma-separated list of fields for `fielddata`
             and `completion` index metric (supports wildcards)
@@ -1491,6 +1491,26 @@ class IndicesClient(NamespacedClient):
         return self.transport.perform_request(
             "POST",
             _make_path("_data_stream", "_migrate", name),
+            params=params,
+            headers=headers,
+        )
+
+    @query_params()
+    def promote_data_stream(self, name, params=None, headers=None):
+        """
+        Promotes a data stream from a replicated data stream managed by CCR to a
+        regular data stream
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
+
+        :arg name: The name of the data stream
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'name'.")
+
+        return self.transport.perform_request(
+            "POST",
+            _make_path("_data_stream", "_promote", name),
             params=params,
             headers=headers,
         )

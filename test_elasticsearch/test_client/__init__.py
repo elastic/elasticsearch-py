@@ -17,9 +17,9 @@
 
 from __future__ import unicode_literals
 
-from elasticsearch.client import _normalize_hosts, Elasticsearch
+from elasticsearch.client import Elasticsearch, _normalize_hosts
 
-from ..test_cases import TestCase, ElasticsearchTestCase
+from ..test_cases import ElasticsearchTestCase, TestCase
 
 
 class TestNormalizeHosts(TestCase):

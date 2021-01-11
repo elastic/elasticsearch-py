@@ -15,21 +15,22 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import (
-    Generator,
-    Optional,
-    Union,
-    Any,
-    Mapping,
-    Tuple,
-    Iterable,
-    AsyncIterable,
-    List,
-    Collection,
-    Callable,
-    Dict,
-)
 import logging
+from typing import (
+    Any,
+    AsyncIterable,
+    Callable,
+    Collection,
+    Dict,
+    Generator,
+    Iterable,
+    List,
+    Mapping,
+    Optional,
+    Tuple,
+    Union,
+)
+
 from ..client import Elasticsearch
 from ..serializer import Serializer
 

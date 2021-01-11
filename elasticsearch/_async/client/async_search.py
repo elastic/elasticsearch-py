@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import NamespacedClient, SKIP_IN_PATH, query_params, _make_path
+from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 
 
 class AsyncSearchClient(NamespacedClient):

@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import List, Any
+from typing import Any, List
+
 from ..exceptions import ElasticsearchException
 
 class BulkIndexError(ElasticsearchException):

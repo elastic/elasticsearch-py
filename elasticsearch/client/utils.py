@@ -20,7 +20,8 @@ from __future__ import unicode_literals
 import weakref
 from datetime import date, datetime
 from functools import wraps
-from ..compat import string_types, quote, PY2, unquote, urlparse
+
+from ..compat import PY2, quote, string_types, unquote, urlparse
 
 # parts of URL to be omitted
 SKIP_IN_PATH = (None, "", b"", [], ())

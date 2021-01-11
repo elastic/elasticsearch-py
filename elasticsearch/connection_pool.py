@@ -15,17 +15,17 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import time
-import random
 import logging
+import random
 import threading
-
-try:
-    from Queue import PriorityQueue, Empty
-except ImportError:
-    from queue import PriorityQueue, Empty
+import time
 
 from .exceptions import ImproperlyConfigured
+
+try:
+    from Queue import Empty, PriorityQueue
+except ImportError:
+    from queue import Empty, PriorityQueue
 
 logger = logging.getLogger("elasticsearch")
 

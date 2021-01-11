@@ -17,15 +17,14 @@
 #  under the License.
 
 
+import collections
 import json
 import tempfile
-import collections
+from pathlib import Path
 
 import black
 from click.testing import CliRunner
 from jinja2 import Environment, FileSystemLoader
-from pathlib import Path
-
 
 code_root = Path(__file__).absolute().parent.parent
 asciidocs_dir = code_root / "docs/examples"

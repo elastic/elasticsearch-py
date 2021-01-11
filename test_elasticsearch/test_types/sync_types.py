@@ -15,15 +15,15 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Generator, Dict, Any
-from elasticsearch import (
-    Elasticsearch,
-    Transport,
-    RequestsHttpConnection,
-    ConnectionPool,
-)
-from elasticsearch.helpers import scan, streaming_bulk, reindex, bulk
+from typing import Any, Dict, Generator
 
+from elasticsearch import (
+    ConnectionPool,
+    Elasticsearch,
+    RequestsHttpConnection,
+    Transport,
+)
+from elasticsearch.helpers import bulk, reindex, scan, streaming_bulk
 
 es = Elasticsearch(
     [{"host": "localhost", "port": 9443}],

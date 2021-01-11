@@ -17,9 +17,9 @@
 #  under the License.
 
 import re
-from os.path import abspath, join, dirname
-from setuptools import setup, find_packages
+from os.path import abspath, dirname, join
 
+from setuptools import find_packages, setup
 
 package_name = "elasticsearch"
 base_dir = abspath(dirname(__file__))

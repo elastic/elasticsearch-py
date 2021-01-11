@@ -16,19 +16,18 @@
 #  under the License.
 
 import logging
-
 from typing import (
-    Union,
-    Optional,
-    Mapping,
-    MutableMapping,
-    Tuple,
-    List,
-    NoReturn,
-    Dict,
-    Sequence,
     Any,
     Collection,
+    Dict,
+    List,
+    Mapping,
+    MutableMapping,
+    NoReturn,
+    Optional,
+    Sequence,
+    Tuple,
+    Union,
 )
 
 logger: logging.Logger
