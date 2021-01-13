@@ -17,20 +17,18 @@
 #  under the License.
 
 
-import os
 import json
+import os
 import re
-import urllib3
-from itertools import chain
 from functools import lru_cache
-
-import black
-from click.testing import CliRunner
+from itertools import chain
 from pathlib import Path
 
-from jinja2 import Environment, FileSystemLoader, TemplateNotFound
+import black
 import unasync
-
+import urllib3
+from click.testing import CliRunner
+from jinja2 import Environment, FileSystemLoader, TemplateNotFound
 
 http = urllib3.PoolManager()
 

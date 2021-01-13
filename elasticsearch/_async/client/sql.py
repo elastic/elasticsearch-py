@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import NamespacedClient, query_params, SKIP_IN_PATH
+from .utils import SKIP_IN_PATH, NamespacedClient, query_params
 
 
 class SqlClient(NamespacedClient):

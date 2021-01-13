@@ -20,19 +20,21 @@ Dynamically generated set of TestCases based on set of yaml files describing
 some integration tests. These files are shared among all official Elasticsearch
 clients.
 """
-import pytest
-import warnings
 import inspect
+import warnings
 
-from elasticsearch import RequestError, ElasticsearchWarning
+import pytest
+
+from elasticsearch import ElasticsearchWarning, RequestError
 from elasticsearch.helpers.test import _get_version
+
 from ...test_server.test_rest_api_spec import (
-    YamlRunner,
+    IMPLEMENTED_FEATURES,
+    PARAMS_RENAMES,
+    RUN_ASYNC_REST_API_TESTS,
     YAML_TEST_SPECS,
     InvalidActionType,
-    RUN_ASYNC_REST_API_TESTS,
-    PARAMS_RENAMES,
-    IMPLEMENTED_FEATURES,
+    YamlRunner,
 )
 
 pytestmark = pytest.mark.asyncio

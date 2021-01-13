@@ -19,19 +19,28 @@ from typing import Any, Collection, MutableMapping, Optional, Union
 
 from .utils import NamespacedClient
 
-class MonitoringClient(NamespacedClient):
-    def bulk(
+class TextStructureClient(NamespacedClient):
+    def find_structure(
         self,
         *,
         body: Any,
-        doc_type: Optional[Any] = ...,
-        interval: Optional[Any] = ...,
-        system_api_version: Optional[Any] = ...,
-        system_id: Optional[Any] = ...,
+        charset: Optional[Any] = ...,
+        column_names: Optional[Any] = ...,
+        delimiter: Optional[Any] = ...,
+        explain: Optional[Any] = ...,
+        format: Optional[Any] = ...,
+        grok_pattern: Optional[Any] = ...,
+        has_header_row: Optional[Any] = ...,
+        line_merge_size_limit: Optional[Any] = ...,
+        lines_to_sample: Optional[Any] = ...,
+        quote: Optional[Any] = ...,
+        should_trim_fields: Optional[Any] = ...,
+        timeout: Optional[Any] = ...,
+        timestamp_field: Optional[Any] = ...,
+        timestamp_format: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
-        format: Optional[str] = ...,
         filter_path: Optional[Union[str, Collection[str]]] = ...,
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,

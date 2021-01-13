@@ -15,16 +15,13 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from operator import methodcaller
-import time
-
-from ..exceptions import TransportError
-from ..compat import map, string_types, Queue, Mapping
-
-from .errors import ScanError, BulkIndexError
-
 import logging
+import time
+from operator import methodcaller
 
+from ..compat import Mapping, Queue, map, string_types
+from ..exceptions import TransportError
+from .errors import BulkIndexError, ScanError
 
 logger = logging.getLogger("elasticsearch.helpers")
 

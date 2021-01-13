@@ -15,27 +15,27 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Generator, Dict, Any, AsyncGenerator
+from typing import Any, AsyncGenerator, Dict, Generator
+
 from elasticsearch8 import (
-    Elasticsearch,
-    Transport,
-    RequestsHttpConnection,
-    ConnectionPool,
+    AIOHttpConnection,
     AsyncElasticsearch,
     AsyncTransport,
-    AIOHttpConnection,
+    ConnectionPool,
+    Elasticsearch,
+    RequestsHttpConnection,
+    Transport,
 )
 from elasticsearch8.helpers import (
-    scan,
-    streaming_bulk,
-    reindex,
-    bulk,
+    async_bulk,
+    async_reindex,
     async_scan,
     async_streaming_bulk,
-    async_reindex,
-    async_bulk,
+    bulk,
+    reindex,
+    scan,
+    streaming_bulk,
 )
-
 
 es = Elasticsearch(
     [{"host": "localhost", "port": 9443}],

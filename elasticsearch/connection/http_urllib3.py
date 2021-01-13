@@ -15,22 +15,24 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import time
 import ssl
-import urllib3  # type: ignore
-from urllib3.exceptions import ReadTimeoutError, SSLError as UrllibSSLError  # type: ignore
-from urllib3.util.retry import Retry  # type: ignore
+import time
 import warnings
 
-from .base import Connection
+import urllib3  # type: ignore
+from urllib3.exceptions import ReadTimeoutError
+from urllib3.exceptions import SSLError as UrllibSSLError  # type: ignore
+from urllib3.util.retry import Retry  # type: ignore
+
+from ..compat import urlencode
 from ..exceptions import (
     ConnectionError,
-    ImproperlyConfigured,
     ConnectionTimeout,
+    ImproperlyConfigured,
     SSLError,
 )
-from ..compat import urlencode
 from ..utils import _client_meta_version
+from .base import Connection
 
 # sentinel value for `verify_certs` and `ssl_show_warn`.
 # This is used to detect if a user is passing in a value

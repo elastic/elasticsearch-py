@@ -20,16 +20,17 @@ Dynamically generated set of TestCases based on set of yaml files describing
 some integration tests. These files are shared among all official Elasticsearch
 clients.
 """
-import sys
-import re
 import os
-from os import walk, environ
-from os.path import exists, join, dirname, pardir, relpath
-import yaml
+import re
+import sys
 import warnings
-import pytest
+from os import environ, walk
+from os.path import dirname, exists, join, pardir, relpath
 
-from elasticsearch import TransportError, RequestError, ElasticsearchWarning
+import pytest
+import yaml
+
+from elasticsearch import ElasticsearchWarning, RequestError, TransportError
 from elasticsearch.compat import string_types
 from elasticsearch.helpers.test import _get_version
 

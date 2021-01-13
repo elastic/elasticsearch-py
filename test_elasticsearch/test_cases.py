@@ -16,8 +16,9 @@
 #  under the License.
 
 from collections import defaultdict
-from unittest import TestCase
 from unittest import SkipTest  # noqa: F401
+from unittest import TestCase
+
 from elasticsearch import Elasticsearch
 
 

@@ -52,7 +52,7 @@ The process for contributing to any of the Elasticsearch repositories is similar
     $ python -m pip install nox
     
     # Auto-format and lint your changes
-    $ nox -s blacken
+    $ nox -s format
    
     # Run the test suite
     $ python setup.py test

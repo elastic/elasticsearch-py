@@ -15,21 +15,17 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import NamespacedClient, query_params, SKIP_IN_PATH, _make_path
+from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 
 
 class AutoscalingClient(NamespacedClient):
     @query_params()
     def delete_autoscaling_policy(self, name, params=None, headers=None):
         """
-        Deletes an autoscaling policy.
+        Deletes an autoscaling policy. Designed for indirect use by ECE/ESS and ECK.
+        Direct use is not supported.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/autoscaling-delete-autoscaling-policy.html>`_
-
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
 
         :arg name: the name of the autoscaling policy
         """
@@ -46,14 +42,10 @@ class AutoscalingClient(NamespacedClient):
     @query_params()
     def put_autoscaling_policy(self, name, body, params=None, headers=None):
         """
-        Creates a new autoscaling policy.
+        Creates a new autoscaling policy. Designed for indirect use by ECE/ESS and ECK.
+        Direct use is not supported.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/autoscaling-put-autoscaling-policy.html>`_
-
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
 
         :arg name: the name of the autoscaling policy
         :arg body: the specification of the autoscaling policy
@@ -73,14 +65,10 @@ class AutoscalingClient(NamespacedClient):
     @query_params()
     def get_autoscaling_policy(self, name, params=None, headers=None):
         """
-        Retrieves an autoscaling policy.
+        Retrieves an autoscaling policy. Designed for indirect use by ECE/ESS and ECK.
+        Direct use is not supported.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/autoscaling-get-autoscaling-policy.html>`_
-
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
 
         :arg name: the name of the autoscaling policy
         """
@@ -98,14 +86,10 @@ class AutoscalingClient(NamespacedClient):
     def get_autoscaling_capacity(self, params=None, headers=None):
         """
         Gets the current autoscaling capacity based on the configured autoscaling
-        policy.
+        policy. Designed for indirect use by ECE/ESS and ECK. Direct use is not
+        supported.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/autoscaling-get-autoscaling-capacity.html>`_
-
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
         """
         return self.transport.perform_request(
             "GET", "/_autoscaling/capacity", params=params, headers=headers

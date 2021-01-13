@@ -16,6 +16,7 @@
 #  under the License.
 
 import pytest
+
 from elasticsearch.utils import _client_meta_version
 
 

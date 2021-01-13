@@ -17,42 +17,40 @@
 #  under the License.
 
 from __future__ import unicode_literals
+
 import logging
 
 from ..transport import AsyncTransport, TransportError
-from .utils import query_params, _make_path, SKIP_IN_PATH, _bulk_body, _normalize_hosts
-
 from .async_search import AsyncSearchClient
 from .autoscaling import AutoscalingClient
 from .cat import CatClient
+from .ccr import CcrClient
 from .cluster import ClusterClient
 from .dangling_indices import DanglingIndicesClient
-from .indices import IndicesClient
-from .ingest import IngestClient
-from .nodes import NodesClient
-from .snapshot import SnapshotClient
-from .tasks import TasksClient
-
-# xpack APIs
-from .xpack import XPackClient
-from .ccr import CcrClient
 from .enrich import EnrichClient
 from .eql import EqlClient
 from .graph import GraphClient
 from .ilm import IlmClient
+from .indices import IndicesClient
+from .ingest import IngestClient
 from .license import LicenseClient
 from .migration import MigrationClient
 from .ml import MlClient
 from .monitoring import MonitoringClient
+from .nodes import NodesClient
 from .rollup import RollupClient
 from .searchable_snapshots import SearchableSnapshotsClient
 from .security import SecurityClient
 from .slm import SlmClient
+from .snapshot import SnapshotClient
 from .sql import SqlClient
 from .ssl import SslClient
+from .tasks import TasksClient
+from .text_structure import TextStructureClient
 from .transform import TransformClient
+from .utils import SKIP_IN_PATH, _bulk_body, _make_path, _normalize_hosts, query_params
 from .watcher import WatcherClient
-
+from .xpack import XPackClient
 
 logger = logging.getLogger("elasticsearch")
 
@@ -227,6 +225,7 @@ class AsyncElasticsearch(object):
         self.slm = SlmClient(self)
         self.sql = SqlClient(self)
         self.ssl = SslClient(self)
+        self.text_structure = TextStructureClient(self)
         self.transform = TransformClient(self)
         self.watcher = WatcherClient(self)
 
@@ -1376,6 +1375,7 @@ class AsyncElasticsearch(object):
         "ignore_unavailable",
         "lenient",
         "max_concurrent_shard_requests",
+        "min_compatible_shard_node",
         "pre_filter_shard_size",
         "preference",
         "q",
@@ -1454,6 +1454,9 @@ class AsyncElasticsearch(object):
             shard requests per node this search executes concurrently. This value
             should be used to limit the impact of the search on the cluster in order
             to limit the number of concurrent shard requests  Default: 5
+        :arg min_compatible_shard_node: The minimum compatible version
+            that all shards involved in search should have for this request to be
+            successful
         :arg pre_filter_shard_size: A threshold that enforces a pre-
             filter roundtrip to prefilter search shards based on query rewriting if
             the number of shards the search request expands to exceeds the

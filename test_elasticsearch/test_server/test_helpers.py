@@ -17,11 +17,11 @@
 
 from mock import patch
 
-from elasticsearch import helpers, TransportError
+from elasticsearch import TransportError, helpers
 from elasticsearch.helpers import ScanError
 
-from . import ElasticsearchTestCase
 from ..test_cases import SkipTest
+from . import ElasticsearchTestCase
 
 
 class FailingBulkClient(object):

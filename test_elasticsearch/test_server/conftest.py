@@ -17,8 +17,11 @@
 
 import os
 import time
+
 import pytest
+
 import elasticsearch
+
 from ..utils import wipe_cluster
 
 

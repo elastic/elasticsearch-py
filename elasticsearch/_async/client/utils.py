@@ -15,12 +15,10 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from ...client.utils import (  # noqa
-    _make_path,
-    _normalize_hosts,
-    _escape,
-    _bulk_body,
-    query_params,
-    SKIP_IN_PATH,
-    NamespacedClient as NamespacedClient,
-)
+from ...client.utils import SKIP_IN_PATH  # noqa
+from ...client.utils import _bulk_body  # noqa
+from ...client.utils import _escape  # noqa
+from ...client.utils import _make_path  # noqa
+from ...client.utils import _normalize_hosts  # noqa
+from ...client.utils import query_params  # noqa
+from ...client.utils import NamespacedClient as NamespacedClient  # noqa

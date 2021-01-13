@@ -17,41 +17,42 @@
 #  under the License.
 
 from __future__ import unicode_literals
+
 import logging
-from typing import Any, MutableMapping, Optional, Type, Union, Collection
+from typing import Any, Collection, MutableMapping, Optional, Type, Union
 
 from ..transport import Transport
-
 from .async_search import AsyncSearchClient
 from .autoscaling import AutoscalingClient
 from .cat import CatClient
+from .ccr import CcrClient
 from .cluster import ClusterClient
 from .dangling_indices import DanglingIndicesClient
-from .indices import IndicesClient
-from .ingest import IngestClient
-from .nodes import NodesClient
-from .snapshot import SnapshotClient
-from .tasks import TasksClient
-
-# xpack APIs
-from .xpack import XPackClient
-from .ccr import CcrClient
 from .enrich import EnrichClient
 from .eql import EqlClient
 from .graph import GraphClient
 from .ilm import IlmClient
+from .indices import IndicesClient
+from .ingest import IngestClient
 from .license import LicenseClient
 from .migration import MigrationClient
 from .ml import MlClient
 from .monitoring import MonitoringClient
+from .nodes import NodesClient
 from .rollup import RollupClient
 from .searchable_snapshots import SearchableSnapshotsClient
 from .security import SecurityClient
 from .slm import SlmClient
+from .snapshot import SnapshotClient
 from .sql import SqlClient
 from .ssl import SslClient
+from .tasks import TasksClient
+from .text_structure import TextStructureClient
 from .transform import TransformClient
 from .watcher import WatcherClient
+
+# xpack APIs
+from .xpack import XPackClient
 
 logger: logging.Logger
 
@@ -85,6 +86,7 @@ class Elasticsearch(object):
     slm: SlmClient
     sql: SqlClient
     ssl: SslClient
+    text_structure: TextStructureClient
     transform: TransformClient
     watcher: WatcherClient
     def __init__(
@@ -721,6 +723,7 @@ class Elasticsearch(object):
         ignore_unavailable: Optional[Any] = ...,
         lenient: Optional[Any] = ...,
         max_concurrent_shard_requests: Optional[Any] = ...,
+        min_compatible_shard_node: Optional[Any] = ...,
         pre_filter_shard_size: Optional[Any] = ...,
         preference: Optional[Any] = ...,
         q: Optional[Any] = ...,

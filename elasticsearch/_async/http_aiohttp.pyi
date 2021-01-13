@@ -15,9 +15,10 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from ._extra_imports import aiohttp  # type: ignore
-from typing import Optional, Mapping, MutableMapping, Collection, Union, Any, Tuple
+from typing import Any, Collection, Mapping, MutableMapping, Optional, Tuple, Union
+
 from ..connection import Connection
+from ._extra_imports import aiohttp  # type: ignore
 
 class AsyncConnection(Connection):
     async def perform_request(  # type: ignore

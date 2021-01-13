@@ -15,16 +15,14 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from ...client.utils import (  # noqa
-    _make_path as _make_path,
-    _normalize_hosts as _normalize_hosts,
-    _escape as _escape,
-    _bulk_body as _bulk_body,
-    query_params as query_params,
-    SKIP_IN_PATH as SKIP_IN_PATH,
-)
-from ..transport import AsyncTransport
+from ...client.utils import SKIP_IN_PATH as SKIP_IN_PATH  # noqa
+from ...client.utils import _bulk_body as _bulk_body  # noqa
+from ...client.utils import _escape as _escape  # noqa
+from ...client.utils import _make_path as _make_path  # noqa
+from ...client.utils import _normalize_hosts as _normalize_hosts  # noqa
+from ...client.utils import query_params as query_params  # noqa
 from ..client import AsyncElasticsearch
+from ..transport import AsyncTransport
 
 class NamespacedClient:
     client: AsyncElasticsearch

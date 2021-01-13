@@ -18,22 +18,21 @@
 
 import sys
 import uuid
-
 from datetime import datetime
 from decimal import Decimal
 
 import numpy as np
 import pandas as pd
 
+from elasticsearch.exceptions import ImproperlyConfigured, SerializationError
 from elasticsearch.serializer import (
-    JSONSerializer,
-    Deserializer,
     DEFAULT_SERIALIZERS,
+    Deserializer,
+    JSONSerializer,
     TextSerializer,
 )
-from elasticsearch.exceptions import SerializationError, ImproperlyConfigured
 
-from .test_cases import TestCase, SkipTest
+from .test_cases import SkipTest, TestCase
 
 
 class TestJSONSerializer(TestCase):

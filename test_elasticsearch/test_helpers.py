@@ -16,11 +16,13 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import mock
-import time
 import threading
+import time
+
+import mock
 import pytest
-from elasticsearch import helpers, Elasticsearch
+
+from elasticsearch import Elasticsearch, helpers
 from elasticsearch.helpers import actions
 from elasticsearch.serializer import JSONSerializer
 

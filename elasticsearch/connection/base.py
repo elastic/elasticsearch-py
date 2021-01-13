@@ -15,26 +15,26 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import logging
 import binascii
 import gzip
 import io
+import logging
 import re
-from platform import python_version
 import warnings
+from platform import python_version
 
 try:
     import simplejson as json
 except ImportError:
     import json
 
-from ..exceptions import (
-    TransportError,
-    ImproperlyConfigured,
-    ElasticsearchWarning,
-    HTTP_EXCEPTIONS,
-)
 from .. import __versionstr__
+from ..exceptions import (
+    HTTP_EXCEPTIONS,
+    ElasticsearchWarning,
+    ImproperlyConfigured,
+    TransportError,
+)
 
 logger = logging.getLogger("elasticsearch")
 

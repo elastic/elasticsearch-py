@@ -15,13 +15,13 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import pytest
 import asyncio
-from mock import patch, MagicMock
 
-from elasticsearch import helpers, TransportError
+import pytest
+from mock import MagicMock, patch
+
+from elasticsearch import TransportError, helpers
 from elasticsearch.helpers import ScanError
-
 
 pytestmark = pytest.mark.asyncio
 

@@ -16,6 +16,7 @@
 #  under the License.
 
 from unittest import SkipTest
+
 from elasticsearch.helpers import test
 from elasticsearch.helpers.test import ElasticsearchTestCase as BaseTestCase
 

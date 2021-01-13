@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
+from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 
 
 class RollupClient(NamespacedClient):
@@ -218,22 +218,23 @@ class RollupClient(NamespacedClient):
         )
 
     @query_params()
-    async def rollup(self, index, body, params=None, headers=None):
+    async def rollup(self, index, rollup_index, body, params=None, headers=None):
         """
         Rollup an index
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-api.html>`_
 
         :arg index: The index to roll up
+        :arg rollup_index: The name of the rollup index to create
         :arg body: The rollup configuration
         """
-        for param in (index, body):
+        for param in (index, rollup_index, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
         return await self.transport.perform_request(
             "POST",
-            _make_path(index, "_rollup"),
+            _make_path(index, "_rollup", rollup_index),
             params=params,
             headers=headers,
             body=body,
