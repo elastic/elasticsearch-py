@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, MutableMapping, Optional, Union, Collection
+from typing import Any, Collection, MutableMapping, Optional, Union
+
 from .utils import NamespacedClient
 
 class MlClient(NamespacedClient):
@@ -179,34 +180,6 @@ class MlClient(NamespacedClient):
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
         format: Optional[str] = ...,
-        filter_path: Optional[Union[str, Collection[str]]] = ...,
-        request_timeout: Optional[Union[int, float]] = ...,
-        ignore: Optional[Union[int, Collection[int]]] = ...,
-        opaque_id: Optional[str] = ...,
-        params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...
-    ) -> Any: ...
-    async def find_file_structure(
-        self,
-        *,
-        body: Any,
-        charset: Optional[Any] = ...,
-        column_names: Optional[Any] = ...,
-        delimiter: Optional[Any] = ...,
-        explain: Optional[Any] = ...,
-        format: Optional[Any] = ...,
-        grok_pattern: Optional[Any] = ...,
-        has_header_row: Optional[Any] = ...,
-        line_merge_size_limit: Optional[Any] = ...,
-        lines_to_sample: Optional[Any] = ...,
-        quote: Optional[Any] = ...,
-        should_trim_fields: Optional[Any] = ...,
-        timeout: Optional[Any] = ...,
-        timestamp_field: Optional[Any] = ...,
-        timestamp_format: Optional[Any] = ...,
-        pretty: Optional[bool] = ...,
-        human: Optional[bool] = ...,
-        error_trace: Optional[bool] = ...,
         filter_path: Optional[Union[str, Collection[str]]] = ...,
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,

@@ -15,20 +15,20 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import AsyncGenerator, Dict, Any
+from typing import Any, AsyncGenerator, Dict
+
 from elasticsearch import (
+    AIOHttpConnection,
     AsyncElasticsearch,
     AsyncTransport,
-    AIOHttpConnection,
     ConnectionPool,
 )
 from elasticsearch.helpers import (
+    async_bulk,
+    async_reindex,
     async_scan,
     async_streaming_bulk,
-    async_reindex,
-    async_bulk,
 )
-
 
 es = AsyncElasticsearch(
     [{"host": "localhost", "port": 9443}],

@@ -15,8 +15,10 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Optional, Any, Mapping
+from typing import Any, Mapping, Optional
+
 import requests
+
 from .base import Connection
 
 class RequestsHttpConnection(Connection):

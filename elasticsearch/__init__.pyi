@@ -19,41 +19,37 @@ import sys
 from typing import Tuple
 
 from .client import Elasticsearch as Elasticsearch
-from .transport import Transport as Transport
-from .connection_pool import (
-    ConnectionPool as ConnectionPool,
-    ConnectionSelector as ConnectionSelector,
-    RoundRobinSelector as RoundRobinSelector,
-)
-from .serializer import JSONSerializer as JSONSerializer
-from .connection import (
-    Connection as Connection,
-    RequestsHttpConnection as RequestsHttpConnection,
-    Urllib3HttpConnection as Urllib3HttpConnection,
-)
+from .connection import Connection as Connection
+from .connection import RequestsHttpConnection as RequestsHttpConnection
+from .connection import Urllib3HttpConnection as Urllib3HttpConnection
+from .connection_pool import ConnectionPool as ConnectionPool
+from .connection_pool import ConnectionSelector as ConnectionSelector
+from .connection_pool import RoundRobinSelector as RoundRobinSelector
+from .exceptions import AuthenticationException as AuthenticationException
+from .exceptions import AuthorizationException as AuthorizationException
+from .exceptions import ConflictError as ConflictError
+from .exceptions import ConnectionError as ConnectionError
+from .exceptions import ConnectionTimeout as ConnectionTimeout
 from .exceptions import (
-    ImproperlyConfigured as ImproperlyConfigured,
-    ElasticsearchException as ElasticsearchException,
-    SerializationError as SerializationError,
-    TransportError as TransportError,
-    NotFoundError as NotFoundError,
-    ConflictError as ConflictError,
-    RequestError as RequestError,
-    ConnectionError as ConnectionError,
-    SSLError as SSLError,
-    ConnectionTimeout as ConnectionTimeout,
-    AuthenticationException as AuthenticationException,
-    AuthorizationException as AuthorizationException,
     ElasticsearchDeprecationWarning as ElasticsearchDeprecationWarning,
 )
+from .exceptions import ElasticsearchException as ElasticsearchException
+from .exceptions import ImproperlyConfigured as ImproperlyConfigured
+from .exceptions import NotFoundError as NotFoundError
+from .exceptions import RequestError as RequestError
+from .exceptions import SerializationError as SerializationError
+from .exceptions import SSLError as SSLError
+from .exceptions import TransportError as TransportError
+from .serializer import JSONSerializer as JSONSerializer
+from .transport import Transport as Transport
 
 try:
     if sys.version_info < (3, 6):
         raise ImportError
 
+    from ._async.client import AsyncElasticsearch as AsyncElasticsearch
     from ._async.http_aiohttp import AIOHttpConnection as AIOHttpConnection
     from ._async.transport import AsyncTransport as AsyncTransport
-    from ._async.client import AsyncElasticsearch as AsyncElasticsearch
 except (ImportError, SyntaxError):
     pass
 

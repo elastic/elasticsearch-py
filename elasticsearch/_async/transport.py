@@ -17,19 +17,18 @@
 
 import asyncio
 import logging
-from itertools import chain
 import sys
+from itertools import chain
 
+from ..exceptions import (
+    ConnectionError,
+    ConnectionTimeout,
+    SerializationError,
+    TransportError,
+)
+from ..transport import Transport
 from .compat import get_running_loop
 from .http_aiohttp import AIOHttpConnection
-from ..transport import Transport
-from ..exceptions import (
-    TransportError,
-    ConnectionTimeout,
-    ConnectionError,
-    SerializationError,
-)
-
 
 logger = logging.getLogger("elasticsearch")
 

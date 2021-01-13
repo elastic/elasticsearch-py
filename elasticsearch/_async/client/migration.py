@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import NamespacedClient, query_params, _make_path
+from .utils import NamespacedClient, _make_path, query_params
 
 
 class MigrationClient(NamespacedClient):

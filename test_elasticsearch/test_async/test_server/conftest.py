@@ -15,10 +15,13 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import os
-import pytest
 import asyncio
+import os
+
+import pytest
+
 import elasticsearch
+
 from ...utils import wipe_cluster
 
 pytestmark = pytest.mark.asyncio

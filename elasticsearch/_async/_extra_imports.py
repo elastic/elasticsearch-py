@@ -32,7 +32,6 @@
 import aiohttp
 import aiohttp.client_exceptions as aiohttp_exceptions
 
-
 # We do this because we don't explicitly require 'yarl'
 # within our [async] extra any more.
 # See AIOHttpConnection.request() for more information why.

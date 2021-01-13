@@ -20,11 +20,10 @@
 # See the LICENSE file in the project root for more information
 
 import asyncio
+import logging
 
-from .client import AsyncElasticsearch  # noqa
-from ..exceptions import TransportError
 from ..compat import map
-
+from ..exceptions import TransportError
 from ..helpers.actions import (
     _ActionChunker,
     _process_bulk_chunk_error,
@@ -32,9 +31,7 @@ from ..helpers.actions import (
     expand_action,
 )
 from ..helpers.errors import ScanError
-
-import logging
-
+from .client import AsyncElasticsearch  # noqa
 
 logger = logging.getLogger("elasticsearch.helpers")
 

@@ -18,10 +18,10 @@
 
 from __future__ import unicode_literals
 
-from elasticsearch.client.utils import _bulk_body, _make_path, _escape, query_params
+from elasticsearch.client.utils import _bulk_body, _escape, _make_path, query_params
 from elasticsearch.compat import PY2
 
-from ..test_cases import TestCase, SkipTest
+from ..test_cases import SkipTest, TestCase
 
 
 class TestQueryParams(TestCase):

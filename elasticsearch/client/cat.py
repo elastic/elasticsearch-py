@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import NamespacedClient, query_params, _make_path
+from .utils import NamespacedClient, _make_path, query_params
 
 
 class CatClient(NamespacedClient):
@@ -420,7 +420,9 @@ class CatClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("format", "h", "help", "local", "master_timeout", "s", "v")
+    @query_params(
+        "format", "h", "help", "include_bootstrap", "local", "master_timeout", "s", "v"
+    )
     def plugins(self, params=None, headers=None):
         """
         Returns information about installed plugins across nodes node.
@@ -431,6 +433,8 @@ class CatClient(NamespacedClient):
             yaml
         :arg h: Comma-separated list of column names to display
         :arg help: Return help information
+        :arg include_bootstrap: Include bootstrap plugins in the
+            response
         :arg local: Return local information, do not retrieve the state
             from master node (default: false)
         :arg master_timeout: Explicit operation timeout for connection
@@ -527,8 +531,8 @@ class CatClient(NamespacedClient):
         "format",
         "h",
         "help",
-        "node_id",
-        "parent_task",
+        "nodes",
+        "parent_task_id",
         "s",
         "time",
         "v",
@@ -547,12 +551,11 @@ class CatClient(NamespacedClient):
             yaml
         :arg h: Comma-separated list of column names to display
         :arg help: Return help information
-        :arg node_id: A comma-separated list of node IDs or names to
-            limit the returned information; use `_local` to return information from
-            the node you're connecting to, leave empty to get information from all
-            nodes
-        :arg parent_task: Return tasks with specified parent task id.
-            Set to -1 to return all.
+        :arg nodes: A comma-separated list of node IDs or names to limit
+            the returned information; use `_local` to return information from the
+            node you're connecting to, leave empty to get information from all nodes
+        :arg parent_task_id: Return tasks with specified parent task id
+            (node_id:task_number). Set to -1 to return all.
         :arg s: Comma-separated list of column names or column aliases
             to sort by
         :arg time: The unit in which to display time values  Valid

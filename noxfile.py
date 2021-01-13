@@ -17,7 +17,6 @@
 
 import nox
 
-
 SOURCE_FILES = (
     "setup.py",
     "noxfile.py",
@@ -36,9 +35,10 @@ def test(session):
 
 
 @nox.session()
-def blacken(session):
-    session.install("black")
+def format(session):
+    session.install("black", "isort")
 
+    session.run("isort", "--profile=black", *SOURCE_FILES)
     session.run("black", "--target-version=py27", *SOURCE_FILES)
     session.run("python", "utils/license-headers.py", "fix", *SOURCE_FILES)
 
@@ -47,8 +47,9 @@ def blacken(session):
 
 @nox.session()
 def lint(session):
-    session.install("flake8", "black", "mypy")
+    session.install("flake8", "black", "mypy", "isort")
 
+    session.run("isort", "--check", "--profile=black", *SOURCE_FILES)
     session.run("black", "--target-version=py27", "--check", *SOURCE_FILES)
     session.run("flake8", *SOURCE_FILES)
     session.run("python", "utils/license-headers.py", "check", *SOURCE_FILES)

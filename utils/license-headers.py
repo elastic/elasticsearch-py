@@ -23,9 +23,8 @@ error out if 'fix' would have changed the file.
 import os
 import re
 import sys
-from typing import List, Iterator
 from itertools import chain
-
+from typing import Iterator, List
 
 lines_to_keep = ["# -*- coding: utf-8 -*-\n", "#!/usr/bin/env python\n"]
 license_header_lines = [

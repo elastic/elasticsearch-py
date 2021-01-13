@@ -17,6 +17,7 @@
 
 import os
 import time
+
 from elasticsearch import Elasticsearch, NotFoundError, RequestError
 
 

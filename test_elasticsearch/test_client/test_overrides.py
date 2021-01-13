@@ -17,6 +17,7 @@
 #  under the License.
 
 import pytest
+
 from test_elasticsearch.test_cases import ElasticsearchTestCase
 
 

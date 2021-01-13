@@ -15,13 +15,13 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import time
-import random
 import logging
+import random
 import threading
+import time
 
 try:
-    from Queue import PriorityQueue, Empty
+    from Queue import Empty, PriorityQueue
 except ImportError:
     from queue import PriorityQueue, Empty
 

@@ -20,14 +20,13 @@ Can be used for building both 'elasticsearch' and 'elasticsearchX' dists.
 Only requires 'name' in 'setup.py' and the directory to be changed.
 """
 
-import tempfile
-import os
-import shlex
-import sys
-import re
 import contextlib
+import os
+import re
+import shlex
 import shutil
-
+import sys
+import tempfile
 
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 tmp_dir = None

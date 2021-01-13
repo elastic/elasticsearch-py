@@ -15,24 +15,25 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+import logging
 from typing import (
-    AsyncGenerator,
-    Optional,
-    Union,
     Any,
+    AsyncGenerator,
+    AsyncIterable,
+    Callable,
+    Collection,
+    Dict,
+    Iterable,
+    List,
     Mapping,
+    Optional,
     Tuple,
     TypeVar,
-    Iterable,
-    AsyncIterable,
-    List,
-    Dict,
-    Collection,
-    Callable,
+    Union,
 )
-import logging
-from .client import AsyncElasticsearch
+
 from ..serializer import Serializer
+from .client import AsyncElasticsearch
 
 logger: logging.Logger
 

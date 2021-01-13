@@ -16,6 +16,7 @@
 #  under the License.
 
 import asyncio
+
 from ..compat import *  # noqa
 
 # Hack supporting Python 3.6 asyncio which didn't have 'get_running_loop()'.

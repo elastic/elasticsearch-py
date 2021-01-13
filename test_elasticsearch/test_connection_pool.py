@@ -17,12 +17,12 @@
 
 import time
 
+from elasticsearch.connection import Connection
 from elasticsearch.connection_pool import (
     ConnectionPool,
-    RoundRobinSelector,
     DummyConnectionPool,
+    RoundRobinSelector,
 )
-from elasticsearch.connection import Connection
 from elasticsearch.exceptions import ImproperlyConfigured
 
 from .test_cases import TestCase

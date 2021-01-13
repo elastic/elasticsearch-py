@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, MutableMapping, Optional, Union, Collection
+from typing import Any, Collection, MutableMapping, Optional, Union
+
 from .utils import NamespacedClient
 
 class RollupClient(NamespacedClient):
@@ -149,6 +150,7 @@ class RollupClient(NamespacedClient):
     async def rollup(
         self,
         index: Any,
+        rollup_index: Any,
         *,
         body: Any,
         pretty: Optional[bool] = ...,
