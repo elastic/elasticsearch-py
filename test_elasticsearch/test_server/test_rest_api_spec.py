@@ -30,7 +30,7 @@ from os.path import dirname, exists, join, pardir, relpath
 import pytest
 import yaml
 
-from elasticsearch import ElasticsearchDeprecationWarning, RequestError, TransportError
+from elasticsearch import ElasticsearchWarning, RequestError, TransportError
 from elasticsearch.compat import string_types
 from elasticsearch.helpers.test import _get_version
 
@@ -147,7 +147,7 @@ class YamlRunner:
         for k in args:
             args[k] = self._resolve(args[k])
 
-        warnings.simplefilter("always", category=ElasticsearchDeprecationWarning)
+        warnings.simplefilter("always", category=ElasticsearchWarning)
         with warnings.catch_warnings(record=True) as caught_warnings:
             try:
                 self.last_response = api(**args)
@@ -165,7 +165,7 @@ class YamlRunner:
         caught_warnings = [
             str(w.message)
             for w in caught_warnings
-            if w.category == ElasticsearchDeprecationWarning
+            if w.category == ElasticsearchWarning
             and str(w.message) not in allowed_warnings
         ]
 

@@ -44,6 +44,7 @@ from .exceptions import (
     ConnectionTimeout,
     ElasticsearchDeprecationWarning,
     ElasticsearchException,
+    ElasticsearchWarning,
     ImproperlyConfigured,
     NotFoundError,
     RequestError,
@@ -80,6 +81,7 @@ __all__ = [
     "ConnectionTimeout",
     "AuthenticationException",
     "AuthorizationException",
+    "ElasticsearchWarning",
     "ElasticsearchDeprecationWarning",
 ]
 

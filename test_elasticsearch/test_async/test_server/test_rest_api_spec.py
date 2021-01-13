@@ -16,7 +16,7 @@
 #  under the License.
 
 """
-Dynamically generated set of TestCases based on set of yaml files decribing
+Dynamically generated set of TestCases based on set of yaml files describing
 some integration tests. These files are shared among all official Elasticsearch
 clients.
 """
@@ -25,7 +25,7 @@ import warnings
 
 import pytest
 
-from elasticsearch import ElasticsearchDeprecationWarning, RequestError
+from elasticsearch import ElasticsearchWarning, RequestError
 from elasticsearch.helpers.test import _get_version
 
 from ...test_server.test_rest_api_spec import (
@@ -113,7 +113,7 @@ class AsyncYamlRunner(YamlRunner):
         for k in args:
             args[k] = self._resolve(args[k])
 
-        warnings.simplefilter("always", category=ElasticsearchDeprecationWarning)
+        warnings.simplefilter("always", category=ElasticsearchWarning)
         with warnings.catch_warnings(record=True) as caught_warnings:
             try:
                 self.last_response = await api(**args)
@@ -131,7 +131,7 @@ class AsyncYamlRunner(YamlRunner):
         caught_warnings = [
             str(w.message)
             for w in caught_warnings
-            if w.category == ElasticsearchDeprecationWarning
+            if w.category == ElasticsearchWarning
             and str(w.message) not in allowed_warnings
         ]
 
