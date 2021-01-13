@@ -16,7 +16,8 @@
 #  under the License.
 
 import logging
-from typing import Sequence, Optional, Type, Any, Union, List, Tuple, Dict
+from typing import Any, Dict, List, Optional, Sequence, Tuple, Type, Union
+
 from .connection import Connection
 
 try:

@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH, _bulk_body
+from .utils import SKIP_IN_PATH, NamespacedClient, _bulk_body, _make_path, query_params
 
 
 class MonitoringClient(NamespacedClient):

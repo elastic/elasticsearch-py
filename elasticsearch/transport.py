@@ -16,19 +16,19 @@
 #  under the License.
 
 import time
-from platform import python_version
 from itertools import chain
+from platform import python_version
 
 from ._version import __versionstr__
 from .connection import Urllib3HttpConnection
 from .connection_pool import ConnectionPool, DummyConnectionPool, EmptyConnectionPool
-from .serializer import JSONSerializer, Deserializer, DEFAULT_SERIALIZERS
 from .exceptions import (
     ConnectionError,
-    TransportError,
-    SerializationError,
     ConnectionTimeout,
+    SerializationError,
+    TransportError,
 )
+from .serializer import DEFAULT_SERIALIZERS, Deserializer, JSONSerializer
 from .utils import _client_meta_version
 
 

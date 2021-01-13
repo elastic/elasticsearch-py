@@ -17,6 +17,7 @@
 
 from typing import Any, Tuple
 from unittest import TestCase
+
 from ..client import Elasticsearch
 
 def get_test_client(nowait: bool = ..., **kwargs: Any) -> Elasticsearch: ...

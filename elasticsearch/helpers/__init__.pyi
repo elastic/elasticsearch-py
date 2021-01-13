@@ -16,28 +16,26 @@
 #  under the License.
 
 import sys
-from .errors import BulkIndexError as BulkIndexError, ScanError as ScanError
-from .actions import (
-    expand_action as expand_action,
-    streaming_bulk as streaming_bulk,
-    bulk as bulk,
-    parallel_bulk as parallel_bulk,
-    scan as scan,
-    reindex as reindex,
-    _chunk_actions as _chunk_actions,
-    _process_bulk_chunk as _process_bulk_chunk,
-)
+
+from .actions import _chunk_actions as _chunk_actions
+from .actions import _process_bulk_chunk as _process_bulk_chunk
+from .actions import bulk as bulk
+from .actions import expand_action as expand_action
+from .actions import parallel_bulk as parallel_bulk
+from .actions import reindex as reindex
+from .actions import scan as scan
+from .actions import streaming_bulk as streaming_bulk
+from .errors import BulkIndexError as BulkIndexError
+from .errors import ScanError as ScanError
 
 try:
     # Asyncio only supported on Python 3.6+
     if sys.version_info < (3, 6):
         raise ImportError
 
-    from .._async.helpers import (
-        async_scan as async_scan,
-        async_bulk as async_bulk,
-        async_reindex as async_reindex,
-        async_streaming_bulk as async_streaming_bulk,
-    )
+    from .._async.helpers import async_bulk as async_bulk
+    from .._async.helpers import async_reindex as async_reindex
+    from .._async.helpers import async_scan as async_scan
+    from .._async.helpers import async_streaming_bulk as async_streaming_bulk
 except (ImportError, SyntaxError):
     pass

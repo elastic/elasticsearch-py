@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
+from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 
 
 class IndicesClient(NamespacedClient):
@@ -1618,6 +1618,25 @@ class IndicesClient(NamespacedClient):
         return self.transport.perform_request(
             "POST",
             _make_path("_data_stream", "_promote", name),
+            params=params,
+            headers=headers,
+        )
+
+    @query_params()
+    def migrate_to_data_stream(self, name, params=None, headers=None):
+        """
+        Migrates an alias to a data stream
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/data-streams.html>`_
+
+        :arg name: The name of the alias to migrate
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'name'.")
+
+        return self.transport.perform_request(
+            "POST",
+            _make_path("_data_stream", "_migrate", name),
             params=params,
             headers=headers,
         )

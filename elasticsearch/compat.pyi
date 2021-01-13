@@ -22,23 +22,20 @@ PY2: bool
 string_types: Tuple[type, ...]
 
 if sys.version_info[0] == 2:
-    from urllib import (
-        quote_plus as quote_plus,
-        quote as quote,
-        urlencode as urlencode,
-        unquote as unquote,
-    )
-    from urlparse import urlparse as urlparse
     from itertools import imap as map
+    from urllib import quote as quote
+    from urllib import quote_plus as quote_plus
+    from urllib import unquote as unquote
+    from urllib import urlencode as urlencode
+
     from Queue import Queue as Queue
+    from urlparse import urlparse as urlparse
 else:
-    from urllib.parse import (
-        quote as quote,
-        quote_plus as quote_plus,
-        urlencode as urlencode,
-        urlparse as urlparse,
-        unquote as unquote,
-    )
+    from urllib.parse import quote as quote
+    from urllib.parse import quote_plus as quote_plus
+    from urllib.parse import unquote as unquote
+    from urllib.parse import urlencode as urlencode
+    from urllib.parse import urlparse as urlparse
 
     map = map
     from queue import Queue as Queue

@@ -17,9 +17,9 @@
 
 # type: ignore
 
-import time
 import os
-from unittest import TestCase, SkipTest
+import time
+from unittest import SkipTest, TestCase
 
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import ConnectionError

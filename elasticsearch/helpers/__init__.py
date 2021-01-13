@@ -16,10 +16,18 @@
 #  under the License.
 
 import sys
+
+from .actions import (
+    _chunk_actions,
+    _process_bulk_chunk,
+    bulk,
+    expand_action,
+    parallel_bulk,
+    reindex,
+    scan,
+    streaming_bulk,
+)
 from .errors import BulkIndexError, ScanError
-from .actions import expand_action, streaming_bulk, bulk, parallel_bulk
-from .actions import scan, reindex
-from .actions import _chunk_actions, _process_bulk_chunk
 
 __all__ = [
     "BulkIndexError",
@@ -41,9 +49,9 @@ try:
         raise ImportError
 
     from .._async.helpers import (
-        async_scan,
         async_bulk,
         async_reindex,
+        async_scan,
         async_streaming_bulk,
     )
 

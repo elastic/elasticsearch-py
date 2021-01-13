@@ -17,15 +17,17 @@
 #  under the License.
 
 from __future__ import unicode_literals
+
 import json
 import time
+
 import pytest
 from mock import patch
 
-from elasticsearch.transport import Transport, get_host_info
 from elasticsearch.connection import Connection
 from elasticsearch.connection_pool import DummyConnectionPool
 from elasticsearch.exceptions import ConnectionError, TransportError
+from elasticsearch.transport import Transport, get_host_info
 
 from .test_cases import TestCase
 

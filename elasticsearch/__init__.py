@@ -18,9 +18,9 @@
 # flake8: noqa
 from __future__ import absolute_import
 
+import logging
 import re
 import sys
-import logging
 import warnings
 
 from ._version import __versionstr__
@@ -34,26 +34,26 @@ logger = logging.getLogger("elasticsearch")
 logger.addHandler(logging.NullHandler())
 
 from .client import Elasticsearch
-from .transport import Transport
-from .connection_pool import ConnectionPool, ConnectionSelector, RoundRobinSelector
-from .serializer import JSONSerializer
 from .connection import Connection, RequestsHttpConnection, Urllib3HttpConnection
+from .connection_pool import ConnectionPool, ConnectionSelector, RoundRobinSelector
 from .exceptions import (
-    ImproperlyConfigured,
-    ElasticsearchException,
-    SerializationError,
-    TransportError,
-    NotFoundError,
-    ConflictError,
-    RequestError,
-    ConnectionError,
-    SSLError,
-    ConnectionTimeout,
     AuthenticationException,
     AuthorizationException,
-    ElasticsearchWarning,
+    ConflictError,
+    ConnectionError,
+    ConnectionTimeout,
     ElasticsearchDeprecationWarning,
+    ElasticsearchException,
+    ElasticsearchWarning,
+    ImproperlyConfigured,
+    NotFoundError,
+    RequestError,
+    SerializationError,
+    SSLError,
+    TransportError,
 )
+from .serializer import JSONSerializer
+from .transport import Transport
 
 # Only raise one warning per deprecation message so as not
 # to spam up the user if the same action is done multiple times.
@@ -90,9 +90,9 @@ try:
     if sys.version_info < (3, 6):
         raise ImportError
 
+    from ._async.client import AsyncElasticsearch
     from ._async.http_aiohttp import AIOHttpConnection, AsyncConnection
     from ._async.transport import AsyncTransport
-    from ._async.client import AsyncElasticsearch
 
     __all__ += [
         "AIOHttpConnection",

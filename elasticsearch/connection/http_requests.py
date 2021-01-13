@@ -18,15 +18,15 @@
 import time
 import warnings
 
-from .base import Connection
+from ..compat import string_types, urlencode
 from ..exceptions import (
     ConnectionError,
-    ImproperlyConfigured,
     ConnectionTimeout,
+    ImproperlyConfigured,
     SSLError,
 )
-from ..compat import urlencode, string_types
 from ..utils import _client_meta_version
+from .base import Connection
 
 try:
     import requests

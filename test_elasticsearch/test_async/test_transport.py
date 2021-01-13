@@ -17,17 +17,18 @@
 #  under the License.
 
 from __future__ import unicode_literals
-import re
+
 import asyncio
 import json
-from mock import patch
+import re
+
 import pytest
+from mock import patch
 
 from elasticsearch import AsyncTransport
 from elasticsearch.connection import Connection
 from elasticsearch.connection_pool import DummyConnectionPool
 from elasticsearch.exceptions import ConnectionError, TransportError
-
 
 pytestmark = pytest.mark.asyncio
 

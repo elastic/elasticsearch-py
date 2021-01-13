@@ -16,18 +16,18 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import ssl
 import gzip
 import io
-from mock import patch
+import ssl
 import warnings
 from platform import python_version
-import aiohttp
-from multidict import CIMultiDict
-import pytest
 
-from elasticsearch import AIOHttpConnection
-from elasticsearch import __versionstr__
+import aiohttp
+import pytest
+from mock import patch
+from multidict import CIMultiDict
+
+from elasticsearch import AIOHttpConnection, __versionstr__
 
 pytestmark = pytest.mark.asyncio
 

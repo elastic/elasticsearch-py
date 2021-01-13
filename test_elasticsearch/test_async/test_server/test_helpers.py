@@ -19,13 +19,13 @@
 # Elasticsearch B.V licenses this file to you under the Apache 2.0 License.
 # See the LICENSE file in the project root for more information
 
-import pytest
 import asyncio
-from mock import patch, MagicMock
 
-from elasticsearch import helpers, TransportError
+import pytest
+from mock import MagicMock, patch
+
+from elasticsearch import TransportError, helpers
 from elasticsearch.helpers import ScanError
-
 
 pytestmark = pytest.mark.asyncio
 

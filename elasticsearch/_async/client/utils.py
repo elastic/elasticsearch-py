@@ -16,11 +16,11 @@
 #  under the License.
 
 from ...client.utils import (  # noqa
-    _make_path,
-    _normalize_hosts,
-    _escape,
-    _bulk_body,
-    query_params,
     SKIP_IN_PATH,
     NamespacedClient,
+    _bulk_body,
+    _escape,
+    _make_path,
+    _normalize_hosts,
+    query_params,
 )

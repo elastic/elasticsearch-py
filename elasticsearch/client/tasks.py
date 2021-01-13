@@ -16,7 +16,8 @@
 #  under the License.
 
 import warnings
-from .utils import NamespacedClient, query_params, _make_path, SKIP_IN_PATH
+
+from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 
 
 class TasksClient(NamespacedClient):
