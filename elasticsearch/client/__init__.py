@@ -46,7 +46,7 @@ from .snapshot import SnapshotClient
 from .sql import SqlClient
 from .ssl import SslClient
 from .tasks import TasksClient
-from .text_structure import TextStructure
+from .text_structure import TextStructureClient
 from .transform import TransformClient
 from .utils import SKIP_IN_PATH, _bulk_body, _make_path, _normalize_hosts, query_params
 from .watcher import WatcherClient
@@ -225,7 +225,7 @@ class Elasticsearch(object):
         self.slm = SlmClient(self)
         self.sql = SqlClient(self)
         self.ssl = SslClient(self)
-        self.text_structure = TextStructure(self)
+        self.text_structure = TextStructureClient(self)
         self.transform = TransformClient(self)
         self.watcher = WatcherClient(self)
 

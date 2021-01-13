@@ -157,6 +157,16 @@ to encrypt communications in your Elasticsearch cluster.
 .. autoclass:: SslClient
    :members:
 
+Text Structure
+--------------
+
+`Text Structure API <https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-find-file-structure.html>`_
+finds the structure of a text file. The text file must contain data that is
+suitable to be ingested into Elasticsearch.
+
+.. autoclass:: TextStructureClient
+   :members:
+
 Transform
 ---------
 
