@@ -23,7 +23,7 @@ the ``async`` extra:
 
     $ python -m pip install elasticsearch[async]
 
-Read more about `how to use asyncio with this project <async.html>`_.
+Read more about `how to use asyncio with this project <https://elasticsearch-py.readthedocs.io/en/7.10.0/async.html>`_.
 
 
 Compatibility
