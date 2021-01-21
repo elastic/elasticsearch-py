@@ -140,9 +140,6 @@ cython_debug/
 # Pycharm project settings
 .idea
 
-# VSCode project settings
-/.vscode
-
 # elasticsearch files
 test_elasticsearch/cover
 test_elasticsearch/local.py

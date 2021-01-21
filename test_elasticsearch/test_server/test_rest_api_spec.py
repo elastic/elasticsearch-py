@@ -282,7 +282,7 @@ class YamlRunner:
             expected = self._resolve(expected)  # dict[str, str]
 
             if expected not in value:
-                raise AssertionError(f"{expected} does not match {value}")
+                raise AssertionError("%s is not contained by %s" % (expected, value))
 
     def _resolve(self, value):
         # resolve variables
