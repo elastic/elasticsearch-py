@@ -50,6 +50,7 @@ IMPLEMENTED_FEATURES = {
     "default_shards",
     "warnings",
     "allowed_warnings",
+    "contains",
 }
 
 # broken YAML tests on some releases
@@ -274,6 +275,14 @@ class YamlRunner:
                 )
             else:
                 assert expected == value, "%r does not match %r" % (value, expected)
+
+    def run_contains(self, action):
+        for path, expected in action.items():
+            value = self._lookup(path)  # list[dict[str,str]] is returned
+            expected = self._resolve(expected)  # dict[str, str]
+
+            if expected not in value:
+                raise AssertionError("%s is not contained by %s" % (expected, value))
 
     def _resolve(self, value):
         # resolve variables
