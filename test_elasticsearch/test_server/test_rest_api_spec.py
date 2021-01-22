@@ -51,6 +51,7 @@ IMPLEMENTED_FEATURES = {
     "warnings",
     "allowed_warnings",
     "contains",
+    "arbitrary_key",
 }
 
 # broken YAML tests on some releases
@@ -313,6 +314,8 @@ class YamlRunner:
                 step = int(step)
                 assert isinstance(value, list)
                 assert len(value) > step
+            elif step == "_arbitrary_key_":
+                return list(value.keys())[0]
             else:
                 assert step in value
             value = value[step]
