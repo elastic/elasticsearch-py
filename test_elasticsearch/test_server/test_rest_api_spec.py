@@ -340,29 +340,41 @@ class InvalidActionType(Exception):
     pass
 
 
-YAML_DIR = environ.get(
-    "TEST_ES_YAML_DIR",
-    join(
-        dirname(__file__),
-        pardir,
-        pardir,
-        pardir,
-        "elasticsearch",
-        "rest-api-spec",
-        "src",
-        "main",
-        "resources",
-        "rest-api-spec",
-        "test",
-    ),
+ELASTICSEARCH_REPO_DIR = join(
+    dirname(__file__),
+    pardir,
+    pardir,
+    pardir,
+    "elasticsearch",
 )
+
+# Override default YAML_DIRS with $TEST_ES_YAML_DIR
+if "TEST_ES_YAML_DIR" in environ:
+    YAML_DIRS = [environ["TEST_ES_YAML_DIR"]]
+else:
+    YAML_DIRS = [
+        join(
+            ELASTICSEARCH_REPO_DIR,
+            "rest-api-spec/src/main/resources/rest-api-spec/test",
+        )
+    ]
+    # Include x-pack tests if TEST_SUITE=xpack
+    if os.getenv("TEST_SUITE") == "xpack":
+        YAML_DIRS.append(
+            join(
+                ELASTICSEARCH_REPO_DIR,
+                "x-pack/plugin/src/test/resources/rest-api-spec/test",
+            )
+        )
 
 
 YAML_TEST_SPECS = []
 
-if exists(YAML_DIR):
+for yaml_dir in YAML_DIRS:
+    if not exists(yaml_dir):
+        continue
     # find all the test definitions in yaml files ...
-    for path, _, files in walk(YAML_DIR):
+    for path, _, files in walk(yaml_dir):
         for filename in files:
             if not filename.endswith((".yaml", ".yml")):
                 continue
@@ -388,7 +400,7 @@ if exists(YAML_DIR):
                 # Pytest already replaces '.' and '_' with '/' so we do
                 # it ourselves so UI and 'SKIP_TESTS' match.
                 pytest_param_id = (
-                    "%s[%d]" % (relpath(filepath, YAML_DIR).rpartition(".")[0], i)
+                    "%s[%d]" % (relpath(filepath, yaml_dir).rpartition(".")[0], i)
                 ).replace(".", "/")
 
                 if pytest_param_id in SKIP_TESTS:
