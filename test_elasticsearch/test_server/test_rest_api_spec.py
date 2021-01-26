@@ -20,6 +20,7 @@ Dynamically generated set of TestCases based on set of yaml files describing
 some integration tests. These files are shared among all official Elasticsearch
 clients.
 """
+import json
 import os
 import re
 import sys
@@ -113,7 +114,7 @@ class YamlRunner:
 
     def run_code(self, test):
         """ Execute an instruction based on it's type. """
-        print(test)
+        print(json.dumps(test, indent=2, sort_keys=True, default=str))
         for action in test:
             assert len(action) == 1
             action_type, action = list(action.items())[0]
@@ -410,7 +411,7 @@ for yaml_dir in YAML_DIRS:
 
 
 @pytest.fixture(scope="function")
-def sync_runner(sync_client):
+def sync_runner(sync_client, setup_cluster):
     return YamlRunner(sync_client)
 
 

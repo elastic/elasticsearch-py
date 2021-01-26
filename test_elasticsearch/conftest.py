@@ -22,7 +22,24 @@ import pytest
 
 import elasticsearch
 
-from ..utils import wipe_cluster
+from .utils import wipe_cluster
+
+SETUP_CLUSTER_CALLED = False
+
+
+@pytest.fixture(scope="function")
+def setup_cluster(sync_client):
+    global SETUP_CLUSTER_CALLED
+    if SETUP_CLUSTER_CALLED:
+        return
+    SETUP_CLUSTER_CALLED = True
+
+    if os.getenv("TEST_SUITE") == "xpack":
+        # Create the 'x_pack_rest_user'
+        sync_client.security.put_user(
+            username="x_pack_rest_user",
+            body={"password": "x-pack-test-password", "roles": ["superuser"]},
+        )
 
 
 @pytest.fixture(scope="function")

@@ -21,6 +21,7 @@ some integration tests. These files are shared among all official Elasticsearch
 clients.
 """
 import inspect
+import json
 import warnings
 
 import pytest
@@ -77,7 +78,7 @@ class AsyncYamlRunner(YamlRunner):
 
     async def run_code(self, test):
         """ Execute an instruction based on it's type. """
-        print(test)
+        print(json.dumps(test, indent=2, sort_keys=True, default=str))
         for action in test:
             assert len(action) == 1
             action_type, action = list(action.items())[0]
@@ -179,7 +180,7 @@ class AsyncYamlRunner(YamlRunner):
 
 
 @pytest.fixture(scope="function")
-def async_runner(async_client):
+def async_runner(async_client, setup_cluster):
     return AsyncYamlRunner(async_client)
 
 

@@ -100,13 +100,21 @@ def wipe_snapshots(client):
 
 
 def wipe_data_streams(client):
-    client.indices.delete_data_stream(name="*")
+    for data_stream in client.indices.get_data_stream(
+        name="*", expand_wildcards="all", ignore=404
+    ).get("data_streams", ()):
+        client.indices.delete_data_stream(
+            name=data_stream["name"], expand_wildcards="all"
+        )
+    try:
+        client.indices.delete_data_stream(name="*", expand_wildcards="all")
+    except Exception:
+        client.indices.delete_data_stream(name="*")
 
 
 def wipe_indices(client):
-
     client.indices.delete(
-        index="*",
+        index="*,-.ds-ilm-history-*",
         expand_wildcards="all",
         ignore=404,
     )
