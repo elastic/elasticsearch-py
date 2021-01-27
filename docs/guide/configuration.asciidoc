@@ -1,0 +1,12 @@
+[[config]]
+== Configuration
+
+This page contains information about the most important configuration options of 
+the Python {es} client.
+
+* <<connection-pool>>
+* <<connection-selector>>
+
+
+include::connection-pool.asciidoc[]
+include::connection-selector.asciidoc[]
