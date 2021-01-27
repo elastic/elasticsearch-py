@@ -1,0 +1,18 @@
+[[connection-pool]]
+=== Connection pool
+
+Connection pool is a container that holds the `Connection` instances, manages 
+the selection process (via a `ConnectionSelector`) and dead connections.
+
+Initially connections are stored in the class as a list and – along with the 
+connection options – get passed to the `ConnectionSelector` instance for future 
+reference.
+
+Upon each request, the `Transport` asks for a `Connection` via the 
+`get_connection` method. If the connection fails, it is marked as dead (via 
+`mark_dead`) and put on a timeout. When the timeout is over the connection is 
+resurrected and returned to the live pool. A connection that has been previously 
+marked as dead and then succeeds is marked as live (its fail count is deleted).
+
+For reference information, refer to the 
+https://elasticsearch-py.readthedocs.io/en/latest/connection.html#connection-pool[full {es} Python documentation].
