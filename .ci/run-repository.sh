@@ -33,8 +33,8 @@ echo -e "\033[1m>>>>> Run [elastic/elasticsearch-py container] >>>>>>>>>>>>>>>>>
 
 mkdir -p junit
 docker run \
-  --network=${NETWORK_NAME} \
-  --env "ELASTICSEARCH_HOST=${ELASTICSEARCH_URL}" \
+  --network=${network_name} \
+  --env "ELASTICSEARCH_URL=${elasticsearch_url}" \
   --env "TEST_SUITE=${TEST_SUITE}" \
   --env "PYTHON_CONNECTION_CLASS=${PYTHON_CONNECTION_CLASS}" \
   --env "TEST_TYPE=server" \
