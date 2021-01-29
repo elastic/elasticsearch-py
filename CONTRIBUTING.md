@@ -10,6 +10,24 @@ We enjoy working with contributors to get their code accepted. There are many
 approaches to fixing a problem and it is important to find the best approach
 before writing too much code.
 
+## Running Integration Tests
+
+Integration tests are run against a live Elasticsearch instance in Docker.
+
+Run the full integration test suite via `$ .ci/run-tests`.
+
+There are several environment variables that control integration tests:
+
+- `PYTHON_VERSION`: Version of Python to use, defaults to `3.9`
+- `PYTHON_CONNECTION_CLASS`: Connection class to use, defaults to `Urllib3HttpConnection`
+- `STACK_VERSION`: Version of Elasticsearch to use. These should be
+  the same as tags of `docker.elastic.co/elasticsearch/elasticsearch`
+  such as `8.0.0-SNAPSHOT`, `7.x-SNAPSHOT`, etc. Defaults to the
+  same `*-SNAPSHOT` version as the branch.
+- `TEST_SUITE`: Determines how to configure Elasticsearch either by running
+  without any non-free features or by beginning a Platinum license. Possible options
+  are `free` and `platinum`. Defaults to `free` as there are fewer test cases.
+
 ## API Code Generation
 
 All the API methods (any method in `elasticsearch.client` classes decorated

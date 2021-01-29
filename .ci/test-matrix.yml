@@ -1,9 +1,9 @@
-ELASTICSEARCH_VERSION:
+STACK_VERSION:
   - 8.0.0-SNAPSHOT
 
 TEST_SUITE:
-  - oss
-  - xpack
+  - free
+  - platinum
 
 PYTHON_VERSION:
   - 2.7

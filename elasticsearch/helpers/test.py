@@ -36,7 +36,7 @@ def get_test_client(nowait=False, **kwargs):
         )
 
     kw.update(kwargs)
-    client = Elasticsearch([os.environ.get("ELASTICSEARCH_HOST", {})], **kw)
+    client = Elasticsearch(os.environ.get("ELASTICSEARCH_URL", {}), **kw)
 
     # wait for yellow status
     for _ in range(1 if nowait else 100):

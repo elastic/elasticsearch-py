@@ -35,7 +35,7 @@ def wipe_cluster(client):
     except ImportError:
         pass
 
-    is_xpack = os.getenv("TEST_SUITE") == "xpack"
+    is_xpack = os.getenv("TEST_SUITE") == "platinum"
     if is_xpack:
         wipe_rollup_jobs(client)
         wait_for_pending_tasks(client, filter="xpack/rollup/job")
