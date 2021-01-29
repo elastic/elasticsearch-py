@@ -39,7 +39,7 @@ def sync_client():
         }
 
         client = elasticsearch.Elasticsearch(
-            [os.environ.get("ELASTICSEARCH_HOST", {})], **kw
+            [os.environ.get("ELASTICSEARCH_URL", {})], **kw
         )
 
         # wait for yellow status
