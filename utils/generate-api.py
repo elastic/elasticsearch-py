@@ -38,7 +38,7 @@ SEPARATOR = "    # AUTO-GENERATED-API-DEFINITIONS #"
 # global substitutions for python keywords
 SUBSTITUTIONS = {"type": "doc_type", "from": "from_"}
 # api path(s)
-BRANCH_NAME = "7.x"
+BRANCH_NAME = "7.11"
 CODE_ROOT = Path(__file__).absolute().parent.parent
 BASE_PATH = (
     CODE_ROOT.parent
