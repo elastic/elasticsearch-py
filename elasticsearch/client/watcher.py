@@ -24,7 +24,7 @@ class WatcherClient(NamespacedClient):
         """
         Acknowledges a watch, manually throttling the execution of the watch's actions.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/watcher-api-ack-watch.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.11/watcher-api-ack-watch.html>`_
 
         :arg watch_id: Watch ID
         :arg action_id: A comma-separated list of the action ids to be
@@ -45,7 +45,7 @@ class WatcherClient(NamespacedClient):
         """
         Activates a currently inactive watch.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/watcher-api-activate-watch.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.11/watcher-api-activate-watch.html>`_
 
         :arg watch_id: Watch ID
         """
@@ -64,7 +64,7 @@ class WatcherClient(NamespacedClient):
         """
         Deactivates a currently active watch.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/watcher-api-deactivate-watch.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.11/watcher-api-deactivate-watch.html>`_
 
         :arg watch_id: Watch ID
         """
@@ -83,7 +83,7 @@ class WatcherClient(NamespacedClient):
         """
         Removes a watch from Watcher.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/watcher-api-delete-watch.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.11/watcher-api-delete-watch.html>`_
 
         :arg id: Watch ID
         """
@@ -102,7 +102,7 @@ class WatcherClient(NamespacedClient):
         """
         Forces the execution of a stored watch.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/watcher-api-execute-watch.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.11/watcher-api-execute-watch.html>`_
 
         :arg body: Execution control
         :arg id: Watch ID
@@ -122,7 +122,7 @@ class WatcherClient(NamespacedClient):
         """
         Retrieves a watch by its ID.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/watcher-api-get-watch.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.11/watcher-api-get-watch.html>`_
 
         :arg id: Watch ID
         """
@@ -138,7 +138,7 @@ class WatcherClient(NamespacedClient):
         """
         Creates a new watch, or updates an existing one.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/watcher-api-put-watch.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.11/watcher-api-put-watch.html>`_
 
         :arg id: Watch ID
         :arg body: The watch
@@ -165,7 +165,7 @@ class WatcherClient(NamespacedClient):
         """
         Starts Watcher if it is not already running.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/watcher-api-start.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.11/watcher-api-start.html>`_
         """
         return self.transport.perform_request(
             "POST", "/_watcher/_start", params=params, headers=headers
@@ -176,7 +176,7 @@ class WatcherClient(NamespacedClient):
         """
         Retrieves the current Watcher metrics.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/watcher-api-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.11/watcher-api-stats.html>`_
 
         :arg metric: Controls what additional stat metrics should be
             include in the response  Valid choices: _all, queued_watches,
@@ -196,7 +196,7 @@ class WatcherClient(NamespacedClient):
         """
         Stops Watcher if it is running.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/watcher-api-stop.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.11/watcher-api-stop.html>`_
         """
         return self.transport.perform_request(
             "POST", "/_watcher/_stop", params=params, headers=headers
@@ -207,7 +207,7 @@ class WatcherClient(NamespacedClient):
         """
         Retrieves stored watches.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/watcher-api-query-watches.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.11/watcher-api-query-watches.html>`_
 
         :arg body: From, size, query, sort and search_after
         """

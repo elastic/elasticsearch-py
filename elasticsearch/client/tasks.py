@@ -33,7 +33,7 @@ class TasksClient(NamespacedClient):
         """
         Returns a list of tasks.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/tasks.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.11/tasks.html>`_
 
         .. warning::
 
@@ -63,7 +63,7 @@ class TasksClient(NamespacedClient):
         """
         Cancels a task, if it can be cancelled through an API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/tasks.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.11/tasks.html>`_
 
         .. warning::
 
@@ -95,7 +95,7 @@ class TasksClient(NamespacedClient):
         """
         Returns information about a task.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/tasks.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.11/tasks.html>`_
 
         .. warning::
 

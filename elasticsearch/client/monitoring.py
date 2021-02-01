@@ -24,7 +24,7 @@ class MonitoringClient(NamespacedClient):
         """
         Used by the monitoring features to send monitoring data.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/monitor-elasticsearch-cluster.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.11/monitor-elasticsearch-cluster.html>`_
 
         .. warning::
 
