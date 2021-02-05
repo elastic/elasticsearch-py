@@ -24,6 +24,13 @@ from unittest import SkipTest, TestCase
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import ConnectionError
 
+if "ELASTICSEARCH_URL" in os.environ:
+    ELASTICSEARCH_URL = os.environ["ELASTICSEARCH_URL"]
+elif os.environ.get("TEST_SUITE") == "platinum":
+    ELASTICSEARCH_URL = "https://elastic:changeme@localhost:9200"
+else:
+    ELASTICSEARCH_URL = "http://localhost:9200"
+
 
 def get_test_client(nowait=False, **kwargs):
     # construct kwargs from the environment
@@ -36,7 +43,7 @@ def get_test_client(nowait=False, **kwargs):
         )
 
     kw.update(kwargs)
-    client = Elasticsearch(os.environ.get("ELASTICSEARCH_URL", {}), **kw)
+    client = Elasticsearch(ELASTICSEARCH_URL, **kw)
 
     # wait for yellow status
     for _ in range(1 if nowait else 100):
