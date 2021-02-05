@@ -15,10 +15,12 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import os
-import pytest
 import asyncio
+
+import pytest
 import elasticsearch
+from elasticsearch.helpers.test import ELASTICSEARCH_URL
+
 from ...utils import wipe_cluster
 
 pytestmark = pytest.mark.asyncio
@@ -31,15 +33,8 @@ async def async_client():
         if not hasattr(elasticsearch, "AsyncElasticsearch"):
             pytest.skip("test requires 'AsyncElasticsearch'")
 
-        kw = {
-            "timeout": 3,
-            "ca_certs": ".ci/certs/ca.pem",
-            "connection_class": elasticsearch.AIOHttpConnection,
-        }
-
-        client = elasticsearch.AsyncElasticsearch(
-            [os.environ.get("ELASTICSEARCH_HOST", {})], **kw
-        )
+        kw = {"timeout": 3, "ca_certs": ".ci/certs/ca.pem"}
+        client = elasticsearch.AsyncElasticsearch(ELASTICSEARCH_URL, **kw)
 
         # wait for yellow status
         for _ in range(100):
