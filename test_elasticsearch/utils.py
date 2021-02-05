@@ -70,7 +70,7 @@ def wipe_cluster_settings(client):
     for name, value in settings.items():
         if value:
             new_settings.setdefault(name, {})
-            for key in name.keys():
+            for key in value.keys():
                 new_settings[name][key + ".*"] = None
     if new_settings:
         client.cluster.put_settings(body=new_settings)
@@ -103,7 +103,6 @@ def wipe_data_streams(client):
 
 
 def wipe_indices(client):
-
     client.indices.delete(
         index="*",
         expand_wildcards="all",
