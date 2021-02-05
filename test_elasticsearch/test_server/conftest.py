@@ -21,6 +21,7 @@ import time
 import pytest
 
 import elasticsearch
+from elasticsearch.helpers.test import ELASTICSEARCH_URL
 
 from ..utils import wipe_cluster
 
@@ -29,18 +30,15 @@ from ..utils import wipe_cluster
 def sync_client():
     client = None
     try:
-        kw = {
-            "timeout": 3,
-            "ca_certs": ".ci/certs/ca.pem",
-            "connection_class": getattr(
-                elasticsearch,
-                os.environ.get("PYTHON_CONNECTION_CLASS", "Urllib3HttpConnection"),
-            ),
-        }
+        kw = {"timeout": 3, "ca_certs": ".ci/certs/ca.pem"}
+        if "PYTHON_CONNECTION_CLASS" in os.environ:
+            from elasticsearch import connection
 
-        client = elasticsearch.Elasticsearch(
-            [os.environ.get("ELASTICSEARCH_URL", {})], **kw
-        )
+            kw["connection_class"] = getattr(
+                connection, os.environ["PYTHON_CONNECTION_CLASS"]
+            )
+
+        client = elasticsearch.Elasticsearch(ELASTICSEARCH_URL, **kw)
 
         # wait for yellow status
         for _ in range(100):

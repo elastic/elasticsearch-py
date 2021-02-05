@@ -20,6 +20,8 @@ from unittest import TestCase
 
 from ..client import Elasticsearch
 
+ELASTICSEARCH_URL: str
+
 def get_test_client(nowait: bool = ..., **kwargs: Any) -> Elasticsearch: ...
 def _get_version(version_string: str) -> Tuple[int, ...]: ...
 
