@@ -3,6 +3,19 @@
 Changelog
 =========
 
+7.11.0 (2021-02-10)
+-------------------
+
+* Added support for 7.11 APIs
+* Added the ``X-Elastic-Client-Meta`` HTTP header and the ``meta_header`` parameter
+  for controlling the header (`#1473`_)
+* Added ``ElasticsearchWarning`` which is raised when the ``Warning`` HTTP header
+  is returned from Elasticsearch. ``ElasticsearchDeprecationWarning`` is now
+  an alias for this warning type (`#1495`_)
+
+ .. _#1473: https://github.com/elastic/elasticsearch-py/pull/1473
+ .. _#1495: https://github.com/elastic/elasticsearch-py/pull/1495
+
 7.10.1 (2020-12-09)
 -------------------
 
