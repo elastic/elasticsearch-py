@@ -3,8 +3,8 @@
 Changelog
 =========
 
-7.11.0b1 (2021-02-02)
----------------------
+7.11.0 (2021-02-10)
+-------------------
 
 * Added support for 7.11 APIs
 * Added the ``X-Elastic-Client-Meta`` HTTP header and the ``meta_header`` parameter
