@@ -122,18 +122,21 @@ class TestJSONSerializer(TestCase):
         if not hasattr(pd, "NA"):  # pandas.NA added in v1
             raise SkipTest("pandas.NA required")
         self.assertEquals(
-            '{"d":null}', JSONSerializer().dumps({"d": pd.NA}),
+            '{"d":null}',
+            JSONSerializer().dumps({"d": pd.NA}),
         )
 
     def test_serializes_pandas_category(self):
         cat = pd.Categorical(["a", "c", "b", "a"], categories=["a", "b", "c"])
         self.assertEquals(
-            '{"d":["a","c","b","a"]}', JSONSerializer().dumps({"d": cat}),
+            '{"d":["a","c","b","a"]}',
+            JSONSerializer().dumps({"d": cat}),
         )
 
         cat = pd.Categorical([1, 2, 3], categories=[1, 2, 3])
         self.assertEquals(
-            '{"d":[1,2,3]}', JSONSerializer().dumps({"d": cat}),
+            '{"d":[1,2,3]}',
+            JSONSerializer().dumps({"d": cat}),
         )
 
     def test_raises_serialization_error_on_dump_error(self):

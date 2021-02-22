@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #  Licensed to Elasticsearch B.V. under one or more contributor
 #  license agreements. See the NOTICE file distributed with
 #  this work for additional information regarding copyright
@@ -308,7 +309,7 @@ class TestUrllib3Connection(TestCase):
         buf = b"\xe4\xbd\xa0\xe5\xa5\xbd\xed\xa9\xaa"
         con = self._get_mock_connection(response_body=buf)
         status, headers, data = con.perform_request("GET", "/")
-        self.assertEqual("你好\uda6a", data)
+        self.assertEqual(u"你好\uda6a", data)
 
 
 class TestRequestsConnection(TestCase):
@@ -394,7 +395,9 @@ class TestRequestsConnection(TestCase):
         self.assertNotIn("accept-encoding", req.headers)
 
     def test_http_compression(self):
-        con = self._get_mock_connection({"http_compress": True},)
+        con = self._get_mock_connection(
+            {"http_compress": True},
+        )
 
         self.assertTrue(con.http_compress)
 
@@ -630,4 +633,4 @@ class TestRequestsConnection(TestCase):
         buf = b"\xe4\xbd\xa0\xe5\xa5\xbd\xed\xa9\xaa"
         con = self._get_mock_connection(response_body=buf)
         status, headers, data = con.perform_request("GET", "/")
-        self.assertEqual("你好\uda6a", data)
+        self.assertEqual(u"你好\uda6a", data)
