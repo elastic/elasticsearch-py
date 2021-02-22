@@ -163,8 +163,7 @@ class MlClient(NamespacedClient):
 
     @query_params()
     def delete_expired_data(self, params=None):
-        """
-        """
+        """"""
         return self.transport.perform_request(
             "DELETE", "/_xpack/ml/_delete_expired_data", params=params
         )
