@@ -30,6 +30,7 @@ from ..exceptions import (
     SSLError,
 )
 from ..compat import urlencode
+from ..utils import _client_meta_version
 
 # sentinel value for `verify_certs`.
 # This is used to detect if a user is passing in a value for `verify_certs`
@@ -90,6 +91,8 @@ class Urllib3HttpConnection(Connection):
     :arg cloud_id: The Cloud ID from ElasticCloud. Convenient way to connect to cloud instances.
         Other host connection params will be ignored.
     """
+
+    HTTP_CLIENT_META = ("ur", _client_meta_version(urllib3.__version__))
 
     def __init__(
         self,
@@ -201,6 +204,7 @@ class Urllib3HttpConnection(Connection):
         url = self.url_prefix + url
         if params:
             url = "%s?%s" % (url, urlencode(params))
+
         full_url = self.host + url
 
         start = time.time()

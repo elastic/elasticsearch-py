@@ -56,6 +56,8 @@ class Connection(object):
     :arg cloud_id: The Cloud ID from ElasticCloud. Convenient way to connect to cloud instances.
     """
 
+    HTTP_CLIENT_META = None
+
     def __init__(
         self,
         host="localhost",
@@ -66,6 +68,7 @@ class Connection(object):
         headers=None,
         http_compress=None,
         cloud_id=None,
+        meta_header=True,
         **kwargs
     ):
 
@@ -125,6 +128,10 @@ class Connection(object):
             url_prefix = "/" + url_prefix.strip("/")
         self.url_prefix = url_prefix
         self.timeout = timeout
+
+        if not isinstance(meta_header, bool):
+            raise TypeError("meta_header must be of type bool")
+        self.meta_header = meta_header
 
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.host)

@@ -18,13 +18,6 @@
 import time
 import warnings
 
-try:
-    import requests
-
-    REQUESTS_AVAILABLE = True
-except ImportError:
-    REQUESTS_AVAILABLE = False
-
 from .base import Connection
 from ..exceptions import (
     ConnectionError,
@@ -33,6 +26,16 @@ from ..exceptions import (
     SSLError,
 )
 from ..compat import urlencode, string_types
+from ..utils import _client_meta_version
+
+try:
+    import requests
+
+    REQUESTS_AVAILABLE = True
+    _REQUESTS_META_VERSION = _client_meta_version(requests.__version__)
+except ImportError:
+    REQUESTS_AVAILABLE = False
+    _REQUESTS_META_VERSION = ""
 
 
 class RequestsHttpConnection(Connection):
@@ -54,6 +57,8 @@ class RequestsHttpConnection(Connection):
     :arg cloud_id: The Cloud ID from ElasticCloud. Convenient way to connect to cloud instances.
         Other host connection params will be ignored.
     """
+
+    HTTP_CLIENT_META = ("rq", _REQUESTS_META_VERSION)
 
     def __init__(
         self,
@@ -130,7 +135,7 @@ class RequestsHttpConnection(Connection):
         url = self.base_url + url
         headers = headers or {}
         if params:
-            url = "%s?%s" % (url, urlencode(params or {}))
+            url = "%s?%s" % (url, urlencode(params))
 
         orig_body = body
         if self.http_compress and body:

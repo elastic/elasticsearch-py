@@ -38,6 +38,7 @@ from elasticsearch.connection import (
     RequestsHttpConnection,
     Urllib3HttpConnection,
 )
+
 from .test_cases import TestCase, SkipTest
 
 

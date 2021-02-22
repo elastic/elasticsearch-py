@@ -437,6 +437,7 @@ def scan(
 
     """
     scroll_kwargs = scroll_kwargs or {}
+    _add_helper_meta_to_kwargs(scroll_kwargs, "s")
 
     if not preserve_order:
         query = query.copy() if query else {}
@@ -487,7 +488,11 @@ def scan(
                 break
     finally:
         if scroll_id and clear_scroll:
-            client.clear_scroll(body={"scroll_id": [scroll_id]}, ignore=(404,))
+            client.clear_scroll(
+                body={"scroll_id": [scroll_id]},
+                ignore=(404,),
+                params={"__elastic_client_meta": (("h", "s"),)},
+            )
 
 
 def reindex(
@@ -551,3 +556,10 @@ def reindex(
         chunk_size=chunk_size,
         **kwargs
     )
+
+
+def _add_helper_meta_to_kwargs(kwargs, helper_meta):
+    params = (kwargs or {}).pop("params", {})
+    params["__elastic_client_meta"] = (("h", helper_meta),)
+    kwargs["params"] = params
+    return kwargs
