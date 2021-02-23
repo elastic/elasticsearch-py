@@ -1,10 +1,21 @@
 Python Elasticsearch Client
 ===========================
 
+.. image:: https://img.shields.io/pypi/v/elasticsearch
+   :target: https://pypi.org/project/elasticsearch
+
+.. image:: https://pepy.tech/badge/elasticsearch
+   :target: https://pepy.tech/project/elasticsearch?versions=*
+
+.. image:: https://clients-ci.elastic.co/job/elastic+elasticsearch-py+master/badge/icon
+   :target: https://clients-ci.elastic.co/job/elastic+elasticsearch-py+master
+
+.. image:: https://readthedocs.org/projects/elasticsearch-py/badge/?version=latest&style=flat
+   :target: https://elasticsearch-py.readthedocs.io
+
 Official low-level client for Elasticsearch. Its goal is to provide common
 ground for all Elasticsearch-related code in Python; because of this it tries
 to be opinion-free and very extendable.
-
 
 Installation
 ------------
@@ -62,7 +73,7 @@ versions are also released as ``elasticsearch2`` and ``elasticsearch5``.
 Example use
 -----------
 
-Simple use-case::
+.. code-block:: python
 
     >>> from datetime import datetime
     >>> from elasticsearch import Elasticsearch
@@ -89,17 +100,17 @@ Simple use-case::
     >>> es.get(index="my-index", id=42)['_source']
     {'any': 'data', 'timestamp': '2019-05-17T17:28:10.329598'}
 
-`Full documentation`_.
+Elastic Cloud (and SSL) use-case:
 
-.. _Full documentation: https://elasticsearch-py.readthedocs.io/
-
-Elastic Cloud (and SSL) use-case::
+.. code-block:: python
 
     >>> from elasticsearch import Elasticsearch
     >>> es = Elasticsearch(cloud_id="<some_long_cloud_id>", http_auth=('elastic','yourpassword'))
     >>> es.info()
 
-Using SSL Context with a self-signed cert use-case::
+Using SSL Context with a self-signed cert use-case:
+
+.. code-block:: python
 
     >>> from elasticsearch import Elasticsearch
     >>> from ssl import create_default_context
@@ -114,16 +125,16 @@ Features
 
 The client's features include:
 
- * translating basic Python data types to and from json (datetimes are not
-   decoded for performance reasons)
- * configurable automatic discovery of cluster nodes
- * persistent connections
- * load balancing (with pluggable selection strategy) across all available nodes
- * failed connection penalization (time based - failed connections won't be
-   retried until a timeout is reached)
- * support for ssl and http authentication
- * thread safety
- * pluggable architecture
+* translating basic Python data types to and from json (datetimes are not
+  decoded for performance reasons)
+* configurable automatic discovery of cluster nodes
+* persistent connections
+* load balancing (with pluggable selection strategy) across all available nodes
+* failed connection penalization (time based - failed connections won't be
+  retried until a timeout is reached)
+* support for ssl and http authentication
+* thread safety
+* pluggable architecture
 
 
 Elasticsearch-DSL
@@ -163,11 +174,3 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-
-Build Status
-------------
-.. image:: https://readthedocs.org/projects/elasticsearch-py/badge/?version=latest&style=flat
-   :target: https://elasticsearch-py.readthedocs.io/en/master/
-
-.. image:: https://clients-ci.elastic.co/job/elastic+elasticsearch-py+master/badge/icon
-   :target: https://clients-ci.elastic.co/job/elastic+elasticsearch-py+master/

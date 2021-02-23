@@ -1,4 +1,4 @@
-# Python Elasticsearch Client
+# Contributing to the Python Elasticsearch Client
 
 If you have a bugfix or new feature that you would like to contribute to
 elasticsearch-py, please find or open an issue about it first. Talk about what
@@ -10,11 +10,10 @@ We enjoy working with contributors to get their code accepted. There are many
 approaches to fixing a problem and it is important to find the best approach
 before writing too much code.
 
-## Running Integration Tests
+## Running Elasticsearch locally
 
-Integration tests are run against a live Elasticsearch instance in Docker.
-
-Run the full integration test suite via `$ .ci/run-tests`.
+We've provided a script to start an Elasticsearch cluster of a certain version
+found at `.ci/run-elasticsearch.sh`.
 
 There are several environment variables that control integration tests:
 
@@ -28,6 +27,9 @@ There are several environment variables that control integration tests:
   without any non-free features or by beginning a Platinum license. Possible options
   are `free` and `platinum`. Defaults to `free` as there are fewer test cases.
 
+**NOTE: You don't need to run the live integration tests for all changes. If
+you don't have Elasticsearch running locally the integration tests will be skipped.**
+
 ## API Code Generation
 
 All the API methods (any method in `elasticsearch.client` classes decorated
@@ -40,7 +42,7 @@ Script](https://github.com/elastic/elasticsearch-py/blob/master/utils/generate_a
 
 To run the code generation make sure you have pre-requisites installed:
 
-* by running `pip install -e '.[develop]'`
+* by running `python -m pip install -e '.[develop]'`
 * having the [elasticsearch](https://github.com/elastic/elasticsearch) repo
   cloned on the same level as `elasticsearch-py` and switched to appropriate
   version
@@ -48,9 +50,8 @@ To run the code generation make sure you have pre-requisites installed:
 Then you should be able to run the code generation by invoking:
 
 ```
-$ python utils/generate_api.py
+$ python utils/generate-api.py
 ```
-
 
 ## Contributing Code Changes
 
@@ -65,24 +66,22 @@ The process for contributing to any of the Elasticsearch repositories is similar
 
 2. Run the linter and test suite to ensure your changes do not break existing code:
 
-    ````
-    # Install Nox for task management
-    $ python -m pip install nox
-    
-    # Auto-format and lint your changes
-    $ nox -s format
+   ```
+   # Install Nox for task management
+   $ python -m pip install nox
    
-    # Run the test suite
-    $ python setup.py test
-    ````
-
-   See the README file in `test_elasticsearch` directory for more information on
-   running the test suite.
+   # Auto-format and lint your changes
+   $ nox -rs format
+   
+   # Run the test suite
+   $ nox -rs test
+   ```
 
 3. Rebase your changes.
    Update your local repository with the most recent code from the main
    elasticsearch-py repository, and rebase your branch on top of the latest master
-   branch. We prefer your changes to be squashed into a single commit.
+   branch. We prefer your changes to be squashed into a single commit for easier
+   backporting.
 
 4. Submit a pull request. Push your local changes to your forked copy of the
    repository and submit a pull request. In the pull request, describe what your
