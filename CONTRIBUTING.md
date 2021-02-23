@@ -12,28 +12,23 @@ before writing too much code.
 
 ## Running Elasticsearch locally
 
-We've provided a script to start an Elasticsearch cluster of a certain version.
-The version and type of cluster are controlled by the `ELASTICSEARCH_VERSION`
-and `TEST_SUITE` parameters.
+We've provided a script to start an Elasticsearch cluster of a certain version
+found at `.ci/run-elasticsearch.sh`.
+
+There are several environment variables that control integration tests:
+
+- `PYTHON_VERSION`: Version of Python to use, defaults to `3.9`
+- `PYTHON_CONNECTION_CLASS`: Connection class to use, defaults to `Urllib3HttpConnection`
+- `STACK_VERSION`: Version of Elasticsearch to use. These should be
+  the same as tags of `docker.elastic.co/elasticsearch/elasticsearch`
+  such as `8.0.0-SNAPSHOT`, `7.x-SNAPSHOT`, etc. Defaults to the
+  same `*-SNAPSHOT` version as the branch.
+- `TEST_SUITE`: Determines how to configure Elasticsearch either by running
+  without any non-free features or by beginning a Platinum license. Possible options
+  are `free` and `platinum`. Defaults to `free` as there are fewer test cases.
 
 **NOTE: You don't need to run the live integration tests for all changes. If
 you don't have Elasticsearch running locally the integration tests will be skipped.**
-
-If you'd like to run an OSS cluster use `TEST_SUITE=oss` and for X-Pack use
-`TEST_SUITE=xpack`. Typically we run against snapshots of Elasticsearch branches
-like `master`, `7.x`, and feature branches like `7.11`. For `master` it's the
-next unreleased major version:
-
-```console
-# master branch
-ELASTICSEARCH_VERSION=8.0.0-SNAPSHOT
-
-# 7.x branch
-ELASTICSEARCH_VERSION=7.x-SNAPSHOT
-
-# 7.11 branch
-ELASTICSEARCH_VERSION=7.11-SNAPSHOT
-```
 
 ## API Code Generation
 
