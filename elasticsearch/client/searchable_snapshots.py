@@ -24,7 +24,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         """
         Clear the cache of searchable snapshots.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/searchable-snapshots-apis.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.12/searchable-snapshots-apis.html>`_
 
         .. warning::
 
@@ -49,12 +49,12 @@ class SearchableSnapshotsClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("master_timeout", "wait_for_completion")
+    @query_params("master_timeout", "storage", "wait_for_completion")
     def mount(self, repository, snapshot, body, params=None, headers=None):
         """
         Mount a snapshot as a searchable index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/searchable-snapshots-api-mount-snapshot.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.12/searchable-snapshots-api-mount-snapshot.html>`_
 
         .. warning::
 
@@ -68,6 +68,8 @@ class SearchableSnapshotsClient(NamespacedClient):
             as searchable
         :arg master_timeout: Explicit operation timeout for connection
             to master node
+        :arg storage: Selects the kind of local storage used to
+            accelerate searches. Experimental, and defaults to `full_copy`
         :arg wait_for_completion: Should this request wait until the
             operation has completed before returning
         """
@@ -88,7 +90,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         """
         DEPRECATED: This API is replaced by the Repositories Metering API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/searchable-snapshots-apis.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.12/searchable-snapshots-apis.html>`_
 
         .. warning::
 
@@ -107,12 +109,12 @@ class SearchableSnapshotsClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params("level")
     def stats(self, index=None, params=None, headers=None):
         """
         Retrieve various statistics about searchable snapshots.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/searchable-snapshots-apis.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.12/searchable-snapshots-apis.html>`_
 
         .. warning::
 
@@ -120,6 +122,8 @@ class SearchableSnapshotsClient(NamespacedClient):
             or be removed in a future version
 
         :arg index: A comma-separated list of index names
+        :arg level: Return stats aggregated at cluster, index or shard
+            level  Valid choices: cluster, indices, shards  Default: indices
         """
         return self.transport.perform_request(
             "GET",

@@ -24,7 +24,7 @@ class EqlClient(NamespacedClient):
         """
         Returns results matching a query expressed in Event Query Language (EQL)
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/eql-search-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.12/eql-search-api.html>`_
 
         :arg index: The name of the index to scope the operation
         :arg body: Eql request body. Use the `query` to limit the query
@@ -55,7 +55,7 @@ class EqlClient(NamespacedClient):
         Deletes an async EQL search by ID. If the search is still running, the search
         request will be cancelled. Otherwise, the saved search results are deleted.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/eql-search-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.12/eql-search-api.html>`_
 
         :arg id: The async search ID
         """
@@ -72,7 +72,7 @@ class EqlClient(NamespacedClient):
         Returns async results from previously executed Event Query Language (EQL)
         search
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/eql-search-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.12/eql-search-api.html>`_
 
         :arg id: The async search ID
         :arg keep_alive: Update the time interval in which the results
@@ -85,4 +85,24 @@ class EqlClient(NamespacedClient):
 
         return await self.transport.perform_request(
             "GET", _make_path("_eql", "search", id), params=params, headers=headers
+        )
+
+    @query_params()
+    async def get_status(self, id, params=None, headers=None):
+        """
+        Returns the status of a previously submitted async or stored Event Query
+        Language (EQL) search
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.12/eql-search-api.html>`_
+
+        :arg id: The async search ID
+        """
+        if id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'id'.")
+
+        return await self.transport.perform_request(
+            "GET",
+            _make_path("_eql", "search", "status", id),
+            params=params,
+            headers=headers,
         )

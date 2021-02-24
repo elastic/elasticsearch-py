@@ -24,7 +24,7 @@ class IngestClient(NamespacedClient):
         """
         Returns a pipeline.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/get-pipeline-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.12/get-pipeline-api.html>`_
 
         :arg id: Comma separated list of pipeline ids. Wildcards
             supported
@@ -40,7 +40,7 @@ class IngestClient(NamespacedClient):
         """
         Creates or updates a pipeline.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/put-pipeline-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.12/put-pipeline-api.html>`_
 
         :arg id: Pipeline ID
         :arg body: The ingest definition
@@ -65,7 +65,7 @@ class IngestClient(NamespacedClient):
         """
         Deletes a pipeline.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/delete-pipeline-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.12/delete-pipeline-api.html>`_
 
         :arg id: Pipeline ID
         :arg master_timeout: Explicit operation timeout for connection
@@ -87,7 +87,7 @@ class IngestClient(NamespacedClient):
         """
         Allows to simulate a pipeline with example documents.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/simulate-pipeline-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.12/simulate-pipeline-api.html>`_
 
         :arg body: The simulate definition
         :arg id: Pipeline ID
@@ -110,7 +110,7 @@ class IngestClient(NamespacedClient):
         """
         Returns a list of the built-in patterns.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/grok-processor.html#grok-processor-rest-get>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.12/grok-processor.html#grok-processor-rest-get>`_
         """
         return self.transport.perform_request(
             "GET", "/_ingest/processor/grok", params=params, headers=headers

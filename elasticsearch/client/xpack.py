@@ -28,7 +28,7 @@ class XPackClient(NamespacedClient):
         """
         Retrieves information about the installed X-Pack features.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/info-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.12/info-api.html>`_
 
         :arg accept_enterprise: If an enterprise license is installed,
             return the type and mode as 'enterprise' (default: false)
@@ -44,7 +44,7 @@ class XPackClient(NamespacedClient):
         """
         Retrieves usage information about the installed X-Pack features.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/usage-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.12/usage-api.html>`_
 
         :arg master_timeout: Specify timeout for watch write operation
         """
