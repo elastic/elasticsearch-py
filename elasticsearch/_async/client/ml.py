@@ -1676,3 +1676,64 @@ class MlClient(NamespacedClient):
             params=params,
             headers=headers,
         )
+
+    @query_params()
+    async def delete_trained_model_alias(
+        self, model_id, model_alias, params=None, headers=None
+    ):
+        """
+        Deletes a model alias that refers to the trained model
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-trained-models-aliases.html>`_
+
+        .. warning::
+
+            This API is **beta** so may include breaking changes
+            or be removed in a future version
+
+        :arg model_id: The trained model where the model alias is
+            assigned
+        :arg model_alias: The trained model alias to delete
+        """
+        for param in (model_id, model_alias):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
+
+        return await self.transport.perform_request(
+            "DELETE",
+            _make_path("_ml", "trained_models", model_id, "model_aliases", model_alias),
+            params=params,
+            headers=headers,
+        )
+
+    @query_params("reassign")
+    async def put_trained_model_alias(
+        self, model_id, model_alias, params=None, headers=None
+    ):
+        """
+        Creates a new model alias (or reassigns an existing one) to refer to the
+        trained model
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-trained-models-aliases.html>`_
+
+        .. warning::
+
+            This API is **beta** so may include breaking changes
+            or be removed in a future version
+
+        :arg model_id: The trained model where the model alias should be
+            assigned
+        :arg model_alias: The trained model alias to update
+        :arg reassign: If the model_alias already exists and points to a
+            separate model_id, this parameter must be true. Defaults to false.
+        """
+        for param in (model_id, model_alias):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
+
+        return await self.transport.perform_request(
+            "PUT",
+            _make_path("_ml", "trained_models", model_id, "model_aliases", model_alias),
+            params=params,
+            headers=headers,
+        )

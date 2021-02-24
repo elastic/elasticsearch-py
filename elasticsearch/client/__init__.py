@@ -34,6 +34,7 @@ from .ilm import IlmClient
 from .indices import IndicesClient
 from .ingest import IngestClient
 from .license import LicenseClient
+from .logstash import LogstashClient
 from .migration import MigrationClient
 from .ml import MlClient
 from .monitoring import MonitoringClient
@@ -216,6 +217,7 @@ class Elasticsearch(object):
         self.graph = GraphClient(self)
         self.ilm = IlmClient(self)
         self.license = LicenseClient(self)
+        self.logstash = LogstashClient(self)
         self.migration = MigrationClient(self)
         self.ml = MlClient(self)
         self.monitoring = MonitoringClient(self)

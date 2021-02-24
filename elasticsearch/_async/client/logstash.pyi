@@ -19,14 +19,11 @@ from typing import Any, Collection, MutableMapping, Optional, Union
 
 from .utils import NamespacedClient
 
-class SearchableSnapshotsClient(NamespacedClient):
-    def clear_cache(
+class LogstashClient(NamespacedClient):
+    async def delete_pipeline(
         self,
+        id: Any,
         *,
-        index: Optional[Any] = ...,
-        allow_no_indices: Optional[Any] = ...,
-        expand_wildcards: Optional[Any] = ...,
-        ignore_unavailable: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -38,31 +35,26 @@ class SearchableSnapshotsClient(NamespacedClient):
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
-    def mount(
+    async def get_pipeline(
         self,
-        repository: Any,
-        snapshot: Any,
+        id: Any,
+        *,
+        pretty: Optional[bool] = ...,
+        human: Optional[bool] = ...,
+        error_trace: Optional[bool] = ...,
+        format: Optional[str] = ...,
+        filter_path: Optional[Union[str, Collection[str]]] = ...,
+        request_timeout: Optional[Union[int, float]] = ...,
+        ignore: Optional[Union[int, Collection[int]]] = ...,
+        opaque_id: Optional[str] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
+    ) -> Any: ...
+    async def put_pipeline(
+        self,
+        id: Any,
         *,
         body: Any,
-        master_timeout: Optional[Any] = ...,
-        storage: Optional[Any] = ...,
-        wait_for_completion: Optional[Any] = ...,
-        pretty: Optional[bool] = ...,
-        human: Optional[bool] = ...,
-        error_trace: Optional[bool] = ...,
-        format: Optional[str] = ...,
-        filter_path: Optional[Union[str, Collection[str]]] = ...,
-        request_timeout: Optional[Union[int, float]] = ...,
-        ignore: Optional[Union[int, Collection[int]]] = ...,
-        opaque_id: Optional[str] = ...,
-        params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...
-    ) -> Any: ...
-    def stats(
-        self,
-        *,
-        index: Optional[Any] = ...,
-        level: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,

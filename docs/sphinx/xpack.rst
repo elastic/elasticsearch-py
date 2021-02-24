@@ -74,6 +74,15 @@ can be used to manage your licences.
 .. autoclass:: LicenseClient
    :members:
 
+Logstash
+--------
+
+`Logstash APIs <https://www.elastic.co/guide/en/elasticsearch/reference/7.x/logstash-apis.html>`_
+manage Pipelines used by Logstash Central Management.
+
+.. autoclass:: LogstashClient
+   :members:
+
 Machine Learning
 ----------------
 

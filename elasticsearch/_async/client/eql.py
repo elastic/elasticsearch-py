@@ -86,3 +86,23 @@ class EqlClient(NamespacedClient):
         return await self.transport.perform_request(
             "GET", _make_path("_eql", "search", id), params=params, headers=headers
         )
+
+    @query_params()
+    async def get_status(self, id, params=None, headers=None):
+        """
+        Returns the status of a previously submitted async or stored Event Query
+        Language (EQL) search
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/eql-search-api.html>`_
+
+        :arg id: The async search ID
+        """
+        if id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'id'.")
+
+        return await self.transport.perform_request(
+            "GET",
+            _make_path("_eql", "search", "status", id),
+            params=params,
+            headers=headers,
+        )
