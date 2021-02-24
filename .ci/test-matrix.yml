@@ -1,5 +1,5 @@
 STACK_VERSION:
-  - 7.x-SNAPSHOT
+  - 7.12-SNAPSHOT
 
 TEST_SUITE:
   - free
