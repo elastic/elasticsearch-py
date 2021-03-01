@@ -18,7 +18,7 @@ The library is compatible with all Elasticsearch versions since `0.90.x` but you
 For **Elasticsearch 7.0** and later, use the major version 7 (`7.x.y`) of the
 library.
 
-For **Elasticsearch 6.0** and later, use the major version 6 (``6.x.y`) of the
+For **Elasticsearch 6.0** and later, use the major version 6 (`6.x.y`) of the
 library.
 
 For **Elasticsearch 5.0** and later, use the major version 5 (`5.x.y`) of the
@@ -43,7 +43,7 @@ The recommended way to set your requirements in your `setup.py` or
     elasticsearch>=2,<3
 
 If you have a need to have multiple versions installed at the same time older
-versions are also released as ``elasticsearch2`` and ``elasticsearch5``.
+versions are also released as `elasticsearch2` and `elasticsearch5`.
 
 
 [discrete]
@@ -119,24 +119,3 @@ https://elasticsearch-dsl.readthedocs.org/en/latest/persistence.html#doctype[per
 layer] for working with documents as Python objects in an ORM-like fashion:
 defining mappings, retrieving and saving documents, wrapping the document data
 in user-defined classes.
-
-
-[discrete]
-=== License
-
-Licensed to Elasticsearch B.V. under one or more contributor
-license agreements. See the NOTICE file distributed with
-this work for additional information regarding copyright
-ownership. Elasticsearch B.V. licenses this file to you under
-the Apache License, Version 2.0 (the "License"); you may
-not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing,
-software distributed under the License is distributed on an
-"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-KIND, either express or implied.  See the License for the
-specific language governing permissions and limitations
-under the License.
