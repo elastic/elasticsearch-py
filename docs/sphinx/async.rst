@@ -36,7 +36,7 @@ and are used in the same way as other APIs, just with an extra ``await``:
     async def main():
         resp = await es.search(
             index="documents",
-            body={"query": {"match_all": {}}}
+            body={"query": {"match_all": {}}},
             size=20,
         )
         print(resp)
