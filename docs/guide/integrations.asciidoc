@@ -1,0 +1,27 @@
+[[integrations]]
+== Integrations
+
+You can find integration options and information on this page.
+
+
+[discrete]
+[[transport]]
+=== Transport
+
+The `Transport` class is a subclass of the 
+https://elasticsearch-py.readthedocs.io/en/latest/connection.html[Connection Layer API]
+that contains all the classes that are responsible for handling the connection 
+to the {es} cluster. 
+
+The `Transport` class is an encapsulation of the transport-related logic of the 
+Python client. For the exhaustive list of parameters, refer to the 
+https://elasticsearch-py.readthedocs.io/en/latest/connection.html#transport[documentation].
+
+
+[discrete]
+[[transport-classes]]
+==== Transport classes
+
+The `Transport` classes can be used to maintain connection with an {es} cluster. 
+For the reference information of these classes, refer to the 
+https://elasticsearch-py.readthedocs.io/en/latest/transports.html[documentation].
