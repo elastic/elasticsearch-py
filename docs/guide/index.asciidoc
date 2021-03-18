@@ -11,3 +11,5 @@ include::installation.asciidoc[]
 include::connecting.asciidoc[]
 
 include::configuration.asciidoc[]
+
+include::integrations.asciidoc[]
