@@ -31,6 +31,7 @@ from .data_frame import Data_FrameClient
 from .deprecation import DeprecationClient
 from .enrich import EnrichClient
 from .eql import EqlClient
+from .features import FeaturesClient
 from .graph import GraphClient
 from .ilm import IlmClient
 from .indices import IndicesClient
@@ -207,6 +208,7 @@ class AsyncElasticsearch(object):
         self.cat = CatClient(self)
         self.cluster = ClusterClient(self)
         self.dangling_indices = DanglingIndicesClient(self)
+        self.features = FeaturesClient(self)
         self.indices = IndicesClient(self)
         self.ingest = IngestClient(self)
         self.nodes = NodesClient(self)
