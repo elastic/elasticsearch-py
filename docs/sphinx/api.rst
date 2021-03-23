@@ -137,7 +137,7 @@ Dangling Indices
 Features
 --------
 
-.. autoclass:: Features
+.. autoclass:: FeaturesClient
    :members:
 
 Indices
