@@ -29,6 +29,7 @@ from .cluster import ClusterClient
 from .dangling_indices import DanglingIndicesClient
 from .enrich import EnrichClient
 from .eql import EqlClient
+from .features import FeaturesClient
 from .graph import GraphClient
 from .ilm import IlmClient
 from .indices import IndicesClient
@@ -203,6 +204,7 @@ class AsyncElasticsearch(object):
         self.autoscaling = AutoscalingClient(self)
         self.cat = CatClient(self)
         self.cluster = ClusterClient(self)
+        self.features = FeaturesClient(self)
         self.indices = IndicesClient(self)
         self.ingest = IngestClient(self)
         self.nodes = NodesClient(self)

@@ -210,7 +210,16 @@ class CatClient(NamespacedClient):
         )
 
     @query_params(
-        "bytes", "format", "full_id", "h", "help", "master_timeout", "s", "time", "v"
+        "bytes",
+        "format",
+        "full_id",
+        "h",
+        "help",
+        "include_unloaded_segments",
+        "master_timeout",
+        "s",
+        "time",
+        "v",
     )
     def nodes(self, params=None, headers=None):
         """
@@ -226,6 +235,9 @@ class CatClient(NamespacedClient):
             version (default: false)
         :arg h: Comma-separated list of column names to display
         :arg help: Return help information
+        :arg include_unloaded_segments: If set to true segment stats
+            will include stats for segments that are not currently loaded into
+            memory
         :arg master_timeout: Explicit operation timeout for connection
             to master node
         :arg s: Comma-separated list of column names or column aliases

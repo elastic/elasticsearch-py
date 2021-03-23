@@ -129,6 +129,7 @@ class NodesClient(NamespacedClient):
         "fields",
         "groups",
         "include_segment_file_sizes",
+        "include_unloaded_segments",
         "level",
         "timeout",
         "types",
@@ -164,6 +165,9 @@ class NodesClient(NamespacedClient):
         :arg include_segment_file_sizes: Whether to report the
             aggregated disk usage of each one of the Lucene index files (only
             applies if segment stats are requested)
+        :arg include_unloaded_segments: If set to true segment stats
+            will include stats for segments that are not currently loaded into
+            memory
         :arg level: Return indices stats aggregated at index, node or
             shard level  Valid choices: indices, node, shards  Default: node
         :arg timeout: Explicit operation timeout

@@ -1737,3 +1737,28 @@ class MlClient(NamespacedClient):
             params=params,
             headers=headers,
         )
+
+    @query_params()
+    async def preview_data_frame_analytics(
+        self, body=None, id=None, params=None, headers=None
+    ):
+        """
+        Previews that will be analyzed given a data frame analytics config.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/preview-dfanalytics.html>`_
+
+        .. warning::
+
+            This API is **beta** so may include breaking changes
+            or be removed in a future version
+
+        :arg body: The data frame analytics config to preview
+        :arg id: The ID of the data frame analytics to preview
+        """
+        return await self.transport.perform_request(
+            "POST",
+            _make_path("_ml", "data_frame", "analytics", id, "_preview"),
+            params=params,
+            headers=headers,
+            body=body,
+        )

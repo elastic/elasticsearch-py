@@ -283,17 +283,3 @@ class SnapshotClient(NamespacedClient):
             headers=headers,
             body=body,
         )
-
-    @query_params("master_timeout")
-    def get_features(self, params=None, headers=None):
-        """
-        Returns a list of features which can be snapshotted in this cluster.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
-
-        :arg master_timeout: Explicit operation timeout for connection
-            to master node
-        """
-        return self.transport.perform_request(
-            "GET", "/_snapshottable_features", params=params, headers=headers
-        )
