@@ -133,6 +133,12 @@ Dangling Indices
 .. autoclass:: DanglingIndicesClient
    :members:
 
+Features
+--------
+
+.. autoclass:: FeaturesClient
+   :members:
+
 Indices
 -------
 
