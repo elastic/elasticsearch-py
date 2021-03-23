@@ -173,6 +173,7 @@ class CatClient(NamespacedClient):
         full_id: Optional[Any] = ...,
         h: Optional[Any] = ...,
         help: Optional[Any] = ...,
+        include_unloaded_segments: Optional[Any] = ...,
         local: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
         s: Optional[Any] = ...,

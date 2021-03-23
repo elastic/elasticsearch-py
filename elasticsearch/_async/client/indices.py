@@ -254,7 +254,9 @@ class IndicesClient(NamespacedClient):
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         :arg wait_for_active_shards: Sets the number of active shards to
-            wait for before the operation returns.
+            wait for before the operation returns. Set to `index-setting` to wait
+            according to the index setting `index.write.wait_for_active_shards`, or
+            `all` to wait for all shards, or an integer. Defaults to `0`.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")

@@ -1660,3 +1660,87 @@ class MlClient(NamespacedClient):
             params=params,
             headers=headers,
         )
+
+    @query_params()
+    def delete_trained_model_alias(
+        self, model_id, model_alias, params=None, headers=None
+    ):
+        """
+        Deletes a model alias that refers to the trained model
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/delete-trained-models-aliases.html>`_
+
+        .. warning::
+
+            This API is **beta** so may include breaking changes
+            or be removed in a future version
+
+        :arg model_id: The trained model where the model alias is
+            assigned
+        :arg model_alias: The trained model alias to delete
+        """
+        for param in (model_id, model_alias):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
+
+        return self.transport.perform_request(
+            "DELETE",
+            _make_path("_ml", "trained_models", model_id, "model_aliases", model_alias),
+            params=params,
+            headers=headers,
+        )
+
+    @query_params()
+    def preview_data_frame_analytics(
+        self, body=None, id=None, params=None, headers=None
+    ):
+        """
+        Previews that will be analyzed given a data frame analytics config.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/preview-dfanalytics.html>`_
+
+        .. warning::
+
+            This API is **beta** so may include breaking changes
+            or be removed in a future version
+
+        :arg body: The data frame analytics config to preview
+        :arg id: The ID of the data frame analytics to preview
+        """
+        return self.transport.perform_request(
+            "POST",
+            _make_path("_ml", "data_frame", "analytics", id, "_preview"),
+            params=params,
+            headers=headers,
+            body=body,
+        )
+
+    @query_params("reassign")
+    def put_trained_model_alias(self, model_id, model_alias, params=None, headers=None):
+        """
+        Creates a new model alias (or reassigns an existing one) to refer to the
+        trained model
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/put-trained-models-aliases.html>`_
+
+        .. warning::
+
+            This API is **beta** so may include breaking changes
+            or be removed in a future version
+
+        :arg model_id: The trained model where the model alias should be
+            assigned
+        :arg model_alias: The trained model alias to update
+        :arg reassign: If the model_alias already exists and points to a
+            separate model_id, this parameter must be true. Defaults to false.
+        """
+        for param in (model_id, model_alias):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
+
+        return self.transport.perform_request(
+            "PUT",
+            _make_path("_ml", "trained_models", model_id, "model_aliases", model_alias),
+            params=params,
+            headers=headers,
+        )

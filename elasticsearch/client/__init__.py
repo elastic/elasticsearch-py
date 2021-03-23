@@ -31,11 +31,13 @@ from .data_frame import Data_FrameClient
 from .deprecation import DeprecationClient
 from .enrich import EnrichClient
 from .eql import EqlClient
+from .features import FeaturesClient
 from .graph import GraphClient
 from .ilm import IlmClient
 from .indices import IndicesClient
 from .ingest import IngestClient
 from .license import LicenseClient
+from .logstash import LogstashClient
 from .migration import MigrationClient
 from .ml import MlClient
 from .monitoring import MonitoringClient
@@ -221,9 +223,11 @@ class Elasticsearch(object):
         self.deprecation = DeprecationClient(self)
         self.enrich = EnrichClient(self)
         self.eql = EqlClient(self)
+        self.features = FeaturesClient(self)
         self.graph = GraphClient(self)
         self.ilm = IlmClient(self)
         self.license = LicenseClient(self)
+        self.logstash = LogstashClient(self)
         self.migration = MigrationClient(self)
         self.ml = MlClient(self)
         self.monitoring = MonitoringClient(self)

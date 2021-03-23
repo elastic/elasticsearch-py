@@ -30,11 +30,13 @@ from .cluster import ClusterClient
 from .dangling_indices import DanglingIndicesClient
 from .enrich import EnrichClient
 from .eql import EqlClient
+from .features import FeaturesClient
 from .graph import GraphClient
 from .ilm import IlmClient
 from .indices import IndicesClient
 from .ingest import IngestClient
 from .license import LicenseClient
+from .logstash import LogstashClient
 from .migration import MigrationClient
 from .ml import MlClient
 from .monitoring import MonitoringClient
@@ -64,6 +66,7 @@ class Elasticsearch(object):
     autoscaling: AutoscalingClient
     cat: CatClient
     cluster: ClusterClient
+    features: FeaturesClient
     indices: IndicesClient
     ingest: IngestClient
     nodes: NodesClient
@@ -79,6 +82,7 @@ class Elasticsearch(object):
     graph: GraphClient
     ilm: IlmClient
     license: LicenseClient
+    logstash: LogstashClient
     migration: MigrationClient
     ml: MlClient
     monitoring: MonitoringClient

@@ -25,6 +25,7 @@ class IngestClient(NamespacedClient):
         *,
         id: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
+        summary: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,

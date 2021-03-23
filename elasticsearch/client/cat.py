@@ -218,6 +218,7 @@ class CatClient(NamespacedClient):
         "full_id",
         "h",
         "help",
+        "include_unloaded_segments",
         "local",
         "master_timeout",
         "s",
@@ -238,6 +239,9 @@ class CatClient(NamespacedClient):
             version (default: false)
         :arg h: Comma-separated list of column names to display
         :arg help: Return help information
+        :arg include_unloaded_segments: If set to true segment stats
+            will include stats for segments that are not currently loaded into
+            memory
         :arg local: Calculate the selected nodes using the local cluster
             state rather than the state from master node (default: false)
         :arg master_timeout: Explicit operation timeout for connection

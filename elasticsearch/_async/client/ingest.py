@@ -19,7 +19,7 @@ from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 
 
 class IngestClient(NamespacedClient):
-    @query_params("master_timeout")
+    @query_params("master_timeout", "summary")
     async def get_pipeline(self, id=None, params=None, headers=None):
         """
         Returns a pipeline.
@@ -30,6 +30,8 @@ class IngestClient(NamespacedClient):
             supported
         :arg master_timeout: Explicit operation timeout for connection
             to master node
+        :arg summary: Return pipelines without their definitions
+            (default: false)
         """
         return await self.transport.perform_request(
             "GET", _make_path("_ingest", "pipeline", id), params=params, headers=headers
