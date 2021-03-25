@@ -101,6 +101,7 @@ print(res['result'])
 You can delete a document by specifying its `index`, and `id` in the `delete()` 
 method:
 
+[source,py]
 ----------------------------
 es.delete(index="test-index", id=1)
 ----------------------------
