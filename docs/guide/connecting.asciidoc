@@ -1,13 +1,8 @@
 [[connecting]]
 == Connecting
 
-This page contains the information you need to connect and use the Client with 
-{es}.
+This page contains the information you need to connect the Client with {es}.
 
-**On this page**
-
-* <<authentication>>
-* <<client-usage, Using the client>>
 
 [discrete]
 [[authentication]]
@@ -70,81 +65,4 @@ from elasticsearch import Elasticsearch
 es = Elasticsearch(
     api_key=(“api_key_id”, “api_key_secret”)
 )
-----------------------------
-
-
-[discrete]
-[[client-usage]]
-=== Usage
-
-This section is a brief overview of the client and its syntax.
-
-
-[discrete]
-==== Indexing a document
-  
-To index a document, you need to specify four pieces of information: `index`, 
-`id`, and a `body`:
-
-[source,py]
-----------------------------
-from datetime import datetime
-from elasticsearch import Elasticsearch
-es = Elasticsearch()
-
-doc = {
-    'author': 'author_name',
-    'text': 'Interensting content...',
-    'timestamp': datetime.now(),
-}
-res = es.index(index="test-index", id=1, body=doc)
-print(res['result'])
-----------------------------
-
-
-[discrete]
-==== Getting a document 
-
-To get a document, you need to specify its `index` and `id`:
-
-[source,py]
-----------------------------
-res = es.get(index="test-index", id=1)
-print(res['_source'])
-----------------------------
-
-
-[discrete]
-==== Refreshing an index
-
-You can perform the refresh operation on an index:
-
-[source,py]
-----------------------------
-es.indices.refresh(index="test-index")
-----------------------------
-
-
-[discrete]
-==== Searching for a document
-
-The `search()` method returns results that are matching a query:
-
-[source,py]
-----------------------------
-res = es.search(index="test-index", body={"query": {"match_all": {}}})
-print("Got %d Hits:" % res['hits']['total']['value'])
-for hit in res['hits']['hits']:
-    print("%(timestamp)s %(author)s: %(text)s" % hit["_source"])
-----------------------------
-
-
-[discrete]
-==== Deleting a document
-
-You can delete a document by specifying its `index`, and `id` in the `delete()` 
-method:
-
-----------------------------
-es.delete(index="test-index", id=1)
 ----------------------------
