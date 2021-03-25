@@ -15,7 +15,7 @@ the Python client.
 [[ex-index]]
 === Indexing a document
   
-To index a document, you need to specify four pieces of information: `index`, 
+To index a document, you need to specify three pieces of information: `index`, 
 `id`, and a `body`:
 
 [source,py]
@@ -77,6 +77,9 @@ for hit in res['hits']['hits']:
 [discrete]
 [[ex-update]]
 === Updating a document
+
+To update a document, you need to specify three pieces of information: `index`, 
+`id`, and a `body`:
 
 [source,py]
 ----------------------------
