@@ -1,0 +1,110 @@
+[[examples]]
+== Examples
+
+Below you can find examples of how to use the most frequently called APIs with 
+the Python client.
+
+* <<ex-index>>
+* <<ex-get>>
+* <<ex-refresh>>
+* <<ex-search>>
+* <<ex-update>>
+* <<ex-delete>>
+
+[discrete]
+[[ex-index]]
+=== Indexing a document
+  
+To index a document, you need to specify three pieces of information: `index`, 
+`id`, and a `body`:
+
+[source,py]
+----------------------------
+from datetime import datetime
+from elasticsearch import Elasticsearch
+es = Elasticsearch()
+
+doc = {
+    'author': 'author_name',
+    'text': 'Interensting content...',
+    'timestamp': datetime.now(),
+}
+res = es.index(index="test-index", id=1, body=doc)
+print(res['result'])
+----------------------------
+
+
+[discrete]
+[[ex-get]]
+=== Getting a document 
+
+To get a document, you need to specify its `index` and `id`:
+
+[source,py]
+----------------------------
+res = es.get(index="test-index", id=1)
+print(res['_source'])
+----------------------------
+
+
+[discrete]
+[[ex-refresh]]
+=== Refreshing an index
+
+You can perform the refresh operation on an index:
+
+[source,py]
+----------------------------
+es.indices.refresh(index="test-index")
+----------------------------
+
+
+[discrete]
+[[ex-search]]
+=== Searching for a document
+
+The `search()` method returns results that are matching a query:
+
+[source,py]
+----------------------------
+res = es.search(index="test-index", body={"query": {"match_all": {}}})
+print("Got %d Hits:" % res['hits']['total']['value'])
+for hit in res['hits']['hits']:
+    print("%(timestamp)s %(author)s: %(text)s" % hit["_source"])
+----------------------------
+
+
+[discrete]
+[[ex-update]]
+=== Updating a document
+
+To update a document, you need to specify three pieces of information: `index`, 
+`id`, and a `body`:
+
+[source,py]
+----------------------------
+from datetime import datetime
+from elasticsearch import Elasticsearch
+es = Elasticsearch()
+
+doc = {
+    'author': 'author_name',
+    'text': 'Interensting modified content...',
+    'timestamp': datetime.now(),
+}
+res = es.update(index="test-index", id=1, body=doc)
+print(res['result'])
+----------------------------
+
+
+[discrete]
+[[ex-delete]]
+=== Deleting a document
+
+You can delete a document by specifying its `index`, and `id` in the `delete()` 
+method:
+
+[source,py]
+----------------------------
+es.delete(index="test-index", id=1)
+----------------------------
