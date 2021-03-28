@@ -61,6 +61,7 @@ def streaming_bulk(
     initial_backoff: Union[float, int] = ...,
     max_backoff: Union[float, int] = ...,
     yield_ok: bool = ...,
+    ignore: Collection[int] = ...,
     *args: Any,
     **kwargs: Any
 ) -> Generator[Tuple[bool, Any], None, None]: ...
@@ -79,6 +80,7 @@ def parallel_bulk(
     max_chunk_bytes: int = ...,
     queue_size: int = ...,
     expand_action_callback: Callable[[Any], Tuple[Dict[str, Any], Optional[Any]]] = ...,
+    ignore: Collection[int] = ...,
     *args: Any,
     **kwargs: Any
 ) -> Generator[Tuple[bool, Any], None, None]: ...
