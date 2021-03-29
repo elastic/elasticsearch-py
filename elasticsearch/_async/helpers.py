@@ -78,7 +78,10 @@ async def _process_bulk_chunk(
         )
     else:
         gen = _process_bulk_chunk_success(
-            resp=resp, bulk_data=bulk_data, ignore_status=ignore_status, raise_on_error=raise_on_error
+            resp=resp,
+            bulk_data=bulk_data,
+            ignore_status=ignore_status,
+            raise_on_error=raise_on_error,
         )
     for item in gen:
         yield item
@@ -222,7 +225,9 @@ async def async_streaming_bulk(
                 bulk_actions, bulk_data = to_retry, to_retry_data
 
 
-async def async_bulk(client, actions, stats_only=False, ignore_status=(), *args, **kwargs):
+async def async_bulk(
+    client, actions, stats_only=False, ignore_status=(), *args, **kwargs
+):
     """
     Helper for the :meth:`~elasticsearch.AsyncElasticsearch.bulk` api that provides
     a more human friendly interface - it consumes an iterator of actions and

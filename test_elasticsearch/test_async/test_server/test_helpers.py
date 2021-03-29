@@ -334,7 +334,9 @@ class TestBulk(object):
 
     def test_ignore_error_if_raised(self, async_client):
         # ignore the status code 400 in tuple
-        helpers.async_bulk(async_client, [{"a": 42}, {"a": "c"}], index="i", ignore_status=(400,))
+        helpers.async_bulk(
+            async_client, [{"a": 42}, {"a": "c"}], index="i", ignore_status=(400,)
+        )
 
         # ignore the status code 400 in list
         helpers.async_bulk(
@@ -347,7 +349,9 @@ class TestBulk(object):
         )
 
         # ignore the status code 400
-        helpers.async_bulk(async_client, [{"a": 42}, {"a": "c"}], index="i", ignore_status=400)
+        helpers.async_bulk(
+            async_client, [{"a": 42}, {"a": "c"}], index="i", ignore_status=400
+        )
 
         # ignore only the status code in the `ignore_status` argument
         self.assertRaises(

@@ -297,7 +297,9 @@ class TestBulk(ElasticsearchTestCase):
 
     def test_ignore_error_if_raised(self):
         # ignore the status code 400 in tuple
-        helpers.bulk(self.client, [{"a": 42}, {"a": "c"}], index="i", ignore_status=(400,))
+        helpers.bulk(
+            self.client, [{"a": 42}, {"a": "c"}], index="i", ignore_status=(400,)
+        )
 
         # ignore the status code 400 in list
         helpers.bulk(

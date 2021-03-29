@@ -248,7 +248,10 @@ def _process_bulk_chunk(
         )
     else:
         gen = _process_bulk_chunk_success(
-            resp=resp, bulk_data=bulk_data, ignore_status=ignore_status, raise_on_error=raise_on_error
+            resp=resp,
+            bulk_data=bulk_data,
+            ignore_status=ignore_status,
+            raise_on_error=raise_on_error,
         )
     for item in gen:
         yield item
@@ -404,7 +407,9 @@ def bulk(client, actions, stats_only=False, ignore_status=(), *args, **kwargs):
 
     # make streaming_bulk yield successful results so we can count them
     kwargs["yield_ok"] = True
-    for ok, item in streaming_bulk(client, actions, ignore_status=ignore_status, *args, **kwargs):
+    for ok, item in streaming_bulk(
+        client, actions, ignore_status=ignore_status, *args, **kwargs
+    ):
         # go through request-response pairs and detect failures
         if not ok:
             if not stats_only:
@@ -467,7 +472,12 @@ def parallel_bulk(
         for result in pool.imap(
             lambda bulk_chunk: list(
                 _process_bulk_chunk(
-                    client, bulk_chunk[1], bulk_chunk[0], ignore_status=ignore_status, *args, **kwargs
+                    client,
+                    bulk_chunk[1],
+                    bulk_chunk[0],
+                    ignore_status=ignore_status,
+                    *args,
+                    **kwargs
                 )
             ),
             _chunk_actions(
