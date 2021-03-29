@@ -48,6 +48,7 @@ def _process_bulk_chunk(
     bulk_data: Any,
     raise_on_exception: bool = ...,
     raise_on_error: bool = ...,
+    ignore_status: Optional[Union[int, Collection[int]]] = ...,
     *args: Any,
     **kwargs: Any
 ) -> AsyncGenerator[Tuple[bool, Any], None]: ...
@@ -67,6 +68,7 @@ def async_streaming_bulk(
     initial_backoff: Union[float, int] = ...,
     max_backoff: Union[float, int] = ...,
     yield_ok: bool = ...,
+    ignore_status: Optional[Union[int, Collection[int]]] = ...,
     *args: Any,
     **kwargs: Any
 ) -> AsyncGenerator[Tuple[bool, Any], None]: ...
@@ -74,6 +76,7 @@ async def async_bulk(
     client: AsyncElasticsearch,
     actions: Union[Iterable[Any], AsyncIterable[Any]],
     stats_only: bool = ...,
+    ignore_status: Optional[Union[int, Collection[int]]] = ...,
     *args: Any,
     **kwargs: Any
 ) -> Tuple[int, Union[int, List[Any]]]: ...
