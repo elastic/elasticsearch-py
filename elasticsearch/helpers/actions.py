@@ -161,7 +161,7 @@ def _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer):
         yield ret
 
 
-def _process_bulk_chunk_success(resp, bulk_data, ignore, raise_on_error=True):
+def _process_bulk_chunk_success(resp, bulk_data, ignore_status, raise_on_error=True):
     # if raise on error is set, we need to collect errors per chunk before raising them
     errors = []
 
@@ -172,7 +172,7 @@ def _process_bulk_chunk_success(resp, bulk_data, ignore, raise_on_error=True):
         status_code = item.get("status", 500)
 
         ok = 200 <= status_code < 300
-        if not ok and raise_on_error and status_code not in ignore:
+        if not ok and raise_on_error and status_code not in ignore_status:
             # include original document source
             if len(data) > 1:
                 item["data"] = data[1]
@@ -188,10 +188,10 @@ def _process_bulk_chunk_success(resp, bulk_data, ignore, raise_on_error=True):
 
 
 def _process_bulk_chunk_error(
-    error, bulk_data, ignore, raise_on_exception=True, raise_on_error=True
+    error, bulk_data, ignore_status, raise_on_exception=True, raise_on_error=True
 ):
     # default behavior - just propagate exception
-    if raise_on_exception and error.status_code not in ignore:
+    if raise_on_exception and error.status_code not in ignore_status:
         raise error
 
     # if we are not propagating, mark all actions in current chunk as failed
@@ -208,7 +208,7 @@ def _process_bulk_chunk_error(
         exc_errors.append({op_type: info})
 
     # emulate standard behavior for failed actions
-    if raise_on_error and error.status_code not in ignore:
+    if raise_on_error and error.status_code not in ignore_status:
         raise BulkIndexError(
             "%i document(s) failed to index." % len(exc_errors), exc_errors
         )
@@ -223,7 +223,7 @@ def _process_bulk_chunk(
     bulk_data,
     raise_on_exception=True,
     raise_on_error=True,
-    ignore=(),
+    ignore_status=(),
     *args,
     **kwargs
 ):
@@ -232,8 +232,8 @@ def _process_bulk_chunk(
     """
     kwargs = _add_helper_meta_to_kwargs(kwargs, "bp")
 
-    if type(ignore) not in (list, tuple):
-        ignore = (ignore,)
+    if type(ignore_status) not in (list, tuple):
+        ignore_status = (ignore_status,)
 
     try:
         # send the actual request
@@ -242,13 +242,13 @@ def _process_bulk_chunk(
         gen = _process_bulk_chunk_error(
             error=e,
             bulk_data=bulk_data,
-            ignore=ignore,
+            ignore_status=ignore_status,
             raise_on_exception=raise_on_exception,
             raise_on_error=raise_on_error,
         )
     else:
         gen = _process_bulk_chunk_success(
-            resp=resp, bulk_data=bulk_data, raise_on_error=raise_on_error, ignore=ignore
+            resp=resp, bulk_data=bulk_data, ignore_status=ignore_status, raise_on_error=raise_on_error
         )
     for item in gen:
         yield item
@@ -273,7 +273,7 @@ def streaming_bulk(
     initial_backoff=2,
     max_backoff=600,
     yield_ok=True,
-    ignore=(),
+    ignore_status=(),
     *args,
     **kwargs
 ):
@@ -309,7 +309,7 @@ def streaming_bulk(
         2**retry_number``
     :arg max_backoff: maximum number of seconds a retry will wait
     :arg yield_ok: if set to False will skip successful documents in the output
-    :arg ignore: list of HTTP status code that you want to ignore
+    :arg ignore_status: list of HTTP status code that you want to ignore
     """
     actions = map(expand_action_callback, actions)
 
@@ -331,7 +331,7 @@ def streaming_bulk(
                         bulk_data,
                         raise_on_exception,
                         raise_on_error,
-                        ignore,
+                        ignore_status,
                         *args,
                         **kwargs
                     ),
@@ -368,7 +368,7 @@ def streaming_bulk(
                 bulk_actions, bulk_data = to_retry, to_retry_data
 
 
-def bulk(client, actions, stats_only=False, ignore=(), *args, **kwargs):
+def bulk(client, actions, stats_only=False, ignore_status=(), *args, **kwargs):
     """
     Helper for the :meth:`~elasticsearch.Elasticsearch.bulk` api that provides
     a more human friendly interface - it consumes an iterator of actions and
@@ -390,7 +390,7 @@ def bulk(client, actions, stats_only=False, ignore=(), *args, **kwargs):
     :arg actions: iterator containing the actions
     :arg stats_only: if `True` only report number of successful/failed
         operations instead of just number of successful and a list of error responses
-    :arg ignore: list of HTTP status code that you want to ignore
+    :arg ignore_status: list of HTTP status code that you want to ignore
 
     Any additional keyword arguments will be passed to
     :func:`~elasticsearch.helpers.streaming_bulk` which is used to execute
@@ -404,7 +404,7 @@ def bulk(client, actions, stats_only=False, ignore=(), *args, **kwargs):
 
     # make streaming_bulk yield successful results so we can count them
     kwargs["yield_ok"] = True
-    for ok, item in streaming_bulk(client, actions, ignore=ignore, *args, **kwargs):
+    for ok, item in streaming_bulk(client, actions, ignore_status=ignore_status, *args, **kwargs):
         # go through request-response pairs and detect failures
         if not ok:
             if not stats_only:
@@ -424,7 +424,7 @@ def parallel_bulk(
     max_chunk_bytes=100 * 1024 * 1024,
     queue_size=4,
     expand_action_callback=expand_action,
-    ignore=(),
+    ignore_status=(),
     *args,
     **kwargs
 ):
@@ -445,7 +445,7 @@ def parallel_bulk(
         (`None` if data line should be omitted).
     :arg queue_size: size of the task queue between the main thread (producing
         chunks to send) and the processing threads.
-    :arg ignore: list of HTTP status code that you want to ignore
+    :arg ignore_status: list of HTTP status code that you want to ignore
     """
     # Avoid importing multiprocessing unless parallel_bulk is used
     # to avoid exceptions on restricted environments like App Engine
@@ -467,7 +467,7 @@ def parallel_bulk(
         for result in pool.imap(
             lambda bulk_chunk: list(
                 _process_bulk_chunk(
-                    client, bulk_chunk[1], bulk_chunk[0], ignore=ignore, *args, **kwargs
+                    client, bulk_chunk[1], bulk_chunk[0], ignore_status=ignore_status, *args, **kwargs
                 )
             ),
             _chunk_actions(

@@ -61,7 +61,7 @@ def streaming_bulk(
     initial_backoff: Union[float, int] = ...,
     max_backoff: Union[float, int] = ...,
     yield_ok: bool = ...,
-    ignore: Collection[int] = ...,
+    ignore_status: Optional[Union[int, Collection[int]]] = ...,
     *args: Any,
     **kwargs: Any
 ) -> Generator[Tuple[bool, Any], None, None]: ...
@@ -69,6 +69,7 @@ def bulk(
     client: Elasticsearch,
     actions: Iterable[Any],
     stats_only: bool = ...,
+    ignore_status: Optional[Union[int, Collection[int]]] = ...,
     *args: Any,
     **kwargs: Any
 ) -> Tuple[int, Union[int, List[Any]]]: ...
@@ -80,7 +81,7 @@ def parallel_bulk(
     max_chunk_bytes: int = ...,
     queue_size: int = ...,
     expand_action_callback: Callable[[Any], Tuple[Dict[str, Any], Optional[Any]]] = ...,
-    ignore: Collection[int] = ...,
+    ignore_status: Optional[Union[int, Collection[int]]] = ...,
     *args: Any,
     **kwargs: Any
 ) -> Generator[Tuple[bool, Any], None, None]: ...
