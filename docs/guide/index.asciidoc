@@ -15,3 +15,5 @@ include::configuration.asciidoc[]
 include::integrations.asciidoc[]
 
 include::examples.asciidoc[]
+
+include::helpers.asciidoc[]
