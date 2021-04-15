@@ -207,9 +207,9 @@ class AIOHttpConnection(AsyncConnection):
 
             # Use client_cert and client_key variables for SSL certificate configuration.
             if client_cert and not os.path.isfile(client_cert):
-                raise ImproperlyConfigured("client_cert is not a path of file.")
+                raise ImproperlyConfigured("client_cert is not a path to a file")
             if client_key and not os.path.isfile(client_key):
-                raise ImproperlyConfigured("client_key is not a path of file.")
+                raise ImproperlyConfigured("client_key is not a path to a file")
             if client_cert and client_key:
                 ssl_context.load_cert_chain(client_cert, client_key)
             elif client_cert:
