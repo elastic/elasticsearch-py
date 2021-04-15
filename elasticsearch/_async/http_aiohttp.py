@@ -205,6 +205,16 @@ class AIOHttpConnection(AsyncConnection):
             else:
                 raise ImproperlyConfigured("ca_certs parameter is not a path")
 
+            # Use client_cert and client_key variables for SSL certificate configuration.
+            if client_cert and not os.path.isfile(client_cert):
+                raise ImproperlyConfigured("client_cert is not a path to a file")
+            if client_key and not os.path.isfile(client_key):
+                raise ImproperlyConfigured("client_key is not a path to a file")
+            if client_cert and client_key:
+                ssl_context.load_cert_chain(client_cert, client_key)
+            elif client_cert:
+                ssl_context.load_cert_chain(client_cert)
+
         self.headers.setdefault("connection", "keep-alive")
         self.loop = loop
         self.session = None
