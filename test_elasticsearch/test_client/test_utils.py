@@ -52,7 +52,7 @@ class TestQueryParams(TestCase):
                         "params": {"request_timeout": 60, "ignore": [404]},
                         "headers": {},
                     },
-                )
+                ),
             ],
         )
 
@@ -66,6 +66,21 @@ class TestQueryParams(TestCase):
         self.func_to_wrap(opaque_id="request-id")
         self.assertEqual(
             self.calls, [((), {"params": {}, "headers": {"x-opaque-id": "request-id"}})]
+        )
+
+    def test_api_key(self):
+        self.func_to_wrap(api_key="ZWxhc3RpYzpjaGFuZ2VtZTI=")
+        self.assertEqual(
+            self.calls,
+            [
+                (
+                    (),
+                    {
+                        "params": {},
+                        "headers": {"authorization": "ApiKey ZWxhc3RpYzpjaGFuZ2VtZTI="},
+                    },
+                )
+            ],
         )
 
     def test_handles_empty_none_and_normalization(self):

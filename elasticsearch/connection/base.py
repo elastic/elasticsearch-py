@@ -23,6 +23,8 @@ import re
 import warnings
 from platform import python_version
 
+from ..utils import get_api_key_header_val
+
 try:
     import simplejson as json
 except ImportError:
@@ -125,7 +127,7 @@ class Connection(object):
         self.headers.setdefault("user-agent", self._get_default_user_agent())
 
         if api_key is not None:
-            self.headers["authorization"] = self._get_api_key_header_val(api_key)
+            self.headers["authorization"] = get_api_key_header_val(api_key)
 
         if http_compress:
             self.headers["accept-encoding"] = "gzip,deflate"
@@ -325,14 +327,3 @@ class Connection(object):
 
     def _get_default_user_agent(self):
         return "elasticsearch-py/%s (Python %s)" % (__versionstr__, python_version())
-
-    def _get_api_key_header_val(self, api_key):
-        """
-        Check the type of the passed api_key and return the correct header value
-        for the `API Key authentication <https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-create-api-key.html>`
-        :arg api_key, either a tuple or a base64 encoded string
-        """
-        if isinstance(api_key, (tuple, list)):
-            s = "{0}:{1}".format(api_key[0], api_key[1]).encode("utf-8")
-            return "ApiKey " + binascii.b2a_base64(s).rstrip(b"\r\n").decode("utf-8")
-        return "ApiKey " + api_key

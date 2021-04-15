@@ -22,6 +22,7 @@ from datetime import date, datetime
 from functools import wraps
 
 from ..compat import PY2, quote, string_types, unquote, urlparse
+from ..utils import get_api_key_header_val
 
 # parts of URL to be omitted
 SKIP_IN_PATH = (None, "", b"", [], ())
@@ -150,6 +151,10 @@ def query_params(*es_query_params):
             for p in ("ignore", "request_timeout"):
                 if p in kwargs:
                     params[p] = kwargs.pop(p)
+
+            if "api_key" in kwargs:
+                headers["authorization"] = get_api_key_header_val(kwargs.pop("api_key"))
+
             return func(*args, params=params, headers=headers, **kwargs)
 
         return _wrapped
