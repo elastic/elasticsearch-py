@@ -155,6 +155,11 @@ def query_params(*es_query_params):
             if "api_key" in kwargs:
                 headers["authorization"] = get_api_key_header_val(kwargs.pop("api_key"))
 
+            if "http_auth" in kwargs:
+                if isinstance(kwargs["http_auth"], (tuple, list)):
+                    kwargs["http_auth"] = ":".join(kwargs["http_auth"])
+                headers["http_auth"] = kwargs.pop("http_auth")
+
             return func(*args, params=params, headers=headers, **kwargs)
 
         return _wrapped

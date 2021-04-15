@@ -30,6 +30,7 @@ from .base import Connection
 
 try:
     import requests
+    from requests.auth import HTTPBasicAuth
 
     REQUESTS_AVAILABLE = True
     _REQUESTS_META_VERSION = _client_meta_version(requests.__version__)
@@ -154,8 +155,16 @@ class RequestsHttpConnection(Connection):
             body = self._gzip_compress(body)
             headers["content-encoding"] = "gzip"
 
+        if "http_auth" in headers:
+            username, password = tuple(headers.pop("http_auth").split(":"))
+            auth = HTTPBasicAuth(username, password)
+        else:
+            auth = None
+
         start = time.time()
-        request = requests.Request(method=method, headers=headers, url=url, data=body)
+        request = requests.Request(
+            method=method, headers=headers, url=url, data=body, auth=auth
+        )
         prepared_request = self.session.prepare_request(request)
         settings = self.session.merge_environment_settings(
             prepared_request.url, {}, None, None, None

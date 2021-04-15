@@ -226,6 +226,9 @@ class Urllib3HttpConnection(Connection):
 
         full_url = self.host + url
 
+        if headers and "http_auth" in headers:
+            headers.update(urllib3.make_headers(basic_auth=headers.pop("http_auth")))
+
         start = time.time()
         orig_body = body
         try:

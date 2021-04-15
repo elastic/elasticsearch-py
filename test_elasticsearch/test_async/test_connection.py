@@ -20,6 +20,7 @@ import gzip
 import io
 import ssl
 import warnings
+from base64 import b64encode
 from platform import python_version
 
 import aiohttp
@@ -128,6 +129,19 @@ class TestAIOHttpConnection:
             con.host
             == "https://4fa8821e75634032bed1cf22110e2f97.us-east-1.aws.found.io"
         )
+
+    async def test_http_basic_auth_per_request(self):
+        con = await self._get_mock_connection()
+
+        assert "authorization" not in con.headers
+
+        await con.perform_request("GET", "/", headers={"http_auth": "username:secret"})
+
+        _, kwargs = con.session.request.call_args
+        assert "http_auth" not in kwargs["headers"]
+        assert kwargs["headers"]["authorization"] == "Basic " + b64encode(
+            b"username:secret"
+        ).decode("utf8")
 
     async def test_no_http_compression(self):
         con = await self._get_mock_connection()

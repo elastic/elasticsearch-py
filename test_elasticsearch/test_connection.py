@@ -21,6 +21,7 @@ import io
 import re
 import ssl
 import warnings
+from base64 import b64encode
 from platform import python_version
 
 import pytest
@@ -257,6 +258,21 @@ class TestUrllib3Connection(TestCase):
         )
         self.assertEqual(
             con.host, "https://4fa8821e75634032bed1cf22110e2f97.us-east-1.aws.found.io"
+        )
+
+    def test_http_basic_auth_per_request(self):
+        con = self._get_mock_connection()
+
+        self.assertNotIn("authorization", con.headers)
+        con.perform_request("GET", "/", headers={"http_auth": "username:secret"})
+
+        (_, _, req_body), kwargs = con.pool.urlopen.call_args
+
+        self.assertFalse(req_body)
+        self.assertNotIn("http_auth", kwargs["headers"])
+        self.assertEqual(
+            kwargs["headers"]["authorization"],
+            "Basic " + b64encode(b"username:secret").decode("utf8"),
         )
 
     def test_no_http_compression(self):
@@ -542,6 +558,19 @@ class TestRequestsConnection(TestCase):
         )
         self.assertEqual(
             con.host, "https://4fa8821e75634032bed1cf22110e2f97.us-east-1.aws.found.io"
+        )
+
+    def test_http_basic_auth_per_request(self):
+        con = self._get_mock_connection()
+
+        self.assertEqual(con.session.auth, None)
+        con.perform_request("GET", "/", headers={"http_auth": "username:secret"})
+
+        req = con.session.send.call_args[0][0]
+        self.assertNotIn("http_auth", con.session.headers)
+        self.assertEqual(
+            req.headers["Authorization"],
+            "Basic " + b64encode(b"username:secret").decode("utf8"),
         )
 
     def test_no_http_compression(self):

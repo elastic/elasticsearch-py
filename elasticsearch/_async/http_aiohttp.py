@@ -267,6 +267,11 @@ class AIOHttpConnection(AsyncConnection):
 
         req_headers = self.headers.copy()
         if headers:
+            if "http_auth" in headers:
+                headers.update(
+                    urllib3.make_headers(basic_auth=headers.pop("http_auth"))
+                )
+
             req_headers.update(headers)
 
         if self.http_compress and body:

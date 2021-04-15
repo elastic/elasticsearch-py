@@ -83,6 +83,22 @@ class TestQueryParams(TestCase):
             ],
         )
 
+    def test_http_auth(self):
+        _expected_call = (
+            (),
+            {
+                "params": {},
+                "headers": {"http_auth": "username:secret"},
+            },
+        )
+
+        self.func_to_wrap(http_auth="username:secret")
+        self.func_to_wrap(http_auth=("username", "secret"))
+        self.assertEqual(
+            self.calls,
+            [_expected_call, _expected_call],
+        )
+
     def test_handles_empty_none_and_normalization(self):
         self.func_to_wrap(params=None)
         self.assertEqual(self.calls[-1], ((), {"params": {}, "headers": {}}))
