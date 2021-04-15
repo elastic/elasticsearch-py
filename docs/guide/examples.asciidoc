@@ -26,7 +26,7 @@ es = Elasticsearch()
 
 doc = {
     'author': 'author_name',
-    'text': 'Interensting content...',
+    'text': 'Interesting content...',
     'timestamp': datetime.now(),
 }
 res = es.index(index="test-index", id=1, body=doc)
@@ -89,7 +89,7 @@ es = Elasticsearch()
 
 doc = {
     'author': 'author_name',
-    'text': 'Interensting modified content...',
+    'text': 'Interesting modified content...',
     'timestamp': datetime.now(),
 }
 res = es.update(index="test-index", id=1, body=doc)
