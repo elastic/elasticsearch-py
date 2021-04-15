@@ -34,6 +34,8 @@ class TestQueryParams(TestCase):
 
     def test_handles_params(self):
         self.func_to_wrap(params={"simple_param_2": "2"}, simple_param="3")
+        self.func_to_wrap(request_timeout=60, ignore=[404])
+
         self.assertEqual(
             self.calls,
             [
@@ -41,6 +43,13 @@ class TestQueryParams(TestCase):
                     (),
                     {
                         "params": {"simple_param": b"3", "simple_param_2": "2"},
+                        "headers": {},
+                    },
+                ),
+                (
+                    (),
+                    {
+                        "params": {"request_timeout": 60, "ignore": [404]},
                         "headers": {},
                     },
                 )
