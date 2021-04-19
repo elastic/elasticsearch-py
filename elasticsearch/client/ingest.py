@@ -117,3 +117,14 @@ class IngestClient(NamespacedClient):
         return self.transport.perform_request(
             "GET", "/_ingest/processor/grok", params=params, headers=headers
         )
+
+    @query_params()
+    def geo_ip_stats(self, params=None, headers=None):
+        """
+        Returns statistical information about geoip databases
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/geoip-stats-api.html>`_
+        """
+        return self.transport.perform_request(
+            "GET", "/_ingest/geoip/stats", params=params, headers=headers
+        )

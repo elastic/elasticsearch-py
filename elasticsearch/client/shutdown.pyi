@@ -19,13 +19,11 @@ from typing import Any, Collection, MutableMapping, Optional, Union
 
 from .utils import NamespacedClient
 
-class IngestClient(NamespacedClient):
-    def get_pipeline(
+class ShutdownClient(NamespacedClient):
+    def delete_node(
         self,
+        node_id: Any,
         *,
-        id: Optional[Any] = ...,
-        master_timeout: Optional[Any] = ...,
-        summary: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -37,75 +35,26 @@ class IngestClient(NamespacedClient):
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...
     ) -> Any: ...
-    def put_pipeline(
+    def get_node(
         self,
-        id: Any,
+        *,
+        node_id: Optional[Any] = ...,
+        pretty: Optional[bool] = ...,
+        human: Optional[bool] = ...,
+        error_trace: Optional[bool] = ...,
+        format: Optional[str] = ...,
+        filter_path: Optional[Union[str, Collection[str]]] = ...,
+        request_timeout: Optional[Union[int, float]] = ...,
+        ignore: Optional[Union[int, Collection[int]]] = ...,
+        opaque_id: Optional[str] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...
+    ) -> Any: ...
+    def put_node(
+        self,
+        node_id: Any,
         *,
         body: Any,
-        master_timeout: Optional[Any] = ...,
-        timeout: Optional[Any] = ...,
-        pretty: Optional[bool] = ...,
-        human: Optional[bool] = ...,
-        error_trace: Optional[bool] = ...,
-        format: Optional[str] = ...,
-        filter_path: Optional[Union[str, Collection[str]]] = ...,
-        request_timeout: Optional[Union[int, float]] = ...,
-        ignore: Optional[Union[int, Collection[int]]] = ...,
-        opaque_id: Optional[str] = ...,
-        params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...
-    ) -> Any: ...
-    def delete_pipeline(
-        self,
-        id: Any,
-        *,
-        master_timeout: Optional[Any] = ...,
-        timeout: Optional[Any] = ...,
-        pretty: Optional[bool] = ...,
-        human: Optional[bool] = ...,
-        error_trace: Optional[bool] = ...,
-        format: Optional[str] = ...,
-        filter_path: Optional[Union[str, Collection[str]]] = ...,
-        request_timeout: Optional[Union[int, float]] = ...,
-        ignore: Optional[Union[int, Collection[int]]] = ...,
-        opaque_id: Optional[str] = ...,
-        params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...
-    ) -> Any: ...
-    def simulate(
-        self,
-        *,
-        body: Any,
-        id: Optional[Any] = ...,
-        verbose: Optional[Any] = ...,
-        pretty: Optional[bool] = ...,
-        human: Optional[bool] = ...,
-        error_trace: Optional[bool] = ...,
-        format: Optional[str] = ...,
-        filter_path: Optional[Union[str, Collection[str]]] = ...,
-        request_timeout: Optional[Union[int, float]] = ...,
-        ignore: Optional[Union[int, Collection[int]]] = ...,
-        opaque_id: Optional[str] = ...,
-        params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...
-    ) -> Any: ...
-    def processor_grok(
-        self,
-        *,
-        pretty: Optional[bool] = ...,
-        human: Optional[bool] = ...,
-        error_trace: Optional[bool] = ...,
-        format: Optional[str] = ...,
-        filter_path: Optional[Union[str, Collection[str]]] = ...,
-        request_timeout: Optional[Union[int, float]] = ...,
-        ignore: Optional[Union[int, Collection[int]]] = ...,
-        opaque_id: Optional[str] = ...,
-        params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...
-    ) -> Any: ...
-    def geo_ip_stats(
-        self,
-        *,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
