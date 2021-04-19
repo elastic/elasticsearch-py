@@ -17,9 +17,15 @@
 #  under the License.
 
 
+import contextlib
+import io
 import json
 import os
 import re
+import shutil
+import sys
+import tempfile
+import zipfile
 from functools import lru_cache
 from itertools import chain
 from pathlib import Path
@@ -39,27 +45,6 @@ SUBSTITUTIONS = {"type": "doc_type", "from": "from_"}
 # api path(s)
 BRANCH_NAME = "master"
 CODE_ROOT = Path(__file__).absolute().parent.parent
-BASE_PATH = (
-    CODE_ROOT.parent
-    / "elasticsearch"
-    / "rest-api-spec"
-    / "src"
-    / "main"
-    / "resources"
-    / "rest-api-spec"
-    / "api"
-)
-XPACK_PATH = (
-    CODE_ROOT.parent
-    / "elasticsearch"
-    / "x-pack"
-    / "plugin"
-    / "src"
-    / "test"
-    / "resources"
-    / "rest-api-spec"
-    / "api"
-)
 GLOBAL_QUERY_PARAMS = {
     "pretty": "Optional[bool]",
     "human": "Optional[bool]",
@@ -329,10 +314,37 @@ class API:
         )
 
 
-def read_modules():
+@contextlib.contextmanager
+def download_artifact(version):
+    # Download the list of all artifacts for a version
+    # and find the latest build URL for 'rest-api-spec-X.jar'
+    resp = http.request(
+        "GET", f"https://artifacts-api.elastic.co/v1/versions/{version}"
+    )
+    zip_url = json.loads(resp.data)["version"]["builds"][0]["projects"][
+        "elasticsearch"
+    ]["packages"][f"rest-api-spec-{version}.jar"]["url"]
+
+    # Download the .jar file and unzip only the API
+    # .json files into a temporary directory
+    resp = http.request("GET", zip_url)
+
+    tmp = Path(tempfile.mkdtemp())
+    zip = zipfile.ZipFile(io.BytesIO(resp.data))
+    for name in zip.namelist():
+        if not name.endswith(".json") or name == "schema.json":
+            continue
+        with (tmp / name.replace("rest-api-spec/api/", "")).open("wb") as f:
+            f.write(zip.read(name))
+
+    yield tmp
+    shutil.rmtree(tmp)
+
+
+def read_modules(version):
     modules = {}
 
-    for path in (BASE_PATH, XPACK_PATH):
+    with download_artifact(version) as path:
         for f in sorted(os.listdir(path)):
             name, ext = f.rsplit(".", 1)
 
@@ -397,4 +409,5 @@ def dump_modules(modules):
 
 
 if __name__ == "__main__":
-    dump_modules(read_modules())
+    version = sys.argv[1]
+    dump_modules(read_modules(version))

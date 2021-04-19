@@ -514,8 +514,9 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def preview_datafeed(
         self,
-        datafeed_id: Any,
         *,
+        body: Optional[Any] = ...,
+        datafeed_id: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,

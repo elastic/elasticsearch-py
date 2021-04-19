@@ -42,11 +42,6 @@ class TextStructureClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/find-structure.html>`_
 
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
-
         :arg body: The contents of the file to be analyzed
         :arg charset: Optional parameter to specify the character set of
             the file
