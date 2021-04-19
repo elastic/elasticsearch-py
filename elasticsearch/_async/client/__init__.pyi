@@ -31,6 +31,7 @@ from .dangling_indices import DanglingIndicesClient
 from .enrich import EnrichClient
 from .eql import EqlClient
 from .features import FeaturesClient
+from .fleet import FleetClient
 from .graph import GraphClient
 from .ilm import IlmClient
 from .indices import IndicesClient
@@ -43,6 +44,7 @@ from .nodes import NodesClient
 from .rollup import RollupClient
 from .searchable_snapshots import SearchableSnapshotsClient
 from .security import SecurityClient
+from .shutdown import ShutdownClient
 from .slm import SlmClient
 from .snapshot import SnapshotClient
 from .sql import SqlClient
@@ -76,6 +78,7 @@ class AsyncElasticsearch(object):
     enrich: EnrichClient
     eql: EqlClient
     features: FeaturesClient
+    fleet: FleetClient
     graph: GraphClient
     ilm: IlmClient
     license: LicenseClient
@@ -86,6 +89,7 @@ class AsyncElasticsearch(object):
     searchable_snapshots: SearchableSnapshotsClient
     security: SecurityClient
     slm: SlmClient
+    shutdown: ShutdownClient
     sql: SqlClient
     ssl: SslClient
     text_structure: TextStructureClient

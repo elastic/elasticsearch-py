@@ -192,7 +192,7 @@ class ClusterClient(NamespacedClient):
         """
         Returns cluster settings.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-update-settings.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-get-settings.html>`_
 
         :arg flat_settings: Return settings in flat format (default:
             false)

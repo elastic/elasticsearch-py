@@ -752,24 +752,24 @@ class MlClient(NamespacedClient):
         )
 
     @query_params()
-    async def preview_datafeed(self, datafeed_id, params=None, headers=None):
+    async def preview_datafeed(
+        self, body=None, datafeed_id=None, params=None, headers=None
+    ):
         """
         Previews a datafeed.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-preview-datafeed.html>`_
 
+        :arg body: The datafeed config and job config with which to
+            execute the preview
         :arg datafeed_id: The ID of the datafeed to preview
         """
-        if datafeed_id in SKIP_IN_PATH:
-            raise ValueError(
-                "Empty value passed for a required argument 'datafeed_id'."
-            )
-
         return await self.transport.perform_request(
-            "GET",
+            "POST",
             _make_path("_ml", "datafeeds", datafeed_id, "_preview"),
             params=params,
             headers=headers,
+            body=body,
         )
 
     @query_params()
