@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Collection, MutableMapping, Optional, Union
+from typing import Any, Collection, MutableMapping, Optional, Tuple, Union
 
 from .utils import NamespacedClient
 
@@ -34,8 +34,10 @@ class NodesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
+        http_auth: Optional[Union[str, Tuple[str, str]]] = ...,
+        api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def info(
         self,
@@ -52,8 +54,10 @@ class NodesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
+        http_auth: Optional[Union[str, Tuple[str, str]]] = ...,
+        api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def hot_threads(
         self,
@@ -73,8 +77,10 @@ class NodesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
+        http_auth: Optional[Union[str, Tuple[str, str]]] = ...,
+        api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def usage(
         self,
@@ -90,8 +96,10 @@ class NodesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
+        http_auth: Optional[Union[str, Tuple[str, str]]] = ...,
+        api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def stats(
         self,
@@ -116,6 +124,8 @@ class NodesClient(NamespacedClient):
         request_timeout: Optional[Union[int, float]] = ...,
         ignore: Optional[Union[int, Collection[int]]] = ...,
         opaque_id: Optional[str] = ...,
+        http_auth: Optional[Union[str, Tuple[str, str]]] = ...,
+        api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
-        headers: Optional[MutableMapping[str, str]] = ...
+        headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...

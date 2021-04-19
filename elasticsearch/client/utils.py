@@ -17,11 +17,12 @@
 
 from __future__ import unicode_literals
 
+import base64
 import weakref
 from datetime import date, datetime
 from functools import wraps
 
-from ..compat import PY2, quote, string_types, unquote, urlparse
+from ..compat import PY2, quote, string_types, to_bytes, to_str, unquote, urlparse
 
 # parts of URL to be omitted
 SKIP_IN_PATH = (None, "", b"", [], ())
@@ -140,6 +141,20 @@ def query_params(*es_query_params):
             if "opaque_id" in kwargs:
                 headers["x-opaque-id"] = kwargs.pop("opaque_id")
 
+            http_auth = kwargs.pop("http_auth", None)
+            api_key = kwargs.pop("api_key", None)
+
+            if http_auth is not None and api_key is not None:
+                raise ValueError(
+                    "Only one of 'http_auth' and 'api_key' may be passed at a time"
+                )
+            elif http_auth is not None:
+                headers["authorization"] = "Basic %s" % (
+                    _base64_auth_header(http_auth),
+                )
+            elif api_key is not None:
+                headers["authorization"] = "ApiKey %s" % (_base64_auth_header(api_key),)
+
             for p in es_query_params + GLOBAL_PARAMS:
                 if p in kwargs:
                     v = kwargs.pop(p)
@@ -170,6 +185,16 @@ def _bulk_body(serializer, body):
         body += "\n"
 
     return body
+
+
+def _base64_auth_header(auth_value):
+    """Takes either a 2-tuple or a base64-encoded string
+    and returns a base64-encoded string to be used
+    as an HTTP authorization header.
+    """
+    if isinstance(auth_value, (list, tuple)):
+        auth_value = base64.b64encode(to_bytes(":".join(auth_value)))
+    return to_str(auth_value)
 
 
 class NamespacedClient(object):
