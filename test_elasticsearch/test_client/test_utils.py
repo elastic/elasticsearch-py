@@ -75,6 +75,49 @@ class TestQueryParams(TestCase):
         self.func_to_wrap(headers={"X": "y"})
         self.assertEqual(self.calls[-1], ((), {"params": {}, "headers": {"x": "y"}}))
 
+    def test_per_call_authentication(self):
+        self.func_to_wrap(api_key=("name", "key"))
+        self.assertEqual(
+            self.calls[-1],
+            ((), {"headers": {"authorization": "ApiKey bmFtZTprZXk="}, "params": {}}),
+        )
+
+        self.func_to_wrap(http_auth=("user", "password"))
+        self.assertEqual(
+            self.calls[-1],
+            (
+                (),
+                {
+                    "headers": {"authorization": "Basic dXNlcjpwYXNzd29yZA=="},
+                    "params": {},
+                },
+            ),
+        )
+
+        self.func_to_wrap(http_auth="abcdef")
+        self.assertEqual(
+            self.calls[-1],
+            ((), {"headers": {"authorization": "Basic abcdef"}, "params": {}}),
+        )
+
+        # If one or the other is 'None' it's all good!
+        self.func_to_wrap(http_auth=None, api_key=None)
+        self.assertEqual(self.calls[-1], ((), {"headers": {}, "params": {}}))
+
+        self.func_to_wrap(http_auth="abcdef", api_key=None)
+        self.assertEqual(
+            self.calls[-1],
+            ((), {"headers": {"authorization": "Basic abcdef"}, "params": {}}),
+        )
+
+        # If both are given values an error is raised.
+        with self.assertRaises(ValueError) as e:
+            self.func_to_wrap(http_auth="key", api_key=("1", "2"))
+        self.assertEqual(
+            str(e.exception),
+            "Only one of 'http_auth' and 'api_key' may be passed at a time",
+        )
+
 
 class TestMakePath(TestCase):
     def test_handles_unicode(self):
