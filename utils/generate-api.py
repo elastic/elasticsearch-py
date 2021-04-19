@@ -54,6 +54,8 @@ GLOBAL_QUERY_PARAMS = {
     "request_timeout": "Optional[Union[int, float]]",
     "ignore": "Optional[Union[int, Collection[int]]]",
     "opaque_id": "Optional[str]",
+    "http_auth": "Optional[Union[str, Tuple[str, str]]]",
+    "api_key": "Optional[Union[str, Tuple[str, str]]]",
 }
 
 jinja_env = Environment(
