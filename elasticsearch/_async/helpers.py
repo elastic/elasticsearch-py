@@ -62,7 +62,7 @@ async def _process_bulk_chunk(
     """
     Send a bulk request to elasticsearch and process the output.
     """
-    if type(ignore_status) not in (list, tuple):
+    if not isinstance(ignore_status, (list, tuple)):
         ignore_status = (ignore_status,)
 
     try:
