@@ -232,7 +232,7 @@ def _process_bulk_chunk(
     """
     kwargs = _add_helper_meta_to_kwargs(kwargs, "bp")
 
-    if type(ignore_status) not in (list, tuple):
+    if not isinstance(ignore_status, (list, tuple)):
         ignore_status = (ignore_status,)
 
     try:
