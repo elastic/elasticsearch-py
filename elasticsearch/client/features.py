@@ -22,9 +22,10 @@ class FeaturesClient(NamespacedClient):
     @query_params("master_timeout")
     def get_features(self, params=None, headers=None):
         """
-        Returns a list of features which can be snapshotted in this cluster.
+        Gets a list of features which can be included in snapshots using the
+        feature_states field when creating a snapshot
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.12/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.12/get-features-api.html>`_
 
         :arg master_timeout: Explicit operation timeout for connection
             to master node
