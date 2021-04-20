@@ -55,12 +55,16 @@ async def _process_bulk_chunk(
     bulk_data,
     raise_on_exception=True,
     raise_on_error=True,
+    ignore_status=(),
     *args,
     **kwargs
 ):
     """
     Send a bulk request to elasticsearch and process the output.
     """
+    if not isinstance(ignore_status, (list, tuple)):
+        ignore_status = (ignore_status,)
+
     try:
         # send the actual request
         resp = await client.bulk("\n".join(bulk_actions) + "\n", *args, **kwargs)
@@ -68,12 +72,16 @@ async def _process_bulk_chunk(
         gen = _process_bulk_chunk_error(
             error=e,
             bulk_data=bulk_data,
+            ignore_status=ignore_status,
             raise_on_exception=raise_on_exception,
             raise_on_error=raise_on_error,
         )
     else:
         gen = _process_bulk_chunk_success(
-            resp=resp, bulk_data=bulk_data, raise_on_error=raise_on_error
+            resp=resp,
+            bulk_data=bulk_data,
+            ignore_status=ignore_status,
+            raise_on_error=raise_on_error,
         )
     for item in gen:
         yield item
@@ -117,6 +125,7 @@ async def async_streaming_bulk(
     initial_backoff=2,
     max_backoff=600,
     yield_ok=True,
+    ignore_status=(),
     *args,
     **kwargs
 ):
@@ -152,6 +161,7 @@ async def async_streaming_bulk(
         2**retry_number``
     :arg max_backoff: maximum number of seconds a retry will wait
     :arg yield_ok: if set to False will skip successful documents in the output
+    :arg ignore_status: list of HTTP status code that you want to ignore
     """
 
     async def map_actions():
@@ -178,6 +188,7 @@ async def async_streaming_bulk(
                         bulk_data,
                         raise_on_exception,
                         raise_on_error,
+                        ignore_status,
                         *args,
                         **kwargs
                     ),
@@ -214,7 +225,9 @@ async def async_streaming_bulk(
                 bulk_actions, bulk_data = to_retry, to_retry_data
 
 
-async def async_bulk(client, actions, stats_only=False, *args, **kwargs):
+async def async_bulk(
+    client, actions, stats_only=False, ignore_status=(), *args, **kwargs
+):
     """
     Helper for the :meth:`~elasticsearch.AsyncElasticsearch.bulk` api that provides
     a more human friendly interface - it consumes an iterator of actions and
@@ -236,6 +249,7 @@ async def async_bulk(client, actions, stats_only=False, *args, **kwargs):
     :arg actions: iterator containing the actions
     :arg stats_only: if `True` only report number of successful/failed
         operations instead of just number of successful and a list of error responses
+    :arg ignore_status: list of HTTP status code that you want to ignore
 
     Any additional keyword arguments will be passed to
     :func:`~elasticsearch.helpers.async_streaming_bulk` which is used to execute

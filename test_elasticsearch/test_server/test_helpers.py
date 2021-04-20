@@ -295,6 +295,39 @@ class TestBulk(ElasticsearchTestCase):
             index="i",
         )
 
+    def test_ignore_error_if_raised(self):
+        # ignore the status code 400 in tuple
+        helpers.bulk(
+            self.client, [{"a": 42}, {"a": "c"}], index="i", ignore_status=(400,)
+        )
+
+        # ignore the status code 400 in list
+        helpers.bulk(
+            self.client,
+            [{"a": 42}, {"a": "c"}],
+            index="i",
+            ignore_status=[
+                400,
+            ],
+        )
+
+        # ignore the status code 400
+        helpers.bulk(self.client, [{"a": 42}, {"a": "c"}], index="i", ignore_status=400)
+
+        # ignore only the status code in the `ignore_status` argument
+        self.assertRaises(
+            helpers.BulkIndexError,
+            helpers.bulk,
+            self.client,
+            [{"a": 42}, {"a": "c"}],
+            index="i",
+            ignore_status=(444,),
+        )
+
+        # ignore transport error exception
+        failing_client = FailingBulkClient(self.client)
+        helpers.bulk(failing_client, [{"a": 42}], index="i", ignore_status=(599,))
+
     def test_errors_are_collected_properly(self):
         self.client.indices.create(
             "i",

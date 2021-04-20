@@ -332,6 +332,39 @@ class TestBulk(object):
         with pytest.raises(helpers.BulkIndexError):
             await helpers.async_bulk(async_client, [{"a": 42}, {"a": "c"}], index="i")
 
+    async def test_ignore_error_if_raised(self, async_client):
+        # ignore the status code 400 in tuple
+        await helpers.async_bulk(
+            async_client, [{"a": 42}, {"a": "c"}], index="i", ignore_status=(400,)
+        )
+
+        # ignore the status code 400 in list
+        await helpers.async_bulk(
+            async_client,
+            [{"a": 42}, {"a": "c"}],
+            index="i",
+            ignore_status=[
+                400,
+            ],
+        )
+
+        # ignore the status code 400
+        await helpers.async_bulk(
+            async_client, [{"a": 42}, {"a": "c"}], index="i", ignore_status=400
+        )
+
+        # ignore only the status code in the `ignore_status` argument
+        with pytest.raises(helpers.BulkIndexError):
+            await helpers.async_bulk(
+                async_client, [{"a": 42}, {"a": "c"}], index="i", ignore_status=(444,)
+            )
+
+        # ignore transport error exception
+        failing_client = FailingBulkClient(async_client)
+        await helpers.async_bulk(
+            failing_client, [{"a": 42}], index="i", ignore_status=(599,)
+        )
+
     async def test_errors_are_collected_properly(self, async_client):
         await async_client.indices.create(
             "i",
