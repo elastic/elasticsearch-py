@@ -2,7 +2,6 @@ STACK_VERSION:
   - 8.0.0-SNAPSHOT
 
 TEST_SUITE:
-  - free
   - platinum
 
 PYTHON_VERSION:

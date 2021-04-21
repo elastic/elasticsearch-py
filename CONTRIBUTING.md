@@ -23,9 +23,6 @@ There are several environment variables that control integration tests:
   the same as tags of `docker.elastic.co/elasticsearch/elasticsearch`
   such as `8.0.0-SNAPSHOT`, `7.x-SNAPSHOT`, etc. Defaults to the
   same `*-SNAPSHOT` version as the branch.
-- `TEST_SUITE`: Determines how to configure Elasticsearch either by running
-  without any non-free features or by beginning a Platinum license. Possible options
-  are `free` and `platinum`. Defaults to `free` as there are fewer test cases.
 
 **NOTE: You don't need to run the live integration tests for all changes. If
 you don't have Elasticsearch running locally the integration tests will be skipped.**
