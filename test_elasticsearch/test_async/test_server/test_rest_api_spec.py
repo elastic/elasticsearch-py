@@ -33,7 +33,6 @@ from ...test_server.test_rest_api_spec import (
     PARAMS_RENAMES,
     RUN_ASYNC_REST_API_TESTS,
     YAML_TEST_SPECS,
-    InvalidActionType,
     YamlRunner,
 )
 
@@ -85,7 +84,7 @@ class AsyncYamlRunner(YamlRunner):
             if hasattr(self, "run_" + action_type):
                 await await_if_coro(getattr(self, "run_" + action_type)(action))
             else:
-                raise InvalidActionType(action_type)
+                raise RuntimeError("Invalid action type %r" % (action_type,))
 
     async def run_do(self, action):
         api = self.client

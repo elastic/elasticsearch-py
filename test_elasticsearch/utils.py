@@ -104,7 +104,7 @@ def wipe_data_streams(client):
 
 def wipe_indices(client):
     client.indices.delete(
-        index="*",
+        index="*,-.ds-ilm-history-*",
         expand_wildcards="all",
         ignore=404,
     )
