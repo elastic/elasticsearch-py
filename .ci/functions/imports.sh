@@ -18,7 +18,7 @@ require_stack_version
 if [[ -z $es_node_name ]]; then
   # only set these once
   set -euo pipefail
-  export TEST_SUITE=${TEST_SUITE-free}
+  export TEST_SUITE=${TEST_SUITE-platinum}
   export RUNSCRIPTS=${RUNSCRIPTS-}
   export DETACH=${DETACH-false}
   export CLEANUP=${CLEANUP-false}
