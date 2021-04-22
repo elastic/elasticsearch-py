@@ -25,11 +25,19 @@ from elasticsearch.helpers.test import ELASTICSEARCH_URL
 
 from ..utils import wipe_cluster
 
+# Information about the Elasticsearch instance running, if any
+# Used for
+ELASTICSEARCH_VERSION = ""
+ELASTICSEARCH_BUILD_HASH = ""
+ELASTICSEARCH_REST_API_TESTS = []
 
-@pytest.fixture(scope="function")
-def sync_client():
+
+@pytest.fixture(scope="session")
+def sync_client_factory():
     client = None
     try:
+        # Configure the client with certificates and optionally
+        # an HTTP conn class depending on 'PYTHON_CONNECTION_CLASS' envvar
         kw = {"timeout": 3, "ca_certs": ".ci/certs/ca.pem"}
         if "PYTHON_CONNECTION_CLASS" in os.environ:
             from elasticsearch import connection
@@ -40,7 +48,7 @@ def sync_client():
 
         client = elasticsearch.Elasticsearch(ELASTICSEARCH_URL, **kw)
 
-        # wait for yellow status
+        # Wait for the cluster to report a status of 'yellow'
         for _ in range(100):
             try:
                 client.cluster.health(wait_for_status="yellow")
@@ -48,12 +56,18 @@ def sync_client():
             except ConnectionError:
                 time.sleep(0.1)
         else:
-            # timeout
-            pytest.skip("Elasticsearch failed to start.")
+            pytest.skip("Elasticsearch wasn't running at %r" % (ELASTICSEARCH_URL,))
 
+        wipe_cluster(client)
         yield client
-
     finally:
         if client:
-            wipe_cluster(client)
             client.close()
+
+
+@pytest.fixture(scope="function")
+def sync_client(sync_client_factory):
+    try:
+        yield sync_client_factory
+    finally:
+        wipe_cluster(sync_client_factory)
