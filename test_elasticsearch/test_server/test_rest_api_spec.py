@@ -86,6 +86,9 @@ SKIP_TESTS = {
     "service_accounts/10_basic[0]",
     "service_accounts/10_basic[1]",
     "snapshot/20_operator_privileges_disabled[0]",
+    "vectors/35_sparse_vector_l1l2[0]",
+    "vectors/30_sparse_vector_basic[0]",
+    "vectors/40_sparse_vector_special_cases[0]",
 }
 
 
