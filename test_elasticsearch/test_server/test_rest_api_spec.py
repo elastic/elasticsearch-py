@@ -20,19 +20,23 @@ Dynamically generated set of TestCases based on set of yaml files describing
 some integration tests. These files are shared among all official Elasticsearch
 clients.
 """
+import io
+import json
 import os
 import re
 import sys
 import warnings
-from os import environ, walk
-from os.path import dirname, exists, join, pardir, relpath
+import zipfile
 
 import pytest
+import urllib3
 import yaml
 
 from elasticsearch import ElasticsearchWarning, RequestError, TransportError
 from elasticsearch.compat import string_types
 from elasticsearch.helpers.test import _get_version
+
+from . import get_client
 
 # some params had to be changed in python, keep track of them so we can rename
 # those in the tests accordingly
@@ -56,10 +60,32 @@ IMPLEMENTED_FEATURES = {
 
 # broken YAML tests on some releases
 SKIP_TESTS = {
-    "indices/get_alias/10_basic[23]",
-    "indices/simulate_index_template/10_basic[2]",
-    "search/aggregation/250_moving_fn[1]",
-    "search/highlight/20_fvh[3]",
+    "ml/post_data[1]",
+    "ml/post_data[2]",
+    "ml/post_data[3]",
+    "ml/post_data[4]",
+    "ml/post_data[5]",
+    "ml/post_data[6]",
+    "ml/get_trained_model_stats[1]",
+    "ml/get_trained_model_stats[2]",
+    "ml/get_trained_model_stats[3]",
+    "ml/set_upgrade_mode[1]",
+    "ml/set_upgrade_mode[2]",
+    "ml/set_upgrade_mode[3]",
+    "ml/jobs_get_stats[0]",
+    "ml/jobs_get_stats[1]",
+    "ml/jobs_get_stats[2]",
+    "ml/jobs_get_stats[3]",
+    "ml/jobs_get_stats[4]",
+    "ml/jobs_get_stats[5]",
+    "ml/jobs_get_stats[6]",
+    "ml/jobs_get_stats[7]",
+    "ml/jobs_get_stats[8]",
+    "ml/jobs_get_stats[9]",
+    "ml/jobs_get_stats[10]",
+    "service_accounts/10_basic[0]",
+    "service_accounts/10_basic[1]",
+    "snapshot/20_operator_privileges_disabled[0]",
 }
 
 
@@ -121,7 +147,7 @@ class YamlRunner:
             if hasattr(self, "run_" + action_type):
                 getattr(self, "run_" + action_type)(action)
             else:
-                raise InvalidActionType(action_type)
+                raise RuntimeError("Invalid action type %r" % (action_type,))
 
     def run_do(self, action):
         api = self.client
@@ -130,6 +156,16 @@ class YamlRunner:
         warn = action.pop("warnings", ())
         allowed_warnings = action.pop("allowed_warnings", ())
         assert len(action) == 1
+
+        # Remove the x_pack_rest_user authentication
+        # if it's given via headers. We're already authenticated
+        # via the 'elastic' user.
+        if (
+            headers
+            and headers.get("Authorization", None)
+            == "Basic eF9wYWNrX3Jlc3RfdXNlcjp4LXBhY2stdGVzdC1wYXNzd29yZA=="
+        ):
+            headers.pop("Authorization")
 
         method, args = list(action.items())[0]
         args["headers"] = headers
@@ -336,70 +372,102 @@ class YamlRunner:
         return name in XPACK_FEATURES
 
 
-class InvalidActionType(Exception):
-    pass
-
-
-YAML_DIR = environ.get(
-    "TEST_ES_YAML_DIR",
-    join(
-        dirname(__file__),
-        pardir,
-        pardir,
-        pardir,
-        "elasticsearch",
-        "rest-api-spec",
-        "src",
-        "main",
-        "resources",
-        "rest-api-spec",
-        "test",
-    ),
-)
+@pytest.fixture(scope="function")
+def sync_runner(sync_client):
+    return YamlRunner(sync_client)
 
 
 YAML_TEST_SPECS = []
 
-if exists(YAML_DIR):
-    # find all the test definitions in yaml files ...
-    for path, _, files in walk(YAML_DIR):
-        for filename in files:
-            if not filename.endswith((".yaml", ".yml")):
-                continue
+# Try loading the REST API test specs from the Elastic Artifacts API
+try:
+    # Construct the HTTP and Elasticsearch client
+    http = urllib3.PoolManager(retries=10)
+    client = get_client()
 
-            filepath = join(path, filename)
-            with open(filepath) as f:
-                tests = list(yaml.load_all(f, Loader=yaml.SafeLoader))
+    # Make a request to Elasticsearch for the build hash, we'll be looking for
+    # an artifact with this same hash to download test specs for.
+    build_hash = client.info()["version"]["build_hash"]
 
-            setup_code = None
-            teardown_code = None
-            run_codes = []
-            for i, test in enumerate(tests):
-                for test_name, definition in test.items():
-                    if test_name == "setup":
-                        setup_code = definition
-                    elif test_name == "teardown":
-                        teardown_code = definition
-                    else:
-                        run_codes.append((i, definition))
+    # Now talk to the artifacts API with the 'STACK_VERSION' environment variable
+    resp = http.request(
+        "GET",
+        "https://artifacts-api.elastic.co/v1/versions/%s"
+        % (os.environ["STACK_VERSION"],),
+    )
+    resp = json.loads(resp.data.decode("utf-8"))
 
-            for i, run_code in run_codes:
-                src = {"setup": setup_code, "run": run_code, "teardown": teardown_code}
-                # Pytest already replaces '.' and '_' with '/' so we do
-                # it ourselves so UI and 'SKIP_TESTS' match.
-                pytest_param_id = (
-                    "%s[%d]" % (relpath(filepath, YAML_DIR).rpartition(".")[0], i)
-                ).replace(".", "/")
+    # Look through every build and see if one matches the commit hash
+    # we're looking for. If not it's okay, we'll just use the latest and
+    # hope for the best!
+    builds = resp["version"]["builds"]
+    for build in builds:
+        if build["projects"]["elasticsearch"]["commit_hash"] == build_hash:
+            break
+    else:
+        build = builds[0]  # Use the latest
 
-                if pytest_param_id in SKIP_TESTS:
-                    src["skip"] = True
+    # Now we're looking for the 'rest-api-spec-<VERSION>-sources.jar' file
+    # to download and extract in-memory.
+    packages = build["projects"]["elasticsearch"]["packages"]
+    for package in packages:
+        if re.match(r"rest-resources-zip-.*\.zip", package):
+            package_url = packages[package]["url"]
+            break
+    else:
+        raise RuntimeError(
+            "Could not find the package 'rest-resources-zip-*.zip' in build %r" % build
+        )
 
-                YAML_TEST_SPECS.append(pytest.param(src, id=pytest_param_id))
+    # Download the zip and start reading YAML from the files in memory
+    package_zip = zipfile.ZipFile(io.BytesIO(http.request("GET", package_url).data))
+    for yaml_file in package_zip.namelist():
+        if not re.match(r"^rest-api-spec/test/.*\.ya?ml$", yaml_file):
+            continue
+        yaml_tests = list(yaml.safe_load_all(package_zip.read(yaml_file)))
 
+        # Each file may have a "test" named 'setup' or 'teardown',
+        # these sets of steps should be run at the beginning and end
+        # of every other test within the file so we do one pass to capture those.
+        setup_steps = teardown_steps = None
+        test_numbers_and_steps = []
+        test_number = 0
 
-@pytest.fixture(scope="function")
-def sync_runner(sync_client):
-    return YamlRunner(sync_client)
+        for yaml_test in yaml_tests:
+            test_name, test_step = yaml_test.popitem()
+            if test_name == "setup":
+                setup_steps = test_step
+            elif test_name == "teardown":
+                teardown_steps = test_step
+            else:
+                test_numbers_and_steps.append((test_number, yaml_test))
+                test_number += 1
+
+        # Now we combine setup, teardown, and test_steps into
+        # a set of pytest.param() instances
+        for test_number, test_step in test_numbers_and_steps:
+            # Build the id from the name of the YAML file and
+            # the number within that file. Most important step
+            # is to remove most of the file path prefixes and
+            # the .yml suffix.
+            pytest_test_name = yaml_file.rpartition(".")[0].replace(".", "/")
+            for prefix in ("rest-api-spec/", "test/", "free/", "platinum/"):
+                if pytest_test_name.startswith(prefix):
+                    pytest_test_name = pytest_test_name[len(prefix) :]
+            pytest_param_id = "%s[%d]" % (pytest_test_name, test_number)
+
+            pytest_param = {
+                "setup": setup_steps,
+                "run": test_step,
+                "teardown": teardown_steps,
+            }
+            if pytest_param_id in SKIP_TESTS:
+                pytest_param["skip"] = True
+
+            YAML_TEST_SPECS.append(pytest.param(pytest_param, id=pytest_param_id))
+
+except Exception as e:
+    warnings.warn("Could not load REST API tests: %s" % (str(e),))
 
 
 if not RUN_ASYNC_REST_API_TESTS:

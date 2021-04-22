@@ -263,7 +263,9 @@ async def async_bulk(
 
     # make streaming_bulk yield successful results so we can count them
     kwargs["yield_ok"] = True
-    async for ok, item in async_streaming_bulk(client, actions, *args, **kwargs):
+    async for ok, item in async_streaming_bulk(
+        client, actions, ignore_status=ignore_status, *args, **kwargs
+    ):
         # go through request-response pairs and detect failures
         if not ok:
             if not stats_only:
