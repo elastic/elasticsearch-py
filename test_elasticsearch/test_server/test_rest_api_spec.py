@@ -139,7 +139,8 @@ class YamlRunner:
         # if it's given via headers. We're already authenticated
         # via the 'elastic' user.
         if (
-            headers.get("Authorization", None)
+            headers
+            and headers.get("Authorization", None)
             == "Basic eF9wYWNrX3Jlc3RfdXNlcjp4LXBhY2stdGVzdC1wYXNzd29yZA=="
         ):
             headers.pop("Authorization")
