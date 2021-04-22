@@ -325,7 +325,7 @@ class API:
 @contextlib.contextmanager
 def download_artifact(version):
     # Download the list of all artifacts for a version
-    # and find the latest build URL for 'rest-api-spec-X.jar'
+    # and find the latest build URL for 'rest-resources-zip-*.zip'
     resp = http.request(
         "GET", f"https://artifacts-api.elastic.co/v1/versions/{version}"
     )
@@ -333,11 +333,13 @@ def download_artifact(version):
         "elasticsearch"
     ]["packages"]
     for package in packages:
-        if re.match(r"^rest-api-spec-.*-sources\.jar$", package):
+        if re.match(r"^rest-resources-zip-.*\.zip$", package):
             zip_url = packages[package]["url"]
             break
     else:
-        raise ValueError("Could not find 'rest-api-spec'")
+        raise RuntimeError(
+            "Could not find the package 'rest-resources-zip-*.zip' in build"
+        )
 
     # Download the .jar file and unzip only the API
     # .json files into a temporary directory

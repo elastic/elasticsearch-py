@@ -15,7 +15,6 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import os
 import time
 
 from elasticsearch import Elasticsearch, NotFoundError, RequestError
@@ -35,7 +34,7 @@ def wipe_cluster(client):
     except ImportError:
         pass
 
-    is_xpack = os.getenv("TEST_SUITE") == "platinum"
+    is_xpack = True
     if is_xpack:
         wipe_rollup_jobs(client)
         wait_for_pending_tasks(client, filter="xpack/rollup/job")
@@ -105,7 +104,7 @@ def wipe_data_streams(client):
 
 def wipe_indices(client):
     client.indices.delete(
-        index="*",
+        index="*,-.ds-ilm-history-*",
         expand_wildcards="all",
         ignore=404,
     )
@@ -133,11 +132,9 @@ def wipe_xpack_templates(client):
     for _ in range(3):
         for template in list(templates_to_delete):
             try:
-
                 client.cluster.delete_component_template(
                     name=template["name"],
                 )
-
             except RequestError:
                 pass
             else:
@@ -211,6 +208,7 @@ def is_xpack_template(name):
         "security_audit_log",
         ".slm-history",
         ".async-search",
+        ".geoip_databases",
         "saml-service-provider",
         "ilm-history",
         "logs",
