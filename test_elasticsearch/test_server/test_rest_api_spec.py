@@ -60,10 +60,32 @@ IMPLEMENTED_FEATURES = {
 
 # broken YAML tests on some releases
 SKIP_TESTS = {
-    # "indices/get_alias/10_basic[23]",
-    # "indices/simulate_index_template/10_basic[2]",
-    # "search/aggregation/250_moving_fn[1]",
-    # "search/highlight/20_fvh[3]",
+    "ml/post_data[1]",
+    "ml/post_data[2]",
+    "ml/post_data[3]",
+    "ml/post_data[4]",
+    "ml/post_data[5]",
+    "ml/post_data[6]",
+    "ml/get_trained_model_stats[1]",
+    "ml/get_trained_model_stats[2]",
+    "ml/get_trained_model_stats[3]",
+    "ml/set_upgrade_mode[1]",
+    "ml/set_upgrade_mode[2]",
+    "ml/set_upgrade_mode[3]",
+    "ml/jobs_get_stats[0]",
+    "ml/jobs_get_stats[1]",
+    "ml/jobs_get_stats[2]",
+    "ml/jobs_get_stats[3]",
+    "ml/jobs_get_stats[4]",
+    "ml/jobs_get_stats[5]",
+    "ml/jobs_get_stats[6]",
+    "ml/jobs_get_stats[7]",
+    "ml/jobs_get_stats[8]",
+    "ml/jobs_get_stats[9]",
+    "ml/jobs_get_stats[10]",
+    "service_accounts/10_basic[0]",
+    "service_accounts/10_basic[1]",
+    "snapshot/20_operator_privileges_disabled[0]",
 }
 
 
