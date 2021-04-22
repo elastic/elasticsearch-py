@@ -33,7 +33,6 @@ from ...test_server.test_rest_api_spec import (
     PARAMS_RENAMES,
     RUN_ASYNC_REST_API_TESTS,
     YAML_TEST_SPECS,
-    InvalidActionType,
     YamlRunner,
 )
 
@@ -85,7 +84,7 @@ class AsyncYamlRunner(YamlRunner):
             if hasattr(self, "run_" + action_type):
                 await await_if_coro(getattr(self, "run_" + action_type)(action))
             else:
-                raise InvalidActionType(action_type)
+                raise RuntimeError("Invalid action type %r" % (action_type,))
 
     async def run_do(self, action):
         api = self.client
@@ -94,6 +93,16 @@ class AsyncYamlRunner(YamlRunner):
         warn = action.pop("warnings", ())
         allowed_warnings = action.pop("allowed_warnings", ())
         assert len(action) == 1
+
+        # Remove the x_pack_rest_user authentication
+        # if it's given via headers. We're already authenticated
+        # via the 'elastic' user.
+        if (
+            headers
+            and headers.get("Authorization", None)
+            == "Basic eF9wYWNrX3Jlc3RfdXNlcjp4LXBhY2stdGVzdC1wYXNzd29yZA=="
+        ):
+            headers.pop("Authorization")
 
         method, args = list(action.items())[0]
         args["headers"] = headers

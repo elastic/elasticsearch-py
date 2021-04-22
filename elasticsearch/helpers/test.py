@@ -26,10 +26,8 @@ from elasticsearch.exceptions import ConnectionError
 
 if "ELASTICSEARCH_URL" in os.environ:
     ELASTICSEARCH_URL = os.environ["ELASTICSEARCH_URL"]
-elif os.environ.get("TEST_SUITE") == "platinum":
-    ELASTICSEARCH_URL = "https://elastic:changeme@localhost:9200"
 else:
-    ELASTICSEARCH_URL = "http://localhost:9200"
+    ELASTICSEARCH_URL = "https://elastic:changeme@localhost:9200"
 
 
 def get_test_client(nowait=False, **kwargs):
