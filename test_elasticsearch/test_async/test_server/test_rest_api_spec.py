@@ -144,6 +144,18 @@ class AsyncYamlRunner(YamlRunner):
             and str(w.message) not in allowed_warnings
         ]
 
+        # This warning can show up in many places but isn't accounted for
+        # in tests, so we remove it to make sure things pass.
+        include_type_name_warning = (
+            "[types removal] Using include_type_name in create index requests is deprecated. "
+            "The parameter will be removed in the next major version."
+        )
+        if (
+            include_type_name_warning in caught_warnings
+            and include_type_name_warning not in warn
+        ):
+            caught_warnings.remove(include_type_name_warning)
+
         # Sorting removes the issue with order raised. We only care about
         # if all warnings are raised in the single API call.
         if warn and sorted(warn) != sorted(caught_warnings):
