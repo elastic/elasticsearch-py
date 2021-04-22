@@ -94,6 +94,15 @@ class AsyncYamlRunner(YamlRunner):
         allowed_warnings = action.pop("allowed_warnings", ())
         assert len(action) == 1
 
+        # Remove the x_pack_rest_user authentication
+        # if it's given via headers. We're already authenticated
+        # via the 'elastic' user.
+        if (
+            headers.get("Authorization", None)
+            == "Basic eF9wYWNrX3Jlc3RfdXNlcjp4LXBhY2stdGVzdC1wYXNzd29yZA=="
+        ):
+            headers.pop("Authorization")
+
         method, args = list(action.items())[0]
         args["headers"] = headers
 

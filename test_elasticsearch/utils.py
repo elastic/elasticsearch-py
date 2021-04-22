@@ -132,11 +132,9 @@ def wipe_xpack_templates(client):
     for _ in range(3):
         for template in list(templates_to_delete):
             try:
-
                 client.cluster.delete_component_template(
                     name=template["name"],
                 )
-
             except RequestError:
                 pass
             else:

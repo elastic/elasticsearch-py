@@ -47,14 +47,6 @@ def sync_client_factory():
             )
 
         client = elasticsearch.Elasticsearch(ELASTICSEARCH_URL, **kw)
-        client.security.put_user(
-            username="x_pack_rest_user",
-            body={
-                "password": "x-pack-test-password",
-                "roles": ["superuser"]
-            },
-            ignore=[400, 409]
-        )
 
         # Wait for the cluster to report a status of 'yellow'
         for _ in range(100):
