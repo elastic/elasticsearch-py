@@ -6,7 +6,7 @@
 
 # Default environment variables
 export STACK_VERSION="${STACK_VERSION:=8.0.0-SNAPSHOT}"
-export TEST_SUITE="${TEST_SUITE:=free}"
+export TEST_SUITE="${TEST_SUITE:=platinum}"
 export PYTHON_VERSION="${PYTHON_VERSION:=3.9}"
 export PYTHON_CONNECTION_CLASS="${PYTHON_CONNECTION_CLASS:=Urllib3HttpConnection}"
 
