@@ -19,6 +19,7 @@ import binascii
 import gzip
 import io
 import logging
+import os
 import re
 import warnings
 from platform import python_version
@@ -28,7 +29,7 @@ try:
 except ImportError:
     import json
 
-from .. import __versionstr__
+from .. import __version__, __versionstr__
 from ..exceptions import (
     HTTP_EXCEPTIONS,
     ElasticsearchWarning,
@@ -120,6 +121,13 @@ class Connection(object):
             self.headers[key.lower()] = headers[key]
         if opaque_id:
             self.headers["x-opaque-id"] = opaque_id
+
+        if os.getenv("ELASTIC_CLIENT_APIVERSIONING") == "1":
+            self.headers.setdefault(
+                "accept",
+                "application/vnd.elasticsearch+json;compatible-with=%s"
+                % (str(__version__[0]),),
+            )
 
         self.headers.setdefault("content-type", "application/json")
         self.headers.setdefault("user-agent", self._get_default_user_agent())
@@ -248,7 +256,7 @@ class Connection(object):
     def log_request_success(
         self, method, full_url, path, body, status_code, response, duration
     ):
-        """ Log a successful API call.  """
+        """Log a successful API call."""
         #  TODO: optionally pass in params instead of full_url and do urlencode only when needed
 
         # body has already been serialized to utf-8, deserialize it for logging
@@ -278,7 +286,7 @@ class Connection(object):
         response=None,
         exception=None,
     ):
-        """ Log an unsuccessful API call.  """
+        """Log an unsuccessful API call."""
         # do not log 404s on HEAD requests
         if method == "HEAD" and status_code == 404:
             return
@@ -307,7 +315,7 @@ class Connection(object):
             logger.debug("< %s", response)
 
     def _raise_error(self, status_code, raw_data):
-        """ Locate appropriate exception and raise it. """
+        """Locate appropriate exception and raise it."""
         error_message = raw_data
         additional_info = None
         try:
