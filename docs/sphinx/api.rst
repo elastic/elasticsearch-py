@@ -115,10 +115,22 @@ Async Search
 .. autoclass:: AsyncSearchClient
    :members:
 
+Autoscaling
+-----------
+
+.. autoclass:: AutoscalingClient
+   :members:
+
 Cat
 ---
 
 .. autoclass:: CatClient
+   :members:
+
+Cross-Cluster Replication (CCR)
+-------------------------------
+
+.. autoclass:: CcrClient
    :members:
 
 Cluster
@@ -133,10 +145,40 @@ Dangling Indices
 .. autoclass:: DanglingIndicesClient
    :members:
 
-Features
---------
+Enrich Policies
+---------------
+
+.. autoclass:: EnrichClient
+   :members:
+
+Event Query Language (EQL)
+--------------------------
+
+.. autoclass:: EqlClient
+   :members:
+
+Snapshottable Features
+----------------------
 
 .. autoclass:: FeaturesClient
+   :members:
+
+Fleet
+-----
+
+.. autoclass:: FleetClient
+   :members:
+
+Graph Explore
+-------------
+
+.. autoclass:: GraphClient
+   :members:
+
+Index Lifecycle Management (ILM)
+--------------------------------
+
+.. autoclass:: IlmClient
    :members:
 
 Indices
@@ -145,10 +187,40 @@ Indices
 .. autoclass:: IndicesClient
    :members:
 
-Ingest
-------
+Ingest Pipelines
+----------------
 
 .. autoclass:: IngestClient
+   :members:
+
+License
+-------
+
+.. autoclass:: LicenseClient
+   :members:
+
+Logstash
+--------
+
+.. autoclass:: LogstashClient
+   :members:
+
+Migration
+---------
+
+.. autoclass:: MigrationClient
+   :members:
+
+Machine Learning (ML)
+---------------------
+
+.. autoclass:: MlClient
+   :members:
+
+Monitoring
+----------
+
+.. autoclass:: MonitoringClient
    :members:
 
 Nodes
@@ -157,20 +229,81 @@ Nodes
 .. autoclass:: NodesClient
    :members:
 
-Remote
-------
 
-.. autoclass:: RemoteClient
+Rollup Indices
+--------------
+
+.. autoclass:: RollupClient
    :members:
 
-Snapshot
+Searchable Snapshots
+--------------------
+
+.. autoclass:: SearchableSnapshotsClient
+   :members:
+
+Security
 --------
 
+.. autoclass:: SecurityClient
+   :members:
+
+Shutdown
+--------
+
+.. autoclass:: ShutdownClient
+   :members:
+
+Snapshot Lifecycle Management (SLM)
+-----------------------------------
+
+.. autoclass:: SlmClient
+   :members:
+
+Snapshots
+---------
+
 .. autoclass:: SnapshotClient
+   :members:
+
+SQL
+---
+
+.. autoclass:: SqlClient
+   :members:
+
+TLS/SSL
+-------
+
+.. autoclass:: SslClient
    :members:
 
 Tasks
 -----
 
 .. autoclass:: TasksClient
+   :members:
+
+Text Structure
+--------------
+
+.. autoclass:: TextStructureClient
+   :members:
+
+Transforms
+----------
+
+.. autoclass:: TransformClient
+   :members:
+
+Watcher
+-------
+
+.. autoclass:: WatcherClient
+   :members:
+
+X-Pack
+------
+
+.. autoclass:: XPackClient
    :members:

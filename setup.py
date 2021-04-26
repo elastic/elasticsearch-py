@@ -29,7 +29,7 @@ with open(join(base_dir, package_name, "_version.py")) as f:
         r"__versionstr__\s+=\s+[\"\']([^\"\']+)[\"\']", f.read()
     ).group(1)
 
-with open(join(base_dir, "README")) as f:
+with open(join(base_dir, "README.rst")) as f:
     long_description = f.read().strip()
 
 packages = [
