@@ -68,7 +68,7 @@ class TransportError(ElasticsearchException):
 
     @property
     def error(self):
-        """ A string error message. """
+        """A string error message."""
         return self.args[1]
 
     @property
@@ -120,11 +120,11 @@ class ConnectionError(TransportError):
 
 
 class SSLError(ConnectionError):
-    """ Error raised when encountering SSL errors. """
+    """Error raised when encountering SSL errors."""
 
 
 class ConnectionTimeout(ConnectionError):
-    """ A network timeout. Doesn't cause a node retry by default. """
+    """A network timeout. Doesn't cause a node retry by default."""
 
     def __str__(self):
         return "ConnectionTimeout caused by - %s(%s)" % (
@@ -134,23 +134,23 @@ class ConnectionTimeout(ConnectionError):
 
 
 class NotFoundError(TransportError):
-    """ Exception representing a 404 status code. """
+    """Exception representing a 404 status code."""
 
 
 class ConflictError(TransportError):
-    """ Exception representing a 409 status code. """
+    """Exception representing a 409 status code."""
 
 
 class RequestError(TransportError):
-    """ Exception representing a 400 status code. """
+    """Exception representing a 400 status code."""
 
 
 class AuthenticationException(TransportError):
-    """ Exception representing a 401 status code. """
+    """Exception representing a 401 status code."""
 
 
 class AuthorizationException(TransportError):
-    """ Exception representing a 403 status code. """
+    """Exception representing a 403 status code."""
 
 
 class ElasticsearchWarning(Warning):
