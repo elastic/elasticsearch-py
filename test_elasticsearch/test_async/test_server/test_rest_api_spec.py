@@ -75,7 +75,7 @@ class AsyncYamlRunner(YamlRunner):
             await self.teardown()
 
     async def run_code(self, test):
-        """ Execute an instruction based on it's type. """
+        """Execute an instruction based on it's type."""
         print(test)
         for action in test:
             assert len(action) == 1

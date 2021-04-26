@@ -154,8 +154,12 @@ class Deserializer(object):
         if not mimetype:
             deserializer = self.default
         else:
-            # split out charset
-            mimetype, _, _ = mimetype.partition(";")
+            # split out 'charset' and 'compatible-width' options
+            mimetype = mimetype.partition(";")[0].strip()
+            # Treat 'application/vnd.elasticsearch+json'
+            # as application/json for compatibility.
+            if mimetype == "application/vnd.elasticsearch+json":
+                mimetype = "application/json"
             try:
                 deserializer = self.serializers[mimetype]
             except KeyError:
