@@ -1,0 +1,261 @@
+[[release-notes]]
+== Release notes
+
+* <<rn-7-12-0>>
+* <<rn-7-11-0>>
+* <<rn-7-10-1>>
+* <<rn-7-10-0>>
+* <<rn-7-9-1>>
+* <<rn-7-9-0>>
+* <<rn-7-8-1>>
+* <<rn-7-8-0>>
+* <<rn-7-7-1>>
+* <<rn-7-7-0>>
+* <<rn-7-6-0>>
+* <<rn-7-5-1>>
+* <<rn-7-1-0>>
+* <<rn-7-0-5>>
+* <<rn-7-0-4>>
+* <<rn-7-0-3>>
+* <<rn-7-0-2>>
+* <<rn-7-0-1>>
+* <<rn-7-0-0>>
+
+
+[discrete]
+[[rn-7-12-0]]
+=== 7.12.0 (2021-03-23)
+
+* Added support for 7.12 APIs
+
+
+[discrete]
+[[rn-7-11-0]]
+=== 7.11.0 (2021-02-10)
+
+* Added support for 7.11 APIs.
+* Added the `X-Elastic-Client-Meta` HTTP header and the `meta_header` parameter
+  for controlling the header 
+  (https://github.com/elastic/elasticsearch-py/pull/1473[#1473]).
+* Added `ElasticsearchWarning` which is raised when the `Warning` HTTP header
+  is returned from {es}. `ElasticsearchDeprecationWarning` is now an alias for 
+  this warning type 
+  (https://github.com/elastic/elasticsearch-py/pull/1495[#1495]).
+
+
+[discrete]
+[[rn-7-10-1]]
+=== 7.10.1 (2020-12-09)
+
+* Fixed issue where the Scan helper would fail if a `scroll` response returned
+  without a value for `_shards.skipped` 
+  (https://github.com/elastic/elasticsearch-py/pull/1451[#1451]).
+* Fixed handling of IPv6 hosts with a port in the computed `Connection.host` 
+  property (https://github.com/elastic/elasticsearch-py/pull/1460[#1460]).
+* Fixed documented task management API stability, should have been as 
+  "experimental" (https://github.com/elastic/elasticsearch-py/pull/1471[#1471]).
+* Changed deprecated `collections.Mapping` in favor of
+  `collections.abc.Mapping` for Python 3.9 
+  (https://github.com/elastic/elasticsearch-py/pull/1443[#1443]).
+
+
+[discrete]
+[[rn-7-10-0]]
+=== 7.10.0 (2020-11-11)
+
+
+* Added support for {es} 7.10 APIs.
+* Added basic type stubs for static type checking and IDE auto-complete of API 
+  parameters (https://github.com/elastic/elasticsearch-py/pull/1297[#1297], 
+  https://github.com/elastic/elasticsearch-py/pull/1406[#1406]).
+* Added support for 
+  https://www.elastic.co/guide/en/elasticsearch/reference/current/optimistic-concurrency-control.html[`Optimistic Concurrency Control options`]
+  (`_if_seq_no`/`_if_primary_term`) to bulk helpers 
+  (https://github.com/elastic/elasticsearch-py/pull/1387[#1387]).
+* Added support for passing `_source` with `"_op_type": "update"`
+  bulk helpers (https://github.com/elastic/elasticsearch-py/pull/1387[#1387]).
+* Fixed bug where `Connection.log_request_failure()` call would receive the 
+  compressed HTTP body rather than uncompressed when an error is raised for 
+  `RequestsHttpConnection` 
+  (https://github.com/elastic/elasticsearch-py/pull/1394[#1394]).
+* Fix a typo in AsyncTransport where `sniff_timeout` was used instead of 
+  `sniffer_timeout` 
+  (https://github.com/elastic/elasticsearch-py/pull/1431[#1431]).
+* Removed explicit `yarl` dependency from `[async]` extra to avoid issue where 
+  pip would override `aiohttp`'s pin of `yarl`. This is not a problem if you 
+  install with `--use-feature=2020-resolver`. Users should see no changes 
+  (https://github.com/elastic/elasticsearch-py/pull/1401[#1401]).
+
+
+
+[discrete]
+[[rn-7-9-1]]
+=== 7.9.1 (2020-08-19)
+
+
+* Fixed the import of async helpers which were not available in 7.9.0 
+  (https://github.com/elastic/elasticsearch-py/pull/1353[#1353]).
+* Added support for `url_prefix` when using `AIOHttpConnection` 
+  (https://github.com/elastic/elasticsearch-py/pull/1357[#1357]).
+
+
+[discrete]
+[[rn-7-9-0]]
+=== 7.9.0 (2020-08-18)
+
+* Added support for ES 7.9 APIs.
+* Fixed retries to not raise an error when `sniff_on_connection_error=True`
+  and a `TransportError` is raised during the sniff step. Instead the
+  retry will continue or the error that triggered the retry will be raised
+  (https://github.com/elastic/elasticsearch-py/pull/1279[#1279], 
+   https://github.com/elastic/elasticsearch-py/pull/1326[#1326]).
+
+
+[discrete]
+[[rn-7-8-1]]
+=== 7.8.1 (2020-07-30)
+
+* Added the `accept_enterprise` parameter to `xpack.info` API 
+  (https://github.com/elastic/elasticsearch-py/pull/1337[#1337]).
+
+
+[discrete]
+[[rn-7-8-0]]
+=== 7.8.0 (2020-06-18)
+
+* Added support for ES 7.8 APIs.
+* Added support for async/await with asyncio via `AsyncElasticsearch`. See 
+  https://elasticsearch-py.readthedocs.io/en/master/async.html[documentation] on
+  `using Asyncio with {es} 
+  (https://github.com/elastic/elasticsearch-py/pull/1232[#1232], 
+  https://github.com/elastic/elasticsearch-py/pull/1235[#1235], 
+  https://github.com/elastic/elasticsearch-py/pull/1236[#1236]).
+* Added async helpers `async_bulk`, `async_streaming_bulk`, `async_scan`, and 
+  `async_reindex` 
+  (https://github.com/elastic/elasticsearch-py/pull/1260[#1260]).
+* Updated `exists_source` API to use non-deprecated {es} API routes when 
+  `doc_type` is not specified to suppress deprecation warnings 
+  (https://github.com/elastic/elasticsearch-py/pull/1272[#1272]).
+
+
+[discrete]
+[[rn-7-7-1]]
+=== 7.7.1 (2020-05-26)
+
+* Updated `create`, `update`, `explain`, `get_source`, and `termvectors` APIs to 
+  use non-deprecated {es} API routes when `doc_type` is not specified to 
+  suppress deprecation warnings 
+  (https://github.com/elastic/elasticsearch-py/pull/1253[#1253]).
+
+
+[discrete]
+[[rn-7-7-0]]
+=== 7.7.0 (2020-05-13)
+
+* Added support for ES 7.7 APIs 
+  (https://github.com/elastic/elasticsearch-py/pull/1182[#1182]).
+* Added `ElasticsearchDeprecationWarning` which is raised when a `Warning` HTTP 
+  header is sent by {es} 
+  (https://github.com/elastic/elasticsearch-py/pull/1179[#1179]).
+* Added support for serializing `numpy` and `pandas` data types to 
+  `JSONSerializer` 
+  (https://github.com/elastic/elasticsearch-py/pull/1180[#1180]).
+* Added `certifi` as a dependency so HTTPS connections work automatically.
+* Fixed duplicated parameters in some API docstrings 
+  (https://github.com/elastic/elasticsearch-py/pull/1169[#1169], thanks to 
+  https://github.com/mortenhauberg[Morten Hauberg]).
+
+
+[discrete]
+[[rn-7-6-0]]
+=== 7.6.0 (2020-03-19)
+
+
+* Added support for ES 7.6 APIs.
+* Added support for 
+  https://www.elastic.co/guide/en/elasticsearch/reference/current/tasks.html#_identifying_running_tasks[`X-Opaque-Id`] 
+  to identify long-running tasks.
+* Added support for HTTP compression to `RequestsHttpConnection`.
+* Updated default setting of `http_compress` when using `cloud_id` to `True`.
+* Updated default setting of `sniffing` when using `cloud_id` to `False`.
+* Updated default port to `443` if `cloud_id` and no other port is defined on 
+  the client or within `cloud_id`.
+* Updated `GET` HTTP requests that contain a body to `POST` where the API allows 
+  this to fix proxies rejecting these requests.
+* Fix regression of `client.cluster.state()` where the default `metric` should 
+  be set to `"_all"` if an index is given 
+  (https://github.com/elastic/elasticsearch-py/pull/1143[#1143]).
+* Fix regression of `client.tasks.get()` without a `task_id` having similar 
+  functionality to `client.tasks.list()` This will be removed in `v8.0` of 
+  `elasticsearch-py` 
+  (https://github.com/elastic/elasticsearch-py/pull/1157[#1157]).
+
+
+[discrete]
+[[rn-7-5-1]]
+=== 7.5.1 (2020-01-19)
+
+* All API is now auto generated.
+* Deprecated the `.xpack` namespace.
+* Update client to support ES 7.5 APIs.
+
+
+[discrete]
+[[rn-7-1-0]]
+=== 7.1.0 (2019-11-14)
+
+* Fix sniffing with `http.publish_host`.
+* Fix `request_timeout` for `indices` APIs.
+* Allow access to `x-pack` features without `xpack` namespace.
+* Fix mark dead.
+
+
+[discrete]
+[[rn-7-0-5]]
+=== 7.0.5 (2019-10-01)
+
+* Fix `verify_certs=False`.
+
+
+[discrete]
+[[rn-7-0-4]]
+=== 7.0.4 (2019-08-22)
+
+* Fix wheel distribution.
+
+
+[discrete]
+[[rn-7-0-3]]
+=== 7.0.3 (2019-08-21)
+
+* Remove sleep in retries.
+* Pass `scroll_id` through body in `scroll`.
+* Add `user-agent`.
+
+
+[discrete]
+[[rn-7-0-2]]
+=== 7.0.2 (2019-05-29)
+
+* Add connection parameter for Elastic Cloud cloud_id.
+* ML client uses client object for _bulk_body requests.
+
+
+[discrete]
+[[rn-7-0-1]]
+=== 7.0.1 (2019-05-19)
+
+* Use black to format the code.
+* Update the test matrix to only use current pythons and 7.x ES.
+* Blocking pool must fit thread_count.
+* Update client to support missing ES 7 API's and query params.
+
+
+[discrete]
+[[rn-7-0-0]]
+=== 7.0.0 (2019-04-11)
+
+* Removed deprecated option `update_all_types`.
+* Using insecure SSL configuration (`verify_cert=False`) raises a warning, 
+  this can be not showed with `ssl_show_warn=False`.
+* Add support for 7.x APIs in {es} both xpack and oss flavors.
