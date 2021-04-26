@@ -1,29 +1,36 @@
 [[release-notes]]
 == Release notes
 
-* <<rn-7110>>
-* <<rn-7101>>
-* <<rn-7100>>
-* <<rn-791>>
-* <<rn-790>>
-* <<rn-781>>
-* <<rn-780>>
-* <<rn-771>>
-* <<rn-770>>
-* <<rn-760>>
-* <<rn-751>>
-* <<rn-750>>
-* <<rn-710>>
-* <<rn-705>>
-* <<rn-704>>
-* <<rn-703>>
-* <<rn-702>>
-* <<rn-701>>
-* <<rn-700>>
+* <<rn-7-12-0>>
+* <<rn-7-11-0>>
+* <<rn-7-10-1>>
+* <<rn-7-10-0>>
+* <<rn-7-9-1>>
+* <<rn-7-9-0>>
+* <<rn-7-8-1>>
+* <<rn-7-8-0>>
+* <<rn-7-7-1>>
+* <<rn-7-7-0>>
+* <<rn-7-6-0>>
+* <<rn-7-5-1>>
+* <<rn-7-1-0>>
+* <<rn-7-0-5>>
+* <<rn-7-0-4>>
+* <<rn-7-0-3>>
+* <<rn-7-0-2>>
+* <<rn-7-0-1>>
+* <<rn-7-0-0>>
 
 
 [discrete]
-[[rn-7110]]
+[[rn-7-12-0]]
+=== 7.12.0 (2021-03-23)
+
+* Added support for 7.12 APIs
+
+
+[discrete]
+[[rn-7-11-0]]
 === 7.11.0 (2021-02-10)
 
 * Added support for 7.11 APIs.
@@ -37,7 +44,7 @@
 
 
 [discrete]
-[[rn-7101]]
+[[rn-7-10-1]]
 === 7.10.1 (2020-12-09)
 
 * Fixed issue where the Scan helper would fail if a `scroll` response returned
@@ -53,7 +60,7 @@
 
 
 [discrete]
-[[rn-7100]]
+[[rn-7-10-0]]
 === 7.10.0 (2020-11-11)
 
 
@@ -82,7 +89,7 @@
 
 
 [discrete]
-[[rn-791]]
+[[rn-7-9-1]]
 === 7.9.1 (2020-08-19)
 
 
@@ -93,7 +100,7 @@
 
 
 [discrete]
-[[rn-790]]
+[[rn-7-9-0]]
 === 7.9.0 (2020-08-18)
 
 * Added support for ES 7.9 APIs.
@@ -105,7 +112,7 @@
 
 
 [discrete]
-[[rn-781]]
+[[rn-7-8-1]]
 === 7.8.1 (2020-07-30)
 
 * Added the `accept_enterprise` parameter to `xpack.info` API 
@@ -113,7 +120,7 @@
 
 
 [discrete]
-[[rn-780]]
+[[rn-7-8-0]]
 === 7.8.0 (2020-06-18)
 
 * Added support for ES 7.8 APIs.
@@ -132,7 +139,7 @@
 
 
 [discrete]
-[[rn-771]]
+[[rn-7-7-1]]
 === 7.7.1 (2020-05-26)
 
 * Updated `create`, `update`, `explain`, `get_source`, and `termvectors` APIs to 
@@ -142,7 +149,7 @@
 
 
 [discrete]
-[[rn-770]]
+[[rn-7-7-0]]
 === 7.7.0 (2020-05-13)
 
 * Added support for ES 7.7 APIs 
@@ -160,7 +167,7 @@
 
 
 [discrete]
-[[rn-760]]
+[[rn-7-6-0]]
 === 7.6.0 (2020-03-19)
 
 
@@ -185,15 +192,8 @@
 
 
 [discrete]
-[[rn-751]]
+[[rn-7-5-1]]
 === 7.5.1 (2020-01-19)
-
-* `7.5.0` tag was not released so retagging.
-
-
-[discrete]
-[[rn-750]]
-=== 7.5.0
 
 * All API is now auto generated.
 * Deprecated the `.xpack` namespace.
@@ -201,7 +201,7 @@
 
 
 [discrete]
-[[rn-710]]
+[[rn-7-1-0]]
 === 7.1.0 (2019-11-14)
 
 * Fix sniffing with `http.publish_host`.
@@ -211,7 +211,7 @@
 
 
 [discrete]
-[[rn-705]]
+[[rn-7-0-5]]
 === 7.0.5 (2019-10-01)
 
 * Fix `verify_certs=False`.
@@ -225,7 +225,7 @@
 
 
 [discrete]
-[[rn-703]]
+[[rn-7-0-3]]
 === 7.0.3 (2019-08-21)
 
 * Remove sleep in retries.
@@ -234,7 +234,7 @@
 
 
 [discrete]
-[[rn-702]]
+[[rn-7-0-2]]
 === 7.0.2 (2019-05-29)
 
 * Add connection parameter for Elastic Cloud cloud_id.
@@ -242,7 +242,7 @@
 
 
 [discrete]
-[[rn-701]]
+[[rn-7-0-1]]
 === 7.0.1 (2019-05-19)
 
 * Use black to format the code.
@@ -252,7 +252,7 @@
 
 
 [discrete]
-[[rn-700]]
+[[rn-7-0-0]]
 === 7.0.0 (2019-04-11)
 
 * Removed deprecated option `update_all_types`.
