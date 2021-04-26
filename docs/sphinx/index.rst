@@ -378,31 +378,6 @@ documents. This will configure compression.
 
 Compression is enabled by default when connecting to Elastic Cloud via ``cloud_id``.
 
-Running on AWS with IAM
-~~~~~~~~~~~~~~~~~~~~~~~
-
-If you want to use this client with IAM based authentication on AWS you can use
-the `requests-aws4auth`_ package:
-
-.. code-block:: python
-
-    from elasticsearch import Elasticsearch, RequestsHttpConnection
-    from requests_aws4auth import AWS4Auth
-
-    host = 'YOURHOST.us-east-1.es.amazonaws.com'
-    awsauth = AWS4Auth(YOUR_ACCESS_KEY, YOUR_SECRET_KEY, REGION, 'es')
-
-    es = Elasticsearch(
-        hosts=[{'host': host, 'port': 443}],
-        http_auth=awsauth,
-        use_ssl=True,
-        verify_certs=True,
-        connection_class=RequestsHttpConnection
-    )
-    print(es.info())
-
-.. _requests-aws4auth: https://pypi.python.org/pypi/requests-aws4auth
-
 Customization
 -------------
 
@@ -457,7 +432,6 @@ Contents
    :maxdepth: 2
 
    api
-   xpack
    exceptions
    async
    connection
@@ -469,19 +443,7 @@ Contents
 License
 -------
 
-Copyright 2020 Elasticsearch B.V
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Copyright 2021 Elasticsearch B.V. Licensed under the Apache License, Version 2.0.
 
 
 Indices and tables

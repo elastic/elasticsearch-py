@@ -4,7 +4,6 @@ include CONTRIBUTING.md
 include LICENSE
 include MANIFEST.in
 include README.rst
-include README
 include setup.py
 recursive-include elasticsearch* py.typed *.pyi
 recursive-include docs/sphinx *
