@@ -19,7 +19,7 @@ from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 
 
 class FleetClient(NamespacedClient):
-    @query_params("checkpoints", "timeout", "wait_for_advance")
+    @query_params("checkpoints", "timeout", "wait_for_advance", "wait_for_index")
     async def global_checkpoints(self, index, params=None, headers=None):
         """
         Returns the current global checkpoints for an index. This API is design for
@@ -36,6 +36,8 @@ class FleetClient(NamespacedClient):
             Default: 30s
         :arg wait_for_advance: Whether to wait for the global checkpoint
             to advance past the specified current checkpoints  Default: false
+        :arg wait_for_index: Whether to wait for the target index to
+            exist and all primary shards be active  Default: false
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")

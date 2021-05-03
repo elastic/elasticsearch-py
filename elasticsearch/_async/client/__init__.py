@@ -1190,8 +1190,7 @@ class AsyncElasticsearch(object):
         :arg rest_total_hits_as_int: Indicates whether hits.total should
             be rendered as an integer or an object in the rest search response
         :arg search_type: Search operation type  Valid choices:
-            query_then_fetch, query_and_fetch, dfs_query_then_fetch,
-            dfs_query_and_fetch
+            query_then_fetch, dfs_query_then_fetch
         :arg typed_keys: Specify whether aggregation and suggester names
             should be prefixed by their respective types in the response
         """
@@ -1236,8 +1235,7 @@ class AsyncElasticsearch(object):
         :arg rest_total_hits_as_int: Indicates whether hits.total should
             be rendered as an integer or an object in the rest search response
         :arg search_type: Search operation type  Valid choices:
-            query_then_fetch, query_and_fetch, dfs_query_then_fetch,
-            dfs_query_and_fetch
+            query_then_fetch, dfs_query_then_fetch
         :arg typed_keys: Specify whether aggregation and suggester names
             should be prefixed by their respective types in the response
         """
@@ -1774,8 +1772,7 @@ class AsyncElasticsearch(object):
         :arg scroll: Specify how long a consistent view of the index
             should be maintained for scrolled search
         :arg search_type: Search operation type  Valid choices:
-            query_then_fetch, query_and_fetch, dfs_query_then_fetch,
-            dfs_query_and_fetch
+            query_then_fetch, dfs_query_then_fetch
         :arg typed_keys: Specify whether aggregation and suggester names
             should be prefixed by their respective types in the response
         """
