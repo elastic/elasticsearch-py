@@ -401,7 +401,7 @@ However, you can implement your own custom serializer
 
    es = Elasticsearch(serializer=SetEncoder())
 
-.. _JSONSerializer: https://github.com/elastic/elasticsearch-py/blob/master/elasticsearch/serializer.py#L24
+.. _JSONSerializer: https://github.com/elastic/elasticsearch-py/blob/master/elasticsearch/serializer.py#L89
 
 
 Elasticsearch-DSL
