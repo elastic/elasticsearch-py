@@ -599,3 +599,160 @@ class SecurityClient(NamespacedClient):
             headers=headers,
             body=body,
         )
+
+    @query_params()
+    def clear_cached_service_tokens(
+        self, namespace, service, name, params=None, headers=None
+    ):
+        """
+        Evicts tokens from the service account token caches.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-clear-service-token-caches.html>`_
+
+        .. warning::
+
+            This API is **beta** so may include breaking changes
+            or be removed in a future version
+
+        :arg namespace: An identifier for the namespace
+        :arg service: An identifier for the service name
+        :arg name: A comma-separated list of service token names
+        """
+        for param in (namespace, service, name):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
+
+        return self.transport.perform_request(
+            "POST",
+            _make_path(
+                "_security",
+                "service",
+                namespace,
+                service,
+                "credential",
+                "token",
+                name,
+                "_clear_cache",
+            ),
+            params=params,
+            headers=headers,
+        )
+
+    @query_params("refresh")
+    def create_service_token(
+        self, namespace, service, name=None, params=None, headers=None
+    ):
+        """
+        Creates a service account token for access without requiring basic
+        authentication.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-create-service-token.html>`_
+
+        .. warning::
+
+            This API is **beta** so may include breaking changes
+            or be removed in a future version
+
+        :arg namespace: An identifier for the namespace
+        :arg service: An identifier for the service name
+        :arg name: An identifier for the token name
+        :arg refresh: If `true` then refresh the affected shards to make
+            this operation visible to search, if `wait_for` (the default) then wait
+            for a refresh to make this operation visible to search, if `false` then
+            do nothing with refreshes.  Valid choices: true, false, wait_for
+        """
+        for param in (namespace, service):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
+
+        return self.transport.perform_request(
+            "PUT",
+            _make_path(
+                "_security", "service", namespace, service, "credential", "token", name
+            ),
+            params=params,
+            headers=headers,
+        )
+
+    @query_params("refresh")
+    def delete_service_token(self, namespace, service, name, params=None, headers=None):
+        """
+        Deletes a service account token.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-delete-service-token.html>`_
+
+        .. warning::
+
+            This API is **beta** so may include breaking changes
+            or be removed in a future version
+
+        :arg namespace: An identifier for the namespace
+        :arg service: An identifier for the service name
+        :arg name: An identifier for the token name
+        :arg refresh: If `true` then refresh the affected shards to make
+            this operation visible to search, if `wait_for` (the default) then wait
+            for a refresh to make this operation visible to search, if `false` then
+            do nothing with refreshes.  Valid choices: true, false, wait_for
+        """
+        for param in (namespace, service, name):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
+
+        return self.transport.perform_request(
+            "DELETE",
+            _make_path(
+                "_security", "service", namespace, service, "credential", "token", name
+            ),
+            params=params,
+            headers=headers,
+        )
+
+    @query_params()
+    def get_service_accounts(
+        self, namespace=None, service=None, params=None, headers=None
+    ):
+        """
+        Retrieves information about service accounts.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-service-accounts.html>`_
+
+        .. warning::
+
+            This API is **beta** so may include breaking changes
+            or be removed in a future version
+
+        :arg namespace: An identifier for the namespace
+        :arg service: An identifier for the service name
+        """
+        return self.transport.perform_request(
+            "GET",
+            _make_path("_security", "service", namespace, service),
+            params=params,
+            headers=headers,
+        )
+
+    @query_params()
+    def get_service_credentials(self, namespace, service, params=None, headers=None):
+        """
+        Retrieves information of all service credentials for a service account.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-service-credentials.html>`_
+
+        .. warning::
+
+            This API is **beta** so may include breaking changes
+            or be removed in a future version
+
+        :arg namespace: An identifier for the namespace
+        :arg service: An identifier for the service name
+        """
+        for param in (namespace, service):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
+
+        return self.transport.perform_request(
+            "GET",
+            _make_path("_security", "service", namespace, service, "credential"),
+            params=params,
+            headers=headers,
+        )

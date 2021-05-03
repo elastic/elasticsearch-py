@@ -27,6 +27,7 @@ class FleetClient(NamespacedClient):
         checkpoints: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
         wait_for_advance: Optional[Any] = ...,
+        wait_for_index: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,

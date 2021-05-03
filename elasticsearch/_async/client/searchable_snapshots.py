@@ -88,7 +88,7 @@ class SearchableSnapshotsClient(NamespacedClient):
     @query_params("level")
     async def stats(self, index=None, params=None, headers=None):
         """
-        Retrieve various statistics about searchable snapshots.
+        Retrieve shard-level statistics about searchable snapshots.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-apis.html>`_
 
@@ -104,6 +104,30 @@ class SearchableSnapshotsClient(NamespacedClient):
         return await self.transport.perform_request(
             "GET",
             _make_path(index, "_searchable_snapshots", "stats"),
+            params=params,
+            headers=headers,
+        )
+
+    @query_params()
+    async def cache_stats(self, node_id=None, params=None, headers=None):
+        """
+        Retrieve node-level cache statistics about searchable snapshots.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-apis.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
+        :arg node_id: A comma-separated list of node IDs or names to
+            limit the returned information; use `_local` to return information from
+            the node you're connecting to, leave empty to get information from all
+            nodes
+        """
+        return await self.transport.perform_request(
+            "GET",
+            _make_path("_searchable_snapshots", node_id, "cache", "stats"),
             params=params,
             headers=headers,
         )
