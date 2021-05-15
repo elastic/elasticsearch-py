@@ -586,7 +586,7 @@ def scan(
                         ),
                     )
             resp = client.scroll(
-                body={"scroll_id": scroll_id, "scroll": scroll}, **scroll_kwargs
+                body={"scroll_id": scroll_id, "scroll": scroll}, **scroll_kwargs, headers=kwargs.get("headers", None),
             )
             scroll_id = resp.get("_scroll_id")
 
@@ -595,6 +595,7 @@ def scan(
             client.clear_scroll(
                 body={"scroll_id": [scroll_id]},
                 ignore=(404,),
+                headers=kwargs.get("headers", None),
                 params={"__elastic_client_meta": (("h", "s"),)},
             )
 
