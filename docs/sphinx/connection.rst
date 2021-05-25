@@ -60,7 +60,29 @@ To create an `SSLContext` object you only need to use one of cafile, capath or c
 * `capath` is the directory of a collection of CA's
 * `cadata` is either an ASCII string of one or more PEM-encoded certificates or a bytes-like object of DER-encoded certificates.
 
-Please note that the use of SSLContext is only available for Urllib3.
+Please note that the use of SSLContext is only available for urllib3.
 
 .. autoclass:: Urllib3HttpConnection
    :members:
+
+
+API Compatibility HTTP Header
+-----------------------------
+
+The Python client can be configured to emit an HTTP header
+``Accept: application/vnd.elasticsearch+json; compatible-with=7``
+which signals to Elasticsearch that the client is requesting
+``7.x`` version of request and response bodies. This allows for
+upgrading from 7.x to 8.x version of Elasticsearch without upgrading
+everything at once. Elasticsearch should be upgraded first after
+the compatibility header is configured and clients should be upgraded
+second.
+
+ .. code-block:: python
+
+    from elasticsearch import Elasticsearch
+
+    client = Elasticsearch("http://...", headers={"accept": "application/vnd.elasticsearch+json; compatible-with=7"})
+
+If you'd like to have the client emit the header without configuring ``headers`` you
+can use the environment variable ``ELASTIC_CLIENT_APIVERSIONING=1``.

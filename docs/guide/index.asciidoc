@@ -17,3 +17,5 @@ include::integrations.asciidoc[]
 include::examples.asciidoc[]
 
 include::helpers.asciidoc[]
+
+include::release-notes.asciidoc[]
