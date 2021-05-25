@@ -246,7 +246,7 @@ class ConnectionPool(object):
         instance.
 
         It tries to resurrect eligible connections, forces a resurrection when
-        no connections are availible and passes the list of live connections to
+        no connections are available and passes the list of live connections to
         the selector instance to choose from.
 
         Returns a connection instance and it's current fail count.
