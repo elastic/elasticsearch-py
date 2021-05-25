@@ -437,8 +437,7 @@ Contents
    connection
    transports
    helpers
-   Changelog
-
+   Release Notes <https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/release-notes.html>
 
 License
 -------
