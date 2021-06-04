@@ -2133,3 +2133,33 @@ class Elasticsearch(object):
         return self.transport.perform_request(
             "POST", _make_path(index, "_pit"), params=params, headers=headers
         )
+
+    @query_params()
+    def terms_enum(self, index, body=None, params=None, headers=None):
+        """
+        The terms enum API  can be used to discover terms in the index that begin with
+        the provided string. It is designed for low-latency look-ups used in auto-
+        complete scenarios.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/search-terms-enum.html>`_
+
+        .. warning::
+
+            This API is **beta** so may include breaking changes
+            or be removed in a future version
+
+        :arg index: A comma-separated list of index names to search; use
+            `_all` or empty string to perform the operation on all indices
+        :arg body: field name, string which is the prefix expected in
+            matching terms, timeout and size for max number of results
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'index'.")
+
+        return self.transport.perform_request(
+            "POST",
+            _make_path(index, "_terms_enum"),
+            params=params,
+            headers=headers,
+            body=body,
+        )
