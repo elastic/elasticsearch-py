@@ -179,6 +179,8 @@ class RequestsHttpConnection(Connection):
                 raise SSLError("N/A", str(e), e)
             if isinstance(e, requests.Timeout):
                 raise ConnectionTimeout("TIMEOUT", str(e), e)
+            if isinstance(e, RecursionError):
+                raise RecursionError("RECURSION", str(e), e)
             raise ConnectionError("N/A", str(e), e)
 
         # raise warnings if any from the 'Warnings' header.

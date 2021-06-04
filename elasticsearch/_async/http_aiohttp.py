@@ -319,6 +319,8 @@ class AIOHttpConnection(AsyncConnection):
                 e, (asyncio.TimeoutError, aiohttp_exceptions.ServerTimeoutError)
             ):
                 raise ConnectionTimeout("TIMEOUT", str(e), e)
+            if isinstance(e, RecursionError):
+                raise RecursionError("RECURSION", str(e), e)
             raise ConnectionError("N/A", str(e), e)
 
         # raise warnings if any from the 'Warnings' header.
