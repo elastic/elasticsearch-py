@@ -253,6 +253,8 @@ class Urllib3HttpConnection(Connection):
             )
             duration = time.time() - start
             raw_data = response.data.decode("utf-8", "surrogatepass")
+        except RecursionError:
+            raise
         except Exception as e:
             self.log_request_fail(
                 method, full_url, url, orig_body, time.time() - start, exception=e
@@ -261,8 +263,6 @@ class Urllib3HttpConnection(Connection):
                 raise SSLError("N/A", str(e), e)
             if isinstance(e, ReadTimeoutError):
                 raise ConnectionTimeout("TIMEOUT", str(e), e)
-            if isinstance(e, RecursionError):
-                raise RecursionError("RECURSION", str(e), e)
             raise ConnectionError("N/A", str(e), e)
 
         # raise warnings if any from the 'Warnings' header.
