@@ -60,6 +60,7 @@ IMPLEMENTED_FEATURES = {
 
 # broken YAML tests on some releases
 SKIP_TESTS = {
+    "ml/post_data[0]",
     "ml/post_data[1]",
     "ml/post_data[2]",
     "ml/post_data[3]",
@@ -83,9 +84,11 @@ SKIP_TESTS = {
     "ml/jobs_get_stats[8]",
     "ml/jobs_get_stats[9]",
     "ml/jobs_get_stats[10]",
+    "ml/set_upgrade_mode[0]",
     "service_accounts/10_basic[0]",
     "service_accounts/10_basic[1]",
     "snapshot/20_operator_privileges_disabled[0]",
+    "transform/transforms_start_stop[0]",
 }
 
 
