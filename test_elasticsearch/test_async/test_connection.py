@@ -18,6 +18,7 @@
 
 import gzip
 import io
+import json
 import ssl
 import warnings
 from platform import python_version
@@ -316,3 +317,75 @@ class TestAIOHttpConnection:
         con = await self._get_mock_connection(response_body=buf)
         status, headers, data = await con.perform_request("GET", "/")
         assert u"你好\uda6a" == data
+
+
+class TestConnectionHttpbin:
+    """Tests the HTTP connection implementations against a live server E2E"""
+
+    async def httpbin_anything(self, conn, **kwargs):
+        status, headers, data = await conn.perform_request("GET", "/anything", **kwargs)
+        data = json.loads(data)
+        data["headers"].pop(
+            "X-Amzn-Trace-Id", None
+        )  # Remove this header as it's put there by AWS.
+        return (status, data)
+
+    async def test_aiohttp_connection(self):
+        # Defaults
+        conn = AIOHttpConnection("httpbin.org", port=443, use_ssl=True)
+        user_agent = conn._get_default_user_agent()
+        status, data = await self.httpbin_anything(conn)
+        assert status == 200
+        assert data["method"] == "GET"
+        assert data["headers"] == {
+            "Content-Type": "application/json",
+            "Host": "httpbin.org",
+            "User-Agent": user_agent,
+        }
+
+        # http_compress=False
+        conn = AIOHttpConnection(
+            "httpbin.org", port=443, use_ssl=True, http_compress=False
+        )
+        status, data = await self.httpbin_anything(conn)
+        assert status == 200
+        assert data["method"] == "GET"
+        assert data["headers"] == {
+            "Content-Type": "application/json",
+            "Host": "httpbin.org",
+            "User-Agent": user_agent,
+        }
+
+        # http_compress=True
+        conn = AIOHttpConnection(
+            "httpbin.org", port=443, use_ssl=True, http_compress=True
+        )
+        status, data = await self.httpbin_anything(conn)
+        assert status == 200
+        assert data["headers"] == {
+            "Accept-Encoding": "gzip,deflate",
+            "Content-Type": "application/json",
+            "Host": "httpbin.org",
+            "User-Agent": user_agent,
+        }
+
+        # Headers
+        conn = AIOHttpConnection(
+            "httpbin.org",
+            port=443,
+            use_ssl=True,
+            http_compress=True,
+            headers={"header1": "value1"},
+        )
+        status, data = await self.httpbin_anything(
+            conn, headers={"header2": "value2", "header1": "override!"}
+        )
+        assert status == 200
+        assert data["headers"] == {
+            "Accept-Encoding": "gzip,deflate",
+            "Content-Type": "application/json",
+            "Host": "httpbin.org",
+            "Header1": "override!",
+            "Header2": "value2",
+            "User-Agent": user_agent,
+        }
