@@ -756,3 +756,14 @@ class SecurityClient(NamespacedClient):
             params=params,
             headers=headers,
         )
+
+    @query_params()
+    def enroll_node(self, params=None, headers=None):
+        """
+        Allows a new node to enroll to an existing cluster with security enabled.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-node-enrollment.html>`_
+        """
+        return self.transport.perform_request(
+            "GET", "/_security/enroll_node", params=params, headers=headers
+        )
