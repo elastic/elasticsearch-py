@@ -300,7 +300,7 @@ class AIOHttpConnection(AsyncConnection):
                     raw_data = await response.text()
                 duration = self.loop.time() - start
 
-        # We want to reraise a cancellation or recursion error.
+        # We want to reraise a cancellation or recursion error
         except (asyncio.CancelledError, RecursionError):
             raise
         except Exception as e:
