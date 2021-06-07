@@ -21,8 +21,11 @@ import uuid
 from datetime import datetime
 from decimal import Decimal
 
-import numpy as np
-import pandas as pd
+try:
+    import numpy as np
+    import pandas as pd
+except ImportError:
+    np = pd = None
 
 from elasticsearch.exceptions import ImproperlyConfigured, SerializationError
 from elasticsearch.serializer import (
@@ -35,6 +38,11 @@ from elasticsearch.serializer import (
 from .test_cases import SkipTest, TestCase
 
 
+def requires_numpy_and_pandas():
+    if np is None or pd is None:
+        raise SkipTest("Test requires numpy or pandas to be available")
+
+
 class TestJSONSerializer(TestCase):
     def test_datetime_serialization(self):
         self.assertEqual(
@@ -43,6 +51,8 @@ class TestJSONSerializer(TestCase):
         )
 
     def test_decimal_serialization(self):
+        requires_numpy_and_pandas()
+
         if sys.version_info[:2] == (2, 6):
             raise SkipTest("Float rounding is broken in 2.6.")
         self.assertEqual('{"d":3.8}', JSONSerializer().dumps({"d": Decimal("3.8")}))
@@ -56,9 +66,13 @@ class TestJSONSerializer(TestCase):
         )
 
     def test_serializes_numpy_bool(self):
+        requires_numpy_and_pandas()
+
         self.assertEqual('{"d":true}', JSONSerializer().dumps({"d": np.bool_(True)}))
 
     def test_serializes_numpy_integers(self):
+        requires_numpy_and_pandas()
+
         ser = JSONSerializer()
         for np_type in (
             np.int_,
@@ -78,6 +92,8 @@ class TestJSONSerializer(TestCase):
             self.assertEqual(ser.dumps({"d": np_type(1)}), '{"d":1}')
 
     def test_serializes_numpy_floats(self):
+        requires_numpy_and_pandas()
+
         ser = JSONSerializer()
         for np_type in (
             np.float_,
@@ -89,12 +105,16 @@ class TestJSONSerializer(TestCase):
             )
 
     def test_serializes_numpy_datetime(self):
+        requires_numpy_and_pandas()
+
         self.assertEqual(
             '{"d":"2010-10-01T02:30:00"}',
             JSONSerializer().dumps({"d": np.datetime64("2010-10-01T02:30:00")}),
         )
 
     def test_serializes_numpy_ndarray(self):
+        requires_numpy_and_pandas()
+
         self.assertEqual(
             '{"d":[0,0,0,0,0]}',
             JSONSerializer().dumps({"d": np.zeros((5,), dtype=np.uint8)}),
@@ -106,24 +126,32 @@ class TestJSONSerializer(TestCase):
         )
 
     def test_serializes_numpy_nan_to_nan(self):
+        requires_numpy_and_pandas()
+
         self.assertEqual(
             '{"d":NaN}',
             JSONSerializer().dumps({"d": np.nan}),
         )
 
     def test_serializes_pandas_timestamp(self):
+        requires_numpy_and_pandas()
+
         self.assertEqual(
             '{"d":"2010-10-01T02:30:00"}',
             JSONSerializer().dumps({"d": pd.Timestamp("2010-10-01T02:30:00")}),
         )
 
     def test_serializes_pandas_series(self):
+        requires_numpy_and_pandas()
+
         self.assertEqual(
             '{"d":["a","b","c","d"]}',
             JSONSerializer().dumps({"d": pd.Series(["a", "b", "c", "d"])}),
         )
 
     def test_serializes_pandas_na(self):
+        requires_numpy_and_pandas()
+
         if not hasattr(pd, "NA"):  # pandas.NA added in v1
             raise SkipTest("pandas.NA required")
         self.assertEqual(
@@ -132,11 +160,15 @@ class TestJSONSerializer(TestCase):
         )
 
     def test_raises_serialization_error_pandas_nat(self):
+        requires_numpy_and_pandas()
+
         if not hasattr(pd, "NaT"):
             raise SkipTest("pandas.NaT required")
         self.assertRaises(SerializationError, JSONSerializer().dumps, {"d": pd.NaT})
 
     def test_serializes_pandas_category(self):
+        requires_numpy_and_pandas()
+
         cat = pd.Categorical(["a", "c", "b", "a"], categories=["a", "b", "c"])
         self.assertEqual(
             '{"d":["a","c","b","a"]}',
