@@ -265,7 +265,7 @@ class TestAIOHttpConnection:
                 use_ssl=True, verify_certs=False, ssl_show_warn=False
             )
             await con._create_aiohttp_session()
-            assert 0 == len(w)
+            assert w == []
 
         assert isinstance(con.session, aiohttp.ClientSession)
 
@@ -277,7 +277,7 @@ class TestAIOHttpConnection:
         ctx = ssl.create_default_context()
         with warnings.catch_warnings(record=True) as w:
             AIOHttpConnection(ssl_context=ctx)
-            assert 0 == len(w), str([x.message for x in w])
+            assert w == [], str([x.message for x in w])
 
     def test_warns_if_using_non_default_ssl_kwargs_with_ssl_context(self):
         for kwargs in (
