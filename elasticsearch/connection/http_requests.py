@@ -166,6 +166,8 @@ class RequestsHttpConnection(Connection):
             response = self.session.send(prepared_request, **send_kwargs)
             duration = time.time() - start
             raw_data = response.content.decode("utf-8", "surrogatepass")
+        except RecursionError:
+            raise
         except Exception as e:
             self.log_request_fail(
                 method,
