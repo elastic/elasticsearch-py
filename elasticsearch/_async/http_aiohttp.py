@@ -167,7 +167,10 @@ class AIOHttpConnection(AsyncConnection):
 
         self.ssl_assert_fingerprint = ssl_assert_fingerprint
         if self.use_ssl and ssl_context is None:
-            ssl_context = ssl.SSLContext(ssl_version or ssl.PROTOCOL_TLS)
+            if ssl_version is None:
+                ssl_context = ssl.create_default_context()
+            else:
+                ssl_context = ssl.SSLContext(ssl_version)
 
             # Convert all sentinel values to their actual default
             # values if not using an SSLContext.
@@ -180,8 +183,8 @@ class AIOHttpConnection(AsyncConnection):
                 ssl_context.verify_mode = ssl.CERT_REQUIRED
                 ssl_context.check_hostname = True
             else:
-                ssl_context.verify_mode = ssl.CERT_NONE
                 ssl_context.check_hostname = False
+                ssl_context.verify_mode = ssl.CERT_NONE
 
             ca_certs = CA_CERTS if ca_certs is None else ca_certs
             if verify_certs:
