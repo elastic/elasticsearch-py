@@ -359,6 +359,7 @@ class AIOHttpConnection(AsyncConnection):
             self.loop = get_running_loop()
         self.session = aiohttp.ClientSession(
             headers=self.headers,
+            skip_auto_headers=("accept", "accept-encoding"),
             auto_decompress=True,
             loop=self.loop,
             cookie_jar=aiohttp.DummyCookieJar(),
