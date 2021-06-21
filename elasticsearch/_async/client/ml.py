@@ -1755,3 +1755,24 @@ class MlClient(NamespacedClient):
             headers=headers,
             body=body,
         )
+
+    @query_params("wait_for_completion")
+    async def reset_job(self, job_id, params=None, headers=None):
+        """
+        Resets an existing anomaly detection job.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ml-reset-job.html>`_
+
+        :arg job_id: The ID of the job to reset
+        :arg wait_for_completion: Should this request wait until the
+            operation has completed before returning  Default: True
+        """
+        if job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'job_id'.")
+
+        return await self.transport.perform_request(
+            "POST",
+            _make_path("_ml", "anomaly_detectors", job_id, "_reset"),
+            params=params,
+            headers=headers,
+        )
