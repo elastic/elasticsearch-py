@@ -1662,3 +1662,99 @@ class MlClient(NamespacedClient):
             headers=headers,
             body=body,
         )
+
+    @query_params("timeout")
+    def infer_trained_model_deployment(self, model_id, params=None, headers=None):
+        """
+        Evaluate a trained model.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-infer-trained-model-deployment.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
+        :arg model_id: The ID of the model to perform inference on
+        :arg timeout: Controls the time to wait for the inference result
+        """
+        if model_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'model_id'.")
+
+        return self.transport.perform_request(
+            "POST",
+            _make_path("_ml", "trained_models", model_id, "deployment", "_infer"),
+            params=params,
+            headers=headers,
+        )
+
+    @query_params("wait_for_completion")
+    def reset_job(self, job_id, params=None, headers=None):
+        """
+        Resets an existing anomaly detection job.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-reset-job.html>`_
+
+        :arg job_id: The ID of the job to reset
+        :arg wait_for_completion: Should this request wait until the
+            operation has completed before returning  Default: True
+        """
+        if job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'job_id'.")
+
+        return self.transport.perform_request(
+            "POST",
+            _make_path("_ml", "anomaly_detectors", job_id, "_reset"),
+            params=params,
+            headers=headers,
+        )
+
+    @query_params("timeout")
+    def start_trained_model_deployment(self, model_id, params=None, headers=None):
+        """
+        Start a trained model deployment.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-start-trained-model-deployment.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
+        :arg model_id: The ID of the model to deploy
+        :arg timeout: Controls the time to wait until the model is
+            deployed
+        """
+        if model_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'model_id'.")
+
+        return self.transport.perform_request(
+            "POST",
+            _make_path("_ml", "trained_models", model_id, "deployment", "_start"),
+            params=params,
+            headers=headers,
+        )
+
+    @query_params()
+    def stop_trained_model_deployment(self, model_id, params=None, headers=None):
+        """
+        Stop a trained model deployment.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/stop-trained-model-deployment.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
+        :arg model_id: The ID of the model to undeploy
+        """
+        if model_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'model_id'.")
+
+        return self.transport.perform_request(
+            "POST",
+            _make_path("_ml", "trained_models", model_id, "deployment", "_stop"),
+            params=params,
+            headers=headers,
+        )

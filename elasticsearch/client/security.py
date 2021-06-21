@@ -767,3 +767,23 @@ class SecurityClient(NamespacedClient):
         return self.transport.perform_request(
             "GET", "/_security/enroll_node", params=params, headers=headers
         )
+
+    @query_params()
+    def saml_complete_logout(self, body, params=None, headers=None):
+        """
+        Verifies the logout response sent from the SAML IdP
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-complete-logout.html>`_
+
+        :arg body: The logout response to verify
+        """
+        if body in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'body'.")
+
+        return self.transport.perform_request(
+            "POST",
+            "/_security/saml/complete_logout",
+            params=params,
+            headers=headers,
+            body=body,
+        )
