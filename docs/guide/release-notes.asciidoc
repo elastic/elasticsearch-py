@@ -41,7 +41,7 @@
 
 [discrete]
 [[rn-7-13-1]]
-=== 7.13.1 (2021-05-25)
+=== 7.13.1 (2021-06-02)
 
 * Client is compatible with Elasticsearch 7.13.1
 
