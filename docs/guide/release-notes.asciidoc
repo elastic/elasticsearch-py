@@ -25,6 +25,25 @@
 
 
 [discrete]
+[[rn-7-13-2]]
+=== 7.13.2 (2021-06-21)
+
+* Fixed `Transport.perform_request()` to properly reraise `RecursionError`
+* Fixed `AIOHttpConnection` to no longer send `Accept-Encoding: gzip, deflate` when `http_compress=None`.
+  Instead now sends no `Accept-Encoding` header in the default case
+
+[discrete]
+==== Snapshot
+
+* Added the `snapshot.repository_analyze` API
+
+[discrete]
+[[rn-7-13-1]]
+=== 7.13.1 (2021-05-25)
+
+* Client is compatible with Elasticsearch 7.13.1
+
+[discrete]
 [[rn-7-13-0]]
 === 7.13.0 (2021-05-25)
 
