@@ -494,3 +494,66 @@ class TestTransport:
         assert not any([conn.closed for conn in t.connection_pool.connections])
         await t.close()
         assert all([conn.closed for conn in t.connection_pool.connections])
+
+    async def test_sniff_on_start_waits_for_sniff_to_complete(self, event_loop):
+        t = AsyncTransport(
+            [
+                {"delay": 1, "data": ""},
+                {"delay": 1, "data": ""},
+                {"delay": 1, "data": CLUSTER_NODES},
+            ],
+            connection_class=DummyConnection,
+            sniff_on_start=True,
+        )
+
+        # Start the timer right before the first task
+        # and have a bunch of tasks come in immediately.
+        tasks = []
+        start_time = event_loop.time()
+        for _ in range(5):
+            tasks.append(event_loop.create_task(t._async_call()))
+            await asyncio.sleep(0)  # Yield to the loop
+
+        assert t.sniffing_task is not None
+
+        # Tasks streaming in later.
+        for _ in range(5):
+            tasks.append(event_loop.create_task(t._async_call()))
+            await asyncio.sleep(0.1)
+
+        # Now that all the API calls have come in we wait for
+        # them all to resolve before
+        await asyncio.gather(*tasks)
+        end_time = event_loop.time()
+        duration = end_time - start_time
+
+        # All the tasks blocked on the sniff of each node
+        # and then resolved immediately after.
+        assert 1 <= duration < 2
+
+    async def test_sniff_on_start_close_unlocks_async_calls(self, event_loop):
+        t = AsyncTransport(
+            [
+                {"delay": 10, "data": CLUSTER_NODES},
+            ],
+            connection_class=DummyConnection,
+            sniff_on_start=True,
+        )
+
+        # Start making _async_calls() before we cancel
+        tasks = []
+        start_time = event_loop.time()
+        for _ in range(3):
+            tasks.append(event_loop.create_task(t._async_call()))
+            await asyncio.sleep(0)
+
+        # Close the transport while the sniffing task is active! :(
+        await t.close()
+
+        # Now we start waiting on all those _async_calls()
+        await asyncio.gather(*tasks)
+        end_time = event_loop.time()
+        duration = end_time - start_time
+
+        # A lot quicker than 10 seconds defined in 'delay'
+        assert duration < 1
