@@ -1,5 +1,5 @@
 STACK_VERSION:
-  - 7.13-SNAPSHOT
+  - 7.x-SNAPSHOT
 
 TEST_SUITE:
   - platinum
