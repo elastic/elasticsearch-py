@@ -188,7 +188,7 @@ class TestBaseConnection(TestCase):
             conn = Connection()
             assert (
                 conn.headers["accept"]
-                == "application/vnd.elasticsearch+json;compatible-with=8"
+                == "application/vnd.elasticsearch+json;compatible-with=7"
             )
         finally:
             os.environ.pop("ELASTIC_CLIENT_APIVERSIONING")

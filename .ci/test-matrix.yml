@@ -1,18 +1,18 @@
 STACK_VERSION:
-  - 7.x-SNAPSHOT
+  - 7.13-SNAPSHOT
 
 TEST_SUITE:
   - platinum
 
 PYTHON_VERSION:
-  - 2.7
-  - 3.4
-  - 3.5
-  - 3.6
-  - 3.7
-  - 3.8
-  - 3.9
-  - 3.10
+  - "2.7"
+  - "3.4"
+  - "3.5"
+  - "3.6"
+  - "3.7"
+  - "3.8"
+  - "3.9"
+  - "3.10"
 
 PYTHON_CONNECTION_CLASS:
   - Urllib3HttpConnection
