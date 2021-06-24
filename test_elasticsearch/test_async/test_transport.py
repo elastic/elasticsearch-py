@@ -495,6 +495,23 @@ class TestTransport:
         await t.close()
         assert all([conn.closed for conn in t.connection_pool.connections])
 
+    async def test_sniff_on_start_no_viable_hosts(self, event_loop):
+        t = AsyncTransport(
+            [
+                {"data": ""},
+                {"data": ""},
+                {"data": ""},
+            ],
+            connection_class=DummyConnection,
+            sniff_on_start=True,
+        )
+
+        # If our initial sniffing attempt comes back
+        # empty then we raise an error.
+        with pytest.raises(TransportError) as e:
+            await t._async_call()
+        assert str(e.value) == "TransportError(N/A, 'Unable to sniff hosts.')"
+
     async def test_sniff_on_start_waits_for_sniff_to_complete(self, event_loop):
         t = AsyncTransport(
             [
