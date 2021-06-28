@@ -24,7 +24,7 @@ class DanglingIndicesClient(NamespacedClient):
         """
         Deletes the specified dangling index
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/modules-gateway-dangling-indices.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.13/modules-gateway-dangling-indices.html>`_
 
         :arg index_uuid: The UUID of the dangling index
         :arg accept_data_loss: Must be set to true in order to delete
@@ -47,7 +47,7 @@ class DanglingIndicesClient(NamespacedClient):
         """
         Imports the specified dangling index
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/modules-gateway-dangling-indices.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.13/modules-gateway-dangling-indices.html>`_
 
         :arg index_uuid: The UUID of the dangling index
         :arg accept_data_loss: Must be set to true in order to import
@@ -67,7 +67,7 @@ class DanglingIndicesClient(NamespacedClient):
         """
         Returns all dangling indices.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/modules-gateway-dangling-indices.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.13/modules-gateway-dangling-indices.html>`_
         """
         return await self.transport.perform_request(
             "GET", "/_dangling", params=params, headers=headers

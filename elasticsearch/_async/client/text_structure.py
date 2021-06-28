@@ -40,7 +40,7 @@ class TextStructureClient(NamespacedClient):
         Finds the structure of a text file. The text file must contain data that is
         suitable to be ingested into Elasticsearch.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/find-structure.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.13/find-structure.html>`_
 
         :arg body: The contents of the file to be analyzed
         :arg charset: Optional parameter to specify the character set of

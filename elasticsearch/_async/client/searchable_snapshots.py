@@ -24,7 +24,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         """
         Clear the cache of searchable snapshots.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/searchable-snapshots-apis.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.13/searchable-snapshots-apis.html>`_
 
         .. warning::
 
@@ -54,7 +54,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         """
         Mount a snapshot as a searchable index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/searchable-snapshots-api-mount-snapshot.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.13/searchable-snapshots-api-mount-snapshot.html>`_
 
         .. warning::
 
@@ -90,7 +90,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         """
         DEPRECATED: This API is replaced by the Repositories Metering API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/searchable-snapshots-apis.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.13/searchable-snapshots-apis.html>`_
 
         .. warning::
 
@@ -114,7 +114,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         """
         Retrieve shard-level statistics about searchable snapshots.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/searchable-snapshots-apis.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.13/searchable-snapshots-apis.html>`_
 
         .. warning::
 
@@ -137,7 +137,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         """
         Retrieve node-level cache statistics about searchable snapshots.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/searchable-snapshots-apis.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.13/searchable-snapshots-apis.html>`_
 
         .. warning::
 
