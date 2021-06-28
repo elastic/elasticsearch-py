@@ -18,15 +18,19 @@
 import asyncio
 import logging
 import sys
+import warnings
 from itertools import chain
 
 from ..exceptions import (
+    AuthenticationException,
+    AuthorizationException,
     ConnectionError,
     ConnectionTimeout,
+    ElasticsearchWarning,
     SerializationError,
     TransportError,
 )
-from ..transport import Transport
+from ..transport import Transport, _verify_elasticsearch
 from .compat import get_running_loop
 from .http_aiohttp import AIOHttpConnection
 
@@ -327,6 +331,10 @@ class AsyncTransport(Transport):
             method, headers, params, body
         )
 
+        # Before we make the actual API call we verify the Elasticsearch instance.
+        if not self._verified_elasticsearch:
+            await self._do_verify_elasticsearch(headers=headers, timeout=timeout)
+
         for attempt in range(self.max_retries + 1):
             connection = self.get_connection()
 
@@ -398,3 +406,67 @@ class AsyncTransport(Transport):
 
         for connection in self.connection_pool.connections:
             await connection.close()
+
+    async def _do_verify_elasticsearch(self, headers, timeout):
+        """Verifies that we're connected to an Elasticsearch cluster.
+        This is done at least once before the first actual API call
+        and makes a single request to the 'GET /' API endpoint and
+        check version along with other details of the response.
+
+        If we're unable to verify we're talking to Elasticsearch
+        but we're also unable to rule it out due to a permission
+        error we instead emit an 'ElasticsearchWarning'.
+        """
+        # Product check has already been done, no need to do again.
+        if self._verified_elasticsearch:
+            return
+
+        headers = {header.lower(): value for header, value in (headers or {}).items()}
+        # We know we definitely want JSON so request it via 'accept'
+        headers.setdefault("accept", "application/json")
+
+        info_headers = {}
+        info_response = {}
+        info_error = None
+
+        for conn in chain(self.connection_pool.connections, self.seed_connections):
+            try:
+                _, info_headers, info_response = await conn.perform_request(
+                    "GET", "/", headers=headers, timeout=timeout
+                )
+
+                # Lowercase all the header names for consistency in accessing them.
+                info_headers = {
+                    header.lower(): value for header, value in info_headers.items()
+                }
+
+                info_response = self.deserializer.loads(
+                    info_response, mimetype="application/json"
+                )
+                break
+
+            # Previous versions of 7.x Elasticsearch required a specific
+            # permission so if we receive HTTP 401/403 we should warn
+            # instead of erroring out.
+            except (AuthenticationException, AuthorizationException):
+                warnings.warn(
+                    (
+                        "The client is unable to verify that the server is "
+                        "Elasticsearch due security privileges on the server side"
+                    ),
+                    ElasticsearchWarning,
+                    stacklevel=3,
+                )
+                self._verified_elasticsearch = True
+                return
+
+            # This connection didn't work, we'll try another.
+            except (ConnectionError, SerializationError):
+                if info_error is None:
+                    info_error = info_error
+
+        # Check the information we got back from the index request.
+        _verify_elasticsearch(info_headers, info_response)
+
+        # If we made it through the above call this config is verified.
+        self._verified_elasticsearch = True

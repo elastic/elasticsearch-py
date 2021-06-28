@@ -51,6 +51,12 @@ class SerializationError(ElasticsearchException):
     """
 
 
+class NotElasticsearchError(ElasticsearchException):
+    """Error which is raised when the client detects
+    it's not connected to an Elasticsearch cluster.
+    """
+
+
 class TransportError(ElasticsearchException):
     """
     Exception raised when ES returns a non-OK (>=400) HTTP status code. Or when
