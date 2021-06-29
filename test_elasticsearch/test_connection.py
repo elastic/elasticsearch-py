@@ -32,6 +32,7 @@ from requests.auth import AuthBase
 from urllib3._collections import HTTPHeaderDict
 
 from elasticsearch import __versionstr__
+from elasticsearch.compat import reraise_exceptions
 from elasticsearch.connection import (
     Connection,
     RequestsHttpConnection,
@@ -39,6 +40,7 @@ from elasticsearch.connection import (
 )
 from elasticsearch.exceptions import (
     ConflictError,
+    ConnectionError,
     NotFoundError,
     RequestError,
     TransportError,
@@ -466,6 +468,21 @@ class TestUrllib3Connection(TestCase):
         status, headers, data = con.perform_request("GET", "/")
         self.assertEqual(u"你好\uda6a", data)
 
+    @pytest.mark.skipif(
+        not reraise_exceptions, reason="RecursionError isn't defined in Python <3.5"
+    )
+    def test_recursion_error_reraised(self):
+        conn = Urllib3HttpConnection()
+
+        def urlopen_raise(*_, **__):
+            raise RecursionError("Wasn't modified!")
+
+        conn.pool.urlopen = urlopen_raise
+
+        with pytest.raises(RecursionError) as e:
+            conn.perform_request("GET", "/")
+        assert str(e.value) == "Wasn't modified!"
+
 
 class TestRequestsConnection(TestCase):
     def _get_mock_connection(
@@ -868,6 +885,21 @@ class TestRequestsConnection(TestCase):
         status, headers, data = con.perform_request("GET", "/")
         self.assertEqual(u"你好\uda6a", data)
 
+    @pytest.mark.skipif(
+        not reraise_exceptions, reason="RecursionError isn't defined in Python <3.5"
+    )
+    def test_recursion_error_reraised(self):
+        conn = RequestsHttpConnection()
+
+        def send_raise(*_, **__):
+            raise RecursionError("Wasn't modified!")
+
+        conn.session.send = send_raise
+
+        with pytest.raises(RecursionError) as e:
+            conn.perform_request("GET", "/")
+        assert str(e.value) == "Wasn't modified!"
+
 
 class TestConnectionHttpbin:
     """Tests the HTTP connection implementations against a live server E2E"""
@@ -942,6 +974,11 @@ class TestConnectionHttpbin:
             "User-Agent": user_agent,
         }
 
+    def test_urllib3_connection_error(self):
+        conn = Urllib3HttpConnection("not.a.host.name")
+        with pytest.raises(ConnectionError):
+            conn.perform_request("GET", "/")
+
     def test_requests_connection(self):
         # Defaults
         conn = RequestsHttpConnection("httpbin.org", port=443, use_ssl=True)
@@ -1003,3 +1040,8 @@ class TestConnectionHttpbin:
             "Header2": "value2",
             "User-Agent": user_agent,
         }
+
+    def test_requests_connection_error(self):
+        conn = RequestsHttpConnection("not.a.host.name")
+        with pytest.raises(ConnectionError):
+            conn.perform_request("GET", "/")
