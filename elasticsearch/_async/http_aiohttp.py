@@ -22,7 +22,7 @@ import warnings
 
 import urllib3  # type: ignore
 
-from ..compat import urlencode
+from ..compat import reraise_exceptions, urlencode
 from ..connection.base import Connection
 from ..exceptions import (
     ConnectionError,
@@ -304,7 +304,7 @@ class AIOHttpConnection(AsyncConnection):
                 duration = self.loop.time() - start
 
         # We want to reraise a cancellation or recursion error.
-        except (asyncio.CancelledError, RecursionError):
+        except reraise_exceptions:
             raise
         except Exception as e:
             self.log_request_fail(

@@ -58,8 +58,22 @@ except ImportError:
     from collections import Mapping
 
 
+try:
+    reraise_exceptions = (RecursionError,)
+except NameError:
+    reraise_exceptions = ()
+
+try:
+    import asyncio
+
+    reraise_exceptions += (asyncio.CancelledError,)
+except (ImportError, AttributeError):
+    pass
+
+
 __all__ = [
     "string_types",
+    "reraise_exceptions",
     "quote_plus",
     "quote",
     "urlencode",
