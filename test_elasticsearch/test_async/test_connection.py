@@ -29,6 +29,8 @@ from mock import patch
 from multidict import CIMultiDict
 
 from elasticsearch import AIOHttpConnection, __versionstr__
+from elasticsearch.compat import reraise_exceptions
+from elasticsearch.exceptions import ConnectionError
 
 pytestmark = pytest.mark.asyncio
 
@@ -318,6 +320,20 @@ class TestAIOHttpConnection:
         status, headers, data = await con.perform_request("GET", "/")
         assert u"你好\uda6a" == data
 
+    @pytest.mark.parametrize("exception_cls", reraise_exceptions)
+    async def test_recursion_error_reraised(self, exception_cls):
+        conn = AIOHttpConnection()
+
+        def request_raise(*_, **__):
+            raise exception_cls("Wasn't modified!")
+
+        await conn._create_aiohttp_session()
+        conn.session.request = request_raise
+
+        with pytest.raises(exception_cls) as e:
+            await conn.perform_request("GET", "/")
+        assert str(e.value) == "Wasn't modified!"
+
 
 class TestConnectionHttpbin:
     """Tests the HTTP connection implementations against a live server E2E"""
@@ -389,3 +405,8 @@ class TestConnectionHttpbin:
             "Header2": "value2",
             "User-Agent": user_agent,
         }
+
+    async def test_aiohttp_connection_error(self):
+        conn = AIOHttpConnection("not.a.host.name")
+        with pytest.raises(ConnectionError):
+            await conn.perform_request("GET", "/")
