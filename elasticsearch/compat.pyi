@@ -16,13 +16,14 @@
 #  under the License.
 
 import sys
-from typing import Callable, Tuple, Union
+from typing import Callable, Tuple, Type, Union
 
 PY2: bool
 string_types: Tuple[type, ...]
 
 to_str: Callable[[Union[str, bytes]], str]
 to_bytes: Callable[[Union[str, bytes]], bytes]
+reraise_exceptions: Tuple[Type[Exception], ...]
 
 if sys.version_info[0] == 2:
     from itertools import imap as map
