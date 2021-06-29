@@ -522,6 +522,7 @@ class Transport(object):
 
         info_headers = {}
         info_response = {}
+        error = None
 
         for conn in chain(self.connection_pool.connections, self.seed_connections):
             try:
@@ -549,14 +550,20 @@ class Transport(object):
                         "Elasticsearch due security privileges on the server side"
                     ),
                     ElasticsearchWarning,
-                    stacklevel=3,
+                    stacklevel=5,
                 )
                 self._verified_elasticsearch = True
                 return
 
             # This connection didn't work, we'll try another.
-            except (ConnectionError, SerializationError):
-                pass
+            except (ConnectionError, SerializationError) as err:
+                if error is None:
+                    error = err
+
+        # If we received a connection error and weren't successful
+        # anywhere then we reraise the more appropriate error.
+        if error and not info_response:
+            raise error
 
         # Check the information we got back from the index request.
         _verify_elasticsearch(info_headers, info_response)
