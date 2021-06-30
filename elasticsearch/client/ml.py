@@ -857,7 +857,9 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        "allow_no_indices", "expand_wildcards", "ignore_throttled", "ignore_unavailable"
+    )
     def put_job(self, job_id, body, params=None, headers=None):
         """
         Instantiates an anomaly detection job.
@@ -866,6 +868,17 @@ class MlClient(NamespacedClient):
 
         :arg job_id: The ID of the job to create
         :arg body: The job
+        :arg allow_no_indices: Ignore if the source indices expressions
+            resolves to no concrete indices (default: true). Only set if
+            datafeed_config is provided.
+        :arg expand_wildcards: Whether source index expressions should
+            get expanded to open or closed indices (default: open). Only set if
+            datafeed_config is provided.  Valid choices: open, closed, hidden, none,
+            all
+        :arg ignore_throttled: Ignore indices that are marked as
+            throttled (default: true). Only set if datafeed_config is provided.
+        :arg ignore_unavailable: Ignore unavailable indexes (default:
+            false). Only set if datafeed_config is provided.
         """
         for param in (job_id, body):
             if param in SKIP_IN_PATH:

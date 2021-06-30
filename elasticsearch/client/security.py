@@ -359,9 +359,9 @@ class SecurityClient(NamespacedClient):
     @query_params()
     def get_user_privileges(self, params=None, headers=None):
         """
-        Retrieves application privileges.
+        Retrieves security privileges for the logged in user.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-privileges.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-user-privileges.html>`_
         """
         return self.transport.perform_request(
             "GET", "/_security/user/_privileges", params=params, headers=headers
@@ -765,7 +765,7 @@ class SecurityClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-node-enrollment.html>`_
         """
         return self.transport.perform_request(
-            "GET", "/_security/enroll_node", params=params, headers=headers
+            "GET", "/_security/enroll/node", params=params, headers=headers
         )
 
     @query_params()
@@ -786,4 +786,111 @@ class SecurityClient(NamespacedClient):
             params=params,
             headers=headers,
             body=body,
+        )
+
+    @query_params()
+    def enroll_kibana(self, params=None, headers=None):
+        """
+        Allows a kibana instance to configure itself to communicate with a secured
+        elasticsearch cluster.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-enroll-kibana.html>`_
+        """
+        return self.transport.perform_request(
+            "GET", "/_security/enroll/kibana", params=params, headers=headers
+        )
+
+    @query_params()
+    def saml_authenticate(self, body, params=None, headers=None):
+        """
+        Exchanges a SAML Response message for an Elasticsearch access token and refresh
+        token pair
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-authenticate.html>`_
+
+        :arg body: The SAML response to authenticate
+        """
+        if body in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'body'.")
+
+        return self.transport.perform_request(
+            "POST",
+            "/_security/saml/authenticate",
+            params=params,
+            headers=headers,
+            body=body,
+        )
+
+    @query_params()
+    def saml_invalidate(self, body, params=None, headers=None):
+        """
+        Consumes a SAML LogoutRequest
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-invalidate.html>`_
+
+        :arg body: The LogoutRequest message
+        """
+        if body in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'body'.")
+
+        return self.transport.perform_request(
+            "POST",
+            "/_security/saml/invalidate",
+            params=params,
+            headers=headers,
+            body=body,
+        )
+
+    @query_params()
+    def saml_logout(self, body, params=None, headers=None):
+        """
+        Invalidates an access token and a refresh token that were generated via the
+        SAML Authenticate API
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-logout.html>`_
+
+        :arg body: The tokens to invalidate
+        """
+        if body in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'body'.")
+
+        return self.transport.perform_request(
+            "POST", "/_security/saml/logout", params=params, headers=headers, body=body
+        )
+
+    @query_params()
+    def saml_prepare_authentication(self, body, params=None, headers=None):
+        """
+        Creates a SAML authentication request
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-prepare-authentication.html>`_
+
+        :arg body: The realm for which to create the authentication
+            request, identified by either its name or the ACS URL
+        """
+        if body in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'body'.")
+
+        return self.transport.perform_request(
+            "POST", "/_security/saml/prepare", params=params, headers=headers, body=body
+        )
+
+    @query_params()
+    def saml_service_provider_metadata(self, realm_name, params=None, headers=None):
+        """
+        Generates SAML metadata for the Elastic stack SAML 2.0 Service Provider
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-sp-metadata.html>`_
+
+        :arg realm_name: The name of the SAML realm to get the metadata
+            for
+        """
+        if realm_name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'realm_name'.")
+
+        return self.transport.perform_request(
+            "GET",
+            _make_path("_security", "saml", "metadata", realm_name),
+            params=params,
+            headers=headers,
         )
