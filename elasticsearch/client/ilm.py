@@ -183,3 +183,23 @@ class IlmClient(NamespacedClient):
         return self.transport.perform_request(
             "POST", "/_ilm/stop", params=params, headers=headers
         )
+
+    @query_params()
+    def migrate_to_data_tiers(self, body=None, params=None, headers=None):
+        """
+        Migrates the indices and ILM policies away from custom node attribute
+        allocation routing to data tiers routing
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ilm-migrate-to-data-tiers.html>`_
+
+        :arg body: Optionally specify a legacy index template name to
+            delete and optionally specify a node attribute name used for index shard
+            routing (defaults to "data")
+        """
+        return self.transport.perform_request(
+            "POST",
+            "/_ilm/migrate_to_data_tiers",
+            params=params,
+            headers=headers,
+            body=body,
+        )
