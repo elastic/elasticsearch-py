@@ -33,6 +33,7 @@ from elasticsearch.exceptions import (
     AuthorizationException,
     ConnectionError,
     ElasticsearchWarning,
+    NotElasticsearchError,
     TransportError,
 )
 
@@ -714,3 +715,111 @@ class TestTransport:
                 },
             ),
         ]
+
+    async def test_multiple_requests_verify_elasticsearch_success(self, event_loop):
+        t = AsyncTransport(
+            [
+                {
+                    "data": '{"version":{"number":"7.13.0","build_flavor":"default"},"tagline":"You Know, for Search"}',
+                    "delay": 1,
+                }
+            ],
+            connection_class=DummyConnection,
+        )
+
+        results = []
+        completed_at = []
+
+        async def request_task():
+            try:
+                results.append(await t.perform_request("GET", "/_search"))
+            except Exception as e:
+                results.append(e)
+            completed_at.append(event_loop.time())
+
+        # Execute a bunch of requests concurrently.
+        tasks = []
+        start_time = event_loop.time()
+        for _ in range(10):
+            tasks.append(event_loop.create_task(request_task()))
+        await asyncio.gather(*tasks)
+        end_time = event_loop.time()
+
+        # Exactly 10 results completed
+        assert len(results) == 10
+
+        # No errors in the results
+        assert all(isinstance(result, dict) for result in results)
+
+        # Assert that this took longer than 2 seconds but less than 2.1 seconds
+        duration = end_time - start_time
+        assert 2 <= duration <= 2.1
+
+        # Assert that every result came after ~2 seconds, no fast completions.
+        assert all(
+            2 <= completed_time - start_time <= 2.1 for completed_time in completed_at
+        )
+
+        # Assert that the cluster is "verified"
+        assert t._verified_elasticsearch
+
+        # See that the first request is always 'GET /' for ES check
+        calls = t.connection_pool.connections[0].calls
+        assert calls[0][0] == ("GET", "/")
+
+        # The rest of the requests are 'GET /_search' afterwards
+        assert all(call[0][:2] == ("GET", "/_search") for call in calls[1:])
+
+    async def test_multiple_requests_verify_elasticsearch_errors(self, event_loop):
+        t = AsyncTransport(
+            [
+                {
+                    "data": '{"version":{"number":"7.13.0","build_flavor":"default"},"tagline":"BAD TAGLINE"}',
+                    "delay": 1,
+                }
+            ],
+            connection_class=DummyConnection,
+        )
+
+        results = []
+        completed_at = []
+
+        async def request_task():
+            try:
+                results.append(await t.perform_request("GET", "/_search"))
+            except Exception as e:
+                results.append(e)
+            completed_at.append(event_loop.time())
+
+        # Execute a bunch of requests concurrently.
+        tasks = []
+        start_time = event_loop.time()
+        for _ in range(10):
+            tasks.append(event_loop.create_task(request_task()))
+        await asyncio.gather(*tasks)
+        end_time = event_loop.time()
+
+        # Exactly 10 results completed
+        assert len(results) == 10
+
+        # All results were errors
+        assert all(isinstance(result, NotElasticsearchError) for result in results)
+
+        # Assert that one request was made but not 2 requests.
+        duration = end_time - start_time
+        assert 1 <= duration <= 1.1
+
+        # Assert that every result came after ~1 seconds, no fast completions.
+        assert all(
+            1 <= completed_time - start_time <= 1.1 for completed_time in completed_at
+        )
+
+        # Assert that the cluster is definitely not Elasticsearch
+        assert t._verified_elasticsearch is False
+
+        # See that the first request is always 'GET /' for ES check
+        calls = t.connection_pool.connections[0].calls
+        assert calls[0][0] == ("GET", "/")
+
+        # The rest of the requests are 'GET /_search' afterwards
+        assert all(call[0][:2] == ("GET", "/_search") for call in calls[1:])

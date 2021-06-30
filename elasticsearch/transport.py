@@ -22,6 +22,7 @@ from itertools import chain
 from platform import python_version
 
 from ._version import __versionstr__
+from .compat import Lock
 from .connection import Urllib3HttpConnection
 from .connection_pool import ConnectionPool, DummyConnectionPool, EmptyConnectionPool
 from .exceptions import (
@@ -204,9 +205,22 @@ class Transport(object):
         if http_client_meta:
             self._client_meta += (http_client_meta,)
 
-        # Flag which is set after verifying that we're
-        # connected to Elasticsearch.
-        self._verified_elasticsearch = False
+        # Tri-state flag that describes what state the verification
+        # of whether we're connected to an Elasticsearch cluster or not.
+        # The three states are:
+        # - 'None': Means we've either not started the verification process
+        #   or that the verification is in progress. '_verified_once' ensures
+        #   that multiple requests don't kick off multiple verification processes.
+        # - 'True': Means we've verified that we're talking to Elasticsearch or
+        #   that we can't rule out Elasticsearch due to auth issues. A warning
+        #   will be raised if we receive 401/403.
+        # - 'False': Means we've discovered we're not talking to Elasticsearch,
+        #   should raise an error in this case for every request.
+        self._verified_elasticsearch = None
+
+        # Ensures that the ES verification request only fires once and that
+        # all requests block until this request returns back.
+        self._verified_once = Once()
 
     def add_connection(self, host):
         """
@@ -391,7 +405,17 @@ class Transport(object):
         )
 
         # Before we make the actual API call we verify the Elasticsearch instance.
-        self._do_verify_elasticsearch(headers=headers, timeout=timeout)
+        if self._verified_elasticsearch is None:
+            self._verified_once.call(
+                self._do_verify_elasticsearch, headers=headers, timeout=timeout
+            )
+
+        # If '_verified_elasticsearch' is False we know we're not connected to Elasticsearch.
+        if self._verified_elasticsearch is False:
+            raise NotElasticsearchError(
+                "The client noticed that the server is not Elasticsearch "
+                "and we do not support this unknown product"
+            )
 
         for attempt in range(self.max_retries + 1):
             connection = self.get_connection()
@@ -513,7 +537,7 @@ class Transport(object):
         error we instead emit an 'ElasticsearchWarning'.
         """
         # Product check has already been done, no need to do again.
-        if self._verified_elasticsearch:
+        if self._verified_elasticsearch is not None:
             return
 
         headers = {header.lower(): value for header, value in (headers or {}).items()}
@@ -566,19 +590,16 @@ class Transport(object):
             raise error
 
         # Check the information we got back from the index request.
-        _verify_elasticsearch(info_headers, info_response)
-
-        # If we made it through the above call this config is verified.
-        self._verified_elasticsearch = True
+        self._verified_elasticsearch = _verify_elasticsearch(
+            info_headers, info_response
+        )
 
 
 def _verify_elasticsearch(headers, response):
     """Verifies that the server we're talking to is Elasticsearch.
     Does this by checking HTTP headers and the deserialized
-    response to the 'info' API.
-
-    If there's a problem this function raises 'NotElasticsearchError'
-    otherwise doesn't do anything.
+    response to the 'info' API. Returns 'True' if we're verified
+    against Elasticsearch, 'False' otherwise.
     """
     try:
         version = response.get("version", {})
@@ -616,7 +637,20 @@ def _verify_elasticsearch(headers, response):
         # 7.14+ and there's a bad 'X-Elastic-Product' HTTP header
         or ((7, 14, 0) <= version_number and bad_product_header)
     ):
-        raise NotElasticsearchError(
-            "The client noticed that the server is not Elasticsearch "
-            "and we do not support this unknown product"
-        )
+        return False
+
+    return True
+
+
+class Once:
+    """Simple class which forces a function to only execute once."""
+
+    def __init__(self):
+        self._lock = Lock()
+        self._called = False
+
+    def call(self, func, *args, **kwargs):
+        with self._lock:
+            if not self._called:
+                self._called = True
+                func(*args, **kwargs)

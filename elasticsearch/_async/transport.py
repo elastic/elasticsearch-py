@@ -27,6 +27,7 @@ from ..exceptions import (
     ConnectionError,
     ConnectionTimeout,
     ElasticsearchWarning,
+    NotElasticsearchError,
     SerializationError,
     TransportError,
 )
@@ -116,6 +117,10 @@ class AsyncTransport(Transport):
         # on all already created HTTP connections.
         self.loop = get_running_loop()
         self.kwargs["loop"] = self.loop
+
+        # Set our 'verified_once' implementation to one that
+        # works with 'asyncio' instead of 'threading'
+        self._verified_once = Once()
 
         # Now that we have a loop we can create all our HTTP connections...
         self.set_connections(self.hosts)
@@ -332,8 +337,17 @@ class AsyncTransport(Transport):
         )
 
         # Before we make the actual API call we verify the Elasticsearch instance.
-        if not self._verified_elasticsearch:
-            await self._do_verify_elasticsearch(headers=headers, timeout=timeout)
+        if self._verified_elasticsearch is None:
+            await self._verified_once.call(
+                self._do_verify_elasticsearch, headers=headers, timeout=timeout
+            )
+
+        # If '_verified_elasticsearch' is False we know we're not connected to Elasticsearch.
+        if self._verified_elasticsearch is False:
+            raise NotElasticsearchError(
+                "The client noticed that the server is not Elasticsearch "
+                "and we do not support this unknown product"
+            )
 
         for attempt in range(self.max_retries + 1):
             connection = self.get_connection()
@@ -471,7 +485,20 @@ class AsyncTransport(Transport):
             raise error
 
         # Check the information we got back from the index request.
-        _verify_elasticsearch(info_headers, info_response)
+        self._verified_elasticsearch = _verify_elasticsearch(
+            info_headers, info_response
+        )
 
-        # If we made it through the above call this config is verified.
-        self._verified_elasticsearch = True
+
+class Once:
+    """Simple class which forces an async function to only execute once."""
+
+    def __init__(self):
+        self._lock = asyncio.Lock()
+        self._called = False
+
+    async def call(self, func, *args, **kwargs):
+        async with self._lock:
+            if not self._called:
+                self._called = True
+                await func(*args, **kwargs)

@@ -70,6 +70,17 @@ try:
 except (ImportError, AttributeError):
     pass
 
+try:
+    from threading import Lock
+except ImportError:  # Python <3.7 isn't guaranteed to have threading support.
+
+    class Lock:
+        def __enter__(self):
+            pass
+
+        def __exit__(self, *_):
+            pass
+
 
 __all__ = [
     "string_types",
