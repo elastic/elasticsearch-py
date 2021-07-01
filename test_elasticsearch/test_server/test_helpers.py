@@ -478,6 +478,69 @@ class TestScan(ElasticsearchTestCase):
             client_mock.scroll.assert_not_called()
             client_mock.clear_scroll.assert_not_called()
 
+    def test_scan_auth_kwargs_forwarded(self):
+        for key, val in {
+            "api_key": ("name", "value"),
+            "http_auth": ("username", "password"),
+            "headers": {"custom": "header"},
+        }.items():
+            with patch.object(self, "client") as client_mock:
+                client_mock.search.return_value = {
+                    "_scroll_id": "scroll_id",
+                    "_shards": {"successful": 5, "total": 5, "skipped": 0},
+                    "hits": {"hits": [{"search_data": 1}]},
+                }
+                client_mock.scroll.return_value = {
+                    "_scroll_id": "scroll_id",
+                    "_shards": {"successful": 5, "total": 5, "skipped": 0},
+                    "hits": {"hits": []},
+                }
+                client_mock.clear_scroll.return_value = {}
+
+                data = list(helpers.scan(self.client, index="test_index", **{key: val}))
+
+                self.assertEqual(data, [{"search_data": 1}])
+
+                # Assert that 'search', 'scroll' and 'clear_scroll' all
+                # received the extra kwarg related to authentication.
+                for api_mock in (
+                    client_mock.search,
+                    client_mock.scroll,
+                    client_mock.clear_scroll,
+                ):
+                    self.assertEqual(api_mock.call_args[1][key], val)
+
+    def test_scan_auth_kwargs_favor_scroll_kwargs_option(self):
+        with patch.object(self, "client") as client_mock:
+            client_mock.search.return_value = {
+                "_scroll_id": "scroll_id",
+                "_shards": {"successful": 5, "total": 5, "skipped": 0},
+                "hits": {"hits": [{"search_data": 1}]},
+            }
+            client_mock.scroll.return_value = {
+                "_scroll_id": "scroll_id",
+                "_shards": {"successful": 5, "total": 5, "skipped": 0},
+                "hits": {"hits": []},
+            }
+            client_mock.clear_scroll.return_value = {}
+
+            data = list(
+                helpers.scan(
+                    self.client,
+                    index="test_index",
+                    scroll_kwargs={"headers": {"scroll": "kwargs"}, "sort": "asc"},
+                    headers={"not scroll": "kwargs"},
+                )
+            )
+
+            self.assertEqual(data, [{"search_data": 1}])
+
+            # Assert that we see 'scroll_kwargs' options used instead of 'kwargs'
+            self.assertEqual(
+                client_mock.scroll.call_args[1]["headers"], {"scroll": "kwargs"}
+            )
+            self.assertEqual(client_mock.scroll.call_args[1]["sort"], "asc")
+
     @patch("elasticsearch.helpers.actions.logger")
     def test_logger(self, logger_mock):
         bulk = []
