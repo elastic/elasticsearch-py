@@ -550,6 +550,20 @@ def scan(
         query = query.copy() if query else {}
         query["sort"] = "_doc"
 
+    # Grab options that should be propagated to every
+    # API call within this helper instead of just 'search()'
+    transport_kwargs = {}
+    for key in ("headers", "api_key", "http_auth"):
+        if key in kwargs:
+            transport_kwargs[key] = kwargs[key]
+
+    # If the user is using 'scroll_kwargs' we want
+    # to propagate there too, but to not break backwards
+    # compatibility we'll not override anything already given.
+    if scroll_kwargs is not None and transport_kwargs:
+        for key, val in transport_kwargs.items():
+            scroll_kwargs.setdefault(key, val)
+
     # initial search
     resp = client.search(
         body=query, scroll=scroll, size=size, request_timeout=request_timeout, **kwargs
@@ -596,6 +610,7 @@ def scan(
                 body={"scroll_id": [scroll_id]},
                 ignore=(404,),
                 params={"__elastic_client_meta": (("h", "s"),)},
+                **transport_kwargs
             )
 
 
