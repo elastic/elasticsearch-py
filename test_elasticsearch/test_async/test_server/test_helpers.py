@@ -30,6 +30,9 @@ class AsyncMock(MagicMock):
     async def __call__(self, *args, **kwargs):
         return super(AsyncMock, self).__call__(*args, **kwargs)
 
+    def __await__(self):
+        return self().__await__()
+
 
 class FailingBulkClient(object):
     def __init__(
@@ -415,6 +418,9 @@ class MockResponse:
     async def __call__(self, *args, **kwargs):
         return self.resp
 
+    def __await__(self):
+        return self().__await__()
+
 
 @pytest.fixture(scope="function")
 async def scan_teardown(async_client):
@@ -640,6 +646,105 @@ class TestScan(object):
                 )
             ]
             spy.assert_not_called()
+
+    @pytest.mark.parametrize(
+        "kwargs",
+        [
+            {"api_key": ("name", "value")},
+            {"http_auth": ("username", "password")},
+            {"headers": {"custom", "header"}},
+        ],
+    )
+    async def test_scan_auth_kwargs_forwarded(
+        self, async_client, scan_teardown, kwargs
+    ):
+        ((key, val),) = kwargs.items()
+
+        with patch.object(
+            async_client,
+            "search",
+            return_value=MockResponse(
+                {
+                    "_scroll_id": "scroll_id",
+                    "_shards": {"successful": 5, "total": 5, "skipped": 0},
+                    "hits": {"hits": [{"search_data": 1}]},
+                }
+            ),
+        ) as search_mock:
+            with patch.object(
+                async_client,
+                "scroll",
+                return_value=MockResponse(
+                    {
+                        "_scroll_id": "scroll_id",
+                        "_shards": {"successful": 5, "total": 5, "skipped": 0},
+                        "hits": {"hits": []},
+                    }
+                ),
+            ) as scroll_mock:
+                with patch.object(
+                    async_client, "clear_scroll", return_value=MockResponse({})
+                ) as clear_mock:
+                    data = [
+                        x
+                        async for x in helpers.async_scan(
+                            async_client, index="test_index", **kwargs
+                        )
+                    ]
+
+                    assert data == [{"search_data": 1}]
+
+        for api_mock in (search_mock, scroll_mock, clear_mock):
+            assert api_mock.call_args[1][key] == val
+
+    async def test_scan_auth_kwargs_favor_scroll_kwargs_option(
+        self, async_client, scan_teardown
+    ):
+        with patch.object(
+            async_client,
+            "search",
+            return_value=MockResponse(
+                {
+                    "_scroll_id": "scroll_id",
+                    "_shards": {"successful": 5, "total": 5, "skipped": 0},
+                    "hits": {"hits": [{"search_data": 1}]},
+                }
+            ),
+        ):
+            with patch.object(
+                async_client,
+                "scroll",
+                return_value=MockResponse(
+                    {
+                        "_scroll_id": "scroll_id",
+                        "_shards": {"successful": 5, "total": 5, "skipped": 0},
+                        "hits": {"hits": []},
+                    }
+                ),
+            ):
+                with patch.object(
+                    async_client, "clear_scroll", return_value=MockResponse({})
+                ):
+                    data = [
+                        x
+                        async for x in helpers.async_scan(
+                            async_client,
+                            index="test_index",
+                            headers={"not scroll": "kwargs"},
+                            scroll_kwargs={
+                                "headers": {"scroll": "kwargs"},
+                                "sort": "asc",
+                            },
+                        )
+                    ]
+
+                    assert data == [{"search_data": 1}]
+
+                    # Assert that we see 'scroll_kwargs' options used instead of 'kwargs'
+                    assert async_client.scroll.call_args[1]["headers"] == {
+                        "scroll": "kwargs"
+                    }
+                    assert async_client.scroll.call_args[1]["sort"] == "asc"
 
 
 @pytest.fixture(scope="function")
