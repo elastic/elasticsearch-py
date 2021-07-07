@@ -1,6 +1,7 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-7-13-3>>
 * <<rn-7-13-2>>
 * <<rn-7-13-1>>
 * <<rn-7-13-0>>
@@ -25,6 +26,12 @@
 * <<rn-7-0-1>>
 * <<rn-7-0-0>>
 
+
+[discrete]
+[[rn-7-13-3]]
+=== 7.13.3 (2021-07-07)
+
+* `NameError` would be raised on Python 2.7 and 3.4 when a connection error would have otherwise been raised.
 
 [discrete]
 [[rn-7-13-2]]
