@@ -220,7 +220,7 @@ class Transport(object):
 
         # Ensures that the ES verification request only fires once and that
         # all requests block until this request returns back.
-        self._verified_once = Once()
+        self._verify_elasticsearch_lock = Lock()
 
     def add_connection(self, host):
         """
@@ -406,9 +406,7 @@ class Transport(object):
 
         # Before we make the actual API call we verify the Elasticsearch instance.
         if self._verified_elasticsearch is None:
-            self._verified_once.call(
-                self._do_verify_elasticsearch, headers=headers, timeout=timeout
-            )
+            self._do_verify_elasticsearch(headers=headers, timeout=timeout)
 
         # If '_verified_elasticsearch' is False we know we're not connected to Elasticsearch.
         if self._verified_elasticsearch is False:
@@ -536,63 +534,76 @@ class Transport(object):
         but we're also unable to rule it out due to a permission
         error we instead emit an 'ElasticsearchWarning'.
         """
-        # Product check has already been done, no need to do again.
-        if self._verified_elasticsearch is not None:
-            return
+        # Ensure that there's only one thread within this section
+        # at a time to not emit unnecessary index API calls.
+        with self._verify_elasticsearch_lock:
 
-        headers = {header.lower(): value for header, value in (headers or {}).items()}
-        # We know we definitely want JSON so request it via 'accept'
-        headers.setdefault("accept", "application/json")
-
-        info_headers = {}
-        info_response = {}
-        error = None
-
-        for conn in chain(self.connection_pool.connections, self.seed_connections):
-            try:
-                _, info_headers, info_response = conn.perform_request(
-                    "GET", "/", headers=headers, timeout=timeout
-                )
-
-                # Lowercase all the header names for consistency in accessing them.
-                info_headers = {
-                    header.lower(): value for header, value in info_headers.items()
-                }
-
-                info_response = self.deserializer.loads(
-                    info_response, mimetype="application/json"
-                )
-                break
-
-            # Previous versions of 7.x Elasticsearch required a specific
-            # permission so if we receive HTTP 401/403 we should warn
-            # instead of erroring out.
-            except (AuthenticationException, AuthorizationException):
-                warnings.warn(
-                    (
-                        "The client is unable to verify that the server is "
-                        "Elasticsearch due security privileges on the server side"
-                    ),
-                    ElasticsearchWarning,
-                    stacklevel=5,
-                )
-                self._verified_elasticsearch = True
+            # Product check has already been completed while we were
+            # waiting our turn, no need to do again.
+            if self._verified_elasticsearch is not None:
                 return
 
-            # This connection didn't work, we'll try another.
-            except (ConnectionError, SerializationError) as err:
-                if error is None:
-                    error = err
+            headers = {
+                header.lower(): value for header, value in (headers or {}).items()
+            }
+            # We know we definitely want JSON so request it via 'accept'
+            headers.setdefault("accept", "application/json")
 
-        # If we received a connection error and weren't successful
-        # anywhere then we reraise the more appropriate error.
-        if error and not info_response:
-            raise error
+            info_headers = {}
+            info_response = {}
+            error = None
 
-        # Check the information we got back from the index request.
-        self._verified_elasticsearch = _verify_elasticsearch(
-            info_headers, info_response
-        )
+            attempted_conns = []
+            for conn in chain(self.connection_pool.connections, self.seed_connections):
+                # Only attempt once per connection max.
+                if conn in attempted_conns:
+                    continue
+                attempted_conns.append(conn)
+
+                try:
+                    _, info_headers, info_response = conn.perform_request(
+                        "GET", "/", headers=headers, timeout=timeout
+                    )
+
+                    # Lowercase all the header names for consistency in accessing them.
+                    info_headers = {
+                        header.lower(): value for header, value in info_headers.items()
+                    }
+
+                    info_response = self.deserializer.loads(
+                        info_response, mimetype="application/json"
+                    )
+                    break
+
+                # Previous versions of 7.x Elasticsearch required a specific
+                # permission so if we receive HTTP 401/403 we should warn
+                # instead of erroring out.
+                except (AuthenticationException, AuthorizationException):
+                    warnings.warn(
+                        (
+                            "The client is unable to verify that the server is "
+                            "Elasticsearch due security privileges on the server side"
+                        ),
+                        ElasticsearchWarning,
+                        stacklevel=5,
+                    )
+                    self._verified_elasticsearch = True
+                    return
+
+                # This connection didn't work, we'll try another.
+                except (ConnectionError, SerializationError, TransportError) as err:
+                    if error is None:
+                        error = err
+
+            # If we received a connection error and weren't successful
+            # anywhere then we re-raise the more appropriate error.
+            if error and not info_response:
+                raise error
+
+            # Check the information we got back from the index request.
+            self._verified_elasticsearch = _verify_elasticsearch(
+                info_headers, info_response
+            )
 
 
 def _verify_elasticsearch(headers, response):
@@ -640,17 +651,3 @@ def _verify_elasticsearch(headers, response):
         return False
 
     return True
-
-
-class Once:
-    """Simple class which forces a function to only execute once."""
-
-    def __init__(self):
-        self._lock = Lock()
-        self._called = False
-
-    def call(self, func, *args, **kwargs):
-        with self._lock:
-            if not self._called:
-                self._called = True
-                func(*args, **kwargs)

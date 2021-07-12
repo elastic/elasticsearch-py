@@ -34,6 +34,7 @@ from elasticsearch.exceptions import (
     ConnectionError,
     ElasticsearchWarning,
     NotElasticsearchError,
+    NotFoundError,
     TransportError,
 )
 
@@ -770,7 +771,9 @@ class TestTransport:
         # The rest of the requests are 'GET /_search' afterwards
         assert all(call[0][:2] == ("GET", "/_search") for call in calls[1:])
 
-    async def test_multiple_requests_verify_elasticsearch_errors(self, event_loop):
+    async def test_multiple_requests_verify_elasticsearch_product_error(
+        self, event_loop
+    ):
         t = AsyncTransport(
             [
                 {
@@ -823,3 +826,53 @@ class TestTransport:
 
         # The rest of the requests are 'GET /_search' afterwards
         assert all(call[0][:2] == ("GET", "/_search") for call in calls[1:])
+
+    @pytest.mark.parametrize("error_cls", [ConnectionError, NotFoundError])
+    async def test_multiple_requests_verify_elasticsearch_retry_on_errors(
+        self, event_loop, error_cls
+    ):
+        t = AsyncTransport(
+            [
+                {
+                    "exception": error_cls(),
+                    "delay": 0.1,
+                }
+            ],
+            connection_class=DummyConnection,
+        )
+
+        results = []
+        completed_at = []
+
+        async def request_task():
+            try:
+                results.append(await t.perform_request("GET", "/_search"))
+            except Exception as e:
+                results.append(e)
+            completed_at.append(event_loop.time())
+
+        # Execute a bunch of requests concurrently.
+        tasks = []
+        start_time = event_loop.time()
+        for _ in range(5):
+            tasks.append(event_loop.create_task(request_task()))
+        await asyncio.gather(*tasks)
+        end_time = event_loop.time()
+
+        # Exactly 5 results completed
+        assert len(results) == 5
+
+        # All results were errors and not wrapped in 'NotElasticsearchError'
+        assert all(isinstance(result, error_cls) for result in results)
+
+        # Assert that 5 requests were made in total (5 transport requests per x 0.1s/conn request)
+        duration = end_time - start_time
+        assert 0.5 <= duration <= 0.6
+
+        # Assert that the cluster is still in the unknown/unverified stage.
+        assert t._verified_elasticsearch is None
+
+        # See that the API isn't hit, instead it's the index requests that are failing.
+        calls = t.connection_pool.connections[0].calls
+        assert len(calls) == 5
+        assert all(call[0] == ("GET", "/") for call in calls)
