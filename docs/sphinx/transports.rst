@@ -24,7 +24,7 @@ features like custom auth plugins etc.
 Product check on first request
 ------------------------------
 
-Started in v7.14.0 the client performs a required product check before
+Starting in v7.14.0 the client performs a required product check before
 the first API call is executed. This product check allows the client to
 establish that it's communicating with a valid Elasticsearch cluster.
 
