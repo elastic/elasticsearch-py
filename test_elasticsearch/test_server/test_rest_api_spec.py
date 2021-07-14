@@ -33,6 +33,7 @@ import urllib3
 import yaml
 
 from elasticsearch import ElasticsearchWarning, RequestError, TransportError
+from elasticsearch.client.utils import _base64_auth_header
 from elasticsearch.compat import string_types
 from elasticsearch.helpers.test import _get_version
 
@@ -56,6 +57,7 @@ IMPLEMENTED_FEATURES = {
     "allowed_warnings",
     "contains",
     "arbitrary_key",
+    "transform_and_set",
 }
 
 # broken YAML tests on some releases
@@ -324,12 +326,27 @@ class YamlRunner:
             if expected not in value:
                 raise AssertionError("%s is not contained by %s" % (expected, value))
 
+    def run_transform_and_set(self, action):
+        for key, value in action.items():
+            # Convert #base64EncodeCredentials(id,api_key) to ["id", "api_key"]
+            if "#base64EncodeCredentials" in value:
+                value = value.replace("#base64EncodeCredentials", "")
+                value = value.replace("(", "").replace(")", "").split(",")
+                self._state[key] = _base64_auth_header(
+                    (self._lookup(value[0]), self._lookup(value[1]))
+                )
+
     def _resolve(self, value):
         # resolve variables
-        if isinstance(value, string_types) and value.startswith("$"):
-            value = value[1:]
-            assert value in self._state
-            value = self._state[value]
+        if isinstance(value, string_types) and "$" in value:
+            for k, v in self._state.items():
+                key_construct = "${" + k + "}"
+                if key_construct in value:
+                    value = value.replace(key_construct, v)
+                key_construct = "$" + k
+                if key_construct in value:
+                    value = value.replace(key_construct, v)
+
         if isinstance(value, string_types):
             value = value.strip()
         elif isinstance(value, dict):
@@ -443,7 +460,7 @@ try:
             elif test_name == "teardown":
                 teardown_steps = test_step
             else:
-                test_numbers_and_steps.append((test_number, yaml_test))
+                test_numbers_and_steps.append((test_number, test_step))
                 test_number += 1
 
         # Now we combine setup, teardown, and test_steps into
