@@ -184,7 +184,7 @@ class IlmClient(NamespacedClient):
             "POST", "/_ilm/stop", params=params, headers=headers
         )
 
-    @query_params()
+    @query_params("dry_run")
     async def migrate_to_data_tiers(self, body=None, params=None, headers=None):
         """
         Migrates the indices and ILM policies away from custom node attribute
@@ -195,6 +195,9 @@ class IlmClient(NamespacedClient):
         :arg body: Optionally specify a legacy index template name to
             delete and optionally specify a node attribute name used for index shard
             routing (defaults to "data")
+        :arg dry_run: If set to true it will simulate the migration,
+            providing a way to retrieve the ILM policies and indices that need to be
+            migrated. The default is false
         """
         return await self.transport.perform_request(
             "POST",

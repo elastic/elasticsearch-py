@@ -195,6 +195,7 @@ class IlmClient(NamespacedClient):
         self,
         *,
         body: Optional[Any] = ...,
+        dry_run: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
