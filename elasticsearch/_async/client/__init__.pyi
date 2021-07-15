@@ -45,6 +45,7 @@ from .remote import RemoteClient
 from .rollup import RollupClient
 from .searchable_snapshots import SearchableSnapshotsClient
 from .security import SecurityClient
+from .shutdown import ShutdownClient
 from .slm import SlmClient
 from .snapshot import SnapshotClient
 from .sql import SqlClient
@@ -89,6 +90,7 @@ class AsyncElasticsearch(object):
     rollup: RollupClient
     searchable_snapshots: SearchableSnapshotsClient
     security: SecurityClient
+    shutdown: ShutdownClient
     slm: SlmClient
     sql: SqlClient
     ssl: SslClient
