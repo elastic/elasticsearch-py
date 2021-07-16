@@ -190,7 +190,7 @@ async def async_streaming_bulk(
                         raise_on_error,
                         ignore_status,
                         *args,
-                        **kwargs
+                        **kwargs,
                     ),
                 ):
 
@@ -458,5 +458,5 @@ async def async_reindex(
         target_client,
         _change_doc_index(docs, target_index),
         chunk_size=chunk_size,
-        **kwargs
+        **kwargs,
     )

@@ -50,11 +50,26 @@ async def await_if_coro(x):
 
 class AsyncYamlRunner(YamlRunner):
     async def setup(self):
+        # Pull skips from individual tests to not do unnecessary setup.
+        skip_code = []
+        for action in self._run_code:
+            assert len(action) == 1
+            action_type, _ = list(action.items())[0]
+            if action_type == "skip":
+                skip_code.append(action)
+            else:
+                break
+
+        if self._setup_code or skip_code:
+            self.section("setup")
+        if skip_code:
+            await self.run_code(skip_code)
         if self._setup_code:
             await self.run_code(self._setup_code)
 
     async def teardown(self):
         if self._teardown_code:
+            self.section("teardown")
             await self.run_code(self._teardown_code)
 
     async def es_version(self):
@@ -67,19 +82,26 @@ class AsyncYamlRunner(YamlRunner):
             ES_VERSION = tuple(int(v) if v.isdigit() else 999 for v in version)
         return ES_VERSION
 
+    def section(self, name):
+        print(("=" * 10) + " " + name + " " + ("=" * 10))
+
     async def run(self):
         try:
             await self.setup()
+            self.section("test")
             await self.run_code(self._run_code)
         finally:
-            await self.teardown()
+            try:
+                await self.teardown()
+            except Exception:
+                pass
 
     async def run_code(self, test):
         """Execute an instruction based on it's type."""
-        print(test)
         for action in test:
             assert len(action) == 1
             action_type, action = list(action.items())[0]
+            print(action_type, action)
 
             if hasattr(self, "run_" + action_type):
                 await await_if_coro(getattr(self, "run_" + action_type)(action))

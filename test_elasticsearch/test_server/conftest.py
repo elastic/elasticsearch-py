@@ -21,7 +21,7 @@ import time
 import pytest
 
 import elasticsearch
-from elasticsearch.helpers.test import ELASTICSEARCH_URL
+from elasticsearch.helpers.test import CA_CERTS, ELASTICSEARCH_URL
 
 from ..utils import wipe_cluster
 
@@ -38,7 +38,11 @@ def sync_client_factory():
     try:
         # Configure the client with certificates and optionally
         # an HTTP conn class depending on 'PYTHON_CONNECTION_CLASS' envvar
-        kw = {"timeout": 3, "ca_certs": ".ci/certs/ca.pem"}
+        kw = {
+            "timeout": 3,
+            "ca_certs": CA_CERTS,
+            "headers": {"Authorization": "Basic ZWxhc3RpYzpjaGFuZ2VtZQ=="},
+        }
         if "PYTHON_CONNECTION_CLASS" in os.environ:
             from elasticsearch import connection
 
@@ -46,7 +50,11 @@ def sync_client_factory():
                 connection, os.environ["PYTHON_CONNECTION_CLASS"]
             )
 
-        client = elasticsearch.Elasticsearch(ELASTICSEARCH_URL, **kw)
+        # We do this little dance with the URL to force
+        # Requests to respect 'headers: None' within rest API spec tests.
+        client = elasticsearch.Elasticsearch(
+            ELASTICSEARCH_URL.replace("elastic:changeme@", ""), **kw
+        )
 
         # Wait for the cluster to report a status of 'yellow'
         for _ in range(100):
