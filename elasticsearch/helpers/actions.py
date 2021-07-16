@@ -659,18 +659,33 @@ def reindex(
     target_client = client if target_client is None else target_client
     docs = scan(client, query=query, index=source_index, scroll=scroll, **scan_kwargs)
 
-    def _change_doc_index(hits, index):
+    def _change_doc_index(hits, index, is_data_stream):
         for h in hits:
             h["_index"] = index
+            if is_data_stream:
+                h["_op_type"] = "create"
             if "fields" in h:
                 h.update(h.pop("fields"))
             yield h
 
     kwargs = {"stats_only": True}
     kwargs.update(bulk_kwargs)
+
+    is_data_stream: bool = False
+    try:
+        # Verify if the target_index is data stream or index
+        data_streams = target_client.indices.get_data_stream(target_index)
+    except Exception:
+        pass
+    else:
+        for stream in data_streams["data_streams"]:
+            if target_index == stream["name"]:
+                is_data_stream = True
+                break
+
     return bulk(
         target_client,
-        _change_doc_index(docs, target_index),
+        _change_doc_index(docs, target_index, is_data_stream),
         chunk_size=chunk_size,
         **kwargs
     )

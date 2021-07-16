@@ -73,6 +73,9 @@ class ElasticsearchTestCase(TestCase):
         if self.es_version() >= (7, 7):
             expand_wildcards.append("hidden")
 
+        self.client.indices.delete_data_stream(
+            name="*", ignore=404, expand_wildcards=expand_wildcards
+        )
         self.client.indices.delete(
             index="*", ignore=404, expand_wildcards=expand_wildcards
         )

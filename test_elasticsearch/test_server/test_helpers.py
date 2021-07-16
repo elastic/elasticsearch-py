@@ -15,6 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+from datetime import datetime, timedelta, timezone
+
 from mock import patch
 
 from elasticsearch import TransportError, helpers
@@ -753,4 +755,43 @@ class TestParentChildReindex(ElasticsearchTestCase):
                 "found": True,
             },
             q,
+        )
+
+
+class TestDataStreamReindex(ElasticsearchTestCase):
+    def setup_method(self, _):
+        dt = datetime.now(tz=timezone.utc)
+        bulk = []
+        for x in range(100):
+            bulk.append({"index": {"_index": "test_index_stream", "_id": x}})
+            bulk.append(
+                {
+                    "answer": x,
+                    "correct": x == 42,
+                    "type": "answers" if x % 2 == 0 else "questions",
+                    "@timestamp": (dt - timedelta(days=x)).isoformat(),
+                }
+            )
+        self.client.bulk(bulk, refresh=True)
+        self.client.indices.put_index_template(
+            "my-index-template",
+            body={
+                "index_patterns": ["py-*-*"],
+                "data_stream": {},
+            },
+        )
+        self.client.indices.create_data_stream("py-test-stream")
+        self.client.indices.refresh()
+
+    def test_reindex_index_datastream(self):
+        helpers.reindex(
+            self.client,
+            "test_index_stream",
+            "py-test-stream",
+            query={"query": {"bool": {"filter": {"term": {"type": "answers"}}}}},
+        )
+        self.client.indices.refresh()
+        self.assertTrue(self.client.indices.exists("py-test-stream"))
+        self.assertEqual(
+            50, self.client.count(index="py-test-stream", q="type:answers")["count"]
         )
