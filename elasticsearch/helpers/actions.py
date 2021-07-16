@@ -671,7 +671,7 @@ def reindex(
     kwargs = {"stats_only": True}
     kwargs.update(bulk_kwargs)
 
-    is_data_stream: bool = False
+    is_data_stream = False
     try:
         # Verify if the target_index is data stream or index
         data_streams = target_client.indices.get_data_stream(target_index)
