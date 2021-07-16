@@ -1,6 +1,11 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-7-13-3>>
+* <<rn-7-13-2>>
+* <<rn-7-13-1>>
+* <<rn-7-13-0>>
+* <<rn-7-12-1>>
 * <<rn-7-12-0>>
 * <<rn-7-11-0>>
 * <<rn-7-10-1>>
@@ -23,10 +28,142 @@
 
 
 [discrete]
+[[rn-7-13-3]]
+=== 7.13.3 (2021-07-07)
+
+* `NameError` would be raised on Python 2.7 and 3.4 when a connection error would have otherwise been raised.
+
+[discrete]
+[[rn-7-13-2]]
+=== 7.13.2 (2021-06-21)
+
+* Fixed `Transport.perform_request()` to properly reraise `RecursionError`
+* Fixed `AIOHttpConnection` to no longer send `Accept-Encoding: gzip, deflate` when `http_compress=None`.
+  Instead now sends no `Accept-Encoding` header in the default case
+
+[discrete]
+==== Snapshot
+
+* Added the `snapshot.repository_analyze` API
+
+[discrete]
+[[rn-7-13-1]]
+=== 7.13.1 (2021-06-02)
+
+* Client is compatible with Elasticsearch 7.13.1
+
+[discrete]
+[[rn-7-13-0]]
+=== 7.13.0 (2021-05-25)
+
+* Added support for compatibility header for Elasticsearch. If the environment variable
+  `ELASTIC_CLIENT_APIVERSIONING=1` is set the client will send the headers Accept and
+  Content-Type with the following value: `application/vnd.elasticsearch+json;compatible-with=7`.
+
+[discrete]
+==== Cat
+
+* Added the `include_unloaded_segments` parameter to the `cat.nodes` API
+* Added the `features.reset_features` **experimental** API
+* Added the `fleet.global_checkpoints` **expiremental** API
+* Added the `ingest.geo_ip_stats` API
+
+[discrete]
+==== Machine Learning
+
+* Added the `ml.delete_trained_model_alias` API
+* Added the `ml.preview_data_frame_analytics` API
+* Added the `ml.put_trained_model_alias` API
+* Changed the `ml.delete_data_frame_analytics`, `ml.delete_trained_model`, `ml.explain_data_frame_analytics`,
+  `ml.get_data_fram_analytics`, `ml.get_data_frame_analytics_stats`, `ml.get_trained_models`,
+  `ml.get_trained_models_stats`, `ml.put_trained_model`, `ml.start_data_frame_analytics`,
+  `ml.stop_data_frame_analytics`, `ml.update_data_frame_analytics` APIs from **beta** to **stable**.
+
+[discrete]
+==== Nodes
+
+* Added `include_unloaded_segments` parameter to `node.stats` API
+
+[discrete]
+==== Searchable Snapshots
+
+* Added the `searchable_snapshots.cache_stats` **experimental** API
+
+[discrete]
+==== Security
+
+* Added the `security.clear_cached_service_tokens` **beta** API
+* Added the `security.create_service_token` **beta** API
+* Added the `security.delete_service_token` **beta** API
+* Added the `security.get_service_accounts` **beta** API
+* Added the `security.get_service_credentials` **beta** API
+
+[discrete]
+==== Shutdown
+
+* Added the `shutdown.delete_node` **experiemental** API
+* Added the `shutdown.get_node` **experimental** API
+* Added the `shutdown.put_node` **experimental** API
+
+[discrete]
+==== Snapshots
+
+* Added the `index_details` parameter to `snapshot.get` API
+
+[discrete]
+==== Text Structure
+
+* Changed the `text_structure.find_structure` API from **experimental** to **stable**
+
+[discrete]
+[[rn-7-12-1]]
+=== 7.12.1 (2021-04-27)
+
+[discrete]
+==== Text Structure
+
+* Changed the `text_structure.find_text_structure` API from **experimental** to **stable**
+
+[discrete]
 [[rn-7-12-0]]
 === 7.12.0 (2021-03-23)
 
-* Added support for 7.12 APIs
+[discrete]
+==== Autoscaling
+
+* Changed `autoscaling.delete_autoscaling_policy`, `autoscaling.get_autoscaling_policy`,
+  and `autoscaling.put_autoscaling_policy` APIs from **experimental** to **stable**
+
+[discrete]
+==== EQL
+
+* Added `eql.get_status` API
+
+[discrete]
+==== Logash
+
+* Added `logstash.delete_pipeline`, `logstash.get_pipeline`, and `logstash.put_pipeline` APIs
+
+[discrete]
+==== Machine Learning
+
+* Removed the **experimental** `ml.find_text_structure` API
+
+[discrete]
+==== Searchable Snapshots
+
+* Added `storage` parameter to the `searchable_snapshots.mount` API
+* Added `level` parameter to the `searchable_snapshots.stats` API
+
+[discrete]
+==== Search
+
+* Added the `min_compatible_shard_node` parameter to `search()`
+
+[discrete]
+==== Text Structure
+
+* Added **experimental** `text_structure.find_text_structure` API
 
 
 [discrete]

@@ -278,6 +278,12 @@ class Transport(object):
                         "/_nodes/_all/http",
                         timeout=self.sniff_timeout if not initial else None,
                     )
+
+                    # Lowercase all the header names for consistency in accessing them.
+                    headers = {
+                        header.lower(): value for header, value in headers.items()
+                    }
+
                     node_info = self.deserializer.loads(
                         node_info, headers.get("content-type")
                     )
@@ -387,6 +393,11 @@ class Transport(object):
                     ignore=ignore,
                     timeout=timeout,
                 )
+
+                # Lowercase all the header names for consistency in accessing them.
+                headers_response = {
+                    header.lower(): value for header, value in headers_response.items()
+                }
 
             except TransportError as e:
                 if method == "HEAD" and e.status_code == 404:

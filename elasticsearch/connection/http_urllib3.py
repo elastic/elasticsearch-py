@@ -24,7 +24,7 @@ from urllib3.exceptions import ReadTimeoutError
 from urllib3.exceptions import SSLError as UrllibSSLError  # type: ignore
 from urllib3.util.retry import Retry  # type: ignore
 
-from ..compat import urlencode
+from ..compat import reraise_exceptions, urlencode
 from ..exceptions import (
     ConnectionError,
     ConnectionTimeout,
@@ -253,6 +253,8 @@ class Urllib3HttpConnection(Connection):
             )
             duration = time.time() - start
             raw_data = response.data.decode("utf-8", "surrogatepass")
+        except reraise_exceptions:
+            raise
         except Exception as e:
             self.log_request_fail(
                 method, full_url, url, orig_body, time.time() - start, exception=e

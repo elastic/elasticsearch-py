@@ -84,6 +84,7 @@ class AsyncTransport(Transport):
         self.sniffing_task = None
         self.loop = None
         self._async_init_called = False
+        self._sniff_on_start_event = None  # type: asyncio.Event
 
         super(AsyncTransport, self).__init__(
             *args, hosts=[], sniff_on_start=False, **kwargs
@@ -112,14 +113,35 @@ class AsyncTransport(Transport):
         self.loop = get_running_loop()
         self.kwargs["loop"] = self.loop
 
-        # Now that we have a loop we can create all our HTTP connections
+        # Now that we have a loop we can create all our HTTP connections...
         self.set_connections(self.hosts)
         self.seed_connections = list(self.connection_pool.connections[:])
 
         # ... and we can start sniffing in the background.
         if self.sniffing_task is None and self.sniff_on_start:
-            self.last_sniff = self.loop.time()
-            self.create_sniff_task(initial=True)
+
+            # Create an asyncio.Event for future calls to block on
+            # until the initial sniffing task completes.
+            self._sniff_on_start_event = asyncio.Event()
+
+            try:
+                self.last_sniff = self.loop.time()
+                self.create_sniff_task(initial=True)
+
+                # Since this is the first one we wait for it to complete
+                # in case there's an error it'll get raised here.
+                await self.sniffing_task
+
+            # If the task gets cancelled here it likely means the
+            # transport got closed.
+            except asyncio.CancelledError:
+                pass
+
+            # Once we exit this section we want to unblock any _async_calls()
+            # that are blocking on our initial sniff attempt regardless of it
+            # was successful or not.
+            finally:
+                self._sniff_on_start_event.set()
 
     async def _async_call(self):
         """This method is called within any async method of AsyncTransport
@@ -129,6 +151,14 @@ class AsyncTransport(Transport):
         if not self._async_init_called:
             self._async_init_called = True
             await self._async_init()
+
+        # If the initial sniff_on_start hasn't returned yet
+        # then we need to wait for node information to come back
+        # or for the task to be cancelled via AsyncTransport.close()
+        if self._sniff_on_start_event and not self._sniff_on_start_event.is_set():
+            # This is already a no-op if the event is set but we try to
+            # avoid an 'await' by checking 'not event.is_set()' above first.
+            await self._sniff_on_start_event.wait()
 
         if self.sniffer_timeout:
             if self.loop.time() >= self.last_sniff + self.sniffer_timeout:
@@ -187,6 +217,12 @@ class AsyncTransport(Transport):
                 for t in done:
                     try:
                         _, headers, node_info = t.result()
+
+                        # Lowercase all the header names for consistency in accessing them.
+                        headers = {
+                            header.lower(): value for header, value in headers.items()
+                        }
+
                         node_info = self.deserializer.loads(
                             node_info, headers.get("content-type")
                         )
@@ -212,6 +248,8 @@ class AsyncTransport(Transport):
         """
         # Without a loop we can't do anything.
         if not self.loop:
+            if initial:
+                raise RuntimeError("Event loop not running on initial sniffing task")
             return
 
         node_info = await self._get_sniff_data(initial)
@@ -293,7 +331,7 @@ class AsyncTransport(Transport):
             connection = self.get_connection()
 
             try:
-                status, headers, data = await connection.perform_request(
+                status, headers_response, data = await connection.perform_request(
                     method,
                     url,
                     params,
@@ -302,6 +340,11 @@ class AsyncTransport(Transport):
                     ignore=ignore,
                     timeout=timeout,
                 )
+
+                # Lowercase all the header names for consistency in accessing them.
+                headers_response = {
+                    header.lower(): value for header, value in headers_response.items()
+                }
             except TransportError as e:
                 if method == "HEAD" and e.status_code == 404:
                     return False
@@ -336,7 +379,9 @@ class AsyncTransport(Transport):
                     return 200 <= status < 300
 
                 if data:
-                    data = self.deserializer.loads(data, headers.get("content-type"))
+                    data = self.deserializer.loads(
+                        data, headers_response.get("content-type")
+                    )
                 return data
 
     async def close(self):
@@ -350,5 +395,6 @@ class AsyncTransport(Transport):
             except asyncio.CancelledError:
                 pass
             self.sniffing_task = None
+
         for connection in self.connection_pool.connections:
             await connection.close()

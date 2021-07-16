@@ -159,7 +159,7 @@ class API:
         if isinstance(definition["documentation"], str):
             self.doc_url = definition["documentation"]
         else:
-            # set as attribute so it may be overriden by Module.add
+            # set as attribute so it may be overridden by Module.add
             self.description = (
                 definition["documentation"].get("description", "").strip()
             )

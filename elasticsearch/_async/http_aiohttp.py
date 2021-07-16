@@ -22,7 +22,7 @@ import warnings
 
 import urllib3  # type: ignore
 
-from ..compat import urlencode
+from ..compat import reraise_exceptions, urlencode
 from ..connection.base import Connection
 from ..exceptions import (
     ConnectionError,
@@ -167,7 +167,10 @@ class AIOHttpConnection(AsyncConnection):
 
         self.ssl_assert_fingerprint = ssl_assert_fingerprint
         if self.use_ssl and ssl_context is None:
-            ssl_context = ssl.SSLContext(ssl_version or ssl.PROTOCOL_TLS)
+            if ssl_version is None:
+                ssl_context = ssl.create_default_context()
+            else:
+                ssl_context = ssl.SSLContext(ssl_version)
 
             # Convert all sentinel values to their actual default
             # values if not using an SSLContext.
@@ -180,8 +183,8 @@ class AIOHttpConnection(AsyncConnection):
                 ssl_context.verify_mode = ssl.CERT_REQUIRED
                 ssl_context.check_hostname = True
             else:
-                ssl_context.verify_mode = ssl.CERT_NONE
                 ssl_context.check_hostname = False
+                ssl_context.verify_mode = ssl.CERT_NONE
 
             ca_certs = CA_CERTS if ca_certs is None else ca_certs
             if verify_certs:
@@ -300,10 +303,9 @@ class AIOHttpConnection(AsyncConnection):
                     raw_data = await response.text()
                 duration = self.loop.time() - start
 
-        # We want to reraise a cancellation.
-        except asyncio.CancelledError:
+        # We want to reraise a cancellation or recursion error.
+        except reraise_exceptions:
             raise
-
         except Exception as e:
             self.log_request_fail(
                 method,
@@ -360,6 +362,7 @@ class AIOHttpConnection(AsyncConnection):
             self.loop = get_running_loop()
         self.session = aiohttp.ClientSession(
             headers=self.headers,
+            skip_auto_headers=("accept", "accept-encoding"),
             auto_decompress=True,
             loop=self.loop,
             cookie_jar=aiohttp.DummyCookieJar(),

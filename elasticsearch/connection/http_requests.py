@@ -18,7 +18,7 @@
 import time
 import warnings
 
-from ..compat import string_types, urlencode
+from ..compat import reraise_exceptions, string_types, urlencode
 from ..exceptions import (
     ConnectionError,
     ConnectionTimeout,
@@ -166,6 +166,8 @@ class RequestsHttpConnection(Connection):
             response = self.session.send(prepared_request, **send_kwargs)
             duration = time.time() - start
             raw_data = response.content.decode("utf-8", "surrogatepass")
+        except reraise_exceptions:
+            raise
         except Exception as e:
             self.log_request_fail(
                 method,
