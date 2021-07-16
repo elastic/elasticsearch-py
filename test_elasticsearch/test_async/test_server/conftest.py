@@ -20,7 +20,7 @@ import asyncio
 import pytest
 
 import elasticsearch
-from elasticsearch.helpers.test import ELASTICSEARCH_URL
+from elasticsearch.helpers.test import CA_CERTS, ELASTICSEARCH_URL
 
 from ...utils import wipe_cluster
 
@@ -34,7 +34,7 @@ async def async_client():
         if not hasattr(elasticsearch, "AsyncElasticsearch"):
             pytest.skip("test requires 'AsyncElasticsearch'")
 
-        kw = {"timeout": 3, "ca_certs": ".ci/certs/ca.pem"}
+        kw = {"timeout": 3, "ca_certs": CA_CERTS}
         client = elasticsearch.AsyncElasticsearch(ELASTICSEARCH_URL, **kw)
 
         # wait for yellow status
