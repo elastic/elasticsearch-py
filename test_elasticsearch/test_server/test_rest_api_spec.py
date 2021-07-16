@@ -114,6 +114,7 @@ SKIP_TESTS = {
     "indices/stats/60_field_usage[0]",
     # actual Elasticsearch failure?
     "transform/transforms_stats",
+    "transform/transforms_cat_apis",
 }
 
 
