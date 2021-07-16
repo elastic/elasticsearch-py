@@ -384,7 +384,7 @@ Customization
 Custom serializers
 ~~~~~~~~~~~~~~~~~~
 
-By default, `JSONSerializer`_ is used to encode all outgoing requests.
+By default, ``JSONSerializer`` is used to encode all outgoing requests.
 However, you can implement your own custom serializer
 
 .. code-block:: python
@@ -400,8 +400,6 @@ However, you can implement your own custom serializer
            return JSONSerializer.default(self, obj)
 
    es = Elasticsearch(serializer=SetEncoder())
-
-.. _JSONSerializer: https://github.com/elastic/elasticsearch-py/blob/master/elasticsearch/serializer.py#L24
 
 
 Elasticsearch-DSL
