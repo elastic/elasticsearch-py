@@ -15,6 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+from asyncio import AbstractEventLoop
 from typing import Any, Collection, Mapping, MutableMapping, Optional, Tuple, Union
 
 from ..connection import Connection
@@ -57,6 +58,6 @@ class AIOHttpConnection(AsyncConnection):
         api_key: Optional[Any] = ...,
         opaque_id: Optional[str] = ...,
         meta_header: bool = ...,
-        loop: Any = ...,
+        loop: Optional[AbstractEventLoop] = ...,
         **kwargs: Any,
     ) -> None: ...
