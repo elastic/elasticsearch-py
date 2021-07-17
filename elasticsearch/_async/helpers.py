@@ -19,7 +19,7 @@ import asyncio
 import logging
 
 from ..compat import map
-from ..exceptions import TransportError
+from ..exceptions import NotFoundError, TransportError
 from ..helpers.actions import (
     _ActionChunker,
     _process_bulk_chunk_error,
@@ -408,6 +408,7 @@ async def async_reindex(
     scroll="5m",
     scan_kwargs={},
     bulk_kwargs={},
+    op_type=None,
 ):
 
     """
@@ -439,17 +440,18 @@ async def async_reindex(
         :func:`~elasticsearch.helpers.async_scan`
     :arg bulk_kwargs: additional kwargs to be passed to
         :func:`~elasticsearch.helpers.async_bulk`
+    :arg op_type: Explicit operation type.
     """
     target_client = client if target_client is None else target_client
     docs = async_scan(
         client, query=query, index=source_index, scroll=scroll, **scan_kwargs
     )
 
-    async def _change_doc_index(hits, index, is_data_stream):
+    async def _change_doc_index(hits, index, op_type):
         async for h in hits:
             h["_index"] = index
-            if is_data_stream:
-                h["_op_type"] = "create"
+            if op_type is not None:
+                h["_op_type"] = op_type
             if "fields" in h:
                 h.update(h.pop("fields"))
             yield h
@@ -461,7 +463,8 @@ async def async_reindex(
     try:
         # Verify if the target_index is data stream or index
         data_streams = await target_client.indices.get_data_stream(target_index)
-    except Exception:
+    except NotFoundError:
+        # If its not data stream, might be index
         pass
     else:
         for stream in data_streams["data_streams"]:
@@ -469,9 +472,15 @@ async def async_reindex(
                 is_data_stream = True
                 break
 
+    if is_data_stream:
+        if op_type is not None and op_type != "create":
+            raise ValueError("Data Stream should have op_type as create")
+        else:
+            op_type = "create"
+
     return await async_bulk(
         target_client,
-        _change_doc_index(docs, target_index, is_data_stream),
+        _change_doc_index(docs, target_index, op_type),
         chunk_size=chunk_size,
         **kwargs,
     )

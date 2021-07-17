@@ -20,7 +20,7 @@ import time
 from operator import methodcaller
 
 from ..compat import Mapping, Queue, map, string_types
-from ..exceptions import TransportError
+from ..exceptions import NotFoundError, TransportError
 from .errors import BulkIndexError, ScanError
 
 logger = logging.getLogger("elasticsearch.helpers")
@@ -624,6 +624,7 @@ def reindex(
     scroll="5m",
     scan_kwargs={},
     bulk_kwargs={},
+    op_type=None,
 ):
 
     """
@@ -655,15 +656,16 @@ def reindex(
         :func:`~elasticsearch.helpers.scan`
     :arg bulk_kwargs: additional kwargs to be passed to
         :func:`~elasticsearch.helpers.bulk`
+    :arg op_type: Explicit operation type.
     """
     target_client = client if target_client is None else target_client
     docs = scan(client, query=query, index=source_index, scroll=scroll, **scan_kwargs)
 
-    def _change_doc_index(hits, index, is_data_stream):
+    def _change_doc_index(hits, index, op_type):
         for h in hits:
             h["_index"] = index
-            if is_data_stream:
-                h["_op_type"] = "create"
+            if op_type is not None:
+                h["_op_type"] = op_type
             if "fields" in h:
                 h.update(h.pop("fields"))
             yield h
@@ -675,7 +677,8 @@ def reindex(
     try:
         # Verify if the target_index is data stream or index
         data_streams = target_client.indices.get_data_stream(target_index)
-    except Exception:
+    except NotFoundError:
+        # If its not data stream, might be index
         pass
     else:
         for stream in data_streams["data_streams"]:
@@ -683,9 +686,15 @@ def reindex(
                 is_data_stream = True
                 break
 
+    if is_data_stream:
+        if op_type is not None and op_type != "create":
+            raise ValueError("Data Stream should have op_type as create")
+        else:
+            op_type = "create"
+
     return bulk(
         target_client,
-        _change_doc_index(docs, target_index, is_data_stream),
+        _change_doc_index(docs, target_index, op_type),
         chunk_size=chunk_size,
         **kwargs
     )

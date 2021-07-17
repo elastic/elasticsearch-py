@@ -102,4 +102,5 @@ async def async_reindex(
     scroll: str = ...,
     scan_kwargs: Optional[Mapping[str, Any]] = ...,
     bulk_kwargs: Optional[Mapping[str, Any]] = ...,
+    op_type: bool = ...,
 ) -> Tuple[int, Union[int, List[Any]]]: ...

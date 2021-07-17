@@ -915,8 +915,9 @@ async def reindex_data_stream_setup(async_client):
 
 
 class TestAsyncDataStreamReindex(object):
+    @pytest.mark.parametrize("op_type", [None, "create"])
     async def test_reindex_index_datastream(
-        self, async_client, reindex_data_stream_setup
+        self, op_type, async_client, reindex_data_stream_setup
     ):
         await helpers.async_reindex(
             async_client,
@@ -924,6 +925,7 @@ class TestAsyncDataStreamReindex(object):
             "py-test-stream",
             scan_kwargs={"q": "type:answers"},
             bulk_kwargs={"refresh": True},
+            op_type=op_type,
         )
         # await async_client.indices.refresh()
         assert await async_client.indices.exists("py-test-stream")
@@ -933,3 +935,17 @@ class TestAsyncDataStreamReindex(object):
                 "count"
             ]
         )
+
+    async def test_reindex_index_datastream_op_type_index(
+        self, async_client, reindex_data_stream_setup
+    ):
+        with pytest.raises(
+            ValueError, match="Data Stream should have op_type as create"
+        ):
+            await helpers.async_reindex(
+                async_client,
+                "test_index_stream",
+                "py-test-stream",
+                query={"query": {"bool": {"filter": {"term": {"type": "answers"}}}}},
+                op_type="_index",
+            )
