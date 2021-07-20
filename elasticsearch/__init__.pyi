@@ -40,6 +40,7 @@ from .exceptions import RequestError as RequestError
 from .exceptions import SerializationError as SerializationError
 from .exceptions import SSLError as SSLError
 from .exceptions import TransportError as TransportError
+from .exceptions import UnsupportedProductError as UnsupportedProductError
 from .serializer import JSONSerializer as JSONSerializer
 from .transport import Transport as Transport
 
