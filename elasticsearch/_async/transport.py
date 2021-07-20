@@ -27,11 +27,10 @@ from ..exceptions import (
     ConnectionError,
     ConnectionTimeout,
     ElasticsearchWarning,
-    NotElasticsearchError,
     SerializationError,
     TransportError,
 )
-from ..transport import Transport, _verify_elasticsearch
+from ..transport import Transport, _ProductChecker
 from .compat import get_running_loop
 from .http_aiohttp import AIOHttpConnection
 
@@ -340,12 +339,9 @@ class AsyncTransport(Transport):
         if self._verified_elasticsearch is None:
             await self._do_verify_elasticsearch(headers=headers, timeout=timeout)
 
-        # If '_verified_elasticsearch' is False we know we're not connected to Elasticsearch.
-        if self._verified_elasticsearch is False:
-            raise NotElasticsearchError(
-                "The client noticed that the server is not Elasticsearch "
-                "and we do not support this unknown product"
-            )
+        # If '_verified_elasticsearch' isn't 'True' then we raise an error.
+        if self._verified_elasticsearch is not True:
+            _ProductChecker.raise_error(self._verified_elasticsearch)
 
         for attempt in range(self.max_retries + 1):
             connection = self.get_connection()
@@ -496,6 +492,6 @@ class AsyncTransport(Transport):
                 raise error
 
             # Check the information we got back from the index request.
-            self._verified_elasticsearch = _verify_elasticsearch(
+            self._verified_elasticsearch = _ProductChecker.check_product(
                 info_headers, info_response
             )
