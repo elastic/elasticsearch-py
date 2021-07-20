@@ -31,9 +31,9 @@ from .exceptions import (
     ConnectionError,
     ConnectionTimeout,
     ElasticsearchWarning,
-    NotElasticsearchError,
     SerializationError,
     TransportError,
+    UnsupportedProductError,
 )
 from .serializer import DEFAULT_SERIALIZERS, Deserializer, JSONSerializer
 from .utils import _client_meta_version
@@ -214,8 +214,8 @@ class Transport(object):
         # - 'True': Means we've verified that we're talking to Elasticsearch or
         #   that we can't rule out Elasticsearch due to auth issues. A warning
         #   will be raised if we receive 401/403.
-        # - 'False': Means we've discovered we're not talking to Elasticsearch,
-        #   should raise an error in this case for every request.
+        # - 'int': Means we're talking to an unsupported product, should raise
+        #   the corresponding error.
         self._verified_elasticsearch = None
 
         # Ensures that the ES verification request only fires once and that
@@ -408,12 +408,9 @@ class Transport(object):
         if self._verified_elasticsearch is None:
             self._do_verify_elasticsearch(headers=headers, timeout=timeout)
 
-        # If '_verified_elasticsearch' is False we know we're not connected to Elasticsearch.
-        if self._verified_elasticsearch is False:
-            raise NotElasticsearchError(
-                "The client noticed that the server is not Elasticsearch "
-                "and we do not support this unknown product"
-            )
+        # If '_verified_elasticsearch' isn't 'True' then we raise an error.
+        if self._verified_elasticsearch is not True:
+            _ProductChecker.raise_error(self._verified_elasticsearch)
 
         for attempt in range(self.max_retries + 1):
             connection = self.get_connection()
@@ -601,53 +598,84 @@ class Transport(object):
                 raise error
 
             # Check the information we got back from the index request.
-            self._verified_elasticsearch = _verify_elasticsearch(
+            self._verified_elasticsearch = _ProductChecker.check_product(
                 info_headers, info_response
             )
 
 
-def _verify_elasticsearch(headers, response):
-    """Verifies that the server we're talking to is Elasticsearch.
-    Does this by checking HTTP headers and the deserialized
-    response to the 'info' API. Returns 'True' if we're verified
-    against Elasticsearch, 'False' otherwise.
-    """
-    try:
-        version = response.get("version", {})
-        version_number = tuple(
-            int(x) if x is not None else 999
-            for x in re.search(
-                r"^([0-9]+)\.([0-9]+)(?:\.([0-9]+))?", version["number"]
-            ).groups()
-        )
-    except (KeyError, TypeError, ValueError, AttributeError):
-        # No valid 'version.number' field, effectively 0.0.0
-        version = {}
-        version_number = (0, 0, 0)
+class _ProductChecker:
+    """Class which verifies we're connected to a supported product"""
 
-    # Check all of the fields and headers for missing/valid values.
-    try:
-        bad_tagline = response.get("tagline", None) != "You Know, for Search"
-        bad_build_flavor = version.get("build_flavor", None) != "default"
-        bad_product_header = headers.get("x-elastic-product", None) != "Elasticsearch"
-    except (AttributeError, TypeError):
-        bad_tagline = True
-        bad_build_flavor = True
-        bad_product_header = True
+    # States that can be returned from 'check_product'
+    SUCCESS = True
+    UNSUPPORTED_PRODUCT = 2
+    UNSUPPORTED_DISTRIBUTION = 3
 
-    if (
-        # No version or version less than 6.x
-        version_number < (6, 0, 0)
-        # 6.x and there's a bad 'tagline'
-        or ((6, 0, 0) <= version_number < (7, 0, 0) and bad_tagline)
-        # 7.0-7.13 and there's a bad 'tagline' or 'build_flavor'
-        or (
-            (7, 0, 0) <= version_number < (7, 14, 0)
-            and (bad_tagline or bad_build_flavor)
-        )
-        # 7.14+ and there's a bad 'X-Elastic-Product' HTTP header
-        or ((7, 14, 0) <= version_number and bad_product_header)
-    ):
-        return False
+    @classmethod
+    def raise_error(cls, state):
+        # These states mean the product_check() didn't fail so do nothing.
+        if state in (None, True):
+            return
 
-    return True
+        if state == cls.UNSUPPORTED_DISTRIBUTION:
+            message = (
+                "The client noticed that the server is not "
+                "a supported distribution of Elasticsearch"
+            )
+        else:  # UNSUPPORTED_PRODUCT
+            message = (
+                "The client noticed that the server is not Elasticsearch "
+                "and we do not support this unknown product"
+            )
+        raise UnsupportedProductError(message)
+
+    @classmethod
+    def check_product(cls, headers, response):
+        # type: (dict[str, str], dict[str, str]) -> int
+        """Verifies that the server we're talking to is Elasticsearch.
+        Does this by checking HTTP headers and the deserialized
+        response to the 'info' API. Returns one of the states above.
+        """
+        try:
+            version = response.get("version", {})
+            version_number = tuple(
+                int(x) if x is not None else 999
+                for x in re.search(
+                    r"^([0-9]+)\.([0-9]+)(?:\.([0-9]+))?", version["number"]
+                ).groups()
+            )
+        except (KeyError, TypeError, ValueError, AttributeError):
+            # No valid 'version.number' field, effectively 0.0.0
+            version = {}
+            version_number = (0, 0, 0)
+
+        # Check all of the fields and headers for missing/valid values.
+        try:
+            bad_tagline = response.get("tagline", None) != "You Know, for Search"
+            bad_build_flavor = version.get("build_flavor", None) != "default"
+            bad_product_header = (
+                headers.get("x-elastic-product", None) != "Elasticsearch"
+            )
+        except (AttributeError, TypeError):
+            bad_tagline = True
+            bad_build_flavor = True
+            bad_product_header = True
+
+        # 7.0-7.13 and there's a bad 'tagline' or unsupported 'build_flavor'
+        if (7, 0, 0) <= version_number < (7, 14, 0):
+            if bad_tagline:
+                return cls.UNSUPPORTED_PRODUCT
+            elif bad_build_flavor:
+                return cls.UNSUPPORTED_DISTRIBUTION
+
+        elif (
+            # No version or version less than 6.x
+            version_number < (6, 0, 0)
+            # 6.x and there's a bad 'tagline'
+            or ((6, 0, 0) <= version_number < (7, 0, 0) and bad_tagline)
+            # 7.14+ and there's a bad 'X-Elastic-Product' HTTP header
+            or ((7, 14, 0) <= version_number and bad_product_header)
+        ):
+            return cls.UNSUPPORTED_PRODUCT
+
+        return True

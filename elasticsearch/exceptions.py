@@ -51,9 +51,9 @@ class SerializationError(ElasticsearchException):
     """
 
 
-class NotElasticsearchError(ElasticsearchException):
+class UnsupportedProductError(ElasticsearchException):
     """Error which is raised when the client detects
-    it's not connected to an Elasticsearch cluster.
+    it's not connected to a supported product.
     """
 
 

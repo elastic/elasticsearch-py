@@ -31,13 +31,11 @@ from elasticsearch.exceptions import (
     AuthorizationException,
     ConnectionError,
     ElasticsearchWarning,
-    NotElasticsearchError,
     NotFoundError,
     TransportError,
+    UnsupportedProductError,
 )
-from elasticsearch.transport import Transport
-from elasticsearch.transport import _verify_elasticsearch as verify_elasticsearch
-from elasticsearch.transport import get_host_info
+from elasticsearch.transport import Transport, _ProductChecker, get_host_info
 
 from .test_cases import TestCase
 
@@ -486,26 +484,50 @@ TAGLINE = "You Know, for Search"
 
 
 @pytest.mark.parametrize(
-    ["headers", "response"],
+    ["headers", "response", "product_error"],
     [
         # All empty.
-        ({}, {}),
+        ({}, {}, _ProductChecker.UNSUPPORTED_PRODUCT),
         # Don't check the product header immediately, need to check version first.
-        ({"x-elastic-product": "Elasticsearch"}, {}),
+        (
+            {"x-elastic-product": "Elasticsearch"},
+            {},
+            _ProductChecker.UNSUPPORTED_PRODUCT,
+        ),
         # Version not there.
-        ({}, {"tagline": TAGLINE}),
+        ({}, {"tagline": TAGLINE}, _ProductChecker.UNSUPPORTED_PRODUCT),
         # Version is nonsense
-        ({}, {"version": "1.0.0", "tagline": TAGLINE}),
+        (
+            {},
+            {"version": "1.0.0", "tagline": TAGLINE},
+            _ProductChecker.UNSUPPORTED_PRODUCT,
+        ),
         # Version number not there
-        ({}, {"version": {}, "tagline": TAGLINE}),
+        ({}, {"version": {}, "tagline": TAGLINE}, _ProductChecker.UNSUPPORTED_PRODUCT),
         # Version number is nonsense
-        ({}, {"version": {"number": "nonsense"}, "tagline": TAGLINE}),
+        (
+            {},
+            {"version": {"number": "nonsense"}, "tagline": TAGLINE},
+            _ProductChecker.UNSUPPORTED_PRODUCT,
+        ),
         # Version number way in the past
-        ({}, {"version": {"number": "1.0.0"}, "tagline": TAGLINE}),
+        (
+            {},
+            {"version": {"number": "1.0.0"}, "tagline": TAGLINE},
+            _ProductChecker.UNSUPPORTED_PRODUCT,
+        ),
         # Version number way in the future
-        ({}, {"version": {"number": "999.0.0"}, "tagline": TAGLINE}),
+        (
+            {},
+            {"version": {"number": "999.0.0"}, "tagline": TAGLINE},
+            _ProductChecker.UNSUPPORTED_PRODUCT,
+        ),
         # Build flavor not supposed to be missing
-        ({}, {"version": {"number": "7.13.0"}, "tagline": TAGLINE}),
+        (
+            {},
+            {"version": {"number": "7.13.0"}, "tagline": TAGLINE},
+            _ProductChecker.UNSUPPORTED_DISTRIBUTION,
+        ),
         # Build flavor is 'oss'
         (
             {},
@@ -513,6 +535,7 @@ TAGLINE = "You Know, for Search"
                 "version": {"number": "7.10.0", "build_flavor": "oss"},
                 "tagline": TAGLINE,
             },
+            _ProductChecker.UNSUPPORTED_DISTRIBUTION,
         ),
         # Build flavor is nonsense
         (
@@ -521,20 +544,30 @@ TAGLINE = "You Know, for Search"
                 "version": {"number": "7.13.0", "build_flavor": "nonsense"},
                 "tagline": TAGLINE,
             },
+            _ProductChecker.UNSUPPORTED_DISTRIBUTION,
         ),
         # Tagline is nonsense
-        ({}, {"version": {"number": "7.1.0-SNAPSHOT"}, "tagline": "nonsense"}),
+        (
+            {},
+            {"version": {"number": "7.1.0-SNAPSHOT"}, "tagline": "nonsense"},
+            _ProductChecker.UNSUPPORTED_PRODUCT,
+        ),
         # Product header is not supposed to be missing
-        ({}, {"version": {"number": "7.14.0"}, "tagline": "You Know, for Search"}),
+        (
+            {},
+            {"version": {"number": "7.14.0"}, "tagline": "You Know, for Search"},
+            _ProductChecker.UNSUPPORTED_PRODUCT,
+        ),
         # Product header is nonsense
         (
             {"x-elastic-product": "nonsense"},
             {"version": {"number": "7.15.0"}, "tagline": TAGLINE},
+            _ProductChecker.UNSUPPORTED_PRODUCT,
         ),
     ],
 )
-def test_verify_elasticsearch_errors(headers, response):
-    assert verify_elasticsearch(headers, response) is False
+def test_verify_elasticsearch_errors(headers, response, product_error):
+    assert _ProductChecker.check_product(headers, response) == product_error
 
 
 @pytest.mark.parametrize(
@@ -579,7 +612,9 @@ def test_verify_elasticsearch_errors(headers, response):
     ],
 )
 def test_verify_elasticsearch_passes(headers, response):
-    assert verify_elasticsearch(headers, response) is True
+    result = _ProductChecker.check_product(headers, response)
+    assert result == _ProductChecker.SUCCESS
+    assert result is True
 
 
 @pytest.mark.parametrize(
@@ -624,7 +659,7 @@ def test_verify_elasticsearch(headers, data):
         [{"data": data, "headers": headers}], connection_class=DummyConnection
     )
     t.perform_request("GET", "/_search")
-    assert t._verified_elasticsearch
+    assert t._verified_elasticsearch is True
 
     calls = t.connection_pool.connections[0].calls
     _ = [call[1]["headers"].pop("x-elastic-client-meta") for call in calls]
@@ -675,7 +710,7 @@ def test_verify_elasticsearch_skips_on_auth_errors(exception_cls):
     ]
 
     # Assert that the cluster is "verified"
-    assert t._verified_elasticsearch
+    assert t._verified_elasticsearch is True
 
     # See that the headers were passed along to the "info" request made
     calls = t.connection_pool.connections[0].calls
@@ -759,7 +794,7 @@ def test_multiple_requests_verify_elasticsearch_success():
     )
 
     # Assert that the cluster is "verified"
-    assert t._verified_elasticsearch
+    assert t._verified_elasticsearch is True
 
     # See that the first request is always 'GET /' for ES check
     calls = t.connection_pool.connections[0].calls
@@ -769,7 +804,32 @@ def test_multiple_requests_verify_elasticsearch_success():
     assert all(call[0][:2] == ("GET", "/_search") for call in calls[1:])
 
 
-def test_multiple_requests_verify_elasticsearch_product_error():
+@pytest.mark.parametrize(
+    ["build_flavor", "tagline", "product_error", "error_message"],
+    [
+        (
+            "default",
+            "BAD TAGLINE",
+            _ProductChecker.UNSUPPORTED_PRODUCT,
+            "The client noticed that the server is not Elasticsearch and we do not support this unknown product",
+        ),
+        (
+            "BAD BUILD FLAVOR",
+            "BAD TAGLINE",
+            _ProductChecker.UNSUPPORTED_PRODUCT,
+            "The client noticed that the server is not Elasticsearch and we do not support this unknown product",
+        ),
+        (
+            "BAD BUILD FLAVOR",
+            "You Know, for Search",
+            _ProductChecker.UNSUPPORTED_DISTRIBUTION,
+            "The client noticed that the server is not a supported distribution of Elasticsearch",
+        ),
+    ],
+)
+def test_multiple_requests_verify_elasticsearch_product_error(
+    build_flavor, tagline, product_error, error_message
+):
     try:
         import threading
     except ImportError:
@@ -778,7 +838,8 @@ def test_multiple_requests_verify_elasticsearch_product_error():
     t = Transport(
         [
             {
-                "data": '{"version":{"number":"7.13.0","build_flavor":"default"},"tagline":"BAD TAGLINE"}',
+                "data": '{"version":{"number":"7.13.0","build_flavor":"%s"},"tagline":"%s"}'
+                % (build_flavor, tagline),
                 "delay": 1,
             }
         ],
@@ -811,7 +872,8 @@ def test_multiple_requests_verify_elasticsearch_product_error():
     assert len(results) == 10
 
     # All results were errors
-    assert all(isinstance(result, NotElasticsearchError) for result in results)
+    assert all(isinstance(result, UnsupportedProductError) for result in results)
+    assert all(str(result) == error_message for result in results)
 
     # Assert that one request was made but not 2 requests.
     duration = end_time - start_time
@@ -823,7 +885,7 @@ def test_multiple_requests_verify_elasticsearch_product_error():
     )
 
     # Assert that the cluster is definitely not Elasticsearch
-    assert t._verified_elasticsearch is False
+    assert t._verified_elasticsearch == product_error
 
     # See that the first request is always 'GET /' for ES check
     calls = t.connection_pool.connections[0].calls
@@ -875,7 +937,7 @@ def test_multiple_requests_verify_elasticsearch_retry_on_errors(error_cls):
     # Exactly 5 results completed
     assert len(results) == 5
 
-    # All results were errors and not wrapped in 'NotElasticsearchError'
+    # All results were errors and not wrapped in 'UnsupportedProductError'
     assert all(isinstance(result, error_cls) for result in results)
 
     # Assert that 5 requests were made in total (5 transport requests per x 0.1s/conn request)
