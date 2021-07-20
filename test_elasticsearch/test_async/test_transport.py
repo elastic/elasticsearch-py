@@ -33,10 +33,11 @@ from elasticsearch.exceptions import (
     AuthorizationException,
     ConnectionError,
     ElasticsearchWarning,
-    NotElasticsearchError,
     NotFoundError,
     TransportError,
+    UnsupportedProductError,
 )
+from elasticsearch.transport import _ProductChecker
 
 pytestmark = pytest.mark.asyncio
 
@@ -641,7 +642,7 @@ class TestTransport:
             [{"data": data, "headers": headers}], connection_class=DummyConnection
         )
         await t.perform_request("GET", "/_search")
-        assert t._verified_elasticsearch
+        assert t._verified_elasticsearch is True
 
         calls = t.connection_pool.connections[0].calls
         _ = [call[1]["headers"].pop("x-elastic-client-meta") for call in calls]
@@ -688,7 +689,7 @@ class TestTransport:
         ]
 
         # Assert that the cluster is "verified"
-        assert t._verified_elasticsearch
+        assert t._verified_elasticsearch is True
 
         # See that the headers were passed along to the "info" request made
         calls = t.connection_pool.connections[0].calls
@@ -762,7 +763,7 @@ class TestTransport:
         )
 
         # Assert that the cluster is "verified"
-        assert t._verified_elasticsearch
+        assert t._verified_elasticsearch is True
 
         # See that the first request is always 'GET /' for ES check
         calls = t.connection_pool.connections[0].calls
@@ -771,13 +772,37 @@ class TestTransport:
         # The rest of the requests are 'GET /_search' afterwards
         assert all(call[0][:2] == ("GET", "/_search") for call in calls[1:])
 
+    @pytest.mark.parametrize(
+        ["build_flavor", "tagline", "product_error", "error_message"],
+        [
+            (
+                "default",
+                "BAD TAGLINE",
+                _ProductChecker.UNSUPPORTED_PRODUCT,
+                "The client noticed that the server is not Elasticsearch and we do not support this unknown product",
+            ),
+            (
+                "BAD BUILD FLAVOR",
+                "BAD TAGLINE",
+                _ProductChecker.UNSUPPORTED_PRODUCT,
+                "The client noticed that the server is not Elasticsearch and we do not support this unknown product",
+            ),
+            (
+                "BAD BUILD FLAVOR",
+                "You Know, for Search",
+                _ProductChecker.UNSUPPORTED_DISTRIBUTION,
+                "The client noticed that the server is not a supported distribution of Elasticsearch",
+            ),
+        ],
+    )
     async def test_multiple_requests_verify_elasticsearch_product_error(
-        self, event_loop
+        self, event_loop, build_flavor, tagline, product_error, error_message
     ):
         t = AsyncTransport(
             [
                 {
-                    "data": '{"version":{"number":"7.13.0","build_flavor":"default"},"tagline":"BAD TAGLINE"}',
+                    "data": '{"version":{"number":"7.13.0","build_flavor":"%s"},"tagline":"%s"}'
+                    % (build_flavor, tagline),
                     "delay": 1,
                 }
             ],
@@ -806,7 +831,8 @@ class TestTransport:
         assert len(results) == 10
 
         # All results were errors
-        assert all(isinstance(result, NotElasticsearchError) for result in results)
+        assert all(isinstance(result, UnsupportedProductError) for result in results)
+        assert all(str(result) == error_message for result in results)
 
         # Assert that one request was made but not 2 requests.
         duration = end_time - start_time
@@ -818,7 +844,7 @@ class TestTransport:
         )
 
         # Assert that the cluster is definitely not Elasticsearch
-        assert t._verified_elasticsearch is False
+        assert t._verified_elasticsearch == product_error
 
         # See that the first request is always 'GET /' for ES check
         calls = t.connection_pool.connections[0].calls
