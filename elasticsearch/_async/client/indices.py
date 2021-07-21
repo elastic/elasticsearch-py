@@ -1516,3 +1516,80 @@ class IndicesClient(NamespacedClient):
             params=params,
             headers=headers,
         )
+
+    @query_params(
+        "allow_no_indices",
+        "expand_wildcards",
+        "flush",
+        "ignore_unavailable",
+        "run_expensive_tasks",
+    )
+    async def disk_usage(self, index, params=None, headers=None):
+        """
+        Analyzes the disk usage of each field of an index or data stream
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-disk-usage.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
+        :arg index: Comma-separated list of indices or data streams to
+            analyze the disk usage
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+            expression resolves into no concrete indices. (This includes `_all`
+            string or when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to
+            concrete indices that are open, closed or both.  Valid choices: open,
+            closed, hidden, none, all  Default: open
+        :arg flush: Whether flush or not before analyzing the index disk
+            usage. Defaults to true
+        :arg ignore_unavailable: Whether specified concrete indices
+            should be ignored when unavailable (missing or closed)
+        :arg run_expensive_tasks: Must be set to [true] in order for the
+            task to be performed. Defaults to false.
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'index'.")
+
+        return await self.transport.perform_request(
+            "POST", _make_path(index, "_disk_usage"), params=params, headers=headers
+        )
+
+    @query_params(
+        "allow_no_indices", "expand_wildcards", "fields", "ignore_unavailable"
+    )
+    async def field_usage_stats(self, index, params=None, headers=None):
+        """
+        Returns the field usage stats for each field of an index
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/field-usage-stats.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
+        :arg index: A comma-separated list of index names; use `_all` or
+            empty string to perform the operation on all indices
+        :arg allow_no_indices: Whether to ignore if a wildcard indices
+            expression resolves into no concrete indices. (This includes `_all`
+            string or when no indices have been specified)
+        :arg expand_wildcards: Whether to expand wildcard expression to
+            concrete indices that are open, closed or both.  Valid choices: open,
+            closed, hidden, none, all  Default: open
+        :arg fields: A comma-separated list of fields to include in the
+            stats if only a subset of fields should be returned (supports wildcards)
+        :arg ignore_unavailable: Whether specified concrete indices
+            should be ignored when unavailable (missing or closed)
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'index'.")
+
+        return await self.transport.perform_request(
+            "GET",
+            _make_path(index, "_field_usage_stats"),
+            params=params,
+            headers=headers,
+        )

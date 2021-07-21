@@ -222,7 +222,12 @@ class RollupClient(NamespacedClient):
         """
         Rollup an index
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/xpack-rollup.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
 
         :arg index: The index to roll up
         :arg rollup_index: The name of the rollup index to create

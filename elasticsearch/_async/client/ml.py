@@ -1701,7 +1701,7 @@ class MlClient(NamespacedClient):
         """
         Evaluate a trained model.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-infer-trained-model-deployment.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-df-analytics-apis.html>`_
 
         .. warning::
 
@@ -1747,7 +1747,7 @@ class MlClient(NamespacedClient):
         """
         Start a trained model deployment.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-start-trained-model-deployment.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-df-analytics-apis.html>`_
 
         .. warning::
 
@@ -1773,7 +1773,7 @@ class MlClient(NamespacedClient):
         """
         Stop a trained model deployment.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/stop-trained-model-deployment.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-df-analytics-apis.html>`_
 
         .. warning::
 

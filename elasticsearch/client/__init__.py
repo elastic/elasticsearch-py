@@ -1299,7 +1299,7 @@ class Elasticsearch(object):
         """
         Allows to use the Mustache language to pre-render a search definition.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-template.html#_validating_templates>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/render-search-template-api.html>`_
 
         :arg body: The search definition template and its params
         :arg id: The id of the stored search template

@@ -794,7 +794,7 @@ class SecurityClient(NamespacedClient):
         Allows a kibana instance to configure itself to communicate with a secured
         elasticsearch cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-enroll-kibana.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-kibana-enrollment.html>`_
         """
         return self.transport.perform_request(
             "GET", "/_security/enroll/kibana", params=params, headers=headers
