@@ -903,13 +903,13 @@ async def reindex_data_stream_setup(async_client):
         )
     await async_client.bulk(bulk, refresh=True)
     await async_client.indices.put_index_template(
-        "my-index-template",
+        name="my-index-template",
         body={
             "index_patterns": ["py-*-*"],
             "data_stream": {},
         },
     )
-    await async_client.indices.create_data_stream("py-test-stream")
+    await async_client.indices.create_data_stream(name="py-test-stream")
     await async_client.indices.refresh()
     yield
 
@@ -921,14 +921,14 @@ class TestAsyncDataStreamReindex(object):
     ):
         await helpers.async_reindex(
             async_client,
-            "test_index_stream",
-            "py-test-stream",
+            source_index="test_index_stream",
+            target_index="py-test-stream",
             scan_kwargs={"q": "type:answers"},
             bulk_kwargs={"refresh": True},
             op_type=op_type,
         )
         # await async_client.indices.refresh()
-        assert await async_client.indices.exists("py-test-stream")
+        assert await async_client.indices.exists(index="py-test-stream")
         assert (
             50
             == (await async_client.count(index="py-test-stream", q="type:answers"))[
@@ -940,12 +940,12 @@ class TestAsyncDataStreamReindex(object):
         self, async_client, reindex_data_stream_setup
     ):
         with pytest.raises(
-            ValueError, match="Data Stream should have op_type as create"
+            ValueError, match="Data streams must have 'op_type' set to 'create'"
         ):
             await helpers.async_reindex(
                 async_client,
-                "test_index_stream",
-                "py-test-stream",
+                source_index="test_index_stream",
+                target_index="py-test-stream",
                 query={"query": {"bool": {"filter": {"term": {"type": "answers"}}}}},
                 op_type="_index",
             )

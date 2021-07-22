@@ -775,13 +775,13 @@ def reindex_data_stream_setup(sync_client):
         )
     sync_client.bulk(bulk, refresh=True)
     sync_client.indices.put_index_template(
-        "my-index-template",
+        name="my-index-template",
         body={
             "index_patterns": ["py-*-*"],
             "data_stream": {},
         },
     )
-    sync_client.indices.create_data_stream("py-test-stream")
+    sync_client.indices.create_data_stream(name="py-test-stream")
     sync_client.indices.refresh()
 
 
@@ -792,13 +792,13 @@ class TestDataStreamReindex(object):
     ):
         helpers.reindex(
             sync_client,
-            "test_index_stream",
-            "py-test-stream",
+            source_index="test_index_stream",
+            target_index="py-test-stream",
             query={"query": {"bool": {"filter": {"term": {"type": "answers"}}}}},
             op_type=op_type,
         )
         sync_client.indices.refresh()
-        assert sync_client.indices.exists("py-test-stream")
+        assert sync_client.indices.exists(index="py-test-stream")
         assert (
             50 == sync_client.count(index="py-test-stream", q="type:answers")["count"]
         )
@@ -807,12 +807,12 @@ class TestDataStreamReindex(object):
         self, sync_client, reindex_data_stream_setup
     ):
         with pytest.raises(
-            ValueError, match="Data Stream should have op_type as create"
+            ValueError, match="Data streams must have 'op_type' set to 'create'"
         ):
             helpers.reindex(
                 sync_client,
-                "test_index_stream",
-                "py-test-stream",
+                source_index="test_index_stream",
+                target_index="py-test-stream",
                 query={"query": {"bool": {"filter": {"term": {"type": "answers"}}}}},
                 op_type="_index",
             )

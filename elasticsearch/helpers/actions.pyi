@@ -105,7 +105,7 @@ def reindex(
     target_client: Optional[Elasticsearch] = ...,
     chunk_size: int = ...,
     scroll: str = ...,
+    op_type: str = ...,
     scan_kwargs: Optional[Mapping[str, Any]] = ...,
     bulk_kwargs: Optional[Mapping[str, Any]] = ...,
-    op_type: bool = ...,
 ) -> Tuple[int, Union[int, List[Any]]]: ...
