@@ -653,7 +653,7 @@ def reindex(
     :arg scroll: Specify how long a consistent view of the index should be
         maintained for scrolled search
     :arg op_type: Explicit operation type. Defaults to '_index'. Data streams must
-        be set to 'create'. If not specified will auto-detect if target_index is a
+        be set to 'create'. If not specified, will auto-detect if target_index is a
         data stream.
     :arg scan_kwargs: additional kwargs to be passed to
         :func:`~elasticsearch.helpers.scan`
