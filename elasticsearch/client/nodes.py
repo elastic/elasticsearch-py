@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import NamespacedClient, _make_path, query_params
+from .utils import NamespacedClient, _make_path, query_params, SKIP_IN_PATH
 
 
 class NodesClient(NamespacedClient):
@@ -177,6 +177,63 @@ class NodesClient(NamespacedClient):
         return self.transport.perform_request(
             "GET",
             _make_path("_nodes", node_id, "usage", metric),
+            params=params,
+            headers=headers,
+        )
+
+    @query_params()
+    def clear_metering_archive(
+        self, node_id, max_archive_version, params=None, headers=None
+    ):
+        """
+        Removes the archived repositories metering information present in the cluster.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/clear-repositories-metering-archive-api.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
+        :arg node_id: Comma-separated list of node IDs or names used to
+            limit returned information.
+        :arg max_archive_version: Specifies the maximum archive_version
+            to be cleared from the archive.
+        """
+        for param in (node_id, max_archive_version):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
+
+        return self.transport.perform_request(
+            "DELETE",
+            _make_path(
+                "_nodes", node_id, "_repositories_metering", max_archive_version
+            ),
+            params=params,
+            headers=headers,
+        )
+
+    @query_params()
+    def get_metering_info(self, node_id, params=None, headers=None):
+        """
+        Returns cluster repositories metering information.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/get-repositories-metering-api.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
+        :arg node_id: A comma-separated list of node IDs or names to
+            limit the returned information.
+        """
+        if node_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'node_id'.")
+
+        return self.transport.perform_request(
+            "GET",
+            _make_path("_nodes", node_id, "_repositories_metering"),
             params=params,
             headers=headers,
         )

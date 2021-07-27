@@ -1694,7 +1694,7 @@ class IndicesClient(NamespacedClient):
         """
         Returns the field usage stats for each field of an index
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-field-usage-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/field-usage-stats.html>`_
 
         .. warning::
 
