@@ -20,7 +20,7 @@ import time
 from operator import methodcaller
 
 from ..compat import Mapping, Queue, map, string_types
-from ..exceptions import TransportError
+from ..exceptions import NotFoundError, TransportError
 from .errors import BulkIndexError, ScanError
 
 logger = logging.getLogger("elasticsearch.helpers")
@@ -622,6 +622,7 @@ def reindex(
     target_client=None,
     chunk_size=500,
     scroll="5m",
+    op_type=None,
     scan_kwargs={},
     bulk_kwargs={},
 ):
@@ -651,6 +652,9 @@ def reindex(
     :arg chunk_size: number of docs in one chunk sent to es (default: 500)
     :arg scroll: Specify how long a consistent view of the index should be
         maintained for scrolled search
+    :arg op_type: Explicit operation type. Defaults to '_index'. Data streams must
+        be set to 'create'. If not specified, will auto-detect if target_index is a
+        data stream.
     :arg scan_kwargs: additional kwargs to be passed to
         :func:`~elasticsearch.helpers.scan`
     :arg bulk_kwargs: additional kwargs to be passed to
@@ -659,18 +663,41 @@ def reindex(
     target_client = client if target_client is None else target_client
     docs = scan(client, query=query, index=source_index, scroll=scroll, **scan_kwargs)
 
-    def _change_doc_index(hits, index):
+    def _change_doc_index(hits, index, op_type):
         for h in hits:
             h["_index"] = index
+            if op_type is not None:
+                h["_op_type"] = op_type
             if "fields" in h:
                 h.update(h.pop("fields"))
             yield h
 
     kwargs = {"stats_only": True}
     kwargs.update(bulk_kwargs)
+
+    is_data_stream = False
+    try:
+        # Verify if the target_index is data stream or index
+        data_streams = target_client.indices.get_data_stream(
+            target_index, expand_wildcards="all"
+        )
+        is_data_stream = any(
+            data_stream["name"] == target_index
+            for data_stream in data_streams["data_streams"]
+        )
+    except (TransportError, KeyError, NotFoundError):
+        # If its not data stream, might be index
+        pass
+
+    if is_data_stream:
+        if op_type not in (None, "create"):
+            raise ValueError("Data streams must have 'op_type' set to 'create'")
+        else:
+            op_type = "create"
+
     return bulk(
         target_client,
-        _change_doc_index(docs, target_index),
+        _change_doc_index(docs, target_index, op_type),
         chunk_size=chunk_size,
         **kwargs
     )
