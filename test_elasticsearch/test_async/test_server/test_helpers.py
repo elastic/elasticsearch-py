@@ -16,6 +16,7 @@
 #  under the License.
 
 import asyncio
+from datetime import datetime, timedelta, timezone
 
 import pytest
 from mock import MagicMock, patch
@@ -884,3 +885,67 @@ class TestParentChildReindex:
             "_version": 1,
             "found": True,
         } == q
+
+
+@pytest.fixture(scope="function")
+async def reindex_data_stream_setup(async_client):
+    dt = datetime.now(tz=timezone.utc)
+    bulk = []
+    for x in range(100):
+        bulk.append({"index": {"_index": "test_index_stream", "_id": x}})
+        bulk.append(
+            {
+                "answer": x,
+                "correct": x == 42,
+                "type": "answers" if x % 2 == 0 else "questions",
+                "@timestamp": (dt - timedelta(days=x)).isoformat(),
+            }
+        )
+    await async_client.bulk(bulk, refresh=True)
+    await async_client.indices.put_index_template(
+        name="my-index-template",
+        body={
+            "index_patterns": ["py-*-*"],
+            "data_stream": {},
+        },
+    )
+    await async_client.indices.create_data_stream(name="py-test-stream")
+    await async_client.indices.refresh()
+    yield
+
+
+class TestAsyncDataStreamReindex(object):
+    @pytest.mark.parametrize("op_type", [None, "create"])
+    async def test_reindex_index_datastream(
+        self, op_type, async_client, reindex_data_stream_setup
+    ):
+        await helpers.async_reindex(
+            async_client,
+            source_index="test_index_stream",
+            target_index="py-test-stream",
+            scan_kwargs={"q": "type:answers"},
+            bulk_kwargs={"refresh": True},
+            op_type=op_type,
+        )
+        # await async_client.indices.refresh()
+        assert await async_client.indices.exists(index="py-test-stream")
+        assert (
+            50
+            == (await async_client.count(index="py-test-stream", q="type:answers"))[
+                "count"
+            ]
+        )
+
+    async def test_reindex_index_datastream_op_type_index(
+        self, async_client, reindex_data_stream_setup
+    ):
+        with pytest.raises(
+            ValueError, match="Data streams must have 'op_type' set to 'create'"
+        ):
+            await helpers.async_reindex(
+                async_client,
+                source_index="test_index_stream",
+                target_index="py-test-stream",
+                query={"query": {"bool": {"filter": {"term": {"type": "answers"}}}}},
+                op_type="_index",
+            )

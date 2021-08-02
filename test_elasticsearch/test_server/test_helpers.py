@@ -15,6 +15,9 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+from datetime import datetime, timedelta, timezone
+
+import pytest
 from mock import patch
 
 from elasticsearch import TransportError, helpers
@@ -754,3 +757,62 @@ class TestParentChildReindex(ElasticsearchTestCase):
             },
             q,
         )
+
+
+@pytest.fixture(scope="function")
+def reindex_data_stream_setup(sync_client):
+    dt = datetime.now(tz=timezone.utc)
+    bulk = []
+    for x in range(100):
+        bulk.append({"index": {"_index": "test_index_stream", "_id": x}})
+        bulk.append(
+            {
+                "answer": x,
+                "correct": x == 42,
+                "type": "answers" if x % 2 == 0 else "questions",
+                "@timestamp": (dt - timedelta(days=x)).isoformat(),
+            }
+        )
+    sync_client.bulk(bulk, refresh=True)
+    sync_client.indices.put_index_template(
+        name="my-index-template",
+        body={
+            "index_patterns": ["py-*-*"],
+            "data_stream": {},
+        },
+    )
+    sync_client.indices.create_data_stream(name="py-test-stream")
+    sync_client.indices.refresh()
+
+
+class TestDataStreamReindex(object):
+    @pytest.mark.parametrize("op_type", [None, "create"])
+    def test_reindex_index_datastream(
+        self, op_type, sync_client, reindex_data_stream_setup
+    ):
+        helpers.reindex(
+            sync_client,
+            source_index="test_index_stream",
+            target_index="py-test-stream",
+            query={"query": {"bool": {"filter": {"term": {"type": "answers"}}}}},
+            op_type=op_type,
+        )
+        sync_client.indices.refresh()
+        assert sync_client.indices.exists(index="py-test-stream")
+        assert (
+            50 == sync_client.count(index="py-test-stream", q="type:answers")["count"]
+        )
+
+    def test_reindex_index_datastream_op_type_index(
+        self, sync_client, reindex_data_stream_setup
+    ):
+        with pytest.raises(
+            ValueError, match="Data streams must have 'op_type' set to 'create'"
+        ):
+            helpers.reindex(
+                sync_client,
+                source_index="test_index_stream",
+                target_index="py-test-stream",
+                query={"query": {"bool": {"filter": {"term": {"type": "answers"}}}}},
+                op_type="_index",
+            )
