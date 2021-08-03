@@ -1,6 +1,7 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-7-14-0>>
 * <<rn-7-13-4>>
 * <<rn-7-13-3>>
 * <<rn-7-13-2>>
@@ -27,6 +28,52 @@
 * <<rn-7-0-1>>
 * <<rn-7-0-0>>
 
+
+[discrete]
+[[rn-7-14-0]]
+=== 7.14.0 (2021-08-02)
+
+* Added check that client is connected to an Elasticsearch cluster. If the client isn't connected to a supported Elasticsearch cluster the `UnsupportedProductError` exception will be raised.
+
+[discrete]
+==== Search
+
+* Added the `terms_enum` **beta** API
+
+* Removed the `query_and_fetch` and `dfs_query_and_fetch` options in the `search_type` parameter to the `msearch`, `msearch_template` and `search_template` APIs
+
+[discrete]
+==== Index Lifecycle Management
+
+* Added the `ilm.migrate_to_data_tiers` API
+
+[discrete]
+==== Machine Learning
+
+* Added the `ml.reset_job` API
+
+[discrete]
+==== Security
+
+* Added the `security.saml_authenticate` API
+* Added the `security.saml_complete_logout` API
+* Added the `security.saml_invalidate` API
+* Added the `security.saml_logout` API
+* Added the `security.saml_prepare_authentication` API
+* Added the `security.saml_service_provider_metadata` API
+
+[discrete]
+==== SQL
+
+* Added the `sql.delete_async` API
+* Added the `sql.get_async` API
+* Added the `sql.get_async_status` API
+
+[discrete]
+==== Snapshots
+
+* Added the `include_repository` parameter to `snapshot.get` API
+* Added the `rarely_abort_writes` parameter to the `snapshot.repository_analyze` API
 
 [discrete]
 [[rn-7-13-4]]
