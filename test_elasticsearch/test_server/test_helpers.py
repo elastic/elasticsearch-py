@@ -15,9 +15,10 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 
 import pytest
+from dateutil import tz
 from mock import patch
 
 from elasticsearch import TransportError, helpers
@@ -761,7 +762,7 @@ class TestParentChildReindex(ElasticsearchTestCase):
 
 @pytest.fixture(scope="function")
 def reindex_data_stream_setup(sync_client):
-    dt = datetime.now(tz=timezone.utc)
+    dt = datetime.now(tz=tz.UTC)
     bulk = []
     for x in range(100):
         bulk.append({"index": {"_index": "test_index_stream", "_id": x}})
@@ -786,10 +787,9 @@ def reindex_data_stream_setup(sync_client):
 
 
 class TestDataStreamReindex(object):
+    @pytest.mark.usefixtures("reindex_data_stream_setup")
     @pytest.mark.parametrize("op_type", [None, "create"])
-    def test_reindex_index_datastream(
-        self, op_type, sync_client, reindex_data_stream_setup
-    ):
+    def test_reindex_index_datastream(self, op_type, sync_client):
         helpers.reindex(
             sync_client,
             source_index="test_index_stream",
@@ -803,9 +803,8 @@ class TestDataStreamReindex(object):
             50 == sync_client.count(index="py-test-stream", q="type:answers")["count"]
         )
 
-    def test_reindex_index_datastream_op_type_index(
-        self, sync_client, reindex_data_stream_setup
-    ):
+    @pytest.mark.usefixtures("reindex_data_stream_setup")
+    def test_reindex_index_datastream_op_type_index(self, sync_client):
         with pytest.raises(
             ValueError, match="Data streams must have 'op_type' set to 'create'"
         ):
