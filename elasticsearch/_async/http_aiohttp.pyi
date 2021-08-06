@@ -41,6 +41,8 @@ class AIOHttpConnection(AsyncConnection):
         self,
         host: str = ...,
         port: Optional[int] = ...,
+        url_prefix: Optional[str] = ...,
+        timeout: int = ...,
         http_auth: Optional[Any] = ...,
         use_ssl: bool = ...,
         verify_certs: bool = ...,
