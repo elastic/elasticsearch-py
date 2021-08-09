@@ -56,7 +56,6 @@ class UnsupportedProductError(ElasticsearchException):
     it's not connected to a supported product.
     """
 
-
 class TransportError(ElasticsearchException):
     """
     Exception raised when ES returns a non-OK (>=400) HTTP status code. Or when

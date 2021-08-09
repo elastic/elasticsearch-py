@@ -28,7 +28,7 @@ import pytest
 from mock import patch
 from multidict import CIMultiDict
 
-from elasticsearch import AIOHttpConnection, AsyncElasticsearch, __versionstr__
+from elasticsearch import AIOHttpConnection, __versionstr__
 from elasticsearch.compat import reraise_exceptions
 from elasticsearch.exceptions import ConnectionError
 
@@ -410,9 +410,3 @@ class TestConnectionHttpbin:
         conn = AIOHttpConnection("not.a.host.name")
         with pytest.raises(ConnectionError):
             await conn.perform_request("GET", "/")
-
-    async def test_elasticsearch_connection_error(self):
-        es = AsyncElasticsearch("http://not.a.host.name")
-
-        with pytest.raises(ConnectionError):
-            await es.search()
