@@ -26,17 +26,8 @@ from mock import patch
 
 from elasticsearch.connection import Connection
 from elasticsearch.connection_pool import DummyConnectionPool
-from elasticsearch.exceptions import (
-    AuthenticationException,
-    AuthorizationException,
-    ConnectionError,
-    ElasticsearchWarning,
-    NotElasticsearchError,
-    TransportError,
-)
-from elasticsearch.transport import Transport
-from elasticsearch.transport import _verify_elasticsearch as verify_elasticsearch
-from elasticsearch.transport import get_host_info
+from elasticsearch.exceptions import ConnectionError, TransportError
+from elasticsearch.transport import Transport, get_host_info
 
 from .test_cases import TestCase
 
@@ -46,14 +37,11 @@ class DummyConnection(Connection):
         self.exception = kwargs.pop("exception", None)
         self.status, self.data = kwargs.pop("status", 200), kwargs.pop("data", "{}")
         self.headers = kwargs.pop("headers", {})
-        self.delay = kwargs.pop("delay", None)
         self.calls = []
         super(DummyConnection, self).__init__(**kwargs)
 
     def perform_request(self, *args, **kwargs):
         self.calls.append((args, kwargs))
-        if self.delay is not None:
-            time.sleep(self.delay)
         if self.exception:
             raise self.exception
         return self.status, self.headers, self.data
@@ -130,16 +118,12 @@ class TestHostsInfoCallback(TestCase):
 class TestTransport(TestCase):
     def test_single_connection_uses_dummy_connection_pool(self):
         t = Transport([{}])
-        t._verified_elasticsearch = True
         self.assertIsInstance(t.connection_pool, DummyConnectionPool)
-
         t = Transport([{"host": "localhost"}])
-        t._verified_elasticsearch = True
         self.assertIsInstance(t.connection_pool, DummyConnectionPool)
 
     def test_request_timeout_extracted_from_params_and_passed(self):
         t = Transport([{}], meta_header=False, connection_class=DummyConnection)
-        t._verified_elasticsearch = True
 
         t.perform_request("GET", "/", params={"request_timeout": 42})
         self.assertEqual(1, len(t.get_connection().calls))
@@ -153,7 +137,6 @@ class TestTransport(TestCase):
         t = Transport(
             [{}], opaque_id="app-1", meta_header=False, connection_class=DummyConnection
         )
-        t._verified_elasticsearch = True
 
         t.perform_request("GET", "/")
         self.assertEqual(1, len(t.get_connection().calls))
@@ -174,7 +157,6 @@ class TestTransport(TestCase):
 
     def test_request_with_custom_user_agent_header(self):
         t = Transport([{}], meta_header=False, connection_class=DummyConnection)
-        t._verified_elasticsearch = True
 
         t.perform_request("GET", "/", headers={"user-agent": "my-custom-value/1.2.3"})
         self.assertEqual(1, len(t.get_connection().calls))
@@ -189,7 +171,6 @@ class TestTransport(TestCase):
 
     def test_send_get_body_as_source(self):
         t = Transport([{}], send_get_body_as="source", connection_class=DummyConnection)
-        t._verified_elasticsearch = True
 
         t.perform_request("GET", "/", body={})
         self.assertEqual(1, len(t.get_connection().calls))
@@ -199,7 +180,6 @@ class TestTransport(TestCase):
 
     def test_send_get_body_as_post(self):
         t = Transport([{}], send_get_body_as="POST", connection_class=DummyConnection)
-        t._verified_elasticsearch = True
 
         t.perform_request("GET", "/", body={})
         self.assertEqual(1, len(t.get_connection().calls))
@@ -207,7 +187,6 @@ class TestTransport(TestCase):
 
     def test_client_meta_header(self):
         t = Transport([{}], connection_class=DummyConnection)
-        t._verified_elasticsearch = True
 
         t.perform_request("GET", "/", body={})
         self.assertEqual(1, len(t.get_connection().calls))
@@ -220,7 +199,6 @@ class TestTransport(TestCase):
             HTTP_CLIENT_META = ("dm", "1.2.3")
 
         t = Transport([{}], connection_class=DummyConnectionWithMeta)
-        t._verified_elasticsearch = True
 
         t.perform_request("GET", "/", body={}, headers={"Custom": "header"})
         self.assertEqual(1, len(t.get_connection().calls))
@@ -233,7 +211,6 @@ class TestTransport(TestCase):
 
     def test_client_meta_header_not_sent(self):
         t = Transport([{}], meta_header=False, connection_class=DummyConnection)
-        t._verified_elasticsearch = True
 
         t.perform_request("GET", "/", body={})
         self.assertEqual(1, len(t.get_connection().calls))
@@ -247,7 +224,6 @@ class TestTransport(TestCase):
 
     def test_body_gets_encoded_into_bytes(self):
         t = Transport([{}], connection_class=DummyConnection)
-        t._verified_elasticsearch = True
 
         t.perform_request("GET", "/", body="你好")
         self.assertEqual(1, len(t.get_connection().calls))
@@ -258,7 +234,6 @@ class TestTransport(TestCase):
 
     def test_body_bytes_get_passed_untouched(self):
         t = Transport([{}], connection_class=DummyConnection)
-        t._verified_elasticsearch = True
 
         body = b"\xe4\xbd\xa0\xe5\xa5\xbd"
         t.perform_request("GET", "/", body=body)
@@ -267,7 +242,6 @@ class TestTransport(TestCase):
 
     def test_body_surrogates_replaced_encoded_into_bytes(self):
         t = Transport([{}], connection_class=DummyConnection)
-        t._verified_elasticsearch = True
 
         t.perform_request("GET", "/", body="你好\uda6a")
         self.assertEqual(1, len(t.get_connection().calls))
@@ -278,14 +252,12 @@ class TestTransport(TestCase):
 
     def test_kwargs_passed_on_to_connections(self):
         t = Transport([{"host": "google.com"}], port=123)
-        t._verified_elasticsearch = True
         self.assertEqual(1, len(t.connection_pool.connections))
         self.assertEqual("http://google.com:123", t.connection_pool.connections[0].host)
 
     def test_kwargs_passed_on_to_connection_pool(self):
         dt = object()
         t = Transport([{}, {}], dead_timeout=dt)
-        t._verified_elasticsearch = True
         self.assertIs(dt, t.connection_pool.dead_timeout)
 
     def test_custom_connection_class(self):
@@ -294,13 +266,11 @@ class TestTransport(TestCase):
                 self.kwargs = kwargs
 
         t = Transport([{}], connection_class=MyConnection)
-        t._verified_elasticsearch = True
         self.assertEqual(1, len(t.connection_pool.connections))
         self.assertIsInstance(t.connection_pool.connections[0], MyConnection)
 
     def test_add_connection(self):
         t = Transport([{}], randomize_hosts=False)
-        t._verified_elasticsearch = True
         t.add_connection({"host": "google.com", "port": 1234})
 
         self.assertEqual(2, len(t.connection_pool.connections))
@@ -313,7 +283,6 @@ class TestTransport(TestCase):
             [{"exception": ConnectionError("abandon ship")}],
             connection_class=DummyConnection,
         )
-        t._verified_elasticsearch = True
 
         self.assertRaises(ConnectionError, t.perform_request, "GET", "/")
         self.assertEqual(4, len(t.get_connection().calls))
@@ -323,7 +292,6 @@ class TestTransport(TestCase):
             [{"exception": ConnectionError("abandon ship")}] * 2,
             connection_class=DummyConnection,
         )
-        t._verified_elasticsearch = True
 
         self.assertRaises(ConnectionError, t.perform_request, "GET", "/")
         self.assertEqual(0, len(t.connection_pool.connections))
@@ -331,7 +299,6 @@ class TestTransport(TestCase):
     def test_resurrected_connection_will_be_marked_as_live_on_success(self):
         for method in ("GET", "HEAD"):
             t = Transport([{}, {}], connection_class=DummyConnection)
-            t._verified_elasticsearch = True
             con1 = t.connection_pool.get_connection()
             con2 = t.connection_pool.get_connection()
             t.connection_pool.mark_dead(con1)
@@ -343,7 +310,6 @@ class TestTransport(TestCase):
 
     def test_sniff_will_use_seed_connections(self):
         t = Transport([{"data": CLUSTER_NODES}], connection_class=DummyConnection)
-        t._verified_elasticsearch = True
         t.set_connections([{"data": "invalid"}])
 
         t.sniff_hosts()
@@ -356,7 +322,6 @@ class TestTransport(TestCase):
             connection_class=DummyConnection,
             sniff_on_start=True,
         )
-        t._verified_elasticsearch = True
         self.assertEqual(1, len(t.connection_pool.connections))
         self.assertEqual("http://1.1.1.1:123", t.get_connection().host)
 
@@ -367,7 +332,6 @@ class TestTransport(TestCase):
             sniff_on_start=True,
             sniff_timeout=12,
         )
-        t._verified_elasticsearch = True
         self.assertEqual(
             (("GET", "/_nodes/_all/http"), {"timeout": None}),
             t.seed_connections[0].calls[0],
@@ -379,7 +343,6 @@ class TestTransport(TestCase):
             connection_class=DummyConnection,
             sniff_timeout=42,
         )
-        t._verified_elasticsearch = True
         t.sniff_hosts()
         self.assertEqual(
             (("GET", "/_nodes/_all/http"), {"timeout": 42}),
@@ -392,7 +355,6 @@ class TestTransport(TestCase):
             connection_class=DummyConnection,
             randomize_hosts=False,
         )
-        t._verified_elasticsearch = True
         connection = t.connection_pool.connections[1]
 
         t.sniff_hosts()
@@ -407,7 +369,6 @@ class TestTransport(TestCase):
             max_retries=0,
             randomize_hosts=False,
         )
-        t._verified_elasticsearch = True
 
         self.assertRaises(ConnectionError, t.perform_request, "GET", "/")
         self.assertEqual(1, len(t.connection_pool.connections))
@@ -423,7 +384,6 @@ class TestTransport(TestCase):
             max_retries=3,
             randomize_hosts=False,
         )
-        t._verified_elasticsearch = True
 
         conn_err, conn_data = t.connection_pool.connections
         response = t.perform_request("GET", "/")
@@ -438,7 +398,6 @@ class TestTransport(TestCase):
             connection_class=DummyConnection,
             sniffer_timeout=5,
         )
-        t._verified_elasticsearch = True
 
         for _ in range(4):
             t.perform_request("GET", "/")
@@ -459,7 +418,6 @@ class TestTransport(TestCase):
             connection_class=DummyConnection,
             sniff_timeout=42,
         )
-        t._verified_elasticsearch = True
         t.sniff_hosts()
         # Ensure we parsed out the fqdn and port from the fqdn/ip:port string.
         self.assertEqual(
@@ -475,338 +433,6 @@ class TestTransport(TestCase):
             sniff_on_connection_fail=True,
             cloud_id="cluster:dXMtZWFzdC0xLmF3cy5mb3VuZC5pbyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5NyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5Ng==",
         )
-        t._verified_elasticsearch = True
 
         self.assertFalse(t.sniff_on_connection_fail)
         self.assertIs(sniff_hosts.call_args, None)  # Assert not called.
-
-
-TAGLINE = "You Know, for Search"
-
-
-@pytest.mark.parametrize(
-    ["headers", "response"],
-    [
-        # All empty.
-        ({}, {}),
-        # Don't check the product header immediately, need to check version first.
-        ({"x-elastic-product": "Elasticsearch"}, {}),
-        # Version not there.
-        ({}, {"tagline": TAGLINE}),
-        # Version is nonsense
-        ({}, {"version": "1.0.0", "tagline": TAGLINE}),
-        # Version number not there
-        ({}, {"version": {}, "tagline": TAGLINE}),
-        # Version number is nonsense
-        ({}, {"version": {"number": "nonsense"}, "tagline": TAGLINE}),
-        # Version number way in the past
-        ({}, {"version": {"number": "1.0.0"}, "tagline": TAGLINE}),
-        # Version number way in the future
-        ({}, {"version": {"number": "999.0.0"}, "tagline": TAGLINE}),
-        # Build flavor not supposed to be missing
-        ({}, {"version": {"number": "7.13.0"}, "tagline": TAGLINE}),
-        # Build flavor is 'oss'
-        (
-            {},
-            {
-                "version": {"number": "7.10.0", "build_flavor": "oss"},
-                "tagline": TAGLINE,
-            },
-        ),
-        # Build flavor is nonsense
-        (
-            {},
-            {
-                "version": {"number": "7.13.0", "build_flavor": "nonsense"},
-                "tagline": TAGLINE,
-            },
-        ),
-        # Tagline is nonsense
-        ({}, {"version": {"number": "7.1.0-SNAPSHOT"}, "tagline": "nonsense"}),
-        # Product header is not supposed to be missing
-        ({}, {"version": {"number": "7.14.0"}, "tagline": "You Know, for Search"}),
-        # Product header is nonsense
-        (
-            {"x-elastic-product": "nonsense"},
-            {"version": {"number": "7.15.0"}, "tagline": TAGLINE},
-        ),
-    ],
-)
-def test_verify_elasticsearch_errors(headers, response):
-    assert verify_elasticsearch(headers, response) is False
-
-
-@pytest.mark.parametrize(
-    ["headers", "response"],
-    [
-        ({}, {"version": {"number": "6.0.0"}, "tagline": TAGLINE}),
-        ({}, {"version": {"number": "6.99.99"}, "tagline": TAGLINE}),
-        (
-            {},
-            {
-                "version": {"number": "7.0.0", "build_flavor": "default"},
-                "tagline": TAGLINE,
-            },
-        ),
-        (
-            {},
-            {
-                "version": {"number": "7.13.99", "build_flavor": "default"},
-                "tagline": TAGLINE,
-            },
-        ),
-        (
-            {"x-elastic-product": "Elasticsearch"},
-            {
-                "version": {"number": "7.14.0", "build_flavor": "default"},
-                "tagline": TAGLINE,
-            },
-        ),
-        (
-            {"x-elastic-product": "Elasticsearch"},
-            {
-                "version": {"number": "7.99.99", "build_flavor": "default"},
-                "tagline": TAGLINE,
-            },
-        ),
-        (
-            {"x-elastic-product": "Elasticsearch"},
-            {
-                "version": {"number": "8.0.0"},
-            },
-        ),
-    ],
-)
-def test_verify_elasticsearch_passes(headers, response):
-    assert verify_elasticsearch(headers, response) is True
-
-
-@pytest.mark.parametrize(
-    ["headers", "data"],
-    [
-        (
-            {},
-            '{"version":{"number":"6.99.0"},"tagline":"You Know, for Search"}',
-        ),
-        (
-            {},
-            '{"version":{"number":"7.13.0","build_flavor":"default"},"tagline":"You Know, for Search"}',
-        ),
-        (
-            {"X-elastic-product": "Elasticsearch"},
-            '{"version":{"number":"7.14.0","build_flavor":"default"},"tagline":"You Know, for Search"}',
-        ),
-    ],
-)
-def test_verify_elasticsearch(headers, data):
-    t = Transport(
-        [{"data": data, "headers": headers}], connection_class=DummyConnection
-    )
-    t.perform_request("GET", "/_search")
-    assert t._verified_elasticsearch
-
-    calls = t.connection_pool.connections[0].calls
-    _ = [call[1]["headers"].pop("x-elastic-client-meta") for call in calls]
-
-    assert calls == [
-        (
-            ("GET", "/"),
-            {
-                "headers": {
-                    "accept": "application/json",
-                },
-                "timeout": None,
-            },
-        ),
-        (
-            ("GET", "/_search", None, None),
-            {
-                "headers": {},
-                "ignore": (),
-                "timeout": None,
-            },
-        ),
-    ]
-
-
-@pytest.mark.parametrize(
-    "exception_cls", [AuthorizationException, AuthenticationException]
-)
-def test_verify_elasticsearch_skips_on_auth_errors(exception_cls):
-    t = Transport(
-        [{"exception": exception_cls(exception_cls.status_code)}],
-        connection_class=DummyConnection,
-    )
-
-    with pytest.warns(ElasticsearchWarning) as warns:
-        with pytest.raises(exception_cls):
-            t.perform_request(
-                "GET",
-                "/_search",
-                headers={"Authorization": "testme"},
-                params={"request_timeout": 3},
-            )
-
-    # Assert that a warning was raised due to security privileges
-    assert [str(w.message) for w in warns] == [
-        "The client is unable to verify that the server is "
-        "Elasticsearch due security privileges on the server side"
-    ]
-
-    # Assert that the cluster is "verified"
-    assert t._verified_elasticsearch
-
-    # See that the headers were passed along to the "info" request made
-    calls = t.connection_pool.connections[0].calls
-    _ = [call[1]["headers"].pop("x-elastic-client-meta") for call in calls]
-
-    assert calls == [
-        (
-            ("GET", "/"),
-            {
-                "headers": {
-                    "accept": "application/json",
-                    "authorization": "testme",
-                },
-                "timeout": 3,
-            },
-        ),
-        (
-            ("GET", "/_search", {}, None),
-            {
-                "headers": {
-                    "Authorization": "testme",
-                },
-                "ignore": (),
-                "timeout": 3,
-            },
-        ),
-    ]
-
-
-def test_multiple_requests_verify_elasticsearch_success():
-    try:
-        import threading
-    except ImportError:
-        return pytest.skip("Requires the 'threading' module")
-
-    t = Transport(
-        [
-            {
-                "data": '{"version":{"number":"7.13.0","build_flavor":"default"},"tagline":"You Know, for Search"}',
-                "delay": 1,
-            }
-        ],
-        connection_class=DummyConnection,
-    )
-
-    results = []
-    completed_at = []
-
-    class RequestThread(threading.Thread):
-        def run(self):
-            try:
-                results.append(t.perform_request("GET", "/_search"))
-            except Exception as e:
-                results.append(e)
-            completed_at.append(time.time())
-
-    # Execute a bunch of requests concurrently.
-    threads = []
-    start_time = time.time()
-    for _ in range(10):
-        thread = RequestThread()
-        thread.start()
-        threads.append(thread)
-    for thread in threads:
-        thread.join()
-    end_time = time.time()
-
-    # Exactly 10 results completed
-    assert len(results) == 10
-
-    # No errors in the results
-    assert all(isinstance(result, dict) for result in results)
-
-    # Assert that this took longer than 2 seconds but less than 2.1 seconds
-    duration = end_time - start_time
-    assert 2 <= duration <= 2.1
-
-    # Assert that every result came after ~2 seconds, no fast completions.
-    assert all(
-        2 <= completed_time - start_time <= 2.1 for completed_time in completed_at
-    )
-
-    # Assert that the cluster is "verified"
-    assert t._verified_elasticsearch
-
-    # See that the first request is always 'GET /' for ES check
-    calls = t.connection_pool.connections[0].calls
-    assert calls[0][0] == ("GET", "/")
-
-    # The rest of the requests are 'GET /_search' afterwards
-    assert all(call[0][:2] == ("GET", "/_search") for call in calls[1:])
-
-
-def test_multiple_requests_verify_elasticsearch_errors():
-    try:
-        import threading
-    except ImportError:
-        return pytest.skip("Requires the 'threading' module")
-
-    t = Transport(
-        [
-            {
-                "data": '{"version":{"number":"7.13.0","build_flavor":"default"},"tagline":"BAD TAGLINE"}',
-                "delay": 1,
-            }
-        ],
-        connection_class=DummyConnection,
-    )
-
-    results = []
-    completed_at = []
-
-    class RequestThread(threading.Thread):
-        def run(self):
-            try:
-                results.append(t.perform_request("GET", "/_search"))
-            except Exception as e:
-                results.append(e)
-            completed_at.append(time.time())
-
-    # Execute a bunch of requests concurrently.
-    threads = []
-    start_time = time.time()
-    for _ in range(10):
-        thread = RequestThread()
-        thread.start()
-        threads.append(thread)
-    for thread in threads:
-        thread.join()
-    end_time = time.time()
-
-    # Exactly 10 results completed
-    assert len(results) == 10
-
-    # All results were errors
-    assert all(isinstance(result, NotElasticsearchError) for result in results)
-
-    # Assert that one request was made but not 2 requests.
-    duration = end_time - start_time
-    assert 1 <= duration <= 1.1
-
-    # Assert that every result came after ~1 seconds, no fast completions.
-    assert all(
-        1 <= completed_time - start_time <= 1.1 for completed_time in completed_at
-    )
-
-    # Assert that the cluster is definitely not Elasticsearch
-    assert t._verified_elasticsearch is False
-
-    # See that the first request is always 'GET /' for ES check
-    calls = t.connection_pool.connections[0].calls
-    assert calls[0][0] == ("GET", "/")
-
-    # The rest of the requests are 'GET /_search' afterwards
-    assert all(call[0][:2] == ("GET", "/_search") for call in calls[1:])

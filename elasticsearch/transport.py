@@ -15,23 +15,16 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import re
 import time
-import warnings
 from itertools import chain
 from platform import python_version
 
 from ._version import __versionstr__
-from .compat import Lock
 from .connection import Urllib3HttpConnection
 from .connection_pool import ConnectionPool, DummyConnectionPool, EmptyConnectionPool
 from .exceptions import (
-    AuthenticationException,
-    AuthorizationException,
     ConnectionError,
     ConnectionTimeout,
-    ElasticsearchWarning,
-    NotElasticsearchError,
     SerializationError,
     TransportError,
 )
@@ -204,23 +197,6 @@ class Transport(object):
         http_client_meta = getattr(connection_class, "HTTP_CLIENT_META", None)
         if http_client_meta:
             self._client_meta += (http_client_meta,)
-
-        # Tri-state flag that describes what state the verification
-        # of whether we're connected to an Elasticsearch cluster or not.
-        # The three states are:
-        # - 'None': Means we've either not started the verification process
-        #   or that the verification is in progress. '_verified_once' ensures
-        #   that multiple requests don't kick off multiple verification processes.
-        # - 'True': Means we've verified that we're talking to Elasticsearch or
-        #   that we can't rule out Elasticsearch due to auth issues. A warning
-        #   will be raised if we receive 401/403.
-        # - 'False': Means we've discovered we're not talking to Elasticsearch,
-        #   should raise an error in this case for every request.
-        self._verified_elasticsearch = None
-
-        # Ensures that the ES verification request only fires once and that
-        # all requests block until this request returns back.
-        self._verified_once = Once()
 
     def add_connection(self, host):
         """
@@ -404,19 +380,6 @@ class Transport(object):
             method, headers, params, body
         )
 
-        # Before we make the actual API call we verify the Elasticsearch instance.
-        if self._verified_elasticsearch is None:
-            self._verified_once.call(
-                self._do_verify_elasticsearch, headers=headers, timeout=timeout
-            )
-
-        # If '_verified_elasticsearch' is False we know we're not connected to Elasticsearch.
-        if self._verified_elasticsearch is False:
-            raise NotElasticsearchError(
-                "The client noticed that the server is not Elasticsearch "
-                "and we do not support this unknown product"
-            )
-
         for attempt in range(self.max_retries + 1):
             connection = self.get_connection()
 
@@ -525,132 +488,3 @@ class Transport(object):
             )
 
         return method, headers, params, body, ignore, timeout
-
-    def _do_verify_elasticsearch(self, headers, timeout):
-        """Verifies that we're connected to an Elasticsearch cluster.
-        This is done at least once before the first actual API call
-        and makes a single request to the 'GET /' API endpoint to
-        check the version along with other details of the response.
-
-        If we're unable to verify we're talking to Elasticsearch
-        but we're also unable to rule it out due to a permission
-        error we instead emit an 'ElasticsearchWarning'.
-        """
-        # Product check has already been done, no need to do again.
-        if self._verified_elasticsearch is not None:
-            return
-
-        headers = {header.lower(): value for header, value in (headers or {}).items()}
-        # We know we definitely want JSON so request it via 'accept'
-        headers.setdefault("accept", "application/json")
-
-        info_headers = {}
-        info_response = {}
-        error = None
-
-        for conn in chain(self.connection_pool.connections, self.seed_connections):
-            try:
-                _, info_headers, info_response = conn.perform_request(
-                    "GET", "/", headers=headers, timeout=timeout
-                )
-
-                # Lowercase all the header names for consistency in accessing them.
-                info_headers = {
-                    header.lower(): value for header, value in info_headers.items()
-                }
-
-                info_response = self.deserializer.loads(
-                    info_response, mimetype="application/json"
-                )
-                break
-
-            # Previous versions of 7.x Elasticsearch required a specific
-            # permission so if we receive HTTP 401/403 we should warn
-            # instead of erroring out.
-            except (AuthenticationException, AuthorizationException):
-                warnings.warn(
-                    (
-                        "The client is unable to verify that the server is "
-                        "Elasticsearch due security privileges on the server side"
-                    ),
-                    ElasticsearchWarning,
-                    stacklevel=5,
-                )
-                self._verified_elasticsearch = True
-                return
-
-            # This connection didn't work, we'll try another.
-            except (ConnectionError, SerializationError) as err:
-                if error is None:
-                    error = err
-
-        # If we received a connection error and weren't successful
-        # anywhere then we reraise the more appropriate error.
-        if error and not info_response:
-            raise error
-
-        # Check the information we got back from the index request.
-        self._verified_elasticsearch = _verify_elasticsearch(
-            info_headers, info_response
-        )
-
-
-def _verify_elasticsearch(headers, response):
-    """Verifies that the server we're talking to is Elasticsearch.
-    Does this by checking HTTP headers and the deserialized
-    response to the 'info' API. Returns 'True' if we're verified
-    against Elasticsearch, 'False' otherwise.
-    """
-    try:
-        version = response.get("version", {})
-        version_number = tuple(
-            int(x) if x is not None else 999
-            for x in re.search(
-                r"^([0-9]+)\.([0-9]+)(?:\.([0-9]+))?", version["number"]
-            ).groups()
-        )
-    except (KeyError, TypeError, ValueError, AttributeError):
-        # No valid 'version.number' field, effectively 0.0.0
-        version = {}
-        version_number = (0, 0, 0)
-
-    # Check all of the fields and headers for missing/valid values.
-    try:
-        bad_tagline = response.get("tagline", None) != "You Know, for Search"
-        bad_build_flavor = version.get("build_flavor", None) != "default"
-        bad_product_header = headers.get("x-elastic-product", None) != "Elasticsearch"
-    except (AttributeError, TypeError):
-        bad_tagline = True
-        bad_build_flavor = True
-        bad_product_header = True
-
-    if (
-        # No version or version less than 6.x
-        version_number < (6, 0, 0)
-        # 6.x and there's a bad 'tagline'
-        or ((6, 0, 0) <= version_number < (7, 0, 0) and bad_tagline)
-        # 7.0-7.13 and there's a bad 'tagline' or 'build_flavor'
-        or (
-            (7, 0, 0) <= version_number < (7, 14, 0)
-            and (bad_tagline or bad_build_flavor)
-        )
-        # 7.14+ and there's a bad 'X-Elastic-Product' HTTP header
-        or ((7, 14, 0) <= version_number and bad_product_header)
-    ):
-        return False
-
-    return True
-
-
-class Once:
-    """Simple class which forces a function to only execute once."""
-
-    def __init__(self):
-        self._lock = Lock()
-        self._called = False
-
-    def call(self, func, *args, **kwargs):
-        with self._lock:
-            if not self._called:
-                self._called = True
-                func(*args, **kwargs)

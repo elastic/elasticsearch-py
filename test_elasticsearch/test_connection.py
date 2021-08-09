@@ -31,7 +31,7 @@ from mock import Mock, patch
 from requests.auth import AuthBase
 from urllib3._collections import HTTPHeaderDict
 
-from elasticsearch import Elasticsearch, __versionstr__
+from elasticsearch import __versionstr__
 from elasticsearch.compat import reraise_exceptions
 from elasticsearch.connection import (
     Connection,
@@ -1045,9 +1045,3 @@ class TestConnectionHttpbin:
         conn = RequestsHttpConnection("not.a.host.name")
         with pytest.raises(ConnectionError):
             conn.perform_request("GET", "/")
-
-    def test_elasticsearch_connection_error(self):
-        es = Elasticsearch("http://not.a.host.name")
-
-        with pytest.raises(ConnectionError):
-            es.search()
