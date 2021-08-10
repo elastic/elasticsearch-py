@@ -27,6 +27,7 @@ from .exceptions import (
     ConnectionTimeout,
     SerializationError,
     TransportError,
+    UnsupportedProductError,
 )
 from .serializer import DEFAULT_SERIALIZERS, Deserializer, JSONSerializer
 from .utils import _client_meta_version
@@ -428,6 +429,13 @@ class Transport(object):
             else:
                 # connection didn't fail, confirm it's live status
                 self.connection_pool.mark_live(connection)
+
+                # 'X-Elastic-Product: Elasticsearch' should be on every response
+                if headers_response.get("x-elastic-product", "") != "Elasticsearch":
+                    raise UnsupportedProductError(
+                        "The client noticed that the server is not Elasticsearch "
+                        "and we do not support this unknown product"
+                    )
 
                 if method == "HEAD":
                     return 200 <= status < 300

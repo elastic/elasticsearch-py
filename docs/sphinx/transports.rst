@@ -22,6 +22,18 @@ and lightweight than the optional ``requests``-based class. Only use
 features like custom auth plugins etc.
 
 
+Product check and unsupported distributions
+-------------------------------------------
+
+Starting in v7.14.0 the client performs a required product check before
+the first API call is executed. This product check allows the client to
+establish that it's communicating with a supported Elasticsearch cluster.
+
+For 8.x clients the product check will verify that the ``X-Elastic-Product: Elasticsearch``
+HTTP header is being sent with every response. If the client detects that it's not connected
+to a supported distribution of Elasticsearch the ``UnsupportedProductError`` exception
+will be raised.
+
 .. py:module:: elasticsearch.connection
 
 Connection

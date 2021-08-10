@@ -51,6 +51,7 @@ from .exceptions import (
     SerializationError,
     SSLError,
     TransportError,
+    UnsupportedProductError,
 )
 from .serializer import JSONSerializer
 from .transport import Transport
@@ -81,6 +82,7 @@ __all__ = [
     "ConnectionTimeout",
     "AuthenticationException",
     "AuthorizationException",
+    "UnsupportedProductError",
     "ElasticsearchWarning",
     "ElasticsearchDeprecationWarning",
 ]
