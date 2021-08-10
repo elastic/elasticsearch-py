@@ -87,6 +87,7 @@ class Transport(object):
         retry_on_timeout=False,
         send_get_body_as="GET",
         meta_header=True,
+        disable_product_check=False,
         **kwargs
     ):
         """
@@ -123,6 +124,7 @@ class Transport(object):
             will be serialized and passed as a query parameter `source`.
         :arg meta_header: If True will send the 'X-Elastic-Client-Meta' HTTP header containing
             simple client metadata. Setting to False will disable the header. Defaults to True.
+        :arg disable_product_check: If True will not perform the product check.
 
         Any extra keyword arguments will be passed to the `connection_class`
         when creating and instance unless overridden by that connection's
@@ -205,9 +207,9 @@ class Transport(object):
         if http_client_meta:
             self._client_meta += (http_client_meta,)
 
-        # Tri-state flag that describes what state the verification
+        # Four-state flag that describes what state the verification
         # of whether we're connected to an Elasticsearch cluster or not.
-        # The three states are:
+        # The four states are:
         # - 'None': Means we've either not started the verification process
         #   or that the verification is in progress. '_verified_once' ensures
         #   that multiple requests don't kick off multiple verification processes.
@@ -216,11 +218,14 @@ class Transport(object):
         #   will be raised if we receive 401/403.
         # - 'int': Means we're talking to an unsupported product, should raise
         #   the corresponding error.
-        self._verified_elasticsearch = None
-
-        # Ensures that the ES verification request only fires once and that
-        # all requests block until this request returns back.
-        self._verify_elasticsearch_lock = Lock()
+        # - 'False': Means product verification is disabled.
+        if disable_product_check:
+            self._verified_elasticsearch = False
+        else:
+            self._verified_elasticsearch = None
+            # Ensures that the ES verification request only fires once and that
+            # all requests block until this request returns back.
+            self._verify_elasticsearch_lock = Lock()
 
     def add_connection(self, host):
         """
@@ -404,13 +409,14 @@ class Transport(object):
             method, headers, params, body
         )
 
-        # Before we make the actual API call we verify the Elasticsearch instance.
-        if self._verified_elasticsearch is None:
-            self._do_verify_elasticsearch(headers=headers, timeout=timeout)
+        if self._verified_elasticsearch is not False:
+            # Before we make the actual API call we verify the Elasticsearch instance.
+            if self._verified_elasticsearch is None:
+                self._do_verify_elasticsearch(headers=headers, timeout=timeout)
 
-        # If '_verified_elasticsearch' isn't 'True' then we raise an error.
-        if self._verified_elasticsearch is not True:
-            _ProductChecker.raise_error(self._verified_elasticsearch)
+            # If '_verified_elasticsearch' isn't 'True' then we raise an error.
+            if self._verified_elasticsearch is not True:
+                _ProductChecker.raise_error(self._verified_elasticsearch)
 
         for attempt in range(self.max_retries + 1):
             connection = self.get_connection()

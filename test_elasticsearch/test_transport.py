@@ -805,30 +805,60 @@ def test_multiple_requests_verify_elasticsearch_success():
 
 
 @pytest.mark.parametrize(
-    ["build_flavor", "tagline", "product_error", "error_message"],
+    [
+        "build_flavor",
+        "tagline",
+        "product_error",
+        "error_message",
+        "disable_product_check",
+    ],
     [
         (
             "default",
             "BAD TAGLINE",
             _ProductChecker.UNSUPPORTED_PRODUCT,
             "The client noticed that the server is not Elasticsearch and we do not support this unknown product",
+            False,
+        ),
+        (
+            "default",
+            "BAD TAGLINE",
+            None,
+            None,
+            True,
         ),
         (
             "BAD BUILD FLAVOR",
             "BAD TAGLINE",
             _ProductChecker.UNSUPPORTED_PRODUCT,
             "The client noticed that the server is not Elasticsearch and we do not support this unknown product",
+            False,
+        ),
+        (
+            "BAD BUILD FLAVOR",
+            "BAD TAGLINE",
+            None,
+            None,
+            True,
         ),
         (
             "BAD BUILD FLAVOR",
             "You Know, for Search",
             _ProductChecker.UNSUPPORTED_DISTRIBUTION,
             "The client noticed that the server is not a supported distribution of Elasticsearch",
+            False,
+        ),
+        (
+            "BAD BUILD FLAVOR",
+            "You Know, for Search",
+            None,
+            None,
+            True,
         ),
     ],
 )
 def test_multiple_requests_verify_elasticsearch_product_error(
-    build_flavor, tagline, product_error, error_message
+    build_flavor, tagline, product_error, error_message, disable_product_check
 ):
     try:
         import threading
@@ -844,6 +874,7 @@ def test_multiple_requests_verify_elasticsearch_product_error(
             }
         ],
         connection_class=DummyConnection,
+        disable_product_check=disable_product_check,
     )
 
     results = []
@@ -871,9 +902,13 @@ def test_multiple_requests_verify_elasticsearch_product_error(
     # Exactly 10 results completed
     assert len(results) == 10
 
-    # All results were errors
-    assert all(isinstance(result, UnsupportedProductError) for result in results)
-    assert all(str(result) == error_message for result in results)
+    if product_error is None and error_message is None:
+        # All results were not errors
+        assert all(isinstance(result, dict) for result in results)
+    else:
+        # All results were errors
+        assert all(isinstance(result, UnsupportedProductError) for result in results)
+        assert all(str(result) == error_message for result in results)
 
     # Assert that one request was made but not 2 requests.
     duration = end_time - start_time
@@ -884,15 +919,23 @@ def test_multiple_requests_verify_elasticsearch_product_error(
         1 <= completed_time - start_time <= 1.1 for completed_time in completed_at
     )
 
-    # Assert that the cluster is definitely not Elasticsearch
-    assert t._verified_elasticsearch == product_error
+    if disable_product_check:
+        # Assert that product check was not performed
+        assert t._verified_elasticsearch is False
+    else:
+        # Assert that the cluster is definitely not Elasticsearch
+        assert t._verified_elasticsearch == product_error
 
-    # See that the first request is always 'GET /' for ES check
     calls = t.connection_pool.connections[0].calls
-    assert calls[0][0] == ("GET", "/")
 
-    # The rest of the requests are 'GET /_search' afterwards
-    assert all(call[0][:2] == ("GET", "/_search") for call in calls[1:])
+    if disable_product_check:
+        # See that the requests are all for 'GET /_search'
+        assert all(call[0][:2] == ("GET", "/_search") for call in calls)
+    else:
+        # See that the first request is always 'GET /' for ES check
+        assert calls[0][0] == ("GET", "/")
+        # The rest of the requests are 'GET /_search' afterwards
+        assert all(call[0][:2] == ("GET", "/_search") for call in calls[1:])
 
 
 @pytest.mark.parametrize("error_cls", [ConnectionError, NotFoundError])

@@ -187,6 +187,11 @@ class Elasticsearch(object):
 
         es = Elasticsearch(serializer=SetEncoder())
 
+    By default, the client performs a product check before the first API call
+    is executed. However, you can disable this check::
+
+        es = Elasticsearch(disable_product_check=True)
+
     """
 
     def __init__(self, hosts=None, transport_class=Transport, **kwargs):

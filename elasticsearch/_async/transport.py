@@ -80,6 +80,7 @@ class AsyncTransport(Transport):
             don't support passing bodies with GET requests. If you set this to
             'POST' a POST method will be used instead, if to 'source' then the body
             will be serialized and passed as a query parameter `source`.
+        :arg disable_product_check: If True will not perform the product check.
 
         Any extra keyword arguments will be passed to the `connection_class`
         when creating and instance unless overridden by that connection's
@@ -335,13 +336,14 @@ class AsyncTransport(Transport):
             method, headers, params, body
         )
 
-        # Before we make the actual API call we verify the Elasticsearch instance.
-        if self._verified_elasticsearch is None:
-            await self._do_verify_elasticsearch(headers=headers, timeout=timeout)
+        if self._verified_elasticsearch is not False:
+            # Before we make the actual API call we verify the Elasticsearch instance.
+            if self._verified_elasticsearch is None:
+                await self._do_verify_elasticsearch(headers=headers, timeout=timeout)
 
-        # If '_verified_elasticsearch' isn't 'True' then we raise an error.
-        if self._verified_elasticsearch is not True:
-            _ProductChecker.raise_error(self._verified_elasticsearch)
+            # If '_verified_elasticsearch' isn't 'True' then we raise an error.
+            if self._verified_elasticsearch is not True:
+                _ProductChecker.raise_error(self._verified_elasticsearch)
 
         for attempt in range(self.max_retries + 1):
             connection = self.get_connection()
