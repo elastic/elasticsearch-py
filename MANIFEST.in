@@ -1,5 +1,3 @@
-include AUTHORS
-include Changelog.rst
 include CONTRIBUTING.md
 include LICENSE
 include MANIFEST.in
