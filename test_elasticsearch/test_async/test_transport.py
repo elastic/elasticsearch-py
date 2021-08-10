@@ -28,7 +28,12 @@ from mock import patch
 from elasticsearch import AsyncTransport
 from elasticsearch.connection import Connection
 from elasticsearch.connection_pool import DummyConnectionPool
-from elasticsearch.exceptions import ConnectionError, TransportError
+from elasticsearch.exceptions import (
+    ConnectionError,
+    NotFoundError,
+    TransportError,
+    UnsupportedProductError,
+)
 
 pytestmark = pytest.mark.asyncio
 
@@ -37,7 +42,7 @@ class DummyConnection(Connection):
     def __init__(self, **kwargs):
         self.exception = kwargs.pop("exception", None)
         self.status, self.data = kwargs.pop("status", 200), kwargs.pop("data", "{}")
-        self.headers = kwargs.pop("headers", {})
+        self.headers = kwargs.pop("headers", {"X-elastic-product": "Elasticsearch"})
         self.delay = kwargs.pop("delay", 0)
         self.calls = []
         self.closed = False
@@ -574,3 +579,42 @@ class TestTransport:
 
         # A lot quicker than 10 seconds defined in 'delay'
         assert duration < 1
+
+
+@pytest.mark.parametrize("headers", [{}, {"X-elastic-product": "BAD HEADER"}])
+async def test_unsupported_product_error(headers):
+    t = AsyncTransport(
+        [{"headers": headers}], meta_header=False, connection_class=DummyConnection
+    )
+
+    with pytest.raises(UnsupportedProductError) as e:
+        await t.perform_request("GET", "/")
+    assert str(e.value) == (
+        "The client noticed that the server is not Elasticsearch "
+        "and we do not support this unknown product"
+    )
+
+    calls = t.get_connection().calls
+    assert len(calls) == 1
+    assert calls[0][0] == ("GET", "/", None, None)
+    assert calls[0][1] == {"timeout": None, "ignore": (), "headers": None}
+
+
+@pytest.mark.parametrize(
+    "error", [TransportError(500, "", {}), NotFoundError(404, "", {})]
+)
+async def test_transport_error_raised_before_product_error(error):
+    t = AsyncTransport(
+        [{"headers": {"X-elastic-product": "BAD HEADER"}, "exception": error}],
+        meta_header=False,
+        connection_class=DummyConnection,
+    )
+
+    with pytest.raises(TransportError) as e:
+        await t.perform_request("GET", "/")
+    assert e.value.status_code == error.status_code
+
+    calls = t.get_connection().calls
+    assert len(calls) == 1
+    assert calls[0][0] == ("GET", "/", None, None)
+    assert calls[0][1] == {"timeout": None, "ignore": (), "headers": None}
