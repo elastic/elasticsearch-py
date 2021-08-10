@@ -30,7 +30,20 @@ with open(join(base_dir, package_name, "_version.py")) as f:
     ).group(1)
 
 with open(join(base_dir, "README.rst")) as f:
-    long_description = f.read().strip()
+    # Remove reST raw directive from README as they're not allowed on PyPI
+    # Those blocks start with a newline and continue until the next newline
+    mode = None
+    lines = []
+    for line in f:
+        if line.startswith(".. raw::"):
+            mode = "ignore_nl"
+        elif line == "\n":
+            mode = "wait_nl" if mode == "ignore_nl" else None
+        if mode is None:
+            lines.append(line)
+
+    long_description = "".join(lines)
+
 
 packages = [
     package
