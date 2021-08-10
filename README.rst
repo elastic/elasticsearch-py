@@ -1,8 +1,16 @@
-Python Elasticsearch Client
+.. raw:: html
+
+   <img align="right" width="auto" height="auto" src="https://www.elastic.co/static-res/images/elastic-logo-200.png">
+
+
+Elasticsearch Python Client
 ===========================
 
 .. image:: https://img.shields.io/pypi/v/elasticsearch
    :target: https://pypi.org/project/elasticsearch
+
+.. image:: https://img.shields.io/conda/vn/conda-forge/elasticsearch?color=blue
+   :target: https://anaconda.org/conda-forge/elasticsearch
 
 .. image:: https://pepy.tech/badge/elasticsearch
    :target: https://pepy.tech/project/elasticsearch?versions=*
@@ -13,9 +21,23 @@ Python Elasticsearch Client
 .. image:: https://readthedocs.org/projects/elasticsearch-py/badge/?version=latest&style=flat
    :target: https://elasticsearch-py.readthedocs.io
 
-Official low-level client for Elasticsearch. Its goal is to provide common
-ground for all Elasticsearch-related code in Python; because of this it tries
-to be opinion-free and very extendable.
+*The official Python client for Elasticsearch.*
+
+
+Features
+--------
+
+* Translating basic Python data types to and from JSON
+* Configurable automatic discovery of cluster nodes
+* Persistent connections
+* Load balancing (with pluggable selection strategy) across available nodes
+* Failed connection penalization (time based - failed connections won't be
+  retried until a timeout is reached)
+* Support for TLS and HTTP authentication
+* Thread safety across requests
+* Pluggable architecture
+* Helper functions for idiomatically using APIs together
+
 
 Installation
 ------------
@@ -37,101 +59,52 @@ Compatibility
 -------------
 
 Language clients are forward compatible; meaning that clients support communicating
-with greater minor versions of Elasticsearch.
-
-Elastic language clients are also backwards compatible with lesser supported
-minor Elasticsearch versions.
+with greater minor versions of Elasticsearch. Elastic language clients are also backwards
+compatible with lesser supported minor Elasticsearch versions.
 
 If you have a need to have multiple versions installed at the same time older
 versions are also released as ``elasticsearch2`` and ``elasticsearch5``.
 
 
-Example use
+Documentation
+-------------
+
+Documentation for the client is `available on elastic.co`_ and `Read the Docs`_.
+
+.. _available on elastic.co: https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/index.html
+.. _Read the Docs: https://elasticsearch-py.readthedocs.io
+
+Quick Start
 -----------
 
 .. code-block:: python
 
-    >>> from datetime import datetime
+    # Import the client from the 'elasticsearch' module
     >>> from elasticsearch import Elasticsearch
+    
+    # Instantiate a client instance
+    >>> client = Elasticsearch("http://localhost:9200")
+    
+    # Call an API, in this example `info()`
+    >>> resp = client.info()
 
-    # by default we connect to localhost:9200
-    >>> es = Elasticsearch()
-
-    # create an index in elasticsearch, ignore status code 400 (index already exists)
-    >>> es.indices.create(index='my-index', ignore=400)
-    {'acknowledged': True, 'shards_acknowledged': True, 'index': 'my-index'}
-
-    # datetimes will be serialized
-    >>> es.index(index="my-index", id=42, body={"any": "data", "timestamp": datetime.now()})
-    {'_index': 'my-index',
-     '_type': '_doc',
-     '_id': '42',
-     '_version': 1,
-     'result': 'created',
-     '_shards': {'total': 2, 'successful': 1, 'failed': 0},
-     '_seq_no': 0,
-     '_primary_term': 1}
-
-    # but not deserialized
-    >>> es.get(index="my-index", id=42)['_source']
-    {'any': 'data', 'timestamp': '2019-05-17T17:28:10.329598'}
-
-Elastic Cloud (and SSL) use-case:
-
-.. code-block:: python
-
-    >>> from elasticsearch import Elasticsearch
-    >>> es = Elasticsearch(cloud_id="<some_long_cloud_id>", http_auth=('elastic','yourpassword'))
-    >>> es.info()
-
-Using SSL Context with a self-signed cert use-case:
-
-.. code-block:: python
-
-    >>> from elasticsearch import Elasticsearch
-    >>> from ssl import create_default_context
-
-    >>> context = create_default_context(cafile="path/to/cafile.pem")
-    >>> es = Elasticsearch("https://elasticsearch.url:port", ssl_context=context, http_auth=('elastic','yourpassword'))
-    >>> es.info()
+    # View the result
+    >>> resp
+    {
+      "name" : "instance-name",
+      "cluster_name" : "cluster-name",
+      "cluster_uuid" : "cluster-uuid",
+      "version" : {
+        "number" : "7.14.0",
+        ...
+      },
+      "tagline" : "You know, for Search"
+    }
 
 
-Features
---------
+You can read more about `configuring the client`_ in the documentation.
 
-The client's features include:
-
-* translating basic Python data types to and from json (datetimes are not
-  decoded for performance reasons)
-* configurable automatic discovery of cluster nodes
-* persistent connections
-* load balancing (with pluggable selection strategy) across all available nodes
-* failed connection penalization (time based - failed connections won't be
-  retried until a timeout is reached)
-* support for ssl and http authentication
-* thread safety
-* pluggable architecture
-
-
-Elasticsearch-DSL
------------------
-
-For a more high level client library with more limited scope, have a look at
-`elasticsearch-dsl`_ - a more pythonic library sitting on top of
-``elasticsearch-py``.
-
-`elasticsearch-dsl`_ provides a more convenient and idiomatic way to write and manipulate
-`queries`_ by mirroring the terminology and structure of Elasticsearch JSON DSL
-while exposing the whole range of the DSL from Python
-either directly using defined classes or a queryset-like expressions.
-
-It also provides an optional `persistence layer`_ for working with documents as
-Python objects in an ORM-like fashion: defining mappings, retrieving and saving
-documents, wrapping the document data in user-defined classes.
-
-.. _elasticsearch-dsl: https://elasticsearch-dsl.readthedocs.io/
-.. _queries: https://elasticsearch-dsl.readthedocs.io/en/latest/search_dsl.html
-.. _persistence layer: https://elasticsearch-dsl.readthedocs.io/en/latest/persistence.html#doctype
+.. _configuring the client: https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/connecting.html
 
 
 License
