@@ -1,8 +1,0 @@
-{% extends "base" %}
-{% block request %}
-        try:
-            {{ super()|trim }}
-        except TransportError:
-            return False
-{% endblock %}
-
