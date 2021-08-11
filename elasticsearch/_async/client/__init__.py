@@ -2175,3 +2175,49 @@ class AsyncElasticsearch(object):
             headers=headers,
             body=body,
         )
+
+    @query_params("exact_bounds", "extent", "grid_precision", "grid_type", "size")
+    async def search_mvt(
+        self, index, field, zoom, x, y, body=None, params=None, headers=None
+    ):
+        """
+        Searches a vector tile for geospatial values. Returns results as a binary
+        Mapbox vector tile.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/search-vector-tile-api.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
+        :arg index: Comma-separated list of data streams, indices, or
+            aliases to search
+        :arg field: Field containing geospatial data to return
+        :arg zoom: Zoom level for the vector tile to search
+        :arg x: X coordinate for the vector tile to search
+        :arg y: Y coordinate for the vector tile to search
+        :arg body: Search request body.
+        :arg exact_bounds: If false, the meta layer's feature is the
+            bounding box of the tile. If true, the meta layer's feature is a
+            bounding box resulting from a `geo_bounds` aggregation.
+        :arg extent: Size, in pixels, of a side of the vector tile.
+            Default: 4096
+        :arg grid_precision: Additional zoom levels available through
+            the aggs layer. Accepts 0-8.  Default: 8
+        :arg grid_type: Determines the geometry type for features in the
+            aggs layer.  Valid choices: grid, point  Default: grid
+        :arg size: Maximum number of features to return in the hits
+            layer. Accepts 0-10000.  Default: 10000
+        """
+        for param in (index, field, zoom, x, y):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
+
+        return await self.transport.perform_request(
+            "POST",
+            _make_path(index, "_mvt", field, zoom, x, y),
+            params=params,
+            headers=headers,
+            body=body,
+        )

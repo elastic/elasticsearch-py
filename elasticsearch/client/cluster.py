@@ -247,7 +247,7 @@ class ClusterClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/cluster-allocation-explain.html>`_
 
         :arg body: The index, shard, and primary flag to explain. Empty
-            means 'explain the first unassigned shard'
+            means 'explain a randomly-chosen unassigned shard'
         :arg include_disk_info: Return information about disk usage and
             shard sizes (default: false)
         :arg include_yes_decisions: Return 'YES' decisions in
