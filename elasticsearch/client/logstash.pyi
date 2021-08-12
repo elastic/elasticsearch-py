@@ -22,8 +22,8 @@ from .utils import NamespacedClient
 class LogstashClient(NamespacedClient):
     def delete_pipeline(
         self,
-        id: Any,
         *,
+        id: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -39,8 +39,8 @@ class LogstashClient(NamespacedClient):
     ) -> Any: ...
     def get_pipeline(
         self,
-        id: Any,
         *,
+        id: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -56,8 +56,8 @@ class LogstashClient(NamespacedClient):
     ) -> Any: ...
     def put_pipeline(
         self,
-        id: Any,
         *,
+        id: Any,
         body: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,

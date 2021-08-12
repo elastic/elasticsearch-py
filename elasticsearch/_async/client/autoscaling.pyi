@@ -22,8 +22,8 @@ from .utils import NamespacedClient
 class AutoscalingClient(NamespacedClient):
     async def delete_autoscaling_policy(
         self,
-        name: Any,
         *,
+        name: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -39,8 +39,8 @@ class AutoscalingClient(NamespacedClient):
     ) -> Any: ...
     async def get_autoscaling_policy(
         self,
-        name: Any,
         *,
+        name: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -56,8 +56,8 @@ class AutoscalingClient(NamespacedClient):
     ) -> Any: ...
     async def put_autoscaling_policy(
         self,
-        name: Any,
         *,
+        name: Any,
         body: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,

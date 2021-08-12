@@ -405,8 +405,8 @@ class CatClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/cat-fielddata.html>`_
 
-        :arg fields: A comma-separated list of fields to return in the
-            output
+        :arg fields: A comma-separated list of fields to return the
+            fielddata size
         :arg bytes: The unit in which to display byte values  Valid
             choices: b, k, kb, m, mb, g, gb, t, tb, p, pb
         :arg format: a short version of the Accept header, e.g. json,

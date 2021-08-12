@@ -22,8 +22,8 @@ from .utils import NamespacedClient
 class FleetClient(NamespacedClient):
     def global_checkpoints(
         self,
-        index: Any,
         *,
+        index: Any,
         checkpoints: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
         wait_for_advance: Optional[Any] = ...,

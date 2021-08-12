@@ -82,8 +82,8 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def create(
         self,
-        index: Any,
         *,
+        index: Any,
         body: Optional[Any] = ...,
         include_type_name: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
@@ -104,9 +104,9 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def clone(
         self,
+        *,
         index: Any,
         target: Any,
-        *,
         body: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
@@ -126,8 +126,8 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def get(
         self,
-        index: Any,
         *,
+        index: Any,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
         flat_settings: Optional[Any] = ...,
@@ -151,8 +151,8 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def open(
         self,
-        index: Any,
         *,
+        index: Any,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
         ignore_unavailable: Optional[Any] = ...,
@@ -174,8 +174,8 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def close(
         self,
-        index: Any,
         *,
+        index: Any,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
         ignore_unavailable: Optional[Any] = ...,
@@ -197,8 +197,8 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def delete(
         self,
-        index: Any,
         *,
+        index: Any,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
         ignore_unavailable: Optional[Any] = ...,
@@ -219,8 +219,8 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def exists(
         self,
-        index: Any,
         *,
+        index: Any,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
         flat_settings: Optional[Any] = ...,
@@ -242,9 +242,9 @@ class IndicesClient(NamespacedClient):
     ) -> bool: ...
     def exists_type(
         self,
+        *,
         index: Any,
         doc_type: Any,
-        *,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
         ignore_unavailable: Optional[Any] = ...,
@@ -314,8 +314,8 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def get_field_mapping(
         self,
-        fields: Any,
         *,
+        fields: Any,
         index: Optional[Any] = ...,
         doc_type: Optional[Any] = ...,
         allow_no_indices: Optional[Any] = ...,
@@ -339,9 +339,9 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def put_alias(
         self,
+        *,
         index: Any,
         name: Any,
-        *,
         body: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
@@ -360,8 +360,8 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def exists_alias(
         self,
-        name: Any,
         *,
+        name: Any,
         index: Optional[Any] = ...,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
@@ -423,9 +423,9 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def delete_alias(
         self,
+        *,
         index: Any,
         name: Any,
-        *,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -443,8 +443,8 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def put_template(
         self,
-        name: Any,
         *,
+        name: Any,
         body: Any,
         create: Optional[Any] = ...,
         include_type_name: Optional[Any] = ...,
@@ -465,8 +465,8 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def exists_template(
         self,
-        name: Any,
         *,
+        name: Any,
         flat_settings: Optional[Any] = ...,
         local: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
@@ -506,8 +506,8 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def delete_template(
         self,
-        name: Any,
         *,
+        name: Any,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -804,9 +804,9 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def shrink(
         self,
+        *,
         index: Any,
         target: Any,
-        *,
         body: Optional[Any] = ...,
         copy_settings: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
@@ -827,9 +827,9 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def split(
         self,
+        *,
         index: Any,
         target: Any,
-        *,
         body: Optional[Any] = ...,
         copy_settings: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
@@ -850,8 +850,8 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def rollover(
         self,
-        alias: Any,
         *,
+        alias: Any,
         body: Optional[Any] = ...,
         new_index: Optional[Any] = ...,
         dry_run: Optional[Any] = ...,
@@ -874,8 +874,8 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def freeze(
         self,
-        index: Any,
         *,
+        index: Any,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
         ignore_unavailable: Optional[Any] = ...,
@@ -897,8 +897,8 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def unfreeze(
         self,
-        index: Any,
         *,
+        index: Any,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
         ignore_unavailable: Optional[Any] = ...,
@@ -920,8 +920,8 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def reload_search_analyzers(
         self,
-        index: Any,
         *,
+        index: Any,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
         ignore_unavailable: Optional[Any] = ...,
@@ -940,8 +940,8 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def create_data_stream(
         self,
-        name: Any,
         *,
+        name: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -957,8 +957,8 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def delete_data_stream(
         self,
-        name: Any,
         *,
+        name: Any,
         expand_wildcards: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -975,8 +975,8 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def delete_index_template(
         self,
-        name: Any,
         *,
+        name: Any,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -994,8 +994,8 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def exists_index_template(
         self,
-        name: Any,
         *,
+        name: Any,
         flat_settings: Optional[Any] = ...,
         local: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
@@ -1034,8 +1034,8 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def put_index_template(
         self,
-        name: Any,
         *,
+        name: Any,
         body: Any,
         cause: Optional[Any] = ...,
         create: Optional[Any] = ...,
@@ -1055,8 +1055,8 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def simulate_index_template(
         self,
-        name: Any,
         *,
+        name: Any,
         body: Optional[Any] = ...,
         cause: Optional[Any] = ...,
         create: Optional[Any] = ...,
@@ -1115,8 +1115,8 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def resolve_index(
         self,
-        name: Any,
         *,
+        name: Any,
         expand_wildcards: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -1133,9 +1133,9 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def add_block(
         self,
+        *,
         index: Any,
         block: Any,
-        *,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
         ignore_unavailable: Optional[Any] = ...,
@@ -1173,8 +1173,8 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def promote_data_stream(
         self,
-        name: Any,
         *,
+        name: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -1190,8 +1190,8 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def migrate_to_data_stream(
         self,
-        name: Any,
         *,
+        name: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -1207,8 +1207,8 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def disk_usage(
         self,
-        index: Any,
         *,
+        index: Any,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
         flush: Optional[Any] = ...,
@@ -1229,8 +1229,8 @@ class IndicesClient(NamespacedClient):
     ) -> Any: ...
     def field_usage_stats(
         self,
-        index: Any,
         *,
+        index: Any,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
         fields: Optional[Any] = ...,

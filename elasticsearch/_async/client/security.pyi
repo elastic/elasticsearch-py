@@ -57,8 +57,8 @@ class SecurityClient(NamespacedClient):
     ) -> Any: ...
     async def clear_cached_realms(
         self,
-        realms: Any,
         *,
+        realms: Any,
         usernames: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -75,8 +75,8 @@ class SecurityClient(NamespacedClient):
     ) -> Any: ...
     async def clear_cached_roles(
         self,
-        name: Any,
         *,
+        name: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -110,9 +110,9 @@ class SecurityClient(NamespacedClient):
     ) -> Any: ...
     async def delete_privileges(
         self,
+        *,
         application: Any,
         name: Any,
-        *,
         refresh: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -129,8 +129,8 @@ class SecurityClient(NamespacedClient):
     ) -> Any: ...
     async def delete_role(
         self,
-        name: Any,
         *,
+        name: Any,
         refresh: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -147,8 +147,8 @@ class SecurityClient(NamespacedClient):
     ) -> Any: ...
     async def delete_role_mapping(
         self,
-        name: Any,
         *,
+        name: Any,
         refresh: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -165,8 +165,8 @@ class SecurityClient(NamespacedClient):
     ) -> Any: ...
     async def delete_user(
         self,
-        username: Any,
         *,
+        username: Any,
         refresh: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -183,8 +183,8 @@ class SecurityClient(NamespacedClient):
     ) -> Any: ...
     async def disable_user(
         self,
-        username: Any,
         *,
+        username: Any,
         refresh: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -201,8 +201,8 @@ class SecurityClient(NamespacedClient):
     ) -> Any: ...
     async def enable_user(
         self,
-        username: Any,
         *,
+        username: Any,
         refresh: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -412,8 +412,8 @@ class SecurityClient(NamespacedClient):
     ) -> Any: ...
     async def put_role(
         self,
-        name: Any,
         *,
+        name: Any,
         body: Any,
         refresh: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -431,8 +431,8 @@ class SecurityClient(NamespacedClient):
     ) -> Any: ...
     async def put_role_mapping(
         self,
-        name: Any,
         *,
+        name: Any,
         body: Any,
         refresh: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -450,8 +450,8 @@ class SecurityClient(NamespacedClient):
     ) -> Any: ...
     async def put_user(
         self,
-        username: Any,
         *,
+        username: Any,
         body: Any,
         refresh: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -485,8 +485,8 @@ class SecurityClient(NamespacedClient):
     ) -> Any: ...
     async def clear_cached_privileges(
         self,
-        application: Any,
         *,
+        application: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -502,8 +502,8 @@ class SecurityClient(NamespacedClient):
     ) -> Any: ...
     async def clear_api_key_cache(
         self,
-        ids: Any,
         *,
+        ids: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -537,10 +537,10 @@ class SecurityClient(NamespacedClient):
     ) -> Any: ...
     async def clear_cached_service_tokens(
         self,
+        *,
         namespace: Any,
         service: Any,
         name: Any,
-        *,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -556,9 +556,9 @@ class SecurityClient(NamespacedClient):
     ) -> Any: ...
     async def create_service_token(
         self,
+        *,
         namespace: Any,
         service: Any,
-        *,
         name: Optional[Any] = ...,
         refresh: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -576,10 +576,10 @@ class SecurityClient(NamespacedClient):
     ) -> Any: ...
     async def delete_service_token(
         self,
+        *,
         namespace: Any,
         service: Any,
         name: Any,
-        *,
         refresh: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -614,9 +614,9 @@ class SecurityClient(NamespacedClient):
     ) -> Any: ...
     async def get_service_credentials(
         self,
+        *,
         namespace: Any,
         service: Any,
-        *,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -717,8 +717,8 @@ class SecurityClient(NamespacedClient):
     ) -> Any: ...
     async def saml_service_provider_metadata(
         self,
-        realm_name: Any,
         *,
+        realm_name: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,

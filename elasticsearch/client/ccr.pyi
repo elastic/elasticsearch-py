@@ -22,8 +22,8 @@ from .utils import NamespacedClient
 class CcrClient(NamespacedClient):
     def delete_auto_follow_pattern(
         self,
-        name: Any,
         *,
+        name: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -39,8 +39,8 @@ class CcrClient(NamespacedClient):
     ) -> Any: ...
     def follow(
         self,
-        index: Any,
         *,
+        index: Any,
         body: Any,
         wait_for_active_shards: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -58,8 +58,8 @@ class CcrClient(NamespacedClient):
     ) -> Any: ...
     def follow_info(
         self,
-        index: Any,
         *,
+        index: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -75,8 +75,8 @@ class CcrClient(NamespacedClient):
     ) -> Any: ...
     def follow_stats(
         self,
-        index: Any,
         *,
+        index: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -92,8 +92,8 @@ class CcrClient(NamespacedClient):
     ) -> Any: ...
     def forget_follower(
         self,
-        index: Any,
         *,
+        index: Any,
         body: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -127,8 +127,8 @@ class CcrClient(NamespacedClient):
     ) -> Any: ...
     def pause_follow(
         self,
-        index: Any,
         *,
+        index: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -144,8 +144,8 @@ class CcrClient(NamespacedClient):
     ) -> Any: ...
     def put_auto_follow_pattern(
         self,
-        name: Any,
         *,
+        name: Any,
         body: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -162,8 +162,8 @@ class CcrClient(NamespacedClient):
     ) -> Any: ...
     def resume_follow(
         self,
-        index: Any,
         *,
+        index: Any,
         body: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -196,8 +196,8 @@ class CcrClient(NamespacedClient):
     ) -> Any: ...
     def unfollow(
         self,
-        index: Any,
         *,
+        index: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -213,8 +213,8 @@ class CcrClient(NamespacedClient):
     ) -> Any: ...
     def pause_auto_follow_pattern(
         self,
-        name: Any,
         *,
+        name: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -230,8 +230,8 @@ class CcrClient(NamespacedClient):
     ) -> Any: ...
     def resume_auto_follow_pattern(
         self,
-        name: Any,
         *,
+        name: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,

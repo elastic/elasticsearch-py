@@ -22,8 +22,8 @@ from .utils import NamespacedClient
 class WatcherClient(NamespacedClient):
     async def ack_watch(
         self,
-        watch_id: Any,
         *,
+        watch_id: Any,
         action_id: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -40,8 +40,8 @@ class WatcherClient(NamespacedClient):
     ) -> Any: ...
     async def activate_watch(
         self,
-        watch_id: Any,
         *,
+        watch_id: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -57,8 +57,8 @@ class WatcherClient(NamespacedClient):
     ) -> Any: ...
     async def deactivate_watch(
         self,
-        watch_id: Any,
         *,
+        watch_id: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -74,8 +74,8 @@ class WatcherClient(NamespacedClient):
     ) -> Any: ...
     async def delete_watch(
         self,
-        id: Any,
         *,
+        id: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -110,8 +110,8 @@ class WatcherClient(NamespacedClient):
     ) -> Any: ...
     async def get_watch(
         self,
-        id: Any,
         *,
+        id: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -127,8 +127,8 @@ class WatcherClient(NamespacedClient):
     ) -> Any: ...
     async def put_watch(
         self,
-        id: Any,
         *,
+        id: Any,
         body: Optional[Any] = ...,
         active: Optional[Any] = ...,
         if_primary_term: Optional[Any] = ...,

@@ -42,9 +42,9 @@ class SearchableSnapshotsClient(NamespacedClient):
     ) -> Any: ...
     def mount(
         self,
+        *,
         repository: Any,
         snapshot: Any,
-        *,
         body: Any,
         master_timeout: Optional[Any] = ...,
         storage: Optional[Any] = ...,
@@ -64,8 +64,8 @@ class SearchableSnapshotsClient(NamespacedClient):
     ) -> Any: ...
     def repository_stats(
         self,
-        repository: Any,
         *,
+        repository: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
