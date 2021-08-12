@@ -131,9 +131,9 @@ class NodesClient(NamespacedClient):
     ) -> Any: ...
     async def clear_metering_archive(
         self,
+        *,
         node_id: Any,
         max_archive_version: Any,
-        *,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -149,8 +149,8 @@ class NodesClient(NamespacedClient):
     ) -> Any: ...
     async def get_metering_info(
         self,
-        node_id: Any,
         *,
+        node_id: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,

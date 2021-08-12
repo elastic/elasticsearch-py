@@ -22,8 +22,8 @@ from .utils import NamespacedClient
 class EnrichClient(NamespacedClient):
     async def delete_policy(
         self,
-        name: Any,
         *,
+        name: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -39,8 +39,8 @@ class EnrichClient(NamespacedClient):
     ) -> Any: ...
     async def execute_policy(
         self,
-        name: Any,
         *,
+        name: Any,
         wait_for_completion: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -74,8 +74,8 @@ class EnrichClient(NamespacedClient):
     ) -> Any: ...
     async def put_policy(
         self,
-        name: Any,
         *,
+        name: Any,
         body: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,

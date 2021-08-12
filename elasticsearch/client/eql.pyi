@@ -22,8 +22,8 @@ from .utils import NamespacedClient
 class EqlClient(NamespacedClient):
     def search(
         self,
-        index: Any,
         *,
+        index: Any,
         body: Any,
         keep_alive: Optional[Any] = ...,
         keep_on_completion: Optional[Any] = ...,
@@ -43,8 +43,8 @@ class EqlClient(NamespacedClient):
     ) -> Any: ...
     def delete(
         self,
-        id: Any,
         *,
+        id: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -60,8 +60,8 @@ class EqlClient(NamespacedClient):
     ) -> Any: ...
     def get(
         self,
-        id: Any,
         *,
+        id: Any,
         keep_alive: Optional[Any] = ...,
         wait_for_completion_timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -79,8 +79,8 @@ class EqlClient(NamespacedClient):
     ) -> Any: ...
     def get_status(
         self,
-        id: Any,
         *,
+        id: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,

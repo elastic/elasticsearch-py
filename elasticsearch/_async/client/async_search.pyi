@@ -22,8 +22,8 @@ from .utils import NamespacedClient
 class AsyncSearchClient(NamespacedClient):
     async def delete(
         self,
-        id: Any,
         *,
+        id: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -39,8 +39,8 @@ class AsyncSearchClient(NamespacedClient):
     ) -> Any: ...
     async def get(
         self,
-        id: Any,
         *,
+        id: Any,
         keep_alive: Optional[Any] = ...,
         typed_keys: Optional[Any] = ...,
         wait_for_completion_timeout: Optional[Any] = ...,
@@ -118,8 +118,8 @@ class AsyncSearchClient(NamespacedClient):
     ) -> Any: ...
     async def status(
         self,
-        id: Any,
         *,
+        id: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,

@@ -22,8 +22,8 @@ from .utils import NamespacedClient
 class GraphClient(NamespacedClient):
     def explore(
         self,
-        index: Any,
         *,
+        index: Any,
         body: Optional[Any] = ...,
         doc_type: Optional[Any] = ...,
         routing: Optional[Any] = ...,

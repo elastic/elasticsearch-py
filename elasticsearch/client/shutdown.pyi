@@ -22,8 +22,8 @@ from .utils import NamespacedClient
 class ShutdownClient(NamespacedClient):
     def delete_node(
         self,
-        node_id: Any,
         *,
+        node_id: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -56,8 +56,8 @@ class ShutdownClient(NamespacedClient):
     ) -> Any: ...
     def put_node(
         self,
-        node_id: Any,
         *,
+        node_id: Any,
         body: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,

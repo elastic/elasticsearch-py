@@ -22,8 +22,8 @@ from .utils import NamespacedClient
 class RollupClient(NamespacedClient):
     async def delete_job(
         self,
-        id: Any,
         *,
+        id: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -73,8 +73,8 @@ class RollupClient(NamespacedClient):
     ) -> Any: ...
     async def get_rollup_index_caps(
         self,
-        index: Any,
         *,
+        index: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -90,8 +90,8 @@ class RollupClient(NamespacedClient):
     ) -> Any: ...
     async def put_job(
         self,
-        id: Any,
         *,
+        id: Any,
         body: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -108,8 +108,8 @@ class RollupClient(NamespacedClient):
     ) -> Any: ...
     async def rollup_search(
         self,
-        index: Any,
         *,
+        index: Any,
         body: Any,
         doc_type: Optional[Any] = ...,
         rest_total_hits_as_int: Optional[Any] = ...,
@@ -129,8 +129,8 @@ class RollupClient(NamespacedClient):
     ) -> Any: ...
     async def start_job(
         self,
-        id: Any,
         *,
+        id: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -146,8 +146,8 @@ class RollupClient(NamespacedClient):
     ) -> Any: ...
     async def stop_job(
         self,
-        id: Any,
         *,
+        id: Any,
         timeout: Optional[Any] = ...,
         wait_for_completion: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -165,9 +165,9 @@ class RollupClient(NamespacedClient):
     ) -> Any: ...
     async def rollup(
         self,
+        *,
         index: Any,
         rollup_index: Any,
-        *,
         body: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,

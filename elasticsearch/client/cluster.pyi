@@ -211,8 +211,8 @@ class ClusterClient(NamespacedClient):
     ) -> Any: ...
     def delete_component_template(
         self,
-        name: Any,
         *,
+        name: Any,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -249,8 +249,8 @@ class ClusterClient(NamespacedClient):
     ) -> Any: ...
     def put_component_template(
         self,
-        name: Any,
         *,
+        name: Any,
         body: Any,
         create: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
@@ -270,8 +270,8 @@ class ClusterClient(NamespacedClient):
     ) -> Any: ...
     def exists_component_template(
         self,
-        name: Any,
         *,
+        name: Any,
         local: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,

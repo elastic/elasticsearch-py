@@ -22,8 +22,8 @@ from .utils import NamespacedClient
 class MlClient(NamespacedClient):
     def close_job(
         self,
-        job_id: Any,
         *,
+        job_id: Any,
         body: Optional[Any] = ...,
         allow_no_jobs: Optional[Any] = ...,
         allow_no_match: Optional[Any] = ...,
@@ -44,8 +44,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def delete_calendar(
         self,
-        calendar_id: Any,
         *,
+        calendar_id: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -61,9 +61,9 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def delete_calendar_event(
         self,
+        *,
         calendar_id: Any,
         event_id: Any,
-        *,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -79,9 +79,9 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def delete_calendar_job(
         self,
+        *,
         calendar_id: Any,
         job_id: Any,
-        *,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -97,8 +97,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def delete_datafeed(
         self,
-        datafeed_id: Any,
         *,
+        datafeed_id: Any,
         force: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -135,8 +135,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def delete_filter(
         self,
-        filter_id: Any,
         *,
+        filter_id: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -152,8 +152,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def delete_forecast(
         self,
-        job_id: Any,
         *,
+        job_id: Any,
         forecast_id: Optional[Any] = ...,
         allow_no_forecasts: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
@@ -172,8 +172,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def delete_job(
         self,
-        job_id: Any,
         *,
+        job_id: Any,
         force: Optional[Any] = ...,
         wait_for_completion: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -191,9 +191,9 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def delete_model_snapshot(
         self,
+        *,
         job_id: Any,
         snapshot_id: Any,
-        *,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -209,8 +209,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def flush_job(
         self,
-        job_id: Any,
         *,
+        job_id: Any,
         body: Optional[Any] = ...,
         advance_time: Optional[Any] = ...,
         calc_interim: Optional[Any] = ...,
@@ -232,8 +232,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def forecast(
         self,
-        job_id: Any,
         *,
+        job_id: Any,
         duration: Optional[Any] = ...,
         expires_in: Optional[Any] = ...,
         max_model_memory: Optional[Any] = ...,
@@ -252,8 +252,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def get_buckets(
         self,
-        job_id: Any,
         *,
+        job_id: Any,
         body: Optional[Any] = ...,
         timestamp: Optional[Any] = ...,
         anomaly_score: Optional[Any] = ...,
@@ -280,8 +280,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def get_calendar_events(
         self,
-        calendar_id: Any,
         *,
+        calendar_id: Any,
         end: Optional[Any] = ...,
         from_: Optional[Any] = ...,
         job_id: Optional[Any] = ...,
@@ -322,8 +322,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def get_categories(
         self,
-        job_id: Any,
         *,
+        job_id: Any,
         body: Optional[Any] = ...,
         category_id: Optional[Any] = ...,
         from_: Optional[Any] = ...,
@@ -402,8 +402,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def get_influencers(
         self,
-        job_id: Any,
         *,
+        job_id: Any,
         body: Optional[Any] = ...,
         desc: Optional[Any] = ...,
         end: Optional[Any] = ...,
@@ -467,8 +467,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def get_model_snapshots(
         self,
-        job_id: Any,
         *,
+        job_id: Any,
         body: Optional[Any] = ...,
         snapshot_id: Optional[Any] = ...,
         desc: Optional[Any] = ...,
@@ -492,8 +492,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def get_overall_buckets(
         self,
-        job_id: Any,
         *,
+        job_id: Any,
         body: Optional[Any] = ...,
         allow_no_jobs: Optional[Any] = ...,
         allow_no_match: Optional[Any] = ...,
@@ -518,8 +518,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def get_records(
         self,
-        job_id: Any,
         *,
+        job_id: Any,
         body: Optional[Any] = ...,
         desc: Optional[Any] = ...,
         end: Optional[Any] = ...,
@@ -560,8 +560,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def open_job(
         self,
-        job_id: Any,
         *,
+        job_id: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -577,8 +577,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def post_calendar_events(
         self,
-        calendar_id: Any,
         *,
+        calendar_id: Any,
         body: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -595,8 +595,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def post_data(
         self,
-        job_id: Any,
         *,
+        job_id: Any,
         body: Any,
         reset_end: Optional[Any] = ...,
         reset_start: Optional[Any] = ...,
@@ -633,8 +633,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def put_calendar(
         self,
-        calendar_id: Any,
         *,
+        calendar_id: Any,
         body: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -651,9 +651,9 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def put_calendar_job(
         self,
+        *,
         calendar_id: Any,
         job_id: Any,
-        *,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -669,8 +669,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def put_datafeed(
         self,
-        datafeed_id: Any,
         *,
+        datafeed_id: Any,
         body: Any,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
@@ -691,8 +691,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def put_filter(
         self,
-        filter_id: Any,
         *,
+        filter_id: Any,
         body: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -709,8 +709,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def put_job(
         self,
-        job_id: Any,
         *,
+        job_id: Any,
         body: Any,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
@@ -731,9 +731,9 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def revert_model_snapshot(
         self,
+        *,
         job_id: Any,
         snapshot_id: Any,
-        *,
         body: Optional[Any] = ...,
         delete_intervening_results: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -769,8 +769,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def start_datafeed(
         self,
-        datafeed_id: Any,
         *,
+        datafeed_id: Any,
         body: Optional[Any] = ...,
         end: Optional[Any] = ...,
         start: Optional[Any] = ...,
@@ -790,8 +790,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def stop_datafeed(
         self,
-        datafeed_id: Any,
         *,
+        datafeed_id: Any,
         body: Optional[Any] = ...,
         allow_no_datafeeds: Optional[Any] = ...,
         allow_no_match: Optional[Any] = ...,
@@ -812,8 +812,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def update_datafeed(
         self,
-        datafeed_id: Any,
         *,
+        datafeed_id: Any,
         body: Any,
         allow_no_indices: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
@@ -834,8 +834,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def update_filter(
         self,
-        filter_id: Any,
         *,
+        filter_id: Any,
         body: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -852,8 +852,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def update_job(
         self,
-        job_id: Any,
         *,
+        job_id: Any,
         body: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -870,9 +870,9 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def update_model_snapshot(
         self,
+        *,
         job_id: Any,
         snapshot_id: Any,
-        *,
         body: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -923,8 +923,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def delete_data_frame_analytics(
         self,
-        id: Any,
         *,
+        id: Any,
         force: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -1001,8 +1001,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def put_data_frame_analytics(
         self,
-        id: Any,
         *,
+        id: Any,
         body: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -1019,8 +1019,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def start_data_frame_analytics(
         self,
-        id: Any,
         *,
+        id: Any,
         body: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -1038,8 +1038,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def stop_data_frame_analytics(
         self,
-        id: Any,
         *,
+        id: Any,
         body: Optional[Any] = ...,
         allow_no_match: Optional[Any] = ...,
         force: Optional[Any] = ...,
@@ -1059,8 +1059,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def delete_trained_model(
         self,
-        model_id: Any,
         *,
+        model_id: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -1139,8 +1139,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def put_trained_model(
         self,
-        model_id: Any,
         *,
+        model_id: Any,
         body: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -1174,8 +1174,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def update_data_frame_analytics(
         self,
-        id: Any,
         *,
+        id: Any,
         body: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -1192,9 +1192,9 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def upgrade_job_snapshot(
         self,
+        *,
         job_id: Any,
         snapshot_id: Any,
-        *,
         timeout: Optional[Any] = ...,
         wait_for_completion: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -1212,9 +1212,9 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def delete_trained_model_alias(
         self,
+        *,
         model_id: Any,
         model_alias: Any,
-        *,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -1248,9 +1248,9 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def put_trained_model_alias(
         self,
+        *,
         model_id: Any,
         model_alias: Any,
-        *,
         reassign: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -1297,8 +1297,8 @@ class MlClient(NamespacedClient):
     ) -> Any: ...
     def reset_job(
         self,
-        job_id: Any,
         *,
+        job_id: Any,
         wait_for_completion: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,

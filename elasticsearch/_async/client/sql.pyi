@@ -73,8 +73,8 @@ class SqlClient(NamespacedClient):
     ) -> Any: ...
     async def delete_async(
         self,
-        id: Any,
         *,
+        id: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -90,8 +90,8 @@ class SqlClient(NamespacedClient):
     ) -> Any: ...
     async def get_async(
         self,
-        id: Any,
         *,
+        id: Any,
         delimiter: Optional[Any] = ...,
         format: Optional[Any] = ...,
         keep_alive: Optional[Any] = ...,
@@ -110,8 +110,8 @@ class SqlClient(NamespacedClient):
     ) -> Any: ...
     async def get_async_status(
         self,
-        id: Any,
         *,
+        id: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,

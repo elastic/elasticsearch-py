@@ -41,8 +41,8 @@ class IngestClient(NamespacedClient):
     ) -> Any: ...
     def put_pipeline(
         self,
-        id: Any,
         *,
+        id: Any,
         body: Any,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
@@ -61,8 +61,8 @@ class IngestClient(NamespacedClient):
     ) -> Any: ...
     def delete_pipeline(
         self,
-        id: Any,
         *,
+        id: Any,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,

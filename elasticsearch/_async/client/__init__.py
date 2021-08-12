@@ -1328,7 +1328,7 @@ class AsyncElasticsearch(object):
 
         :arg id: Script ID
         :arg body: The document
-        :arg context: Context name to compile script against
+        :arg context: Script context
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         """
@@ -1504,7 +1504,7 @@ class AsyncElasticsearch(object):
 
         :arg body: The scroll ID if not passed by URL or query
             parameter.
-        :arg scroll_id: The scroll ID for scrolled search
+        :arg scroll_id: The scroll ID
         :arg rest_total_hits_as_int: Indicates whether hits.total should
             be rendered as an integer or an object in the rest search response
         :arg scroll: Specify how long a consistent view of the index

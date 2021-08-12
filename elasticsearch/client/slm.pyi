@@ -22,8 +22,8 @@ from .utils import NamespacedClient
 class SlmClient(NamespacedClient):
     def delete_lifecycle(
         self,
-        policy_id: Any,
         *,
+        policy_id: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -39,8 +39,8 @@ class SlmClient(NamespacedClient):
     ) -> Any: ...
     def execute_lifecycle(
         self,
-        policy_id: Any,
         *,
+        policy_id: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -105,8 +105,8 @@ class SlmClient(NamespacedClient):
     ) -> Any: ...
     def put_lifecycle(
         self,
-        policy_id: Any,
         *,
+        policy_id: Any,
         body: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,

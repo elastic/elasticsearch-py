@@ -22,8 +22,8 @@ from .utils import NamespacedClient
 class DanglingIndicesClient(NamespacedClient):
     def delete_dangling_index(
         self,
-        index_uuid: Any,
         *,
+        index_uuid: Any,
         accept_data_loss: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
@@ -42,8 +42,8 @@ class DanglingIndicesClient(NamespacedClient):
     ) -> Any: ...
     def import_dangling_index(
         self,
-        index_uuid: Any,
         *,
+        index_uuid: Any,
         accept_data_loss: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,

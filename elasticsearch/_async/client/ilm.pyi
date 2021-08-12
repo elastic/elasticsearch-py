@@ -22,8 +22,8 @@ from .utils import NamespacedClient
 class IlmClient(NamespacedClient):
     async def delete_lifecycle(
         self,
-        policy: Any,
         *,
+        policy: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -39,8 +39,8 @@ class IlmClient(NamespacedClient):
     ) -> Any: ...
     async def explain_lifecycle(
         self,
-        index: Any,
         *,
+        index: Any,
         only_errors: Optional[Any] = ...,
         only_managed: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -91,8 +91,8 @@ class IlmClient(NamespacedClient):
     ) -> Any: ...
     async def move_to_step(
         self,
-        index: Any,
         *,
+        index: Any,
         body: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -109,8 +109,8 @@ class IlmClient(NamespacedClient):
     ) -> Any: ...
     async def put_lifecycle(
         self,
-        policy: Any,
         *,
+        policy: Any,
         body: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -127,8 +127,8 @@ class IlmClient(NamespacedClient):
     ) -> Any: ...
     async def remove_policy(
         self,
-        index: Any,
         *,
+        index: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -144,8 +144,8 @@ class IlmClient(NamespacedClient):
     ) -> Any: ...
     async def retry(
         self,
-        index: Any,
         *,
+        index: Any,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,

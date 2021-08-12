@@ -142,9 +142,9 @@ class Elasticsearch(object):
     ) -> Any: ...
     def create(
         self,
+        *,
         index: Any,
         id: Any,
-        *,
         body: Any,
         doc_type: Optional[Any] = ...,
         pipeline: Optional[Any] = ...,
@@ -169,8 +169,8 @@ class Elasticsearch(object):
     ) -> Any: ...
     def index(
         self,
-        index: Any,
         *,
+        index: Any,
         body: Any,
         doc_type: Optional[Any] = ...,
         id: Optional[Any] = ...,
@@ -279,9 +279,9 @@ class Elasticsearch(object):
     ) -> Any: ...
     def delete(
         self,
+        *,
         index: Any,
         id: Any,
-        *,
         doc_type: Optional[Any] = ...,
         if_primary_term: Optional[Any] = ...,
         if_seq_no: Optional[Any] = ...,
@@ -306,8 +306,8 @@ class Elasticsearch(object):
     ) -> Any: ...
     def delete_by_query(
         self,
-        index: Any,
         *,
+        index: Any,
         body: Any,
         doc_type: Optional[Any] = ...,
         _source: Optional[Any] = ...,
@@ -358,8 +358,8 @@ class Elasticsearch(object):
     ) -> Any: ...
     def delete_by_query_rethrottle(
         self,
-        task_id: Any,
         *,
+        task_id: Any,
         requests_per_second: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -376,8 +376,8 @@ class Elasticsearch(object):
     ) -> Any: ...
     def delete_script(
         self,
-        id: Any,
         *,
+        id: Any,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -395,9 +395,9 @@ class Elasticsearch(object):
     ) -> Any: ...
     def exists(
         self,
+        *,
         index: Any,
         id: Any,
-        *,
         doc_type: Optional[Any] = ...,
         _source: Optional[Any] = ...,
         _source_excludes: Optional[Any] = ...,
@@ -424,9 +424,9 @@ class Elasticsearch(object):
     ) -> bool: ...
     def exists_source(
         self,
+        *,
         index: Any,
         id: Any,
-        *,
         doc_type: Optional[Any] = ...,
         _source: Optional[Any] = ...,
         _source_excludes: Optional[Any] = ...,
@@ -452,9 +452,9 @@ class Elasticsearch(object):
     ) -> bool: ...
     def explain(
         self,
+        *,
         index: Any,
         id: Any,
-        *,
         body: Optional[Any] = ...,
         doc_type: Optional[Any] = ...,
         _source: Optional[Any] = ...,
@@ -507,9 +507,9 @@ class Elasticsearch(object):
     ) -> Any: ...
     def get(
         self,
+        *,
         index: Any,
         id: Any,
-        *,
         doc_type: Optional[Any] = ...,
         _source: Optional[Any] = ...,
         _source_excludes: Optional[Any] = ...,
@@ -536,8 +536,8 @@ class Elasticsearch(object):
     ) -> Any: ...
     def get_script(
         self,
-        id: Any,
         *,
+        id: Any,
         master_timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -554,9 +554,9 @@ class Elasticsearch(object):
     ) -> Any: ...
     def get_source(
         self,
+        *,
         index: Any,
         id: Any,
-        *,
         doc_type: Optional[Any] = ...,
         _source: Optional[Any] = ...,
         _source_excludes: Optional[Any] = ...,
@@ -690,8 +690,8 @@ class Elasticsearch(object):
     ) -> Any: ...
     def put_script(
         self,
-        id: Any,
         *,
+        id: Any,
         body: Any,
         context: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
@@ -758,8 +758,8 @@ class Elasticsearch(object):
     ) -> Any: ...
     def reindex_rethrottle(
         self,
-        task_id: Any,
         *,
+        task_id: Any,
         requests_per_second: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -948,8 +948,8 @@ class Elasticsearch(object):
     ) -> Any: ...
     def termvectors(
         self,
-        index: Any,
         *,
+        index: Any,
         body: Optional[Any] = ...,
         doc_type: Optional[Any] = ...,
         id: Optional[Any] = ...,
@@ -979,9 +979,9 @@ class Elasticsearch(object):
     ) -> Any: ...
     def update(
         self,
+        *,
         index: Any,
         id: Any,
-        *,
         body: Any,
         doc_type: Optional[Any] = ...,
         _source: Optional[Any] = ...,
@@ -1011,8 +1011,8 @@ class Elasticsearch(object):
     ) -> Any: ...
     def update_by_query(
         self,
-        index: Any,
         *,
+        index: Any,
         body: Optional[Any] = ...,
         doc_type: Optional[Any] = ...,
         _source: Optional[Any] = ...,
@@ -1065,8 +1065,8 @@ class Elasticsearch(object):
     ) -> Any: ...
     def update_by_query_rethrottle(
         self,
-        task_id: Any,
         *,
+        task_id: Any,
         requests_per_second: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -1154,8 +1154,8 @@ class Elasticsearch(object):
     ) -> Any: ...
     def terms_enum(
         self,
-        index: Any,
         *,
+        index: Any,
         body: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -1172,12 +1172,12 @@ class Elasticsearch(object):
     ) -> Any: ...
     def search_mvt(
         self,
+        *,
         index: Any,
         field: Any,
         zoom: Any,
         x: Any,
         y: Any,
-        *,
         body: Optional[Any] = ...,
         exact_bounds: Optional[Any] = ...,
         extent: Optional[Any] = ...,
