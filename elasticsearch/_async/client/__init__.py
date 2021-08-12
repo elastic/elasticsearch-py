@@ -57,8 +57,6 @@ from .text_structure import TextStructureClient
 from .transform import TransformClient
 from .utils import SKIP_IN_PATH, _bulk_body, _make_path, _normalize_hosts, query_params
 from .watcher import WatcherClient
-
-# xpack APIs
 from .xpack import XPackClient
 
 logger = logging.getLogger("elasticsearch")
@@ -210,17 +208,9 @@ class AsyncElasticsearch(object):
         self.async_search = AsyncSearchClient(self)
         self.autoscaling = AutoscalingClient(self)
         self.cat = CatClient(self)
+        self.ccr = CcrClient(self)
         self.cluster = ClusterClient(self)
         self.dangling_indices = DanglingIndicesClient(self)
-        self.indices = IndicesClient(self)
-        self.ingest = IngestClient(self)
-        self.nodes = NodesClient(self)
-        self.remote = RemoteClient(self)
-        self.snapshot = SnapshotClient(self)
-        self.tasks = TasksClient(self)
-
-        self.xpack = XPackClient(self)
-        self.ccr = CcrClient(self)
         self.data_frame = Data_FrameClient(self)
         self.deprecation = DeprecationClient(self)
         self.enrich = EnrichClient(self)
@@ -229,21 +219,28 @@ class AsyncElasticsearch(object):
         self.fleet = FleetClient(self)
         self.graph = GraphClient(self)
         self.ilm = IlmClient(self)
+        self.indices = IndicesClient(self)
+        self.ingest = IngestClient(self)
         self.license = LicenseClient(self)
         self.logstash = LogstashClient(self)
         self.migration = MigrationClient(self)
         self.ml = MlClient(self)
         self.monitoring = MonitoringClient(self)
+        self.nodes = NodesClient(self)
+        self.remote = RemoteClient(self)
         self.rollup = RollupClient(self)
         self.searchable_snapshots = SearchableSnapshotsClient(self)
         self.security = SecurityClient(self)
-        self.slm = SlmClient(self)
         self.shutdown = ShutdownClient(self)
+        self.slm = SlmClient(self)
+        self.snapshot = SnapshotClient(self)
         self.sql = SqlClient(self)
         self.ssl = SslClient(self)
+        self.tasks = TasksClient(self)
         self.text_structure = TextStructureClient(self)
         self.transform = TransformClient(self)
         self.watcher = WatcherClient(self)
+        self.xpack = XPackClient(self)
 
     def __repr__(self):
         try:

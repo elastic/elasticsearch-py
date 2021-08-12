@@ -19,7 +19,18 @@
 from __future__ import unicode_literals
 
 import logging
-from typing import Any, Collection, MutableMapping, Optional, Tuple, Type, Union
+from typing import (
+    Any,
+    Collection,
+    Dict,
+    Mapping,
+    MutableMapping,
+    Optional,
+    Sequence,
+    Tuple,
+    Type,
+    Union,
+)
 
 from ..transport import AsyncTransport
 from .async_search import AsyncSearchClient
@@ -54,8 +65,6 @@ from .tasks import TasksClient
 from .text_structure import TextStructureClient
 from .transform import TransformClient
 from .watcher import WatcherClient
-
-# xpack APIs
 from .xpack import XPackClient
 
 logger: logging.Logger
@@ -66,37 +75,36 @@ class AsyncElasticsearch(object):
     async_search: AsyncSearchClient
     autoscaling: AutoscalingClient
     cat: CatClient
-    cluster: ClusterClient
-    features: FeaturesClient
-    indices: IndicesClient
-    ingest: IngestClient
-    nodes: NodesClient
-    remote: RemoteClient
-    snapshot: SnapshotClient
-    tasks: TasksClient
-
-    xpack: XPackClient
     ccr: CcrClient
+    cluster: ClusterClient
     dangling_indices: DanglingIndicesClient
     enrich: EnrichClient
     eql: EqlClient
+    features: FeaturesClient
     graph: GraphClient
     ilm: IlmClient
+    indices: IndicesClient
+    ingest: IngestClient
     license: LicenseClient
     logstash: LogstashClient
     migration: MigrationClient
     ml: MlClient
     monitoring: MonitoringClient
+    nodes: NodesClient
+    remote: RemoteClient
     rollup: RollupClient
     searchable_snapshots: SearchableSnapshotsClient
     security: SecurityClient
     shutdown: ShutdownClient
     slm: SlmClient
+    snapshot: SnapshotClient
     sql: SqlClient
     ssl: SslClient
-    transform: TransformClient
+    tasks: TasksClient
     text_structure: TextStructureClient
+    transform: TransformClient
     watcher: WatcherClient
+    xpack: XPackClient
     def __init__(
         self,
         hosts: Any = ...,
@@ -139,13 +147,13 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def create(
         self,
         *,
         index: Any,
         id: Any,
-        body: Any,
+        body: Mapping[str, Any],
         doc_type: Optional[Any] = ...,
         pipeline: Optional[Any] = ...,
         refresh: Optional[Any] = ...,
@@ -166,12 +174,12 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def index(
         self,
         *,
         index: Any,
-        body: Any,
+        body: Mapping[str, Any],
         doc_type: Optional[Any] = ...,
         id: Optional[Any] = ...,
         if_primary_term: Optional[Any] = ...,
@@ -179,7 +187,7 @@ class AsyncElasticsearch(object):
         op_type: Optional[Any] = ...,
         pipeline: Optional[Any] = ...,
         refresh: Optional[Any] = ...,
-        require_alias: Optional[Any] = ...,
+        require_alias: Optional[bool] = ...,
         routing: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
         version: Optional[Any] = ...,
@@ -197,11 +205,11 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def bulk(
         self,
         *,
-        body: Any,
+        body: Union[Sequence[Mapping[str, Any]], bytes, str],
         index: Optional[Any] = ...,
         doc_type: Optional[Any] = ...,
         _source: Optional[Any] = ...,
@@ -209,7 +217,7 @@ class AsyncElasticsearch(object):
         _source_includes: Optional[Any] = ...,
         pipeline: Optional[Any] = ...,
         refresh: Optional[Any] = ...,
-        require_alias: Optional[Any] = ...,
+        require_alias: Optional[bool] = ...,
         routing: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
         wait_for_active_shards: Optional[Any] = ...,
@@ -225,11 +233,11 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def clear_scroll(
         self,
         *,
-        body: Optional[Any] = ...,
+        body: Optional[Union[Mapping[str, Any], str]] = ...,
         scroll_id: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -243,22 +251,22 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def count(
         self,
         *,
-        body: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
         index: Optional[Any] = ...,
         doc_type: Optional[Any] = ...,
-        allow_no_indices: Optional[Any] = ...,
-        analyze_wildcard: Optional[Any] = ...,
+        allow_no_indices: Optional[bool] = ...,
+        analyze_wildcard: Optional[bool] = ...,
         analyzer: Optional[Any] = ...,
         default_operator: Optional[Any] = ...,
         df: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
-        ignore_throttled: Optional[Any] = ...,
-        ignore_unavailable: Optional[Any] = ...,
-        lenient: Optional[Any] = ...,
+        ignore_throttled: Optional[bool] = ...,
+        ignore_unavailable: Optional[bool] = ...,
+        lenient: Optional[bool] = ...,
         min_score: Optional[Any] = ...,
         preference: Optional[Any] = ...,
         q: Optional[Any] = ...,
@@ -276,7 +284,7 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def delete(
         self,
         *,
@@ -303,31 +311,31 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def delete_by_query(
         self,
         *,
         index: Any,
-        body: Any,
+        body: Mapping[str, Any],
         doc_type: Optional[Any] = ...,
         _source: Optional[Any] = ...,
         _source_excludes: Optional[Any] = ...,
         _source_includes: Optional[Any] = ...,
-        allow_no_indices: Optional[Any] = ...,
-        analyze_wildcard: Optional[Any] = ...,
+        allow_no_indices: Optional[bool] = ...,
+        analyze_wildcard: Optional[bool] = ...,
         analyzer: Optional[Any] = ...,
         conflicts: Optional[Any] = ...,
         default_operator: Optional[Any] = ...,
         df: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
         from_: Optional[Any] = ...,
-        ignore_unavailable: Optional[Any] = ...,
-        lenient: Optional[Any] = ...,
+        ignore_unavailable: Optional[bool] = ...,
+        lenient: Optional[bool] = ...,
         max_docs: Optional[Any] = ...,
         preference: Optional[Any] = ...,
         q: Optional[Any] = ...,
-        refresh: Optional[Any] = ...,
-        request_cache: Optional[Any] = ...,
+        refresh: Optional[bool] = ...,
+        request_cache: Optional[bool] = ...,
         requests_per_second: Optional[Any] = ...,
         routing: Optional[Any] = ...,
         scroll: Optional[Any] = ...,
@@ -340,9 +348,9 @@ class AsyncElasticsearch(object):
         stats: Optional[Any] = ...,
         terminate_after: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
-        version: Optional[Any] = ...,
+        version: Optional[bool] = ...,
         wait_for_active_shards: Optional[Any] = ...,
-        wait_for_completion: Optional[Any] = ...,
+        wait_for_completion: Optional[bool] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -355,7 +363,7 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def delete_by_query_rethrottle(
         self,
         *,
@@ -373,7 +381,7 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def delete_script(
         self,
         *,
@@ -392,7 +400,7 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def exists(
         self,
         *,
@@ -403,8 +411,8 @@ class AsyncElasticsearch(object):
         _source_excludes: Optional[Any] = ...,
         _source_includes: Optional[Any] = ...,
         preference: Optional[Any] = ...,
-        realtime: Optional[Any] = ...,
-        refresh: Optional[Any] = ...,
+        realtime: Optional[bool] = ...,
+        refresh: Optional[bool] = ...,
         routing: Optional[Any] = ...,
         stored_fields: Optional[Any] = ...,
         version: Optional[Any] = ...,
@@ -432,8 +440,8 @@ class AsyncElasticsearch(object):
         _source_excludes: Optional[Any] = ...,
         _source_includes: Optional[Any] = ...,
         preference: Optional[Any] = ...,
-        realtime: Optional[Any] = ...,
-        refresh: Optional[Any] = ...,
+        realtime: Optional[bool] = ...,
+        refresh: Optional[bool] = ...,
         routing: Optional[Any] = ...,
         version: Optional[Any] = ...,
         version_type: Optional[Any] = ...,
@@ -455,16 +463,16 @@ class AsyncElasticsearch(object):
         *,
         index: Any,
         id: Any,
-        body: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
         doc_type: Optional[Any] = ...,
         _source: Optional[Any] = ...,
         _source_excludes: Optional[Any] = ...,
         _source_includes: Optional[Any] = ...,
-        analyze_wildcard: Optional[Any] = ...,
+        analyze_wildcard: Optional[bool] = ...,
         analyzer: Optional[Any] = ...,
         default_operator: Optional[Any] = ...,
         df: Optional[Any] = ...,
-        lenient: Optional[Any] = ...,
+        lenient: Optional[bool] = ...,
         preference: Optional[Any] = ...,
         q: Optional[Any] = ...,
         routing: Optional[Any] = ...,
@@ -481,17 +489,17 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def field_caps(
         self,
         *,
         body: Optional[Any] = ...,
         index: Optional[Any] = ...,
-        allow_no_indices: Optional[Any] = ...,
+        allow_no_indices: Optional[bool] = ...,
         expand_wildcards: Optional[Any] = ...,
         fields: Optional[Any] = ...,
-        ignore_unavailable: Optional[Any] = ...,
-        include_unmapped: Optional[Any] = ...,
+        ignore_unavailable: Optional[bool] = ...,
+        include_unmapped: Optional[bool] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -504,7 +512,7 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def get(
         self,
         *,
@@ -515,8 +523,8 @@ class AsyncElasticsearch(object):
         _source_excludes: Optional[Any] = ...,
         _source_includes: Optional[Any] = ...,
         preference: Optional[Any] = ...,
-        realtime: Optional[Any] = ...,
-        refresh: Optional[Any] = ...,
+        realtime: Optional[bool] = ...,
+        refresh: Optional[bool] = ...,
         routing: Optional[Any] = ...,
         stored_fields: Optional[Any] = ...,
         version: Optional[Any] = ...,
@@ -533,7 +541,7 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def get_script(
         self,
         *,
@@ -551,7 +559,7 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def get_source(
         self,
         *,
@@ -562,8 +570,8 @@ class AsyncElasticsearch(object):
         _source_excludes: Optional[Any] = ...,
         _source_includes: Optional[Any] = ...,
         preference: Optional[Any] = ...,
-        realtime: Optional[Any] = ...,
-        refresh: Optional[Any] = ...,
+        realtime: Optional[bool] = ...,
+        refresh: Optional[bool] = ...,
         routing: Optional[Any] = ...,
         version: Optional[Any] = ...,
         version_type: Optional[Any] = ...,
@@ -579,19 +587,19 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def mget(
         self,
         *,
-        body: Any,
+        body: Mapping[str, Any],
         index: Optional[Any] = ...,
         doc_type: Optional[Any] = ...,
         _source: Optional[Any] = ...,
         _source_excludes: Optional[Any] = ...,
         _source_includes: Optional[Any] = ...,
         preference: Optional[Any] = ...,
-        realtime: Optional[Any] = ...,
-        refresh: Optional[Any] = ...,
+        realtime: Optional[bool] = ...,
+        refresh: Optional[bool] = ...,
         routing: Optional[Any] = ...,
         stored_fields: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -606,20 +614,20 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def msearch(
         self,
         *,
-        body: Any,
+        body: Union[Sequence[Mapping[str, Any]], bytes, str],
         index: Optional[Any] = ...,
         doc_type: Optional[Any] = ...,
-        ccs_minimize_roundtrips: Optional[Any] = ...,
+        ccs_minimize_roundtrips: Optional[bool] = ...,
         max_concurrent_searches: Optional[Any] = ...,
         max_concurrent_shard_requests: Optional[Any] = ...,
         pre_filter_shard_size: Optional[Any] = ...,
-        rest_total_hits_as_int: Optional[Any] = ...,
+        rest_total_hits_as_int: Optional[bool] = ...,
         search_type: Optional[Any] = ...,
-        typed_keys: Optional[Any] = ...,
+        typed_keys: Optional[bool] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -632,18 +640,18 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def msearch_template(
         self,
         *,
-        body: Any,
+        body: Union[Sequence[Mapping[str, Any]], bytes, str],
         index: Optional[Any] = ...,
         doc_type: Optional[Any] = ...,
-        ccs_minimize_roundtrips: Optional[Any] = ...,
+        ccs_minimize_roundtrips: Optional[bool] = ...,
         max_concurrent_searches: Optional[Any] = ...,
-        rest_total_hits_as_int: Optional[Any] = ...,
+        rest_total_hits_as_int: Optional[bool] = ...,
         search_type: Optional[Any] = ...,
-        typed_keys: Optional[Any] = ...,
+        typed_keys: Optional[bool] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -656,23 +664,23 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def mtermvectors(
         self,
         *,
-        body: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
         index: Optional[Any] = ...,
         doc_type: Optional[Any] = ...,
-        field_statistics: Optional[Any] = ...,
+        field_statistics: Optional[bool] = ...,
         fields: Optional[Any] = ...,
         ids: Optional[Any] = ...,
-        offsets: Optional[Any] = ...,
-        payloads: Optional[Any] = ...,
-        positions: Optional[Any] = ...,
+        offsets: Optional[bool] = ...,
+        payloads: Optional[bool] = ...,
+        positions: Optional[bool] = ...,
         preference: Optional[Any] = ...,
-        realtime: Optional[Any] = ...,
+        realtime: Optional[bool] = ...,
         routing: Optional[Any] = ...,
-        term_statistics: Optional[Any] = ...,
+        term_statistics: Optional[bool] = ...,
         version: Optional[Any] = ...,
         version_type: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -687,12 +695,12 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def put_script(
         self,
         *,
         id: Any,
-        body: Any,
+        body: Mapping[str, Any],
         context: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
@@ -708,15 +716,15 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def rank_eval(
         self,
         *,
-        body: Any,
+        body: Mapping[str, Any],
         index: Optional[Any] = ...,
-        allow_no_indices: Optional[Any] = ...,
+        allow_no_indices: Optional[bool] = ...,
         expand_wildcards: Optional[Any] = ...,
-        ignore_unavailable: Optional[Any] = ...,
+        ignore_unavailable: Optional[bool] = ...,
         search_type: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -730,19 +738,19 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def reindex(
         self,
         *,
-        body: Any,
+        body: Mapping[str, Any],
         max_docs: Optional[Any] = ...,
-        refresh: Optional[Any] = ...,
+        refresh: Optional[bool] = ...,
         requests_per_second: Optional[Any] = ...,
         scroll: Optional[Any] = ...,
         slices: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
         wait_for_active_shards: Optional[Any] = ...,
-        wait_for_completion: Optional[Any] = ...,
+        wait_for_completion: Optional[bool] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -755,7 +763,7 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def reindex_rethrottle(
         self,
         *,
@@ -773,11 +781,11 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def render_search_template(
         self,
         *,
-        body: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
         id: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -791,11 +799,11 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def scripts_painless_execute(
         self,
         *,
-        body: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -808,13 +816,13 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def scroll(
         self,
         *,
-        body: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
         scroll_id: Optional[Any] = ...,
-        rest_total_hits_as_int: Optional[Any] = ...,
+        rest_total_hits_as_int: Optional[bool] = ...,
         scroll: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -828,42 +836,42 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def search(
         self,
         *,
-        body: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
         index: Optional[Any] = ...,
         doc_type: Optional[Any] = ...,
         _source: Optional[Any] = ...,
         _source_excludes: Optional[Any] = ...,
         _source_includes: Optional[Any] = ...,
-        allow_no_indices: Optional[Any] = ...,
-        allow_partial_search_results: Optional[Any] = ...,
-        analyze_wildcard: Optional[Any] = ...,
+        allow_no_indices: Optional[bool] = ...,
+        allow_partial_search_results: Optional[bool] = ...,
+        analyze_wildcard: Optional[bool] = ...,
         analyzer: Optional[Any] = ...,
         batched_reduce_size: Optional[Any] = ...,
-        ccs_minimize_roundtrips: Optional[Any] = ...,
+        ccs_minimize_roundtrips: Optional[bool] = ...,
         default_operator: Optional[Any] = ...,
         df: Optional[Any] = ...,
         docvalue_fields: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
-        explain: Optional[Any] = ...,
+        explain: Optional[bool] = ...,
         from_: Optional[Any] = ...,
-        ignore_throttled: Optional[Any] = ...,
-        ignore_unavailable: Optional[Any] = ...,
-        lenient: Optional[Any] = ...,
+        ignore_throttled: Optional[bool] = ...,
+        ignore_unavailable: Optional[bool] = ...,
+        lenient: Optional[bool] = ...,
         max_concurrent_shard_requests: Optional[Any] = ...,
         min_compatible_shard_node: Optional[Any] = ...,
         pre_filter_shard_size: Optional[Any] = ...,
         preference: Optional[Any] = ...,
         q: Optional[Any] = ...,
-        request_cache: Optional[Any] = ...,
-        rest_total_hits_as_int: Optional[Any] = ...,
+        request_cache: Optional[bool] = ...,
+        rest_total_hits_as_int: Optional[bool] = ...,
         routing: Optional[Any] = ...,
         scroll: Optional[Any] = ...,
         search_type: Optional[Any] = ...,
-        seq_no_primary_term: Optional[Any] = ...,
+        seq_no_primary_term: Optional[bool] = ...,
         size: Optional[Any] = ...,
         sort: Optional[Any] = ...,
         stats: Optional[Any] = ...,
@@ -874,10 +882,10 @@ class AsyncElasticsearch(object):
         suggest_text: Optional[Any] = ...,
         terminate_after: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
-        track_scores: Optional[Any] = ...,
-        track_total_hits: Optional[Any] = ...,
-        typed_keys: Optional[Any] = ...,
-        version: Optional[Any] = ...,
+        track_scores: Optional[bool] = ...,
+        track_total_hits: Optional[bool] = ...,
+        typed_keys: Optional[bool] = ...,
+        version: Optional[bool] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -890,15 +898,15 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def search_shards(
         self,
         *,
         index: Optional[Any] = ...,
-        allow_no_indices: Optional[Any] = ...,
+        allow_no_indices: Optional[bool] = ...,
         expand_wildcards: Optional[Any] = ...,
-        ignore_unavailable: Optional[Any] = ...,
-        local: Optional[Any] = ...,
+        ignore_unavailable: Optional[bool] = ...,
+        local: Optional[bool] = ...,
         preference: Optional[Any] = ...,
         routing: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -913,26 +921,26 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def search_template(
         self,
         *,
-        body: Any,
+        body: Mapping[str, Any],
         index: Optional[Any] = ...,
         doc_type: Optional[Any] = ...,
-        allow_no_indices: Optional[Any] = ...,
-        ccs_minimize_roundtrips: Optional[Any] = ...,
+        allow_no_indices: Optional[bool] = ...,
+        ccs_minimize_roundtrips: Optional[bool] = ...,
         expand_wildcards: Optional[Any] = ...,
-        explain: Optional[Any] = ...,
-        ignore_throttled: Optional[Any] = ...,
-        ignore_unavailable: Optional[Any] = ...,
+        explain: Optional[bool] = ...,
+        ignore_throttled: Optional[bool] = ...,
+        ignore_unavailable: Optional[bool] = ...,
         preference: Optional[Any] = ...,
-        profile: Optional[Any] = ...,
-        rest_total_hits_as_int: Optional[Any] = ...,
+        profile: Optional[bool] = ...,
+        rest_total_hits_as_int: Optional[bool] = ...,
         routing: Optional[Any] = ...,
         scroll: Optional[Any] = ...,
         search_type: Optional[Any] = ...,
-        typed_keys: Optional[Any] = ...,
+        typed_keys: Optional[bool] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -945,23 +953,23 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def termvectors(
         self,
         *,
         index: Any,
-        body: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
         doc_type: Optional[Any] = ...,
         id: Optional[Any] = ...,
-        field_statistics: Optional[Any] = ...,
+        field_statistics: Optional[bool] = ...,
         fields: Optional[Any] = ...,
-        offsets: Optional[Any] = ...,
-        payloads: Optional[Any] = ...,
-        positions: Optional[Any] = ...,
+        offsets: Optional[bool] = ...,
+        payloads: Optional[bool] = ...,
+        positions: Optional[bool] = ...,
         preference: Optional[Any] = ...,
-        realtime: Optional[Any] = ...,
+        realtime: Optional[bool] = ...,
         routing: Optional[Any] = ...,
-        term_statistics: Optional[Any] = ...,
+        term_statistics: Optional[bool] = ...,
         version: Optional[Any] = ...,
         version_type: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -976,13 +984,13 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def update(
         self,
         *,
         index: Any,
         id: Any,
-        body: Any,
+        body: Mapping[str, Any],
         doc_type: Optional[Any] = ...,
         _source: Optional[Any] = ...,
         _source_excludes: Optional[Any] = ...,
@@ -991,7 +999,7 @@ class AsyncElasticsearch(object):
         if_seq_no: Optional[Any] = ...,
         lang: Optional[Any] = ...,
         refresh: Optional[Any] = ...,
-        require_alias: Optional[Any] = ...,
+        require_alias: Optional[bool] = ...,
         retry_on_conflict: Optional[Any] = ...,
         routing: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
@@ -1008,32 +1016,32 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def update_by_query(
         self,
         *,
         index: Any,
-        body: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
         doc_type: Optional[Any] = ...,
         _source: Optional[Any] = ...,
         _source_excludes: Optional[Any] = ...,
         _source_includes: Optional[Any] = ...,
-        allow_no_indices: Optional[Any] = ...,
-        analyze_wildcard: Optional[Any] = ...,
+        allow_no_indices: Optional[bool] = ...,
+        analyze_wildcard: Optional[bool] = ...,
         analyzer: Optional[Any] = ...,
         conflicts: Optional[Any] = ...,
         default_operator: Optional[Any] = ...,
         df: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
         from_: Optional[Any] = ...,
-        ignore_unavailable: Optional[Any] = ...,
-        lenient: Optional[Any] = ...,
+        ignore_unavailable: Optional[bool] = ...,
+        lenient: Optional[bool] = ...,
         max_docs: Optional[Any] = ...,
         pipeline: Optional[Any] = ...,
         preference: Optional[Any] = ...,
         q: Optional[Any] = ...,
-        refresh: Optional[Any] = ...,
-        request_cache: Optional[Any] = ...,
+        refresh: Optional[bool] = ...,
+        request_cache: Optional[bool] = ...,
         requests_per_second: Optional[Any] = ...,
         routing: Optional[Any] = ...,
         scroll: Optional[Any] = ...,
@@ -1046,10 +1054,10 @@ class AsyncElasticsearch(object):
         stats: Optional[Any] = ...,
         terminate_after: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
-        version: Optional[Any] = ...,
-        version_type: Optional[Any] = ...,
+        version: Optional[bool] = ...,
+        version_type: Optional[bool] = ...,
         wait_for_active_shards: Optional[Any] = ...,
-        wait_for_completion: Optional[Any] = ...,
+        wait_for_completion: Optional[bool] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -1062,7 +1070,7 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def update_by_query_rethrottle(
         self,
         *,
@@ -1080,7 +1088,7 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def get_script_context(
         self,
         *,
@@ -1096,7 +1104,7 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def get_script_languages(
         self,
         *,
@@ -1112,7 +1120,7 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def close_point_in_time(
         self,
         *,
@@ -1129,13 +1137,13 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def open_point_in_time(
         self,
         *,
         index: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
-        ignore_unavailable: Optional[Any] = ...,
+        ignore_unavailable: Optional[bool] = ...,
         keep_alive: Optional[Any] = ...,
         preference: Optional[Any] = ...,
         routing: Optional[Any] = ...,
@@ -1151,12 +1159,12 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def terms_enum(
         self,
         *,
         index: Any,
-        body: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -1169,7 +1177,7 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def search_mvt(
         self,
         *,
@@ -1178,8 +1186,8 @@ class AsyncElasticsearch(object):
         zoom: Any,
         x: Any,
         y: Any,
-        body: Optional[Any] = ...,
-        exact_bounds: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
+        exact_bounds: Optional[bool] = ...,
         extent: Optional[Any] = ...,
         grid_precision: Optional[Any] = ...,
         grid_type: Optional[Any] = ...,
@@ -1196,4 +1204,4 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Union[Dict[str, Any], bytes]: ...

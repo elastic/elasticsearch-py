@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Collection, MutableMapping, Optional, Tuple, Union
+from typing import Any, Collection, Dict, MutableMapping, Optional, Tuple, Union
 
 from .utils import NamespacedClient
 
@@ -24,7 +24,7 @@ class DanglingIndicesClient(NamespacedClient):
         self,
         *,
         index_uuid: Any,
-        accept_data_loss: Optional[Any] = ...,
+        accept_data_loss: Optional[bool] = ...,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -39,12 +39,12 @@ class DanglingIndicesClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def import_dangling_index(
         self,
         *,
         index_uuid: Any,
-        accept_data_loss: Optional[Any] = ...,
+        accept_data_loss: Optional[bool] = ...,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -59,7 +59,7 @@ class DanglingIndicesClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def list_dangling_indices(
         self,
         *,
@@ -75,4 +75,4 @@ class DanglingIndicesClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
