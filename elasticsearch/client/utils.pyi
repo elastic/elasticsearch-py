@@ -22,7 +22,9 @@ from typing import (
     Callable,
     Collection,
     Dict,
+    Iterable,
     List,
+    Mapping,
     Optional,
     Tuple,
     TypeVar,
@@ -48,8 +50,8 @@ def query_params(
     *es_query_params: str,
 ) -> Callable[[Callable[..., T]], Callable[..., T]]: ...
 def _bulk_body(
-    serializer: Serializer, body: Union[str, bytes, Collection[Any]]
-) -> str: ...
+    serializer: Serializer, body: Union[str, bytes, Mapping[str, Any], Iterable[Any]]
+) -> Union[str, Mapping[str, Any]]: ...
 
 class NamespacedClient:
     client: Elasticsearch

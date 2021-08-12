@@ -15,7 +15,16 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Collection, MutableMapping, Optional, Tuple, Union
+from typing import (
+    Any,
+    Collection,
+    Dict,
+    Mapping,
+    MutableMapping,
+    Optional,
+    Tuple,
+    Union,
+)
 
 from .utils import NamespacedClient
 
@@ -23,7 +32,7 @@ class NodesClient(NamespacedClient):
     async def reload_secure_settings(
         self,
         *,
-        body: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
         node_id: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -38,13 +47,13 @@ class NodesClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def info(
         self,
         *,
         node_id: Optional[Any] = ...,
         metric: Optional[Any] = ...,
-        flat_settings: Optional[Any] = ...,
+        flat_settings: Optional[bool] = ...,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -58,7 +67,7 @@ class NodesClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def stats(
         self,
         *,
@@ -68,9 +77,9 @@ class NodesClient(NamespacedClient):
         completion_fields: Optional[Any] = ...,
         fielddata_fields: Optional[Any] = ...,
         fields: Optional[Any] = ...,
-        groups: Optional[Any] = ...,
-        include_segment_file_sizes: Optional[Any] = ...,
-        include_unloaded_segments: Optional[Any] = ...,
+        groups: Optional[bool] = ...,
+        include_segment_file_sizes: Optional[bool] = ...,
+        include_unloaded_segments: Optional[bool] = ...,
         level: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
         types: Optional[Any] = ...,
@@ -86,13 +95,13 @@ class NodesClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def hot_threads(
         self,
         *,
         node_id: Optional[Any] = ...,
         doc_type: Optional[Any] = ...,
-        ignore_idle_threads: Optional[Any] = ...,
+        ignore_idle_threads: Optional[bool] = ...,
         interval: Optional[Any] = ...,
         snapshots: Optional[Any] = ...,
         threads: Optional[Any] = ...,
@@ -109,7 +118,7 @@ class NodesClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> str: ...
     async def usage(
         self,
         *,
@@ -128,7 +137,7 @@ class NodesClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def clear_metering_archive(
         self,
         *,
@@ -146,7 +155,7 @@ class NodesClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def get_metering_info(
         self,
         *,
@@ -163,4 +172,4 @@ class NodesClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...

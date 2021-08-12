@@ -15,7 +15,16 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Collection, MutableMapping, Optional, Tuple, Union
+from typing import (
+    Any,
+    Collection,
+    Dict,
+    Mapping,
+    MutableMapping,
+    Optional,
+    Tuple,
+    Union,
+)
 
 from .utils import NamespacedClient
 
@@ -36,7 +45,7 @@ class ShutdownClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def get_node(
         self,
         *,
@@ -53,12 +62,12 @@ class ShutdownClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def put_node(
         self,
         *,
         node_id: Any,
-        body: Any,
+        body: Mapping[str, Any],
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -71,4 +80,4 @@ class ShutdownClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...

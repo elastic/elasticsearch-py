@@ -15,7 +15,16 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Collection, MutableMapping, Optional, Tuple, Union
+from typing import (
+    Any,
+    Collection,
+    Dict,
+    Mapping,
+    MutableMapping,
+    Optional,
+    Tuple,
+    Union,
+)
 
 from .utils import NamespacedClient
 
@@ -23,7 +32,7 @@ class SqlClient(NamespacedClient):
     async def clear_cursor(
         self,
         *,
-        body: Any,
+        body: Mapping[str, Any],
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -36,11 +45,11 @@ class SqlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def query(
         self,
         *,
-        body: Any,
+        body: Mapping[str, Any],
         format: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -53,11 +62,11 @@ class SqlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def translate(
         self,
         *,
-        body: Any,
+        body: Mapping[str, Any],
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -70,7 +79,7 @@ class SqlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def delete_async(
         self,
         *,
@@ -87,7 +96,7 @@ class SqlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def get_async(
         self,
         *,
@@ -107,7 +116,7 @@ class SqlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def get_async_status(
         self,
         *,
@@ -124,4 +133,4 @@ class SqlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...

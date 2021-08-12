@@ -15,7 +15,16 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Collection, MutableMapping, Optional, Tuple, Union
+from typing import (
+    Any,
+    Collection,
+    Dict,
+    Mapping,
+    MutableMapping,
+    Optional,
+    Tuple,
+    Union,
+)
 
 from .utils import NamespacedClient
 
@@ -35,11 +44,11 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def change_password(
         self,
         *,
-        body: Any,
+        body: Mapping[str, Any],
         username: Optional[Any] = ...,
         refresh: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -54,7 +63,7 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def clear_cached_realms(
         self,
         *,
@@ -72,7 +81,7 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def clear_cached_roles(
         self,
         *,
@@ -89,11 +98,11 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def create_api_key(
         self,
         *,
-        body: Any,
+        body: Mapping[str, Any],
         refresh: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -107,7 +116,7 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def delete_privileges(
         self,
         *,
@@ -126,7 +135,7 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def delete_role(
         self,
         *,
@@ -144,7 +153,7 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def delete_role_mapping(
         self,
         *,
@@ -162,7 +171,7 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def delete_user(
         self,
         *,
@@ -180,7 +189,7 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def disable_user(
         self,
         *,
@@ -198,7 +207,7 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def enable_user(
         self,
         *,
@@ -216,13 +225,13 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def get_api_key(
         self,
         *,
         id: Optional[Any] = ...,
         name: Optional[Any] = ...,
-        owner: Optional[Any] = ...,
+        owner: Optional[bool] = ...,
         realm_name: Optional[Any] = ...,
         username: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -237,7 +246,7 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def get_privileges(
         self,
         *,
@@ -255,7 +264,7 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def get_role(
         self,
         *,
@@ -272,7 +281,7 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def get_role_mapping(
         self,
         *,
@@ -289,11 +298,11 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def get_token(
         self,
         *,
-        body: Any,
+        body: Mapping[str, Any],
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -306,7 +315,7 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def get_user(
         self,
         *,
@@ -323,7 +332,7 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def get_user_privileges(
         self,
         *,
@@ -339,11 +348,11 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def has_privileges(
         self,
         *,
-        body: Any,
+        body: Mapping[str, Any],
         user: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -357,11 +366,11 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def invalidate_api_key(
         self,
         *,
-        body: Any,
+        body: Mapping[str, Any],
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -374,11 +383,11 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def invalidate_token(
         self,
         *,
-        body: Any,
+        body: Mapping[str, Any],
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -391,11 +400,11 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def put_privileges(
         self,
         *,
-        body: Any,
+        body: Mapping[str, Any],
         refresh: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -409,12 +418,12 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def put_role(
         self,
         *,
         name: Any,
-        body: Any,
+        body: Mapping[str, Any],
         refresh: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -428,12 +437,12 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def put_role_mapping(
         self,
         *,
         name: Any,
-        body: Any,
+        body: Mapping[str, Any],
         refresh: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -447,12 +456,12 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def put_user(
         self,
         *,
         username: Any,
-        body: Any,
+        body: Mapping[str, Any],
         refresh: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -466,7 +475,7 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def get_builtin_privileges(
         self,
         *,
@@ -482,7 +491,7 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def clear_cached_privileges(
         self,
         *,
@@ -499,7 +508,7 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def clear_api_key_cache(
         self,
         *,
@@ -516,11 +525,11 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def grant_api_key(
         self,
         *,
-        body: Any,
+        body: Mapping[str, Any],
         refresh: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -534,7 +543,7 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def clear_cached_service_tokens(
         self,
         *,
@@ -553,7 +562,7 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def create_service_token(
         self,
         *,
@@ -573,7 +582,7 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def delete_service_token(
         self,
         *,
@@ -593,7 +602,7 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def get_service_accounts(
         self,
         *,
@@ -611,7 +620,7 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def get_service_credentials(
         self,
         *,
@@ -629,11 +638,11 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def saml_complete_logout(
         self,
         *,
-        body: Any,
+        body: Mapping[str, Any],
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -646,11 +655,11 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def saml_authenticate(
         self,
         *,
-        body: Any,
+        body: Mapping[str, Any],
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -663,11 +672,11 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def saml_invalidate(
         self,
         *,
-        body: Any,
+        body: Mapping[str, Any],
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -680,11 +689,11 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def saml_logout(
         self,
         *,
-        body: Any,
+        body: Mapping[str, Any],
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -697,11 +706,11 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def saml_prepare_authentication(
         self,
         *,
-        body: Any,
+        body: Mapping[str, Any],
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -714,7 +723,7 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     async def saml_service_provider_metadata(
         self,
         *,
@@ -731,4 +740,4 @@ class SecurityClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...

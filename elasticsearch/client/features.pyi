@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Collection, MutableMapping, Optional, Tuple, Union
+from typing import Any, Collection, Dict, MutableMapping, Optional, Tuple, Union
 
 from .utils import NamespacedClient
 
@@ -36,7 +36,7 @@ class FeaturesClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def reset_features(
         self,
         *,
@@ -52,4 +52,4 @@ class FeaturesClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...

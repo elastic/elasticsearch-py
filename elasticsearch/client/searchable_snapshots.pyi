@@ -15,7 +15,16 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Collection, MutableMapping, Optional, Tuple, Union
+from typing import (
+    Any,
+    Collection,
+    Dict,
+    Mapping,
+    MutableMapping,
+    Optional,
+    Tuple,
+    Union,
+)
 
 from .utils import NamespacedClient
 
@@ -24,9 +33,9 @@ class SearchableSnapshotsClient(NamespacedClient):
         self,
         *,
         index: Optional[Any] = ...,
-        allow_no_indices: Optional[Any] = ...,
+        allow_no_indices: Optional[bool] = ...,
         expand_wildcards: Optional[Any] = ...,
-        ignore_unavailable: Optional[Any] = ...,
+        ignore_unavailable: Optional[bool] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -39,16 +48,16 @@ class SearchableSnapshotsClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def mount(
         self,
         *,
         repository: Any,
         snapshot: Any,
-        body: Any,
+        body: Mapping[str, Any],
         master_timeout: Optional[Any] = ...,
         storage: Optional[Any] = ...,
-        wait_for_completion: Optional[Any] = ...,
+        wait_for_completion: Optional[bool] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -61,7 +70,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def repository_stats(
         self,
         *,
@@ -78,7 +87,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def stats(
         self,
         *,
@@ -96,7 +105,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def cache_stats(
         self,
         *,
@@ -113,4 +122,4 @@ class SearchableSnapshotsClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...

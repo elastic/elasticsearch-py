@@ -15,7 +15,17 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Collection, MutableMapping, Optional, Tuple, Union
+from typing import (
+    Any,
+    Collection,
+    Dict,
+    Mapping,
+    MutableMapping,
+    Optional,
+    Sequence,
+    Tuple,
+    Union,
+)
 
 from .utils import NamespacedClient
 
@@ -24,10 +34,10 @@ class MlClient(NamespacedClient):
         self,
         *,
         job_id: Any,
-        body: Optional[Any] = ...,
-        allow_no_jobs: Optional[Any] = ...,
-        allow_no_match: Optional[Any] = ...,
-        force: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
+        allow_no_jobs: Optional[bool] = ...,
+        allow_no_match: Optional[bool] = ...,
+        force: Optional[bool] = ...,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -41,7 +51,7 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def delete_calendar(
         self,
         *,
@@ -58,7 +68,7 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def delete_calendar_event(
         self,
         *,
@@ -76,7 +86,7 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def delete_calendar_job(
         self,
         *,
@@ -94,12 +104,12 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def delete_datafeed(
         self,
         *,
         datafeed_id: Any,
-        force: Optional[Any] = ...,
+        force: Optional[bool] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -112,7 +122,7 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def delete_expired_data(
         self,
         *,
@@ -132,7 +142,7 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def delete_filter(
         self,
         *,
@@ -149,13 +159,13 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def delete_forecast(
         self,
         *,
         job_id: Any,
         forecast_id: Optional[Any] = ...,
-        allow_no_forecasts: Optional[Any] = ...,
+        allow_no_forecasts: Optional[bool] = ...,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -169,13 +179,13 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def delete_job(
         self,
         *,
         job_id: Any,
-        force: Optional[Any] = ...,
-        wait_for_completion: Optional[Any] = ...,
+        force: Optional[bool] = ...,
+        wait_for_completion: Optional[bool] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -188,7 +198,7 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def delete_model_snapshot(
         self,
         *,
@@ -206,14 +216,14 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def flush_job(
         self,
         *,
         job_id: Any,
-        body: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
         advance_time: Optional[Any] = ...,
-        calc_interim: Optional[Any] = ...,
+        calc_interim: Optional[bool] = ...,
         end: Optional[Any] = ...,
         skip_time: Optional[Any] = ...,
         start: Optional[Any] = ...,
@@ -229,7 +239,7 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def forecast(
         self,
         *,
@@ -249,18 +259,18 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def get_buckets(
         self,
         *,
         job_id: Any,
-        body: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
         timestamp: Optional[Any] = ...,
         anomaly_score: Optional[Any] = ...,
-        desc: Optional[Any] = ...,
+        desc: Optional[bool] = ...,
         end: Optional[Any] = ...,
-        exclude_interim: Optional[Any] = ...,
-        expand: Optional[Any] = ...,
+        exclude_interim: Optional[bool] = ...,
+        expand: Optional[bool] = ...,
         from_: Optional[Any] = ...,
         size: Optional[Any] = ...,
         sort: Optional[Any] = ...,
@@ -277,7 +287,7 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def get_calendar_events(
         self,
         *,
@@ -299,11 +309,11 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def get_calendars(
         self,
         *,
-        body: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
         calendar_id: Optional[Any] = ...,
         from_: Optional[Any] = ...,
         size: Optional[Any] = ...,
@@ -319,12 +329,12 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def get_categories(
         self,
         *,
         job_id: Any,
-        body: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
         category_id: Optional[Any] = ...,
         from_: Optional[Any] = ...,
         partition_field_value: Optional[Any] = ...,
@@ -341,13 +351,13 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def get_datafeed_stats(
         self,
         *,
         datafeed_id: Optional[Any] = ...,
-        allow_no_datafeeds: Optional[Any] = ...,
-        allow_no_match: Optional[Any] = ...,
+        allow_no_datafeeds: Optional[bool] = ...,
+        allow_no_match: Optional[bool] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -360,14 +370,14 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def get_datafeeds(
         self,
         *,
         datafeed_id: Optional[Any] = ...,
-        allow_no_datafeeds: Optional[Any] = ...,
-        allow_no_match: Optional[Any] = ...,
-        exclude_generated: Optional[Any] = ...,
+        allow_no_datafeeds: Optional[bool] = ...,
+        allow_no_match: Optional[bool] = ...,
+        exclude_generated: Optional[bool] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -380,7 +390,7 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def get_filters(
         self,
         *,
@@ -399,15 +409,15 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def get_influencers(
         self,
         *,
         job_id: Any,
-        body: Optional[Any] = ...,
-        desc: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
+        desc: Optional[bool] = ...,
         end: Optional[Any] = ...,
-        exclude_interim: Optional[Any] = ...,
+        exclude_interim: Optional[bool] = ...,
         from_: Optional[Any] = ...,
         influencer_score: Optional[Any] = ...,
         size: Optional[Any] = ...,
@@ -425,13 +435,13 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def get_job_stats(
         self,
         *,
         job_id: Optional[Any] = ...,
-        allow_no_jobs: Optional[Any] = ...,
-        allow_no_match: Optional[Any] = ...,
+        allow_no_jobs: Optional[bool] = ...,
+        allow_no_match: Optional[bool] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -444,14 +454,14 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def get_jobs(
         self,
         *,
         job_id: Optional[Any] = ...,
-        allow_no_jobs: Optional[Any] = ...,
-        allow_no_match: Optional[Any] = ...,
-        exclude_generated: Optional[Any] = ...,
+        allow_no_jobs: Optional[bool] = ...,
+        allow_no_match: Optional[bool] = ...,
+        exclude_generated: Optional[bool] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -464,14 +474,14 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def get_model_snapshots(
         self,
         *,
         job_id: Any,
-        body: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
         snapshot_id: Optional[Any] = ...,
-        desc: Optional[Any] = ...,
+        desc: Optional[bool] = ...,
         end: Optional[Any] = ...,
         from_: Optional[Any] = ...,
         size: Optional[Any] = ...,
@@ -489,17 +499,17 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def get_overall_buckets(
         self,
         *,
         job_id: Any,
-        body: Optional[Any] = ...,
-        allow_no_jobs: Optional[Any] = ...,
-        allow_no_match: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
+        allow_no_jobs: Optional[bool] = ...,
+        allow_no_match: Optional[bool] = ...,
         bucket_span: Optional[Any] = ...,
         end: Optional[Any] = ...,
-        exclude_interim: Optional[Any] = ...,
+        exclude_interim: Optional[bool] = ...,
         overall_score: Optional[Any] = ...,
         start: Optional[Any] = ...,
         top_n: Optional[Any] = ...,
@@ -515,15 +525,15 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def get_records(
         self,
         *,
         job_id: Any,
-        body: Optional[Any] = ...,
-        desc: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
+        desc: Optional[bool] = ...,
         end: Optional[Any] = ...,
-        exclude_interim: Optional[Any] = ...,
+        exclude_interim: Optional[bool] = ...,
         from_: Optional[Any] = ...,
         record_score: Optional[Any] = ...,
         size: Optional[Any] = ...,
@@ -541,7 +551,7 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def info(
         self,
         *,
@@ -557,7 +567,7 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def open_job(
         self,
         *,
@@ -574,12 +584,12 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def post_calendar_events(
         self,
         *,
         calendar_id: Any,
-        body: Any,
+        body: Mapping[str, Any],
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -592,12 +602,12 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def post_data(
         self,
         *,
         job_id: Any,
-        body: Any,
+        body: Union[Mapping[str, Any], Sequence[Mapping[str, Any]], bytes, str],
         reset_end: Optional[Any] = ...,
         reset_start: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -612,7 +622,7 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def preview_datafeed(
         self,
         *,
@@ -630,12 +640,12 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def put_calendar(
         self,
         *,
         calendar_id: Any,
-        body: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -648,7 +658,7 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def put_calendar_job(
         self,
         *,
@@ -666,16 +676,16 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def put_datafeed(
         self,
         *,
         datafeed_id: Any,
-        body: Any,
-        allow_no_indices: Optional[Any] = ...,
+        body: Mapping[str, Any],
+        allow_no_indices: Optional[bool] = ...,
         expand_wildcards: Optional[Any] = ...,
-        ignore_throttled: Optional[Any] = ...,
-        ignore_unavailable: Optional[Any] = ...,
+        ignore_throttled: Optional[bool] = ...,
+        ignore_unavailable: Optional[bool] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -688,12 +698,12 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def put_filter(
         self,
         *,
         filter_id: Any,
-        body: Any,
+        body: Mapping[str, Any],
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -706,16 +716,16 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def put_job(
         self,
         *,
         job_id: Any,
-        body: Any,
-        allow_no_indices: Optional[Any] = ...,
+        body: Mapping[str, Any],
+        allow_no_indices: Optional[bool] = ...,
         expand_wildcards: Optional[Any] = ...,
-        ignore_throttled: Optional[Any] = ...,
-        ignore_unavailable: Optional[Any] = ...,
+        ignore_throttled: Optional[bool] = ...,
+        ignore_unavailable: Optional[bool] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -728,14 +738,14 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def revert_model_snapshot(
         self,
         *,
         job_id: Any,
         snapshot_id: Any,
-        body: Optional[Any] = ...,
-        delete_intervening_results: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
+        delete_intervening_results: Optional[bool] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -748,11 +758,11 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def set_upgrade_mode(
         self,
         *,
-        enabled: Optional[Any] = ...,
+        enabled: Optional[bool] = ...,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -766,12 +776,12 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def start_datafeed(
         self,
         *,
         datafeed_id: Any,
-        body: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
         end: Optional[Any] = ...,
         start: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
@@ -787,15 +797,15 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def stop_datafeed(
         self,
         *,
         datafeed_id: Any,
         body: Optional[Any] = ...,
-        allow_no_datafeeds: Optional[Any] = ...,
-        allow_no_match: Optional[Any] = ...,
-        force: Optional[Any] = ...,
+        allow_no_datafeeds: Optional[bool] = ...,
+        allow_no_match: Optional[bool] = ...,
+        force: Optional[bool] = ...,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -809,16 +819,16 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def update_datafeed(
         self,
         *,
         datafeed_id: Any,
-        body: Any,
-        allow_no_indices: Optional[Any] = ...,
+        body: Mapping[str, Any],
+        allow_no_indices: Optional[bool] = ...,
         expand_wildcards: Optional[Any] = ...,
-        ignore_throttled: Optional[Any] = ...,
-        ignore_unavailable: Optional[Any] = ...,
+        ignore_throttled: Optional[bool] = ...,
+        ignore_unavailable: Optional[bool] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -831,12 +841,12 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def update_filter(
         self,
         *,
         filter_id: Any,
-        body: Any,
+        body: Mapping[str, Any],
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -849,12 +859,12 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def update_job(
         self,
         *,
         job_id: Any,
-        body: Any,
+        body: Mapping[str, Any],
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -867,13 +877,13 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def update_model_snapshot(
         self,
         *,
         job_id: Any,
         snapshot_id: Any,
-        body: Any,
+        body: Mapping[str, Any],
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -886,11 +896,11 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def validate(
         self,
         *,
-        body: Any,
+        body: Mapping[str, Any],
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -903,11 +913,11 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def validate_detector(
         self,
         *,
-        body: Any,
+        body: Mapping[str, Any],
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -920,12 +930,12 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def delete_data_frame_analytics(
         self,
         *,
         id: Any,
-        force: Optional[Any] = ...,
+        force: Optional[bool] = ...,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -939,11 +949,11 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def evaluate_data_frame(
         self,
         *,
-        body: Any,
+        body: Mapping[str, Any],
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -956,13 +966,13 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def get_data_frame_analytics(
         self,
         *,
         id: Optional[Any] = ...,
-        allow_no_match: Optional[Any] = ...,
-        exclude_generated: Optional[Any] = ...,
+        allow_no_match: Optional[bool] = ...,
+        exclude_generated: Optional[bool] = ...,
         from_: Optional[Any] = ...,
         size: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -977,15 +987,15 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def get_data_frame_analytics_stats(
         self,
         *,
         id: Optional[Any] = ...,
-        allow_no_match: Optional[Any] = ...,
+        allow_no_match: Optional[bool] = ...,
         from_: Optional[Any] = ...,
         size: Optional[Any] = ...,
-        verbose: Optional[Any] = ...,
+        verbose: Optional[bool] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -998,12 +1008,12 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def put_data_frame_analytics(
         self,
         *,
         id: Any,
-        body: Any,
+        body: Mapping[str, Any],
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -1016,12 +1026,12 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def start_data_frame_analytics(
         self,
         *,
         id: Any,
-        body: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -1035,14 +1045,14 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def stop_data_frame_analytics(
         self,
         *,
         id: Any,
-        body: Optional[Any] = ...,
-        allow_no_match: Optional[Any] = ...,
-        force: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
+        allow_no_match: Optional[bool] = ...,
+        force: Optional[bool] = ...,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -1056,7 +1066,7 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def delete_trained_model(
         self,
         *,
@@ -1073,11 +1083,11 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def explain_data_frame_analytics(
         self,
         *,
-        body: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
         id: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -1091,17 +1101,17 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def get_trained_models(
         self,
         *,
         model_id: Optional[Any] = ...,
-        allow_no_match: Optional[Any] = ...,
-        decompress_definition: Optional[Any] = ...,
-        exclude_generated: Optional[Any] = ...,
+        allow_no_match: Optional[bool] = ...,
+        decompress_definition: Optional[bool] = ...,
+        exclude_generated: Optional[bool] = ...,
         from_: Optional[Any] = ...,
         include: Optional[Any] = ...,
-        include_model_definition: Optional[Any] = ...,
+        include_model_definition: Optional[bool] = ...,
         size: Optional[Any] = ...,
         tags: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -1116,12 +1126,12 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def get_trained_models_stats(
         self,
         *,
         model_id: Optional[Any] = ...,
-        allow_no_match: Optional[Any] = ...,
+        allow_no_match: Optional[bool] = ...,
         from_: Optional[Any] = ...,
         size: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -1136,12 +1146,12 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def put_trained_model(
         self,
         *,
         model_id: Any,
-        body: Any,
+        body: Mapping[str, Any],
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -1154,11 +1164,11 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def estimate_model_memory(
         self,
         *,
-        body: Any,
+        body: Mapping[str, Any],
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -1171,12 +1181,12 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def update_data_frame_analytics(
         self,
         *,
         id: Any,
-        body: Any,
+        body: Mapping[str, Any],
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -1189,14 +1199,14 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def upgrade_job_snapshot(
         self,
         *,
         job_id: Any,
         snapshot_id: Any,
         timeout: Optional[Any] = ...,
-        wait_for_completion: Optional[Any] = ...,
+        wait_for_completion: Optional[bool] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -1209,7 +1219,7 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def delete_trained_model_alias(
         self,
         *,
@@ -1227,11 +1237,11 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def preview_data_frame_analytics(
         self,
         *,
-        body: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
         id: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -1245,13 +1255,13 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def put_trained_model_alias(
         self,
         *,
         model_id: Any,
         model_alias: Any,
-        reassign: Optional[Any] = ...,
+        reassign: Optional[bool] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -1264,22 +1274,22 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def find_file_structure(
         self,
         *,
-        body: Any,
+        body: Union[Sequence[Mapping[str, Any]], bytes, str],
         charset: Optional[Any] = ...,
         column_names: Optional[Any] = ...,
         delimiter: Optional[Any] = ...,
-        explain: Optional[Any] = ...,
+        explain: Optional[bool] = ...,
         format: Optional[Any] = ...,
         grok_pattern: Optional[Any] = ...,
-        has_header_row: Optional[Any] = ...,
+        has_header_row: Optional[bool] = ...,
         line_merge_size_limit: Optional[Any] = ...,
         lines_to_sample: Optional[Any] = ...,
         quote: Optional[Any] = ...,
-        should_trim_fields: Optional[Any] = ...,
+        should_trim_fields: Optional[bool] = ...,
         timeout: Optional[Any] = ...,
         timestamp_field: Optional[Any] = ...,
         timestamp_format: Optional[Any] = ...,
@@ -1294,12 +1304,12 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def reset_job(
         self,
         *,
         job_id: Any,
-        wait_for_completion: Optional[Any] = ...,
+        wait_for_completion: Optional[bool] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -1312,4 +1322,4 @@ class MlClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...

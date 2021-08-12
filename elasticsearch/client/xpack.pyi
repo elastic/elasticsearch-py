@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Collection, MutableMapping, Optional, Tuple, Union
+from typing import Any, Collection, Dict, MutableMapping, Optional, Tuple, Union
 
 from .utils import NamespacedClient
 
@@ -26,7 +26,7 @@ class XPackClient(NamespacedClient):
     def info(
         self,
         *,
-        accept_enterprise: Optional[Any] = ...,
+        accept_enterprise: Optional[bool] = ...,
         categories: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -40,7 +40,7 @@ class XPackClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
     def usage(
         self,
         *,
@@ -57,4 +57,4 @@ class XPackClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...

@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Collection, MutableMapping, Optional, Tuple, Union
+from typing import Any, Collection, Dict, MutableMapping, Optional, Tuple, Union
 
 from .utils import NamespacedClient
 
@@ -26,8 +26,8 @@ class FleetClient(NamespacedClient):
         index: Any,
         checkpoints: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
-        wait_for_advance: Optional[Any] = ...,
-        wait_for_index: Optional[Any] = ...,
+        wait_for_advance: Optional[bool] = ...,
+        wait_for_index: Optional[bool] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -40,4 +40,4 @@ class FleetClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Dict[str, Any]: ...
