@@ -63,6 +63,7 @@ class AsyncTransport(Transport):
         retry_on_status=(502, 503, 504),
         retry_on_timeout=False,
         send_get_body_as="GET",
+        meta_header = True,
         **kwargs
     ):
         """
@@ -97,6 +98,8 @@ class AsyncTransport(Transport):
             don't support passing bodies with GET requests. If you set this to
             'POST' a POST method will be used instead, if to 'source' then the body
             will be serialized and passed as a query parameter `source`.
+        :arg meta_header: If True will send the 'X-Elastic-Client-Meta' HTTP header containing
+            simple client metadata. Setting to False will disable the header. Defaults to True.
 
         Any extra keyword arguments will be passed to the `connection_class`
         when creating and instance unless overridden by that connection's
@@ -123,6 +126,7 @@ class AsyncTransport(Transport):
             retry_on_status=retry_on_status,
             retry_on_timeout=retry_on_timeout,
             send_get_body_as=send_get_body_as,
+            meta_header=meta_header
             **kwargs
         )
 
