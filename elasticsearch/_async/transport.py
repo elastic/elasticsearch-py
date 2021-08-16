@@ -21,6 +21,7 @@ import sys
 import warnings
 from itertools import chain
 
+from ..connection_pool import ConnectionPool
 from ..exceptions import (
     AuthenticationException,
     AuthorizationException,
@@ -30,7 +31,8 @@ from ..exceptions import (
     SerializationError,
     TransportError,
 )
-from ..transport import Transport, _ProductChecker
+from ..serializer import JSONSerializer
+from ..transport import Transport, _ProductChecker, get_host_info
 from .compat import get_running_loop
 from .http_aiohttp import AIOHttpConnection
 
@@ -47,7 +49,26 @@ class AsyncTransport(Transport):
 
     DEFAULT_CONNECTION_CLASS = AIOHttpConnection
 
-    def __init__(self, hosts, *args, sniff_on_start=False, **kwargs):
+    def __init__(
+        self,
+        hosts,
+        connection_class=None,
+        connection_pool_class=ConnectionPool,
+        host_info_callback=get_host_info,
+        sniff_on_start=False,
+        sniffer_timeout=None,
+        sniff_timeout=0.1,
+        sniff_on_connection_fail=False,
+        serializer=JSONSerializer(),
+        serializers=None,
+        default_mimetype="application/json",
+        max_retries=3,
+        retry_on_status=(502, 503, 504),
+        retry_on_timeout=False,
+        send_get_body_as="GET",
+        meta_header=True,
+        **kwargs
+    ):
         """
         :arg hosts: list of dictionaries, each containing keyword arguments to
             create a `connection_class` instance
@@ -80,6 +101,8 @@ class AsyncTransport(Transport):
             don't support passing bodies with GET requests. If you set this to
             'POST' a POST method will be used instead, if to 'source' then the body
             will be serialized and passed as a query parameter `source`.
+        :arg meta_header: If True will send the 'X-Elastic-Client-Meta' HTTP header containing
+            simple client metadata. Setting to False will disable the header. Defaults to True.
 
         Any extra keyword arguments will be passed to the `connection_class`
         when creating and instance unless overridden by that connection's
@@ -91,7 +114,23 @@ class AsyncTransport(Transport):
         self._sniff_on_start_event = None  # type: asyncio.Event
 
         super(AsyncTransport, self).__init__(
-            *args, hosts=[], sniff_on_start=False, **kwargs
+            hosts=[],
+            connection_class=connection_class,
+            connection_pool_class=connection_pool_class,
+            host_info_callback=host_info_callback,
+            sniff_on_start=False,
+            sniffer_timeout=sniffer_timeout,
+            sniff_timeout=sniff_timeout,
+            sniff_on_connection_fail=sniff_on_connection_fail,
+            serializer=serializer,
+            serializers=serializers,
+            default_mimetype=default_mimetype,
+            max_retries=max_retries,
+            retry_on_status=retry_on_status,
+            retry_on_timeout=retry_on_timeout,
+            send_get_body_as=send_get_body_as,
+            meta_header=meta_header,
+            **kwargs,
         )
 
         # Don't enable sniffing on Cloud instances.

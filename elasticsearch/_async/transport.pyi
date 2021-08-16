@@ -63,6 +63,7 @@ class AsyncTransport(object):
         retry_on_status: Collection[int] = ...,
         retry_on_timeout: bool = ...,
         send_get_body_as: str = ...,
+        meta_header: bool = ...,
         **kwargs: Any
     ) -> None: ...
     def add_connection(self, host: Any) -> None: ...
