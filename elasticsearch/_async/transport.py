@@ -63,7 +63,7 @@ class AsyncTransport(Transport):
         retry_on_status=(502, 503, 504),
         retry_on_timeout=False,
         send_get_body_as="GET",
-        meta_header = True,
+        meta_header=True,
         **kwargs
     ):
         """
@@ -126,8 +126,8 @@ class AsyncTransport(Transport):
             retry_on_status=retry_on_status,
             retry_on_timeout=retry_on_timeout,
             send_get_body_as=send_get_body_as,
-            meta_header=meta_header
-            **kwargs
+            meta_header=meta_header,
+            **kwargs,
         )
 
         # Don't enable sniffing on Cloud instances.
