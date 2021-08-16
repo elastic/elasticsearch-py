@@ -77,7 +77,7 @@ class AIOHttpConnection(AsyncConnection):
         self,
         host="localhost",
         port=None,
-        url_prefix=None,
+        url_prefix="",
         timeout=10,
         http_auth=None,
         use_ssl=False,
