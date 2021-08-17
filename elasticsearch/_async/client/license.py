@@ -109,7 +109,6 @@ class LicenseClient(NamespacedClient):
         :arg doc_type: The type of trial license to generate (default:
             "trial")
         """
-        # type is a reserved word so it cannot be used, use doc_type instead
         if "doc_type" in params:
             params["type"] = params.pop("doc_type")
 

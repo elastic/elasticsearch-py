@@ -716,7 +716,6 @@ class Elasticsearch(object):
         :arg wait_for_completion: Should the request should block until
             the delete by query is complete.  Default: True
         """
-        # from is a reserved word so it cannot be used, use from_ instead
         if "from_" in params:
             params["from"] = params.pop("from_")
 
@@ -1658,7 +1657,6 @@ class Elasticsearch(object):
         :arg version: Specify whether to return document version as part
             of a hit
         """
-        # from is a reserved word so it cannot be used, use from_ instead
         if "from_" in params:
             params["from"] = params.pop("from_")
 
@@ -2023,7 +2021,6 @@ class Elasticsearch(object):
         :arg wait_for_completion: Should the request should block until
             the update by query operation is complete.  Default: True
         """
-        # from is a reserved word so it cannot be used, use from_ instead
         if "from_" in params:
             params["from"] = params.pop("from_")
 

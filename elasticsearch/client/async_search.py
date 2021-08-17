@@ -194,7 +194,6 @@ class AsyncSearchClient(NamespacedClient):
         :arg wait_for_completion_timeout: Specify the time that the
             request should block waiting for the final response  Default: 1s
         """
-        # from is a reserved word so it cannot be used, use from_ instead
         if "from_" in params:
             params["from"] = params.pop("from_")
 

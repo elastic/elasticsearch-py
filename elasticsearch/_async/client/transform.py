@@ -62,7 +62,6 @@ class TransformClient(NamespacedClient):
         :arg size: specifies a max number of transforms to get, defaults
             to 100
         """
-        # from is a reserved word so it cannot be used, use from_ instead
         if "from_" in params:
             params["from"] = params.pop("from_")
 
@@ -89,7 +88,6 @@ class TransformClient(NamespacedClient):
         :arg size: specifies a max number of transform stats to get,
             defaults to 100
         """
-        # from is a reserved word so it cannot be used, use from_ instead
         if "from_" in params:
             params["from"] = params.pop("from_")
 

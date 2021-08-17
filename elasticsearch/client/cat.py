@@ -737,7 +737,6 @@ class CatClient(NamespacedClient):
             choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
-        # from is a reserved word so it cannot be used, use from_ instead
         if "from_" in params:
             params["from"] = params.pop("from_")
 
@@ -775,7 +774,6 @@ class CatClient(NamespacedClient):
             choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
-        # from is a reserved word so it cannot be used, use from_ instead
         if "from_" in params:
             params["from"] = params.pop("from_")
 

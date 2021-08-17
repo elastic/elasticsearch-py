@@ -148,7 +148,6 @@ class NodesClient(NamespacedClient):
             information for (default: 3)
         :arg timeout: Explicit operation timeout
         """
-        # type is a reserved word so it cannot be used, use doc_type instead
         if "doc_type" in params:
             params["type"] = params.pop("doc_type")
 

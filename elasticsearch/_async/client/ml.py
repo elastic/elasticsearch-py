@@ -343,7 +343,6 @@ class MlClient(NamespacedClient):
         :arg sort: Sort buckets by a particular field
         :arg start: Start time filter for buckets
         """
-        # from is a reserved word so it cannot be used, use from_ instead
         if "from_" in params:
             params["from"] = params.pop("from_")
 
@@ -375,7 +374,6 @@ class MlClient(NamespacedClient):
         :arg size: Specifies a max number of events to get
         :arg start: Get events after this time
         """
-        # from is a reserved word so it cannot be used, use from_ instead
         if "from_" in params:
             params["from"] = params.pop("from_")
 
@@ -406,7 +404,6 @@ class MlClient(NamespacedClient):
         :arg from_: skips a number of calendars
         :arg size: specifies a max number of calendars to get
         """
-        # from is a reserved word so it cannot be used, use from_ instead
         if "from_" in params:
             params["from"] = params.pop("from_")
 
@@ -437,7 +434,6 @@ class MlClient(NamespacedClient):
             where per-partition categorization is disabled.
         :arg size: specifies a max number of categories to get
         """
-        # from is a reserved word so it cannot be used, use from_ instead
         if "from_" in params:
             params["from"] = params.pop("from_")
 
@@ -511,7 +507,6 @@ class MlClient(NamespacedClient):
         :arg from_: skips a number of filters
         :arg size: specifies a max number of filters to get
         """
-        # from is a reserved word so it cannot be used, use from_ instead
         if "from_" in params:
             params["from"] = params.pop("from_")
 
@@ -551,7 +546,6 @@ class MlClient(NamespacedClient):
         :arg sort: sort field for the requested influencers
         :arg start: start timestamp for the requested influencers
         """
-        # from is a reserved word so it cannot be used, use from_ instead
         if "from_" in params:
             params["from"] = params.pop("from_")
 
@@ -633,7 +627,6 @@ class MlClient(NamespacedClient):
         :arg sort: Name of the field to sort on
         :arg start: The filter 'start' query parameter
         """
-        # from is a reserved word so it cannot be used, use from_ instead
         if "from_" in params:
             params["from"] = params.pop("from_")
 
@@ -731,7 +724,6 @@ class MlClient(NamespacedClient):
         :arg sort: Sort records by a particular field
         :arg start: Start time filter for records
         """
-        # from is a reserved word so it cannot be used, use from_ instead
         if "from_" in params:
             params["from"] = params.pop("from_")
 
@@ -1299,7 +1291,6 @@ class MlClient(NamespacedClient):
         :arg size: specifies a max number of analytics to get  Default:
             100
         """
-        # from is a reserved word so it cannot be used, use from_ instead
         if "from_" in params:
             params["from"] = params.pop("from_")
 
@@ -1326,7 +1317,6 @@ class MlClient(NamespacedClient):
             100
         :arg verbose: whether the stats response should be verbose
         """
-        # from is a reserved word so it cannot be used, use from_ instead
         if "from_" in params:
             params["from"] = params.pop("from_")
 
@@ -1489,7 +1479,6 @@ class MlClient(NamespacedClient):
         :arg tags: A comma-separated list of tags that the model must
             have.
         """
-        # from is a reserved word so it cannot be used, use from_ instead
         if "from_" in params:
             params["from"] = params.pop("from_")
 
@@ -1515,7 +1504,6 @@ class MlClient(NamespacedClient):
         :arg size: specifies a max number of trained models to get
             Default: 100
         """
-        # from is a reserved word so it cannot be used, use from_ instead
         if "from_" in params:
             params["from"] = params.pop("from_")
 
