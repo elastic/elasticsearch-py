@@ -18,6 +18,7 @@
 from __future__ import unicode_literals
 
 import base64
+import warnings
 import weakref
 from datetime import date, datetime
 from functools import wraps
@@ -123,11 +124,13 @@ def _make_path(*parts):
 GLOBAL_PARAMS = ("pretty", "human", "error_trace", "format", "filter_path")
 
 
-def query_params(*es_query_params):
+def query_params(*es_query_params, **kwargs):
     """
     Decorator that pops all accepted parameters from method's kwargs and puts
     them in the params argument.
     """
+    body_params = kwargs.pop("body_params", None)
+    body_only_params = set(body_params or ()) - set(es_query_params)
 
     def _wrapper(func):
         @wraps(func)
@@ -143,6 +146,65 @@ def query_params(*es_query_params):
 
             http_auth = kwargs.pop("http_auth", None)
             api_key = kwargs.pop("api_key", None)
+
+            # Detect when we should absorb body parameters into 'body'
+            # We only do this when there's no 'body' parameter, no
+            # positional arguments, and at least one parameter we can
+            # serialize in the body.
+            using_body_kwarg = kwargs.get("body", None) is not None
+            using_positional_args = args and len(args) > 1
+
+            if using_body_kwarg or using_positional_args:
+                # If there are any body-only parameters then we raise a 'TypeError'
+                # to alert the user they have to either not use a 'body' parameter
+                # or to put the parameter into the body.
+                body_only_params_in_use = body_only_params.intersection(kwargs)
+                if body_only_params_in_use:
+                    # Make sure the error message prose makes sense!
+                    params_prose = "', '".join(sorted(body_only_params_in_use))
+                    plural_params = len(body_only_params_in_use) > 1
+
+                    raise TypeError(
+                        "The '%s' parameter%s %s only serialized in the request body "
+                        "and can't be combined with the 'body' parameter. Either stop using the "
+                        "'body' parameter and use keyword-arguments only or move the specified "
+                        "parameters into the 'body'"
+                        % (
+                            params_prose,
+                            "s" if plural_params else "",
+                            "are" if plural_params else "is",
+                        )
+                    )
+
+                # If there's no parameter overlap we still warn the user
+                # that the 'body' parameter is deprecated for this API.
+                if using_body_kwarg and body_params:
+                    api_name = str(func.__name__)
+                    warnings.warn(
+                        "The 'body' parameter is deprecated for the '%s' API and "
+                        "will be removed in 8.0.0. Instead use API parameters directly"
+                        % api_name,
+                        DeprecationWarning,
+                        stacklevel=2,
+                    )
+
+                # If positional arguments are being used we also warn about that being deprecated.
+                if using_positional_args:
+                    warnings.warn(
+                        "Using positional arguments for APIs is deprecated and will be "
+                        "disabled in 8.0.0. Instead only use keyword arguments for all APIs",
+                        DeprecationWarning,
+                        stacklevel=2,
+                    )
+
+            # We need to serialize all these parameters into a JSON body.
+            elif set(body_params or ()).intersection(kwargs):
+                body = {}
+                for param in body_params:
+                    value = kwargs.pop(param, None)
+                    if value is not None:
+                        body[param] = value
+                kwargs["body"] = body
 
             if http_auth is not None and api_key is not None:
                 raise ValueError(
