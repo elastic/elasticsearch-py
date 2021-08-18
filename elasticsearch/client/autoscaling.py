@@ -25,7 +25,7 @@ class AutoscalingClient(NamespacedClient):
         Deletes an autoscaling policy. Designed for indirect use by ECE/ESS and ECK.
         Direct use is not supported.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/autoscaling-delete-autoscaling-policy.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.15/autoscaling-delete-autoscaling-policy.html>`_
 
         :arg name: the name of the autoscaling policy
         """
@@ -45,7 +45,7 @@ class AutoscalingClient(NamespacedClient):
         Retrieves an autoscaling policy. Designed for indirect use by ECE/ESS and ECK.
         Direct use is not supported.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/autoscaling-get-autoscaling-policy.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.15/autoscaling-get-autoscaling-policy.html>`_
 
         :arg name: the name of the autoscaling policy
         """
@@ -65,7 +65,7 @@ class AutoscalingClient(NamespacedClient):
         Creates a new autoscaling policy. Designed for indirect use by ECE/ESS and ECK.
         Direct use is not supported.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/autoscaling-put-autoscaling-policy.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.15/autoscaling-put-autoscaling-policy.html>`_
 
         :arg name: the name of the autoscaling policy
         :arg body: the specification of the autoscaling policy
@@ -89,7 +89,7 @@ class AutoscalingClient(NamespacedClient):
         policy. Designed for indirect use by ECE/ESS and ECK. Direct use is not
         supported.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/autoscaling-get-autoscaling-capacity.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.15/autoscaling-get-autoscaling-capacity.html>`_
         """
         return self.transport.perform_request(
             "GET", "/_autoscaling/capacity", params=params, headers=headers

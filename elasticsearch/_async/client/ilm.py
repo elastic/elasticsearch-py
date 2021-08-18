@@ -25,7 +25,7 @@ class IlmClient(NamespacedClient):
         Deletes the specified lifecycle policy definition. A currently used policy
         cannot be deleted.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ilm-delete-lifecycle.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.15/ilm-delete-lifecycle.html>`_
 
         :arg policy: The name of the index lifecycle policy
         """
@@ -45,7 +45,7 @@ class IlmClient(NamespacedClient):
         Retrieves information about the index's current lifecycle state, such as the
         currently executing phase, action, and step.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ilm-explain-lifecycle.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.15/ilm-explain-lifecycle.html>`_
 
         :arg index: The name of the index to explain
         :arg only_errors: filters the indices included in the response
@@ -66,7 +66,7 @@ class IlmClient(NamespacedClient):
         Returns the specified policy definition. Includes the policy version and last
         modified date.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ilm-get-lifecycle.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.15/ilm-get-lifecycle.html>`_
 
         :arg policy: The name of the index lifecycle policy
         """
@@ -79,7 +79,7 @@ class IlmClient(NamespacedClient):
         """
         Retrieves the current index lifecycle management (ILM) status.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ilm-get-status.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.15/ilm-get-status.html>`_
         """
         return await self.transport.perform_request(
             "GET", "/_ilm/status", params=params, headers=headers
@@ -90,7 +90,7 @@ class IlmClient(NamespacedClient):
         """
         Manually moves an index into the specified step and executes that step.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ilm-move-to-step.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.15/ilm-move-to-step.html>`_
 
         :arg index: The name of the index whose lifecycle step is to
             change
@@ -112,7 +112,7 @@ class IlmClient(NamespacedClient):
         """
         Creates a lifecycle policy
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ilm-put-lifecycle.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.15/ilm-put-lifecycle.html>`_
 
         :arg policy: The name of the index lifecycle policy
         :arg body: The lifecycle policy definition to register
@@ -133,7 +133,7 @@ class IlmClient(NamespacedClient):
         """
         Removes the assigned lifecycle policy and stops managing the specified index
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ilm-remove-policy.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.15/ilm-remove-policy.html>`_
 
         :arg index: The name of the index to remove policy on
         """
@@ -149,7 +149,7 @@ class IlmClient(NamespacedClient):
         """
         Retries executing the policy for an index that is in the ERROR step.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ilm-retry-policy.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.15/ilm-retry-policy.html>`_
 
         :arg index: The name of the indices (comma-separated) whose
             failed lifecycle step is to be retry
@@ -166,7 +166,7 @@ class IlmClient(NamespacedClient):
         """
         Start the index lifecycle management (ILM) plugin.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ilm-start.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.15/ilm-start.html>`_
         """
         return await self.transport.perform_request(
             "POST", "/_ilm/start", params=params, headers=headers
@@ -178,7 +178,7 @@ class IlmClient(NamespacedClient):
         Halts all lifecycle management operations and stops the index lifecycle
         management (ILM) plugin
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ilm-stop.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.15/ilm-stop.html>`_
         """
         return await self.transport.perform_request(
             "POST", "/_ilm/stop", params=params, headers=headers
@@ -190,7 +190,7 @@ class IlmClient(NamespacedClient):
         Migrates the indices and ILM policies away from custom node attribute
         allocation routing to data tiers routing
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ilm-migrate-to-data-tiers.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.15/ilm-migrate-to-data-tiers.html>`_
 
         :arg body: Optionally specify a legacy index template name to
             delete and optionally specify a node attribute name used for index shard

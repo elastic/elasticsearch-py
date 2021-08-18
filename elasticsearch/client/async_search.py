@@ -25,7 +25,7 @@ class AsyncSearchClient(NamespacedClient):
         Deletes an async search by ID. If the search is still running, the search
         request will be cancelled. Otherwise, the saved search results are deleted.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/async-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.15/async-search.html>`_
 
         :arg id: The async search ID
         """
@@ -42,7 +42,7 @@ class AsyncSearchClient(NamespacedClient):
         Retrieves the results of a previously submitted async search request given its
         ID.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/async-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.15/async-search.html>`_
 
         :arg id: The async search ID
         :arg keep_alive: Specify the time interval in which the results
@@ -106,7 +106,7 @@ class AsyncSearchClient(NamespacedClient):
         """
         Executes a search request asynchronously.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/async-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.15/async-search.html>`_
 
         :arg body: The search definition using the Query DSL
         :arg index: A comma-separated list of index names to search; use
@@ -211,7 +211,7 @@ class AsyncSearchClient(NamespacedClient):
         Retrieves the status of a previously submitted async search request given its
         ID.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/async-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.15/async-search.html>`_
 
         :arg id: The async search ID
         """
