@@ -353,8 +353,11 @@ async def async_scan(
             scroll_kwargs.setdefault(key, val)
 
     # initial search
+    search_kwargs = kwargs.copy()
+    if query:
+        search_kwargs.update(query)
     resp = await client.search(
-        body=query, scroll=scroll, size=size, request_timeout=request_timeout, **kwargs
+        scroll=scroll, size=size, request_timeout=request_timeout, **search_kwargs
     )
     scroll_id = resp.get("_scroll_id")
 

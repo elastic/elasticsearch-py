@@ -1551,6 +1551,39 @@ class Elasticsearch(object):
         "track_total_hits",
         "typed_keys",
         "version",
+        body_params=[
+            "_source",
+            "aggregations",
+            "aggs",
+            "collapse",
+            "docvalue_fields",
+            "explain",
+            "fields",
+            "from_",
+            "highlight",
+            "indices_boost",
+            "min_score",
+            "pit",
+            "post_filter",
+            "profile",
+            "query",
+            "rescore",
+            "runtime_mappings",
+            "script_fields",
+            "search_after",
+            "seq_no_primary_term",
+            "size",
+            "slice",
+            "sort",
+            "stats",
+            "stored_fields",
+            "suggest",
+            "terminate_after",
+            "timeout",
+            "track_scores",
+            "track_total_hits",
+            "version",
+        ],
     )
     def search(self, body=None, index=None, doc_type=None, params=None, headers=None):
         """
@@ -1563,12 +1596,13 @@ class Elasticsearch(object):
             `_all` or empty string to perform the operation on all indices
         :arg doc_type: A comma-separated list of document types to
             search; leave empty to perform the operation on all types
-        :arg _source: True or false to return the _source field or not,
-            or a list of fields to return
+        :arg _source:
         :arg _source_excludes: A list of fields to exclude from the
             returned _source field
         :arg _source_includes: A list of fields to extract and return
             from the _source field
+        :arg aggregations:
+        :arg aggs:
         :arg allow_no_indices: Whether to ignore if a wildcard indices
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
@@ -1586,22 +1620,24 @@ class Elasticsearch(object):
         :arg ccs_minimize_roundtrips: Indicates whether network round-
             trips should be minimized as part of cross-cluster search requests
             execution  Default: true
+        :arg collapse:
         :arg default_operator: The default operator for query string
             query (AND or OR)  Valid choices: AND, OR  Default: OR
         :arg df: The field to use as default where no field prefix is
             given in the query string
-        :arg docvalue_fields: A comma-separated list of fields to return
-            as the docvalue representation of a field for each hit
+        :arg docvalue_fields:
         :arg expand_wildcards: Whether to expand wildcard expression to
             concrete indices that are open, closed or both.  Valid choices: open,
             closed, hidden, none, all  Default: open
-        :arg explain: Specify whether to return detailed information
-            about score computation as part of a hit
-        :arg from_: Starting offset (default: 0)
+        :arg explain:
+        :arg fields:
+        :arg from_:
+        :arg highlight:
         :arg ignore_throttled: Whether specified concrete, expanded or
             aliased indices should be ignored when throttled
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
+        :arg indices_boost:
         :arg lenient: Specify whether format-based query failures (such
             as providing text to a numeric field) should be ignored
         :arg max_concurrent_shard_requests: The number of concurrent
@@ -1611,6 +1647,9 @@ class Elasticsearch(object):
         :arg min_compatible_shard_node: The minimum compatible version
             that all shards involved in search should have for this request to be
             successful
+        :arg min_score:
+        :arg pit:
+        :arg post_filter:
         :arg pre_filter_shard_size: A threshold that enforces a pre-
             filter roundtrip to prefilter search shards based on query rewriting if
             the number of shards the search request expands to exceeds the
@@ -1620,42 +1659,42 @@ class Elasticsearch(object):
             shard bounds and the query are disjoint.
         :arg preference: Specify the node or shard the operation should
             be performed on (default: random)
+        :arg profile:
         :arg q: Query in the Lucene query string syntax
+        :arg query:
         :arg request_cache: Specify if request cache should be used for
             this request or not, defaults to index level setting
+        :arg rescore:
         :arg rest_total_hits_as_int: Indicates whether hits.total should
             be rendered as an integer or an object in the rest search response
         :arg routing: A comma-separated list of specific routing values
+        :arg runtime_mappings:
+        :arg script_fields:
         :arg scroll: Specify how long a consistent view of the index
             should be maintained for scrolled search
+        :arg search_after:
         :arg search_type: Search operation type  Valid choices:
             query_then_fetch, dfs_query_then_fetch
-        :arg seq_no_primary_term: Specify whether to return sequence
-            number and primary term of the last modification of each hit
-        :arg size: Number of hits to return (default: 10)
-        :arg sort: A comma-separated list of <field>:<direction> pairs
-        :arg stats: Specific 'tag' of the request for logging and
-            statistical purposes
-        :arg stored_fields: A comma-separated list of stored fields to
-            return as part of a hit
+        :arg seq_no_primary_term:
+        :arg size:
+        :arg slice:
+        :arg sort:
+        :arg stats:
+        :arg stored_fields:
+        :arg suggest:
         :arg suggest_field: Specify which field to use for suggestions
         :arg suggest_mode: Specify suggest mode  Valid choices: missing,
             popular, always  Default: missing
         :arg suggest_size: How many suggestions to return in response
         :arg suggest_text: The source text for which the suggestions
             should be returned
-        :arg terminate_after: The maximum number of documents to collect
-            for each shard, upon reaching which the query execution will terminate
-            early.
-        :arg timeout: Explicit operation timeout
-        :arg track_scores: Whether to calculate and return scores even
-            if they are not used for sorting
-        :arg track_total_hits: Indicate if the number of documents that
-            match the query should be tracked
+        :arg terminate_after:
+        :arg timeout:
+        :arg track_scores:
+        :arg track_total_hits:
         :arg typed_keys: Specify whether aggregation and suggester names
             should be prefixed by their respective types in the response
-        :arg version: Specify whether to return document version as part
-            of a hit
+        :arg version:
         """
         if "from_" in params:
             params["from"] = params.pop("from_")

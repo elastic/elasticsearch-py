@@ -20,6 +20,7 @@
 # See the LICENSE file in the project root for more information
 
 import asyncio
+import warnings
 from datetime import datetime, timedelta, timezone
 
 import pytest
@@ -441,15 +442,17 @@ class TestScan(object):
             bulk.append({"answer": x, "correct": x == 42})
         await async_client.bulk(bulk, refresh=True)
 
-        docs = [
-            doc
-            async for doc in helpers.async_scan(
-                async_client,
-                index="test_index",
-                query={"sort": "answer"},
-                preserve_order=True,
-            )
-        ]
+        with warnings.catch_warnings(record=True) as w:
+            docs = [
+                doc
+                async for doc in helpers.async_scan(
+                    async_client,
+                    index="test_index",
+                    query={"sort": "answer"},
+                    preserve_order=True,
+                )
+            ]
+        assert w == []
 
         assert 100 == len(docs)
         assert list(map(str, range(100))) == list(d["_id"] for d in docs)

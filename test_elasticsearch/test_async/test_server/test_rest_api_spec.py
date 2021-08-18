@@ -29,6 +29,7 @@ from elasticsearch import ElasticsearchWarning, RequestError
 from elasticsearch.helpers.test import _get_version
 
 from ...test_server.test_rest_api_spec import (
+    APIS_WITH_BODY_FIELDS,
     IMPLEMENTED_FEATURES,
     PARAMS_RENAMES,
     RUN_ASYNC_REST_API_TESTS,
@@ -143,6 +144,17 @@ class AsyncYamlRunner(YamlRunner):
         # resolve vars
         for k in args:
             args[k] = self._resolve(args[k])
+
+        # If there's a body parameter given to an API with
+        # body fields enabled we expand the body to parameters.
+        if (
+            "body" in args
+            and isinstance(args["body"], dict)
+            and method in APIS_WITH_BODY_FIELDS
+        ):
+            args.update(
+                {PARAMS_RENAMES.get(k, k): v for k, v in args.pop("body").items()}
+            )
 
         warnings.simplefilter("always", category=ElasticsearchWarning)
         with warnings.catch_warnings(record=True) as caught_warnings:

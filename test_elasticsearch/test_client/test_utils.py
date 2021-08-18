@@ -18,6 +18,10 @@
 
 from __future__ import unicode_literals
 
+import warnings
+
+import pytest
+
 from elasticsearch.client.utils import _bulk_body, _escape, _make_path, query_params
 from elasticsearch.compat import PY2
 
@@ -30,6 +34,12 @@ class TestQueryParams(TestCase):
 
     @query_params("simple_param")
     def func_to_wrap(self, *args, **kwargs):
+        self.calls.append((args, kwargs))
+
+    @query_params(
+        "query_only", "query_and_body", body_params=["query_and_body", "body_only"]
+    )
+    def func_with_body_params(self, *args, **kwargs):
         self.calls.append((args, kwargs))
 
     def test_handles_params(self):
@@ -116,6 +126,124 @@ class TestQueryParams(TestCase):
         self.assertEqual(
             str(e.exception),
             "Only one of 'http_auth' and 'api_key' may be passed at a time",
+        )
+
+    def test_body_params(self):
+        with warnings.catch_warnings(record=True) as w:
+            # No params, should be same as an empty call
+            self.func_with_body_params()
+            assert self.calls[-1] == ((), {"headers": {}, "params": {}})
+
+            # No overlap with 'body_params'
+            self.func_with_body_params(query_only=1)
+            assert self.calls[-1] == (
+                (),
+                {"headers": {}, "params": {"query_only": "1"}},
+            )
+
+            # One body parameter
+            self.func_with_body_params(query_and_body=1)
+            assert self.calls[-1] == (
+                (),
+                {"body": {"query_and_body": 1}, "headers": {}, "params": {}},
+            )
+            self.func_with_body_params(body_only=1)
+            assert self.calls[-1] == (
+                (),
+                {"body": {"body_only": 1}, "headers": {}, "params": {}},
+            )
+
+            # Multiple body field parameters
+            self.func_with_body_params(query_and_body=1, body_only=1)
+            assert self.calls[-1] == (
+                (),
+                {
+                    "body": {"query_and_body": 1, "body_only": 1},
+                    "headers": {},
+                    "params": {},
+                },
+            )
+
+            # All the parameters
+            self.func_with_body_params(query_only=1, query_and_body=1, body_only=1)
+            assert self.calls[-1] == (
+                (),
+                {
+                    "body": {"query_and_body": 1, "body_only": 1},
+                    "headers": {},
+                    "params": {"query_only": "1"},
+                },
+            )
+
+        # There should be no 'DeprecationWarnings'
+        # emitted for any of the above cases.
+        assert w == []
+
+        # Positional arguments pass-through
+        self.func_with_body_params(1)
+        assert self.calls[-1] == (
+            (1,),
+            {"headers": {}, "params": {}},
+        )
+
+        # Positional arguments disable body serialization
+        self.func_with_body_params(1, query_and_body=1)
+        assert self.calls[-1] == (
+            (1,),
+            {"headers": {}, "params": {"query_and_body": "1"}},
+        )
+
+    def test_body_params_errors(self):
+        with pytest.raises(TypeError) as e:
+            self.func_with_body_params(body={}, body_only=True)
+        assert str(e.value) == (
+            "The 'body_only' parameter is only serialized in the request body "
+            "and can't be combined with the 'body' parameter. Either stop using "
+            "the 'body' parameter and use keyword-arguments only or move the "
+            "specified parameters into the 'body'"
+        )
+
+        # Positional arguments disable body serialization
+        with pytest.raises(TypeError) as e:
+            self.func_with_body_params(1, body_only=1)
+        assert str(e.value) == (
+            "The 'body_only' parameter is only serialized in the request body "
+            "and can't be combined with the 'body' parameter. Either stop using "
+            "the 'body' parameter and use keyword-arguments only or move the "
+            "specified parameters into the 'body'"
+        )
+
+    def test_body_params_deprecations(self):
+        # APIs with body_params deprecate the 'body' parameter.
+        with pytest.warns(DeprecationWarning) as w:
+            self.func_with_body_params(body={})
+
+        assert self.calls[-1] == ((), {"body": {}, "headers": {}, "params": {}})
+        assert len(w) == 1
+        assert w[0].category == DeprecationWarning
+        assert str(w[0].message) == (
+            "The 'body' parameter is deprecated for the "
+            "'func_with_body_params' API and will be removed in 8.0.0. "
+            "Instead use API parameters directly"
+        )
+
+        # APIs that don't have body parameters don't have a deprecated 'body' parameter
+        with warnings.catch_warnings(record=True) as w:
+            self.func_to_wrap(body={})
+
+        assert self.calls[-1] == ((), {"body": {}, "headers": {}, "params": {}})
+        assert w == []
+
+        # Positional arguments are deprecated for all APIs
+        with pytest.warns(DeprecationWarning) as w:
+            self.func_to_wrap(1)
+
+        assert self.calls[-1] == ((1,), {"headers": {}, "params": {}})
+        assert len(w) == 1
+        assert w[0].category == DeprecationWarning
+        assert str(w[0].message) == (
+            "Using positional arguments for APIs is deprecated and will be disabled in "
+            "8.0.0. Instead only use keyword arguments for all APIs"
         )
 
 
