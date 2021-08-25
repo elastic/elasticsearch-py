@@ -9,13 +9,13 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v1
-      - name: Set up Python 3.7
+      - name: Set up Python 3.x
         uses: actions/setup-python@v2
         with:
-          python-version: 3.7
+          python-version: 3.x
       - name: Install dependencies
         run: |
-          python3.7 -m pip install nox
+          python3 -m pip install nox
       - name: Lint the code
         run: nox -s lint
 
@@ -27,10 +27,10 @@ jobs:
       - name: Set up Python 3.7
         uses: actions/setup-python@v2
         with:
-          python-version: 3.7
+          python-version: 3.x
       - name: Install dependencies
         run: |
-          python3.7 -m pip install nox
+          python3 -m pip install nox
       - name: Build the docs
         run: nox -s docs
 
@@ -38,11 +38,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [2.7, 3.5, 3.6, 3.7, 3.8, 3.9]
+        python-version: [3.6, 3.7, 3.8, 3.9]
         experimental: [false]
+        nox-session: [""]
         include:
           - python-version: 3.10-dev
             experimental: true
+            nox-session: test-3.10
 
     runs-on: ubuntu-latest
     name: test-${{ matrix.python-version }}
@@ -56,7 +58,10 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install Dependencies
         run: |
-          python -m pip install -r dev-requirements.txt
+          python -m pip install nox
       - name: Run Tests
-        run: |
-          python setup.py test
+        shell: bash
+        run: .ci/run-nox.sh
+        env:
+          PYTHON_VERSION: ${{ matrix.python-version }}
+          NOX_SESSION: ${{ matrix.nox-session }}

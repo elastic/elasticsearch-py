@@ -15,10 +15,84 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+import os
+import re
 import time
+from pathlib import Path
+from typing import Optional, Tuple
 
 from elasticsearch import Elasticsearch, NotFoundError, RequestError
-from elasticsearch.helpers.test import es_version
+
+SOURCE_DIR = Path(__file__).absolute().parent.parent
+CA_CERTS = str(SOURCE_DIR / ".ci/certs/ca.crt")
+
+
+def es_url() -> str:
+    """Grabs an Elasticsearch URL which can be designated via
+    an environment variable otherwise falls back on localhost.
+    """
+    urls_to_try = []
+
+    # Try user-supplied URLs before generic localhost ones.
+    if os.environ.get("ELASTICSEARCH_URL", ""):
+        urls_to_try.append(os.environ["ELASTICSEARCH_URL"])
+    if os.environ.get("elasticsearch_url", ""):
+        urls_to_try.append(os.environ["elasticsearch_url"])
+    urls_to_try.extend(
+        [
+            "https://localhost:9200",
+            "http://localhost:9200",
+            "https://elastic:changeme@localhost:9200",
+            "http://elastic:changeme@localhost:9200",
+        ]
+    )
+
+    error = None
+    for url in urls_to_try:
+        client = Elasticsearch(url, timeout=3, ca_certs=CA_CERTS)
+        try:
+            # Check that we get any sort of connection first.
+            client.info()
+
+            # After we get a connection let's wait for the cluster
+            # to be in 'yellow' state, otherwise we could start
+            # tests too early and get failures.
+            for _ in range(100):
+                try:
+                    client.cluster.health(wait_for_status="yellow")
+                    break
+                except ConnectionError:
+                    time.sleep(0.1)
+
+        except Exception as e:
+            if error is None:
+                error = str(e)
+        else:
+            successful_url = url
+            break
+    else:
+        raise RuntimeError(
+            "Could not connect to Elasticsearch (tried %s): %s"
+            % (", ".join(urls_to_try), error)
+        )
+    return successful_url
+
+
+def es_version(client) -> Tuple[int, ...]:
+    """Determines the version number and parses the number as a tuple of ints"""
+    resp = client.info()
+    return parse_version(resp["version"]["number"])
+
+
+def parse_version(version: Optional[str]) -> Optional[Tuple[int, ...]]:
+    """Parses a version number string into it's major, minor, patch as a tuple"""
+    if not version:
+        return None
+    version_number = tuple(
+        int(x)
+        for x in re.search(r"^([0-9]+(?:\.[0-9]+)*)", version).group(1).split(".")
+    )
+    return version_number
 
 
 def wipe_cluster(client):

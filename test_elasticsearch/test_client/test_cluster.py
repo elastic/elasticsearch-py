@@ -15,10 +15,10 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from test_elasticsearch.test_cases import ElasticsearchTestCase
+from test_elasticsearch.test_cases import DummyTransportTestCase
 
 
-class TestCluster(ElasticsearchTestCase):
+class TestCluster(DummyTransportTestCase):
     def test_stats_without_node_id(self):
         self.client.cluster.stats()
         self.assert_url_called("GET", "/_cluster/stats")

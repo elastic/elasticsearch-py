@@ -18,25 +18,49 @@
 
 from __future__ import unicode_literals
 
-from . import ElasticsearchTestCase
+
+def test_indices_analyze_unicode(sync_client):
+    resp = sync_client.indices.analyze(body='{"text": "привет"}')
+    assert resp == {
+        "tokens": [
+            {
+                "end_offset": 6,
+                "position": 0,
+                "start_offset": 0,
+                "token": "привет",
+                "type": "<ALPHANUM>",
+            }
+        ]
+    }
 
 
-class TestUnicode(ElasticsearchTestCase):
-    def test_indices_analyze(self):
-        self.client.indices.analyze(body='{"text": "привет"}')
+def test_bulk_works_with_string_body(sync_client):
+    docs = '{ "index" : { "_index" : "bulk_test_index", "_id" : "1" } }\n{"answer": 42}'
+    resp = sync_client.bulk(body=docs)
+
+    assert resp["errors"] is False
+    assert 1 == len(resp["items"])
 
 
-class TestBulk(ElasticsearchTestCase):
-    def test_bulk_works_with_string_body(self):
-        docs = '{ "index" : { "_index" : "bulk_test_index", "_id" : "1" } }\n{"answer": 42}'
-        response = self.client.bulk(body=docs)
+def test_bulk_works_with_bytestring_body(sync_client):
+    docs = (
+        b'{ "index" : { "_index" : "bulk_test_index", "_id" : "2" } }\n{"answer": 42}'
+    )
+    resp = sync_client.bulk(body=docs)
 
-        self.assertFalse(response["errors"])
-        self.assertEqual(1, len(response["items"]))
+    assert resp["errors"] is False
+    assert 1 == len(resp["items"])
 
-    def test_bulk_works_with_bytestring_body(self):
-        docs = b'{ "index" : { "_index" : "bulk_test_index", "_id" : "2" } }\n{"answer": 42}'
-        response = self.client.bulk(body=docs)
-
-        self.assertFalse(response["errors"])
-        self.assertEqual(1, len(response["items"]))
+    # Pop inconsistent items before asserting
+    resp["items"][0]["index"].pop("_id")
+    resp["items"][0]["index"].pop("_version")
+    assert resp["items"][0] == {
+        "index": {
+            "_index": "bulk_test_index",
+            "result": "created",
+            "_shards": {"total": 2, "successful": 1, "failed": 0},
+            "_seq_no": 0,
+            "_primary_term": 1,
+            "status": 201,
+        }
+    }

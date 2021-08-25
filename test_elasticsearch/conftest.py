@@ -15,21 +15,24 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Tuple
-from unittest import TestCase
+from typing import Tuple
 
-from ..client import Elasticsearch
+import pytest
 
-ELASTICSEARCH_URL: str
-CA_CERTS: str
+from elasticsearch import Elasticsearch
 
-def get_test_client(nowait: bool = ..., **kwargs: Any) -> Elasticsearch: ...
-def _get_version(version_string: str) -> Tuple[int, ...]: ...
+from .utils import CA_CERTS, es_url, es_version
 
-class ElasticsearchTestCase(TestCase):
-    @staticmethod
-    def _get_client() -> Elasticsearch: ...
-    @classmethod
-    def setup_class(cls) -> None: ...
-    def teardown_method(self, _: Any) -> None: ...
-    def es_version(self) -> Tuple[int, ...]: ...
+
+@pytest.fixture(scope="session")
+def elasticsearch_url():
+    try:
+        return es_url()
+    except RuntimeError as e:
+        pytest.skip(str(e))
+
+
+@pytest.fixture(scope="session")
+def elasticsearch_version(elasticsearch_url) -> Tuple[int, ...]:
+    """Returns the version of the current Elasticsearch cluster"""
+    return es_version(Elasticsearch(elasticsearch_url, ca_certs=CA_CERTS))

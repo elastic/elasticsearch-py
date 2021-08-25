@@ -16,10 +16,10 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from test_elasticsearch.test_cases import ElasticsearchTestCase
+from test_elasticsearch.test_cases import DummyTransportTestCase
 
 
-class TestOverriddenUrlTargets(ElasticsearchTestCase):
+class TestOverriddenUrlTargets(DummyTransportTestCase):
     def test_create(self):
         self.client.create(index="test-index", id="test-id", body={})
         self.assert_url_called("PUT", "/test-index/_create/test-id")

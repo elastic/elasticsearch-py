@@ -16,14 +16,12 @@
 #  under the License.
 
 import os
-import time
 
 import pytest
 
 import elasticsearch
-from elasticsearch.helpers.test import CA_CERTS, ELASTICSEARCH_URL
 
-from ..utils import wipe_cluster
+from ..utils import CA_CERTS, wipe_cluster
 
 # Information about the Elasticsearch instance running, if any
 # Used for
@@ -33,7 +31,7 @@ ELASTICSEARCH_REST_API_TESTS = []
 
 
 @pytest.fixture(scope="session")
-def sync_client_factory():
+def sync_client_factory(elasticsearch_url):
     client = None
     try:
         # Configure the client with certificates and optionally
@@ -53,20 +51,13 @@ def sync_client_factory():
         # We do this little dance with the URL to force
         # Requests to respect 'headers: None' within rest API spec tests.
         client = elasticsearch.Elasticsearch(
-            ELASTICSEARCH_URL.replace("elastic:changeme@", ""), **kw
+            elasticsearch_url.replace("elastic:changeme@", ""), **kw
         )
 
-        # Wait for the cluster to report a status of 'yellow'
-        for _ in range(100):
-            try:
-                client.cluster.health(wait_for_status="yellow")
-                break
-            except ConnectionError:
-                time.sleep(0.1)
-        else:
-            pytest.skip("Elasticsearch wasn't running at %r" % (ELASTICSEARCH_URL,))
-
+        # Wipe the cluster before we start testing just in case it wasn't wiped
+        # cleanly from the previous run of pytest?
         wipe_cluster(client)
+
         yield client
     finally:
         if client:
@@ -78,4 +69,5 @@ def sync_client(sync_client_factory):
     try:
         yield sync_client_factory
     finally:
+        # Wipe the cluster clean after every test execution.
         wipe_cluster(sync_client_factory)

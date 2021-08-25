@@ -32,12 +32,16 @@ import pytest
 import urllib3
 import yaml
 
-from elasticsearch import ElasticsearchWarning, RequestError, TransportError
+from elasticsearch import (
+    Elasticsearch,
+    ElasticsearchWarning,
+    RequestError,
+    TransportError,
+)
 from elasticsearch.client.utils import _base64_auth_header
 from elasticsearch.compat import string_types
-from elasticsearch.helpers.test import _get_version
 
-from . import get_client
+from ..utils import CA_CERTS, es_url, parse_version
 
 # some params had to be changed in python, keep track of them so we can rename
 # those in the tests accordingly
@@ -300,9 +304,9 @@ class YamlRunner:
             version, reason = skip["version"], skip["reason"]
             if version == "all":
                 pytest.skip(reason)
-            min_version, max_version = version.split("-")
-            min_version = _get_version(min_version) or (0,)
-            max_version = _get_version(max_version) or (999,)
+            min_version, _, max_version = version.partition("-")
+            min_version = parse_version(min_version.strip()) or (0,)
+            max_version = parse_version(max_version.strip()) or (999,)
             if min_version <= (self.es_version()) <= max_version:
                 pytest.skip(reason)
 
@@ -490,7 +494,7 @@ YAML_TEST_SPECS = []
 try:
     # Construct the HTTP and Elasticsearch client
     http = urllib3.PoolManager(retries=10)
-    client = get_client()
+    client = Elasticsearch(es_url(), timeout=3, ca_certs=CA_CERTS)
 
     # Make a request to Elasticsearch for the build hash, we'll be looking for
     # an artifact with this same hash to download test specs for.
