@@ -166,7 +166,7 @@ class Elasticsearch(object):
         )
 
     By default, `JSONSerializer
-    <https://github.com/elastic/elasticsearch-py/blob/master/elasticsearch/serializer.py#L24>`_
+    <https://github.com/elastic/elasticsearch-py/blob/main/elasticsearch/serializer.py>`_
     is used to encode all outgoing requests.
     However, you can implement your own custom serializer::
 

@@ -15,8 +15,8 @@ Elasticsearch Python Client
 .. image:: https://pepy.tech/badge/elasticsearch
    :target: https://pepy.tech/project/elasticsearch?versions=*
 
-.. image:: https://clients-ci.elastic.co/job/elastic+elasticsearch-py+master/badge/icon
-   :target: https://clients-ci.elastic.co/job/elastic+elasticsearch-py+master
+.. image:: https://clients-ci.elastic.co/job/elastic+elasticsearch-py+main/badge/icon
+   :target: https://clients-ci.elastic.co/job/elastic+elasticsearch-py+main
 
 .. image:: https://readthedocs.org/projects/elasticsearch-py/badge/?version=latest&style=flat
    :target: https://elasticsearch-py.readthedocs.io
@@ -52,7 +52,7 @@ the ``async`` extra::
 
     $ python -m pip install elasticsearch[async]
 
-Read more about `how to use asyncio with this project <https://elasticsearch-py.readthedocs.io/en/master/async.html>`_.
+Read more about `how to use asyncio with this project <https://elasticsearch-py.readthedocs.io/en/latest/async.html>`_.
 
 
 Compatibility
