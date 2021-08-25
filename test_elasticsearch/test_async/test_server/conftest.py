@@ -15,41 +15,32 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import asyncio
-
 import pytest
 
 import elasticsearch
-from elasticsearch.helpers.test import CA_CERTS, ELASTICSEARCH_URL
 
-from ...utils import wipe_cluster
+from ...utils import CA_CERTS, wipe_cluster
 
 pytestmark = pytest.mark.asyncio
 
 
 @pytest.fixture(scope="function")
-async def async_client():
+@pytest.mark.usefixtures("sync_client")
+async def async_client(elasticsearch_url):
+    # 'sync_client' fixture is used for the guaranteed wipe_cluster() call.
+
+    if not hasattr(elasticsearch, "AsyncElasticsearch"):
+        pytest.skip("test requires 'AsyncElasticsearch' and aiohttp to be installed")
+
+    # Unfortunately the asyncio client needs to be rebuilt every
+    # test execution due to how pytest-asyncio manages
+    # event loops (one per test!)
     client = None
     try:
-        if not hasattr(elasticsearch, "AsyncElasticsearch"):
-            pytest.skip("test requires 'AsyncElasticsearch'")
-
-        kw = {"timeout": 3, "ca_certs": CA_CERTS}
-        client = elasticsearch.AsyncElasticsearch(ELASTICSEARCH_URL, **kw)
-
-        # wait for yellow status
-        for _ in range(100):
-            try:
-                await client.cluster.health(wait_for_status="yellow")
-                break
-            except ConnectionError:
-                await asyncio.sleep(0.1)
-        else:
-            # timeout
-            pytest.skip("Elasticsearch failed to start.")
-
+        client = elasticsearch.AsyncElasticsearch(
+            elasticsearch_url, timeout=3, ca_certs=CA_CERTS
+        )
         yield client
-
     finally:
         if client:
             wipe_cluster(client)

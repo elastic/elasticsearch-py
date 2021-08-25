@@ -26,8 +26,6 @@ from elasticsearch import Elasticsearch, helpers
 from elasticsearch.helpers import actions
 from elasticsearch.serializer import JSONSerializer
 
-from .test_cases import TestCase
-
 lock_side_effect = threading.Lock()
 
 
@@ -46,7 +44,7 @@ def mock_process_bulk_chunk(*args, **kwargs):
 mock_process_bulk_chunk.call_count = 0
 
 
-class TestParallelBulk(TestCase):
+class TestParallelBulk:
     @mock.patch(
         "elasticsearch.helpers.actions._process_bulk_chunk",
         side_effect=mock_process_bulk_chunk,
@@ -55,7 +53,7 @@ class TestParallelBulk(TestCase):
         actions = ({"x": i} for i in range(100))
         list(helpers.parallel_bulk(Elasticsearch(), actions, chunk_size=2))
 
-        self.assertEqual(50, mock_process_bulk_chunk.call_count)
+        assert 50 == mock_process_bulk_chunk.call_count
 
     @pytest.mark.skip
     @mock.patch(
@@ -72,39 +70,28 @@ class TestParallelBulk(TestCase):
                 Elasticsearch(), actions, thread_count=10, chunk_size=2
             )
         )
-        self.assertTrue(len(set([r[1] for r in results])) > 1)
+        assert len(set([r[1] for r in results])) > 1
 
 
-class TestChunkActions(TestCase):
+class TestChunkActions:
     def setup_method(self, _):
         self.actions = [({"index": {}}, {"some": u"datá", "i": i}) for i in range(100)]
 
     def test_expand_action(self):
-        self.assertEqual(helpers.expand_action({}), ({"index": {}}, {}))
-        self.assertEqual(
-            helpers.expand_action({"key": "val"}), ({"index": {}}, {"key": "val"})
-        )
+        assert helpers.expand_action({}) == ({"index": {}}, {})
+        assert helpers.expand_action({"key": "val"}) == ({"index": {}}, {"key": "val"})
 
     def test_expand_action_actions(self):
-        self.assertEqual(
-            helpers.expand_action(
-                {"_op_type": "delete", "_id": "id", "_index": "index"}
-            ),
-            ({"delete": {"_id": "id", "_index": "index"}}, None),
-        )
-        self.assertEqual(
-            helpers.expand_action(
-                {"_op_type": "update", "_id": "id", "_index": "index", "key": "val"}
-            ),
-            ({"update": {"_id": "id", "_index": "index"}}, {"key": "val"}),
-        )
-        self.assertEqual(
-            helpers.expand_action(
-                {"_op_type": "create", "_id": "id", "_index": "index", "key": "val"}
-            ),
-            ({"create": {"_id": "id", "_index": "index"}}, {"key": "val"}),
-        )
-        self.assertEqual(
+        assert helpers.expand_action(
+            {"_op_type": "delete", "_id": "id", "_index": "index"}
+        ) == ({"delete": {"_id": "id", "_index": "index"}}, None)
+        assert helpers.expand_action(
+            {"_op_type": "update", "_id": "id", "_index": "index", "key": "val"}
+        ) == ({"update": {"_id": "id", "_index": "index"}}, {"key": "val"})
+        assert helpers.expand_action(
+            {"_op_type": "create", "_id": "id", "_index": "index", "key": "val"}
+        ) == ({"create": {"_id": "id", "_index": "index"}}, {"key": "val"})
+        assert (
             helpers.expand_action(
                 {
                     "_op_type": "create",
@@ -112,8 +99,8 @@ class TestChunkActions(TestCase):
                     "_index": "index",
                     "_source": {"key": "val"},
                 }
-            ),
-            ({"create": {"_id": "id", "_index": "index"}}, {"key": "val"}),
+            )
+            == ({"create": {"_id": "id", "_index": "index"}}, {"key": "val"})
         )
 
     def test_expand_action_options(self):
@@ -143,55 +130,38 @@ class TestChunkActions(TestCase):
                 action_option = option
             else:
                 option, action_option = option
-            self.assertEqual(
-                helpers.expand_action({"key": "val", option: 0}),
-                ({"index": {action_option: 0}}, {"key": "val"}),
+            assert helpers.expand_action({"key": "val", option: 0}) == (
+                {"index": {action_option: 0}},
+                {"key": "val"},
             )
 
     def test__source_metadata_or_source(self):
-        self.assertEqual(
-            helpers.expand_action({"_source": {"key": "val"}}),
-            ({"index": {}}, {"key": "val"}),
+        assert helpers.expand_action({"_source": {"key": "val"}}) == (
+            {"index": {}},
+            {"key": "val"},
         )
 
-        self.assertEqual(
-            helpers.expand_action(
-                {"_source": ["key"], "key": "val", "_op_type": "update"}
-            ),
-            ({"update": {"_source": ["key"]}}, {"key": "val"}),
-        )
+        assert helpers.expand_action(
+            {"_source": ["key"], "key": "val", "_op_type": "update"}
+        ) == ({"update": {"_source": ["key"]}}, {"key": "val"})
 
-        self.assertEqual(
-            helpers.expand_action(
-                {"_source": True, "key": "val", "_op_type": "update"}
-            ),
-            ({"update": {"_source": True}}, {"key": "val"}),
-        )
+        assert helpers.expand_action(
+            {"_source": True, "key": "val", "_op_type": "update"}
+        ) == ({"update": {"_source": True}}, {"key": "val"})
 
         # This case is only to ensure backwards compatibility with old functionality.
-        self.assertEqual(
-            helpers.expand_action(
-                {"_source": {"key2": "val2"}, "key": "val", "_op_type": "update"}
-            ),
-            ({"update": {}}, {"key2": "val2"}),
-        )
+        assert helpers.expand_action(
+            {"_source": {"key2": "val2"}, "key": "val", "_op_type": "update"}
+        ) == ({"update": {}}, {"key2": "val2"})
 
     def test_chunks_are_chopped_by_byte_size(self):
-        self.assertEqual(
-            100,
-            len(
-                list(helpers._chunk_actions(self.actions, 100000, 1, JSONSerializer()))
-            ),
+        assert 100 == len(
+            list(helpers._chunk_actions(self.actions, 100000, 1, JSONSerializer()))
         )
 
     def test_chunks_are_chopped_by_chunk_size(self):
-        self.assertEqual(
-            10,
-            len(
-                list(
-                    helpers._chunk_actions(self.actions, 10, 99999999, JSONSerializer())
-                )
-            ),
+        assert 10 == len(
+            list(helpers._chunk_actions(self.actions, 10, 99999999, JSONSerializer()))
         )
 
     def test_chunks_are_chopped_by_byte_size_properly(self):
@@ -201,29 +171,24 @@ class TestChunkActions(TestCase):
                 self.actions, 100000, max_byte_size, JSONSerializer()
             )
         )
-        self.assertEqual(25, len(chunks))
+        assert 25 == len(chunks)
         for chunk_data, chunk_actions in chunks:
             chunk = u"".join(chunk_actions)
             chunk = chunk if isinstance(chunk, str) else chunk.encode("utf-8")
-            self.assertLessEqual(len(chunk), max_byte_size)
+            assert len(chunk) <= max_byte_size
 
     def test_add_helper_meta_to_kwargs(self):
-        self.assertEqual(
-            actions._add_helper_meta_to_kwargs({}, "b"),
-            {"params": {"__elastic_client_meta": (("h", "b"),)}},
-        )
-        self.assertEqual(
-            actions._add_helper_meta_to_kwargs({"params": {}}, "b"),
-            {"params": {"__elastic_client_meta": (("h", "b"),)}},
-        )
-        self.assertEqual(
-            actions._add_helper_meta_to_kwargs({"params": {"key": "value"}}, "b"),
-            {"params": {"__elastic_client_meta": (("h", "b"),), "key": "value"}},
-        )
+        assert actions._add_helper_meta_to_kwargs({}, "b") == {
+            "params": {"__elastic_client_meta": (("h", "b"),)}
+        }
+        assert actions._add_helper_meta_to_kwargs({"params": {}}, "b") == {
+            "params": {"__elastic_client_meta": (("h", "b"),)}
+        }
+        assert actions._add_helper_meta_to_kwargs(
+            {"params": {"key": "value"}}, "b"
+        ) == {"params": {"__elastic_client_meta": (("h", "b"),), "key": "value"}}
 
 
-class TestExpandActions(TestCase):
+class TestExpandActions:
     def test_string_actions_are_marked_as_simple_inserts(self):
-        self.assertEqual(
-            ('{"index":{}}', "whatever"), helpers.expand_action("whatever")
-        )
+        assert ('{"index":{}}', "whatever") == helpers.expand_action("whatever")

@@ -42,4 +42,4 @@ docker run \
   --name elasticsearch-py \
   --rm \
   elastic/elasticsearch-py \
-  python setup.py test
+  nox -s test

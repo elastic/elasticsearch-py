@@ -26,7 +26,6 @@ import warnings
 import pytest
 
 from elasticsearch import ElasticsearchWarning, RequestError
-from elasticsearch.helpers.test import _get_version
 
 from ...test_server.test_rest_api_spec import (
     IMPLEMENTED_FEATURES,
@@ -35,6 +34,7 @@ from ...test_server.test_rest_api_spec import (
     YAML_TEST_SPECS,
     YamlRunner,
 )
+from ...utils import parse_version
 
 pytestmark = pytest.mark.asyncio
 
@@ -188,9 +188,9 @@ class AsyncYamlRunner(YamlRunner):
             version, reason = skip["version"], skip["reason"]
             if version == "all":
                 pytest.skip(reason)
-            min_version, max_version = version.split("-")
-            min_version = _get_version(min_version) or (0,)
-            max_version = _get_version(max_version) or (999,)
+            min_version, _, max_version = version.partition("-")
+            min_version = parse_version(min_version.strip()) or (0,)
+            max_version = parse_version(max_version.strip()) or (999,)
             if min_version <= (await self.es_version()) <= max_version:
                 pytest.skip(reason)
 

@@ -55,18 +55,7 @@ install_requires = [
     "urllib3>=1.21.1, <2",
     "certifi",
 ]
-tests_require = [
-    "requests>=2.0.0, <3.0.0",
-    "coverage",
-    "mock",
-    "pyyaml",
-    "pytest",
-    "pytest-cov",
-]
-async_require = ["aiohttp>=3,<4"]
-
-docs_require = ["sphinx<1.7", "sphinx_rtd_theme"]
-generate_require = ["black", "jinja2"]
+async_requires = ["aiohttp>=3,<4"]
 
 setup(
     name=package_name,
@@ -109,12 +98,8 @@ setup(
     ],
     python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, <4",
     install_requires=install_requires,
-    test_suite="test_elasticsearch.run_tests.run_all",
-    tests_require=tests_require,
     extras_require={
-        "develop": tests_require + docs_require + generate_require,
-        "docs": docs_require,
         "requests": ["requests>=2.4.0, <3.0.0"],
-        "async": async_require,
+        "async": async_requires,
     },
 )

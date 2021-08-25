@@ -15,8 +15,11 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+import os
+
 import nox
 
+SOURCE_DIR = os.path.dirname(os.path.abspath(__file__))
 SOURCE_FILES = (
     "setup.py",
     "noxfile.py",
@@ -26,12 +29,26 @@ SOURCE_FILES = (
 )
 
 
-@nox.session(python=["2.7", "3.4", "3.5", "3.6", "3.7", "3.8", "3.9"])
+@nox.session(python=["2.7", "3.4", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10"])
 def test(session):
     session.install(".")
     session.install("-r", "dev-requirements.txt")
 
-    session.run("python", "setup.py", "test")
+    python_version = tuple(int(x) for x in session.python.split("."))
+    junit_xml = os.path.join(SOURCE_DIR, "junit", "elasticsearch-py-junit.xml")
+    pytest_argv = [
+        "pytest",
+        "--cov=elasticsearch",
+        "--junitxml=%s" % junit_xml,
+        "--log-level=DEBUG",
+        "--cache-clear",
+        "-vv",
+    ]
+    # Python 3.6+ is required for async
+    if python_version < (3, 6):
+        pytest_argv.append("--ignore=test_elasticsearch/test_async/")
+
+    session.run(*pytest_argv)
 
 
 @nox.session()
@@ -55,7 +72,7 @@ def lint(session):
     session.run("python", "utils/license-headers.py", "check", *SOURCE_FILES)
 
     # Workaround to make '-r' to still work despite uninstalling aiohttp below.
-    session.run("python", "-m", "pip", "install", "aiohttp")
+    session.install("aiohttp")
 
     # Run mypy on the package and then the type examples separately for
     # the two different mypy use-cases, ourselves and our users.

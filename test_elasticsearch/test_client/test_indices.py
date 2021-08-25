@@ -15,10 +15,12 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from test_elasticsearch.test_cases import ElasticsearchTestCase
+import pytest
+
+from test_elasticsearch.test_cases import DummyTransportTestCase
 
 
-class TestIndices(ElasticsearchTestCase):
+class TestIndices(DummyTransportTestCase):
     def test_create_one_index(self):
         self.client.indices.create("test-index")
         self.assert_url_called("PUT", "/test-index")
@@ -32,6 +34,9 @@ class TestIndices(ElasticsearchTestCase):
         self.assert_url_called("HEAD", "/second.index,third%2Findex")
 
     def test_passing_empty_value_for_required_param_raises_exception(self):
-        self.assertRaises(ValueError, self.client.indices.exists, index=None)
-        self.assertRaises(ValueError, self.client.indices.exists, index=[])
-        self.assertRaises(ValueError, self.client.indices.exists, index="")
+        with pytest.raises(ValueError):
+            self.client.indices.exists(index=None)
+        with pytest.raises(ValueError):
+            self.client.indices.exists(index=[])
+        with pytest.raises(ValueError):
+            self.client.indices.exists(index="")
