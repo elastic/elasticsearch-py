@@ -39,7 +39,7 @@ def test(session):
     pytest_argv = [
         "pytest",
         "--cov=elasticsearch",
-        "--junitxml=%s" % junit_xml,
+        f"--junitxml={junit_xml}",
         "--log-level=DEBUG",
         "--cache-clear",
         "-vv",
@@ -53,9 +53,10 @@ def test(session):
 
 @nox.session()
 def format(session):
-    session.install("black", "isort")
+    session.install("black", "isort", "flynt")
 
     session.run("isort", "--profile=black", *SOURCE_FILES)
+    session.run("flynt", *SOURCE_FILES)
     session.run("black", "--target-version=py36", *SOURCE_FILES)
     session.run("python", "utils/license-headers.py", "fix", *SOURCE_FILES)
 

@@ -106,7 +106,7 @@ class AsyncYamlRunner(YamlRunner):
             if hasattr(self, "run_" + action_type):
                 await await_if_coro(getattr(self, "run_" + action_type)(action))
             else:
-                raise RuntimeError("Invalid action type %r" % (action_type,))
+                raise RuntimeError(f"Invalid action type {action_type!r}")
 
     async def run_do(self, action):
         api = self.client
@@ -155,7 +155,7 @@ class AsyncYamlRunner(YamlRunner):
             else:
                 if catch:
                     raise AssertionError(
-                        "Failed to catch %r in %r." % (catch, self.last_response)
+                        f"Failed to catch {catch!r} in {self.last_response!r}."
                     )
 
         # Filter out warnings raised by other components.
@@ -182,7 +182,7 @@ class AsyncYamlRunner(YamlRunner):
             for feature in features:
                 if feature in IMPLEMENTED_FEATURES:
                     continue
-                pytest.skip("feature '%s' is not supported" % feature)
+                pytest.skip(f"feature '{feature}' is not supported")
 
         if "version" in skip:
             version, reason = skip["version"], skip["reason"]

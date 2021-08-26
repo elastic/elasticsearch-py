@@ -45,7 +45,7 @@ def _normalize_hosts(hosts):
     for host in hosts:
         if isinstance(host, string_types):
             if "://" not in host:
-                host = "//%s" % host
+                host = f"//{host}"
 
             parsed_url = urlparse(host)
             h = {"host": parsed_url.hostname}
@@ -144,9 +144,7 @@ def query_params(*es_query_params):
                     "Only one of 'http_auth' and 'api_key' may be passed at a time"
                 )
             elif http_auth is not None:
-                headers["authorization"] = "Basic {}".format(
-                    _base64_auth_header(http_auth),
-                )
+                headers["authorization"] = f"Basic {_base64_auth_header(http_auth)}"
             elif api_key is not None:
                 headers["authorization"] = f"ApiKey {_base64_auth_header(api_key)}"
 

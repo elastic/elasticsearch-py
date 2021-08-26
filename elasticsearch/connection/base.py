@@ -149,7 +149,7 @@ class Connection:
         else:
             self.host = f"{scheme}://{host}"
         if self.port is not None:
-            self.host += ":%s" % self.port
+            self.host += f":{self.port}"
         if url_prefix:
             url_prefix = "/" + url_prefix.strip("/")
         self.url_prefix = url_prefix

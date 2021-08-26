@@ -79,7 +79,7 @@ class TextSerializer(Serializer):
         if isinstance(data, string_types):
             return data
 
-        raise SerializationError("Cannot serialize %r into text." % data)
+        raise SerializationError(f"Cannot serialize {data!r} into text.")
 
 
 class JSONSerializer(Serializer):
@@ -142,7 +142,7 @@ class Deserializer:
             self.default = serializers[default_mimetype]
         except KeyError:
             raise ImproperlyConfigured(
-                "Cannot find default serializer (%s)" % default_mimetype
+                f"Cannot find default serializer ({default_mimetype})"
             )
         self.serializers = serializers
 
@@ -160,7 +160,7 @@ class Deserializer:
                 deserializer = self.serializers[mimetype]
             except KeyError:
                 raise SerializationError(
-                    "Unknown mimetype, unable to deserialize: %s" % mimetype
+                    f"Unknown mimetype, unable to deserialize: {mimetype}"
                 )
 
         return deserializer.loads(s)

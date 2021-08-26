@@ -205,7 +205,7 @@ class YamlRunner:
             if hasattr(self, "run_" + action_type):
                 getattr(self, "run_" + action_type)(action)
             else:
-                raise RuntimeError("Invalid action type %r" % (action_type,))
+                raise RuntimeError(f"Invalid action type {action_type!r}")
 
     def run_do(self, action):
         api = self.client
@@ -254,7 +254,7 @@ class YamlRunner:
             else:
                 if catch:
                     raise AssertionError(
-                        "Failed to catch %r in %r." % (catch, self.last_response)
+                        f"Failed to catch {catch!r} in {self.last_response!r}."
                     )
 
         # Filter out warnings raised by other components.
@@ -284,7 +284,7 @@ class YamlRunner:
         elif catch[0] == "/" and catch[-1] == "/":
             assert (
                 re.search(catch[1:-1], exception.error + " " + repr(exception.info)),
-                "%s not in %r" % (catch, exception.info),
+                f"{catch} not in {exception.info!r}",
             ) is not None
         self.last_response = exception.info
 
@@ -298,7 +298,7 @@ class YamlRunner:
             for feature in features:
                 if feature in IMPLEMENTED_FEATURES:
                     continue
-                pytest.skip("feature '%s' is not supported" % feature)
+                pytest.skip(f"feature '{feature}' is not supported")
 
         if "version" in skip:
             version, reason = skip["version"], skip["reason"]
@@ -364,10 +364,7 @@ class YamlRunner:
                 and expected.endswith("/")
             ):
                 expected = re.compile(expected[1:-1], re.VERBOSE | re.MULTILINE)
-                assert expected.search(value), "%r does not match %r" % (
-                    value,
-                    expected,
-                )
+                assert expected.search(value), f"{value!r} does not match {expected!r}"
             else:
                 self._assert_match_equals(value, expected)
 
@@ -377,7 +374,7 @@ class YamlRunner:
             expected = self._resolve(expected)  # dict[str, str]
 
             if expected not in value:
-                raise AssertionError("%s is not contained by %s" % (expected, value))
+                raise AssertionError(f"{expected} is not contained by {value}")
 
     def run_transform_and_set(self, action):
         for key, value in action.items():
@@ -460,7 +457,7 @@ class YamlRunner:
         if isinstance(b, string_types) and isinstance(a, float) and "e" in repr(a):
             a = repr(a).replace("e+", "E")
 
-        assert a == b, "%r does not match %r" % (a, b)
+        assert a == b, f"{a!r} does not match {b!r}"
 
 
 @pytest.fixture(scope="function")
@@ -505,7 +502,7 @@ try:
     # Now talk to the artifacts API with the 'STACK_VERSION' environment variable
     resp = http.request(
         "GET",
-        "https://artifacts-api.elastic.co/v1/versions/%s" % (version_number,),
+        f"https://artifacts-api.elastic.co/v1/versions/{version_number}",
     )
     resp = json.loads(resp.data.decode("utf-8"))
 
@@ -528,7 +525,7 @@ try:
             break
     else:
         raise RuntimeError(
-            "Could not find the package 'rest-resources-zip-*.zip' in build %r" % build
+            f"Could not find the package 'rest-resources-zip-*.zip' in build {build!r}"
         )
 
     # Download the zip and start reading YAML from the files in memory
@@ -582,7 +579,7 @@ try:
             YAML_TEST_SPECS.append(pytest.param(pytest_param, id=pytest_param_id))
 
 except Exception as e:
-    warnings.warn("Could not load REST API tests: %s" % (str(e),))
+    warnings.warn(f"Could not load REST API tests: {str(e)}")
 
 
 if not RUN_ASYNC_REST_API_TESTS:
