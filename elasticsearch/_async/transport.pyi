@@ -21,7 +21,7 @@ from ..connection import Connection
 from ..connection_pool import ConnectionPool
 from ..serializer import Deserializer, Serializer
 
-class AsyncTransport(object):
+class AsyncTransport:
     DEFAULT_CONNECTION_CLASS: Type[Connection]
     connection_pool: ConnectionPool
     deserializer: Deserializer
@@ -64,7 +64,7 @@ class AsyncTransport(object):
         retry_on_timeout: bool = ...,
         send_get_body_as: str = ...,
         meta_header: bool = ...,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None: ...
     def add_connection(self, host: Any) -> None: ...
     def set_connections(self, hosts: Collection[Any]) -> None: ...

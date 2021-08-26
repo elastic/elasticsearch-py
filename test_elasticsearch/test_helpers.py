@@ -75,7 +75,7 @@ class TestParallelBulk:
 
 class TestChunkActions:
     def setup_method(self, _):
-        self.actions = [({"index": {}}, {"some": u"datá", "i": i}) for i in range(100)]
+        self.actions = [({"index": {}}, {"some": "datá", "i": i}) for i in range(100)]
 
     def test_expand_action(self):
         assert helpers.expand_action({}) == ({"index": {}}, {})
@@ -173,7 +173,7 @@ class TestChunkActions:
         )
         assert 25 == len(chunks)
         for chunk_data, chunk_actions in chunks:
-            chunk = u"".join(chunk_actions)
+            chunk = "".join(chunk_actions)
             chunk = chunk if isinstance(chunk, str) else chunk.encode("utf-8")
             assert len(chunk) <= max_byte_size
 

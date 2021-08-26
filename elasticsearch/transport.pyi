@@ -25,7 +25,7 @@ def get_host_info(
     node_info: Dict[str, Any], host: Optional[Dict[str, Any]]
 ) -> Optional[Dict[str, Any]]: ...
 
-class Transport(object):
+class Transport:
     DEFAULT_CONNECTION_CLASS: Type[Connection]
     connection_pool: ConnectionPool
     deserializer: Deserializer
@@ -68,7 +68,7 @@ class Transport(object):
         retry_on_timeout: bool = ...,
         send_get_body_as: str = ...,
         meta_header: bool = ...,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None: ...
     def add_connection(self, host: Any) -> None: ...
     def set_connections(self, hosts: Collection[Any]) -> None: ...

@@ -52,7 +52,7 @@ packages = [
 ]
 
 install_requires = [
-    "urllib3>=1.21.1, <2",
+    "urllib3>=1.26, <2",
     "certifi",
 ]
 async_requires = ["aiohttp>=3,<4"]
@@ -84,19 +84,16 @@ setup(
         "Intended Audience :: Developers",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.4",
-        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: Implementation :: CPython",
         "Programming Language :: Python :: Implementation :: PyPy",
     ],
-    python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, <4",
+    python_requires=">=3.6, <4",
     install_requires=install_requires,
     extras_require={
         "requests": ["requests>=2.4.0, <3.0.0"],

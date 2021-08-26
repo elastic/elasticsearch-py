@@ -37,7 +37,7 @@ import aiohttp.client_exceptions as aiohttp_exceptions
 # See AIOHttpConnection.request() for more information why.
 try:
     import yarl
-except ImportError:
+except ImportError:  # pragma: nocover
     yarl = False
 
 __all__ = ["aiohttp", "aiohttp_exceptions", "yarl"]

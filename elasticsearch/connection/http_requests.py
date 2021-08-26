@@ -80,7 +80,7 @@ class RequestsHttpConnection(Connection):
         cloud_id=None,
         api_key=None,
         opaque_id=None,
-        **kwargs
+        **kwargs,
     ):
         if not REQUESTS_AVAILABLE:
             raise ImproperlyConfigured(
@@ -92,7 +92,7 @@ class RequestsHttpConnection(Connection):
         for key in list(self.session.headers):
             self.session.headers.pop(key)
 
-        super(RequestsHttpConnection, self).__init__(
+        super().__init__(
             host=host,
             port=port,
             use_ssl=use_ssl,
@@ -101,7 +101,7 @@ class RequestsHttpConnection(Connection):
             cloud_id=cloud_id,
             api_key=api_key,
             opaque_id=opaque_id,
-            **kwargs
+            **kwargs,
         )
 
         if not self.http_compress:
@@ -115,7 +115,7 @@ class RequestsHttpConnection(Connection):
                 http_auth = tuple(http_auth.split(":", 1))
             self.session.auth = http_auth
 
-        self.base_url = "%s%s" % (
+        self.base_url = "{}{}".format(
             self.host,
             self.url_prefix,
         )
@@ -147,7 +147,7 @@ class RequestsHttpConnection(Connection):
         url = self.base_url + url
         headers = headers or {}
         if params:
-            url = "%s?%s" % (url, urlencode(params))
+            url = f"{url}?{urlencode(params)}"
 
         orig_body = body
         if self.http_compress and body:

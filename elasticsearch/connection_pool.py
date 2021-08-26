@@ -19,18 +19,14 @@ import logging
 import random
 import threading
 import time
+from queue import Empty, PriorityQueue
 
 from .exceptions import ImproperlyConfigured
-
-try:
-    from Queue import Empty, PriorityQueue
-except ImportError:
-    from queue import Empty, PriorityQueue
 
 logger = logging.getLogger("elasticsearch")
 
 
-class ConnectionSelector(object):
+class ConnectionSelector:
     """
     Simple class used to select a connection from a list of currently live
     connection instances. In init time it is passed a dictionary containing all
@@ -79,7 +75,7 @@ class RoundRobinSelector(ConnectionSelector):
     """
 
     def __init__(self, opts):
-        super(RoundRobinSelector, self).__init__(opts)
+        super().__init__(opts)
         self.data = threading.local()
 
     def select(self, connections):
@@ -88,7 +84,7 @@ class RoundRobinSelector(ConnectionSelector):
         return connections[self.data.rr]
 
 
-class ConnectionPool(object):
+class ConnectionPool:
     """
     Container holding the :class:`~elasticsearch.Connection` instances,
     managing the selection process (via a
@@ -118,7 +114,7 @@ class ConnectionPool(object):
         timeout_cutoff=5,
         selector_class=RoundRobinSelector,
         randomize_hosts=True,
-        **kwargs
+        **kwargs,
     ):
         """
         :arg connections: list of tuples containing the
@@ -273,7 +269,7 @@ class ConnectionPool(object):
             conn.close()
 
     def __repr__(self):
-        return "<%s: %r>" % (type(self).__name__, self.connections)
+        return f"<{type(self).__name__}: {self.connections!r}>"
 
 
 class DummyConnectionPool(ConnectionPool):

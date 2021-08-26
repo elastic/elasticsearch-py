@@ -33,7 +33,7 @@ from typing import (
 logger: logging.Logger
 tracer: logging.Logger
 
-class Connection(object):
+class Connection:
     headers: Dict[str, str]
     use_ssl: bool
     http_compress: bool
@@ -57,7 +57,7 @@ class Connection(object):
         api_key: Optional[Union[Tuple[str, str], List[str], str]] = ...,
         opaque_id: Optional[str] = ...,
         meta_header: bool = ...,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None: ...
     def __repr__(self) -> str: ...
     def __eq__(self, other: object) -> bool: ...

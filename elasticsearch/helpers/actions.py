@@ -19,7 +19,7 @@ import logging
 import time
 from operator import methodcaller
 
-from ..compat import Mapping, Queue, map, string_types
+from ..compat import Mapping, Queue, string_types
 from ..exceptions import NotFoundError, TransportError
 from .errors import BulkIndexError, ScanError
 
@@ -225,7 +225,7 @@ def _process_bulk_chunk(
     raise_on_error=True,
     ignore_status=(),
     *args,
-    **kwargs
+    **kwargs,
 ):
     """
     Send a bulk request to elasticsearch and process the output.
@@ -253,8 +253,7 @@ def _process_bulk_chunk(
             ignore_status=ignore_status,
             raise_on_error=raise_on_error,
         )
-    for item in gen:
-        yield item
+    yield from gen
 
 
 def _add_helper_meta_to_kwargs(kwargs, helper_meta):
@@ -278,7 +277,7 @@ def streaming_bulk(
     yield_ok=True,
     ignore_status=(),
     *args,
-    **kwargs
+    **kwargs,
 ):
 
     """
@@ -336,7 +335,7 @@ def streaming_bulk(
                         raise_on_error,
                         ignore_status,
                         *args,
-                        **kwargs
+                        **kwargs,
                     ),
                 ):
 
@@ -431,7 +430,7 @@ def parallel_bulk(
     expand_action_callback=expand_action,
     ignore_status=(),
     *args,
-    **kwargs
+    **kwargs,
 ):
     """
     Parallel version of the bulk helper run in multiple threads at once.
@@ -460,7 +459,7 @@ def parallel_bulk(
 
     class BlockingPool(ThreadPool):
         def _setup_queues(self):
-            super(BlockingPool, self)._setup_queues()  # type: ignore
+            super()._setup_queues()  # type: ignore
             # The queue must be at least the size of the number of threads to
             # prevent hanging when inserting sentinel values during teardown.
             self._inqueue = Queue(max(queue_size, thread_count))
@@ -477,15 +476,14 @@ def parallel_bulk(
                     bulk_chunk[0],
                     ignore_status=ignore_status,
                     *args,
-                    **kwargs
+                    **kwargs,
                 )
             ),
             _chunk_actions(
                 actions, chunk_size, max_chunk_bytes, client.transport.serializer
             ),
         ):
-            for item in result:
-                yield item
+            yield from result
 
     finally:
         pool.close()
@@ -502,7 +500,7 @@ def scan(
     request_timeout=None,
     clear_scroll=True,
     scroll_kwargs=None,
-    **kwargs
+    **kwargs,
 ):
     """
     Simple abstraction on top of the
@@ -572,8 +570,7 @@ def scan(
 
     try:
         while scroll_id and resp["hits"]["hits"]:
-            for hit in resp["hits"]["hits"]:
-                yield hit
+            yield from resp["hits"]["hits"]
 
             # Default to 0 if the value isn't included in the response
             shards_successful = resp["_shards"].get("successful", 0)
@@ -610,7 +607,7 @@ def scan(
                 body={"scroll_id": [scroll_id]},
                 ignore=(404,),
                 params={"__elastic_client_meta": (("h", "s"),)},
-                **transport_kwargs
+                **transport_kwargs,
             )
 
 
@@ -699,5 +696,5 @@ def reindex(
         target_client,
         _change_doc_index(docs, target_index, op_type),
         chunk_size=chunk_size,
-        **kwargs
+        **kwargs,
     )

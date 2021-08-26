@@ -64,7 +64,7 @@ class AsyncTransport(Transport):
         retry_on_timeout=False,
         send_get_body_as="GET",
         meta_header=True,
-        **kwargs
+        **kwargs,
     ):
         """
         :arg hosts: list of dictionaries, each containing keyword arguments to
@@ -110,7 +110,7 @@ class AsyncTransport(Transport):
         self._async_init_called = False
         self._sniff_on_start_event = None  # type: asyncio.Event
 
-        super(AsyncTransport, self).__init__(
+        super().__init__(
             hosts=[],
             connection_class=connection_class,
             connection_pool_class=connection_pool_class,

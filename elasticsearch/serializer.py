@@ -15,11 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-try:
-    import simplejson as json
-except ImportError:
-    import json
-
+import json
 import uuid
 from datetime import date, datetime
 from decimal import Decimal
@@ -63,7 +59,7 @@ except ImportError:
     pd = None
 
 
-class Serializer(object):
+class Serializer:
     mimetype = ""
 
     def loads(self, s):
@@ -113,7 +109,7 @@ class JSONSerializer(Serializer):
             elif data is getattr(pd, "NA", None):
                 return None
 
-        raise TypeError("Unable to serialize %r (type: %s)" % (data, type(data)))
+        raise TypeError(f"Unable to serialize {data!r} (type: {type(data)})")
 
     def loads(self, s):
         try:
@@ -140,7 +136,7 @@ DEFAULT_SERIALIZERS = {
 }
 
 
-class Deserializer(object):
+class Deserializer:
     def __init__(self, serializers, default_mimetype="application/json"):
         try:
             self.default = serializers[default_mimetype]

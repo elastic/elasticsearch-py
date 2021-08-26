@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #  Licensed to Elasticsearch B.V. under one or more contributor
 #  license agreements. See the NOTICE file distributed with
 #  this work for additional information regarding copyright
@@ -16,7 +15,6 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from __future__ import unicode_literals
 
 import logging
 
@@ -59,7 +57,7 @@ from .xpack import XPackClient
 logger = logging.getLogger("elasticsearch")
 
 
-class Elasticsearch(object):
+class Elasticsearch:
     """
     Elasticsearch low-level client. Provides a straightforward mapping from
     Python to ES REST endpoints.
@@ -244,10 +242,10 @@ class Elasticsearch(object):
             # truncate to 5 if there are too many
             if len(cons) > 5:
                 cons = cons[:5] + ["..."]
-            return "<{cls}({cons})>".format(cls=self.__class__.__name__, cons=cons)
+            return f"<{self.__class__.__name__}({cons})>"
         except Exception:
             # probably operating on custom transport and connection_pool, ignore
-            return super(Elasticsearch, self).__repr__()
+            return super().__repr__()
 
     def __enter__(self):
         if hasattr(self.transport, "_async_call"):
