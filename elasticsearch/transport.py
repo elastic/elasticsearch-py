@@ -53,7 +53,7 @@ def get_host_info(node_info, host):
     return host
 
 
-class Transport(object):
+class Transport:
     """
     Encapsulation of transport-related to logic. Handles instantiation of the
     individual connections as well as creating a connection pool to hold them.
@@ -81,7 +81,7 @@ class Transport(object):
         retry_on_timeout=False,
         send_get_body_as="GET",
         meta_header=True,
-        **kwargs
+        **kwargs,
     ):
         """
         :arg hosts: list of dictionaries, each containing keyword arguments to
@@ -492,7 +492,7 @@ class Transport(object):
             headers = headers or {}
             client_meta = self._client_meta + client_meta
             headers["x-elastic-client-meta"] = ",".join(
-                "%s=%s" % (k, v) for k, v in client_meta
+                f"{k}={v}" for k, v in client_meta
             )
 
         return method, headers, params, body, ignore, timeout

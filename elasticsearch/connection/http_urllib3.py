@@ -122,12 +122,12 @@ class Urllib3HttpConnection(Connection):
         cloud_id=None,
         api_key=None,
         opaque_id=None,
-        **kwargs
+        **kwargs,
     ):
         # Initialize headers before calling super().__init__().
         self.headers = urllib3.make_headers(keep_alive=True)
 
-        super(Urllib3HttpConnection, self).__init__(
+        super().__init__(
             host=host,
             port=port,
             use_ssl=use_ssl,
@@ -136,7 +136,7 @@ class Urllib3HttpConnection(Connection):
             cloud_id=cloud_id,
             api_key=api_key,
             opaque_id=opaque_id,
-            **kwargs
+            **kwargs,
         )
         if http_auth is not None:
             if isinstance(http_auth, (tuple, list)):
@@ -222,7 +222,7 @@ class Urllib3HttpConnection(Connection):
     ):
         url = self.url_prefix + url
         if params:
-            url = "%s?%s" % (url, urlencode(params))
+            url = f"{url}?{urlencode(params)}"
 
         full_url = self.host + url
 

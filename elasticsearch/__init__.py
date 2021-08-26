@@ -16,7 +16,6 @@
 #  under the License.
 
 # flake8: noqa
-from __future__ import absolute_import
 
 import logging
 import re
@@ -25,9 +24,9 @@ import warnings
 
 from ._version import __versionstr__
 
-_major, _minor, _patch = [
+_major, _minor, _patch = (
     int(x) for x in re.search(r"^(\d+)\.(\d+)\.(\d+)", __versionstr__).groups()
-]
+)
 VERSION = __version__ = (_major, _minor, _patch)
 
 logger = logging.getLogger("elasticsearch")
@@ -88,10 +87,6 @@ __all__ = [
 ]
 
 try:
-    # Asyncio only supported on Python 3.6+
-    if sys.version_info < (3, 6):
-        raise ImportError
-
     from ._async.client import AsyncElasticsearch
     from ._async.http_aiohttp import AIOHttpConnection, AsyncConnection
     from ._async.transport import AsyncTransport
@@ -102,5 +97,5 @@ try:
         "AsyncTransport",
         "AsyncElasticsearch",
     ]
-except (ImportError, SyntaxError):
+except ImportError:  # pragma: nocover
     pass

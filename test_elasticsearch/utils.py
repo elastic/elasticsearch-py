@@ -225,7 +225,7 @@ def wipe_xpack_templates(client):
         try:
             client.indices.delete_template(name=template)
         except NotFoundError as e:
-            if "index_template [%s] missing" % template in str(e.info):
+            if f"index_template [{template}] missing" in str(e.info):
                 client.indices.delete_index_template(name=template)
 
     # Delete component templates, need to retry because sometimes

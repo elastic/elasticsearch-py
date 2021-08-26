@@ -16,18 +16,14 @@
 #  under the License.
 
 import logging
-from typing import Any, Dict, List, Optional, Sequence, Tuple, Type, Union
+from queue import PriorityQueue
+from typing import Any, Dict, Optional, Sequence, Tuple, Type
 
 from .connection import Connection
 
-try:
-    from Queue import PriorityQueue  # type: ignore
-except ImportError:
-    from queue import PriorityQueue
-
 logger: logging.Logger
 
-class ConnectionSelector(object):
+class ConnectionSelector:
     connection_opts: Sequence[Tuple[Connection, Any]]
     def __init__(self, opts: Sequence[Tuple[Connection, Any]]) -> None: ...
     def select(self, connections: Sequence[Connection]) -> Connection: ...
@@ -35,11 +31,11 @@ class ConnectionSelector(object):
 class RandomSelector(ConnectionSelector): ...
 class RoundRobinSelector(ConnectionSelector): ...
 
-class ConnectionPool(object):
+class ConnectionPool:
     connections_opts: Sequence[Tuple[Connection, Any]]
     connections: Sequence[Connection]
     orig_connections: Tuple[Connection, ...]
-    dead: PriorityQueue
+    dead: PriorityQueue[Connection]
     dead_count: Dict[Connection, int]
     dead_timeout: float
     timeout_cutoff: int
@@ -51,7 +47,7 @@ class ConnectionPool(object):
         timeout_cutoff: int = ...,
         selector_class: Type[ConnectionSelector] = ...,
         randomize_hosts: bool = ...,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None: ...
     def mark_dead(self, connection: Connection, now: Optional[float] = ...) -> None: ...
     def mark_live(self, connection: Connection) -> None: ...

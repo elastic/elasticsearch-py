@@ -27,5 +27,5 @@ class BulkIndexError(ElasticsearchException):
 
 class ScanError(ElasticsearchException):
     def __init__(self, scroll_id, *args, **kwargs):
-        super(ScanError, self).__init__(*args, **kwargs)  # type: ignore
+        super().__init__(*args, **kwargs)  # type: ignore
         self.scroll_id = scroll_id

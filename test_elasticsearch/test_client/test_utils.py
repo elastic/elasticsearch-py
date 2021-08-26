@@ -21,7 +21,6 @@ from __future__ import unicode_literals
 import pytest
 
 from elasticsearch.client.utils import _bulk_body, _escape, _make_path, query_params
-from elasticsearch.compat import PY2
 
 
 class TestQueryParams:
@@ -114,13 +113,6 @@ class TestQueryParams:
 class TestMakePath:
     def test_handles_unicode(self):
         id = "中文"
-        assert "/some-index/type/%E4%B8%AD%E6%96%87" == _make_path(
-            "some-index", "type", id
-        )
-
-    @pytest.mark.skipif(not PY2, reason="Only relevant for Python 2")
-    def test_handles_utf_encoded_string(self):
-        id = "中文".encode("utf-8")
         assert "/some-index/type/%E4%B8%AD%E6%96%87" == _make_path(
             "some-index", "type", id
         )

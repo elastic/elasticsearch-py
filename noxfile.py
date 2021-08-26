@@ -29,7 +29,7 @@ SOURCE_FILES = (
 )
 
 
-@nox.session(python=["2.7", "3.4", "3.5", "3.6", "3.7", "3.8", "3.9", "3.10"])
+@nox.session(python=["3.6", "3.7", "3.8", "3.9", "3.10"])
 def test(session):
     session.install(".")
     session.install("-r", "dev-requirements.txt")
@@ -39,7 +39,7 @@ def test(session):
     pytest_argv = [
         "pytest",
         "--cov=elasticsearch",
-        "--junitxml=%s" % junit_xml,
+        f"--junitxml={junit_xml}",
         "--log-level=DEBUG",
         "--cache-clear",
         "-vv",
@@ -53,10 +53,11 @@ def test(session):
 
 @nox.session()
 def format(session):
-    session.install("black", "isort")
+    session.install("black", "isort", "flynt")
 
     session.run("isort", "--profile=black", *SOURCE_FILES)
-    session.run("black", "--target-version=py27", *SOURCE_FILES)
+    session.run("flynt", *SOURCE_FILES)
+    session.run("black", "--target-version=py36", *SOURCE_FILES)
     session.run("python", "utils/license-headers.py", "fix", *SOURCE_FILES)
 
     lint(session)
@@ -67,7 +68,7 @@ def lint(session):
     session.install("flake8", "black", "mypy", "isort", "types-requests")
 
     session.run("isort", "--check", "--profile=black", *SOURCE_FILES)
-    session.run("black", "--target-version=py27", "--check", *SOURCE_FILES)
+    session.run("black", "--target-version=py36", "--check", *SOURCE_FILES)
     session.run("flake8", *SOURCE_FILES)
     session.run("python", "utils/license-headers.py", "check", *SOURCE_FILES)
 

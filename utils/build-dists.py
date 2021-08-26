@@ -222,7 +222,7 @@ def main():
         # Rename the module to fit the suffix.
         shutil.move(
             os.path.join(base_dir, "elasticsearch"),
-            os.path.join(base_dir, "elasticsearch%s" % suffix),
+            os.path.join(base_dir, f"elasticsearch{suffix}"),
         )
 
         # Ensure that the version within 'elasticsearch/_version.py' is correct.
@@ -231,7 +231,7 @@ def main():
             version_data = f.read()
         version_data = re.sub(
             r"__versionstr__ = \"[^\"]+\"",
-            '__versionstr__ = "%s"' % version,
+            f'__versionstr__ = "{version}"',
             version_data,
         )
         with open(version_path, "w") as f:
@@ -248,7 +248,7 @@ def main():
             f.write(
                 setup_py.replace(
                     'package_name = "elasticsearch"',
-                    'package_name = "elasticsearch%s"' % suffix,
+                    f'package_name = "elasticsearch{suffix}"',
                 )
             )
 
@@ -258,7 +258,7 @@ def main():
         # Clean up everything.
         run("git", "checkout", "--", "setup.py", "elasticsearch/")
         if suffix:
-            run("rm", "-rf", "elasticsearch%s/" % suffix)
+            run("rm", "-rf", f"elasticsearch{suffix}/")
 
     # Test everything that got created
     dists = os.listdir(os.path.join(base_dir, "dist"))

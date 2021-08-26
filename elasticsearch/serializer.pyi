@@ -17,7 +17,7 @@
 
 from typing import Any, Dict, Optional
 
-class Serializer(object):
+class Serializer:
     mimetype: str
     def loads(self, s: str) -> Any: ...
     def dumps(self, data: Any) -> str: ...
@@ -35,7 +35,7 @@ class JSONSerializer(Serializer):
 
 DEFAULT_SERIALIZERS: Dict[str, Serializer]
 
-class Deserializer(object):
+class Deserializer:
     def __init__(
         self,
         serializers: Dict[str, Serializer],

@@ -15,12 +15,9 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .base import Connection
+import queue
 
-try:
-    import queue
-except ImportError:
-    import Queue as queue  # type: ignore
+from .base import Connection
 
 
 class PoolingConnection(Connection):
@@ -33,7 +30,7 @@ class PoolingConnection(Connection):
 
     def __init__(self, *args, **kwargs):
         self._free_connections = queue.Queue()
-        super(PoolingConnection, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def _make_connection(self):
         raise NotImplementedError

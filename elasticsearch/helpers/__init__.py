@@ -15,8 +15,6 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import sys
-
 from .actions import (
     _chunk_actions,
     _process_bulk_chunk,
@@ -44,10 +42,6 @@ __all__ = [
 
 
 try:
-    # Asyncio only supported on Python 3.6+
-    if sys.version_info < (3, 6):
-        raise ImportError
-
     from .._async.helpers import (
         async_bulk,
         async_reindex,
@@ -56,5 +50,5 @@ try:
     )
 
     __all__ += ["async_scan", "async_bulk", "async_reindex", "async_streaming_bulk"]
-except (ImportError, SyntaxError):
+except ImportError:  # pragma: nocover
     pass

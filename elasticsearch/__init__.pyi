@@ -45,13 +45,10 @@ from .serializer import JSONSerializer as JSONSerializer
 from .transport import Transport as Transport
 
 try:
-    if sys.version_info < (3, 6):
-        raise ImportError
-
     from ._async.client import AsyncElasticsearch as AsyncElasticsearch
     from ._async.http_aiohttp import AIOHttpConnection as AIOHttpConnection
     from ._async.transport import AsyncTransport as AsyncTransport
-except (ImportError, SyntaxError):
+except ImportError:
     pass
 
 VERSION: Tuple[int, int, int]
