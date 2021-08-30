@@ -153,7 +153,7 @@ class NodesClient(NamespacedClient):
             metric to the specific index metrics. Isn't used if `indices` (or `all`)
             metric isn't specified.  Valid choices: _all, completion, docs,
             fielddata, query_cache, flush, get, indexing, merge, request_cache,
-            refresh, search, segments, store, warmer, bulk
+            refresh, search, segments, store, warmer, bulk, shards
         :arg completion_fields: A comma-separated list of fields for the
             `completion` index metric (supports wildcards)
         :arg fielddata_fields: A comma-separated list of fields for the

@@ -902,3 +902,20 @@ class SecurityClient(NamespacedClient):
             params=params,
             headers=headers,
         )
+
+    @query_params()
+    async def query_api_keys(self, body=None, params=None, headers=None):
+        """
+        Retrieves information for API keys using a subset of query DSL
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-query-api-key.html>`_
+
+        :arg body: From, size, query, sort and search_after
+        """
+        return await self.transport.perform_request(
+            "POST",
+            "/_security/_query/api_key",
+            params=params,
+            headers=headers,
+            body=body,
+        )

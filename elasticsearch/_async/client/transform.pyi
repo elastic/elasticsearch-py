@@ -82,7 +82,8 @@ class TransformClient(NamespacedClient):
     async def preview_transform(
         self,
         *,
-        body: Any,
+        body: Optional[Any] = ...,
+        transform_id: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,

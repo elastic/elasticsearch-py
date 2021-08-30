@@ -1697,28 +1697,34 @@ class MlClient(NamespacedClient):
         )
 
     @query_params("timeout")
-    async def infer_trained_model_deployment(self, model_id, params=None, headers=None):
+    async def infer_trained_model_deployment(
+        self, model_id, body, params=None, headers=None
+    ):
         """
         Evaluate a trained model.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-df-analytics-apis.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/infer-trained-model-deployment.html>`_
 
         .. warning::
 
             This API is **experimental** so may include breaking changes
             or be removed in a future version
 
-        :arg model_id: The ID of the model to perform inference on
-        :arg timeout: Controls the time to wait for the inference result
+        :arg model_id: The unique identifier of the trained model.
+        :arg body: The docs to apply inference on
+        :arg timeout: Controls the amount of time to wait for inference
+            results.  Default: 10s
         """
-        if model_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'model_id'.")
+        for param in (model_id, body):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
 
         return await self.transport.perform_request(
             "POST",
             _make_path("_ml", "trained_models", model_id, "deployment", "_infer"),
             params=params,
             headers=headers,
+            body=body,
         )
 
     @query_params("wait_for_completion")
@@ -1747,16 +1753,16 @@ class MlClient(NamespacedClient):
         """
         Start a trained model deployment.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-df-analytics-apis.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/start-trained-model-deployment.html>`_
 
         .. warning::
 
             This API is **experimental** so may include breaking changes
             or be removed in a future version
 
-        :arg model_id: The ID of the model to deploy
-        :arg timeout: Controls the time to wait until the model is
-            deployed
+        :arg model_id: The unique identifier of the trained model.
+        :arg timeout: Controls the amount of time to wait for the model
+            to deploy.  Default: 20s
         """
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'model_id'.")
@@ -1773,14 +1779,14 @@ class MlClient(NamespacedClient):
         """
         Stop a trained model deployment.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-df-analytics-apis.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/stop-trained-model-deployment.html>`_
 
         .. warning::
 
             This API is **experimental** so may include breaking changes
             or be removed in a future version
 
-        :arg model_id: The ID of the model to undeploy
+        :arg model_id: The unique identifier of the trained model.
         """
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'model_id'.")
@@ -1788,6 +1794,33 @@ class MlClient(NamespacedClient):
         return await self.transport.perform_request(
             "POST",
             _make_path("_ml", "trained_models", model_id, "deployment", "_stop"),
+            params=params,
+            headers=headers,
+        )
+
+    @query_params()
+    async def get_trained_model_deployment_stats(
+        self, model_id, params=None, headers=None
+    ):
+        """
+        Get information about trained model deployments.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-trained-model-deployment-stats.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
+        :arg model_id: The ID of the trained model deployment stats to
+            fetch
+        """
+        if model_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'model_id'.")
+
+        return await self.transport.perform_request(
+            "GET",
+            _make_path("_ml", "trained_models", model_id, "deployment", "_stats"),
             params=params,
             headers=headers,
         )

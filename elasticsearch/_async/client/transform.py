@@ -106,19 +106,23 @@ class TransformClient(NamespacedClient):
         )
 
     @query_params()
-    async def preview_transform(self, body, params=None, headers=None):
+    async def preview_transform(
+        self, body=None, transform_id=None, params=None, headers=None
+    ):
         """
         Previews a transform.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/preview-transform.html>`_
 
         :arg body: The definition for the transform to preview
+        :arg transform_id: The id of the transform to preview.
         """
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
-
         return await self.transport.perform_request(
-            "POST", "/_transform/_preview", params=params, headers=headers, body=body
+            "POST",
+            _make_path("_transform", transform_id, "_preview"),
+            params=params,
+            headers=headers,
+            body=body,
         )
 
     @query_params("defer_validation")

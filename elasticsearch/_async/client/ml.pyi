@@ -1269,6 +1269,7 @@ class MlClient(NamespacedClient):
         self,
         model_id: Any,
         *,
+        body: Any,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -1320,6 +1321,23 @@ class MlClient(NamespacedClient):
         headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
     async def stop_trained_model_deployment(
+        self,
+        model_id: Any,
+        *,
+        pretty: Optional[bool] = ...,
+        human: Optional[bool] = ...,
+        error_trace: Optional[bool] = ...,
+        format: Optional[str] = ...,
+        filter_path: Optional[Union[str, Collection[str]]] = ...,
+        request_timeout: Optional[Union[int, float]] = ...,
+        ignore: Optional[Union[int, Collection[int]]] = ...,
+        opaque_id: Optional[str] = ...,
+        http_auth: Optional[Union[str, Tuple[str, str]]] = ...,
+        api_key: Optional[Union[str, Tuple[str, str]]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
+    ) -> Any: ...
+    async def get_trained_model_deployment_stats(
         self,
         model_id: Any,
         *,
