@@ -17,26 +17,29 @@
 
 import pytest
 
-from test_elasticsearch.test_cases import DummyTransportTestCase
+from elasticsearch.client import Elasticsearch
+
+from .common import DummyTransport, assert_helper
 
 
-class TestIndices(DummyTransportTestCase):
+class TestIndices:
     def test_create_one_index(self):
-        self.client.indices.create("test-index")
-        self.assert_url_called("PUT", "/test-index")
+        client = Elasticsearch(transport_class=DummyTransport)
+        client.indices.create("test-index")
+        assert_helper(client, "PUT", "/test-index")
 
     def test_delete_multiple_indices(self):
-        self.client.indices.delete(["test-index", "second.index", "third/index"])
-        self.assert_url_called("DELETE", "/test-index,second.index,third%2Findex")
+        client = Elasticsearch(transport_class=DummyTransport)
+        client.indices.delete(["test-index", "second.index", "third/index"])
+        assert_helper(client, "DELETE", "/test-index,second.index,third%2Findex")
 
     def test_exists_index(self):
-        self.client.indices.exists("second.index,third/index")
-        self.assert_url_called("HEAD", "/second.index,third%2Findex")
+        client = Elasticsearch(transport_class=DummyTransport)
+        client.indices.exists("second.index,third/index")
+        assert_helper(client, "HEAD", "/second.index,third%2Findex")
 
-    def test_passing_empty_value_for_required_param_raises_exception(self):
+    @pytest.mark.parametrize("index", [None, [], ""])
+    def test_passing_empty_value_for_required_param_raises_exception(self, index):
+        client = Elasticsearch(transport_class=DummyTransport)
         with pytest.raises(ValueError):
-            self.client.indices.exists(index=None)
-        with pytest.raises(ValueError):
-            self.client.indices.exists(index=[])
-        with pytest.raises(ValueError):
-            self.client.indices.exists(index="")
+            client.indices.exists(index=index)

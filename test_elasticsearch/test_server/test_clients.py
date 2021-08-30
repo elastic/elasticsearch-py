@@ -18,6 +18,8 @@
 
 from __future__ import unicode_literals
 
+import pytest
+
 
 def test_indices_analyze_unicode(sync_client):
     resp = sync_client.indices.analyze(body='{"text": "привет"}')
@@ -34,33 +36,25 @@ def test_indices_analyze_unicode(sync_client):
     }
 
 
-def test_bulk_works_with_string_body(sync_client):
+class TestBulk:
     docs = '{ "index" : { "_index" : "bulk_test_index", "_id" : "1" } }\n{"answer": 42}'
-    resp = sync_client.bulk(body=docs)
 
-    assert resp["errors"] is False
-    assert 1 == len(resp["items"])
+    @pytest.mark.parametrize("docs", [docs, docs.encode("utf-8")])
+    def test_bulk_works_with_string_bytestring_body(self, docs, sync_client):
+        response = sync_client.bulk(body=docs)
 
-
-def test_bulk_works_with_bytestring_body(sync_client):
-    docs = (
-        b'{ "index" : { "_index" : "bulk_test_index", "_id" : "2" } }\n{"answer": 42}'
-    )
-    resp = sync_client.bulk(body=docs)
-
-    assert resp["errors"] is False
-    assert 1 == len(resp["items"])
-
-    # Pop inconsistent items before asserting
-    resp["items"][0]["index"].pop("_id")
-    resp["items"][0]["index"].pop("_version")
-    assert resp["items"][0] == {
-        "index": {
-            "_index": "bulk_test_index",
-            "result": "created",
-            "_shards": {"total": 2, "successful": 1, "failed": 0},
-            "_seq_no": 0,
-            "_primary_term": 1,
-            "status": 201,
+        assert (response["errors"]) is False
+        assert len(response["items"]) == 1
+        # Pop inconsistent items before asserting
+        response["items"][0]["index"].pop("_id")
+        response["items"][0]["index"].pop("_version")
+        assert response["items"][0] == {
+            "index": {
+                "_index": "bulk_test_index",
+                "result": "created",
+                "_shards": {"total": 2, "successful": 1, "failed": 0},
+                "_seq_no": 0,
+                "_primary_term": 1,
+                "status": 201,
+            }
         }
-    }

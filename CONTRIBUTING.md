@@ -50,7 +50,7 @@ The process for contributing to any of the Elasticsearch repositories is similar
 
 2. Run the linter and test suite to ensure your changes do not break existing code:
 
-   ```
+   ```bash
    # Install Nox for task management
    $ python -m pip install nox
    

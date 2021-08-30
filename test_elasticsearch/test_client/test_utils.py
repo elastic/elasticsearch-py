@@ -20,15 +20,52 @@ from __future__ import unicode_literals
 
 import pytest
 
+from elasticsearch.client import _normalize_hosts
 from elasticsearch.client.utils import _bulk_body, _escape, _make_path, query_params
 
 
+class TestNormalizeHosts:
+    def test_none_uses_defaults(self):
+        assert [{}] == _normalize_hosts(None)
+
+    def test_strings_are_used_as_hostnames(self):
+        assert [{"host": "elastic.co"}] == _normalize_hosts(["elastic.co"])
+
+    def test_strings_are_parsed_for_port_and_user(self):
+        assert [
+            {"host": "elastic.co", "port": 42},
+            {"host": "elastic.co", "http_auth": "user:secre]"},
+        ] == _normalize_hosts(["elastic.co:42", "user:secre%5D@elastic.co"])
+
+    def test_strings_are_parsed_for_scheme(self):
+        assert [
+            {"host": "elastic.co", "port": 42, "use_ssl": True},
+            {
+                "host": "elastic.co",
+                "http_auth": "user:secret",
+                "use_ssl": True,
+                "port": 443,
+                "url_prefix": "/prefix",
+            },
+        ] == _normalize_hosts(
+            ["https://elastic.co:42", "https://user:secret@elastic.co/prefix"]
+        )
+
+    def test_dicts_are_left_unchanged(self):
+        assert [{"host": "local", "extra": 123}] == _normalize_hosts(
+            [{"host": "local", "extra": 123}]
+        )
+
+    def test_single_string_is_wrapped_in_list(self):
+        assert [{"host": "elastic.co"}] == _normalize_hosts("elastic.co")
+
+
 class TestQueryParams:
-    def setup_method(self, _):
-        self.calls = []
+    calls = []
 
     @query_params("simple_param")
     def func_to_wrap(self, *args, **kwargs):
+        self.calls = []
         self.calls.append((args, kwargs))
 
     def test_handles_params(self):
@@ -102,54 +139,51 @@ class TestQueryParams:
         )
 
         # If both are given values an error is raised.
-        with pytest.raises(ValueError) as e:
+        with pytest.raises(
+            ValueError,
+            match="Only one of 'http_auth' and 'api_key' may be passed at a time",
+        ):
             self.func_to_wrap(http_auth="key", api_key=("1", "2"))
-        assert (
-            str(e.value)
-            == "Only one of 'http_auth' and 'api_key' may be passed at a time"
-        )
 
 
 class TestMakePath:
-    def test_handles_unicode(self):
-        id = "中文"
+    id = "中文"
+
+    @pytest.mark.parametrize("id", [id, id.encode("utf-8")])
+    def test_handles_unicode(self, id):
         assert "/some-index/type/%E4%B8%AD%E6%96%87" == _make_path(
             "some-index", "type", id
         )
 
 
 class TestEscape:
-    def test_handles_ascii(self):
-        string = "abc123"
-        assert b"abc123" == _escape(string)
-
-    def test_handles_unicode(self):
-        string = "中文"
-        assert b"\xe4\xb8\xad\xe6\x96\x87" == _escape(string)
-
-    def test_handles_bytestring(self):
-        string = b"celery-task-meta-c4f1201f-eb7b-41d5-9318-a75a8cfbdaa0"
-        assert string == _escape(string)
+    @pytest.mark.parametrize(
+        ["left", "right"],
+        [
+            ("abc123", b"abc123"),
+            ("中文", b"\xe4\xb8\xad\xe6\x96\x87"),
+            (
+                b"celery-task-meta-c4f1201f-eb7b-41d5-9318-a75a8cfbdaa0",
+                b"celery-task-meta-c4f1201f-eb7b-41d5-9318-a75a8cfbdaa0",
+            ),
+        ],
+    )
+    def test_handles_ascii_unicode_bytestring(self, left, right):
+        assert right == _escape(left)
 
 
 class TestBulkBody:
-    def test_proper_bulk_body_as_string_is_not_modified(self):
-        string_body = '"{"index":{ "_index" : "test"}}\n{"field1": "value1"}"\n'
-        assert string_body == _bulk_body(None, string_body)
+    id = '"{"index":{ "_index" : "test"}}\n{"field1": "value1"}"'
+    id_newline = id + "\n"
 
-    def test_proper_bulk_body_as_bytestring_is_not_modified(self):
-        bytestring_body = b'"{"index":{ "_index" : "test"}}\n{"field1": "value1"}"\n'
-        assert bytestring_body == _bulk_body(None, bytestring_body)
-
-    def test_bulk_body_as_string_adds_trailing_newline(self):
-        string_body = '"{"index":{ "_index" : "test"}}\n{"field1": "value1"}"'
-        assert '"{"index":{ "_index" : "test"}}\n{"field1": "value1"}"\n' == _bulk_body(
-            None, string_body
-        )
-
-    def test_bulk_body_as_bytestring_adds_trailing_newline(self):
-        bytestring_body = b'"{"index":{ "_index" : "test"}}\n{"field1": "value1"}"'
-        assert (
-            b'"{"index":{ "_index" : "test"}}\n{"field1": "value1"}"\n'
-            == _bulk_body(None, bytestring_body)
-        )
+    @pytest.mark.parametrize(
+        ["left", "right"],
+        [
+            (id_newline, id_newline),
+            (id_newline.encode("utf-8"), id_newline.encode("utf-8")),
+            (id_newline, id),
+            (id_newline.encode("utf-8"), id.encode("utf-8")),
+        ],
+    )
+    def test_proper_bulk_string_bytestring(self, left, right):
+        assert left == _bulk_body(None, right)
