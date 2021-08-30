@@ -10,7 +10,7 @@
     below, and delete the other block.
 
 3.  For issues with API definition please note that the API is [auto
-    generated](https://github.com/elastic/elasticsearch-py/blob/master/CONTRIBUTING.md#api-code-generation)
+    generated](https://github.com/elastic/elasticsearch-py/blob/main/CONTRIBUTING.md#api-code-generation)
     so any problems should be checked and reported against [the Elasticsearch
     repo](https://github.com/elastic/elasticsearch) instead.
 

@@ -32,23 +32,10 @@ you don't have Elasticsearch running locally the integration tests will be skipp
 All the API methods (any method in `elasticsearch.client` classes decorated
 with `@query_params`) are actually auto-generated from the
 [rest-api-spec](https://github.com/elastic/elasticsearch/tree/master/rest-api-spec/src/main/resources/rest-api-spec/api)
-found in the `Elasticsearch` repository. Any changes to those methods should be
-done either by submitting a PR to Elasticsearch itself (in case of adding or
-modifying any of the API methods) or to the [Generate
-Script](https://github.com/elastic/elasticsearch-py/blob/master/utils/generate-api.py).
-
-To run the code generation make sure you have pre-requisites installed:
-
-* by running `python -m pip install -e '.[develop]'`
-* having the [elasticsearch](https://github.com/elastic/elasticsearch) repo
-  cloned on the same level as `elasticsearch-py` and switched to appropriate
-  version
-
-Then you should be able to run the code generation by invoking:
-
-```
-$ python utils/generate-api.py 8.0.0-SNAPSHOT
-```
+found in the `Elasticsearch` or the [Elasticsearch specification](https://github.com/elastic/elasticsearch-specification)
+repositories. Any changes to those methods should be done either by submitting a PR to one of these repositories
+instead of directly to the Python client otherwise your change will be overwritten the
+next time the APIs are generated.
 
 ## Contributing Code Changes
 
@@ -76,7 +63,7 @@ The process for contributing to any of the Elasticsearch repositories is similar
 
 3. Rebase your changes.
    Update your local repository with the most recent code from the main
-   elasticsearch-py repository, and rebase your branch on top of the latest master
+   elasticsearch-py repository, and rebase your branch on top of the latest `main`
    branch. We prefer your changes to be squashed into a single commit for easier
    backporting.
 
