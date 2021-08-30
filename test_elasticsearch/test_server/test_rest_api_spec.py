@@ -62,6 +62,9 @@ IMPLEMENTED_FEATURES = {
 
 # broken YAML tests on some releases
 SKIP_TESTS = {
+    # Uses bad input intentionally
+    "update/90_error[0]",
+    "search/20_default_values[1]",
     # Warning about date_histogram.interval deprecation is raised randomly
     "search/aggregation/250_moving_fn[1]",
     # body: null
@@ -111,6 +114,7 @@ SKIP_TESTS = {
 
 APIS_WITH_BODY_FIELDS = {
     "search",
+    "update",
 }
 
 
@@ -487,7 +491,9 @@ YAML_TEST_SPECS = []
 # Try loading the REST API test specs from the Elastic Artifacts API
 try:
     # Construct the HTTP and Elasticsearch client
-    http = urllib3.PoolManager(retries=10)
+    http = urllib3.PoolManager(
+        retries=10, headers=urllib3.util.make_headers(accept_encoding=True)
+    )
     client = get_client()
 
     # Make a request to Elasticsearch for the build hash, we'll be looking for

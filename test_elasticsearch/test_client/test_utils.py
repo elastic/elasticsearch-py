@@ -37,9 +37,15 @@ class TestQueryParams(TestCase):
         self.calls.append((args, kwargs))
 
     @query_params(
-        "query_only", "query_and_body", body_params=["query_and_body", "body_only"]
+        "query_only",
+        "query_and_body",
+        body_params=["query_and_body", "body_only", "from_"],
     )
     def func_with_body_params(self, *args, **kwargs):
+        self.calls.append((args, kwargs))
+
+    @query_params("query_only", body_name="named_body")
+    def func_with_named_body(self, *args, **kwargs):
         self.calls.append((args, kwargs))
 
     def test_handles_params(self):
@@ -200,7 +206,8 @@ class TestQueryParams(TestCase):
             "The 'body_only' parameter is only serialized in the request body "
             "and can't be combined with the 'body' parameter. Either stop using "
             "the 'body' parameter and use keyword-arguments only or move the "
-            "specified parameters into the 'body'"
+            "specified parameters into the 'body'. "
+            "See https://github.com/elastic/elasticsearch-py/issues/1698 for more information"
         )
 
         # Positional arguments disable body serialization
@@ -210,7 +217,8 @@ class TestQueryParams(TestCase):
             "The 'body_only' parameter is only serialized in the request body "
             "and can't be combined with the 'body' parameter. Either stop using "
             "the 'body' parameter and use keyword-arguments only or move the "
-            "specified parameters into the 'body'"
+            "specified parameters into the 'body'. "
+            "See https://github.com/elastic/elasticsearch-py/issues/1698 for more information"
         )
 
     def test_body_params_deprecations(self):
@@ -224,7 +232,8 @@ class TestQueryParams(TestCase):
         assert str(w[0].message) == (
             "The 'body' parameter is deprecated for the "
             "'func_with_body_params' API and will be removed in 8.0.0. "
-            "Instead use API parameters directly"
+            "Instead use API parameters directly. "
+            "See https://github.com/elastic/elasticsearch-py/issues/1698 for more information"
         )
 
         # APIs that don't have body parameters don't have a deprecated 'body' parameter
@@ -243,7 +252,61 @@ class TestQueryParams(TestCase):
         assert w[0].category == DeprecationWarning
         assert str(w[0].message) == (
             "Using positional arguments for APIs is deprecated and will be disabled in "
-            "8.0.0. Instead only use keyword arguments for all APIs"
+            "8.0.0. Instead use only keyword arguments for all APIs. See https://github.com/"
+            "elastic/elasticsearch-py/issues/1698 for more information"
+        )
+
+    def test_body_params_removes_underscore_suffix(self):
+        self.func_with_body_params(from_=0)
+        assert self.calls[-1] == (
+            (),
+            {"body": {"from": 0}, "headers": {}, "params": {}},
+        )
+
+    def test_named_body_params(self):
+        # Passing 'named_body' results in no error or warning
+        with warnings.catch_warnings(record=True) as w:
+            self.func_with_named_body(named_body=[])
+
+        assert self.calls[-1] == ((), {"body": [], "headers": {}, "params": {}})
+        assert w == []
+
+        # Passing 'body' is a warning but works
+        with warnings.catch_warnings(record=True) as w:
+            self.func_with_named_body(body=[])
+
+        assert self.calls[-1] == ((), {"body": [], "headers": {}, "params": {}})
+        assert len(w) == 1
+        assert str(w[0].message) == (
+            "The 'body' parameter is deprecated for the 'func_with_named_body' "
+            "API and will be removed in 8.0.0. Instead use the 'named_body' parameter. "
+            "See https://github.com/elastic/elasticsearch-py/issues/1698 for more information"
+        )
+
+        # Passing both 'named_body' and 'body' is an error
+        self.calls[:] = []
+        with warnings.catch_warnings(record=True) as w:
+            with pytest.raises(TypeError) as e:
+                self.func_with_named_body(named_body=[], body=[])
+
+        assert self.calls == []
+        assert w == []
+        assert str(e.value) == (
+            "Can't use 'named_body' and 'body' parameters together because 'named_body' "
+            "is an alias for 'body'. Instead you should only use the 'named_body' parameter. "
+            "See https://github.com/elastic/elasticsearch-py/issues/1698 for more information"
+        )
+
+        # Positional arguments aren't impacted. Only warning is for positional args
+        with warnings.catch_warnings(record=True) as w:
+            self.func_with_named_body([])
+
+        assert self.calls == [(([],), {"headers": {}, "params": {}})]
+        assert len(w) == 1
+        assert str(w[0].message) == (
+            "Using positional arguments for APIs is deprecated and will be disabled in "
+            "8.0.0. Instead use only keyword arguments for all APIs. "
+            "See https://github.com/elastic/elasticsearch-py/issues/1698 for more information"
         )
 
 
