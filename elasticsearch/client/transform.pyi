@@ -91,7 +91,8 @@ class TransformClient(NamespacedClient):
     def preview_transform(
         self,
         *,
-        body: Mapping[str, Any],
+        body: Optional[Mapping[str, Any]] = ...,
+        transform_id: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,

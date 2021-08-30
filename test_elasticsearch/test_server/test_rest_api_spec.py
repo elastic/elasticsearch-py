@@ -111,6 +111,7 @@ SKIP_TESTS = {
 
 APIS_WITH_BODY_FIELDS = {
     "search",
+    "update",
 }
 
 
@@ -487,7 +488,9 @@ YAML_TEST_SPECS = []
 # Try loading the REST API test specs from the Elastic Artifacts API
 try:
     # Construct the HTTP and Elasticsearch client
-    http = urllib3.PoolManager(retries=10)
+    http = urllib3.PoolManager(
+        retries=10, headers=urllib3.util.make_headers(accept_encoding=True)
+    )
     client = get_client()
 
     # Make a request to Elasticsearch for the build hash, we'll be looking for
