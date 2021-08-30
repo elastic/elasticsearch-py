@@ -62,6 +62,9 @@ IMPLEMENTED_FEATURES = {
 
 # broken YAML tests on some releases
 SKIP_TESTS = {
+    # Uses bad input intentionally
+    "update/90_error[0]",
+    "search/20_default_values[1]",
     # Warning about date_histogram.interval deprecation is raised randomly
     "search/aggregation/250_moving_fn[1]",
     # body: null
