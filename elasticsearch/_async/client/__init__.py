@@ -300,6 +300,7 @@ class AsyncElasticsearch(object):
         "version",
         "version_type",
         "wait_for_active_shards",
+        body_name="document",
     )
     async def create(self, index, id, body, doc_type=None, params=None, headers=None):
         """
@@ -310,7 +311,7 @@ class AsyncElasticsearch(object):
 
         :arg index: The name of the index
         :arg id: Document ID
-        :arg body: The document
+        :arg document: The document
         :arg doc_type: The type of the document
         :arg pipeline: The pipeline id to preprocess incoming documents
             with
@@ -354,6 +355,7 @@ class AsyncElasticsearch(object):
         "version",
         "version_type",
         "wait_for_active_shards",
+        body_name="document",
     )
     async def index(
         self, index, body, doc_type=None, id=None, params=None, headers=None
@@ -364,7 +366,7 @@ class AsyncElasticsearch(object):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.15/docs-index_.html>`_
 
         :arg index: The name of the index
-        :arg body: The document
+        :arg document: The document
         :arg doc_type: The type of the document
         :arg id: Document ID
         :arg if_primary_term: only perform the index operation if the
@@ -996,28 +998,31 @@ class AsyncElasticsearch(object):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.15/docs-get.html>`_
 
-        :arg index: The name of the index
-        :arg id: The document ID
+        :arg index: Name of the index that contains the document.
+        :arg id: Unique identifier of the document.
         :arg doc_type: The type of the document (use `_all` to fetch the
             first document matching the ID across all types)
         :arg _source: True or false to return the _source field or not,
-            or a list of fields to return
-        :arg _source_excludes: A list of fields to exclude from the
-            returned _source field
-        :arg _source_includes: A list of fields to extract and return
-            from the _source field
-        :arg preference: Specify the node or shard the operation should
-            be performed on (default: random)
-        :arg realtime: Specify whether to perform the operation in
-            realtime or search mode
-        :arg refresh: Refresh the shard containing the document before
-            performing the operation
-        :arg routing: Specific routing value
+            or a list of fields to return.
+        :arg _source_excludes: A comma-separated list of source fields
+            to exclude in the response.
+        :arg _source_includes: A comma-separated list of source fields
+            to include in the response.
+        :arg preference: Specifies the node or shard the operation
+            should be performed on. Random by default.
+        :arg realtime:  Boolean) If true, the request is real-time as
+            opposed to near-real-time.  Default: True
+        :arg refresh:  If true, Elasticsearch refreshes the affected
+            shards to make this operation visible to search. If false, do nothing
+            with refreshes.
+        :arg routing: Target the specified primary shard.
         :arg stored_fields: A comma-separated list of stored fields to
             return in the response
-        :arg version: Explicit version number for concurrency control
-        :arg version_type: Specific version type  Valid choices:
-            internal, external, external_gte, force
+        :arg version: Explicit version number for concurrency control.
+            The specified version must match the current version of the document for
+            the request to succeed.
+        :arg version_type: Specific version type: internal, external,
+            external_gte.  Valid choices: internal, external, external_gte, force
         """
         for param in (index, id):
             if param in SKIP_IN_PATH:
@@ -1608,7 +1613,9 @@ class AsyncElasticsearch(object):
             `_all` or empty string to perform the operation on all indices
         :arg doc_type: A comma-separated list of document types to
             search; leave empty to perform the operation on all types
-        :arg _source:
+        :arg _source: Indicates which source fields are returned for
+            matching documents. These fields are returned in the hits._source
+            property of the search response.
         :arg _source_excludes: A list of fields to exclude from the
             returned _source field
         :arg _source_includes: A list of fields to extract and return
@@ -1637,19 +1644,27 @@ class AsyncElasticsearch(object):
             query (AND or OR)  Valid choices: AND, OR  Default: OR
         :arg df: The field to use as default where no field prefix is
             given in the query string
-        :arg docvalue_fields:
+        :arg docvalue_fields: Array of wildcard (*) patterns. The
+            request returns doc values for field names matching these patterns in
+            the hits.fields property of the response.
         :arg expand_wildcards: Whether to expand wildcard expression to
             concrete indices that are open, closed or both.  Valid choices: open,
             closed, hidden, none, all  Default: open
-        :arg explain:
-        :arg fields:
-        :arg from_:
+        :arg explain: If true, returns detailed information about score
+            computation as part of a hit.
+        :arg fields: Array of wildcard (*) patterns. The request returns
+            values for field names matching these patterns in the hits.fields
+            property of the response.
+        :arg from_: Starting document offset. By default, you cannot
+            page through more than 10,000 hits using the from and size parameters.
+            To page through more hits, use the search_after parameter.
         :arg highlight:
         :arg ignore_throttled: Whether specified concrete, expanded or
             aliased indices should be ignored when throttled
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
-        :arg indices_boost:
+        :arg indices_boost: Boosts the _score of documents from
+            specified indices.
         :arg lenient: Specify whether format-based query failures (such
             as providing text to a numeric field) should be ignored
         :arg max_concurrent_shard_requests: The number of concurrent
@@ -1659,8 +1674,10 @@ class AsyncElasticsearch(object):
         :arg min_compatible_shard_node: The minimum compatible version
             that all shards involved in search should have for this request to be
             successful
-        :arg min_score:
-        :arg pit:
+        :arg min_score: Minimum _score for matching documents. Documents
+            with a lower _score are not included in the search results.
+        :arg pit: Limits the search to a point in time (PIT). If you
+            provide a PIT, you cannot specify an <index> in the request path.
         :arg post_filter:
         :arg pre_filter_shard_size: A threshold that enforces a pre-
             filter roundtrip to prefilter search shards based on query rewriting if
@@ -1673,40 +1690,64 @@ class AsyncElasticsearch(object):
             be performed on (default: random)
         :arg profile:
         :arg q: Query in the Lucene query string syntax
-        :arg query:
+        :arg query: Defines the search definition using the Query DSL.
         :arg request_cache: Specify if request cache should be used for
             this request or not, defaults to index level setting
         :arg rescore:
         :arg rest_total_hits_as_int: Indicates whether hits.total should
             be rendered as an integer or an object in the rest search response
         :arg routing: A comma-separated list of specific routing values
-        :arg runtime_mappings:
-        :arg script_fields:
+        :arg runtime_mappings: Defines one or more runtime fields in the
+            search request. These fields take precedence over mapped fields with the
+            same name.
+        :arg script_fields: Retrieve a script evaluation (based on
+            different fields) for each hit.
         :arg scroll: Specify how long a consistent view of the index
             should be maintained for scrolled search
         :arg search_after:
         :arg search_type: Search operation type  Valid choices:
             query_then_fetch, dfs_query_then_fetch
-        :arg seq_no_primary_term:
-        :arg size:
+        :arg seq_no_primary_term: If true, returns sequence number and
+            primary term of the last modification of each hit. See Optimistic
+            concurrency control.
+        :arg size: The number of hits to return. By default, you cannot
+            page through more than 10,000 hits using the from and size parameters.
+            To page through more hits, use the search_after parameter.
         :arg slice:
         :arg sort:
-        :arg stats:
-        :arg stored_fields:
+        :arg stats: Stats groups to associate with the search. Each
+            group maintains a statistics aggregation for its associated searches.
+            You can retrieve these stats using the indices stats API.
+        :arg stored_fields: List of stored fields to return as part of a
+            hit. If no fields are specified, no stored fields are included in the
+            response. If this field is specified, the _source parameter defaults to
+            false. You can pass _source: true to return both source fields and
+            stored fields in the search response.
         :arg suggest:
-        :arg suggest_field: Specify which field to use for suggestions
+        :arg suggest_field: Specifies which field to use for
+            suggestions.
         :arg suggest_mode: Specify suggest mode  Valid choices: missing,
             popular, always  Default: missing
         :arg suggest_size: How many suggestions to return in response
         :arg suggest_text: The source text for which the suggestions
-            should be returned
-        :arg terminate_after:
-        :arg timeout:
-        :arg track_scores:
-        :arg track_total_hits:
+            should be returned.
+        :arg terminate_after: Maximum number of documents to collect for
+            each shard. If a query reaches this limit, Elasticsearch terminates the
+            query early. Elasticsearch collects documents before sorting. Defaults
+            to 0, which does not terminate query execution early.
+        :arg timeout: Specifies the period of time to wait for a
+            response from each shard. If no response is received before the timeout
+            expires, the request fails and returns an error. Defaults to no timeout.
+        :arg track_scores: If true, calculate and return document
+            scores, even if the scores are not used for sorting.
+        :arg track_total_hits: Number of hits matching the query to
+            count accurately. If true, the exact number of hits is returned at the
+            cost of some performance. If false, the response does not include the
+            total number of hits matching the query. Defaults to 10,000 hits.
         :arg typed_keys: Specify whether aggregation and suggester names
             should be prefixed by their respective types in the response
-        :arg version:
+        :arg version: If true, returns document version as part of a
+            hit.
         """
         if "from_" in params:
             params["from"] = params.pop("from_")
@@ -1895,6 +1936,15 @@ class AsyncElasticsearch(object):
         "routing",
         "timeout",
         "wait_for_active_shards",
+        body_params=[
+            "_source",
+            "detect_noop",
+            "doc",
+            "doc_as_upsert",
+            "script",
+            "scripted_upsert",
+            "upsert",
+        ],
     )
     async def update(self, index, id, body, doc_type=None, params=None, headers=None):
         """
@@ -1907,34 +1957,48 @@ class AsyncElasticsearch(object):
         :arg body: The request definition requires either `script` or
             partial `doc`
         :arg doc_type: The type of the document
-        :arg _source: True or false to return the _source field or not,
-            or a list of fields to return
-        :arg _source_excludes: A list of fields to exclude from the
-            returned _source field
-        :arg _source_includes: A list of fields to extract and return
-            from the _source field
-        :arg if_primary_term: only perform the update operation if the
-            last operation that has changed the document has the specified primary
-            term
-        :arg if_seq_no: only perform the update operation if the last
-            operation that has changed the document has the specified sequence
-            number
-        :arg lang: The script language (default: painless)
-        :arg refresh: If `true` then refresh the affected shards to make
-            this operation visible to search, if `wait_for` then wait for a refresh
-            to make this operation visible to search, if `false` (the default) then
-            do nothing with refreshes.  Valid choices: true, false, wait_for
-        :arg require_alias: When true, requires destination is an alias.
-            Default is false
+        :arg _source: Set to false to disable source retrieval. You can
+            also specify a comma-separated list of the fields you want to retrieve.
+        :arg _source_excludes: Specify the source fields you want to
+            exclude.
+        :arg _source_includes: Specify the source fields you want to
+            retrieve.
+        :arg detect_noop: Set to false to disable setting 'result' in
+            the response to 'noop' if no change to the document occurred.
+        :arg doc: A partial update to an existing document.
+        :arg doc_as_upsert: Set to true to use the contents of 'doc' as
+            the value of 'upsert'
+        :arg if_primary_term: Only perform the operation if the document
+            has this primary term.
+        :arg if_seq_no: Only perform the operation if the document has
+            this sequence number.
+        :arg lang: The script language.  Default: painless
+        :arg refresh: If 'true', Elasticsearch refreshes the affected
+            shards to make this operation visible to search, if 'wait_for' then wait
+            for a refresh to make this operation visible to search, if 'false' do
+            nothing with refreshes.  Valid choices: true, false, wait_for  Default:
+            false
+        :arg require_alias: If true, the destination must be an index
+            alias.
         :arg retry_on_conflict: Specify how many times should the
-            operation be retried when a conflict occurs (default: 0)
-        :arg routing: Specific routing value
-        :arg timeout: Explicit operation timeout
-        :arg wait_for_active_shards: Sets the number of shard copies
-            that must be active before proceeding with the update operation.
-            Defaults to 1, meaning the primary shard only. Set to `all` for all
-            shard copies, otherwise set to any non-negative value less than or equal
-            to the total number of copies for the shard (number of replicas + 1)
+            operation be retried when a conflict occurs.
+        :arg routing: Custom value used to route operations to a
+            specific shard.
+        :arg script: Script to execute to update the document.
+        :arg scripted_upsert: Set to true to execute the script whether
+            or not the document exists.
+        :arg timeout: Period to wait for dynamic mapping updates and
+            active shards. This guarantees Elasticsearch waits for at least the
+            timeout before failing. The actual wait time could be longer,
+            particularly when multiple waits occur.  Default: 1m
+        :arg upsert: If the document does not already exist, the
+            contents of 'upsert' are inserted as a new document. If the document
+            exists, the 'script' is executed.
+        :arg wait_for_active_shards: The number of shard copies that
+            must be active before proceeding with the operations. Set to 'all' or
+            any positive integer up to the total number of shards in the index
+            (number_of_replicas+1). Defaults to 1 meaning the primary shard.
+            Default: 1
         """
         for param in (index, id, body):
             if param in SKIP_IN_PATH:
