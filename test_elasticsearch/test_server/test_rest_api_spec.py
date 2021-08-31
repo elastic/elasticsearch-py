@@ -421,7 +421,7 @@ class YamlRunner:
                         and isinstance(value, string_types)
                         and key_replace in value
                     ):
-                        value = value.replace(key_replace, v)
+                        value = value.replace(key_replace, str(v))
                         break
 
         if isinstance(value, string_types):
