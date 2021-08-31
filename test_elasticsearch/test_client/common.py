@@ -17,6 +17,7 @@
 
 from collections import defaultdict
 
+from elasticsearch.client import Elasticsearch
 from elasticsearch.connection import Connection
 
 
@@ -36,8 +37,12 @@ class DummyTransport(Connection):
         return resp
 
 
-def assert_helper(client, method, url, count=1):
-    calls = client.transport.calls
-    assert (method, url) in calls
-    assert count == len(calls[(method, url)])
-    return calls[(method, url)]
+class DummyTransportTestCase:
+    def setup_method(self, _):
+        self.client = Elasticsearch(transport_class=DummyTransport)
+
+    def assert_helper(self, method, url, count=1):
+        calls = self.client.transport.calls
+        assert (method, url) in calls
+        assert count == len(calls[(method, url)])
+        return calls[(method, url)]

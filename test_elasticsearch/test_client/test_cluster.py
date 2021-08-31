@@ -17,20 +17,17 @@
 
 import pytest
 
-from elasticsearch.client import Elasticsearch
-
-from .common import DummyTransport, assert_helper
+from .common import DummyTransportTestCase
 
 
-class TestCluster:
+class TestCluster(DummyTransportTestCase):
     @pytest.mark.parametrize("node_id", [None, "node-1", "node-2"])
     def test_stats_node_id(self, node_id):
-        client = Elasticsearch(transport_class=DummyTransport)
-        client.cluster.stats(node_id=node_id)
+        self.client.cluster.stats(node_id=node_id)
         url = "/_cluster/stats"
         if node_id:
             url += "/nodes/" + node_id
-        assert_helper(client, "GET", url)
+        self.assert_helper("GET", url)
 
     @pytest.mark.parametrize(
         ["index", "metric", "url_suffix"],
@@ -44,9 +41,8 @@ class TestCluster:
     def test_state_with_index_without_metric_defaults_to_all(
         self, index, metric, url_suffix
     ):
-        client = Elasticsearch(transport_class=DummyTransport)
-        client.cluster.state(index=index, metric=metric)
+        self.client.cluster.state(index=index, metric=metric)
         url = "/_cluster/state"
         if url_suffix:
             url += url_suffix
-        assert_helper(client, "GET", url)
+        self.assert_helper("GET", url)

@@ -18,44 +18,38 @@
 
 import pytest
 
-from elasticsearch.client import Elasticsearch
-
-from .common import DummyTransport, assert_helper
+from .common import DummyTransportTestCase
 
 
-class TestOverriddenUrlTargets:
+class TestOverriddenUrlTargets(DummyTransportTestCase):
     @pytest.mark.parametrize(
         ["doc_type", "url_suffix"],
         [(None, "/_create/test-id"), ("test-type", "/test-type/test-id/_create")],
     )
     def test_create(self, doc_type, url_suffix):
-        client = Elasticsearch(transport_class=DummyTransport)
-        client.create(index="test-index", doc_type=doc_type, id="test-id", body={})
-        assert_helper(client, "PUT", "/test-index" + url_suffix)
+        self.client.create(index="test-index", doc_type=doc_type, id="test-id", body={})
+        self.assert_helper("PUT", "/test-index" + url_suffix)
 
     @pytest.mark.parametrize(
         ["doc_type", "url_suffix"],
         [(None, "/_doc/test-id"), ("test-type", "/test-type/test-id")],
     )
     def test_delete(self, doc_type, url_suffix):
-        client = Elasticsearch(transport_class=DummyTransport)
-        client.delete(index="test-index", doc_type=doc_type, id="test-id")
-        assert_helper(client, "DELETE", "/test-index" + url_suffix)
+        self.client.delete(index="test-index", doc_type=doc_type, id="test-id")
+        self.assert_helper("DELETE", "/test-index" + url_suffix)
 
     @pytest.mark.parametrize(
         ["doc_type", "url_suffix"],
         [(None, "/_update/test-id"), ("test-type", "/test-type/test-id/_update")],
     )
     def test_update(self, doc_type, url_suffix):
-        client = Elasticsearch(transport_class=DummyTransport)
-        client.update(index="test-index", doc_type=doc_type, id="test-id", body={})
-        assert_helper(client, "POST", "/test-index" + url_suffix)
+        self.client.update(index="test-index", doc_type=doc_type, id="test-id", body={})
+        self.assert_helper("POST", "/test-index" + url_suffix)
 
     @pytest.mark.parametrize(
         ["request_method", "id", "url_suffix"],
         [("POST", None, ""), ("PUT", "test-id", "/test-id")],
     )
     def test_index(self, request_method, id, url_suffix):
-        client = Elasticsearch(transport_class=DummyTransport)
-        client.index(index="test-index", id=id, body={})
-        assert_helper(client, request_method, "/test-index/_doc" + url_suffix)
+        self.client.index(index="test-index", id=id, body={})
+        self.assert_helper(request_method, "/test-index/_doc" + url_suffix)

@@ -20,43 +20,38 @@ import pytest
 
 from elasticsearch.client import Elasticsearch
 
-from .common import DummyTransport, assert_helper
+from .common import DummyTransportTestCase
 
 
-class TestClient:
+class TestClient(DummyTransportTestCase):
     def test_request_timeout_is_passed_through_unescaped(self):
-        client = Elasticsearch(transport_class=DummyTransport)
-        client.ping(request_timeout=0.1)
-        calls = assert_helper(client, "HEAD", "/")
+        self.client.ping(request_timeout=0.1)
+        calls = self.assert_helper("HEAD", "/")
         assert [({"request_timeout": 0.1}, {}, None)] == calls
 
     def test_params_is_copied_when(self):
-        client = Elasticsearch(transport_class=DummyTransport)
         params = {"request_timeout": object()}
-        client.ping(params=params)
-        client.ping(params=params)
-        calls = assert_helper(client, "HEAD", "/", 2)
+        self.client.ping(params=params)
+        self.client.ping(params=params)
+        calls = self.assert_helper("HEAD", "/", 2)
         assert [(params, {}, None), (params, {}, None)] == calls
         assert calls[0][0] is not calls[1][0]
 
     def test_headers_is_copied_when(self):
-        client = Elasticsearch(transport_class=DummyTransport)
         headers = {"authentication": "value"}
-        client.ping(headers=headers)
-        client.ping(headers=headers)
-        calls = assert_helper(client, "HEAD", "/", 2)
+        self.client.ping(headers=headers)
+        self.client.ping(headers=headers)
+        calls = self.assert_helper("HEAD", "/", 2)
         assert [({}, headers, None), ({}, headers, None)] == calls
         assert calls[0][0] is not calls[1][0]
 
     def test_from_in_search(self):
-        client = Elasticsearch(transport_class=DummyTransport)
-        client.search(index="i", from_=10)
-        calls = assert_helper(client, "POST", "/i/_search")
+        self.client.search(index="i", from_=10)
+        calls = self.assert_helper("POST", "/i/_search")
         assert [({"from": b"10"}, {}, None)] == calls
 
     def test_repr_contains_hosts(self):
-        client = Elasticsearch(transport_class=DummyTransport)
-        assert "<Elasticsearch([{}])>" == repr(client)
+        assert "<Elasticsearch([{}])>" == repr(self.client)
 
     def test_repr_subclass(self):
         class OtherElasticsearch(Elasticsearch):
@@ -78,7 +73,5 @@ class TestClient:
         [("", "POST", "/my-index/_doc"), (0, "PUT", "/my-index/_doc/0")],
     )
     def test_index_uses_id(self, id, request_method, url):
-        client = Elasticsearch(transport_class=DummyTransport)
-        client.index(index="my-index", id=id, body={})
-
-        assert_helper(client, request_method, url)
+        self.client.index(index="my-index", id=id, body={})
+        self.assert_helper(request_method, url)
