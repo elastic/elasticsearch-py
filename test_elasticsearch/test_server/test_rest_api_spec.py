@@ -365,6 +365,9 @@ class YamlRunner:
             ):
                 expected = re.compile(expected[1:-1], re.VERBOSE | re.MULTILINE)
                 assert expected.search(value), f"{value!r} does not match {expected!r}"
+            elif isinstance(value, list) and isinstance(expected, list):
+                assert len(value) == len(expected)
+                [self._assert_match_equals(a, b) for a, b in zip(value, expected)]
             else:
                 self._assert_match_equals(value, expected)
 
