@@ -367,6 +367,11 @@ class YamlRunner:
                     value,
                     expected,
                 )
+            elif isinstance(value, list) and isinstance(expected, list):
+                assert len(value) == len(
+                    expected
+                ), "Length between %r and %r wasn't equal" % (value, expected)
+                [self._assert_match_equals(a, b) for a, b in zip(value, expected)]
             else:
                 self._assert_match_equals(value, expected)
 
