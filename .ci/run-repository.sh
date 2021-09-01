@@ -42,4 +42,4 @@ docker run \
   --name elasticsearch-py \
   --rm \
   elastic/elasticsearch-py \
-  nox -s test
+  nox -s test-${PYTHON_VERSION}
