@@ -428,6 +428,16 @@ class YamlRunner:
                     ):
                         value = value.replace(key_replace, str(v))
                         break
+                    # We only do the in-string replacement if value is JSON string
+                    # E.g. '{\n  "password_hash" : "$hash"\n}\n'
+                    elif (
+                        key_replace.startswith("$")
+                        and isinstance(value, string_types)
+                        and key_replace in value
+                        and not value.startswith("$")
+                    ):
+                        value = value.replace(key_replace, str(v))
+                        break
 
         if isinstance(value, string_types):
             value = value.strip()
