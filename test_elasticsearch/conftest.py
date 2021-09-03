@@ -33,6 +33,11 @@ def elasticsearch_url():
 
 
 @pytest.fixture(scope="session")
-def elasticsearch_version(elasticsearch_url) -> Tuple[int, ...]:
+def ca_certs():
+    return CA_CERTS
+
+
+@pytest.fixture(scope="session")
+def elasticsearch_version(elasticsearch_url, ca_certs) -> Tuple[int, ...]:
     """Returns the version of the current Elasticsearch cluster"""
-    return es_version(Elasticsearch(elasticsearch_url, ca_certs=CA_CERTS))
+    return es_version(Elasticsearch(elasticsearch_url, ca_certs=ca_certs))
