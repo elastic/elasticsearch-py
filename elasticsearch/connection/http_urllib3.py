@@ -252,7 +252,14 @@ class Urllib3HttpConnection(Connection):
                 method, url, body, retries=Retry(False), headers=request_headers, **kw
             )
             duration = time.time() - start
-            raw_data = response.data.decode("utf-8", "surrogatepass")
+            raw_data = response.data
+            content_type = response.headers.get("content-type", "")
+
+            # The 'application/vnd.mapbox-vector-file' type shouldn't be
+            # decoded into text, instead should be forwarded as bytes.
+            if content_type != "application/vnd.mapbox-vector-tile":
+                raw_data = raw_data.decode("utf-8", "surrogatepass")
+
         except reraise_exceptions:
             raise
         except Exception as e:
