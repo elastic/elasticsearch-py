@@ -49,6 +49,9 @@ means that the code makes distinction between positional and keyword arguments;
 we, however, recommend that people use keyword arguments for all calls for
 consistency and safety.
 
+For a more elaborate example of how to ingest data into Elastic Cloud,refer to 
+{cloud}/ec-getting-started-python.html[this page].
+
 
 [discrete]
 === Features
