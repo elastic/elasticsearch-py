@@ -27,7 +27,7 @@ class TestCluster(DummyTransportTestCase):
         url = "/_cluster/stats"
         if node_id:
             url += "/nodes/" + node_id
-        self.assert_helper("GET", url)
+        self.assert_url_called("GET", url)
 
     @pytest.mark.parametrize(
         ["index", "metric", "url_suffix"],
@@ -45,4 +45,4 @@ class TestCluster(DummyTransportTestCase):
         url = "/_cluster/state"
         if url_suffix:
             url += url_suffix
-        self.assert_helper("GET", url)
+        self.assert_url_called("GET", url)

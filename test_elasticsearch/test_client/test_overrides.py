@@ -28,7 +28,7 @@ class TestOverriddenUrlTargets(DummyTransportTestCase):
     )
     def test_create(self, doc_type, url_suffix):
         self.client.create(index="test-index", doc_type=doc_type, id="test-id", body={})
-        self.assert_helper("PUT", "/test-index" + url_suffix)
+        self.assert_url_called("PUT", "/test-index" + url_suffix)
 
     @pytest.mark.parametrize(
         ["doc_type", "url_suffix"],
@@ -36,7 +36,7 @@ class TestOverriddenUrlTargets(DummyTransportTestCase):
     )
     def test_delete(self, doc_type, url_suffix):
         self.client.delete(index="test-index", doc_type=doc_type, id="test-id")
-        self.assert_helper("DELETE", "/test-index" + url_suffix)
+        self.assert_url_called("DELETE", "/test-index" + url_suffix)
 
     @pytest.mark.parametrize(
         ["doc_type", "url_suffix"],
@@ -44,7 +44,7 @@ class TestOverriddenUrlTargets(DummyTransportTestCase):
     )
     def test_update(self, doc_type, url_suffix):
         self.client.update(index="test-index", doc_type=doc_type, id="test-id", body={})
-        self.assert_helper("POST", "/test-index" + url_suffix)
+        self.assert_url_called("POST", "/test-index" + url_suffix)
 
     @pytest.mark.parametrize(
         ["request_method", "id", "url_suffix"],
@@ -52,4 +52,4 @@ class TestOverriddenUrlTargets(DummyTransportTestCase):
     )
     def test_index(self, request_method, id, url_suffix):
         self.client.index(index="test-index", id=id, body={})
-        self.assert_helper(request_method, "/test-index/_doc" + url_suffix)
+        self.assert_url_called(request_method, "/test-index/_doc" + url_suffix)

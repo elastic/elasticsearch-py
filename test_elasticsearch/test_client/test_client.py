@@ -26,14 +26,14 @@ from .common import DummyTransportTestCase
 class TestClient(DummyTransportTestCase):
     def test_request_timeout_is_passed_through_unescaped(self):
         self.client.ping(request_timeout=0.1)
-        calls = self.assert_helper("HEAD", "/")
+        calls = self.assert_url_called("HEAD", "/")
         assert [({"request_timeout": 0.1}, {}, None)] == calls
 
     def test_params_is_copied_when(self):
         params = {"request_timeout": object()}
         self.client.ping(params=params)
         self.client.ping(params=params)
-        calls = self.assert_helper("HEAD", "/", 2)
+        calls = self.assert_url_called("HEAD", "/", 2)
         assert [(params, {}, None), (params, {}, None)] == calls
         assert calls[0][0] is not calls[1][0]
 
@@ -41,13 +41,13 @@ class TestClient(DummyTransportTestCase):
         headers = {"authentication": "value"}
         self.client.ping(headers=headers)
         self.client.ping(headers=headers)
-        calls = self.assert_helper("HEAD", "/", 2)
+        calls = self.assert_url_called("HEAD", "/", 2)
         assert [({}, headers, None), ({}, headers, None)] == calls
         assert calls[0][0] is not calls[1][0]
 
     def test_from_in_search(self):
         self.client.search(index="i", from_=10)
-        calls = self.assert_helper("POST", "/i/_search")
+        calls = self.assert_url_called("POST", "/i/_search")
         assert [({"from": b"10"}, {}, None)] == calls
 
     def test_repr_contains_hosts(self):
@@ -74,4 +74,4 @@ class TestClient(DummyTransportTestCase):
     )
     def test_index_uses_id(self, id, request_method, url):
         self.client.index(index="my-index", id=id, body={})
-        self.assert_helper(request_method, url)
+        self.assert_url_called(request_method, url)

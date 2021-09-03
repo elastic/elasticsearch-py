@@ -17,14 +17,13 @@
 
 from collections import defaultdict
 
-from elasticsearch.client import Elasticsearch
-from elasticsearch.connection import Connection
+from elasticsearch import Elasticsearch
 
 
-class DummyTransport(Connection):
-    def __init__(self, hosts, **kwargs):
+class DummyTransport(object):
+    def __init__(self, hosts, responses=None, **_):
         self.hosts = hosts
-        self.responses = kwargs.pop("responses", None)
+        self.responses = responses
         self.call_count = 0
         self.calls = defaultdict(list)
 
@@ -41,8 +40,11 @@ class DummyTransportTestCase:
     def setup_method(self, _):
         self.client = Elasticsearch(transport_class=DummyTransport)
 
-    def assert_helper(self, method, url, count=1):
-        calls = self.client.transport.calls
-        assert (method, url) in calls
-        assert count == len(calls[(method, url)])
-        return calls[(method, url)]
+    def assert_call_count_equals(self, count):
+        assert count == self.client.transport.call_count
+
+    def assert_url_called(self, method, url, count=1):
+        assert (method, url) in self.client.transport.calls
+        calls = self.client.transport.calls[(method, url)]
+        assert count == len(calls)
+        return calls
