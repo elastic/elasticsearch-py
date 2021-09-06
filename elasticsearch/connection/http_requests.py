@@ -162,7 +162,14 @@ class RequestsHttpConnection(Connection):
         try:
             response = self.session.send(prepared_request, **send_kwargs)
             duration = time.time() - start
-            raw_data = response.content.decode("utf-8", "surrogatepass")
+            content_type = response.headers.get("content-type", "")
+            raw_data = response.content
+
+            # The 'application/vnd.mapbox-vector-file' type shouldn't be
+            # decoded into text, instead should be forwarded as bytes.
+            if content_type != "application/vnd.mapbox-vector-tile":
+                raw_data = raw_data.decode("utf-8", "surrogatepass")
+
         except reraise_exceptions:
             raise
         except Exception as e:
