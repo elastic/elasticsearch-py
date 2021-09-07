@@ -197,12 +197,14 @@ class TestBaseConnection(TestCase):
 
 
 class TestUrllib3Connection(TestCase):
-    def _get_mock_connection(self, connection_params={}, response_body=b"{}"):
+    def _get_mock_connection(
+        self, connection_params={}, response_body=b"{}", response_headers={}
+    ):
         con = Urllib3HttpConnection(**connection_params)
 
         def _dummy_urlopen(*args, **kwargs):
             dummy_response = Mock()
-            dummy_response.headers = HTTPHeaderDict({})
+            dummy_response.headers = HTTPHeaderDict(response_headers)
             dummy_response.status = 200
             dummy_response.data = response_body
             _dummy_urlopen.call_args = (args, kwargs)
@@ -483,16 +485,30 @@ class TestUrllib3Connection(TestCase):
             conn.perform_request("GET", "/")
         assert str(e.value) == "Wasn't modified!"
 
+    def test_mapbox_vector_tile_content_type(self):
+        buf = b"\xe4\xbd\xa0\xe5\xa5\xbd\xed\xa9\xaa"
+        con = self._get_mock_connection(
+            response_body=buf,
+            response_headers={"Content-Type": "application/vnd.mapbox-vector-tile"},
+        )
+        status, headers, data = con.perform_request("GET", "/")
+        # Response is returned as binary
+        assert data == b"\xe4\xbd\xa0\xe5\xa5\xbd\xed\xa9\xaa"
+
 
 class TestRequestsConnection(TestCase):
     def _get_mock_connection(
-        self, connection_params={}, status_code=200, response_body=b"{}"
+        self,
+        connection_params={},
+        status_code=200,
+        response_body=b"{}",
+        response_headers={},
     ):
         con = RequestsHttpConnection(**connection_params)
 
         def _dummy_send(*args, **kwargs):
             dummy_response = Mock()
-            dummy_response.headers = {}
+            dummy_response.headers = response_headers
             dummy_response.status_code = status_code
             dummy_response.content = response_body
             dummy_response.request = args[0]
@@ -900,6 +916,16 @@ class TestRequestsConnection(TestCase):
             conn.perform_request("GET", "/")
         assert str(e.value) == "Wasn't modified!"
 
+    def test_mapbox_vector_tile_content_type(self):
+        buf = b"\xe4\xbd\xa0\xe5\xa5\xbd\xed\xa9\xaa"
+        con = self._get_mock_connection(
+            response_body=buf,
+            response_headers={"Content-Type": "application/vnd.mapbox-vector-tile"},
+        )
+        status, headers, data = con.perform_request("GET", "/")
+        # Response is returned as binary
+        assert data == b"\xe4\xbd\xa0\xe5\xa5\xbd\xed\xa9\xaa"
+
 
 class TestConnectionHttpbin:
     """Tests the HTTP connection implementations against a live server E2E"""
@@ -910,6 +936,7 @@ class TestConnectionHttpbin:
         data["headers"].pop(
             "X-Amzn-Trace-Id", None
         )  # Remove this header as it's put there by AWS.
+        assert all(header == header.lower() for header in headers)
         return (status, data)
 
     def test_urllib3_connection(self):
