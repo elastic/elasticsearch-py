@@ -118,6 +118,7 @@ APIS_WITH_BODY_FIELDS = {
     "scroll",
     "clear_scroll",
     "update",
+    "indices.create",
 }
 
 

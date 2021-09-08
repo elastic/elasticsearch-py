@@ -440,7 +440,7 @@ class AsyncElasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> bool: ...
     async def exists_source(
         self,
         *,

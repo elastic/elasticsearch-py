@@ -99,7 +99,11 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params(
-        "include_type_name", "master_timeout", "timeout", "wait_for_active_shards"
+        "include_type_name",
+        "master_timeout",
+        "timeout",
+        "wait_for_active_shards",
+        body_params=["aliases", "mappings", "settings"],
     )
     async def create(self, index, body=None, params=None, headers=None):
         """
@@ -110,9 +114,16 @@ class IndicesClient(NamespacedClient):
         :arg index: The name of the index
         :arg body: The configuration for the index (`settings` and
             `mappings`)
+        :arg aliases:
         :arg include_type_name: Whether a type should be expected in the
             body of the mappings.
+        :arg mappings: Mapping for fields in the index. If specified,
+            this mapping can include:
+            - Field names
+            - Field data types
+            - Mapping parameters
         :arg master_timeout: Specify timeout for connection to master
+        :arg settings:
         :arg timeout: Explicit operation timeout
         :arg wait_for_active_shards: Set the number of active shards to
             wait for before the operation returns.
@@ -168,23 +179,29 @@ class IndicesClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.15/indices-get-index.html>`_
 
-        :arg index: A comma-separated list of index names
+        :arg index: Comma-separated list of data streams, indices, and
+            index aliases used to limit the request. Wildcard expressions (*) are
+            supported.
         :arg allow_no_indices: Ignore if a wildcard expression resolves
-            to no concrete indices (default: false)
-        :arg expand_wildcards: Whether wildcard expressions should get
-            expanded to open or closed indices (default: open)  Valid choices: open,
-            closed, hidden, none, all  Default: open
-        :arg flat_settings: Return settings in flat format (default:
-            false)
-        :arg ignore_unavailable: Ignore unavailable indexes (default:
-            false)
-        :arg include_defaults: Whether to return all default setting for
-            each of the indices.
-        :arg include_type_name: Whether to add the type name to the
-            response (default: false)
-        :arg local: Return local information, do not retrieve the state
-            from master node (default: false)
-        :arg master_timeout: Specify timeout for connection to master
+            to no concrete indices (default: false)  Default: True
+        :arg expand_wildcards: Type of index that wildcard expressions
+            can match. If the request can target data streams, this argument
+            determines whether wildcard expressions match hidden data streams.
+            Supports comma-separated values, such as open,hidden.  Valid choices:
+            open, closed, hidden, none, all  Default: open
+        :arg flat_settings: If true, returns settings in flat format.
+        :arg ignore_unavailable: If false, requests that target a
+            missing index return an error.
+        :arg include_defaults: If true, return all default settings in
+            the response.
+        :arg include_type_name: If true, a mapping type is expected in
+            the body of mappings.
+        :arg local: If true, the request retrieves information from the
+            local node only. Defaults to false, which means information is retrieved
+            from the master node.
+        :arg master_timeout: Period to wait for a connection to the
+            master node. If no response is received before the timeout expires, the
+            request fails and returns an error.  Default: 30s
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
@@ -616,7 +633,10 @@ class IndicesClient(NamespacedClient):
                 raise ValueError("Empty value passed for a required argument.")
 
         return await self.transport.perform_request(
-            "DELETE", _make_path(index, "_alias", name), params=params, headers=headers
+            "DELETE",
+            _make_path(index, "_aliases", name),
+            params=params,
+            headers=headers,
         )
 
     @query_params("create", "include_type_name", "master_timeout", "order")
@@ -814,9 +834,7 @@ class IndicesClient(NamespacedClient):
         :arg index: A comma-separated list of index names; use `_all` or
             empty string to perform the operation on all indices
         :arg metric: Limit the information returned the specific
-            metrics.  Valid choices: _all, completion, docs, fielddata, query_cache,
-            flush, get, indexing, merge, request_cache, refresh, search, segments,
-            store, warmer, suggest
+            metrics.
         :arg completion_fields: A comma-separated list of fields for
             `fielddata` and `suggest` index metric (supports wildcards)
         :arg expand_wildcards: Whether to expand wildcard expression to
