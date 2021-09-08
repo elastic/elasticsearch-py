@@ -251,8 +251,18 @@ class Urllib3HttpConnection(Connection):
             response = self.pool.urlopen(
                 method, url, body, retries=Retry(False), headers=request_headers, **kw
             )
+            response_headers = {
+                header.lower(): value for header, value in response.headers.items()
+            }
             duration = time.time() - start
-            raw_data = response.data.decode("utf-8", "surrogatepass")
+            raw_data = response.data
+            content_type = response_headers.get("content-type", "")
+
+            # The 'application/vnd.mapbox-vector-file' type shouldn't be
+            # decoded into text, instead should be forwarded as bytes.
+            if content_type != "application/vnd.mapbox-vector-tile":
+                raw_data = raw_data.decode("utf-8", "surrogatepass")
+
         except reraise_exceptions:
             raise
         except Exception as e:
@@ -280,7 +290,7 @@ class Urllib3HttpConnection(Connection):
             method, full_url, url, orig_body, response.status, raw_data, duration
         )
 
-        return response.status, response.getheaders(), raw_data
+        return response.status, response_headers, raw_data
 
     def close(self):
         """

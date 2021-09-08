@@ -134,9 +134,23 @@ class JSONSerializer(Serializer):
             raise SerializationError(data, e)
 
 
+class MapboxVectorTileSerializer(Serializer):
+    mimetype = "application/vnd.mapbox-vector-tile"
+
+    def loads(self, s):
+        return s
+
+    def dumps(self, data):
+        if isinstance(data, string_types):
+            return data
+
+        raise SerializationError("Cannot serialize %r into a MapBox vector tile" % data)
+
+
 DEFAULT_SERIALIZERS = {
     JSONSerializer.mimetype: JSONSerializer(),
     TextSerializer.mimetype: TextSerializer(),
+    MapboxVectorTileSerializer.mimetype: MapboxVectorTileSerializer(),
 }
 
 
