@@ -133,6 +133,7 @@ def query_params(*es_query_params, **kwargs):
     body_only_params = set(body_params or ()) - set(es_query_params)
     body_name = kwargs.pop("body_name", None)
     body_required = kwargs.pop("body_required", False)
+    type_possible_in_params = "type" in es_query_params
 
     # There should be no APIs defined with both 'body_params' and a named body.
     assert not (body_name and body_params)
@@ -162,6 +163,27 @@ def query_params(*es_query_params, **kwargs):
             # serialize in the body.
             using_body_kwarg = kwargs.get("body", None) is not None
             using_positional_args = args and len(args) > 1
+
+            # The 'doc_type' parameter is deprecated in the query
+            # string. This was generated and missed in 7.x so to
+            # push users to use 'type' instead of 'doc_type' in 8.x
+            # we deprecate it here.
+            if type_possible_in_params:
+                doc_type_in_params = params and "doc_type" in params
+                doc_type_in_kwargs = "doc_type" in kwargs
+
+                if doc_type_in_params or doc_type_in_kwargs:
+                    warnings.warn(
+                        "The 'doc_type' parameter is deprecated, use 'type' for this "
+                        "API instead. See https://github.com/elastic/elasticsearch-py/"
+                        "issues/1698 for more information",
+                        category=DeprecationWarning,
+                        stacklevel=2,
+                    )
+                if doc_type_in_params:
+                    params["type"] = params.pop("doc_type")
+                if doc_type_in_kwargs:
+                    kwargs["type"] = kwargs.pop("doc_type")
 
             if using_body_kwarg or using_positional_args:
                 # If there are any body-only parameters then we raise a 'TypeError'

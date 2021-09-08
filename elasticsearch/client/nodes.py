@@ -124,7 +124,7 @@ class NodesClient(NamespacedClient):
         )
 
     @query_params(
-        "doc_type", "ignore_idle_threads", "interval", "snapshots", "threads", "timeout"
+        "ignore_idle_threads", "interval", "snapshots", "threads", "timeout", "type"
     )
     def hot_threads(self, node_id=None, params=None, headers=None):
         """
@@ -136,8 +136,6 @@ class NodesClient(NamespacedClient):
             limit the returned information; use `_local` to return information from
             the node you're connecting to, leave empty to get information from all
             nodes
-        :arg doc_type: The type to sample (default: cpu)  Valid choices:
-            cpu, wait, block
         :arg ignore_idle_threads: Don't show threads that are in known-
             idle places, such as waiting on a socket select or pulling from an empty
             task queue (default: true)
@@ -147,10 +145,9 @@ class NodesClient(NamespacedClient):
         :arg threads: Specify the number of threads to provide
             information for (default: 3)
         :arg timeout: Explicit operation timeout
+        :arg type: The type to sample (default: cpu)  Valid choices:
+            cpu, wait, block
         """
-        if "doc_type" in params:
-            params["type"] = params.pop("doc_type")
-
         return self.transport.perform_request(
             "GET",
             _make_path("_nodes", node_id, "hot_threads"),
