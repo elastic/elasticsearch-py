@@ -44,6 +44,15 @@ class TestQueryParams(TestCase):
     def func_with_body_params(self, *args, **kwargs):
         self.calls.append((args, kwargs))
 
+    @query_params(
+        "query_only",
+        "query_and_body",
+        body_params=["query_and_body", "body_only"],
+        body_required=True,
+    )
+    def func_with_body_params_required(self, *args, **kwargs):
+        self.calls.append((args, kwargs))
+
     @query_params("query_only", body_name="named_body")
     def func_with_named_body(self, *args, **kwargs):
         self.calls.append((args, kwargs))
@@ -308,6 +317,37 @@ class TestQueryParams(TestCase):
             "8.0.0. Instead use only keyword arguments for all APIs. "
             "See https://github.com/elastic/elasticsearch-py/issues/1698 for more information"
         )
+
+    def test_body_required_with_body_fields(self):
+        self.func_with_body_params_required(query_only=True)
+        assert self.calls[-1] == (
+            (),
+            {"body": {}, "headers": {}, "params": {"query_only": b"true"}},
+        )
+
+        self.func_with_body_params_required(body_only=True)
+        assert self.calls[-1] == (
+            (),
+            {"body": {"body_only": True}, "headers": {}, "params": {}},
+        )
+
+        self.func_with_body_params_required(query_and_body=True)
+        assert self.calls[-1] == (
+            (),
+            {"body": {"query_and_body": True}, "headers": {}, "params": {}},
+        )
+
+        self.func_with_body_params_required(body={})
+        assert self.calls[-1] == ((), {"body": {}, "headers": {}, "params": {}})
+
+        self.func_with_body_params_required(body={"hello": "world"})
+        assert self.calls[-1] == (
+            (),
+            {"body": {"hello": "world"}, "headers": {}, "params": {}},
+        )
+
+        self.func_with_body_params_required()
+        assert self.calls[-1] == ((), {"body": {}, "headers": {}, "params": {}})
 
 
 class TestMakePath(TestCase):
