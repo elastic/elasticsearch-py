@@ -68,11 +68,13 @@ class TestStreamingBulk(object):
 
     async def test_all_documents_get_inserted(self, async_client):
         docs = [{"answer": x, "_id": x} for x in range(100)]
-        async for ok, item in helpers.async_streaming_bulk(
-            async_client, docs, index="test-index", refresh=True
-        ):
-            assert ok
+        with warnings.catch_warnings(record=True) as w:
+            async for ok, item in helpers.async_streaming_bulk(
+                async_client, docs, index="test-index", refresh=True
+            ):
+                assert ok
 
+        assert w == []
         assert 100 == (await async_client.count(index="test-index"))["count"]
         assert {"answer": 42} == (await async_client.get(index="test-index", id=42))[
             "_source"

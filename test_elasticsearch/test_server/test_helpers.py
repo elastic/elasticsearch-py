@@ -73,11 +73,13 @@ class TestStreamingBulk(ElasticsearchTestCase):
 
     def test_all_documents_get_inserted(self):
         docs = [{"answer": x, "_id": x} for x in range(100)]
-        for ok, item in helpers.streaming_bulk(
-            self.client, docs, index="test-index", refresh=True
-        ):
-            self.assertTrue(ok)
+        with warnings.catch_warnings(record=True) as w:
+            for ok, item in helpers.streaming_bulk(
+                self.client, docs, index="test-index", refresh=True
+            ):
+                self.assertTrue(ok)
 
+        self.assertEqual(w, [])
         self.assertEqual(100, self.client.count(index="test-index")["count"])
         self.assertEqual(
             {"answer": 42}, self.client.get(index="test-index", id=42)["_source"]

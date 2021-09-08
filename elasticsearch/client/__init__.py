@@ -467,7 +467,7 @@ class Elasticsearch(object):
             body=body,
         )
 
-    @query_params()
+    @query_params(body_params=["scroll_id"])
     def clear_scroll(self, body=None, scroll_id=None, params=None, headers=None):
         """
         Explicitly clears the search context for a scroll.
@@ -479,7 +479,7 @@ class Elasticsearch(object):
         :arg scroll_id: A comma-separated list of scroll IDs to clear
         """
         if scroll_id in SKIP_IN_PATH and body in SKIP_IN_PATH:
-            raise ValueError("You need to supply scroll_id or body.")
+            raise ValueError("Empty value passed for a required argument 'scroll_id'.")
         elif scroll_id and not body:
             body = {"scroll_id": [scroll_id]}
         elif scroll_id:
@@ -1486,7 +1486,12 @@ class Elasticsearch(object):
             body=body,
         )
 
-    @query_params("rest_total_hits_as_int", "scroll")
+    @query_params(
+        "rest_total_hits_as_int",
+        "scroll",
+        "scroll_id",
+        body_params=["scroll", "scroll_id"],
+    )
     def scroll(self, body=None, scroll_id=None, params=None, headers=None):
         """
         Allows to retrieve a large numbers of results from a single search request.
@@ -1496,13 +1501,13 @@ class Elasticsearch(object):
         :arg body: The scroll ID if not passed by URL or query
             parameter.
         :arg scroll_id: The scroll ID
-        :arg rest_total_hits_as_int: Indicates whether hits.total should
-            be rendered as an integer or an object in the rest search response
-        :arg scroll: Specify how long a consistent view of the index
-            should be maintained for scrolled search
+        :arg rest_total_hits_as_int: If true, the API response’s
+            hit.total property is returned as an integer. If false, the API
+            response’s hit.total property is returned as an object.
+        :arg scroll: Period to retain the search context for scrolling.
         """
         if scroll_id in SKIP_IN_PATH and body in SKIP_IN_PATH:
-            raise ValueError("You need to supply scroll_id or body.")
+            raise ValueError("Empty value passed for a required argument 'scroll_id'.")
         elif scroll_id and not body:
             body = {"scroll_id": scroll_id}
         elif scroll_id:
@@ -2285,7 +2290,25 @@ class Elasticsearch(object):
             body=body,
         )
 
-    @query_params("exact_bounds", "extent", "grid_precision", "grid_type", "size")
+    @query_params(
+        "exact_bounds",
+        "extent",
+        "grid_precision",
+        "grid_type",
+        "size",
+        body_params=[
+            "aggs",
+            "exact_bounds",
+            "extent",
+            "fields",
+            "grid_precision",
+            "grid_type",
+            "query",
+            "runtime_mappings",
+            "size",
+            "sort",
+        ],
+    )
     def search_mvt(
         self, index, field, zoom, x, y, body=None, params=None, headers=None
     ):
@@ -2307,17 +2330,52 @@ class Elasticsearch(object):
         :arg x: X coordinate for the vector tile to search
         :arg y: Y coordinate for the vector tile to search
         :arg body: Search request body.
-        :arg exact_bounds: If false, the meta layer's feature is the
-            bounding box of the tile. If true, the meta layer's feature is a
-            bounding box resulting from a `geo_bounds` aggregation.
-        :arg extent: Size, in pixels, of a side of the vector tile.
-            Default: 4096
+        :arg aggs: Sub-aggregations for the geotile_grid.
+
+            Supports the following aggregation types:
+            - avg
+            - cardinality
+            - max
+            - min
+            - sum
+        :arg exact_bounds: If false, the meta layer’s feature is the
+            bounding box of the tile.
+            If true, the meta layer’s feature is a bounding box resulting from a
+            geo_bounds aggregation. The aggregation runs on <field> values that
+            intersect
+            the <zoom>/<x>/<y> tile with wrap_longitude set to false. The resulting
+            bounding box may be larger than the vector tile.
+        :arg extent: Size, in pixels, of a side of the tile. Vector
+            tiles are square with equal sides.
+        :arg fields: Fields to return in the `hits` layer. Supports
+            wildcards (`*`).
+            This parameter does not support fields with array values. Fields with
+            array
+            values may return inconsistent results.
         :arg grid_precision: Additional zoom levels available through
-            the aggs layer. Accepts 0-8.  Default: 8
+            the aggs layer. For example, if <zoom> is 7
+            and grid_precision is 8, you can zoom in up to level 15. Accepts 0-8. If
+            0, results
+            don’t include the aggs layer.
         :arg grid_type: Determines the geometry type for features in the
-            aggs layer.  Valid choices: grid, point  Default: grid
+            aggs layer. In the aggs layer,
+            each feature represents a geotile_grid cell. If 'grid' each feature is a
+            Polygon
+            of the cells bounding box. If 'point' each feature is a Point that is
+            the centroid
+            of the cell.
+        :arg query: Query DSL used to filter documents for the search.
+        :arg runtime_mappings: Defines one or more runtime fields in the
+            search request. These fields take
+            precedence over mapped fields with the same name.
         :arg size: Maximum number of features to return in the hits
-            layer. Accepts 0-10000.  Default: 10000
+            layer. Accepts 0-10000.
+            If 0, results don’t include the hits layer.
+        :arg sort: Sorts features in the hits layer. By default, the API
+            calculates a bounding
+            box for each feature. It sorts features based on this box’s diagonal
+            length,
+            from longest to shortest.
         """
         for param in (index, field, zoom, x, y):
             if param in SKIP_IN_PATH:

@@ -162,3 +162,25 @@ class TestOverriddenUrlTargets(ElasticsearchTestCase):
     def test_tasks_get(self):
         with pytest.warns(DeprecationWarning):
             self.client.tasks.get()
+
+    def test_scroll(self):
+        self.client.scroll(
+            scroll_id="scroll-id", scroll="5m", rest_total_hits_as_int=True
+        )
+        calls = self.client.transport.calls
+        assert calls == {
+            ("POST", "/_search/scroll"): [
+                (
+                    {"rest_total_hits_as_int": b"true"},
+                    {},
+                    {"scroll": "5m", "scroll_id": "scroll-id"},
+                )
+            ]
+        }
+
+    def test_clear_scroll(self):
+        self.client.clear_scroll(scroll_id="scroll-id")
+        calls = self.client.transport.calls
+        assert calls == {
+            ("DELETE", "/_search/scroll"): [({}, {}, {"scroll_id": "scroll-id"})]
+        }
