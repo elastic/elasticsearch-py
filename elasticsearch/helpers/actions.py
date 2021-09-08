@@ -237,7 +237,7 @@ def _process_bulk_chunk(
 
     try:
         # send the actual request
-        resp = client.bulk("\n".join(bulk_actions) + "\n", *args, **kwargs)
+        resp = client.bulk(*args, body="\n".join(bulk_actions) + "\n", **kwargs)
     except TransportError as e:
         gen = _process_bulk_chunk_error(
             error=e,
@@ -602,15 +602,13 @@ def scan(
                             shards_total,
                         ),
                     )
-            resp = client.scroll(
-                body={"scroll_id": scroll_id, "scroll": scroll}, **scroll_kwargs
-            )
+            resp = client.scroll(scroll_id=scroll_id, scroll=scroll, **scroll_kwargs)
             scroll_id = resp.get("_scroll_id")
 
     finally:
         if scroll_id and clear_scroll:
             client.clear_scroll(
-                body={"scroll_id": [scroll_id]},
+                scroll_id=scroll_id,
                 ignore=(404,),
                 params={"__elastic_client_meta": (("h", "s"),)},
                 **transport_kwargs

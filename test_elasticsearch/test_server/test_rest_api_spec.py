@@ -114,6 +114,9 @@ SKIP_TESTS = {
 
 APIS_WITH_BODY_FIELDS = {
     "search",
+    "search_mvt",
+    "scroll",
+    "clear_scroll",
     "update",
 }
 
