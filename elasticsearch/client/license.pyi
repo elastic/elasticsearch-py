@@ -134,7 +134,7 @@ class LicenseClient(NamespacedClient):
         self,
         *,
         acknowledge: Optional[bool] = ...,
-        doc_type: Optional[Any] = ...,
+        type: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,

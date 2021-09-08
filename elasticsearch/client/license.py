@@ -97,7 +97,7 @@ class LicenseClient(NamespacedClient):
             "POST", "/_license/start_basic", params=params, headers=headers
         )
 
-    @query_params("acknowledge", "doc_type")
+    @query_params("acknowledge", "type")
     def post_start_trial(self, params=None, headers=None):
         """
         starts a limited time trial license.
@@ -106,12 +106,9 @@ class LicenseClient(NamespacedClient):
 
         :arg acknowledge: whether the user has acknowledged acknowledge
             messages (default: false)
-        :arg doc_type: The type of trial license to generate (default:
+        :arg type: The type of trial license to generate (default:
             "trial")
         """
-        if "doc_type" in params:
-            params["type"] = params.pop("doc_type")
-
         return self.transport.perform_request(
             "POST", "/_license/start_trial", params=params, headers=headers
         )
