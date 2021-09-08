@@ -29,6 +29,7 @@ from elasticsearch import ElasticsearchWarning, RequestError
 from elasticsearch.helpers.test import _get_version
 
 from ...test_server.test_rest_api_spec import (
+    APIS_USING_TYPE_INSTEAD_OF_DOC_TYPE,
     APIS_WITH_BODY_FIELDS,
     IMPLEMENTED_FEATURES,
     PARAMS_RENAMES,
@@ -138,6 +139,11 @@ class AsyncYamlRunner(YamlRunner):
         # some parameters had to be renamed to not clash with python builtins,
         # compensate
         for k in PARAMS_RENAMES:
+
+            # Don't do the 'doc_type' rename for APIs that actually want 'type'
+            if k == "type" and method in APIS_USING_TYPE_INSTEAD_OF_DOC_TYPE:
+                continue
+
             if k in args:
                 args[PARAMS_RENAMES[k]] = args.pop(k)
 

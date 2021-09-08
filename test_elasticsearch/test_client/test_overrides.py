@@ -16,6 +16,24 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+#  Licensed to Elasticsearch B.V. under one or more contributor
+#  license agreements. See the NOTICE file distributed with
+#  this work for additional information regarding copyright
+#  ownership. Elasticsearch B.V. licenses this file to you under
+#  the Apache License, Version 2.0 (the "License"); you may
+#  not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+# 	http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing,
+#  software distributed under the License is distributed on an
+#  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#  KIND, either express or implied.  See the License for the
+#  specific language governing permissions and limitations
+#  under the License.
+import warnings
+
 import pytest
 
 from test_elasticsearch.test_cases import ElasticsearchTestCase
@@ -183,4 +201,52 @@ class TestOverriddenUrlTargets(ElasticsearchTestCase):
         calls = self.client.transport.calls
         assert calls == {
             ("DELETE", "/_search/scroll"): [({}, {}, {"scroll_id": "scroll-id"})]
+        }
+
+    def test_doc_type_works_for_apis_with_type(self):
+        with warnings.catch_warnings(record=True) as w:
+            self.client.license.post_start_trial(type="trial")
+
+        assert w == []
+        calls = self.client.transport.calls
+        assert calls == {
+            ("POST", "/_license/start_trial"): [({"type": b"trial"}, {}, None)]
+        }
+        self.client.transport.calls.pop(("POST", "/_license/start_trial"))
+
+        with warnings.catch_warnings(record=True) as w:
+            self.client.license.post_start_trial(params={"type": "trial"})
+
+        assert w == []
+        calls = self.client.transport.calls
+        assert calls == {
+            ("POST", "/_license/start_trial"): [({"type": "trial"}, {}, None)]
+        }
+        self.client.transport.calls.pop(("POST", "/_license/start_trial"))
+
+        # Now we try using 'doc_type' in all the same places and see
+        # that things still work but we get deprecation warnings.
+        with pytest.warns(DeprecationWarning) as w:
+            self.client.license.post_start_trial(doc_type="trial")
+
+        assert str(w[0].message) == (
+            "The 'doc_type' parameter is deprecated, use 'type' for this API instead. See "
+            "https://github.com/elastic/elasticsearch-py/issues/1698 for more information"
+        )
+        calls = self.client.transport.calls
+        assert calls == {
+            ("POST", "/_license/start_trial"): [({"type": b"trial"}, {}, None)]
+        }
+        self.client.transport.calls.pop(("POST", "/_license/start_trial"))
+
+        with pytest.warns(DeprecationWarning) as w:
+            self.client.license.post_start_trial(params={"doc_type": "trial"})
+
+        assert str(w[0].message) == (
+            "The 'doc_type' parameter is deprecated, use 'type' for this API instead. See "
+            "https://github.com/elastic/elasticsearch-py/issues/1698 for more information"
+        )
+        calls = self.client.transport.calls
+        assert calls == {
+            ("POST", "/_license/start_trial"): [({"type": "trial"}, {}, None)]
         }

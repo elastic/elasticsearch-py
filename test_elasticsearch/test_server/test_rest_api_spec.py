@@ -42,6 +42,10 @@ from . import get_client
 # some params had to be changed in python, keep track of them so we can rename
 # those in the tests accordingly
 PARAMS_RENAMES = {"type": "doc_type", "from": "from_"}
+APIS_USING_TYPE_INSTEAD_OF_DOC_TYPE = {
+    "nodes.hot_threads",
+    "license.post_start_trial",
+}
 
 # mapping from catch values to http status codes
 CATCH_CODES = {"missing": 404, "conflict": 409, "unauthorized": 401}
@@ -235,6 +239,11 @@ class YamlRunner:
         # some parameters had to be renamed to not clash with python builtins,
         # compensate
         for k in PARAMS_RENAMES:
+
+            # Don't do the 'doc_type' rename for APIs that actually want 'type'
+            if k == "type" and method in APIS_USING_TYPE_INSTEAD_OF_DOC_TYPE:
+                continue
+
             if k in args:
                 args[PARAMS_RENAMES[k]] = args.pop(k)
 
