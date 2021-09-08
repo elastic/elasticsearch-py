@@ -16,6 +16,7 @@
 #  under the License.
 
 import re
+from unittest import SkipTest
 
 import pytest
 from mock import patch
@@ -189,7 +190,7 @@ def test_mapbox_vector_tile_response(mvt_setup, connection_class):
     try:
         import mapbox_vector_tile
     except ImportError:
-        return pytest.skip(reason="Requires the 'mapbox-vector-tile' package")
+        raise SkipTest("Requires the 'mapbox-vector-tile' package")
 
     # Decode the binary as MVT
     tile = mapbox_vector_tile.decode(resp)
