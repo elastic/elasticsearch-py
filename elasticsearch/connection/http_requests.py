@@ -165,7 +165,17 @@ class RequestsHttpConnection(Connection):
         try:
             response = self.session.send(prepared_request, **send_kwargs)
             duration = time.time() - start
-            raw_data = response.content.decode("utf-8", "surrogatepass")
+            response_headers = {
+                header.lower(): value for header, value in response.headers.items()
+            }
+            content_type = response_headers.get("content-type", "")
+            raw_data = response.content
+
+            # The 'application/vnd.mapbox-vector-file' type shouldn't be
+            # decoded into text, instead should be forwarded as bytes.
+            if content_type != "application/vnd.mapbox-vector-tile":
+                raw_data = raw_data.decode("utf-8", "surrogatepass")
+
         except reraise_exceptions:
             raise
         except Exception as e:
@@ -185,7 +195,7 @@ class RequestsHttpConnection(Connection):
 
         # raise warnings if any from the 'Warnings' header.
         warnings_headers = (
-            (response.headers["warning"],) if "warning" in response.headers else ()
+            (response_headers["warning"],) if "warning" in response_headers else ()
         )
         self._raise_warnings(warnings_headers)
 
@@ -215,7 +225,7 @@ class RequestsHttpConnection(Connection):
             duration,
         )
 
-        return response.status_code, response.headers, raw_data
+        return response.status_code, response_headers, raw_data
 
     @property
     def headers(self):

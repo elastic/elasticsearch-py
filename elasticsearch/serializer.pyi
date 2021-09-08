@@ -33,6 +33,11 @@ class JSONSerializer(Serializer):
     def loads(self, s: str) -> Any: ...
     def dumps(self, data: Any) -> str: ...
 
+class MapboxVectorTileSerializer(Serializer):
+    mimetype: str
+    def loads(self, s: bytes) -> bytes: ...  # type: ignore
+    def dumps(self, data: bytes) -> bytes: ...  # type: ignore
+
 DEFAULT_SERIALIZERS: Dict[str, Serializer]
 
 class Deserializer(object):

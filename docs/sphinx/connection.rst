@@ -19,6 +19,11 @@ For example if you wanted to use your own implementation of the
   ``selector_class``) will only be used if more than one connection is defined.
   Either directly or via the :ref:`sniffing` mechanism.
 
+.. note::
+
+  Known binary format mimetypes like ``application/mapbox-vector-tile`` will return
+  the response body as ``bytes`` instead of the usually UTF-8 encoded text.
+
 .. py:module:: elasticsearch
 
 Transport

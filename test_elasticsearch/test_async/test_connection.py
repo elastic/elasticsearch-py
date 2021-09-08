@@ -56,6 +56,9 @@ class TestAIOHttpConnection:
                 async def text(self):
                     return response_body.decode("utf-8", "surrogatepass")
 
+                async def read(self):
+                    return response_body
+
             dummy_response = DummyResponse()
             dummy_response.headers = CIMultiDict()
             dummy_response.status = 200
@@ -344,6 +347,7 @@ class TestConnectionHttpbin:
         data["headers"].pop(
             "X-Amzn-Trace-Id", None
         )  # Remove this header as it's put there by AWS.
+        assert all(header == header.lower() for header in headers)
         return (status, data)
 
     async def test_aiohttp_connection(self):
