@@ -244,8 +244,8 @@ class Elasticsearch(object):
     def clear_scroll(
         self,
         *,
-        body: Optional[Union[Mapping[str, Any], str]] = ...,
-        scroll_id: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
+        scroll_id: Optional[Union[List[str], str]] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -834,9 +834,9 @@ class Elasticsearch(object):
         self,
         *,
         body: Optional[Mapping[str, Any]] = ...,
-        scroll_id: Optional[Any] = ...,
         rest_total_hits_as_int: Optional[bool] = ...,
-        scroll: Optional[Any] = ...,
+        scroll: Optional[Union[int, str]] = ...,
+        scroll_id: Optional[str] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -1229,17 +1229,35 @@ class Elasticsearch(object):
     def search_mvt(
         self,
         *,
-        index: Any,
-        field: Any,
-        zoom: Any,
-        x: Any,
-        y: Any,
+        index: Union[List[str], str],
+        field: str,
+        zoom: int,
+        x: int,
+        y: int,
         body: Optional[Mapping[str, Any]] = ...,
+        aggs: Optional[Mapping[str, Mapping[str, Any]]] = ...,
         exact_bounds: Optional[bool] = ...,
-        extent: Optional[Any] = ...,
-        grid_precision: Optional[Any] = ...,
-        grid_type: Optional[Any] = ...,
-        size: Optional[Any] = ...,
+        extent: Optional[int] = ...,
+        fields: Optional[Union[List[str], str]] = ...,
+        grid_precision: Optional[int] = ...,
+        grid_type: Optional[Union[Literal["grid", "point"], str]] = ...,
+        query: Optional[Mapping[str, Any]] = ...,
+        runtime_mappings: Optional[Mapping[str, Mapping[str, Any]]] = ...,
+        size: Optional[int] = ...,
+        sort: Optional[
+            Union[
+                List[
+                    Union[
+                        Mapping[str, Any],
+                        Union[Literal["asc", "desc", "_doc"], str],
+                        str,
+                    ]
+                ],
+                Union[
+                    Mapping[str, Any], Union[Literal["asc", "desc", "_doc"], str], str
+                ],
+            ]
+        ] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -1252,4 +1270,4 @@ class Elasticsearch(object):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Union[Dict[str, Any], bytes]: ...
+    ) -> bytes: ...

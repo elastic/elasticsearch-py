@@ -71,7 +71,7 @@ async def _process_bulk_chunk(
 
     try:
         # send the actual request
-        resp = await client.bulk("\n".join(bulk_actions) + "\n", *args, **kwargs)
+        resp = await client.bulk(*args, body="\n".join(bulk_actions) + "\n", **kwargs)
     except TransportError as e:
         gen = _process_bulk_chunk_error(
             error=e,
@@ -391,14 +391,14 @@ async def async_scan(
                         ),
                     )
             resp = await client.scroll(
-                body={"scroll_id": scroll_id, "scroll": scroll}, **scroll_kwargs
+                scroll_id=scroll_id, scroll=scroll, **scroll_kwargs
             )
             scroll_id = resp.get("_scroll_id")
 
     finally:
         if scroll_id and clear_scroll:
             await client.clear_scroll(
-                body={"scroll_id": [scroll_id]},
+                scroll_id=scroll_id,
                 **transport_kwargs,
                 ignore=(404,),
                 params={"__elastic_client_meta": (("h", "s"),)},

@@ -174,15 +174,13 @@ def test_mapbox_vector_tile_response(mvt_setup, connection_class):
         x=4207,
         y=2692,
         field="location",
-        body={
-            "grid_precision": 2,
-            "fields": ["name", "price"],
-            "query": {"term": {"included": True}},
-            "aggs": {
-                "min_price": {"min": {"field": "price"}},
-                "max_price": {"max": {"field": "price"}},
-                "avg_price": {"avg": {"field": "price"}},
-            },
+        grid_precision=2,
+        fields=["name", "price"],
+        query={"term": {"included": True}},
+        aggs={
+            "min_price": {"min": {"field": "price"}},
+            "max_price": {"max": {"field": "price"}},
+            "avg_price": {"avg": {"field": "price"}},
         },
     )
     assert isinstance(resp, bytes)
