@@ -115,6 +115,7 @@ SKIP_TESTS = {
 APIS_WITH_BODY_FIELDS = {
     "search",
     "update",
+    "indices.create",
 }
 
 

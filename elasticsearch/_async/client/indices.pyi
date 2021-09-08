@@ -19,12 +19,15 @@ from typing import (
     Any,
     Collection,
     Dict,
+    List,
     Mapping,
     MutableMapping,
     Optional,
     Tuple,
     Union,
 )
+
+from typing_extensions import Literal
 
 from .utils import NamespacedClient
 
@@ -50,9 +53,15 @@ class IndicesClient(NamespacedClient):
     async def refresh(
         self,
         *,
-        index: Optional[Any] = ...,
+        index: Optional[Union[List[str], str]] = ...,
         allow_no_indices: Optional[bool] = ...,
-        expand_wildcards: Optional[Any] = ...,
+        expand_wildcards: Optional[
+            Union[
+                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
+                Union[Literal["all", "open", "closed", "hidden", "none"], str],
+                str,
+            ]
+        ] = ...,
         ignore_unavailable: Optional[bool] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -70,9 +79,15 @@ class IndicesClient(NamespacedClient):
     async def flush(
         self,
         *,
-        index: Optional[Any] = ...,
+        index: Optional[Union[List[str], str]] = ...,
         allow_no_indices: Optional[bool] = ...,
-        expand_wildcards: Optional[Any] = ...,
+        expand_wildcards: Optional[
+            Union[
+                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
+                Union[Literal["all", "open", "closed", "hidden", "none"], str],
+                str,
+            ]
+        ] = ...,
         force: Optional[bool] = ...,
         ignore_unavailable: Optional[bool] = ...,
         wait_if_ongoing: Optional[bool] = ...,
@@ -92,12 +107,17 @@ class IndicesClient(NamespacedClient):
     async def create(
         self,
         *,
-        index: Any,
+        index: str,
         body: Optional[Mapping[str, Any]] = ...,
+        aliases: Optional[Mapping[str, Mapping[str, Any]]] = ...,
         include_type_name: Optional[bool] = ...,
-        master_timeout: Optional[Any] = ...,
-        timeout: Optional[Any] = ...,
-        wait_for_active_shards: Optional[Any] = ...,
+        mappings: Optional[
+            Union[Mapping[str, Any], Mapping[str, Mapping[str, Any]]]
+        ] = ...,
+        master_timeout: Optional[Union[int, str]] = ...,
+        settings: Optional[Mapping[str, Any]] = ...,
+        timeout: Optional[Union[int, str]] = ...,
+        wait_for_active_shards: Optional[Union[Union[Literal["all"], str], int]] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -136,15 +156,21 @@ class IndicesClient(NamespacedClient):
     async def get(
         self,
         *,
-        index: Any,
+        index: Union[List[str], str],
         allow_no_indices: Optional[bool] = ...,
-        expand_wildcards: Optional[Any] = ...,
+        expand_wildcards: Optional[
+            Union[
+                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
+                Union[Literal["all", "open", "closed", "hidden", "none"], str],
+                str,
+            ]
+        ] = ...,
         flat_settings: Optional[bool] = ...,
         ignore_unavailable: Optional[bool] = ...,
         include_defaults: Optional[bool] = ...,
         include_type_name: Optional[bool] = ...,
         local: Optional[bool] = ...,
-        master_timeout: Optional[Any] = ...,
+        master_timeout: Optional[Union[int, str]] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -161,13 +187,19 @@ class IndicesClient(NamespacedClient):
     async def open(
         self,
         *,
-        index: Any,
+        index: Union[List[str], str],
         allow_no_indices: Optional[bool] = ...,
-        expand_wildcards: Optional[Any] = ...,
+        expand_wildcards: Optional[
+            Union[
+                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
+                Union[Literal["all", "open", "closed", "hidden", "none"], str],
+                str,
+            ]
+        ] = ...,
         ignore_unavailable: Optional[bool] = ...,
-        master_timeout: Optional[Any] = ...,
-        timeout: Optional[Any] = ...,
-        wait_for_active_shards: Optional[Any] = ...,
+        master_timeout: Optional[Union[int, str]] = ...,
+        timeout: Optional[Union[int, str]] = ...,
+        wait_for_active_shards: Optional[Union[Union[Literal["all"], str], int]] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -184,13 +216,19 @@ class IndicesClient(NamespacedClient):
     async def close(
         self,
         *,
-        index: Any,
+        index: Union[List[str], str],
         allow_no_indices: Optional[bool] = ...,
-        expand_wildcards: Optional[Any] = ...,
+        expand_wildcards: Optional[
+            Union[
+                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
+                Union[Literal["all", "open", "closed", "hidden", "none"], str],
+                str,
+            ]
+        ] = ...,
         ignore_unavailable: Optional[bool] = ...,
-        master_timeout: Optional[Any] = ...,
-        timeout: Optional[Any] = ...,
-        wait_for_active_shards: Optional[Any] = ...,
+        master_timeout: Optional[Union[int, str]] = ...,
+        timeout: Optional[Union[int, str]] = ...,
+        wait_for_active_shards: Optional[Union[Union[Literal["all"], str], int]] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -207,12 +245,18 @@ class IndicesClient(NamespacedClient):
     async def delete(
         self,
         *,
-        index: Any,
+        index: Union[List[str], str],
         allow_no_indices: Optional[bool] = ...,
-        expand_wildcards: Optional[Any] = ...,
+        expand_wildcards: Optional[
+            Union[
+                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
+                Union[Literal["all", "open", "closed", "hidden", "none"], str],
+                str,
+            ]
+        ] = ...,
         ignore_unavailable: Optional[bool] = ...,
-        master_timeout: Optional[Any] = ...,
-        timeout: Optional[Any] = ...,
+        master_timeout: Optional[Union[int, str]] = ...,
+        timeout: Optional[Union[int, str]] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -229,9 +273,15 @@ class IndicesClient(NamespacedClient):
     async def exists(
         self,
         *,
-        index: Any,
+        index: Union[List[str], str],
         allow_no_indices: Optional[bool] = ...,
-        expand_wildcards: Optional[Any] = ...,
+        expand_wildcards: Optional[
+            Union[
+                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
+                Union[Literal["all", "open", "closed", "hidden", "none"], str],
+                str,
+            ]
+        ] = ...,
         flat_settings: Optional[bool] = ...,
         ignore_unavailable: Optional[bool] = ...,
         include_defaults: Optional[bool] = ...,
@@ -300,14 +350,20 @@ class IndicesClient(NamespacedClient):
     async def get_mapping(
         self,
         *,
-        index: Optional[Any] = ...,
-        doc_type: Optional[Any] = ...,
+        index: Optional[Union[List[str], str]] = ...,
+        doc_type: Optional[Union[List[str], str]] = ...,
         allow_no_indices: Optional[bool] = ...,
-        expand_wildcards: Optional[Any] = ...,
+        expand_wildcards: Optional[
+            Union[
+                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
+                Union[Literal["all", "open", "closed", "hidden", "none"], str],
+                str,
+            ]
+        ] = ...,
         ignore_unavailable: Optional[bool] = ...,
         include_type_name: Optional[bool] = ...,
         local: Optional[bool] = ...,
-        master_timeout: Optional[Any] = ...,
+        master_timeout: Optional[Union[int, str]] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -324,11 +380,17 @@ class IndicesClient(NamespacedClient):
     async def get_field_mapping(
         self,
         *,
-        fields: Any,
-        index: Optional[Any] = ...,
-        doc_type: Optional[Any] = ...,
+        fields: Union[List[str], str],
+        index: Optional[Union[List[str], str]] = ...,
+        doc_type: Optional[Union[List[str], str]] = ...,
         allow_no_indices: Optional[bool] = ...,
-        expand_wildcards: Optional[Any] = ...,
+        expand_wildcards: Optional[
+            Union[
+                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
+                Union[Literal["all", "open", "closed", "hidden", "none"], str],
+                str,
+            ]
+        ] = ...,
         ignore_unavailable: Optional[bool] = ...,
         include_defaults: Optional[bool] = ...,
         include_type_name: Optional[bool] = ...,
@@ -370,10 +432,16 @@ class IndicesClient(NamespacedClient):
     async def exists_alias(
         self,
         *,
-        name: Any,
-        index: Optional[Any] = ...,
+        name: Union[List[str], str],
+        index: Optional[Union[List[str], str]] = ...,
         allow_no_indices: Optional[bool] = ...,
-        expand_wildcards: Optional[Any] = ...,
+        expand_wildcards: Optional[
+            Union[
+                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
+                Union[Literal["all", "open", "closed", "hidden", "none"], str],
+                str,
+            ]
+        ] = ...,
         ignore_unavailable: Optional[bool] = ...,
         local: Optional[bool] = ...,
         pretty: Optional[bool] = ...,
@@ -392,10 +460,16 @@ class IndicesClient(NamespacedClient):
     async def get_alias(
         self,
         *,
-        index: Optional[Any] = ...,
-        name: Optional[Any] = ...,
+        index: Optional[Union[List[str], str]] = ...,
+        name: Optional[Union[List[str], str]] = ...,
         allow_no_indices: Optional[bool] = ...,
-        expand_wildcards: Optional[Any] = ...,
+        expand_wildcards: Optional[
+            Union[
+                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
+                Union[Literal["all", "open", "closed", "hidden", "none"], str],
+                str,
+            ]
+        ] = ...,
         ignore_unavailable: Optional[bool] = ...,
         local: Optional[bool] = ...,
         pretty: Optional[bool] = ...,
@@ -433,10 +507,10 @@ class IndicesClient(NamespacedClient):
     async def delete_alias(
         self,
         *,
-        index: Any,
-        name: Any,
-        master_timeout: Optional[Any] = ...,
-        timeout: Optional[Any] = ...,
+        index: Union[List[str], str],
+        name: Union[List[str], str],
+        master_timeout: Optional[Union[int, str]] = ...,
+        timeout: Optional[Union[int, str]] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -475,10 +549,10 @@ class IndicesClient(NamespacedClient):
     async def exists_template(
         self,
         *,
-        name: Any,
+        name: Union[List[str], str],
         flat_settings: Optional[bool] = ...,
         local: Optional[bool] = ...,
-        master_timeout: Optional[Any] = ...,
+        master_timeout: Optional[Union[int, str]] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -495,11 +569,11 @@ class IndicesClient(NamespacedClient):
     async def get_template(
         self,
         *,
-        name: Optional[Any] = ...,
+        name: Optional[Union[List[str], str]] = ...,
         flat_settings: Optional[bool] = ...,
         include_type_name: Optional[bool] = ...,
         local: Optional[bool] = ...,
-        master_timeout: Optional[Any] = ...,
+        master_timeout: Optional[Union[int, str]] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -516,9 +590,9 @@ class IndicesClient(NamespacedClient):
     async def delete_template(
         self,
         *,
-        name: Any,
-        master_timeout: Optional[Any] = ...,
-        timeout: Optional[Any] = ...,
+        name: str,
+        master_timeout: Optional[Union[int, str]] = ...,
+        timeout: Optional[Union[int, str]] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -535,15 +609,21 @@ class IndicesClient(NamespacedClient):
     async def get_settings(
         self,
         *,
-        index: Optional[Any] = ...,
-        name: Optional[Any] = ...,
+        index: Optional[Union[List[str], str]] = ...,
+        name: Optional[Union[List[str], str]] = ...,
         allow_no_indices: Optional[bool] = ...,
-        expand_wildcards: Optional[Any] = ...,
+        expand_wildcards: Optional[
+            Union[
+                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
+                Union[Literal["all", "open", "closed", "hidden", "none"], str],
+                str,
+            ]
+        ] = ...,
         flat_settings: Optional[bool] = ...,
         ignore_unavailable: Optional[bool] = ...,
         include_defaults: Optional[bool] = ...,
         local: Optional[bool] = ...,
-        master_timeout: Optional[Any] = ...,
+        master_timeout: Optional[Union[int, str]] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -585,18 +665,24 @@ class IndicesClient(NamespacedClient):
     async def stats(
         self,
         *,
-        index: Optional[Any] = ...,
-        metric: Optional[Any] = ...,
-        completion_fields: Optional[Any] = ...,
-        expand_wildcards: Optional[Any] = ...,
-        fielddata_fields: Optional[Any] = ...,
-        fields: Optional[Any] = ...,
+        index: Optional[Union[List[str], str]] = ...,
+        metric: Optional[Union[List[str], str]] = ...,
+        completion_fields: Optional[Union[List[str], str]] = ...,
+        expand_wildcards: Optional[
+            Union[
+                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
+                Union[Literal["all", "open", "closed", "hidden", "none"], str],
+                str,
+            ]
+        ] = ...,
+        fielddata_fields: Optional[Union[List[str], str]] = ...,
+        fields: Optional[Union[List[str], str]] = ...,
         forbid_closed_indices: Optional[bool] = ...,
-        groups: Optional[Any] = ...,
+        groups: Optional[Union[List[str], str]] = ...,
         include_segment_file_sizes: Optional[bool] = ...,
         include_unloaded_segments: Optional[bool] = ...,
-        level: Optional[Any] = ...,
-        types: Optional[Any] = ...,
+        level: Optional[Union[Literal["cluster", "indices", "shards"], str]] = ...,
+        types: Optional[Union[List[str], str]] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -613,9 +699,15 @@ class IndicesClient(NamespacedClient):
     async def segments(
         self,
         *,
-        index: Optional[Any] = ...,
+        index: Optional[Union[List[str], str]] = ...,
         allow_no_indices: Optional[bool] = ...,
-        expand_wildcards: Optional[Any] = ...,
+        expand_wildcards: Optional[
+            Union[
+                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
+                Union[Literal["all", "open", "closed", "hidden", "none"], str],
+                str,
+            ]
+        ] = ...,
         ignore_unavailable: Optional[bool] = ...,
         verbose: Optional[bool] = ...,
         pretty: Optional[bool] = ...,
@@ -770,11 +862,17 @@ class IndicesClient(NamespacedClient):
     async def shard_stores(
         self,
         *,
-        index: Optional[Any] = ...,
+        index: Optional[Union[List[str], str]] = ...,
         allow_no_indices: Optional[bool] = ...,
-        expand_wildcards: Optional[Any] = ...,
+        expand_wildcards: Optional[
+            Union[
+                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
+                Union[Literal["all", "open", "closed", "hidden", "none"], str],
+                str,
+            ]
+        ] = ...,
         ignore_unavailable: Optional[bool] = ...,
-        status: Optional[Any] = ...,
+        status: Optional[Union[List[str], str]] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -950,7 +1048,7 @@ class IndicesClient(NamespacedClient):
     async def create_data_stream(
         self,
         *,
-        name: Any,
+        name: str,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -967,8 +1065,14 @@ class IndicesClient(NamespacedClient):
     async def delete_data_stream(
         self,
         *,
-        name: Any,
-        expand_wildcards: Optional[Any] = ...,
+        name: Union[List[str], str],
+        expand_wildcards: Optional[
+            Union[
+                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
+                Union[Literal["all", "open", "closed", "hidden", "none"], str],
+                str,
+            ]
+        ] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -1086,8 +1190,14 @@ class IndicesClient(NamespacedClient):
     async def get_data_stream(
         self,
         *,
-        name: Optional[Any] = ...,
-        expand_wildcards: Optional[Any] = ...,
+        name: Optional[Union[List[str], str]] = ...,
+        expand_wildcards: Optional[
+            Union[
+                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
+                Union[Literal["all", "open", "closed", "hidden", "none"], str],
+                str,
+            ]
+        ] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,

@@ -1152,6 +1152,7 @@ class MlClient(NamespacedClient):
         *,
         model_id: Any,
         body: Mapping[str, Any],
+        defer_definition_decompression: Optional[bool] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,

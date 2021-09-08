@@ -132,9 +132,14 @@ def query_params(*es_query_params, **kwargs):
     body_params = kwargs.pop("body_params", None)
     body_only_params = set(body_params or ()) - set(es_query_params)
     body_name = kwargs.pop("body_name", None)
+    body_required = kwargs.pop("body_required", False)
 
     # There should be no APIs defined with both 'body_params' and a named body.
     assert not (body_name and body_params)
+
+    # 'body_required' implies there's no named body and that body_params are defined.
+    assert not (body_name and body_required)
+    assert not body_required or body_params
 
     def _wrapper(func):
         @wraps(func)
@@ -212,6 +217,12 @@ def query_params(*es_query_params, **kwargs):
                     if value is not None:
                         body[param.rstrip("_")] = value
                 kwargs["body"] = body
+
+            # Since we've deprecated 'body' we set body={} if there
+            # should be a body on JSON-field APIs but none of those fields
+            # are filled.
+            elif body_required:
+                kwargs["body"] = {}
 
             # If there's a named body parameter then we transform it to 'body'
             # for backwards compatibility with libraries like APM.
