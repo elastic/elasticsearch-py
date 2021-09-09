@@ -31,37 +31,6 @@ INTEGER_TYPES = ()
 FLOAT_TYPES = (Decimal,)
 TIME_TYPES = (date, datetime)
 
-try:
-    import numpy as np
-
-    INTEGER_TYPES += (
-        np.int_,
-        np.intc,
-        np.int8,
-        np.int16,
-        np.int32,
-        np.int64,
-        np.uint8,
-        np.uint16,
-        np.uint32,
-        np.uint64,
-    )
-    FLOAT_TYPES += (
-        np.float_,
-        np.float16,
-        np.float32,
-        np.float64,
-    )
-except ImportError:
-    np = None
-
-try:
-    import pandas as pd
-
-    TIME_TYPES += (pd.Timestamp,)
-except ImportError:
-    pd = None
-
 
 class Serializer(object):
     mimetype = ""
@@ -90,28 +59,77 @@ class JSONSerializer(Serializer):
     mimetype = "application/json"
 
     def default(self, data):
-        if isinstance(data, TIME_TYPES) and getattr(pd, "NaT", None) is not data:
-            return data.isoformat()
-        elif isinstance(data, uuid.UUID):
+        if isinstance(data, TIME_TYPES):
+            # Little hack to avoid importing pandas but to not
+            # return 'NaT' string for pd.NaT as that's not a valid
+            # Elasticsearch date.
+            formatted_data = data.isoformat()
+            if formatted_data != "NaT":
+                return formatted_data
+
+        if isinstance(data, uuid.UUID):
             return str(data)
         elif isinstance(data, FLOAT_TYPES):
             return float(data)
+
+        # This is kept for backwards compatibility even
+        # if 'INTEGER_TYPES' isn't used by default anymore.
         elif INTEGER_TYPES and isinstance(data, INTEGER_TYPES):
             return int(data)
 
         # Special cases for numpy and pandas types
-        elif np:
-            if isinstance(data, np.bool_):
+        # These are expensive to import so we try them last.
+        try:
+            import numpy as np
+
+            if isinstance(
+                data,
+                (
+                    np.int_,
+                    np.intc,
+                    np.int8,
+                    np.int16,
+                    np.int32,
+                    np.int64,
+                    np.uint8,
+                    np.uint16,
+                    np.uint32,
+                    np.uint64,
+                ),
+            ):
+                return int(data)
+            elif isinstance(
+                data,
+                (
+                    np.float_,
+                    np.float16,
+                    np.float32,
+                    np.float64,
+                ),
+            ):
+                return float(data)
+            elif isinstance(data, np.bool_):
                 return bool(data)
             elif isinstance(data, np.datetime64):
                 return data.item().isoformat()
             elif isinstance(data, np.ndarray):
                 return data.tolist()
-        if pd:
+        except ImportError:
+            pass
+
+        try:
+            import pandas as pd
+
             if isinstance(data, (pd.Series, pd.Categorical)):
                 return data.tolist()
+            elif isinstance(data, pd.Timestamp) and data is not getattr(
+                pd, "NaT", None
+            ):
+                return data.isoformat()
             elif data is getattr(pd, "NA", None):
                 return None
+        except ImportError:
+            pass
 
         raise TypeError("Unable to serialize %r (type: %s)" % (data, type(data)))
 
