@@ -24,14 +24,13 @@ import re
 import warnings
 from platform import python_version
 
-import six
-
 try:
     import simplejson as json
 except ImportError:
     import json
 
 from .. import __version__, __versionstr__
+from ..compat import PY2
 from ..exceptions import (
     HTTP_EXCEPTIONS,
     ElasticsearchWarning,
@@ -358,7 +357,7 @@ def loggable_response_body(response):
     # If 'response' isn't unicode we need to try converting it to
     # unicode otherwise it's likely binary so should be encoded
     # properly. On Python 3.x this works out fine.
-    if six.PY2 and not isinstance(response, unicode):  # noqa
+    if PY2 and not isinstance(response, unicode):  # noqa
         try:
             response = response.decode("utf-8")
         except (AttributeError, UnicodeError):
