@@ -178,7 +178,7 @@ class NodesClient(NamespacedClient):
         )
 
     @query_params()
-    def clear_metering_archive(
+    def clear_repositories_metering_archive(
         self, node_id, max_archive_version, params=None, headers=None
     ):
         """
@@ -210,7 +210,7 @@ class NodesClient(NamespacedClient):
         )
 
     @query_params()
-    def get_metering_info(self, node_id, params=None, headers=None):
+    def get_repositories_metering_info(self, node_id, params=None, headers=None):
         """
         Returns cluster repositories metering information.
 
