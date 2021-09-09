@@ -1498,7 +1498,7 @@ class MlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("defer_definition_decompression")
+    @query_params()
     def put_trained_model(self, model_id, body, params=None, headers=None):
         """
         Creates an inference trained model.
@@ -1507,9 +1507,6 @@ class MlClient(NamespacedClient):
 
         :arg model_id: The ID of the trained models to store
         :arg body: The trained model configuration
-        :arg defer_definition_decompression: If set to `true` and a
-            `compressed_definition` is provided, the request defers definition
-            decompression and skips relevant validations.
         """
         for param in (model_id, body):
             if param in SKIP_IN_PATH:
