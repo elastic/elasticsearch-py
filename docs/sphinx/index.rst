@@ -30,10 +30,8 @@ Compatibility
 -------------
 
 Language clients are forward compatible; meaning that clients support communicating
-with greater minor versions of Elasticsearch.
-
-Elastic language clients are also backwards compatible with lesser supported
-minor Elasticsearch versions.
+with greater or equal minor versions of Elasticsearch. Elasticsearch language clients
+are only backwards compatible with default distributions and without guarantees made.
 
 If you have a need to have multiple versions installed at the same time older
 versions are also released as ``elasticsearch2``, ``elasticsearch5`` and ``elasticsearch6``.
