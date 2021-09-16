@@ -31,6 +31,10 @@ docker build \
 
 echo -e "\033[1m>>>>> Run [elastic/elasticsearch-py container] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>\033[0m"
 
+if [[ "$STACK_VERSION" == "8.0.0-SNAPSHOT" ]]; then
+  ELASTIC_CLIENT_APIVERSIONING="1"
+fi
+
 mkdir -p junit
 docker run \
   --network=${network_name} \
@@ -39,6 +43,7 @@ docker run \
   --env "TEST_SUITE=${TEST_SUITE}" \
   --env "PYTHON_CONNECTION_CLASS=${PYTHON_CONNECTION_CLASS}" \
   --env "TEST_TYPE=server" \
+  --env "ELASTIC_CLIENT_APIVERSIONING=${ELASTIC_CLIENT_APIVERSIONING:-false}" \
   --name elasticsearch-py \
   --rm \
   elastic/elasticsearch-py \

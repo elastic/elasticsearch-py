@@ -143,7 +143,11 @@ def wipe_searchable_snapshot_indices(client):
 
 def wipe_xpack_templates(client):
     templates = [
-        x.strip() for x in client.cat.templates(h="name").split("\n") if x.strip()
+        x.strip()
+        for x in client.cat.templates(h="name", headers={"accept": "text/plain"}).split(
+            "\n"
+        )
+        if x.strip()
     ]
     for template in templates:
         if is_xpack_template(template):
@@ -221,8 +225,10 @@ def wipe_tasks(client):
 def wait_for_pending_tasks(client, filter, timeout=30):
     end_time = time.time() + timeout
     while time.time() < end_time:
-        tasks = client.cat.tasks(detailed=True).split("\n")
-        if not any(filter in task for task in tasks):
+        tasks = client.cat.tasks(detailed=True, headers={"accept": "text/plain"}).split(
+            "\n"
+        )
+        if not any(filter in str(task) for task in tasks):
             break
 
 
