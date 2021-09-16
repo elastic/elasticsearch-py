@@ -19,7 +19,9 @@ from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 
 
 class RollupClient(NamespacedClient):
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def delete_job(self, id, params=None, headers=None):
         """
         Deletes an existing rollup job.
@@ -40,7 +42,9 @@ class RollupClient(NamespacedClient):
             "DELETE", _make_path("_rollup", "job", id), params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def get_jobs(self, id=None, params=None, headers=None):
         """
         Retrieves the configuration, stats, and status of rollup jobs.
@@ -59,7 +63,9 @@ class RollupClient(NamespacedClient):
             "GET", _make_path("_rollup", "job", id), params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def get_rollup_caps(self, id=None, params=None, headers=None):
         """
         Returns the capabilities of any rollup jobs that have been configured for a
@@ -79,7 +85,9 @@ class RollupClient(NamespacedClient):
             "GET", _make_path("_rollup", "data", id), params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def get_rollup_index_caps(self, index, params=None, headers=None):
         """
         Returns the rollup capabilities of all jobs inside of a rollup index (e.g. the
@@ -102,7 +110,10 @@ class RollupClient(NamespacedClient):
             "GET", _make_path(index, "_rollup", "data"), params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def put_job(self, id, body, params=None, headers=None):
         """
         Creates a rollup job.
@@ -129,7 +140,12 @@ class RollupClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("rest_total_hits_as_int", "typed_keys")
+    @query_params(
+        "rest_total_hits_as_int",
+        "typed_keys",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def rollup_search(
         self, index, body, doc_type=None, params=None, headers=None
     ):
@@ -164,7 +180,9 @@ class RollupClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def start_job(self, id, params=None, headers=None):
         """
         Starts an existing, stopped rollup job.
@@ -188,7 +206,11 @@ class RollupClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("timeout", "wait_for_completion")
+    @query_params(
+        "timeout",
+        "wait_for_completion",
+        response_mimetypes=["application/json"],
+    )
     async def stop_job(self, id, params=None, headers=None):
         """
         Stops an existing, started rollup job.
@@ -217,7 +239,10 @@ class RollupClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def rollup(self, index, rollup_index, body, params=None, headers=None):
         """
         Rollup an index

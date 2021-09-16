@@ -31,6 +31,7 @@ class ClusterClient(NamespacedClient):
         "wait_for_no_relocating_shards",
         "wait_for_nodes",
         "wait_for_status",
+        response_mimetypes=["application/json"],
     )
     async def health(self, index=None, params=None, headers=None):
         """
@@ -70,7 +71,11 @@ class ClusterClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("local", "master_timeout")
+    @query_params(
+        "local",
+        "master_timeout",
+        response_mimetypes=["application/json"],
+    )
     async def pending_tasks(self, params=None, headers=None):
         """
         Returns a list of any cluster-level changes (e.g. create index, update mapping,
@@ -95,6 +100,7 @@ class ClusterClient(NamespacedClient):
         "master_timeout",
         "wait_for_metadata_version",
         "wait_for_timeout",
+        response_mimetypes=["application/json"],
     )
     async def state(self, metric=None, index=None, params=None, headers=None):
         """
@@ -135,7 +141,11 @@ class ClusterClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("flat_settings", "timeout")
+    @query_params(
+        "flat_settings",
+        "timeout",
+        response_mimetypes=["application/json"],
+    )
     async def stats(self, node_id=None, params=None, headers=None):
         """
         Returns high-level overview of cluster statistics.
@@ -160,7 +170,14 @@ class ClusterClient(NamespacedClient):
         )
 
     @query_params(
-        "dry_run", "explain", "master_timeout", "metric", "retry_failed", "timeout"
+        "dry_run",
+        "explain",
+        "master_timeout",
+        "metric",
+        "retry_failed",
+        "timeout",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
     )
     async def reroute(self, body=None, params=None, headers=None):
         """
@@ -187,7 +204,13 @@ class ClusterClient(NamespacedClient):
             "POST", "/_cluster/reroute", params=params, headers=headers, body=body
         )
 
-    @query_params("flat_settings", "include_defaults", "master_timeout", "timeout")
+    @query_params(
+        "flat_settings",
+        "include_defaults",
+        "master_timeout",
+        "timeout",
+        response_mimetypes=["application/json"],
+    )
     async def get_settings(self, params=None, headers=None):
         """
         Returns cluster settings.
@@ -206,7 +229,13 @@ class ClusterClient(NamespacedClient):
             "GET", "/_cluster/settings", params=params, headers=headers
         )
 
-    @query_params("flat_settings", "master_timeout", "timeout")
+    @query_params(
+        "flat_settings",
+        "master_timeout",
+        "timeout",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def put_settings(self, body, params=None, headers=None):
         """
         Updates the cluster settings.
@@ -228,7 +257,9 @@ class ClusterClient(NamespacedClient):
             "PUT", "/_cluster/settings", params=params, headers=headers, body=body
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def remote_info(self, params=None, headers=None):
         """
         Returns the information about configured remote clusters.
@@ -239,7 +270,12 @@ class ClusterClient(NamespacedClient):
             "GET", "/_remote/info", params=params, headers=headers
         )
 
-    @query_params("include_disk_info", "include_yes_decisions")
+    @query_params(
+        "include_disk_info",
+        "include_yes_decisions",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def allocation_explain(self, body=None, params=None, headers=None):
         """
         Provides explanations for shard allocations in the cluster.
@@ -261,7 +297,11 @@ class ClusterClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("master_timeout", "timeout")
+    @query_params(
+        "master_timeout",
+        "timeout",
+        response_mimetypes=["application/json"],
+    )
     async def delete_component_template(self, name, params=None, headers=None):
         """
         Deletes a component template
@@ -282,7 +322,11 @@ class ClusterClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("local", "master_timeout")
+    @query_params(
+        "local",
+        "master_timeout",
+        response_mimetypes=["application/json"],
+    )
     async def get_component_template(self, name=None, params=None, headers=None):
         """
         Returns one or more component templates
@@ -302,7 +346,13 @@ class ClusterClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("create", "master_timeout", "timeout")
+    @query_params(
+        "create",
+        "master_timeout",
+        "timeout",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def put_component_template(self, name, body, params=None, headers=None):
         """
         Creates or updates a component template
@@ -328,7 +378,11 @@ class ClusterClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("local", "master_timeout")
+    @query_params(
+        "local",
+        "master_timeout",
+        response_mimetypes=["application/json"],
+    )
     async def exists_component_template(self, name, params=None, headers=None):
         """
         Returns information about whether a particular component template exist
@@ -351,7 +405,10 @@ class ClusterClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("wait_for_removal")
+    @query_params(
+        "wait_for_removal",
+        response_mimetypes=["application/json"],
+    )
     async def delete_voting_config_exclusions(self, params=None, headers=None):
         """
         Clears cluster voting config exclusions.
@@ -369,7 +426,12 @@ class ClusterClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("node_ids", "node_names", "timeout")
+    @query_params(
+        "node_ids",
+        "node_names",
+        "timeout",
+        response_mimetypes=["application/json"],
+    )
     async def post_voting_config_exclusions(self, params=None, headers=None):
         """
         Updates the cluster voting config exclusions by node ids or node names.

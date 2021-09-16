@@ -18,15 +18,22 @@
 from __future__ import unicode_literals
 
 import base64
+import os
 import warnings
 import weakref
 from datetime import date, datetime
 from functools import wraps
 
+from .._version import __versionstr__
 from ..compat import PY2, quote, string_types, to_bytes, to_str, unquote, urlparse
 
 # parts of URL to be omitted
 SKIP_IN_PATH = (None, "", b"", [], ())
+
+# Switch this value with 'application/json' if 'ELASTIC_CLIENT_APIVERSIONING=1/true'
+_COMPATIBILITY_MIMETYPE = "application/vnd.elasticsearch+json;compatible-with=%s" % (
+    __versionstr__.partition(".")[0]
+)
 
 
 def _normalize_hosts(hosts):
@@ -129,6 +136,18 @@ def query_params(*es_query_params, **kwargs):
     Decorator that pops all accepted parameters from method's kwargs and puts
     them in the params argument.
     """
+
+    def compat_mimetype(mimetypes):
+        if os.environ.get("ELASTIC_CLIENT_APIVERSIONING", "") in ("1", "true"):
+            return [
+                _COMPATIBILITY_MIMETYPE if mimetype == "application/json" else mimetype
+                for mimetype in mimetypes
+            ]
+        return mimetypes
+
+    content_type = "".join(compat_mimetype(kwargs.pop("request_mimetypes", []))[:1])
+    accept = ",".join(compat_mimetype(kwargs.pop("response_mimetypes", [])))
+
     body_params = kwargs.pop("body_params", None)
     body_only_params = set(body_params or ()) - set(es_query_params)
     body_name = kwargs.pop("body_name", None)
@@ -153,6 +172,14 @@ def query_params(*es_query_params, **kwargs):
 
             if "opaque_id" in kwargs:
                 headers["x-opaque-id"] = kwargs.pop("opaque_id")
+
+            # Set the default 'Accept' and 'Content-Type' HTTP headers
+            # if any are defined for this API. Only send 'Content-Type'
+            # if there's a body in the request.
+            if accept:
+                headers.setdefault("accept", accept)
+            if content_type:
+                headers.setdefault("content-type", content_type)
 
             http_auth = kwargs.pop("http_auth", None)
             api_key = kwargs.pop("api_key", None)

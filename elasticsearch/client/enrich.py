@@ -19,7 +19,9 @@ from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 
 
 class EnrichClient(NamespacedClient):
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def delete_policy(self, name, params=None, headers=None):
         """
         Deletes an existing enrich policy and its enrich index.
@@ -38,7 +40,10 @@ class EnrichClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("wait_for_completion")
+    @query_params(
+        "wait_for_completion",
+        response_mimetypes=["application/json"],
+    )
     def execute_policy(self, name, params=None, headers=None):
         """
         Creates the enrich index for an existing enrich policy.
@@ -59,7 +64,9 @@ class EnrichClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def get_policy(self, name=None, params=None, headers=None):
         """
         Gets information about an enrich policy.
@@ -72,7 +79,10 @@ class EnrichClient(NamespacedClient):
             "GET", _make_path("_enrich", "policy", name), params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def put_policy(self, name, body, params=None, headers=None):
         """
         Creates a new enrich policy.
@@ -94,7 +104,9 @@ class EnrichClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def stats(self, params=None, headers=None):
         """
         Gets enrich coordinator statistics and information about enrich policies that

@@ -19,7 +19,10 @@ from .utils import NamespacedClient, query_params
 
 
 class FeaturesClient(NamespacedClient):
-    @query_params("master_timeout")
+    @query_params(
+        "master_timeout",
+        response_mimetypes=["application/json"],
+    )
     def get_features(self, params=None, headers=None):
         """
         Gets a list of features which can be included in snapshots using the
@@ -34,7 +37,9 @@ class FeaturesClient(NamespacedClient):
             "GET", "/_features", params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def reset_features(self, params=None, headers=None):
         """
         Resets the internal state of features, usually by deleting system indices

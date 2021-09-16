@@ -19,7 +19,10 @@ from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 
 
 class TransformClient(NamespacedClient):
-    @query_params("force")
+    @query_params(
+        "force",
+        response_mimetypes=["application/json"],
+    )
     def delete_transform(self, transform_id, params=None, headers=None):
         """
         Deletes an existing transform.
@@ -43,7 +46,13 @@ class TransformClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("allow_no_match", "exclude_generated", "from_", "size")
+    @query_params(
+        "allow_no_match",
+        "exclude_generated",
+        "from_",
+        "size",
+        response_mimetypes=["application/json"],
+    )
     def get_transform(self, transform_id=None, params=None, headers=None):
         """
         Retrieves configuration information for transforms.
@@ -72,7 +81,12 @@ class TransformClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("allow_no_match", "from_", "size")
+    @query_params(
+        "allow_no_match",
+        "from_",
+        "size",
+        response_mimetypes=["application/json"],
+    )
     def get_transform_stats(self, transform_id, params=None, headers=None):
         """
         Retrieves usage information for transforms.
@@ -103,7 +117,10 @@ class TransformClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def preview_transform(
         self, body=None, transform_id=None, params=None, headers=None
     ):
@@ -123,7 +140,11 @@ class TransformClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("defer_validation")
+    @query_params(
+        "defer_validation",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def put_transform(self, transform_id, body, params=None, headers=None):
         """
         Instantiates a transform.
@@ -147,7 +168,10 @@ class TransformClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("timeout")
+    @query_params(
+        "timeout",
+        response_mimetypes=["application/json"],
+    )
     def start_transform(self, transform_id, params=None, headers=None):
         """
         Starts one or more transforms.
@@ -176,6 +200,7 @@ class TransformClient(NamespacedClient):
         "timeout",
         "wait_for_checkpoint",
         "wait_for_completion",
+        response_mimetypes=["application/json"],
     )
     def stop_transform(self, transform_id, params=None, headers=None):
         """
@@ -208,7 +233,11 @@ class TransformClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("defer_validation")
+    @query_params(
+        "defer_validation",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def update_transform(self, transform_id, body, params=None, headers=None):
         """
         Updates certain properties of a transform.

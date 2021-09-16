@@ -19,7 +19,12 @@ from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 
 
 class SnapshotClient(NamespacedClient):
-    @query_params("master_timeout", "wait_for_completion")
+    @query_params(
+        "master_timeout",
+        "wait_for_completion",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def create(self, repository, snapshot, body=None, params=None, headers=None):
         """
         Creates a snapshot in a repository.
@@ -46,7 +51,10 @@ class SnapshotClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("master_timeout")
+    @query_params(
+        "master_timeout",
+        response_mimetypes=["application/json"],
+    )
     def delete(self, repository, snapshot, params=None, headers=None):
         """
         Deletes a snapshot.
@@ -75,6 +83,7 @@ class SnapshotClient(NamespacedClient):
         "index_details",
         "master_timeout",
         "verbose",
+        response_mimetypes=["application/json"],
     )
     def get(self, repository, snapshot, params=None, headers=None):
         """
@@ -107,7 +116,11 @@ class SnapshotClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("master_timeout", "timeout")
+    @query_params(
+        "master_timeout",
+        "timeout",
+        response_mimetypes=["application/json"],
+    )
     def delete_repository(self, repository, params=None, headers=None):
         """
         Deletes a repository.
@@ -130,7 +143,11 @@ class SnapshotClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("local", "master_timeout")
+    @query_params(
+        "local",
+        "master_timeout",
+        response_mimetypes=["application/json"],
+    )
     def get_repository(self, repository=None, params=None, headers=None):
         """
         Returns information about a repository.
@@ -147,7 +164,13 @@ class SnapshotClient(NamespacedClient):
             "GET", _make_path("_snapshot", repository), params=params, headers=headers
         )
 
-    @query_params("master_timeout", "timeout", "verify")
+    @query_params(
+        "master_timeout",
+        "timeout",
+        "verify",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def create_repository(self, repository, body, params=None, headers=None):
         """
         Creates a repository.
@@ -173,7 +196,12 @@ class SnapshotClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("master_timeout", "wait_for_completion")
+    @query_params(
+        "master_timeout",
+        "wait_for_completion",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def restore(self, repository, snapshot, body=None, params=None, headers=None):
         """
         Restores a snapshot.
@@ -200,7 +228,11 @@ class SnapshotClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("ignore_unavailable", "master_timeout")
+    @query_params(
+        "ignore_unavailable",
+        "master_timeout",
+        response_mimetypes=["application/json"],
+    )
     def status(self, repository=None, snapshot=None, params=None, headers=None):
         """
         Returns information about the status of a snapshot.
@@ -222,7 +254,11 @@ class SnapshotClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("master_timeout", "timeout")
+    @query_params(
+        "master_timeout",
+        "timeout",
+        response_mimetypes=["application/json"],
+    )
     def verify_repository(self, repository, params=None, headers=None):
         """
         Verifies a repository.
@@ -244,7 +280,11 @@ class SnapshotClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("master_timeout", "timeout")
+    @query_params(
+        "master_timeout",
+        "timeout",
+        response_mimetypes=["application/json"],
+    )
     def cleanup_repository(self, repository, params=None, headers=None):
         """
         Removes stale data from repository.
@@ -266,7 +306,11 @@ class SnapshotClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("master_timeout")
+    @query_params(
+        "master_timeout",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def clone(
         self, repository, snapshot, target_snapshot, body, params=None, headers=None
     ):
@@ -306,6 +350,7 @@ class SnapshotClient(NamespacedClient):
         "read_node_count",
         "seed",
         "timeout",
+        response_mimetypes=["application/json"],
     )
     def repository_analyze(self, repository, params=None, headers=None):
         """

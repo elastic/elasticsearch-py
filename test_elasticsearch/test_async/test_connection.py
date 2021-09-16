@@ -220,7 +220,6 @@ class TestAIOHttpConnection:
         con = AIOHttpConnection()
         assert {
             "connection": "keep-alive",
-            "content-type": "application/json",
             "user-agent": con._get_default_user_agent(),
         } == con.headers
 
@@ -229,7 +228,6 @@ class TestAIOHttpConnection:
         assert {
             "authorization": "Basic dXNlcm5hbWU6c2VjcmV0",
             "connection": "keep-alive",
-            "content-type": "application/json",
             "user-agent": con._get_default_user_agent(),
         } == con.headers
 
@@ -237,7 +235,6 @@ class TestAIOHttpConnection:
         con = AIOHttpConnection(http_auth=("username", "secret"))
         assert {
             "authorization": "Basic dXNlcm5hbWU6c2VjcmV0",
-            "content-type": "application/json",
             "connection": "keep-alive",
             "user-agent": con._get_default_user_agent(),
         } == con.headers
@@ -246,7 +243,6 @@ class TestAIOHttpConnection:
         con = AIOHttpConnection(http_auth=["username", "secret"])
         assert {
             "authorization": "Basic dXNlcm5hbWU6c2VjcmV0",
-            "content-type": "application/json",
             "connection": "keep-alive",
             "user-agent": con._get_default_user_agent(),
         } == con.headers
@@ -358,7 +354,6 @@ class TestConnectionHttpbin:
         assert status == 200
         assert data["method"] == "GET"
         assert data["headers"] == {
-            "Content-Type": "application/json",
             "Host": "httpbin.org",
             "User-Agent": user_agent,
         }
@@ -371,7 +366,6 @@ class TestConnectionHttpbin:
         assert status == 200
         assert data["method"] == "GET"
         assert data["headers"] == {
-            "Content-Type": "application/json",
             "Host": "httpbin.org",
             "User-Agent": user_agent,
         }
@@ -384,7 +378,6 @@ class TestConnectionHttpbin:
         assert status == 200
         assert data["headers"] == {
             "Accept-Encoding": "gzip,deflate",
-            "Content-Type": "application/json",
             "Host": "httpbin.org",
             "User-Agent": user_agent,
         }
@@ -403,7 +396,6 @@ class TestConnectionHttpbin:
         assert status == 200
         assert data["headers"] == {
             "Accept-Encoding": "gzip,deflate",
-            "Content-Type": "application/json",
             "Host": "httpbin.org",
             "Header1": "override!",
             "Header2": "value2",

@@ -267,7 +267,9 @@ class AsyncElasticsearch(object):
         await self.transport.close()
 
     # AUTO-GENERATED-API-DEFINITIONS #
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def ping(self, params=None, headers=None):
         """
         Returns whether the cluster is running.
@@ -281,7 +283,9 @@ class AsyncElasticsearch(object):
         except TransportError:
             return False
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def info(self, params=None, headers=None):
         """
         Returns basic information about the cluster.
@@ -300,6 +304,8 @@ class AsyncElasticsearch(object):
         "version",
         "version_type",
         "wait_for_active_shards",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
         body_name="document",
     )
     async def create(self, index, id, body, doc_type=None, params=None, headers=None):
@@ -355,6 +361,8 @@ class AsyncElasticsearch(object):
         "version",
         "version_type",
         "wait_for_active_shards",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
         body_name="document",
     )
     async def index(
@@ -422,6 +430,8 @@ class AsyncElasticsearch(object):
         "routing",
         "timeout",
         "wait_for_active_shards",
+        request_mimetypes=["application/x-ndjson"],
+        response_mimetypes=["application/json"],
     )
     async def bulk(self, body, index=None, doc_type=None, params=None, headers=None):
         """
@@ -469,7 +479,11 @@ class AsyncElasticsearch(object):
             body=body,
         )
 
-    @query_params(body_params=["scroll_id"])
+    @query_params(
+        request_mimetypes=["application/json", "text/plain"],
+        response_mimetypes=["application/json"],
+        body_params=["scroll_id"],
+    )
     async def clear_scroll(self, body=None, scroll_id=None, params=None, headers=None):
         """
         Explicitly clears the search context for a scroll.
@@ -506,6 +520,8 @@ class AsyncElasticsearch(object):
         "q",
         "routing",
         "terminate_after",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
     )
     async def count(
         self, body=None, index=None, doc_type=None, params=None, headers=None
@@ -566,6 +582,7 @@ class AsyncElasticsearch(object):
         "version",
         "version_type",
         "wait_for_active_shards",
+        response_mimetypes=["application/json"],
     )
     async def delete(self, index, id, doc_type=None, params=None, headers=None):
         """
@@ -642,6 +659,8 @@ class AsyncElasticsearch(object):
         "version",
         "wait_for_active_shards",
         "wait_for_completion",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
     )
     async def delete_by_query(
         self, index, body, doc_type=None, params=None, headers=None
@@ -739,7 +758,10 @@ class AsyncElasticsearch(object):
             body=body,
         )
 
-    @query_params("requests_per_second")
+    @query_params(
+        "requests_per_second",
+        response_mimetypes=["application/json"],
+    )
     async def delete_by_query_rethrottle(self, task_id, params=None, headers=None):
         """
         Changes the number of requests per second for a particular Delete By Query
@@ -761,7 +783,11 @@ class AsyncElasticsearch(object):
             headers=headers,
         )
 
-    @query_params("master_timeout", "timeout")
+    @query_params(
+        "master_timeout",
+        "timeout",
+        response_mimetypes=["application/json"],
+    )
     async def delete_script(self, id, params=None, headers=None):
         """
         Deletes a script.
@@ -790,6 +816,7 @@ class AsyncElasticsearch(object):
         "stored_fields",
         "version",
         "version_type",
+        response_mimetypes=["application/json"],
     )
     async def exists(self, index, id, doc_type=None, params=None, headers=None):
         """
@@ -841,6 +868,7 @@ class AsyncElasticsearch(object):
         "routing",
         "version",
         "version_type",
+        response_mimetypes=["application/json"],
     )
     async def exists_source(self, index, id, doc_type=None, params=None, headers=None):
         """
@@ -895,6 +923,8 @@ class AsyncElasticsearch(object):
         "q",
         "routing",
         "stored_fields",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
     )
     async def explain(
         self, index, id, body=None, doc_type=None, params=None, headers=None
@@ -949,6 +979,7 @@ class AsyncElasticsearch(object):
         "fields",
         "ignore_unavailable",
         "include_unmapped",
+        response_mimetypes=["application/json"],
     )
     async def field_caps(self, body=None, index=None, params=None, headers=None):
         """
@@ -991,6 +1022,7 @@ class AsyncElasticsearch(object):
         "stored_fields",
         "version",
         "version_type",
+        response_mimetypes=["application/json"],
     )
     async def get(self, index, id, doc_type=None, params=None, headers=None):
         """
@@ -1035,7 +1067,10 @@ class AsyncElasticsearch(object):
             "GET", _make_path(index, doc_type, id), params=params, headers=headers
         )
 
-    @query_params("master_timeout")
+    @query_params(
+        "master_timeout",
+        response_mimetypes=["application/json"],
+    )
     async def get_script(self, id, params=None, headers=None):
         """
         Returns a script.
@@ -1062,6 +1097,7 @@ class AsyncElasticsearch(object):
         "routing",
         "version",
         "version_type",
+        response_mimetypes=["application/json"],
     )
     async def get_source(self, index, id, doc_type=None, params=None, headers=None):
         """
@@ -1112,6 +1148,8 @@ class AsyncElasticsearch(object):
         "refresh",
         "routing",
         "stored_fields",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
     )
     async def mget(self, body, index=None, doc_type=None, params=None, headers=None):
         """
@@ -1159,6 +1197,8 @@ class AsyncElasticsearch(object):
         "rest_total_hits_as_int",
         "search_type",
         "typed_keys",
+        request_mimetypes=["application/x-ndjson"],
+        response_mimetypes=["application/json"],
     )
     async def msearch(self, body, index=None, doc_type=None, params=None, headers=None):
         """
@@ -1213,6 +1253,8 @@ class AsyncElasticsearch(object):
         "rest_total_hits_as_int",
         "search_type",
         "typed_keys",
+        request_mimetypes=["application/x-ndjson"],
+        response_mimetypes=["application/json"],
     )
     async def msearch_template(
         self, body, index=None, doc_type=None, params=None, headers=None
@@ -1265,6 +1307,8 @@ class AsyncElasticsearch(object):
         "term_statistics",
         "version",
         "version_type",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
     )
     async def mtermvectors(
         self, body=None, index=None, doc_type=None, params=None, headers=None
@@ -1320,7 +1364,12 @@ class AsyncElasticsearch(object):
             "POST", path, params=params, headers=headers, body=body
         )
 
-    @query_params("master_timeout", "timeout")
+    @query_params(
+        "master_timeout",
+        "timeout",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def put_script(self, id, body, context=None, params=None, headers=None):
         """
         Creates or updates a script.
@@ -1346,7 +1395,12 @@ class AsyncElasticsearch(object):
         )
 
     @query_params(
-        "allow_no_indices", "expand_wildcards", "ignore_unavailable", "search_type"
+        "allow_no_indices",
+        "expand_wildcards",
+        "ignore_unavailable",
+        "search_type",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
     )
     async def rank_eval(self, body, index=None, params=None, headers=None):
         """
@@ -1395,6 +1449,8 @@ class AsyncElasticsearch(object):
         "timeout",
         "wait_for_active_shards",
         "wait_for_completion",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
     )
     async def reindex(self, body, params=None, headers=None):
         """
@@ -1433,7 +1489,10 @@ class AsyncElasticsearch(object):
             "POST", "/_reindex", params=params, headers=headers, body=body
         )
 
-    @query_params("requests_per_second")
+    @query_params(
+        "requests_per_second",
+        response_mimetypes=["application/json"],
+    )
     async def reindex_rethrottle(self, task_id, params=None, headers=None):
         """
         Changes the number of requests per second for a particular Reindex operation.
@@ -1454,7 +1513,10 @@ class AsyncElasticsearch(object):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def render_search_template(
         self, body=None, id=None, params=None, headers=None
     ):
@@ -1474,7 +1536,10 @@ class AsyncElasticsearch(object):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def scripts_painless_execute(self, body=None, params=None, headers=None):
         """
         Allows an arbitrary script to be executed and a result to be returned
@@ -1500,6 +1565,8 @@ class AsyncElasticsearch(object):
         "rest_total_hits_as_int",
         "scroll",
         "scroll_id",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
         body_params=["scroll", "scroll_id"],
     )
     async def scroll(self, body=None, scroll_id=None, params=None, headers=None):
@@ -1571,6 +1638,8 @@ class AsyncElasticsearch(object):
         "track_total_hits",
         "typed_keys",
         "version",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
         body_params=[
             "_source",
             "aggregations",
@@ -1789,6 +1858,7 @@ class AsyncElasticsearch(object):
         "local",
         "preference",
         "routing",
+        response_mimetypes=["application/json"],
     )
     async def search_shards(self, index=None, params=None, headers=None):
         """
@@ -1831,6 +1901,8 @@ class AsyncElasticsearch(object):
         "scroll",
         "search_type",
         "typed_keys",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
     )
     async def search_template(
         self, body, index=None, doc_type=None, params=None, headers=None
@@ -1896,6 +1968,8 @@ class AsyncElasticsearch(object):
         "term_statistics",
         "version",
         "version_type",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
     )
     async def termvectors(
         self, index, body=None, doc_type=None, id=None, params=None, headers=None
@@ -1958,6 +2032,8 @@ class AsyncElasticsearch(object):
         "routing",
         "timeout",
         "wait_for_active_shards",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
         body_params=[
             "_source",
             "detect_noop",
@@ -2078,6 +2154,8 @@ class AsyncElasticsearch(object):
         "version_type",
         "wait_for_active_shards",
         "wait_for_completion",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
     )
     async def update_by_query(
         self, index, body=None, doc_type=None, params=None, headers=None
@@ -2179,7 +2257,10 @@ class AsyncElasticsearch(object):
             body=body,
         )
 
-    @query_params("requests_per_second")
+    @query_params(
+        "requests_per_second",
+        response_mimetypes=["application/json"],
+    )
     async def update_by_query_rethrottle(self, task_id, params=None, headers=None):
         """
         Changes the number of requests per second for a particular Update By Query
@@ -2201,7 +2282,9 @@ class AsyncElasticsearch(object):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def get_script_context(self, params=None, headers=None):
         """
         Returns all script contexts.
@@ -2217,7 +2300,9 @@ class AsyncElasticsearch(object):
             "GET", "/_script_context", params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def get_script_languages(self, params=None, headers=None):
         """
         Returns available script types, languages and contexts
@@ -2233,7 +2318,9 @@ class AsyncElasticsearch(object):
             "GET", "/_script_language", params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def close_point_in_time(self, body=None, params=None, headers=None):
         """
         Close a point in time
@@ -2247,9 +2334,14 @@ class AsyncElasticsearch(object):
         )
 
     @query_params(
-        "expand_wildcards", "ignore_unavailable", "keep_alive", "preference", "routing"
+        "expand_wildcards",
+        "ignore_unavailable",
+        "keep_alive",
+        "preference",
+        "routing",
+        response_mimetypes=["application/json"],
     )
-    async def open_point_in_time(self, index=None, params=None, headers=None):
+    async def open_point_in_time(self, index, params=None, headers=None):
         """
         Open a point in time that can be used in subsequent searches
 
@@ -2268,11 +2360,17 @@ class AsyncElasticsearch(object):
             be performed on (default: random)
         :arg routing: Specific routing value
         """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'index'.")
+
         return await self.transport.perform_request(
             "POST", _make_path(index, "_pit"), params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def terms_enum(self, index, body=None, params=None, headers=None):
         """
         The terms enum API  can be used to discover terms in the index that begin with
@@ -2308,6 +2406,8 @@ class AsyncElasticsearch(object):
         "grid_precision",
         "grid_type",
         "size",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/vnd.mapbox-vector-tile"],
         body_params=[
             "aggs",
             "exact_bounds",

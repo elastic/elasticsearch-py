@@ -19,7 +19,9 @@ from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 
 
 class AutoscalingClient(NamespacedClient):
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def delete_autoscaling_policy(self, name, params=None, headers=None):
         """
         Deletes an autoscaling policy. Designed for indirect use by ECE/ESS and ECK.
@@ -39,7 +41,9 @@ class AutoscalingClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def get_autoscaling_policy(self, name, params=None, headers=None):
         """
         Retrieves an autoscaling policy. Designed for indirect use by ECE/ESS and ECK.
@@ -59,7 +63,10 @@ class AutoscalingClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def put_autoscaling_policy(self, name, body, params=None, headers=None):
         """
         Creates a new autoscaling policy. Designed for indirect use by ECE/ESS and ECK.
@@ -82,7 +89,9 @@ class AutoscalingClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def get_autoscaling_capacity(self, params=None, headers=None):
         """
         Gets the current autoscaling capacity based on the configured autoscaling

@@ -34,6 +34,8 @@ class TextStructureClient(NamespacedClient):
         "timeout",
         "timestamp_field",
         "timestamp_format",
+        request_mimetypes=["application/x-ndjson"],
+        response_mimetypes=["application/json"],
     )
     def find_structure(self, body, params=None, headers=None):
         """

@@ -19,7 +19,13 @@ from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 
 
 class EqlClient(NamespacedClient):
-    @query_params("keep_alive", "keep_on_completion", "wait_for_completion_timeout")
+    @query_params(
+        "keep_alive",
+        "keep_on_completion",
+        "wait_for_completion_timeout",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def search(self, index, body, params=None, headers=None):
         """
         Returns results matching a query expressed in Event Query Language (EQL)
@@ -49,7 +55,9 @@ class EqlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def delete(self, id, params=None, headers=None):
         """
         Deletes an async EQL search by ID. If the search is still running, the search
@@ -66,7 +74,11 @@ class EqlClient(NamespacedClient):
             "DELETE", _make_path("_eql", "search", id), params=params, headers=headers
         )
 
-    @query_params("keep_alive", "wait_for_completion_timeout")
+    @query_params(
+        "keep_alive",
+        "wait_for_completion_timeout",
+        response_mimetypes=["application/json"],
+    )
     def get(self, id, params=None, headers=None):
         """
         Returns async results from previously executed Event Query Language (EQL)
@@ -87,7 +99,9 @@ class EqlClient(NamespacedClient):
             "GET", _make_path("_eql", "search", id), params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def get_status(self, id, params=None, headers=None):
         """
         Returns the status of a previously submitted async or stored Event Query

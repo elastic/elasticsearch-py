@@ -371,7 +371,6 @@ class TestUrllib3Connection(TestCase):
             {
                 "authorization": "Basic dXNlcm5hbWU6c2VjcmV0",
                 "connection": "keep-alive",
-                "content-type": "application/json",
                 "user-agent": con._get_default_user_agent(),
             },
             con.headers,
@@ -382,7 +381,6 @@ class TestUrllib3Connection(TestCase):
         self.assertEqual(
             {
                 "authorization": "Basic dXNlcm5hbWU6c2VjcmV0",
-                "content-type": "application/json",
                 "connection": "keep-alive",
                 "user-agent": con._get_default_user_agent(),
             },
@@ -394,7 +392,6 @@ class TestUrllib3Connection(TestCase):
         self.assertEqual(
             {
                 "authorization": "Basic dXNlcm5hbWU6c2VjcmV0",
-                "content-type": "application/json",
                 "connection": "keep-alive",
                 "user-agent": con._get_default_user_agent(),
             },

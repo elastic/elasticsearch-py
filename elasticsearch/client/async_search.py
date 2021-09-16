@@ -19,7 +19,9 @@ from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 
 
 class AsyncSearchClient(NamespacedClient):
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def delete(self, id, params=None, headers=None):
         """
         Deletes an async search by ID. If the search is still running, the search
@@ -36,7 +38,12 @@ class AsyncSearchClient(NamespacedClient):
             "DELETE", _make_path("_async_search", id), params=params, headers=headers
         )
 
-    @query_params("keep_alive", "typed_keys", "wait_for_completion_timeout")
+    @query_params(
+        "keep_alive",
+        "typed_keys",
+        "wait_for_completion_timeout",
+        response_mimetypes=["application/json"],
+    )
     def get(self, id, params=None, headers=None):
         """
         Retrieves the results of a previously submitted async search request given its
@@ -101,6 +108,8 @@ class AsyncSearchClient(NamespacedClient):
         "typed_keys",
         "version",
         "wait_for_completion_timeout",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
     )
     def submit(self, body=None, index=None, params=None, headers=None):
         """
@@ -205,7 +214,9 @@ class AsyncSearchClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def status(self, id, params=None, headers=None):
         """
         Retrieves the status of a previously submitted async search request given its

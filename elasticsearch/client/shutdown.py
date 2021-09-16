@@ -19,7 +19,10 @@ from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 
 
 class ShutdownClient(NamespacedClient):
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def delete_node(self, node_id, params=None, headers=None):
         """
         Removes a node from the shutdown list
@@ -44,7 +47,10 @@ class ShutdownClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def get_node(self, node_id=None, params=None, headers=None):
         """
         Retrieve status of a node or nodes that are currently marked as shutting down
@@ -66,7 +72,10 @@ class ShutdownClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def put_node(self, node_id, body, params=None, headers=None):
         """
         Adds a node to be shut down

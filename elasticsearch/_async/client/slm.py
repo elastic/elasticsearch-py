@@ -19,7 +19,9 @@ from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 
 
 class SlmClient(NamespacedClient):
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def delete_lifecycle(self, policy_id, params=None, headers=None):
         """
         Deletes an existing snapshot lifecycle policy.
@@ -39,7 +41,9 @@ class SlmClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def execute_lifecycle(self, policy_id, params=None, headers=None):
         """
         Immediately creates a snapshot according to the lifecycle policy, without
@@ -60,7 +64,9 @@ class SlmClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def execute_retention(self, params=None, headers=None):
         """
         Deletes any snapshots that are expired according to the policy's retention
@@ -72,7 +78,9 @@ class SlmClient(NamespacedClient):
             "POST", "/_slm/_execute_retention", params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def get_lifecycle(self, policy_id=None, params=None, headers=None):
         """
         Retrieves one or more snapshot lifecycle policy definitions and information
@@ -90,7 +98,9 @@ class SlmClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def get_stats(self, params=None, headers=None):
         """
         Returns global and policy-level statistics about actions taken by snapshot
@@ -102,7 +112,10 @@ class SlmClient(NamespacedClient):
             "GET", "/_slm/stats", params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def put_lifecycle(self, policy_id, body=None, params=None, headers=None):
         """
         Creates or updates a snapshot lifecycle policy.
@@ -123,7 +136,9 @@ class SlmClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def get_status(self, params=None, headers=None):
         """
         Retrieves the status of snapshot lifecycle management (SLM).
@@ -134,7 +149,9 @@ class SlmClient(NamespacedClient):
             "GET", "/_slm/status", params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def start(self, params=None, headers=None):
         """
         Turns on snapshot lifecycle management (SLM).
@@ -145,7 +162,9 @@ class SlmClient(NamespacedClient):
             "POST", "/_slm/start", params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def stop(self, params=None, headers=None):
         """
         Turns off snapshot lifecycle management (SLM).
