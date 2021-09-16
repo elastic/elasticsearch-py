@@ -971,6 +971,7 @@ class Elasticsearch(object):
         "fields",
         "ignore_unavailable",
         "include_unmapped",
+        request_mimetypes=["application/json"],
         response_mimetypes=["application/json"],
     )
     def field_caps(self, body=None, index=None, params=None, headers=None):
@@ -2307,6 +2308,7 @@ class Elasticsearch(object):
         )
 
     @query_params(
+        request_mimetypes=["application/json"],
         response_mimetypes=["application/json"],
     )
     def close_point_in_time(self, body=None, params=None, headers=None):

@@ -979,6 +979,7 @@ class AsyncElasticsearch(object):
         "fields",
         "ignore_unavailable",
         "include_unmapped",
+        request_mimetypes=["application/json"],
         response_mimetypes=["application/json"],
     )
     async def field_caps(self, body=None, index=None, params=None, headers=None):
@@ -2319,6 +2320,7 @@ class AsyncElasticsearch(object):
         )
 
     @query_params(
+        request_mimetypes=["application/json"],
         response_mimetypes=["application/json"],
     )
     async def close_point_in_time(self, body=None, params=None, headers=None):

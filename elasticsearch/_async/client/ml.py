@@ -156,6 +156,7 @@ class MlClient(NamespacedClient):
     @query_params(
         "requests_per_second",
         "timeout",
+        request_mimetypes=["application/json"],
         response_mimetypes=["application/json"],
     )
     async def delete_expired_data(
@@ -932,6 +933,7 @@ class MlClient(NamespacedClient):
         )
 
     @query_params(
+        request_mimetypes=["application/json"],
         response_mimetypes=["application/json"],
     )
     async def preview_datafeed(
@@ -1204,6 +1206,7 @@ class MlClient(NamespacedClient):
         "allow_no_match",
         "force",
         "timeout",
+        request_mimetypes=["application/json"],
         response_mimetypes=["application/json"],
     )
     async def stop_datafeed(self, datafeed_id, body=None, params=None, headers=None):
