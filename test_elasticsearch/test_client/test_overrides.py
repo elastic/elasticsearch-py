@@ -190,7 +190,7 @@ class TestOverriddenUrlTargets(ElasticsearchTestCase):
             ("POST", "/_search/scroll"): [
                 (
                     {"rest_total_hits_as_int": b"true"},
-                    {},
+                    {"accept": "application/json", "content-type": "application/json"},
                     {"scroll": "5m", "scroll_id": "scroll-id"},
                 )
             ]
@@ -200,7 +200,13 @@ class TestOverriddenUrlTargets(ElasticsearchTestCase):
         self.client.clear_scroll(scroll_id="scroll-id")
         calls = self.client.transport.calls
         assert calls == {
-            ("DELETE", "/_search/scroll"): [({}, {}, {"scroll_id": "scroll-id"})]
+            ("DELETE", "/_search/scroll"): [
+                (
+                    {},
+                    {"accept": "application/json", "content-type": "application/json"},
+                    {"scroll_id": "scroll-id"},
+                )
+            ]
         }
 
     def test_doc_type_works_for_apis_with_type(self):
@@ -210,7 +216,9 @@ class TestOverriddenUrlTargets(ElasticsearchTestCase):
         assert w == []
         calls = self.client.transport.calls
         assert calls == {
-            ("POST", "/_license/start_trial"): [({"type": b"trial"}, {}, None)]
+            ("POST", "/_license/start_trial"): [
+                ({"type": b"trial"}, {"accept": "application/json"}, None)
+            ]
         }
         self.client.transport.calls.pop(("POST", "/_license/start_trial"))
 
@@ -220,7 +228,9 @@ class TestOverriddenUrlTargets(ElasticsearchTestCase):
         assert w == []
         calls = self.client.transport.calls
         assert calls == {
-            ("POST", "/_license/start_trial"): [({"type": "trial"}, {}, None)]
+            ("POST", "/_license/start_trial"): [
+                ({"type": "trial"}, {"accept": "application/json"}, None)
+            ]
         }
         self.client.transport.calls.pop(("POST", "/_license/start_trial"))
 
@@ -235,7 +245,9 @@ class TestOverriddenUrlTargets(ElasticsearchTestCase):
         )
         calls = self.client.transport.calls
         assert calls == {
-            ("POST", "/_license/start_trial"): [({"type": b"trial"}, {}, None)]
+            ("POST", "/_license/start_trial"): [
+                ({"type": b"trial"}, {"accept": "application/json"}, None)
+            ]
         }
         self.client.transport.calls.pop(("POST", "/_license/start_trial"))
 
@@ -248,5 +260,7 @@ class TestOverriddenUrlTargets(ElasticsearchTestCase):
         )
         calls = self.client.transport.calls
         assert calls == {
-            ("POST", "/_license/start_trial"): [({"type": "trial"}, {}, None)]
+            ("POST", "/_license/start_trial"): [
+                ({"type": "trial"}, {"accept": "application/json"}, None)
+            ]
         }

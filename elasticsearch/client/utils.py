@@ -139,8 +139,12 @@ def query_params(*es_query_params, **kwargs):
 
     def compat_mimetype(mimetypes):
         if os.environ.get("ELASTIC_CLIENT_APIVERSIONING", "") in ("1", "true"):
+            # Need to replace both 'application/json' and 'application/x-ndjson'
+            # with the compatibility header.
             return [
-                _COMPATIBILITY_MIMETYPE if mimetype == "application/json" else mimetype
+                _COMPATIBILITY_MIMETYPE
+                if mimetype in ("application/json", "application/x-ndjson")
+                else mimetype
                 for mimetype in mimetypes
             ]
         return mimetypes
