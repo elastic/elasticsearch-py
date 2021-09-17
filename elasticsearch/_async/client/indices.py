@@ -301,7 +301,7 @@ class IndicesClient(NamespacedClient):
             to no concrete indices (default: false)
         :arg expand_wildcards: Whether wildcard expressions should get
             expanded to open or closed indices (default: open)  Valid choices: open,
-            closed, hidden, none, all  Default: open
+            closed, hidden, none, all  Default: open,closed
         :arg ignore_unavailable: Ignore unavailable indexes (default:
             false)
         :arg master_timeout: Specify timeout for connection to master

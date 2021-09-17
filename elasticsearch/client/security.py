@@ -877,7 +877,7 @@ class SecurityClient(NamespacedClient):
         """
         Retrieves information for API keys using a subset of query DSL
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-query-api-key.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.15/security-api-query-api-key.html>`_
 
         :arg body: From, size, query, sort and search_after
         """

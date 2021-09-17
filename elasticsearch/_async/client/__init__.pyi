@@ -1189,7 +1189,7 @@ class AsyncElasticsearch(object):
     async def open_point_in_time(
         self,
         *,
-        index: Optional[Any] = ...,
+        index: Any,
         expand_wildcards: Optional[Any] = ...,
         ignore_unavailable: Optional[bool] = ...,
         keep_alive: Optional[Any] = ...,

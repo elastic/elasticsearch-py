@@ -2249,7 +2249,7 @@ class AsyncElasticsearch(object):
     @query_params(
         "expand_wildcards", "ignore_unavailable", "keep_alive", "preference", "routing"
     )
-    async def open_point_in_time(self, index=None, params=None, headers=None):
+    async def open_point_in_time(self, index, params=None, headers=None):
         """
         Open a point in time that can be used in subsequent searches
 
@@ -2268,6 +2268,9 @@ class AsyncElasticsearch(object):
             be performed on (default: random)
         :arg routing: Specific routing value
         """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'index'.")
+
         return await self.transport.perform_request(
             "POST", _make_path(index, "_pit"), params=params, headers=headers
         )
