@@ -38,7 +38,9 @@ def test(session):
     junit_xml = os.path.join(SOURCE_DIR, "junit", "elasticsearch-py-junit.xml")
     pytest_argv = [
         "pytest",
+        "--cov-report=term-missing",
         "--cov=elasticsearch",
+        "--cov-config=setup.cfg",
         f"--junitxml={junit_xml}",
         "--log-level=DEBUG",
         "--cache-clear",
