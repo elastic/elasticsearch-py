@@ -189,6 +189,7 @@ async def test_mapbox_vector_tile_response(elasticsearch_url, mvt_setup, ca_cert
                     "geometry": {"type": "Point", "coordinates": [3208, 3864]},
                     "properties": {
                         "_id": "1",
+                        "_index": "museums",
                         "name": "NEMO Science Museum",
                         "price": 1750,
                     },
@@ -199,6 +200,7 @@ async def test_mapbox_vector_tile_response(elasticsearch_url, mvt_setup, ca_cert
                     "geometry": {"type": "Point", "coordinates": [3429, 3496]},
                     "properties": {
                         "_id": "3",
+                        "_index": "museums",
                         "name": "Nederlands Scheepvaartmuseum",
                         "price": 1650,
                     },
@@ -209,6 +211,7 @@ async def test_mapbox_vector_tile_response(elasticsearch_url, mvt_setup, ca_cert
                     "geometry": {"type": "Point", "coordinates": [3429, 3496]},
                     "properties": {
                         "_id": "4",
+                        "_index": "museums",
                         "name": "Amsterdam Centre for Architecture",
                         "price": 0,
                     },
