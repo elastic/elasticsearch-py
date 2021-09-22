@@ -135,6 +135,12 @@ RUN_ASYNC_REST_API_TESTS = (
 
 FALSEY_VALUES = ("", None, False, 0, 0.0)
 
+# Means the client will be emitting 'application/vnd.elasticsearch;compatible-with=X' headers
+COMPATIBILITY_MODE_ENABLED = os.environ.get("ELASTIC_CLIENT_APIVERSIONING") in (
+    "1",
+    "true",
+)
+
 
 class YamlRunner:
     def __init__(self, client):
@@ -227,6 +233,15 @@ class YamlRunner:
             == "Basic eF9wYWNrX3Jlc3RfdXNlcjp4LXBhY2stdGVzdC1wYXNzd29yZA=="
         ):
             headers.pop("Authorization")
+
+        if (
+            headers
+            and headers.get("Content-Type") == "application/json"
+            and COMPATIBILITY_MODE_ENABLED
+        ):
+            headers[
+                "Content-Type"
+            ] = "application/vnd.elasticsearch+json;compatible-with=7"
 
         method, args = list(action.items())[0]
         args["headers"] = headers
@@ -524,11 +539,17 @@ try:
     )
     client = get_client()
 
-    # Make a request to Elasticsearch for the build hash, we'll be looking for
-    # an artifact with this same hash to download test specs for.
-    client_info = client.info()
-    version_number = client_info["version"]["number"]
-    build_hash = client_info["version"]["build_hash"]
+    # If we're running in compatibility mode the server won't have the previous versions'
+    # test suite so we use the overridden 'STACK_VERSION' in run-repository.sh instead.
+    if os.environ.get("STACK_VERSION") and COMPATIBILITY_MODE_ENABLED:
+        version_number = os.environ["STACK_VERSION"]
+        build_hash = ""
+    else:
+        # Make a request to Elasticsearch for the build hash, we'll be looking for
+        # an artifact with this same hash to download test specs for.
+        client_info = client.info()
+        version_number = client_info["version"]["number"]
+        build_hash = client_info["version"]["build_hash"]
 
     # Now talk to the artifacts API with the 'STACK_VERSION' environment variable
     resp = http.request(
@@ -605,7 +626,8 @@ try:
             if pytest_test_name in SKIP_TESTS or pytest_param_id in SKIP_TESTS:
                 pytest_param["skip"] = True
 
-            YAML_TEST_SPECS.append(pytest.param(pytest_param, id=pytest_param_id))
+            else:
+                YAML_TEST_SPECS.append(pytest.param(pytest_param, id=pytest_param_id))
 
 except Exception as e:
     warnings.warn("Could not load REST API tests: %s" % (str(e),))
