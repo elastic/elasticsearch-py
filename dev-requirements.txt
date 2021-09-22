@@ -10,6 +10,9 @@ python-dateutil
 
 # Testing the 'search_mvt' API response
 mapbox-vector-tile; python_version!="3.4.*"
+# For mapbox-vector-tile, package broke Python 2 support without an annotation.
+# See: protocolbuffers/protobuf#8984
+protobuf<3.18; python_version!="3.4.*"
 
 # No wheels for Python 3.10 yet!
 numpy; python_version<"3.10"

@@ -6,3 +6,8 @@ omit =
     */site-packages/*
     *.egg/*
     test_elasticsearch/*
+
+[report]
+show_missing = True
+exclude_lines=
+    raise NotImplementedError*

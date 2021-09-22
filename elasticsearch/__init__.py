@@ -104,3 +104,13 @@ try:
     ]
 except (ImportError, SyntaxError):
     pass
+
+# Python earlier than 3.6 is deprecated and will be removed in 8.0.0
+if sys.version_info < (3, 6):
+    warnings.warn(
+        "Support for Python 3.5 and earlier is deprecated and will be removed "
+        "in v8.0.0 (current instance is Python %d.%d) See https://github.com/elastic"
+        "/elasticsearch-py/issues/1696 for details." % sys.version_info[:2],
+        category=DeprecationWarning,
+        stacklevel=2,
+    )
