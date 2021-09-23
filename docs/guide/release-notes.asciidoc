@@ -1,6 +1,7 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-7-15-0>>
 * <<rn-7-14-0>>
 * <<rn-7-13-4>>
 * <<rn-7-13-3>>
@@ -27,6 +28,64 @@
 * <<rn-7-0-2>>
 * <<rn-7-0-1>>
 * <<rn-7-0-0>>
+
+
+[discrete]
+[[rn-7-15-0]]
+=== 7.15.0 (2021-09-22)
+
+[discrete]
+==== Client
+
+* Added more precise type hints to many API parameters
+* Added explicit parameters to `AsyncTransport` and `AIOHttpConnection`
+* Added `MapboxVectorTileSerializer` for handling the `application/vnd.mapbox-vector-tile` mimetype. Because this mimetype is binary rather than text the raw response `bytes` are forwarded from the serializer without decoding
+- Reduced amount of time to import the `elasticsearch` module by delaying imports of `pandas` and `numpy` until later in the JSON serialization stage if necessary
+- Deprecated positional arguments for APIs, instead use keyword arguments exclusively.
+
+[discrete]
+==== Search
+
+- Added the `search_mvt` **experimental** API
+- Added body field parameters to the `search`, `scroll`, and `clear_scroll` APIs
+- Deprecated the `body` parameter of the `search`, `scroll`, and `clear_scroll` APIs
+
+[discrete]
+==== Documents
+
+- Added body field parameters to the `update` API
+- Added the `document` parameter to the `create` and `index` APIs
+- Deprecated the `body` parameter of the `create`, `index`, and `update` APIs
+
+[discrete]
+==== Indices
+
+- Added the `indices.disk_usage` **experimental** API
+- Added the `indices.fields_usage_stats` **experimental** API
+- Added body field parameters to the `indices.create` API
+- Deprecated the `body` parameter of the `indices.create` API
+
+[discrete]
+==== Machine Learning
+
+- Added the `ignore_unavailable`, `allow_no_indices`, `ignore_throttled`, and `expand_wildcards` parameters to the `ml.put_job` API
+
+[discrete]
+==== Nodes
+
+- Added the `nodes.clear_repositories_metering_archive` **experimental** API
+- Added the `nodes.get_repositories_metering_info` **experimental** API
+- Added the `shards` option to the `index_metric` parameter of the `nodes.stats` API
+- Deprecated the `doc_type` parameter of the `nodes.hot_threads` API, instead use the `type` parameter
+[discrete]
+==== Security
+
+- Added the `security.query_api_keys` API
+
+[discrete]
+==== License
+
+- Deprecated the `doc_type` parameter of the `license.post_start_trial` API, instead use the `type` parameter
 
 
 [discrete]
