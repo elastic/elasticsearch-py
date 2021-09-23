@@ -33,7 +33,7 @@ import urllib3
 import yaml
 
 from elasticsearch import ElasticsearchWarning, RequestError, TransportError
-from elasticsearch.client.utils import _base64_auth_header
+from elasticsearch.client.utils import _COMPATIBILITY_MIMETYPE, _base64_auth_header
 from elasticsearch.compat import string_types
 from elasticsearch.helpers.test import _get_version
 
@@ -135,6 +135,13 @@ RUN_ASYNC_REST_API_TESTS = (
 
 FALSEY_VALUES = ("", None, False, 0, 0.0)
 
+# Means the client will be emitting 'application/vnd.elasticsearch;compatible-with=X' headers
+COMPATIBILITY_MODE_ENABLED = os.environ.get("ELASTIC_CLIENT_APIVERSIONING") in (
+    "1",
+    "true",
+)
+COMPATIBILITY_MIMETYPE = _COMPATIBILITY_MIMETYPE
+
 
 class YamlRunner:
     def __init__(self, client):
@@ -227,6 +234,9 @@ class YamlRunner:
             == "Basic eF9wYWNrX3Jlc3RfdXNlcjp4LXBhY2stdGVzdC1wYXNzd29yZA=="
         ):
             headers.pop("Authorization")
+
+        if headers and "Content-Type" in headers and COMPATIBILITY_MODE_ENABLED:
+            headers["Content-Type"] = COMPATIBILITY_MIMETYPE
 
         method, args = list(action.items())[0]
         args["headers"] = headers
@@ -524,11 +534,18 @@ try:
     )
     client = get_client()
 
-    # Make a request to Elasticsearch for the build hash, we'll be looking for
-    # an artifact with this same hash to download test specs for.
-    client_info = client.info()
-    version_number = client_info["version"]["number"]
-    build_hash = client_info["version"]["build_hash"]
+    # If we're running in compatibility mode the server won't have the previous versions'
+    # test suite so we use the overridden 'STACK_VERSION' in run-repository.sh instead.
+    if os.environ.get("STACK_VERSION") and COMPATIBILITY_MODE_ENABLED:
+        version_number = os.environ["STACK_VERSION"]
+        # Setting 'build_hash' to empty means we'll always get the latest build.
+        build_hash = ""
+    else:
+        # Make a request to Elasticsearch for the build hash, we'll be looking for
+        # an artifact with this same hash to download test specs for.
+        client_info = client.info()
+        version_number = client_info["version"]["number"]
+        build_hash = client_info["version"]["build_hash"]
 
     # Now talk to the artifacts API with the 'STACK_VERSION' environment variable
     resp = http.request(

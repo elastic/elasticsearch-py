@@ -19,7 +19,9 @@ from .utils import NamespacedClient, query_params
 
 
 class LicenseClient(NamespacedClient):
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def delete(self, params=None, headers=None):
         """
         Deletes licensing information for the cluster
@@ -30,7 +32,11 @@ class LicenseClient(NamespacedClient):
             "DELETE", "/_license", params=params, headers=headers
         )
 
-    @query_params("accept_enterprise", "local")
+    @query_params(
+        "accept_enterprise",
+        "local",
+        response_mimetypes=["application/json"],
+    )
     async def get(self, params=None, headers=None):
         """
         Retrieves licensing information for the cluster
@@ -46,7 +52,9 @@ class LicenseClient(NamespacedClient):
             "GET", "/_license", params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def get_basic_status(self, params=None, headers=None):
         """
         Retrieves information about the status of the basic license.
@@ -57,7 +65,9 @@ class LicenseClient(NamespacedClient):
             "GET", "/_license/basic_status", params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def get_trial_status(self, params=None, headers=None):
         """
         Retrieves information about the status of the trial license.
@@ -68,7 +78,11 @@ class LicenseClient(NamespacedClient):
             "GET", "/_license/trial_status", params=params, headers=headers
         )
 
-    @query_params("acknowledge")
+    @query_params(
+        "acknowledge",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def post(self, body=None, params=None, headers=None):
         """
         Updates the license for the cluster.
@@ -83,7 +97,10 @@ class LicenseClient(NamespacedClient):
             "PUT", "/_license", params=params, headers=headers, body=body
         )
 
-    @query_params("acknowledge")
+    @query_params(
+        "acknowledge",
+        response_mimetypes=["application/json"],
+    )
     async def post_start_basic(self, params=None, headers=None):
         """
         Starts an indefinite basic license.
@@ -97,7 +114,11 @@ class LicenseClient(NamespacedClient):
             "POST", "/_license/start_basic", params=params, headers=headers
         )
 
-    @query_params("acknowledge", "type")
+    @query_params(
+        "acknowledge",
+        "type",
+        response_mimetypes=["application/json"],
+    )
     async def post_start_trial(self, params=None, headers=None):
         """
         starts a limited time trial license.

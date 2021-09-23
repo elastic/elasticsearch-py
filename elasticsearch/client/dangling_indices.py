@@ -19,7 +19,12 @@ from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 
 
 class DanglingIndicesClient(NamespacedClient):
-    @query_params("accept_data_loss", "master_timeout", "timeout")
+    @query_params(
+        "accept_data_loss",
+        "master_timeout",
+        "timeout",
+        response_mimetypes=["application/json"],
+    )
     def delete_dangling_index(self, index_uuid, params=None, headers=None):
         """
         Deletes the specified dangling index
@@ -42,7 +47,12 @@ class DanglingIndicesClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("accept_data_loss", "master_timeout", "timeout")
+    @query_params(
+        "accept_data_loss",
+        "master_timeout",
+        "timeout",
+        response_mimetypes=["application/json"],
+    )
     def import_dangling_index(self, index_uuid, params=None, headers=None):
         """
         Imports the specified dangling index
@@ -62,7 +72,9 @@ class DanglingIndicesClient(NamespacedClient):
             "POST", _make_path("_dangling", index_uuid), params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def list_dangling_indices(self, params=None, headers=None):
         """
         Returns all dangling indices.

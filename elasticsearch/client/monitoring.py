@@ -19,7 +19,13 @@ from .utils import SKIP_IN_PATH, NamespacedClient, _bulk_body, _make_path, query
 
 
 class MonitoringClient(NamespacedClient):
-    @query_params("interval", "system_api_version", "system_id")
+    @query_params(
+        "interval",
+        "system_api_version",
+        "system_id",
+        request_mimetypes=["application/x-ndjson"],
+        response_mimetypes=["application/json"],
+    )
     def bulk(self, body, doc_type=None, params=None, headers=None):
         """
         Used by the monitoring features to send monitoring data.

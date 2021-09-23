@@ -23,7 +23,11 @@ class XPackClient(NamespacedClient):
         return getattr(self.client, attr_name)
 
     # AUTO-GENERATED-API-DEFINITIONS #
-    @query_params("accept_enterprise", "categories")
+    @query_params(
+        "accept_enterprise",
+        "categories",
+        response_mimetypes=["application/json"],
+    )
     async def info(self, params=None, headers=None):
         """
         Retrieves information about the installed X-Pack features.
@@ -39,7 +43,10 @@ class XPackClient(NamespacedClient):
             "GET", "/_xpack", params=params, headers=headers
         )
 
-    @query_params("master_timeout")
+    @query_params(
+        "master_timeout",
+        response_mimetypes=["application/json"],
+    )
     async def usage(self, params=None, headers=None):
         """
         Retrieves usage information about the installed X-Pack features.

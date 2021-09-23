@@ -19,7 +19,10 @@ from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 
 
 class IndicesClient(NamespacedClient):
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def analyze(self, body=None, index=None, params=None, headers=None):
         """
         Performs the analysis process on a text and return the tokens breakdown of the
@@ -39,7 +42,12 @@ class IndicesClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable")
+    @query_params(
+        "allow_no_indices",
+        "expand_wildcards",
+        "ignore_unavailable",
+        response_mimetypes=["application/json"],
+    )
     def refresh(self, index=None, params=None, headers=None):
         """
         Performs the refresh operation in one or more indices.
@@ -67,6 +75,7 @@ class IndicesClient(NamespacedClient):
         "force",
         "ignore_unavailable",
         "wait_if_ongoing",
+        response_mimetypes=["application/json"],
     )
     def flush(self, index=None, params=None, headers=None):
         """
@@ -103,6 +112,8 @@ class IndicesClient(NamespacedClient):
         "master_timeout",
         "timeout",
         "wait_for_active_shards",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
         body_params=["aliases", "mappings", "settings"],
     )
     def create(self, index, body=None, params=None, headers=None):
@@ -135,7 +146,13 @@ class IndicesClient(NamespacedClient):
             "PUT", _make_path(index), params=params, headers=headers, body=body
         )
 
-    @query_params("master_timeout", "timeout", "wait_for_active_shards")
+    @query_params(
+        "master_timeout",
+        "timeout",
+        "wait_for_active_shards",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def clone(self, index, target, body=None, params=None, headers=None):
         """
         Clones an index
@@ -172,6 +189,7 @@ class IndicesClient(NamespacedClient):
         "include_type_name",
         "local",
         "master_timeout",
+        response_mimetypes=["application/json"],
     )
     def get(self, index, params=None, headers=None):
         """
@@ -217,6 +235,7 @@ class IndicesClient(NamespacedClient):
         "master_timeout",
         "timeout",
         "wait_for_active_shards",
+        response_mimetypes=["application/json"],
     )
     def open(self, index, params=None, headers=None):
         """
@@ -252,6 +271,7 @@ class IndicesClient(NamespacedClient):
         "master_timeout",
         "timeout",
         "wait_for_active_shards",
+        response_mimetypes=["application/json"],
     )
     def close(self, index, params=None, headers=None):
         """
@@ -288,6 +308,7 @@ class IndicesClient(NamespacedClient):
         "ignore_unavailable",
         "master_timeout",
         "timeout",
+        response_mimetypes=["application/json"],
     )
     def delete(self, index, params=None, headers=None):
         """
@@ -301,7 +322,7 @@ class IndicesClient(NamespacedClient):
             to no concrete indices (default: false)
         :arg expand_wildcards: Whether wildcard expressions should get
             expanded to open or closed indices (default: open)  Valid choices: open,
-            closed, hidden, none, all  Default: open
+            closed, hidden, none, all  Default: open,closed
         :arg ignore_unavailable: Ignore unavailable indexes (default:
             false)
         :arg master_timeout: Specify timeout for connection to master
@@ -321,6 +342,7 @@ class IndicesClient(NamespacedClient):
         "ignore_unavailable",
         "include_defaults",
         "local",
+        response_mimetypes=["application/json"],
     )
     def exists(self, index, params=None, headers=None):
         """
@@ -350,7 +372,13 @@ class IndicesClient(NamespacedClient):
             "HEAD", _make_path(index), params=params, headers=headers
         )
 
-    @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable", "local")
+    @query_params(
+        "allow_no_indices",
+        "expand_wildcards",
+        "ignore_unavailable",
+        "local",
+        response_mimetypes=["application/json"],
+    )
     def exists_type(self, index, doc_type, params=None, headers=None):
         """
         Returns information about whether a particular document type exists.
@@ -391,6 +419,8 @@ class IndicesClient(NamespacedClient):
         "master_timeout",
         "timeout",
         "write_index_only",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
     )
     def put_mapping(self, body, index=None, doc_type=None, params=None, headers=None):
         """
@@ -439,6 +469,7 @@ class IndicesClient(NamespacedClient):
         "include_type_name",
         "local",
         "master_timeout",
+        response_mimetypes=["application/json"],
     )
     def get_mapping(self, index=None, doc_type=None, params=None, headers=None):
         """
@@ -476,6 +507,7 @@ class IndicesClient(NamespacedClient):
         "include_defaults",
         "include_type_name",
         "local",
+        response_mimetypes=["application/json"],
     )
     def get_field_mapping(
         self, fields, index=None, doc_type=None, params=None, headers=None
@@ -513,7 +545,12 @@ class IndicesClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("master_timeout", "timeout")
+    @query_params(
+        "master_timeout",
+        "timeout",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def put_alias(self, index, name, body=None, params=None, headers=None):
         """
         Creates or updates an alias.
@@ -541,7 +578,13 @@ class IndicesClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable", "local")
+    @query_params(
+        "allow_no_indices",
+        "expand_wildcards",
+        "ignore_unavailable",
+        "local",
+        response_mimetypes=["application/json"],
+    )
     def exists_alias(self, name, index=None, params=None, headers=None):
         """
         Returns information about whether a particular alias exists.
@@ -569,7 +612,13 @@ class IndicesClient(NamespacedClient):
             "HEAD", _make_path(index, "_alias", name), params=params, headers=headers
         )
 
-    @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable", "local")
+    @query_params(
+        "allow_no_indices",
+        "expand_wildcards",
+        "ignore_unavailable",
+        "local",
+        response_mimetypes=["application/json"],
+    )
     def get_alias(self, index=None, name=None, params=None, headers=None):
         """
         Returns an alias.
@@ -594,7 +643,12 @@ class IndicesClient(NamespacedClient):
             "GET", _make_path(index, "_alias", name), params=params, headers=headers
         )
 
-    @query_params("master_timeout", "timeout")
+    @query_params(
+        "master_timeout",
+        "timeout",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def update_aliases(self, body, params=None, headers=None):
         """
         Updates index aliases.
@@ -612,7 +666,11 @@ class IndicesClient(NamespacedClient):
             "POST", "/_aliases", params=params, headers=headers, body=body
         )
 
-    @query_params("master_timeout", "timeout")
+    @query_params(
+        "master_timeout",
+        "timeout",
+        response_mimetypes=["application/json"],
+    )
     def delete_alias(self, index, name, params=None, headers=None):
         """
         Deletes an alias.
@@ -637,7 +695,14 @@ class IndicesClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("create", "include_type_name", "master_timeout", "order")
+    @query_params(
+        "create",
+        "include_type_name",
+        "master_timeout",
+        "order",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def put_template(self, name, body, params=None, headers=None):
         """
         Creates or updates an index template.
@@ -667,7 +732,12 @@ class IndicesClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("flat_settings", "local", "master_timeout")
+    @query_params(
+        "flat_settings",
+        "local",
+        "master_timeout",
+        response_mimetypes=["application/json"],
+    )
     def exists_template(self, name, params=None, headers=None):
         """
         Returns information about whether a particular index template exists.
@@ -689,7 +759,13 @@ class IndicesClient(NamespacedClient):
             "HEAD", _make_path("_template", name), params=params, headers=headers
         )
 
-    @query_params("flat_settings", "include_type_name", "local", "master_timeout")
+    @query_params(
+        "flat_settings",
+        "include_type_name",
+        "local",
+        "master_timeout",
+        response_mimetypes=["application/json"],
+    )
     def get_template(self, name=None, params=None, headers=None):
         """
         Returns an index template.
@@ -710,7 +786,11 @@ class IndicesClient(NamespacedClient):
             "GET", _make_path("_template", name), params=params, headers=headers
         )
 
-    @query_params("master_timeout", "timeout")
+    @query_params(
+        "master_timeout",
+        "timeout",
+        response_mimetypes=["application/json"],
+    )
     def delete_template(self, name, params=None, headers=None):
         """
         Deletes an index template.
@@ -736,6 +816,7 @@ class IndicesClient(NamespacedClient):
         "include_defaults",
         "local",
         "master_timeout",
+        response_mimetypes=["application/json"],
     )
     def get_settings(self, index=None, name=None, params=None, headers=None):
         """
@@ -774,6 +855,8 @@ class IndicesClient(NamespacedClient):
         "master_timeout",
         "preserve_existing",
         "timeout",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
     )
     def put_settings(self, body, index=None, params=None, headers=None):
         """
@@ -822,6 +905,7 @@ class IndicesClient(NamespacedClient):
         "include_unloaded_segments",
         "level",
         "types",
+        response_mimetypes=["application/json"],
     )
     def stats(self, index=None, metric=None, params=None, headers=None):
         """
@@ -863,7 +947,11 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params(
-        "allow_no_indices", "expand_wildcards", "ignore_unavailable", "verbose"
+        "allow_no_indices",
+        "expand_wildcards",
+        "ignore_unavailable",
+        "verbose",
+        response_mimetypes=["application/json"],
     )
     def segments(self, index=None, params=None, headers=None):
         """
@@ -900,6 +988,8 @@ class IndicesClient(NamespacedClient):
         "lenient",
         "q",
         "rewrite",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
     )
     def validate_query(
         self, body=None, index=None, doc_type=None, params=None, headers=None
@@ -956,6 +1046,7 @@ class IndicesClient(NamespacedClient):
         "ignore_unavailable",
         "query",
         "request",
+        response_mimetypes=["application/json"],
     )
     def clear_cache(self, index=None, params=None, headers=None):
         """
@@ -983,7 +1074,11 @@ class IndicesClient(NamespacedClient):
             "POST", _make_path(index, "_cache", "clear"), params=params, headers=headers
         )
 
-    @query_params("active_only", "detailed")
+    @query_params(
+        "active_only",
+        "detailed",
+        response_mimetypes=["application/json"],
+    )
     def recovery(self, index=None, params=None, headers=None):
         """
         Returns information about ongoing index shard recoveries.
@@ -1007,6 +1102,7 @@ class IndicesClient(NamespacedClient):
         "ignore_unavailable",
         "only_ancient_segments",
         "wait_for_completion",
+        response_mimetypes=["application/json"],
     )
     def upgrade(self, index=None, params=None, headers=None):
         """
@@ -1033,7 +1129,12 @@ class IndicesClient(NamespacedClient):
             "POST", _make_path(index, "_upgrade"), params=params, headers=headers
         )
 
-    @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable")
+    @query_params(
+        "allow_no_indices",
+        "expand_wildcards",
+        "ignore_unavailable",
+        response_mimetypes=["application/json"],
+    )
     def get_upgrade(self, index=None, params=None, headers=None):
         """
         DEPRECATED Returns a progress status of current upgrade.
@@ -1055,7 +1156,12 @@ class IndicesClient(NamespacedClient):
             "GET", _make_path(index, "_upgrade"), params=params, headers=headers
         )
 
-    @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable")
+    @query_params(
+        "allow_no_indices",
+        "expand_wildcards",
+        "ignore_unavailable",
+        response_mimetypes=["application/json"],
+    )
     def flush_synced(self, index=None, params=None, headers=None):
         """
         Performs a synced flush operation on one or more indices. Synced flush is
@@ -1082,7 +1188,11 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params(
-        "allow_no_indices", "expand_wildcards", "ignore_unavailable", "status"
+        "allow_no_indices",
+        "expand_wildcards",
+        "ignore_unavailable",
+        "status",
+        response_mimetypes=["application/json"],
     )
     def shard_stores(self, index=None, params=None, headers=None):
         """
@@ -1115,6 +1225,7 @@ class IndicesClient(NamespacedClient):
         "ignore_unavailable",
         "max_num_segments",
         "only_expunge_deletes",
+        response_mimetypes=["application/json"],
     )
     def forcemerge(self, index=None, params=None, headers=None):
         """
@@ -1144,7 +1255,12 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params(
-        "copy_settings", "master_timeout", "timeout", "wait_for_active_shards"
+        "copy_settings",
+        "master_timeout",
+        "timeout",
+        "wait_for_active_shards",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
     )
     def shrink(self, index, target, body=None, params=None, headers=None):
         """
@@ -1176,7 +1292,12 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params(
-        "copy_settings", "master_timeout", "timeout", "wait_for_active_shards"
+        "copy_settings",
+        "master_timeout",
+        "timeout",
+        "wait_for_active_shards",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
     )
     def split(self, index, target, body=None, params=None, headers=None):
         """
@@ -1214,6 +1335,8 @@ class IndicesClient(NamespacedClient):
         "master_timeout",
         "timeout",
         "wait_for_active_shards",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
     )
     def rollover(self, alias, body=None, new_index=None, params=None, headers=None):
         """
@@ -1255,6 +1378,7 @@ class IndicesClient(NamespacedClient):
         "master_timeout",
         "timeout",
         "wait_for_active_shards",
+        response_mimetypes=["application/json"],
     )
     def freeze(self, index, params=None, headers=None):
         """
@@ -1291,6 +1415,7 @@ class IndicesClient(NamespacedClient):
         "master_timeout",
         "timeout",
         "wait_for_active_shards",
+        response_mimetypes=["application/json"],
     )
     def unfreeze(self, index, params=None, headers=None):
         """
@@ -1320,7 +1445,12 @@ class IndicesClient(NamespacedClient):
             "POST", _make_path(index, "_unfreeze"), params=params, headers=headers
         )
 
-    @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable")
+    @query_params(
+        "allow_no_indices",
+        "expand_wildcards",
+        "ignore_unavailable",
+        response_mimetypes=["application/json"],
+    )
     def reload_search_analyzers(self, index, params=None, headers=None):
         """
         Reloads an index's search analyzers and their resources.
@@ -1348,7 +1478,9 @@ class IndicesClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def create_data_stream(self, name, params=None, headers=None):
         """
         Creates a data stream
@@ -1364,7 +1496,10 @@ class IndicesClient(NamespacedClient):
             "PUT", _make_path("_data_stream", name), params=params, headers=headers
         )
 
-    @query_params("expand_wildcards")
+    @query_params(
+        "expand_wildcards",
+        response_mimetypes=["application/json"],
+    )
     def delete_data_stream(self, name, params=None, headers=None):
         """
         Deletes a data stream.
@@ -1384,7 +1519,11 @@ class IndicesClient(NamespacedClient):
             "DELETE", _make_path("_data_stream", name), params=params, headers=headers
         )
 
-    @query_params("master_timeout", "timeout")
+    @query_params(
+        "master_timeout",
+        "timeout",
+        response_mimetypes=["application/json"],
+    )
     def delete_index_template(self, name, params=None, headers=None):
         """
         Deletes an index template.
@@ -1405,7 +1544,12 @@ class IndicesClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("flat_settings", "local", "master_timeout")
+    @query_params(
+        "flat_settings",
+        "local",
+        "master_timeout",
+        response_mimetypes=["application/json"],
+    )
     def exists_index_template(self, name, params=None, headers=None):
         """
         Returns information about whether a particular index template exists.
@@ -1427,7 +1571,12 @@ class IndicesClient(NamespacedClient):
             "HEAD", _make_path("_index_template", name), params=params, headers=headers
         )
 
-    @query_params("flat_settings", "local", "master_timeout")
+    @query_params(
+        "flat_settings",
+        "local",
+        "master_timeout",
+        response_mimetypes=["application/json"],
+    )
     def get_index_template(self, name=None, params=None, headers=None):
         """
         Returns an index template.
@@ -1446,7 +1595,13 @@ class IndicesClient(NamespacedClient):
             "GET", _make_path("_index_template", name), params=params, headers=headers
         )
 
-    @query_params("cause", "create", "master_timeout")
+    @query_params(
+        "cause",
+        "create",
+        "master_timeout",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def put_index_template(self, name, body, params=None, headers=None):
         """
         Creates or updates an index template.
@@ -1473,7 +1628,13 @@ class IndicesClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("cause", "create", "master_timeout")
+    @query_params(
+        "cause",
+        "create",
+        "master_timeout",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def simulate_index_template(self, name, body=None, params=None, headers=None):
         """
         Simulate matching the given index name against the index templates in the
@@ -1503,7 +1664,10 @@ class IndicesClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("expand_wildcards")
+    @query_params(
+        "expand_wildcards",
+        response_mimetypes=["application/json"],
+    )
     def get_data_stream(self, name=None, params=None, headers=None):
         """
         Returns data streams.
@@ -1520,7 +1684,13 @@ class IndicesClient(NamespacedClient):
             "GET", _make_path("_data_stream", name), params=params, headers=headers
         )
 
-    @query_params("cause", "create", "master_timeout")
+    @query_params(
+        "cause",
+        "create",
+        "master_timeout",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def simulate_template(self, body=None, name=None, params=None, headers=None):
         """
         Simulate resolving the given template name or body
@@ -1545,7 +1715,10 @@ class IndicesClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("expand_wildcards")
+    @query_params(
+        "expand_wildcards",
+        response_mimetypes=["application/json"],
+    )
     def resolve_index(self, name, params=None, headers=None):
         """
         Returns information about any matching indices, aliases, and data streams
@@ -1576,6 +1749,7 @@ class IndicesClient(NamespacedClient):
         "ignore_unavailable",
         "master_timeout",
         "timeout",
+        response_mimetypes=["application/json"],
     )
     def add_block(self, index, block, params=None, headers=None):
         """
@@ -1605,7 +1779,9 @@ class IndicesClient(NamespacedClient):
             "PUT", _make_path(index, "_block", block), params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def data_streams_stats(self, name=None, params=None, headers=None):
         """
         Provides statistics on operations happening in a data stream.
@@ -1622,7 +1798,9 @@ class IndicesClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def promote_data_stream(self, name, params=None, headers=None):
         """
         Promotes a data stream from a replicated data stream managed by CCR to a
@@ -1642,7 +1820,9 @@ class IndicesClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def migrate_to_data_stream(self, name, params=None, headers=None):
         """
         Migrates an alias to a data stream
@@ -1667,6 +1847,7 @@ class IndicesClient(NamespacedClient):
         "flush",
         "ignore_unavailable",
         "run_expensive_tasks",
+        response_mimetypes=["application/json"],
     )
     def disk_usage(self, index, params=None, headers=None):
         """
@@ -1702,7 +1883,11 @@ class IndicesClient(NamespacedClient):
         )
 
     @query_params(
-        "allow_no_indices", "expand_wildcards", "fields", "ignore_unavailable"
+        "allow_no_indices",
+        "expand_wildcards",
+        "fields",
+        "ignore_unavailable",
+        response_mimetypes=["application/json"],
     )
     def field_usage_stats(self, index, params=None, headers=None):
         """

@@ -19,7 +19,10 @@ from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 
 
 class SqlClient(NamespacedClient):
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def clear_cursor(self, body, params=None, headers=None):
         """
         Clears the SQL cursor
@@ -36,7 +39,11 @@ class SqlClient(NamespacedClient):
             "POST", "/_sql/close", params=params, headers=headers, body=body
         )
 
-    @query_params("format")
+    @query_params(
+        "format",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def query(self, body, params=None, headers=None):
         """
         Executes a SQL request
@@ -55,7 +62,10 @@ class SqlClient(NamespacedClient):
             "POST", "/_sql", params=params, headers=headers, body=body
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def translate(self, body, params=None, headers=None):
         """
         Translates SQL into Elasticsearch queries
@@ -71,7 +81,9 @@ class SqlClient(NamespacedClient):
             "POST", "/_sql/translate", params=params, headers=headers, body=body
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def delete_async(self, id, params=None, headers=None):
         """
         Deletes an async SQL search or a stored synchronous SQL search. If the search
@@ -91,7 +103,13 @@ class SqlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("delimiter", "format", "keep_alive", "wait_for_completion_timeout")
+    @query_params(
+        "delimiter",
+        "format",
+        "keep_alive",
+        "wait_for_completion_timeout",
+        response_mimetypes=["application/json"],
+    )
     async def get_async(self, id, params=None, headers=None):
         """
         Returns the current status and available results for an async SQL search or
@@ -114,7 +132,9 @@ class SqlClient(NamespacedClient):
             "GET", _make_path("_sql", "async", id), params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def get_async_status(self, id, params=None, headers=None):
         """
         Returns the current status of an async SQL search or a stored synchronous SQL

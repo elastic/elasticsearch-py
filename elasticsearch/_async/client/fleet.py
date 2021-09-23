@@ -19,7 +19,14 @@ from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 
 
 class FleetClient(NamespacedClient):
-    @query_params("checkpoints", "timeout", "wait_for_advance", "wait_for_index")
+    @query_params(
+        "checkpoints",
+        "timeout",
+        "wait_for_advance",
+        "wait_for_index",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def global_checkpoints(self, index, params=None, headers=None):
         """
         Returns the current global checkpoints for an index. This API is design for

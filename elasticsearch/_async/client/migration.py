@@ -19,7 +19,9 @@ from .utils import NamespacedClient, _make_path, query_params
 
 
 class MigrationClient(NamespacedClient):
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def deprecations(self, index=None, params=None, headers=None):
         """
         Retrieves information about different cluster, node, and index level settings

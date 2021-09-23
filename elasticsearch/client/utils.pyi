@@ -48,6 +48,8 @@ GLOBAL_PARAMS: Tuple[str, ...]
 
 def query_params(
     *es_query_params: str,
+    request_mimetypes: Optional[List[str]] = ...,
+    response_mimetypes: Optional[List[str]] = ...,
     body_params: Optional[List[str]] = ...,
     body_name: Optional[str] = ...,
     body_required: Optional[bool] = ...

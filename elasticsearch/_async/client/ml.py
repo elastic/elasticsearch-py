@@ -19,7 +19,14 @@ from .utils import SKIP_IN_PATH, NamespacedClient, _bulk_body, _make_path, query
 
 
 class MlClient(NamespacedClient):
-    @query_params("allow_no_jobs", "allow_no_match", "force", "timeout")
+    @query_params(
+        "allow_no_jobs",
+        "allow_no_match",
+        "force",
+        "timeout",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def close_job(self, job_id, body=None, params=None, headers=None):
         """
         Closes one or more anomaly detection jobs. A job can be opened and closed
@@ -50,7 +57,9 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def delete_calendar(self, calendar_id, params=None, headers=None):
         """
         Deletes a calendar.
@@ -71,7 +80,9 @@ class MlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def delete_calendar_event(
         self, calendar_id, event_id, params=None, headers=None
     ):
@@ -94,7 +105,9 @@ class MlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def delete_calendar_job(self, calendar_id, job_id, params=None, headers=None):
         """
         Deletes anomaly detection jobs from a calendar.
@@ -115,7 +128,10 @@ class MlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("force")
+    @query_params(
+        "force",
+        response_mimetypes=["application/json"],
+    )
     async def delete_datafeed(self, datafeed_id, params=None, headers=None):
         """
         Deletes an existing datafeed.
@@ -137,7 +153,12 @@ class MlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("requests_per_second", "timeout")
+    @query_params(
+        "requests_per_second",
+        "timeout",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def delete_expired_data(
         self, body=None, job_id=None, params=None, headers=None
     ):
@@ -162,7 +183,9 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def delete_filter(self, filter_id, params=None, headers=None):
         """
         Deletes a filter.
@@ -181,7 +204,11 @@ class MlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("allow_no_forecasts", "timeout")
+    @query_params(
+        "allow_no_forecasts",
+        "timeout",
+        response_mimetypes=["application/json"],
+    )
     async def delete_forecast(
         self, job_id, forecast_id=None, params=None, headers=None
     ):
@@ -208,7 +235,11 @@ class MlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("force", "wait_for_completion")
+    @query_params(
+        "force",
+        "wait_for_completion",
+        response_mimetypes=["application/json"],
+    )
     async def delete_job(self, job_id, params=None, headers=None):
         """
         Deletes an existing anomaly detection job.
@@ -230,7 +261,9 @@ class MlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def delete_model_snapshot(
         self, job_id, snapshot_id, params=None, headers=None
     ):
@@ -255,7 +288,15 @@ class MlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("advance_time", "calc_interim", "end", "skip_time", "start")
+    @query_params(
+        "advance_time",
+        "calc_interim",
+        "end",
+        "skip_time",
+        "start",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def flush_job(self, job_id, body=None, params=None, headers=None):
         """
         Forces any buffered data to be processed by the job.
@@ -286,7 +327,12 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("duration", "expires_in", "max_model_memory")
+    @query_params(
+        "duration",
+        "expires_in",
+        "max_model_memory",
+        response_mimetypes=["application/json"],
+    )
     async def forecast(self, job_id, params=None, headers=None):
         """
         Predicts the future behavior of a time series by using its historical behavior.
@@ -320,6 +366,8 @@ class MlClient(NamespacedClient):
         "size",
         "sort",
         "start",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
     )
     async def get_buckets(
         self, job_id, body=None, timestamp=None, params=None, headers=None
@@ -359,7 +407,14 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("end", "from_", "job_id", "size", "start")
+    @query_params(
+        "end",
+        "from_",
+        "job_id",
+        "size",
+        "start",
+        response_mimetypes=["application/json"],
+    )
     async def get_calendar_events(self, calendar_id, params=None, headers=None):
         """
         Retrieves information about the scheduled events in calendars.
@@ -389,7 +444,12 @@ class MlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("from_", "size")
+    @query_params(
+        "from_",
+        "size",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def get_calendars(
         self, body=None, calendar_id=None, params=None, headers=None
     ):
@@ -415,7 +475,13 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("from_", "partition_field_value", "size")
+    @query_params(
+        "from_",
+        "partition_field_value",
+        "size",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def get_categories(
         self, job_id, body=None, category_id=None, params=None, headers=None
     ):
@@ -450,7 +516,11 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("allow_no_datafeeds", "allow_no_match")
+    @query_params(
+        "allow_no_datafeeds",
+        "allow_no_match",
+        response_mimetypes=["application/json"],
+    )
     async def get_datafeed_stats(self, datafeed_id=None, params=None, headers=None):
         """
         Retrieves usage information for datafeeds.
@@ -472,7 +542,12 @@ class MlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("allow_no_datafeeds", "allow_no_match", "exclude_generated")
+    @query_params(
+        "allow_no_datafeeds",
+        "allow_no_match",
+        "exclude_generated",
+        response_mimetypes=["application/json"],
+    )
     async def get_datafeeds(self, datafeed_id=None, params=None, headers=None):
         """
         Retrieves configuration information for datafeeds.
@@ -496,7 +571,11 @@ class MlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("from_", "size")
+    @query_params(
+        "from_",
+        "size",
+        response_mimetypes=["application/json"],
+    )
     async def get_filters(self, filter_id=None, params=None, headers=None):
         """
         Retrieves filters.
@@ -526,6 +605,8 @@ class MlClient(NamespacedClient):
         "size",
         "sort",
         "start",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
     )
     async def get_influencers(self, job_id, body=None, params=None, headers=None):
         """
@@ -560,7 +641,11 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("allow_no_jobs", "allow_no_match")
+    @query_params(
+        "allow_no_jobs",
+        "allow_no_match",
+        response_mimetypes=["application/json"],
+    )
     async def get_job_stats(self, job_id=None, params=None, headers=None):
         """
         Retrieves usage information for anomaly detection jobs.
@@ -582,7 +667,12 @@ class MlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("allow_no_jobs", "allow_no_match", "exclude_generated")
+    @query_params(
+        "allow_no_jobs",
+        "allow_no_match",
+        "exclude_generated",
+        response_mimetypes=["application/json"],
+    )
     async def get_jobs(self, job_id=None, params=None, headers=None):
         """
         Retrieves configuration information for anomaly detection jobs.
@@ -606,7 +696,16 @@ class MlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("desc", "end", "from_", "size", "sort", "start")
+    @query_params(
+        "desc",
+        "end",
+        "from_",
+        "size",
+        "sort",
+        "start",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def get_model_snapshots(
         self, job_id, body=None, snapshot_id=None, params=None, headers=None
     ):
@@ -652,6 +751,8 @@ class MlClient(NamespacedClient):
         "overall_score",
         "start",
         "top_n",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
     )
     async def get_overall_buckets(self, job_id, body=None, params=None, headers=None):
         """
@@ -705,6 +806,8 @@ class MlClient(NamespacedClient):
         "size",
         "sort",
         "start",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
     )
     async def get_records(self, job_id, body=None, params=None, headers=None):
         """
@@ -738,7 +841,9 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def info(self, params=None, headers=None):
         """
         Returns defaults and limits used by machine learning.
@@ -749,7 +854,9 @@ class MlClient(NamespacedClient):
             "GET", "/_ml/info", params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def open_job(self, job_id, params=None, headers=None):
         """
         Opens one or more anomaly detection jobs.
@@ -768,7 +875,10 @@ class MlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def post_calendar_events(self, calendar_id, body, params=None, headers=None):
         """
         Posts scheduled events in a calendar.
@@ -790,7 +900,12 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("reset_end", "reset_start")
+    @query_params(
+        "reset_end",
+        "reset_start",
+        request_mimetypes=["application/x-ndjson", "application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def post_data(self, job_id, body, params=None, headers=None):
         """
         Sends data to an anomaly detection job for analysis.
@@ -817,7 +932,10 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def preview_datafeed(
         self, body=None, datafeed_id=None, params=None, headers=None
     ):
@@ -838,7 +956,10 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def put_calendar(self, calendar_id, body=None, params=None, headers=None):
         """
         Instantiates a calendar.
@@ -861,7 +982,9 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def put_calendar_job(self, calendar_id, job_id, params=None, headers=None):
         """
         Adds an anomaly detection job to a calendar.
@@ -883,7 +1006,12 @@ class MlClient(NamespacedClient):
         )
 
     @query_params(
-        "allow_no_indices", "expand_wildcards", "ignore_throttled", "ignore_unavailable"
+        "allow_no_indices",
+        "expand_wildcards",
+        "ignore_throttled",
+        "ignore_unavailable",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
     )
     async def put_datafeed(self, datafeed_id, body, params=None, headers=None):
         """
@@ -915,7 +1043,10 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def put_filter(self, filter_id, body, params=None, headers=None):
         """
         Instantiates a filter.
@@ -938,7 +1069,12 @@ class MlClient(NamespacedClient):
         )
 
     @query_params(
-        "allow_no_indices", "expand_wildcards", "ignore_throttled", "ignore_unavailable"
+        "allow_no_indices",
+        "expand_wildcards",
+        "ignore_throttled",
+        "ignore_unavailable",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
     )
     async def put_job(self, job_id, body, params=None, headers=None):
         """
@@ -972,7 +1108,11 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("delete_intervening_results")
+    @query_params(
+        "delete_intervening_results",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def revert_model_snapshot(
         self, job_id, snapshot_id, body=None, params=None, headers=None
     ):
@@ -1006,7 +1146,11 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("enabled", "timeout")
+    @query_params(
+        "enabled",
+        "timeout",
+        response_mimetypes=["application/json"],
+    )
     async def set_upgrade_mode(self, params=None, headers=None):
         """
         Sets a cluster wide upgrade_mode setting that prepares machine learning indices
@@ -1023,7 +1167,13 @@ class MlClient(NamespacedClient):
             "POST", "/_ml/set_upgrade_mode", params=params, headers=headers
         )
 
-    @query_params("end", "start", "timeout")
+    @query_params(
+        "end",
+        "start",
+        "timeout",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def start_datafeed(self, datafeed_id, body=None, params=None, headers=None):
         """
         Starts one or more datafeeds.
@@ -1051,7 +1201,14 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("allow_no_datafeeds", "allow_no_match", "force", "timeout")
+    @query_params(
+        "allow_no_datafeeds",
+        "allow_no_match",
+        "force",
+        "timeout",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def stop_datafeed(self, datafeed_id, body=None, params=None, headers=None):
         """
         Stops one or more datafeeds.
@@ -1084,7 +1241,12 @@ class MlClient(NamespacedClient):
         )
 
     @query_params(
-        "allow_no_indices", "expand_wildcards", "ignore_throttled", "ignore_unavailable"
+        "allow_no_indices",
+        "expand_wildcards",
+        "ignore_throttled",
+        "ignore_unavailable",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
     )
     async def update_datafeed(self, datafeed_id, body, params=None, headers=None):
         """
@@ -1116,7 +1278,10 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def update_filter(self, filter_id, body, params=None, headers=None):
         """
         Updates the description of a filter, adds items, or removes items.
@@ -1138,7 +1303,10 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def update_job(self, job_id, body, params=None, headers=None):
         """
         Updates certain properties of an anomaly detection job.
@@ -1160,7 +1328,10 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def update_model_snapshot(
         self, job_id, snapshot_id, body, params=None, headers=None
     ):
@@ -1192,7 +1363,10 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def validate(self, body, params=None, headers=None):
         """
         Validates an anomaly detection job.
@@ -1212,7 +1386,10 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def validate_detector(self, body, params=None, headers=None):
         """
         Validates an anomaly detection detector.
@@ -1232,7 +1409,11 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("force", "timeout")
+    @query_params(
+        "force",
+        "timeout",
+        response_mimetypes=["application/json"],
+    )
     async def delete_data_frame_analytics(self, id, params=None, headers=None):
         """
         Deletes an existing data frame analytics job.
@@ -1254,7 +1435,10 @@ class MlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def evaluate_data_frame(self, body, params=None, headers=None):
         """
         Evaluates the data frame analytics for an annotated index.
@@ -1274,7 +1458,13 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("allow_no_match", "exclude_generated", "from_", "size")
+    @query_params(
+        "allow_no_match",
+        "exclude_generated",
+        "from_",
+        "size",
+        response_mimetypes=["application/json"],
+    )
     async def get_data_frame_analytics(self, id=None, params=None, headers=None):
         """
         Retrieves configuration information for data frame analytics jobs.
@@ -1301,7 +1491,13 @@ class MlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("allow_no_match", "from_", "size", "verbose")
+    @query_params(
+        "allow_no_match",
+        "from_",
+        "size",
+        "verbose",
+        response_mimetypes=["application/json"],
+    )
     async def get_data_frame_analytics_stats(self, id=None, params=None, headers=None):
         """
         Retrieves usage information for data frame analytics jobs.
@@ -1327,7 +1523,10 @@ class MlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def put_data_frame_analytics(self, id, body, params=None, headers=None):
         """
         Instantiates a data frame analytics job.
@@ -1349,7 +1548,11 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("timeout")
+    @query_params(
+        "timeout",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def start_data_frame_analytics(
         self, id, body=None, params=None, headers=None
     ):
@@ -1374,7 +1577,13 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("allow_no_match", "force", "timeout")
+    @query_params(
+        "allow_no_match",
+        "force",
+        "timeout",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def stop_data_frame_analytics(self, id, body=None, params=None, headers=None):
         """
         Stops one or more data frame analytics jobs.
@@ -1402,7 +1611,9 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def delete_trained_model(self, model_id, params=None, headers=None):
         """
         Deletes an existing trained inference model that is currently not referenced by
@@ -1422,7 +1633,10 @@ class MlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def explain_data_frame_analytics(
         self, body=None, id=None, params=None, headers=None
     ):
@@ -1451,6 +1665,7 @@ class MlClient(NamespacedClient):
         "include_model_definition",
         "size",
         "tags",
+        response_mimetypes=["application/json"],
     )
     async def get_trained_models(self, model_id=None, params=None, headers=None):
         """
@@ -1489,7 +1704,12 @@ class MlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("allow_no_match", "from_", "size")
+    @query_params(
+        "allow_no_match",
+        "from_",
+        "size",
+        response_mimetypes=["application/json"],
+    )
     async def get_trained_models_stats(self, model_id=None, params=None, headers=None):
         """
         Retrieves usage information for trained inference models.
@@ -1514,7 +1734,11 @@ class MlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("defer_definition_decompression")
+    @query_params(
+        "defer_definition_decompression",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def put_trained_model(self, model_id, body, params=None, headers=None):
         """
         Creates an inference trained model.
@@ -1539,7 +1763,10 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def estimate_model_memory(self, body, params=None, headers=None):
         """
         Estimates the model memory
@@ -1560,7 +1787,10 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def update_data_frame_analytics(self, id, body, params=None, headers=None):
         """
         Updates certain properties of a data frame analytics job.
@@ -1582,7 +1812,11 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("timeout", "wait_for_completion")
+    @query_params(
+        "timeout",
+        "wait_for_completion",
+        response_mimetypes=["application/json"],
+    )
     async def upgrade_job_snapshot(
         self, job_id, snapshot_id, params=None, headers=None
     ):
@@ -1616,7 +1850,10 @@ class MlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def delete_trained_model_alias(
         self, model_id, model_alias, params=None, headers=None
     ):
@@ -1640,7 +1877,10 @@ class MlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def preview_data_frame_analytics(
         self, body=None, id=None, params=None, headers=None
     ):
@@ -1660,7 +1900,11 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("reassign")
+    @query_params(
+        "reassign",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def put_trained_model_alias(
         self, model_id, model_alias, params=None, headers=None
     ):
@@ -1702,6 +1946,8 @@ class MlClient(NamespacedClient):
         "timeout",
         "timestamp_field",
         "timestamp_format",
+        request_mimetypes=["application/x-ndjson"],
+        response_mimetypes=["application/json"],
     )
     async def find_file_structure(self, body, params=None, headers=None):
         """
@@ -1760,7 +2006,10 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("wait_for_completion")
+    @query_params(
+        "wait_for_completion",
+        response_mimetypes=["application/json"],
+    )
     async def reset_job(self, job_id, params=None, headers=None):
         """
         Resets an existing anomaly detection job.

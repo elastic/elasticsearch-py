@@ -19,7 +19,9 @@ from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 
 
 class CcrClient(NamespacedClient):
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def delete_auto_follow_pattern(self, name, params=None, headers=None):
         """
         Deletes auto-follow patterns.
@@ -38,7 +40,11 @@ class CcrClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("wait_for_active_shards")
+    @query_params(
+        "wait_for_active_shards",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def follow(self, index, body, params=None, headers=None):
         """
         Creates a new follower index configured to follow the referenced leader index.
@@ -66,7 +72,9 @@ class CcrClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def follow_info(self, index, params=None, headers=None):
         """
         Retrieves information about all follower indices, including parameters and
@@ -84,7 +92,9 @@ class CcrClient(NamespacedClient):
             "GET", _make_path(index, "_ccr", "info"), params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def follow_stats(self, index, params=None, headers=None):
         """
         Retrieves follower stats. return shard-level stats about the following tasks
@@ -102,7 +112,10 @@ class CcrClient(NamespacedClient):
             "GET", _make_path(index, "_ccr", "stats"), params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def forget_follower(self, index, body, params=None, headers=None):
         """
         Removes the follower retention leases from the leader.
@@ -128,7 +141,9 @@ class CcrClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def get_auto_follow_pattern(self, name=None, params=None, headers=None):
         """
         Gets configured auto-follow patterns. Returns the specified auto-follow pattern
@@ -145,7 +160,9 @@ class CcrClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def pause_follow(self, index, params=None, headers=None):
         """
         Pauses a follower index. The follower index will not fetch any additional
@@ -166,7 +183,10 @@ class CcrClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def put_auto_follow_pattern(self, name, body, params=None, headers=None):
         """
         Creates a new named collection of auto-follow patterns against a specified
@@ -190,7 +210,10 @@ class CcrClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def resume_follow(self, index, body=None, params=None, headers=None):
         """
         Resumes a follower index that has been paused
@@ -212,7 +235,9 @@ class CcrClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def stats(self, params=None, headers=None):
         """
         Gets all stats related to cross-cluster replication.
@@ -223,7 +248,9 @@ class CcrClient(NamespacedClient):
             "GET", "/_ccr/stats", params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def unfollow(self, index, params=None, headers=None):
         """
         Stops the following task associated with a follower index and removes index
@@ -244,7 +271,9 @@ class CcrClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def pause_auto_follow_pattern(self, name, params=None, headers=None):
         """
         Pauses an auto-follow pattern
@@ -264,7 +293,9 @@ class CcrClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def resume_auto_follow_pattern(self, name, params=None, headers=None):
         """
         Resumes an auto-follow pattern that has been paused

@@ -504,7 +504,7 @@ class Elasticsearch(object):
     def field_caps(
         self,
         *,
-        body: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
         index: Optional[Any] = ...,
         allow_no_indices: Optional[bool] = ...,
         expand_wildcards: Optional[Any] = ...,
@@ -1172,7 +1172,7 @@ class Elasticsearch(object):
     def close_point_in_time(
         self,
         *,
-        body: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
@@ -1189,7 +1189,7 @@ class Elasticsearch(object):
     def open_point_in_time(
         self,
         *,
-        index: Optional[Any] = ...,
+        index: Any,
         expand_wildcards: Optional[Any] = ...,
         ignore_unavailable: Optional[bool] = ...,
         keep_alive: Optional[Any] = ...,

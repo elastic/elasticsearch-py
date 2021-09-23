@@ -19,7 +19,6 @@ import binascii
 import gzip
 import io
 import logging
-import os
 import re
 import warnings
 from platform import python_version
@@ -29,7 +28,7 @@ try:
 except ImportError:
     import json
 
-from .. import __version__, __versionstr__
+from .. import __versionstr__
 from ..compat import PY2
 from ..exceptions import (
     HTTP_EXCEPTIONS,
@@ -123,14 +122,6 @@ class Connection(object):
         if opaque_id:
             self.headers["x-opaque-id"] = opaque_id
 
-        if os.getenv("ELASTIC_CLIENT_APIVERSIONING") == "1":
-            self.headers.setdefault(
-                "accept",
-                "application/vnd.elasticsearch+json;compatible-with=%s"
-                % (str(__version__[0]),),
-            )
-
-        self.headers.setdefault("content-type", "application/json")
         self.headers.setdefault("user-agent", self._get_default_user_agent())
 
         if api_key is not None:

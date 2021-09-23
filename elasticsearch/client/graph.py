@@ -19,7 +19,12 @@ from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 
 
 class GraphClient(NamespacedClient):
-    @query_params("routing", "timeout")
+    @query_params(
+        "routing",
+        "timeout",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def explore(self, index, body=None, doc_type=None, params=None, headers=None):
         """
         Explore extracted and summarized information about the documents and terms in

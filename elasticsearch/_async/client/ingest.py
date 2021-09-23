@@ -19,7 +19,11 @@ from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 
 
 class IngestClient(NamespacedClient):
-    @query_params("master_timeout", "summary")
+    @query_params(
+        "master_timeout",
+        "summary",
+        response_mimetypes=["application/json"],
+    )
     async def get_pipeline(self, id=None, params=None, headers=None):
         """
         Returns a pipeline.
@@ -37,7 +41,12 @@ class IngestClient(NamespacedClient):
             "GET", _make_path("_ingest", "pipeline", id), params=params, headers=headers
         )
 
-    @query_params("master_timeout", "timeout")
+    @query_params(
+        "master_timeout",
+        "timeout",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def put_pipeline(self, id, body, params=None, headers=None):
         """
         Creates or updates a pipeline.
@@ -62,7 +71,11 @@ class IngestClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("master_timeout", "timeout")
+    @query_params(
+        "master_timeout",
+        "timeout",
+        response_mimetypes=["application/json"],
+    )
     async def delete_pipeline(self, id, params=None, headers=None):
         """
         Deletes a pipeline.
@@ -84,7 +97,11 @@ class IngestClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("verbose")
+    @query_params(
+        "verbose",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def simulate(self, body, id=None, params=None, headers=None):
         """
         Allows to simulate a pipeline with example documents.
@@ -107,7 +124,9 @@ class IngestClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def processor_grok(self, params=None, headers=None):
         """
         Returns a list of the built-in patterns.
@@ -118,7 +137,9 @@ class IngestClient(NamespacedClient):
             "GET", "/_ingest/processor/grok", params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def geo_ip_stats(self, params=None, headers=None):
         """
         Returns statistical information about geoip databases

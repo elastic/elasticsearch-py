@@ -19,7 +19,9 @@ from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 
 
 class IlmClient(NamespacedClient):
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def delete_lifecycle(self, policy, params=None, headers=None):
         """
         Deletes the specified lifecycle policy definition. A currently used policy
@@ -39,7 +41,11 @@ class IlmClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("only_errors", "only_managed")
+    @query_params(
+        "only_errors",
+        "only_managed",
+        response_mimetypes=["application/json"],
+    )
     def explain_lifecycle(self, index, params=None, headers=None):
         """
         Retrieves information about the index's current lifecycle state, such as the
@@ -60,7 +66,9 @@ class IlmClient(NamespacedClient):
             "GET", _make_path(index, "_ilm", "explain"), params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def get_lifecycle(self, policy=None, params=None, headers=None):
         """
         Returns the specified policy definition. Includes the policy version and last
@@ -74,7 +82,9 @@ class IlmClient(NamespacedClient):
             "GET", _make_path("_ilm", "policy", policy), params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def get_status(self, params=None, headers=None):
         """
         Retrieves the current index lifecycle management (ILM) status.
@@ -85,7 +95,10 @@ class IlmClient(NamespacedClient):
             "GET", "/_ilm/status", params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def move_to_step(self, index, body=None, params=None, headers=None):
         """
         Manually moves an index into the specified step and executes that step.
@@ -107,7 +120,10 @@ class IlmClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def put_lifecycle(self, policy, body=None, params=None, headers=None):
         """
         Creates a lifecycle policy
@@ -128,7 +144,9 @@ class IlmClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def remove_policy(self, index, params=None, headers=None):
         """
         Removes the assigned lifecycle policy and stops managing the specified index
@@ -144,7 +162,9 @@ class IlmClient(NamespacedClient):
             "POST", _make_path(index, "_ilm", "remove"), params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def retry(self, index, params=None, headers=None):
         """
         Retries executing the policy for an index that is in the ERROR step.
@@ -161,7 +181,9 @@ class IlmClient(NamespacedClient):
             "POST", _make_path(index, "_ilm", "retry"), params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def start(self, params=None, headers=None):
         """
         Start the index lifecycle management (ILM) plugin.
@@ -172,7 +194,9 @@ class IlmClient(NamespacedClient):
             "POST", "/_ilm/start", params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def stop(self, params=None, headers=None):
         """
         Halts all lifecycle management operations and stops the index lifecycle
@@ -184,7 +208,11 @@ class IlmClient(NamespacedClient):
             "POST", "/_ilm/stop", params=params, headers=headers
         )
 
-    @query_params("dry_run")
+    @query_params(
+        "dry_run",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def migrate_to_data_tiers(self, body=None, params=None, headers=None):
         """
         Migrates the indices and ILM policies away from custom node attribute

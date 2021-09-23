@@ -19,7 +19,9 @@ from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 
 
 class LogstashClient(NamespacedClient):
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def delete_pipeline(self, id, params=None, headers=None):
         """
         Deletes Logstash Pipelines used by Central Management
@@ -38,7 +40,9 @@ class LogstashClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def get_pipeline(self, id, params=None, headers=None):
         """
         Retrieves Logstash Pipelines used by Central Management
@@ -57,7 +61,10 @@ class LogstashClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def put_pipeline(self, id, body, params=None, headers=None):
         """
         Adds and updates Logstash Pipelines used for Central Management

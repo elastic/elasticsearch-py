@@ -32,7 +32,8 @@ docker build \
 echo -e "\033[1m>>>>> Run [elastic/elasticsearch-py container] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>\033[0m"
 
 if [[ "$STACK_VERSION" == "8.0.0-SNAPSHOT" ]]; then
-  ELASTIC_CLIENT_APIVERSIONING="1"
+  export STACK_VERSION="7.x-SNAPSHOT"
+  export ELASTIC_CLIENT_APIVERSIONING="true"
 fi
 
 mkdir -p junit

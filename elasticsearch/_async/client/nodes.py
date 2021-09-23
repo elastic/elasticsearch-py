@@ -19,7 +19,11 @@ from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 
 
 class NodesClient(NamespacedClient):
-    @query_params("timeout")
+    @query_params(
+        "timeout",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     async def reload_secure_settings(
         self, body=None, node_id=None, params=None, headers=None
     ):
@@ -43,7 +47,11 @@ class NodesClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("flat_settings", "timeout")
+    @query_params(
+        "flat_settings",
+        "timeout",
+        response_mimetypes=["application/json"],
+    )
     async def info(self, node_id=None, metric=None, params=None, headers=None):
         """
         Returns information about nodes in the cluster.
@@ -75,6 +83,7 @@ class NodesClient(NamespacedClient):
         "level",
         "timeout",
         "types",
+        response_mimetypes=["application/json"],
     )
     async def stats(
         self, node_id=None, metric=None, index_metric=None, params=None, headers=None
@@ -124,7 +133,13 @@ class NodesClient(NamespacedClient):
         )
 
     @query_params(
-        "ignore_idle_threads", "interval", "snapshots", "threads", "timeout", "type"
+        "ignore_idle_threads",
+        "interval",
+        "snapshots",
+        "threads",
+        "timeout",
+        "type",
+        response_mimetypes=["text/plain"],
     )
     async def hot_threads(self, node_id=None, params=None, headers=None):
         """
@@ -155,7 +170,10 @@ class NodesClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("timeout")
+    @query_params(
+        "timeout",
+        response_mimetypes=["application/json"],
+    )
     async def usage(self, node_id=None, metric=None, params=None, headers=None):
         """
         Returns low-level information about REST actions usage on nodes.
@@ -177,7 +195,9 @@ class NodesClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def clear_repositories_metering_archive(
         self, node_id, max_archive_version, params=None, headers=None
     ):
@@ -209,7 +229,9 @@ class NodesClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def get_repositories_metering_info(self, node_id, params=None, headers=None):
         """
         Returns cluster repositories metering information.

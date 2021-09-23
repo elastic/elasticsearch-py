@@ -19,7 +19,16 @@ from .utils import NamespacedClient, _make_path, query_params
 
 
 class CatClient(NamespacedClient):
-    @query_params("expand_wildcards", "format", "h", "help", "local", "s", "v")
+    @query_params(
+        "expand_wildcards",
+        "format",
+        "h",
+        "help",
+        "local",
+        "s",
+        "v",
+        response_mimetypes=["text/plain", "application/json"],
+    )
     def aliases(self, name=None, params=None, headers=None):
         """
         Shows information about currently configured aliases to indices including
@@ -45,7 +54,17 @@ class CatClient(NamespacedClient):
             "GET", _make_path("_cat", "aliases", name), params=params, headers=headers
         )
 
-    @query_params("bytes", "format", "h", "help", "local", "master_timeout", "s", "v")
+    @query_params(
+        "bytes",
+        "format",
+        "h",
+        "help",
+        "local",
+        "master_timeout",
+        "s",
+        "v",
+        response_mimetypes=["text/plain", "application/json"],
+    )
     def allocation(self, node_id=None, params=None, headers=None):
         """
         Provides a snapshot of how many shards are allocated to each data node and how
@@ -76,7 +95,14 @@ class CatClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("format", "h", "help", "s", "v")
+    @query_params(
+        "format",
+        "h",
+        "help",
+        "s",
+        "v",
+        response_mimetypes=["text/plain", "application/json"],
+    )
     def count(self, index=None, params=None, headers=None):
         """
         Provides quick access to the document count of the entire cluster, or
@@ -98,7 +124,16 @@ class CatClient(NamespacedClient):
             "GET", _make_path("_cat", "count", index), params=params, headers=headers
         )
 
-    @query_params("format", "h", "help", "s", "time", "ts", "v")
+    @query_params(
+        "format",
+        "h",
+        "help",
+        "s",
+        "time",
+        "ts",
+        "v",
+        response_mimetypes=["text/plain", "application/json"],
+    )
     def health(self, params=None, headers=None):
         """
         Returns a concise representation of the cluster health.
@@ -120,7 +155,11 @@ class CatClient(NamespacedClient):
             "GET", "/_cat/health", params=params, headers=headers
         )
 
-    @query_params("help", "s")
+    @query_params(
+        "help",
+        "s",
+        response_mimetypes=["text/plain"],
+    )
     def help(self, params=None, headers=None):
         """
         Returns help for the Cat APIs.
@@ -149,6 +188,7 @@ class CatClient(NamespacedClient):
         "s",
         "time",
         "v",
+        response_mimetypes=["text/plain", "application/json"],
     )
     def indices(self, index=None, params=None, headers=None):
         """
@@ -189,7 +229,16 @@ class CatClient(NamespacedClient):
             "GET", _make_path("_cat", "indices", index), params=params, headers=headers
         )
 
-    @query_params("format", "h", "help", "local", "master_timeout", "s", "v")
+    @query_params(
+        "format",
+        "h",
+        "help",
+        "local",
+        "master_timeout",
+        "s",
+        "v",
+        response_mimetypes=["text/plain", "application/json"],
+    )
     def master(self, params=None, headers=None):
         """
         Returns information about the master node.
@@ -224,6 +273,7 @@ class CatClient(NamespacedClient):
         "s",
         "time",
         "v",
+        response_mimetypes=["text/plain", "application/json"],
     )
     def nodes(self, params=None, headers=None):
         """
@@ -257,7 +307,16 @@ class CatClient(NamespacedClient):
         )
 
     @query_params(
-        "active_only", "bytes", "detailed", "format", "h", "help", "s", "time", "v"
+        "active_only",
+        "bytes",
+        "detailed",
+        "format",
+        "h",
+        "help",
+        "s",
+        "time",
+        "v",
+        response_mimetypes=["text/plain", "application/json"],
     )
     def recovery(self, index=None, params=None, headers=None):
         """
@@ -288,7 +347,16 @@ class CatClient(NamespacedClient):
         )
 
     @query_params(
-        "bytes", "format", "h", "help", "local", "master_timeout", "s", "time", "v"
+        "bytes",
+        "format",
+        "h",
+        "help",
+        "local",
+        "master_timeout",
+        "s",
+        "time",
+        "v",
+        response_mimetypes=["text/plain", "application/json"],
     )
     def shards(self, index=None, params=None, headers=None):
         """
@@ -318,7 +386,15 @@ class CatClient(NamespacedClient):
             "GET", _make_path("_cat", "shards", index), params=params, headers=headers
         )
 
-    @query_params("bytes", "format", "h", "help", "s", "v")
+    @query_params(
+        "bytes",
+        "format",
+        "h",
+        "help",
+        "s",
+        "v",
+        response_mimetypes=["text/plain", "application/json"],
+    )
     def segments(self, index=None, params=None, headers=None):
         """
         Provides low-level information about the segments in the shards of an index.
@@ -341,7 +417,17 @@ class CatClient(NamespacedClient):
             "GET", _make_path("_cat", "segments", index), params=params, headers=headers
         )
 
-    @query_params("format", "h", "help", "local", "master_timeout", "s", "time", "v")
+    @query_params(
+        "format",
+        "h",
+        "help",
+        "local",
+        "master_timeout",
+        "s",
+        "time",
+        "v",
+        response_mimetypes=["text/plain", "application/json"],
+    )
     def pending_tasks(self, params=None, headers=None):
         """
         Returns a concise representation of the cluster pending tasks.
@@ -366,7 +452,17 @@ class CatClient(NamespacedClient):
             "GET", "/_cat/pending_tasks", params=params, headers=headers
         )
 
-    @query_params("format", "h", "help", "local", "master_timeout", "s", "size", "v")
+    @query_params(
+        "format",
+        "h",
+        "help",
+        "local",
+        "master_timeout",
+        "s",
+        "size",
+        "v",
+        response_mimetypes=["text/plain", "application/json"],
+    )
     def thread_pool(self, thread_pool_patterns=None, params=None, headers=None):
         """
         Returns cluster-wide thread pool statistics per node. By default the active,
@@ -397,7 +493,15 @@ class CatClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("bytes", "format", "h", "help", "s", "v")
+    @query_params(
+        "bytes",
+        "format",
+        "h",
+        "help",
+        "s",
+        "v",
+        response_mimetypes=["text/plain", "application/json"],
+    )
     def fielddata(self, fields=None, params=None, headers=None):
         """
         Shows how much heap memory is currently being used by fielddata on every data
@@ -425,7 +529,15 @@ class CatClient(NamespacedClient):
         )
 
     @query_params(
-        "format", "h", "help", "include_bootstrap", "local", "master_timeout", "s", "v"
+        "format",
+        "h",
+        "help",
+        "include_bootstrap",
+        "local",
+        "master_timeout",
+        "s",
+        "v",
+        response_mimetypes=["text/plain", "application/json"],
     )
     def plugins(self, params=None, headers=None):
         """
@@ -451,7 +563,16 @@ class CatClient(NamespacedClient):
             "GET", "/_cat/plugins", params=params, headers=headers
         )
 
-    @query_params("format", "h", "help", "local", "master_timeout", "s", "v")
+    @query_params(
+        "format",
+        "h",
+        "help",
+        "local",
+        "master_timeout",
+        "s",
+        "v",
+        response_mimetypes=["text/plain", "application/json"],
+    )
     def nodeattrs(self, params=None, headers=None):
         """
         Returns information about custom node attributes.
@@ -474,7 +595,16 @@ class CatClient(NamespacedClient):
             "GET", "/_cat/nodeattrs", params=params, headers=headers
         )
 
-    @query_params("format", "h", "help", "local", "master_timeout", "s", "v")
+    @query_params(
+        "format",
+        "h",
+        "help",
+        "local",
+        "master_timeout",
+        "s",
+        "v",
+        response_mimetypes=["text/plain", "application/json"],
+    )
     def repositories(self, params=None, headers=None):
         """
         Returns information about snapshot repositories registered in the cluster.
@@ -498,7 +628,15 @@ class CatClient(NamespacedClient):
         )
 
     @query_params(
-        "format", "h", "help", "ignore_unavailable", "master_timeout", "s", "time", "v"
+        "format",
+        "h",
+        "help",
+        "ignore_unavailable",
+        "master_timeout",
+        "s",
+        "time",
+        "v",
+        response_mimetypes=["text/plain", "application/json"],
     )
     def snapshots(self, repository=None, params=None, headers=None):
         """
@@ -540,6 +678,7 @@ class CatClient(NamespacedClient):
         "s",
         "time",
         "v",
+        response_mimetypes=["text/plain", "application/json"],
     )
     def tasks(self, params=None, headers=None):
         """
@@ -570,7 +709,16 @@ class CatClient(NamespacedClient):
             "GET", "/_cat/tasks", params=params, headers=headers
         )
 
-    @query_params("format", "h", "help", "local", "master_timeout", "s", "v")
+    @query_params(
+        "format",
+        "h",
+        "help",
+        "local",
+        "master_timeout",
+        "s",
+        "v",
+        response_mimetypes=["text/plain", "application/json"],
+    )
     def templates(self, name=None, params=None, headers=None):
         """
         Returns information about existing templates.
@@ -594,7 +742,17 @@ class CatClient(NamespacedClient):
             "GET", _make_path("_cat", "templates", name), params=params, headers=headers
         )
 
-    @query_params("allow_no_match", "bytes", "format", "h", "help", "s", "time", "v")
+    @query_params(
+        "allow_no_match",
+        "bytes",
+        "format",
+        "h",
+        "help",
+        "s",
+        "time",
+        "v",
+        response_mimetypes=["text/plain", "application/json"],
+    )
     def ml_data_frame_analytics(self, id=None, params=None, headers=None):
         """
         Gets configuration and usage information about data frame analytics jobs.
@@ -625,7 +783,15 @@ class CatClient(NamespacedClient):
         )
 
     @query_params(
-        "allow_no_datafeeds", "allow_no_match", "format", "h", "help", "s", "time", "v"
+        "allow_no_datafeeds",
+        "allow_no_match",
+        "format",
+        "h",
+        "help",
+        "s",
+        "time",
+        "v",
+        response_mimetypes=["text/plain", "application/json"],
     )
     def ml_datafeeds(self, datafeed_id=None, params=None, headers=None):
         """
@@ -667,6 +833,7 @@ class CatClient(NamespacedClient):
         "s",
         "time",
         "v",
+        response_mimetypes=["text/plain", "application/json"],
     )
     def ml_jobs(self, job_id=None, params=None, headers=None):
         """
@@ -711,6 +878,7 @@ class CatClient(NamespacedClient):
         "size",
         "time",
         "v",
+        response_mimetypes=["text/plain", "application/json"],
     )
     def ml_trained_models(self, model_id=None, params=None, headers=None):
         """
@@ -748,7 +916,16 @@ class CatClient(NamespacedClient):
         )
 
     @query_params(
-        "allow_no_match", "format", "from_", "h", "help", "s", "size", "time", "v"
+        "allow_no_match",
+        "format",
+        "from_",
+        "h",
+        "help",
+        "s",
+        "size",
+        "time",
+        "v",
+        response_mimetypes=["text/plain", "application/json"],
     )
     def transforms(self, transform_id=None, params=None, headers=None):
         """

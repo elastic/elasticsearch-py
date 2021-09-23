@@ -19,7 +19,6 @@
 import gzip
 import io
 import json
-import os
 import re
 import ssl
 import warnings
@@ -174,26 +173,6 @@ class TestBaseConnection(TestCase):
         with pytest.raises(TypeError) as e:
             Connection(meta_header=1)
         assert str(e.value) == "meta_header must be of type bool"
-
-    def test_compatibility_accept_header(self):
-        try:
-            conn = Connection()
-            assert "accept" not in conn.headers
-
-            os.environ["ELASTIC_CLIENT_APIVERSIONING"] = "0"
-
-            conn = Connection()
-            assert "accept" not in conn.headers
-
-            os.environ["ELASTIC_CLIENT_APIVERSIONING"] = "1"
-
-            conn = Connection()
-            assert (
-                conn.headers["accept"]
-                == "application/vnd.elasticsearch+json;compatible-with=7"
-            )
-        finally:
-            os.environ.pop("ELASTIC_CLIENT_APIVERSIONING")
 
 
 class TestUrllib3Connection(TestCase):
@@ -359,7 +338,6 @@ class TestUrllib3Connection(TestCase):
         self.assertEqual(
             {
                 "connection": "keep-alive",
-                "content-type": "application/json",
                 "user-agent": con._get_default_user_agent(),
             },
             con.headers,
@@ -371,7 +349,6 @@ class TestUrllib3Connection(TestCase):
             {
                 "authorization": "Basic dXNlcm5hbWU6c2VjcmV0",
                 "connection": "keep-alive",
-                "content-type": "application/json",
                 "user-agent": con._get_default_user_agent(),
             },
             con.headers,
@@ -382,7 +359,6 @@ class TestUrllib3Connection(TestCase):
         self.assertEqual(
             {
                 "authorization": "Basic dXNlcm5hbWU6c2VjcmV0",
-                "content-type": "application/json",
                 "connection": "keep-alive",
                 "user-agent": con._get_default_user_agent(),
             },
@@ -394,7 +370,6 @@ class TestUrllib3Connection(TestCase):
         self.assertEqual(
             {
                 "authorization": "Basic dXNlcm5hbWU6c2VjcmV0",
-                "content-type": "application/json",
                 "connection": "keep-alive",
                 "user-agent": con._get_default_user_agent(),
             },
@@ -701,8 +676,7 @@ class TestRequestsConnection(TestCase):
     def test_default_headers(self):
         con = self._get_mock_connection()
         req = self._get_request(con, "GET", "/")
-        self.assertEqual(req.headers["content-type"], "application/json")
-        self.assertEqual(req.headers["user-agent"], con._get_default_user_agent())
+        self.assertEqual(req.headers, {"user-agent": con._get_default_user_agent()})
 
     def test_custom_headers(self):
         con = self._get_mock_connection()
@@ -948,7 +922,6 @@ class TestConnectionHttpbin:
         assert data["method"] == "GET"
         assert data["headers"] == {
             "Accept-Encoding": "identity",
-            "Content-Type": "application/json",
             "Host": "httpbin.org",
             "User-Agent": user_agent,
         }
@@ -962,7 +935,6 @@ class TestConnectionHttpbin:
         assert data["method"] == "GET"
         assert data["headers"] == {
             "Accept-Encoding": "identity",
-            "Content-Type": "application/json",
             "Host": "httpbin.org",
             "User-Agent": user_agent,
         }
@@ -975,7 +947,6 @@ class TestConnectionHttpbin:
         assert status == 200
         assert data["headers"] == {
             "Accept-Encoding": "gzip,deflate",
-            "Content-Type": "application/json",
             "Host": "httpbin.org",
             "User-Agent": user_agent,
         }
@@ -994,7 +965,6 @@ class TestConnectionHttpbin:
         assert status == 200
         assert data["headers"] == {
             "Accept-Encoding": "gzip,deflate",
-            "Content-Type": "application/json",
             "Host": "httpbin.org",
             "Header1": "override!",
             "Header2": "value2",
@@ -1015,7 +985,6 @@ class TestConnectionHttpbin:
         assert data["method"] == "GET"
         assert data["headers"] == {
             "Accept-Encoding": "identity",
-            "Content-Type": "application/json",
             "Host": "httpbin.org",
             "User-Agent": user_agent,
         }
@@ -1029,7 +998,6 @@ class TestConnectionHttpbin:
         assert data["method"] == "GET"
         assert data["headers"] == {
             "Accept-Encoding": "identity",
-            "Content-Type": "application/json",
             "Host": "httpbin.org",
             "User-Agent": user_agent,
         }
@@ -1042,7 +1010,6 @@ class TestConnectionHttpbin:
         assert status == 200
         assert data["headers"] == {
             "Accept-Encoding": "gzip,deflate",
-            "Content-Type": "application/json",
             "Host": "httpbin.org",
             "User-Agent": user_agent,
         }
@@ -1061,7 +1028,6 @@ class TestConnectionHttpbin:
         assert status == 200
         assert data["headers"] == {
             "Accept-Encoding": "gzip,deflate",
-            "Content-Type": "application/json",
             "Host": "httpbin.org",
             "Header1": "override!",
             "Header2": "value2",

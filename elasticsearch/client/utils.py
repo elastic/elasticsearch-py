@@ -18,15 +18,22 @@
 from __future__ import unicode_literals
 
 import base64
+import os
 import warnings
 import weakref
 from datetime import date, datetime
 from functools import wraps
 
+from .._version import __versionstr__
 from ..compat import PY2, quote, string_types, to_bytes, to_str, unquote, urlparse
 
 # parts of URL to be omitted
 SKIP_IN_PATH = (None, "", b"", [], ())
+
+# Switch to this mimetype if 'ELASTIC_CLIENT_APIVERSIONING=1/true'
+_COMPATIBILITY_MIMETYPE = "application/vnd.elasticsearch+json;compatible-with=%s" % (
+    __versionstr__.partition(".")[0]
+)
 
 
 def _normalize_hosts(hosts):
@@ -129,6 +136,28 @@ def query_params(*es_query_params, **kwargs):
     Decorator that pops all accepted parameters from method's kwargs and puts
     them in the params argument.
     """
+    request_mimetypes = kwargs.pop("request_mimetypes", [])
+    response_mimetypes = kwargs.pop("response_mimetypes", [])
+
+    default_content_type = "".join(request_mimetypes[:1])
+    default_accept = ",".join(response_mimetypes)
+
+    def compat_mimetype(mimetypes):
+        return [
+            _COMPATIBILITY_MIMETYPE
+            if mimetype
+            in (
+                "application/json",
+                "application/x-ndjson",
+                "application/vnd.mapbox-vector-tile",
+            )
+            else mimetype
+            for mimetype in mimetypes
+        ]
+
+    compat_content_type = "".join(compat_mimetype(request_mimetypes)[:1])
+    compat_accept = ",".join(compat_mimetype(response_mimetypes))
+
     body_params = kwargs.pop("body_params", None)
     body_only_params = set(body_params or ()) - set(es_query_params)
     body_name = kwargs.pop("body_name", None)
@@ -153,6 +182,23 @@ def query_params(*es_query_params, **kwargs):
 
             if "opaque_id" in kwargs:
                 headers["x-opaque-id"] = kwargs.pop("opaque_id")
+
+            # Detect compatibility mode and set the 'Accept' and 'Content-Type'
+            # headers to the compatibility mimetype if detected.
+            try:
+                if os.environ["ELASTIC_CLIENT_APIVERSIONING"] not in ("true", "1"):
+                    raise KeyError  # Unset is the same as env var not being 'true' or '1'
+                accept = compat_accept
+                content_type = compat_content_type
+            except KeyError:
+                accept = default_accept
+                content_type = default_content_type
+
+            # Set the mimetype headers for the request
+            if accept:
+                headers.setdefault("accept", accept)
+            if content_type:
+                headers.setdefault("content-type", content_type)
 
             http_auth = kwargs.pop("http_auth", None)
             api_key = kwargs.pop("api_key", None)

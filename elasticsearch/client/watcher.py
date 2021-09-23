@@ -19,7 +19,9 @@ from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 
 
 class WatcherClient(NamespacedClient):
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def ack_watch(self, watch_id, action_id=None, params=None, headers=None):
         """
         Acknowledges a watch, manually throttling the execution of the watch's actions.
@@ -40,7 +42,9 @@ class WatcherClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def activate_watch(self, watch_id, params=None, headers=None):
         """
         Activates a currently inactive watch.
@@ -59,7 +63,9 @@ class WatcherClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def deactivate_watch(self, watch_id, params=None, headers=None):
         """
         Deactivates a currently active watch.
@@ -78,7 +84,9 @@ class WatcherClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def delete_watch(self, id, params=None, headers=None):
         """
         Removes a watch from Watcher.
@@ -97,7 +105,11 @@ class WatcherClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("debug")
+    @query_params(
+        "debug",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def execute_watch(self, body=None, id=None, params=None, headers=None):
         """
         Forces the execution of a stored watch.
@@ -117,7 +129,9 @@ class WatcherClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def get_watch(self, id, params=None, headers=None):
         """
         Retrieves a watch by its ID.
@@ -133,7 +147,14 @@ class WatcherClient(NamespacedClient):
             "GET", _make_path("_watcher", "watch", id), params=params, headers=headers
         )
 
-    @query_params("active", "if_primary_term", "if_seq_no", "version")
+    @query_params(
+        "active",
+        "if_primary_term",
+        "if_seq_no",
+        "version",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def put_watch(self, id, body=None, params=None, headers=None):
         """
         Creates a new watch, or updates an existing one.
@@ -160,7 +181,9 @@ class WatcherClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def start(self, params=None, headers=None):
         """
         Starts Watcher if it is not already running.
@@ -171,7 +194,10 @@ class WatcherClient(NamespacedClient):
             "POST", "/_watcher/_start", params=params, headers=headers
         )
 
-    @query_params("emit_stacktraces")
+    @query_params(
+        "emit_stacktraces",
+        response_mimetypes=["application/json"],
+    )
     def stats(self, metric=None, params=None, headers=None):
         """
         Retrieves the current Watcher metrics.
@@ -191,7 +217,9 @@ class WatcherClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def stop(self, params=None, headers=None):
         """
         Stops Watcher if it is running.
@@ -202,7 +230,10 @@ class WatcherClient(NamespacedClient):
             "POST", "/_watcher/_stop", params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def query_watches(self, body=None, params=None, headers=None):
         """
         Retrieves stored watches.

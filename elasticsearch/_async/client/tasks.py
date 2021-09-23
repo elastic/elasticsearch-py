@@ -29,6 +29,7 @@ class TasksClient(NamespacedClient):
         "parent_task_id",
         "timeout",
         "wait_for_completion",
+        response_mimetypes=["application/json"],
     )
     async def list(self, params=None, headers=None):
         """
@@ -59,7 +60,13 @@ class TasksClient(NamespacedClient):
             "GET", "/_tasks", params=params, headers=headers
         )
 
-    @query_params("actions", "nodes", "parent_task_id", "wait_for_completion")
+    @query_params(
+        "actions",
+        "nodes",
+        "parent_task_id",
+        "wait_for_completion",
+        response_mimetypes=["application/json"],
+    )
     async def cancel(self, task_id=None, params=None, headers=None):
         """
         Cancels a task, if it can be cancelled through an API.
@@ -91,7 +98,11 @@ class TasksClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("timeout", "wait_for_completion")
+    @query_params(
+        "timeout",
+        "wait_for_completion",
+        response_mimetypes=["application/json"],
+    )
     async def get(self, task_id=None, params=None, headers=None):
         """
         Returns information about a task.

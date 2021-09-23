@@ -19,7 +19,9 @@ from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 
 
 class SecurityClient(NamespacedClient):
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def authenticate(self, params=None, headers=None):
         """
         Enables authentication as a user and retrieve information about the
@@ -31,7 +33,11 @@ class SecurityClient(NamespacedClient):
             "GET", "/_security/_authenticate", params=params, headers=headers
         )
 
-    @query_params("refresh")
+    @query_params(
+        "refresh",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def change_password(self, body, username=None, params=None, headers=None):
         """
         Changes the passwords of users in the native realm and built-in users.
@@ -57,7 +63,10 @@ class SecurityClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("usernames")
+    @query_params(
+        "usernames",
+        response_mimetypes=["application/json"],
+    )
     def clear_cached_realms(self, realms, params=None, headers=None):
         """
         Evicts users from the user cache. Can completely clear the cache or evict
@@ -79,7 +88,9 @@ class SecurityClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def clear_cached_roles(self, name, params=None, headers=None):
         """
         Evicts roles from the native role cache.
@@ -98,7 +109,11 @@ class SecurityClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("refresh")
+    @query_params(
+        "refresh",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def create_api_key(self, body, params=None, headers=None):
         """
         Creates an API key for access without requiring basic authentication.
@@ -118,7 +133,10 @@ class SecurityClient(NamespacedClient):
             "PUT", "/_security/api_key", params=params, headers=headers, body=body
         )
 
-    @query_params("refresh")
+    @query_params(
+        "refresh",
+        response_mimetypes=["application/json"],
+    )
     def delete_privileges(self, application, name, params=None, headers=None):
         """
         Removes application privileges.
@@ -143,7 +161,10 @@ class SecurityClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("refresh")
+    @query_params(
+        "refresh",
+        response_mimetypes=["application/json"],
+    )
     def delete_role(self, name, params=None, headers=None):
         """
         Removes roles in the native realm.
@@ -166,7 +187,10 @@ class SecurityClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("refresh")
+    @query_params(
+        "refresh",
+        response_mimetypes=["application/json"],
+    )
     def delete_role_mapping(self, name, params=None, headers=None):
         """
         Removes role mappings.
@@ -189,7 +213,10 @@ class SecurityClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("refresh")
+    @query_params(
+        "refresh",
+        response_mimetypes=["application/json"],
+    )
     def delete_user(self, username, params=None, headers=None):
         """
         Deletes users from the native realm.
@@ -212,7 +239,10 @@ class SecurityClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("refresh")
+    @query_params(
+        "refresh",
+        response_mimetypes=["application/json"],
+    )
     def disable_user(self, username, params=None, headers=None):
         """
         Disables users in the native realm.
@@ -235,7 +265,10 @@ class SecurityClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("refresh")
+    @query_params(
+        "refresh",
+        response_mimetypes=["application/json"],
+    )
     def enable_user(self, username, params=None, headers=None):
         """
         Enables users in the native realm.
@@ -258,7 +291,14 @@ class SecurityClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("id", "name", "owner", "realm_name", "username")
+    @query_params(
+        "id",
+        "name",
+        "owner",
+        "realm_name",
+        "username",
+        response_mimetypes=["application/json"],
+    )
     def get_api_key(self, params=None, headers=None):
         """
         Retrieves information for one or more API keys.
@@ -278,7 +318,9 @@ class SecurityClient(NamespacedClient):
             "GET", "/_security/api_key", params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def get_privileges(self, application=None, name=None, params=None, headers=None):
         """
         Retrieves application privileges.
@@ -295,7 +337,9 @@ class SecurityClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def get_role(self, name=None, params=None, headers=None):
         """
         Retrieves roles in the native realm.
@@ -308,7 +352,9 @@ class SecurityClient(NamespacedClient):
             "GET", _make_path("_security", "role", name), params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def get_role_mapping(self, name=None, params=None, headers=None):
         """
         Retrieves role mappings.
@@ -324,7 +370,10 @@ class SecurityClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def get_token(self, body, params=None, headers=None):
         """
         Creates a bearer token for access without requiring basic authentication.
@@ -340,7 +389,9 @@ class SecurityClient(NamespacedClient):
             "POST", "/_security/oauth2/token", params=params, headers=headers, body=body
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def get_user(self, username=None, params=None, headers=None):
         """
         Retrieves information about users in the native realm and built-in users.
@@ -356,7 +407,9 @@ class SecurityClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def get_user_privileges(self, params=None, headers=None):
         """
         Retrieves security privileges for the logged in user.
@@ -367,7 +420,10 @@ class SecurityClient(NamespacedClient):
             "GET", "/_security/user/_privileges", params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def has_privileges(self, body, user=None, params=None, headers=None):
         """
         Determines whether the specified user has a specified list of privileges.
@@ -388,7 +444,10 @@ class SecurityClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def invalidate_api_key(self, body, params=None, headers=None):
         """
         Invalidates one or more API keys.
@@ -404,7 +463,10 @@ class SecurityClient(NamespacedClient):
             "DELETE", "/_security/api_key", params=params, headers=headers, body=body
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def invalidate_token(self, body, params=None, headers=None):
         """
         Invalidates one or more access tokens or refresh tokens.
@@ -424,7 +486,11 @@ class SecurityClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("refresh")
+    @query_params(
+        "refresh",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def put_privileges(self, body, params=None, headers=None):
         """
         Adds or updates application privileges.
@@ -444,7 +510,11 @@ class SecurityClient(NamespacedClient):
             "PUT", "/_security/privilege/", params=params, headers=headers, body=body
         )
 
-    @query_params("refresh")
+    @query_params(
+        "refresh",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def put_role(self, name, body, params=None, headers=None):
         """
         Adds and updates roles in the native realm.
@@ -470,7 +540,11 @@ class SecurityClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("refresh")
+    @query_params(
+        "refresh",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def put_role_mapping(self, name, body, params=None, headers=None):
         """
         Creates and updates role mappings.
@@ -496,7 +570,11 @@ class SecurityClient(NamespacedClient):
             body=body,
         )
 
-    @query_params("refresh")
+    @query_params(
+        "refresh",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def put_user(self, username, body, params=None, headers=None):
         """
         Adds and updates users in the native realm. These users are commonly referred
@@ -523,7 +601,9 @@ class SecurityClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def get_builtin_privileges(self, params=None, headers=None):
         """
         Retrieves the list of cluster privileges and index privileges that are
@@ -535,7 +615,9 @@ class SecurityClient(NamespacedClient):
             "GET", "/_security/privilege/_builtin", params=params, headers=headers
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def clear_cached_privileges(self, application, params=None, headers=None):
         """
         Evicts application privileges from the native application privileges cache.
@@ -556,7 +638,9 @@ class SecurityClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def clear_api_key_cache(self, ids, params=None, headers=None):
         """
         Clear a subset or all entries from the API key cache.
@@ -576,7 +660,11 @@ class SecurityClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("refresh")
+    @query_params(
+        "refresh",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def grant_api_key(self, body, params=None, headers=None):
         """
         Creates an API key on behalf of another user.
@@ -600,7 +688,9 @@ class SecurityClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def clear_cached_service_tokens(
         self, namespace, service, name, params=None, headers=None
     ):
@@ -638,7 +728,10 @@ class SecurityClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("refresh")
+    @query_params(
+        "refresh",
+        response_mimetypes=["application/json"],
+    )
     def create_service_token(
         self, namespace, service, name=None, params=None, headers=None
     ):
@@ -674,7 +767,10 @@ class SecurityClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("refresh")
+    @query_params(
+        "refresh",
+        response_mimetypes=["application/json"],
+    )
     def delete_service_token(self, namespace, service, name, params=None, headers=None):
         """
         Deletes a service account token.
@@ -707,7 +803,9 @@ class SecurityClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def get_service_accounts(
         self, namespace=None, service=None, params=None, headers=None
     ):
@@ -731,7 +829,9 @@ class SecurityClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def get_service_credentials(self, namespace, service, params=None, headers=None):
         """
         Retrieves information of all service credentials for a service account.
@@ -757,7 +857,10 @@ class SecurityClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def saml_complete_logout(self, body, params=None, headers=None):
         """
         Verifies the logout response sent from the SAML IdP
@@ -777,7 +880,10 @@ class SecurityClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def saml_authenticate(self, body, params=None, headers=None):
         """
         Exchanges a SAML Response message for an Elasticsearch access token and refresh
@@ -798,7 +904,10 @@ class SecurityClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def saml_invalidate(self, body, params=None, headers=None):
         """
         Consumes a SAML LogoutRequest
@@ -818,7 +927,10 @@ class SecurityClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def saml_logout(self, body, params=None, headers=None):
         """
         Invalidates an access token and a refresh token that were generated via the
@@ -835,7 +947,10 @@ class SecurityClient(NamespacedClient):
             "POST", "/_security/saml/logout", params=params, headers=headers, body=body
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def saml_prepare_authentication(self, body, params=None, headers=None):
         """
         Creates a SAML authentication request
@@ -852,7 +967,10 @@ class SecurityClient(NamespacedClient):
             "POST", "/_security/saml/prepare", params=params, headers=headers, body=body
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def saml_service_provider_metadata(self, realm_name, params=None, headers=None):
         """
         Generates SAML metadata for the Elastic stack SAML 2.0 Service Provider
@@ -872,7 +990,10 @@ class SecurityClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def query_api_keys(self, body=None, params=None, headers=None):
         """
         Retrieves information for API keys using a subset of query DSL

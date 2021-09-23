@@ -19,7 +19,12 @@ from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 
 
 class SearchableSnapshotsClient(NamespacedClient):
-    @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable")
+    @query_params(
+        "allow_no_indices",
+        "expand_wildcards",
+        "ignore_unavailable",
+        response_mimetypes=["application/json"],
+    )
     def clear_cache(self, index=None, params=None, headers=None):
         """
         Clear the cache of searchable snapshots.
@@ -48,7 +53,13 @@ class SearchableSnapshotsClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("master_timeout", "storage", "wait_for_completion")
+    @query_params(
+        "master_timeout",
+        "storage",
+        "wait_for_completion",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
     def mount(self, repository, snapshot, body, params=None, headers=None):
         """
         Mount a snapshot as a searchable index.
@@ -84,7 +95,9 @@ class SearchableSnapshotsClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def repository_stats(self, repository, params=None, headers=None):
         """
         DEPRECATED: This API is replaced by the Repositories Metering API.
@@ -108,7 +121,10 @@ class SearchableSnapshotsClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("level")
+    @query_params(
+        "level",
+        response_mimetypes=["application/json"],
+    )
     def stats(self, index=None, params=None, headers=None):
         """
         Retrieve shard-level statistics about searchable snapshots.
@@ -131,7 +147,9 @@ class SearchableSnapshotsClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     def cache_stats(self, node_id=None, params=None, headers=None):
         """
         Retrieve node-level cache statistics about searchable snapshots.

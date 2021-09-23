@@ -19,7 +19,9 @@ from .utils import NamespacedClient, query_params
 
 
 class SslClient(NamespacedClient):
-    @query_params()
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
     async def certificates(self, params=None, headers=None):
         """
         Retrieves information about the X.509 certificates used to encrypt
