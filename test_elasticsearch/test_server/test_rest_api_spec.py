@@ -596,6 +596,9 @@ try:
 except Exception as e:
     warnings.warn(f"Could not load REST API tests: {str(e)}")
 
+# Sort the tests by ID so they're grouped together nicely.
+YAML_TEST_SPECS = sorted(YAML_TEST_SPECS, key=lambda param: param.id)
+
 
 if not RUN_ASYNC_REST_API_TESTS:
 
