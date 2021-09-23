@@ -31,6 +31,7 @@ from elasticsearch.helpers.test import _get_version
 from ...test_server.test_rest_api_spec import (
     APIS_USING_TYPE_INSTEAD_OF_DOC_TYPE,
     APIS_WITH_BODY_FIELDS,
+    COMPATIBILITY_MIMETYPE,
     COMPATIBILITY_MODE_ENABLED,
     IMPLEMENTED_FEATURES,
     PARAMS_RENAMES,
@@ -129,14 +130,8 @@ class AsyncYamlRunner(YamlRunner):
         ):
             headers.pop("Authorization")
 
-        if (
-            headers
-            and headers.get("Content-Type") == "application/json"
-            and COMPATIBILITY_MODE_ENABLED
-        ):
-            headers[
-                "Content-Type"
-            ] = "application/vnd.elasticsearch+json;compatible-with=7"
+        if headers and "Content-Type" in headers and COMPATIBILITY_MODE_ENABLED:
+            headers["Content-Type"] = COMPATIBILITY_MIMETYPE
 
         method, args = list(action.items())[0]
         args["headers"] = headers

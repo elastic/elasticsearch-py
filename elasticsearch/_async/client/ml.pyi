@@ -126,7 +126,7 @@ class MlClient(NamespacedClient):
     async def delete_expired_data(
         self,
         *,
-        body: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
         job_id: Optional[Any] = ...,
         requests_per_second: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
@@ -626,7 +626,7 @@ class MlClient(NamespacedClient):
     async def preview_datafeed(
         self,
         *,
-        body: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
         datafeed_id: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -802,7 +802,7 @@ class MlClient(NamespacedClient):
         self,
         *,
         datafeed_id: Any,
-        body: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
         allow_no_datafeeds: Optional[bool] = ...,
         allow_no_match: Optional[bool] = ...,
         force: Optional[bool] = ...,

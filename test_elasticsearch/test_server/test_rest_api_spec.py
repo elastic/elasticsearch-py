@@ -33,7 +33,7 @@ import urllib3
 import yaml
 
 from elasticsearch import ElasticsearchWarning, RequestError, TransportError
-from elasticsearch.client.utils import _base64_auth_header
+from elasticsearch.client.utils import _COMPATIBILITY_MIMETYPE, _base64_auth_header
 from elasticsearch.compat import string_types
 from elasticsearch.helpers.test import _get_version
 
@@ -140,6 +140,7 @@ COMPATIBILITY_MODE_ENABLED = os.environ.get("ELASTIC_CLIENT_APIVERSIONING") in (
     "1",
     "true",
 )
+COMPATIBILITY_MIMETYPE = _COMPATIBILITY_MIMETYPE
 
 
 class YamlRunner:
@@ -234,14 +235,8 @@ class YamlRunner:
         ):
             headers.pop("Authorization")
 
-        if (
-            headers
-            and headers.get("Content-Type") == "application/json"
-            and COMPATIBILITY_MODE_ENABLED
-        ):
-            headers[
-                "Content-Type"
-            ] = "application/vnd.elasticsearch+json;compatible-with=7"
+        if headers and "Content-Type" in headers and COMPATIBILITY_MODE_ENABLED:
+            headers["Content-Type"] = COMPATIBILITY_MIMETYPE
 
         method, args = list(action.items())[0]
         args["headers"] = headers
@@ -543,7 +538,9 @@ try:
     # test suite so we use the overridden 'STACK_VERSION' in run-repository.sh instead.
     if os.environ.get("STACK_VERSION") and COMPATIBILITY_MODE_ENABLED:
         version_number = os.environ["STACK_VERSION"]
-        build_hash = ""
+        build_hash = (
+            ""  # Setting this to empty means we'll always get the latest build.
+        )
     else:
         # Make a request to Elasticsearch for the build hash, we'll be looking for
         # an artifact with this same hash to download test specs for.
@@ -626,8 +623,7 @@ try:
             if pytest_test_name in SKIP_TESTS or pytest_param_id in SKIP_TESTS:
                 pytest_param["skip"] = True
 
-            else:
-                YAML_TEST_SPECS.append(pytest.param(pytest_param, id=pytest_param_id))
+            YAML_TEST_SPECS.append(pytest.param(pytest_param, id=pytest_param_id))
 
 except Exception as e:
     warnings.warn("Could not load REST API tests: %s" % (str(e),))

@@ -30,7 +30,7 @@ from ..compat import PY2, quote, string_types, to_bytes, to_str, unquote, urlpar
 # parts of URL to be omitted
 SKIP_IN_PATH = (None, "", b"", [], ())
 
-# Switch this value with 'application/json' if 'ELASTIC_CLIENT_APIVERSIONING=1/true'
+# Switch to this mimetype if 'ELASTIC_CLIENT_APIVERSIONING=1/true'
 _COMPATIBILITY_MIMETYPE = "application/vnd.elasticsearch+json;compatible-with=%s" % (
     __versionstr__.partition(".")[0]
 )
@@ -139,8 +139,6 @@ def query_params(*es_query_params, **kwargs):
 
     def compat_mimetype(mimetypes):
         if os.environ.get("ELASTIC_CLIENT_APIVERSIONING", "") in ("1", "true"):
-            # Need to replace both 'application/json' and 'application/x-ndjson'
-            # with the compatibility header.
             return [
                 _COMPATIBILITY_MIMETYPE
                 if mimetype
