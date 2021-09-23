@@ -538,9 +538,8 @@ try:
     # test suite so we use the overridden 'STACK_VERSION' in run-repository.sh instead.
     if os.environ.get("STACK_VERSION") and COMPATIBILITY_MODE_ENABLED:
         version_number = os.environ["STACK_VERSION"]
-        build_hash = (
-            ""  # Setting this to empty means we'll always get the latest build.
-        )
+        # Setting 'build_hash' to empty means we'll always get the latest build.
+        build_hash = ""
     else:
         # Make a request to Elasticsearch for the build hash, we'll be looking for
         # an artifact with this same hash to download test specs for.

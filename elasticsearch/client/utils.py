@@ -136,24 +136,27 @@ def query_params(*es_query_params, **kwargs):
     Decorator that pops all accepted parameters from method's kwargs and puts
     them in the params argument.
     """
+    request_mimetypes = kwargs.pop("request_mimetypes", [])
+    response_mimetypes = kwargs.pop("response_mimetypes", [])
+
+    default_content_type = "".join(request_mimetypes[:1])
+    default_accept = ",".join(response_mimetypes)
 
     def compat_mimetype(mimetypes):
-        if os.environ.get("ELASTIC_CLIENT_APIVERSIONING", "") in ("1", "true"):
-            return [
-                _COMPATIBILITY_MIMETYPE
-                if mimetype
-                in (
-                    "application/json",
-                    "application/x-ndjson",
-                    "application/vnd.mapbox-vector-tile",
-                )
-                else mimetype
-                for mimetype in mimetypes
-            ]
-        return mimetypes
+        return [
+            _COMPATIBILITY_MIMETYPE
+            if mimetype
+            in (
+                "application/json",
+                "application/x-ndjson",
+                "application/vnd.mapbox-vector-tile",
+            )
+            else mimetype
+            for mimetype in mimetypes
+        ]
 
-    content_type = "".join(compat_mimetype(kwargs.pop("request_mimetypes", []))[:1])
-    accept = ",".join(compat_mimetype(kwargs.pop("response_mimetypes", [])))
+    compat_content_type = "".join(compat_mimetype(request_mimetypes)[:1])
+    compat_accept = ",".join(compat_mimetype(response_mimetypes))
 
     body_params = kwargs.pop("body_params", None)
     body_only_params = set(body_params or ()) - set(es_query_params)
@@ -180,13 +183,22 @@ def query_params(*es_query_params, **kwargs):
             if "opaque_id" in kwargs:
                 headers["x-opaque-id"] = kwargs.pop("opaque_id")
 
-            # Set the default 'Accept' and 'Content-Type' HTTP headers
-            # if any are defined for this API. Only send 'Content-Type'
-            # if there's a body in the request.
-            if accept:
-                headers.setdefault("accept", accept)
-            if content_type:
-                headers.setdefault("content-type", content_type)
+            # Detect compatibility mode and set the 'Accept' and 'Content-Type'
+            # headers to the compatibility mimetype if detected.
+            try:
+                if os.environ["ELASTIC_CLIENT_APIVERSIONING"] not in ("true", "1"):
+                    raise KeyError  # Unset is the same as env var not being 'true' or '1'
+                if compat_accept:
+                    headers.setdefault("accept", compat_accept)
+                if compat_content_type:
+                    headers.setdefault("content-type", compat_content_type)
+            except KeyError:
+                if default_accept:
+                    headers.setdefault("accept", default_accept)
+                if default_content_type:
+                    headers.setdefault("content-type", default_content_type)
+
+            print(headers)
 
             http_auth = kwargs.pop("http_auth", None)
             api_key = kwargs.pop("api_key", None)
