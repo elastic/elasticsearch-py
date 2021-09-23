@@ -18,6 +18,7 @@
 
 from __future__ import unicode_literals
 
+import os
 import warnings
 
 import pytest
@@ -55,6 +56,13 @@ class TestQueryParams(TestCase):
 
     @query_params("query_only", body_name="named_body")
     def func_with_named_body(self, *args, **kwargs):
+        self.calls.append((args, kwargs))
+
+    @query_params(
+        request_mimetypes=["application/json"],
+        response_mimetypes=["text/plain", "application/json"],
+    )
+    def func_with_mimetypes(self, *args, **kwargs):
         self.calls.append((args, kwargs))
 
     def test_handles_params(self):
@@ -348,6 +356,87 @@ class TestQueryParams(TestCase):
 
         self.func_with_body_params_required()
         assert self.calls[-1] == ((), {"body": {}, "headers": {}, "params": {}})
+
+    def test_mimetype_headers(self):
+        compat_envvar = os.environ.pop("ELASTIC_CLIENT_APIVERSIONING", None)
+        try:
+            self.func_with_mimetypes()
+            assert self.calls[-1] == (
+                (),
+                {
+                    "headers": {
+                        "accept": "text/plain,application/json",
+                        "content-type": "application/json",
+                    },
+                    "params": {},
+                },
+            )
+
+            self.func_with_mimetypes(headers={})
+            assert self.calls[-1] == (
+                (),
+                {
+                    "headers": {
+                        "accept": "text/plain,application/json",
+                        "content-type": "application/json",
+                    },
+                    "params": {},
+                },
+            )
+
+            self.func_with_mimetypes(
+                headers={
+                    "Content-Type": "application/x-octet-stream",
+                    "AccepT": "application/x-octet-stream",
+                }
+            )
+            assert self.calls[-1] == (
+                (),
+                {
+                    "headers": {
+                        "accept": "application/x-octet-stream",
+                        "content-type": "application/x-octet-stream",
+                    },
+                    "params": {},
+                },
+            )
+
+        finally:
+            if compat_envvar:
+                os.environ["ELASTIC_CLIENT_APIVERSIONING"] = compat_envvar
+
+    def test_mimetype_headers_compatibility_mode(self):
+        compat_envvar = os.environ.pop("ELASTIC_CLIENT_APIVERSIONING", None)
+        try:
+            for compat_mode_enabled in ["true", "1"]:
+                os.environ["ELASTIC_CLIENT_APIVERSIONING"] = compat_mode_enabled
+
+                self.func_with_mimetypes()
+                assert self.calls[-1] == (
+                    (),
+                    {
+                        "headers": {
+                            "accept": "text/plain,application/vnd.elasticsearch+json;compatible-with=7",
+                            "content-type": "application/vnd.elasticsearch+json;compatible-with=7",
+                        },
+                        "params": {},
+                    },
+                )
+
+                self.func_with_mimetypes(headers={"Content-Type": "text/plain"})
+                assert self.calls[-1] == (
+                    (),
+                    {
+                        "headers": {
+                            "accept": "text/plain,application/vnd.elasticsearch+json;compatible-with=7",
+                            "content-type": "text/plain",
+                        },
+                        "params": {},
+                    },
+                )
+        finally:
+            if compat_envvar:
+                os.environ["ELASTIC_CLIENT_APIVERSIONING"] = compat_envvar
 
 
 class TestMakePath(TestCase):

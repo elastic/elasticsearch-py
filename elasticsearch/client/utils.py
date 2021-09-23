@@ -188,17 +188,17 @@ def query_params(*es_query_params, **kwargs):
             try:
                 if os.environ["ELASTIC_CLIENT_APIVERSIONING"] not in ("true", "1"):
                     raise KeyError  # Unset is the same as env var not being 'true' or '1'
-                if compat_accept:
-                    headers.setdefault("accept", compat_accept)
-                if compat_content_type:
-                    headers.setdefault("content-type", compat_content_type)
+                accept = compat_accept
+                content_type = compat_content_type
             except KeyError:
-                if default_accept:
-                    headers.setdefault("accept", default_accept)
-                if default_content_type:
-                    headers.setdefault("content-type", default_content_type)
+                accept = default_accept
+                content_type = default_content_type
 
-            print(headers)
+            # Set the mimetype headers for the request
+            if accept:
+                headers.setdefault("accept", accept)
+            if content_type:
+                headers.setdefault("content-type", content_type)
 
             http_auth = kwargs.pop("http_auth", None)
             api_key = kwargs.pop("api_key", None)
