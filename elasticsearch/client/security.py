@@ -699,11 +699,6 @@ class SecurityClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/security-api-clear-service-token-caches.html>`_
 
-        .. warning::
-
-            This API is **beta** so may include breaking changes
-            or be removed in a future version
-
         :arg namespace: An identifier for the namespace
         :arg service: An identifier for the service name
         :arg name: A comma-separated list of service token names
@@ -741,11 +736,6 @@ class SecurityClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/security-api-create-service-token.html>`_
 
-        .. warning::
-
-            This API is **beta** so may include breaking changes
-            or be removed in a future version
-
         :arg namespace: An identifier for the namespace
         :arg service: An identifier for the service name
         :arg name: An identifier for the token name
@@ -776,11 +766,6 @@ class SecurityClient(NamespacedClient):
         Deletes a service account token.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/security-api-delete-service-token.html>`_
-
-        .. warning::
-
-            This API is **beta** so may include breaking changes
-            or be removed in a future version
 
         :arg namespace: An identifier for the namespace
         :arg service: An identifier for the service name
@@ -814,11 +799,6 @@ class SecurityClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/security-api-get-service-accounts.html>`_
 
-        .. warning::
-
-            This API is **beta** so may include breaking changes
-            or be removed in a future version
-
         :arg namespace: An identifier for the namespace
         :arg service: An identifier for the service name
         """
@@ -837,11 +817,6 @@ class SecurityClient(NamespacedClient):
         Retrieves information of all service credentials for a service account.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/security-api-get-service-credentials.html>`_
-
-        .. warning::
-
-            This API is **beta** so may include breaking changes
-            or be removed in a future version
 
         :arg namespace: An identifier for the namespace
         :arg service: An identifier for the service name

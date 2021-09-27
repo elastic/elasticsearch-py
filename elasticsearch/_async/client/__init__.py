@@ -1410,11 +1410,6 @@ class AsyncElasticsearch(object):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/search-rank-eval.html>`_
 
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
-
         :arg body: The ranking evaluation search definition, including
             search requests, document ratings and ranking metric definition.
         :arg index: A comma-separated list of index names to search; use
@@ -1761,7 +1756,7 @@ class AsyncElasticsearch(object):
         :arg post_filter:
         :arg pre_filter_shard_size: A threshold that enforces a pre-
             filter roundtrip to prefilter search shards based on query rewriting if
-            the number of shards the search request expands to exceeds the
+            the number of shards the search request expands to exceeds the
             threshold. This filter roundtrip can limit the number of shards
             significantly if for instance a shard can not match any documents based
             on its rewrite method ie. if date filters are mandatory to match but the
@@ -2291,11 +2286,6 @@ class AsyncElasticsearch(object):
         Returns all script contexts.
 
         `<https://www.elastic.co/guide/en/elasticsearch/painless/master/painless-contexts.html>`_
-
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
         """
         return await self.transport.perform_request(
             "GET", "/_script_context", params=params, headers=headers
@@ -2309,11 +2299,6 @@ class AsyncElasticsearch(object):
         Returns available script types, languages and contexts
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/modules-scripting.html>`_
-
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
         """
         return await self.transport.perform_request(
             "GET", "/_script_language", params=params, headers=headers
@@ -2380,11 +2365,6 @@ class AsyncElasticsearch(object):
         complete scenarios.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/search-terms-enum.html>`_
-
-        .. warning::
-
-            This API is **beta** so may include breaking changes
-            or be removed in a future version
 
         :arg index: A comma-separated list of index names to search; use
             `_all` or empty string to perform the operation on all indices
