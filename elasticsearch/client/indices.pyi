@@ -872,7 +872,12 @@ class IndicesClient(NamespacedClient):
             ]
         ] = ...,
         ignore_unavailable: Optional[bool] = ...,
-        status: Optional[Union[List[str], str]] = ...,
+        status: Optional[
+            Union[
+                List[Union[Literal["green", "yellow", "red", "all"], str]],
+                Union[Literal["green", "yellow", "red", "all"], str],
+            ]
+        ] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,

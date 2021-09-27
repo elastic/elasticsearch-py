@@ -504,7 +504,7 @@ class AsyncElasticsearch(object):
     async def field_caps(
         self,
         *,
-        body: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
         index: Optional[Any] = ...,
         allow_no_indices: Optional[bool] = ...,
         expand_wildcards: Optional[Any] = ...,
@@ -1172,7 +1172,7 @@ class AsyncElasticsearch(object):
     async def close_point_in_time(
         self,
         *,
-        body: Optional[Any] = ...,
+        body: Optional[Mapping[str, Any]] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,

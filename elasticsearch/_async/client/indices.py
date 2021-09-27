@@ -300,7 +300,7 @@ class IndicesClient(NamespacedClient):
         :arg allow_no_indices: Ignore if a wildcard expression resolves
             to no concrete indices (default: false)
         :arg expand_wildcards: Whether wildcard expressions should get
-            expanded to open or closed indices (default: open)  Valid choices: open,
+            expanded to open, closed, or hidden indices  Valid choices: open,
             closed, hidden, none, all  Default: open,closed
         :arg ignore_unavailable: Ignore unavailable indexes (default:
             false)
@@ -1092,19 +1092,21 @@ class IndicesClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.15/indices-shards-stores.html>`_
 
-        :arg index: A comma-separated list of index names; use `_all` or
-            empty string to perform the operation on all indices
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
-        :arg ignore_unavailable: Whether specified concrete indices
-            should be ignored when unavailable (missing or closed)
-        :arg status: A comma-separated list of statuses used to filter
-            on shards to get store information for  Valid choices: green, yellow,
-            red, all
+        :arg index: List of data streams, indices, and aliases used to
+            limit the request.
+        :arg allow_no_indices: If false, the request returns an error if
+            any wildcard expression, index alias, or _all
+            value targets only missing or closed indices. This behavior applies even
+            if the request
+            targets other open indices.
+        :arg expand_wildcards: Type of index that wildcard patterns can
+            match. If the request can target data streams,
+            this argument determines whether wildcard expressions match hidden data
+            streams.  Valid choices: open, closed, hidden, none, all  Default: open
+        :arg ignore_unavailable: If true, missing or closed indices are
+            not included in the response.
+        :arg status: List of shard health statuses used to limit the
+            request.  Valid choices: green, yellow, red, all
         """
         return await self.transport.perform_request(
             "GET", _make_path(index, "_shard_stores"), params=params, headers=headers
