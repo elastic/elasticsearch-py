@@ -127,7 +127,7 @@ nodes upon startup, periodically and/or on failure. See
 
 Some example configurations:
 
- .. code-block:: python
+.. code-block:: python
 
     from elasticsearch import Elasticsearch
 
@@ -245,6 +245,8 @@ API Key Authentication
 You can configure the client to use Elasticsearch's `API Key`_ for connecting to your cluster.
 Please note this authentication method has been introduced with release of Elasticsearch ``6.7.0``.
 
+.. code-block:: python
+    
     from elasticsearch import Elasticsearch
 
     # you can use the api key tuple
