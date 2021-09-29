@@ -482,7 +482,6 @@ class AsyncElasticsearch(object):
     @query_params(
         request_mimetypes=["application/json", "text/plain"],
         response_mimetypes=["application/json"],
-        body_params=["scroll_id"],
     )
     async def clear_scroll(self, body=None, scroll_id=None, params=None, headers=None):
         """
@@ -497,7 +496,7 @@ class AsyncElasticsearch(object):
         if scroll_id in SKIP_IN_PATH and body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'scroll_id'.")
         elif scroll_id and not body:
-            body = {"scroll_id": [scroll_id]}
+            body = {"scroll_id": scroll_id}
         elif scroll_id:
             params["scroll_id"] = scroll_id
 
@@ -1565,7 +1564,7 @@ class AsyncElasticsearch(object):
         response_mimetypes=["application/json"],
         body_params=["scroll", "scroll_id"],
     )
-    async def scroll(self, body=None, scroll_id=None, params=None, headers=None):
+    async def scroll(self, body=None, params=None, headers=None):
         """
         Allows to retrieve a large numbers of results from a single search request.
 
@@ -1573,12 +1572,13 @@ class AsyncElasticsearch(object):
 
         :arg body: The scroll ID if not passed by URL or query
             parameter.
-        :arg scroll_id: The scroll ID
         :arg rest_total_hits_as_int: If true, the API response’s
             hit.total property is returned as an integer. If false, the API
             response’s hit.total property is returned as an object.
         :arg scroll: Period to retain the search context for scrolling.
+        :arg scroll_id: Scroll ID of the search.
         """
+        scroll_id = params.pop("scroll_id", None)
         if scroll_id in SKIP_IN_PATH and body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'scroll_id'.")
         elif scroll_id and not body:
@@ -1637,11 +1637,9 @@ class AsyncElasticsearch(object):
         request_mimetypes=["application/json"],
         response_mimetypes=["application/json"],
         body_params=[
-            "_source",
             "aggregations",
             "aggs",
             "collapse",
-            "docvalue_fields",
             "explain",
             "fields",
             "from_",
@@ -1659,12 +1657,10 @@ class AsyncElasticsearch(object):
             "seq_no_primary_term",
             "size",
             "slice",
-            "sort",
             "stats",
             "stored_fields",
             "suggest",
             "terminate_after",
-            "timeout",
             "track_scores",
             "track_total_hits",
             "version",
@@ -1683,9 +1679,8 @@ class AsyncElasticsearch(object):
             `_all` or empty string to perform the operation on all indices
         :arg doc_type: A comma-separated list of document types to
             search; leave empty to perform the operation on all types
-        :arg _source: Indicates which source fields are returned for
-            matching documents. These
-            fields are returned in the hits._source property of the search response.
+        :arg _source: True or false to return the _source field or not,
+            or a list of fields to return
         :arg _source_excludes: A list of fields to exclude from the
             returned _source field
         :arg _source_includes: A list of fields to extract and return
@@ -1714,10 +1709,8 @@ class AsyncElasticsearch(object):
             query (AND or OR)  Valid choices: AND, OR  Default: OR
         :arg df: The field to use as default where no field prefix is
             given in the query string
-        :arg docvalue_fields: Array of wildcard (*) patterns. The
-            request returns doc values for field
-            names matching these patterns in the hits.fields property of the
-            response.
+        :arg docvalue_fields: A comma-separated list of fields to return
+            as the docvalue representation of a field for each hit
         :arg expand_wildcards: Whether to expand wildcard expression to
             concrete indices that are open, closed or both.  Valid choices: open,
             closed, hidden, none, all  Default: open
@@ -1791,7 +1784,7 @@ class AsyncElasticsearch(object):
             more
             hits, use the search_after parameter.
         :arg slice:
-        :arg sort:
+        :arg sort: A comma-separated list of <field>:<direction> pairs
         :arg stats: Stats groups to associate with the search. Each
             group maintains a statistics
             aggregation for its associated searches. You can retrieve these stats
@@ -1818,11 +1811,7 @@ class AsyncElasticsearch(object):
             documents
             before sorting. Defaults to 0, which does not terminate query execution
             early.
-        :arg timeout: Specifies the period of time to wait for a
-            response from each shard. If no response
-            is received before the timeout expires, the request fails and returns an
-            error.
-            Defaults to no timeout.
+        :arg timeout: Explicit operation timeout
         :arg track_scores: If true, calculate and return document
             scores, even if the scores are not used for sorting.
         :arg track_total_hits: Number of hits matching the query to
@@ -2031,7 +2020,6 @@ class AsyncElasticsearch(object):
         request_mimetypes=["application/json"],
         response_mimetypes=["application/json"],
         body_params=[
-            "_source",
             "detect_noop",
             "doc",
             "doc_as_upsert",
@@ -2054,7 +2042,7 @@ class AsyncElasticsearch(object):
         :arg doc_type: The type of the document
         :arg _source: Set to false to disable source retrieval. You can
             also specify a comma-separated
-            list of the fields you want to retrieve.
+            list of the fields you want to retrieve.  Default: true
         :arg _source_excludes: Specify the source fields you want to
             exclude.
         :arg _source_includes: Specify the source fields you want to

@@ -18,7 +18,7 @@
 from test_elasticsearch.test_cases import ElasticsearchTestCase
 
 
-class TestIndices(ElasticsearchTestCase):
+class TestDocument(ElasticsearchTestCase):
     def test_create_document(self):
         self.client.create(index="test-index", id="test-id", document={"key": "value"})
         self.assert_url_called("PUT", "/test-index/_create/test-id")

@@ -209,6 +209,19 @@ class TestOverriddenUrlTargets(ElasticsearchTestCase):
             ]
         }
 
+        calls.clear()
+        self.client.clear_scroll(scroll_id=["scroll-id"])
+        calls = self.client.transport.calls
+        assert calls == {
+            ("DELETE", "/_search/scroll"): [
+                (
+                    {},
+                    {"accept": "application/json", "content-type": "application/json"},
+                    {"scroll_id": ["scroll-id"]},
+                )
+            ]
+        }
+
     def test_doc_type_works_for_apis_with_type(self):
         with warnings.catch_warnings(record=True) as w:
             self.client.license.post_start_trial(type="trial")
