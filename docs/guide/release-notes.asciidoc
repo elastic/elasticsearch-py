@@ -37,9 +37,9 @@
 [discrete]
 ==== Client
 
-* Added more precise type hints to many API parameters
-* Added explicit parameters to `AsyncTransport` and `AIOHttpConnection`
-* Added `MapboxVectorTileSerializer` for handling the `application/vnd.mapbox-vector-tile` mimetype. Because this mimetype is binary rather than text the raw response `bytes` are forwarded from the serializer without decoding
+- Added more precise type hints to many API parameters
+- Added explicit parameters to `AsyncTransport` and `AIOHttpConnection`
+- Added `MapboxVectorTileSerializer` for handling the `application/vnd.mapbox-vector-tile` mimetype. Because this mimetype is binary rather than text the raw response `bytes` are forwarded from the serializer without decoding
 - Reduced amount of time to import the `elasticsearch` module by delaying imports of `pandas` and `numpy` until later in the JSON serialization stage if necessary
 - Deprecated positional arguments for APIs, instead use keyword arguments exclusively.
 
