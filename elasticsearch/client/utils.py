@@ -20,14 +20,33 @@ import base64
 import weakref
 from datetime import date, datetime
 from functools import wraps
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Collection,
+    Dict,
+    List,
+    Optional,
+    Tuple,
+    TypeVar,
+    Union,
+)
 
 from ..compat import quote, string_types, to_bytes, to_str, unquote, urlparse
+from ..serializer import Serializer
+from ..transport import Transport
+
+if TYPE_CHECKING:
+    from ..client import Elasticsearch
 
 # parts of URL to be omitted
-SKIP_IN_PATH = (None, "", b"", [], ())
+SKIP_IN_PATH: Collection[Any] = (None, "", b"", [], ())
 
 
-def _normalize_hosts(hosts):
+def _normalize_hosts(
+    hosts: Optional[Union[str, Collection[Union[str, Dict[str, Any]]]]]
+) -> List[Dict[str, Any]]:
     """
     Helper function to transform hosts argument to
     :class:`~elasticsearch.Elasticsearch` to a list of dicts.
@@ -40,7 +59,7 @@ def _normalize_hosts(hosts):
     if isinstance(hosts, string_types):
         hosts = [hosts]
 
-    out = []
+    out: List[Dict[str, Any]] = []
     # normalize hosts to dicts
     for host in hosts:
         if isinstance(host, string_types):
@@ -48,7 +67,7 @@ def _normalize_hosts(hosts):
                 host = f"//{host}"
 
             parsed_url = urlparse(host)
-            h = {"host": parsed_url.hostname}
+            h: Dict[str, Any] = {"host": parsed_url.hostname}
 
             if parsed_url.port:
                 h["port"] = parsed_url.port
@@ -59,8 +78,8 @@ def _normalize_hosts(hosts):
 
             if parsed_url.username or parsed_url.password:
                 h["http_auth"] = "{}:{}".format(
-                    unquote(parsed_url.username),
-                    unquote(parsed_url.password),
+                    unquote(parsed_url.username or ""),
+                    unquote(parsed_url.password or ""),
                 )
 
             if parsed_url.path and parsed_url.path != "/":
@@ -68,11 +87,11 @@ def _normalize_hosts(hosts):
 
             out.append(h)
         else:
-            out.append(host)
+            out.append(host)  # type: ignore
     return out
 
 
-def _escape(value):
+def _escape(value: Any) -> Union[str, bytes]:
     """
     Escape a single value of a URL string or a query parameter. If it is a list
     or tuple, turn it into a comma-separated string first.
@@ -96,11 +115,11 @@ def _escape(value):
 
     # encode strings to utf-8
     if not isinstance(value, str):
-        value = str(value)
+        return str(value).encode("utf-8")
     return value.encode("utf-8")
 
 
-def _make_path(*parts):
+def _make_path(*parts: Any) -> str:
     """
     Create a URL string from parts, omit all `None` values and empty strings.
     Convert lists and tuples to comma separated values.
@@ -115,18 +134,27 @@ def _make_path(*parts):
 
 
 # parameters that apply to all methods
-GLOBAL_PARAMS = ("pretty", "human", "error_trace", "format", "filter_path")
+GLOBAL_PARAMS: Tuple[str, ...] = (
+    "pretty",
+    "human",
+    "error_trace",
+    "format",
+    "filter_path",
+)
+T = TypeVar("T")
 
 
-def query_params(*es_query_params):
+def query_params(
+    *es_query_params: str,
+) -> Callable[[Callable[..., T]], Callable[..., T]]:
     """
     Decorator that pops all accepted parameters from method's kwargs and puts
     them in the params argument.
     """
 
-    def _wrapper(func):
+    def _wrapper(func: Any) -> Any:
         @wraps(func)
-        def _wrapped(*args, **kwargs):
+        def _wrapped(*args: Any, **kwargs: Any) -> Any:
             params = (kwargs.pop("params", None) or {}).copy()
             headers = {
                 k.lower(): v
@@ -165,7 +193,9 @@ def query_params(*es_query_params):
     return _wrapper
 
 
-def _bulk_body(serializer, body):
+def _bulk_body(
+    serializer: Serializer, body: Union[str, bytes, Collection[Any]]
+) -> Union[str, bytes]:
     # if not passed in a string, serialize items and join by newline
     if not isinstance(body, string_types):
         body = "\n".join(map(serializer.dumps, body))
@@ -174,13 +204,15 @@ def _bulk_body(serializer, body):
     if isinstance(body, bytes):
         if not body.endswith(b"\n"):
             body += b"\n"
-    elif isinstance(body, string_types) and not body.endswith("\n"):
+    elif isinstance(body, str) and not body.endswith("\n"):
         body += "\n"
 
     return body
 
 
-def _base64_auth_header(auth_value):
+def _base64_auth_header(
+    auth_value: Union[List[str], Tuple[str, ...], str, bytes]
+) -> str:
     """Takes either a 2-tuple or a base64-encoded string
     and returns a base64-encoded string to be used
     as an HTTP authorization header.
@@ -191,17 +223,19 @@ def _base64_auth_header(auth_value):
 
 
 class NamespacedClient:
-    def __init__(self, client):
+    client: "Elasticsearch"
+
+    def __init__(self, client: "Elasticsearch") -> None:
         self.client = client
 
     @property
-    def transport(self):
+    def transport(self) -> Transport:
         return self.client.transport
 
 
 class AddonClient(NamespacedClient):
     @classmethod
-    def infect_client(cls, client):
+    def infect_client(cls, client: "Elasticsearch") -> "Elasticsearch":
         addon = cls(weakref.proxy(client))
-        setattr(client, cls.namespace, addon)
+        setattr(client, cls.namespace, addon)  # type: ignore
         return client

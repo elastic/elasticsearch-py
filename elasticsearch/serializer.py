@@ -19,6 +19,7 @@ import json
 import uuid
 from datetime import date, datetime
 from decimal import Decimal
+from typing import Any, Dict, Optional
 
 from .compat import string_types
 from .exceptions import ImproperlyConfigured, SerializationError
@@ -29,32 +30,32 @@ TIME_TYPES = (date, datetime)
 
 
 class Serializer:
-    mimetype = ""
+    mimetype: str = ""
 
-    def loads(self, s):
+    def loads(self, s: str) -> Any:
         raise NotImplementedError()
 
-    def dumps(self, data):
+    def dumps(self, data: Any) -> str:
         raise NotImplementedError()
 
 
 class TextSerializer(Serializer):
-    mimetype = "text/plain"
+    mimetype: str = "text/plain"
 
-    def loads(self, s):
+    def loads(self, s: str) -> Any:
         return s
 
-    def dumps(self, data):
+    def dumps(self, data: Any) -> str:
         if isinstance(data, string_types):
-            return data
+            return data  # type: ignore
 
         raise SerializationError(f"Cannot serialize {data!r} into text.")
 
 
 class JSONSerializer(Serializer):
-    mimetype = "application/json"
+    mimetype: str = "application/json"
 
-    def default(self, data):
+    def default(self, data: Any) -> Any:
         if isinstance(data, TIME_TYPES):
             # Little hack to avoid importing pandas but to not
             # return 'NaT' string for pd.NaT as that's not a valid
@@ -76,7 +77,7 @@ class JSONSerializer(Serializer):
         # Special cases for numpy and pandas types
         # These are expensive to import so we try them last.
         try:
-            import numpy as np
+            import numpy as np  # type: ignore
 
             if isinstance(
                 data,
@@ -114,7 +115,7 @@ class JSONSerializer(Serializer):
             pass
 
         try:
-            import pandas as pd
+            import pandas as pd  # type: ignore
 
             if isinstance(data, (pd.Series, pd.Categorical)):
                 return data.tolist()
@@ -129,16 +130,16 @@ class JSONSerializer(Serializer):
 
         raise TypeError(f"Unable to serialize {data!r} (type: {type(data)})")
 
-    def loads(self, s):
+    def loads(self, s: str) -> Any:
         try:
             return json.loads(s)
         except (ValueError, TypeError) as e:
             raise SerializationError(s, e)
 
-    def dumps(self, data):
+    def dumps(self, data: Any) -> str:
         # don't serialize strings
         if isinstance(data, string_types):
-            return data
+            return data  # type: ignore
 
         try:
             return json.dumps(
@@ -149,19 +150,19 @@ class JSONSerializer(Serializer):
 
 
 class MapboxVectorTileSerializer(Serializer):
-    mimetype = "application/vnd.mapbox-vector-tile"
+    mimetype: str = "application/vnd.mapbox-vector-tile"
 
-    def loads(self, s):
+    def loads(self, s: bytes) -> bytes:  # type: ignore
         return s
 
-    def dumps(self, data):
+    def dumps(self, data: bytes) -> bytes:  # type: ignore
         if isinstance(data, string_types):
             return data
 
         raise SerializationError(f"Cannot serialize {data!r} into a MapBox vector tile")
 
 
-DEFAULT_SERIALIZERS = {
+DEFAULT_SERIALIZERS: Dict[str, Serializer] = {
     JSONSerializer.mimetype: JSONSerializer(),
     TextSerializer.mimetype: TextSerializer(),
     MapboxVectorTileSerializer.mimetype: MapboxVectorTileSerializer(),
@@ -169,7 +170,11 @@ DEFAULT_SERIALIZERS = {
 
 
 class Deserializer:
-    def __init__(self, serializers, default_mimetype="application/json"):
+    def __init__(
+        self,
+        serializers: Dict[str, Serializer],
+        default_mimetype: str = "application/json",
+    ) -> None:
         try:
             self.default = serializers[default_mimetype]
         except KeyError:
@@ -178,7 +183,7 @@ class Deserializer:
             )
         self.serializers = serializers
 
-    def loads(self, s, mimetype=None):
+    def loads(self, s: str, mimetype: Optional[str] = None) -> Any:
         if not mimetype:
             deserializer = self.default
         else:
