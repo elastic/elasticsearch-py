@@ -18,12 +18,12 @@
 import re
 
 
-def _client_meta_version(version):
+def _client_meta_version(version: str) -> str:
     """Transforms a Python package version to one
     compatible with 'X-Elastic-Client-Meta'. Essentially
     replaces any pre-release information with a 'p' suffix.
     """
-    version, version_pre = re.match(
+    version, version_pre = re.match(  # type: ignore
         r"^([0-9][0-9.]*[0-9]|[0-9])(.*)$", version
     ).groups()
     if version_pre:
