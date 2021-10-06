@@ -248,7 +248,7 @@ class TestQueryParams(TestCase):
         assert w[0].category == DeprecationWarning
         assert str(w[0].message) == (
             "The 'body' parameter is deprecated for the "
-            "'func_with_body_params' API and will be removed in 8.0.0. "
+            "'func_with_body_params' API and will be removed in a future version. "
             "Instead use API parameters directly. "
             "See https://github.com/elastic/elasticsearch-py/issues/1698 for more information"
         )
@@ -296,7 +296,7 @@ class TestQueryParams(TestCase):
         assert len(w) == 1
         assert str(w[0].message) == (
             "The 'body' parameter is deprecated for the 'func_with_named_body' "
-            "API and will be removed in 8.0.0. Instead use the 'named_body' parameter. "
+            "API and will be removed in a future version. Instead use the 'named_body' parameter. "
             "See https://github.com/elastic/elasticsearch-py/issues/1698 for more information"
         )
 
