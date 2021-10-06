@@ -259,7 +259,7 @@ def query_params(*es_query_params, **kwargs):
                 if using_body_kwarg and body_params:
                     warnings.warn(
                         "The 'body' parameter is deprecated for the '%s' API and "
-                        "will be removed in 8.0.0. Instead use API parameters directly. "
+                        "will be removed in a future version. Instead use API parameters directly. "
                         "See https://github.com/elastic/elasticsearch-py/issues/1698 for "
                         "more information" % str(func.__name__),
                         DeprecationWarning,
@@ -316,7 +316,7 @@ def query_params(*es_query_params, **kwargs):
                 elif using_body_kwarg:
                     warnings.warn(
                         "The 'body' parameter is deprecated for the '%s' API and "
-                        "will be removed in 8.0.0. Instead use the '%s' parameter. "
+                        "will be removed in a future version. Instead use the '%s' parameter. "
                         "See https://github.com/elastic/elasticsearch-py/issues/1698 "
                         "for more information" % (str(func.__name__), body_name),
                         category=DeprecationWarning,
