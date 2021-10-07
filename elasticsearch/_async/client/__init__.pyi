@@ -1240,7 +1240,7 @@ class AsyncElasticsearch(object):
         extent: Optional[int] = ...,
         fields: Optional[Union[List[str], str]] = ...,
         grid_precision: Optional[int] = ...,
-        grid_type: Optional[Union[Literal["grid", "point"], str]] = ...,
+        grid_type: Optional[Union[Literal["grid", "point", "centroid"], str]] = ...,
         query: Optional[Mapping[str, Any]] = ...,
         runtime_mappings: Optional[Mapping[str, Mapping[str, Any]]] = ...,
         size: Optional[int] = ...,

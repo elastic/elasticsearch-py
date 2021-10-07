@@ -38,3 +38,29 @@ class MigrationClient(NamespacedClient):
             params=params,
             headers=headers,
         )
+
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
+    def get_feature_upgrade_status(self, params=None, headers=None):
+        """
+        Find out whether system features need to be upgraded or not
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/migration-api-feature-upgrade.html>`_
+        """
+        return self.transport.perform_request(
+            "GET", "/_migration/system_features", params=params, headers=headers
+        )
+
+    @query_params(
+        response_mimetypes=["application/json"],
+    )
+    def post_feature_upgrade(self, params=None, headers=None):
+        """
+        Begin upgrades for system features
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/migration-api-feature-upgrade.html>`_
+        """
+        return self.transport.perform_request(
+            "POST", "/_migration/system_features", params=params, headers=headers
+        )
