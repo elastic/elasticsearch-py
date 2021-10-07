@@ -51,7 +51,7 @@ Example Usage
         'text': 'Elasticsearch: cool. bonsai cool.',
         'timestamp': datetime.now(),
     }
-    res = es.index(index="test-index", id=1, body=doc)
+    res = es.index(index="test-index", id=1, document=doc)
     print(res['result'])
 
     res = es.get(index="test-index", id=1)
