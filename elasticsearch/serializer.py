@@ -19,7 +19,7 @@ import json
 import uuid
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Tuple
 
 from .compat import string_types
 from .exceptions import ImproperlyConfigured, SerializationError
@@ -76,57 +76,9 @@ class JSONSerializer(Serializer):
 
         # Special cases for numpy and pandas types
         # These are expensive to import so we try them last.
-        try:
-            import numpy as np  # type: ignore
-
-            if isinstance(
-                data,
-                (
-                    np.int_,
-                    np.intc,
-                    np.int8,
-                    np.int16,
-                    np.int32,
-                    np.int64,
-                    np.uint8,
-                    np.uint16,
-                    np.uint32,
-                    np.uint64,
-                ),
-            ):
-                return int(data)
-            elif isinstance(
-                data,
-                (
-                    np.float_,
-                    np.float16,
-                    np.float32,
-                    np.float64,
-                ),
-            ):
-                return float(data)
-            elif isinstance(data, np.bool_):
-                return bool(data)
-            elif isinstance(data, np.datetime64):
-                return data.item().isoformat()
-            elif isinstance(data, np.ndarray):
-                return data.tolist()
-        except ImportError:
-            pass
-
-        try:
-            import pandas as pd  # type: ignore
-
-            if isinstance(data, (pd.Series, pd.Categorical)):
-                return data.tolist()
-            elif isinstance(data, pd.Timestamp) and data is not getattr(
-                pd, "NaT", None
-            ):
-                return data.isoformat()
-            elif data is getattr(pd, "NA", None):
-                return None
-        except ImportError:
-            pass
+        serialized, value = _attempt_serialize_numpy_or_pandas(data)
+        if serialized:
+            return value
 
         raise TypeError(f"Unable to serialize {data!r} (type: {type(data)})")
 
@@ -201,3 +153,94 @@ class Deserializer:
                 )
 
         return deserializer.loads(s)
+
+
+def _attempt_serialize_numpy_or_pandas(data: Any) -> Tuple[bool, Any]:
+    """Attempts to serialize a value from the numpy or pandas libraries.
+    This function is separate from JSONSerializer because the inner functions
+    are rewritten to be no-ops if either library isn't available to avoid
+    attempting to import and raising an ImportError over and over again.
+
+    Returns a tuple of (bool, Any) where the bool corresponds to whether
+    the second value contains a properly serialized value and thus
+    should be returned by JSONSerializer.default().
+    """
+    serialized, value = _attempt_serialize_numpy(data)
+    if serialized:
+        return serialized, value
+
+    serialized, value = _attempt_serialize_pandas(data)
+    if serialized:
+        return serialized, value
+
+    return False, None
+
+
+def _attempt_serialize_numpy(data: Any) -> Tuple[bool, Any]:
+    global _attempt_serialize_numpy
+    try:
+        import numpy as np  # type: ignore
+
+        if isinstance(
+            data,
+            (
+                np.int_,
+                np.intc,
+                np.int8,
+                np.int16,
+                np.int32,
+                np.int64,
+                np.uint8,
+                np.uint16,
+                np.uint32,
+                np.uint64,
+            ),
+        ):
+            return True, int(data)
+        elif isinstance(
+            data,
+            (
+                np.float_,
+                np.float16,
+                np.float32,
+                np.float64,
+            ),
+        ):
+            return True, float(data)
+        elif isinstance(data, np.bool_):
+            return True, bool(data)
+        elif isinstance(data, np.datetime64):
+            return True, data.item().isoformat()
+        elif isinstance(data, np.ndarray):
+            return True, data.tolist()
+
+    except ImportError:
+        # Since we failed to import 'numpy' we don't want to try again.
+        _attempt_serialize_numpy = _attempt_serialize_noop
+
+    return False, None
+
+
+def _attempt_serialize_pandas(data: Any) -> Tuple[bool, Any]:
+    global _attempt_serialize_pandas
+    try:
+        import pandas as pd  # type: ignore
+
+        if isinstance(data, (pd.Series, pd.Categorical)):
+            return True, data.tolist()
+        elif isinstance(data, pd.Timestamp) and data is not getattr(pd, "NaT", None):
+            return True, data.isoformat()
+        elif data is getattr(pd, "NA", None):
+            return True, None
+
+    except ImportError:
+        # Since we failed to import 'pandas' we don't want to try again.
+        _attempt_serialize_pandas = _attempt_serialize_noop
+
+    return False, None
+
+
+def _attempt_serialize_noop(data: Any) -> Tuple[bool, Any]:  # noqa
+    # Short-circuit if the above functions can't import
+    # the corresponding library on the first attempt.
+    return False, None
