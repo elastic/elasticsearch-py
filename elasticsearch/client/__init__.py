@@ -364,7 +364,7 @@ class Elasticsearch(object):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/7.15/docs-index_.html>`_
 
         :arg index: The name of the index
-        :arg document: The document
+        :arg body: The document
         :arg doc_type: The type of the document
         :arg id: Document ID
         :arg if_primary_term: only perform the index operation if the
