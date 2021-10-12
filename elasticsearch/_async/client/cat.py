@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import NamespacedClient, _make_path, query_params
+from ._base import NamespacedClient
+from .utils import _deprecated_options, _make_path, query_params
 
 
 class CatClient(NamespacedClient):
@@ -41,7 +42,8 @@ class CatClient(NamespacedClient):
             to sort by
         :arg v: Verbose mode. Display column headers
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", _make_path("_cat", "aliases", name), params=params, headers=headers
         )
 
@@ -69,7 +71,8 @@ class CatClient(NamespacedClient):
             to sort by
         :arg v: Verbose mode. Display column headers
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET",
             _make_path("_cat", "allocation", node_id),
             params=params,
@@ -94,7 +97,8 @@ class CatClient(NamespacedClient):
             to sort by
         :arg v: Verbose mode. Display column headers
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", _make_path("_cat", "count", index), params=params, headers=headers
         )
 
@@ -116,7 +120,8 @@ class CatClient(NamespacedClient):
         :arg ts: Set to false to disable timestamping  Default: True
         :arg v: Verbose mode. Display column headers
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", "/_cat/health", params=params, headers=headers
         )
 
@@ -131,7 +136,8 @@ class CatClient(NamespacedClient):
         :arg s: Comma-separated list of column names or column aliases
             to sort by
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", "/_cat", params=params, headers=headers
         )
 
@@ -182,7 +188,8 @@ class CatClient(NamespacedClient):
             choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", _make_path("_cat", "indices", index), params=params, headers=headers
         )
 
@@ -205,7 +212,8 @@ class CatClient(NamespacedClient):
             to sort by
         :arg v: Verbose mode. Display column headers
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", "/_cat/master", params=params, headers=headers
         )
 
@@ -246,7 +254,8 @@ class CatClient(NamespacedClient):
             choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", "/_cat/nodes", params=params, headers=headers
         )
 
@@ -277,7 +286,8 @@ class CatClient(NamespacedClient):
             choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", _make_path("_cat", "recovery", index), params=params, headers=headers
         )
 
@@ -304,7 +314,8 @@ class CatClient(NamespacedClient):
             choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", _make_path("_cat", "shards", index), params=params, headers=headers
         )
 
@@ -327,7 +338,8 @@ class CatClient(NamespacedClient):
             to sort by
         :arg v: Verbose mode. Display column headers
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", _make_path("_cat", "segments", index), params=params, headers=headers
         )
 
@@ -352,7 +364,8 @@ class CatClient(NamespacedClient):
             choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", "/_cat/pending_tasks", params=params, headers=headers
         )
 
@@ -380,7 +393,8 @@ class CatClient(NamespacedClient):
             choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET",
             _make_path("_cat", "thread_pool", thread_pool_patterns),
             params=params,
@@ -407,7 +421,8 @@ class CatClient(NamespacedClient):
             to sort by
         :arg v: Verbose mode. Display column headers
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET",
             _make_path("_cat", "fielddata", fields),
             params=params,
@@ -437,7 +452,8 @@ class CatClient(NamespacedClient):
             to sort by
         :arg v: Verbose mode. Display column headers
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", "/_cat/plugins", params=params, headers=headers
         )
 
@@ -460,7 +476,8 @@ class CatClient(NamespacedClient):
             to sort by
         :arg v: Verbose mode. Display column headers
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", "/_cat/nodeattrs", params=params, headers=headers
         )
 
@@ -483,7 +500,8 @@ class CatClient(NamespacedClient):
             to sort by
         :arg v: Verbose mode. Display column headers
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", "/_cat/repositories", params=params, headers=headers
         )
 
@@ -512,7 +530,8 @@ class CatClient(NamespacedClient):
             choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET",
             _make_path("_cat", "snapshots", repository),
             params=params,
@@ -561,7 +580,8 @@ class CatClient(NamespacedClient):
             choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", "/_cat/tasks", params=params, headers=headers
         )
 
@@ -585,7 +605,8 @@ class CatClient(NamespacedClient):
             to sort by
         :arg v: Verbose mode. Display column headers
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", _make_path("_cat", "templates", name), params=params, headers=headers
         )
 
@@ -612,7 +633,8 @@ class CatClient(NamespacedClient):
             choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET",
             _make_path("_cat", "ml", "data_frame", "analytics", id),
             params=params,
@@ -645,7 +667,8 @@ class CatClient(NamespacedClient):
             choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET",
             _make_path("_cat", "ml", "datafeeds", datafeed_id),
             params=params,
@@ -688,7 +711,8 @@ class CatClient(NamespacedClient):
             choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET",
             _make_path("_cat", "ml", "anomaly_detectors", job_id),
             params=params,
@@ -732,11 +756,11 @@ class CatClient(NamespacedClient):
             choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
-        # from is a reserved word so it cannot be used, use from_ instead
-        if "from_" in params:
+        client, params = _deprecated_options(self, params)
+        if params and "from_" in params:
             params["from"] = params.pop("from_")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "GET",
             _make_path("_cat", "ml", "trained_models", model_id),
             params=params,
@@ -770,11 +794,11 @@ class CatClient(NamespacedClient):
             choices: d, h, m, s, ms, micros, nanos
         :arg v: Verbose mode. Display column headers
         """
-        # from is a reserved word so it cannot be used, use from_ instead
-        if "from_" in params:
+        client, params = _deprecated_options(self, params)
+        if params and "from_" in params:
             params["from"] = params.pop("from_")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "GET",
             _make_path("_cat", "transforms", transform_id),
             params=params,

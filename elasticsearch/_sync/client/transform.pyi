@@ -17,7 +17,7 @@
 
 from typing import Any, Collection, MutableMapping, Optional, Tuple, Union
 
-from .utils import NamespacedClient
+from ._base import NamespacedClient
 
 class TransformClient(NamespacedClient):
     def delete_transform(
@@ -162,6 +162,23 @@ class TransformClient(NamespacedClient):
         *,
         body: Any,
         defer_validation: Optional[Any] = ...,
+        pretty: Optional[bool] = ...,
+        human: Optional[bool] = ...,
+        error_trace: Optional[bool] = ...,
+        format: Optional[str] = ...,
+        filter_path: Optional[Union[str, Collection[str]]] = ...,
+        request_timeout: Optional[Union[int, float]] = ...,
+        ignore: Optional[Union[int, Collection[int]]] = ...,
+        opaque_id: Optional[str] = ...,
+        http_auth: Optional[Union[str, Tuple[str, str]]] = ...,
+        api_key: Optional[Union[str, Tuple[str, str]]] = ...,
+        params: Optional[MutableMapping[str, Any]] = ...,
+        headers: Optional[MutableMapping[str, str]] = ...,
+    ) -> Any: ...
+    def upgrade_transforms(
+        self,
+        *,
+        dry_run: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,

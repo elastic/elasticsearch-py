@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import NamespacedClient, query_params
+from ._base import NamespacedClient
+from .utils import _deprecated_options, query_params
 
 
 class XPackClient(NamespacedClient):
@@ -35,9 +36,8 @@ class XPackClient(NamespacedClient):
         :arg categories: Comma-separated list of info categories. Can be
             any of: build, license, features
         """
-        return self.transport.perform_request(
-            "GET", "/_xpack", params=params, headers=headers
-        )
+        client, params = _deprecated_options(self, params)
+        return client._perform_request("GET", "/_xpack", params=params, headers=headers)
 
     @query_params("master_timeout")
     def usage(self, params=None, headers=None):
@@ -48,6 +48,7 @@ class XPackClient(NamespacedClient):
 
         :arg master_timeout: Specify timeout for watch write operation
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "GET", "/_xpack/usage", params=params, headers=headers
         )

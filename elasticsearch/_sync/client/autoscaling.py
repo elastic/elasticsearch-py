@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
+from ._base import NamespacedClient
+from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
 
 
 class AutoscalingClient(NamespacedClient):
@@ -29,10 +30,11 @@ class AutoscalingClient(NamespacedClient):
 
         :arg name: the name of the autoscaling policy
         """
+        client, params = _deprecated_options(self, params)
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "DELETE",
             _make_path("_autoscaling", "policy", name),
             params=params,
@@ -50,11 +52,12 @@ class AutoscalingClient(NamespacedClient):
         :arg name: the name of the autoscaling policy
         :arg body: the specification of the autoscaling policy
         """
+        client, params = _deprecated_options(self, params)
         for param in (name, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "PUT",
             _make_path("_autoscaling", "policy", name),
             params=params,
@@ -72,10 +75,11 @@ class AutoscalingClient(NamespacedClient):
 
         :arg name: the name of the autoscaling policy
         """
+        client, params = _deprecated_options(self, params)
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "GET",
             _make_path("_autoscaling", "policy", name),
             params=params,
@@ -91,6 +95,7 @@ class AutoscalingClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/autoscaling-get-autoscaling-capacity.html>`_
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "GET", "/_autoscaling/capacity", params=params, headers=headers
         )

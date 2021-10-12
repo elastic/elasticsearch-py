@@ -15,7 +15,9 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
+from ...exceptions import NotFoundError
+from ._base import NamespacedClient
+from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
 
 
 class IndicesClient(NamespacedClient):
@@ -31,7 +33,8 @@ class IndicesClient(NamespacedClient):
             which the analysis should be performed
         :arg index: The name of the index to scope the operation
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "POST",
             _make_path(index, "_analyze"),
             params=params,
@@ -57,7 +60,8 @@ class IndicesClient(NamespacedClient):
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "POST", _make_path(index, "_refresh"), params=params, headers=headers
         )
 
@@ -94,7 +98,8 @@ class IndicesClient(NamespacedClient):
             already executing. The default is true. If set to false the flush will
             be skipped iff if another flush operation is already running.
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "POST", _make_path(index, "_flush"), params=params, headers=headers
         )
 
@@ -113,10 +118,11 @@ class IndicesClient(NamespacedClient):
         :arg wait_for_active_shards: Set the number of active shards to
             wait for before the operation returns.
         """
+        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT", _make_path(index), params=params, headers=headers, body=body
         )
 
@@ -136,11 +142,12 @@ class IndicesClient(NamespacedClient):
         :arg wait_for_active_shards: Set the number of active shards to
             wait for on the cloned index before the operation returns.
         """
+        client, params = _deprecated_options(self, params)
         for param in (index, target):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT",
             _make_path(index, "_clone", target),
             params=params,
@@ -179,10 +186,11 @@ class IndicesClient(NamespacedClient):
             from master node (default: false)
         :arg master_timeout: Specify timeout for connection to master
         """
+        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "GET", _make_path(index), params=params, headers=headers
         )
 
@@ -214,10 +222,11 @@ class IndicesClient(NamespacedClient):
         :arg wait_for_active_shards: Sets the number of active shards to
             wait for before the operation returns.
         """
+        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST", _make_path(index, "_open"), params=params, headers=headers
         )
 
@@ -249,10 +258,11 @@ class IndicesClient(NamespacedClient):
         :arg wait_for_active_shards: Sets the number of active shards to
             wait for before the operation returns.
         """
+        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST", _make_path(index, "_close"), params=params, headers=headers
         )
 
@@ -281,10 +291,11 @@ class IndicesClient(NamespacedClient):
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         """
+        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "DELETE", _make_path(index), params=params, headers=headers
         )
 
@@ -317,12 +328,17 @@ class IndicesClient(NamespacedClient):
         :arg local: Return local information, do not retrieve the state
             from master node (default: false)
         """
+        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return await self.transport.perform_request(
-            "HEAD", _make_path(index), params=params, headers=headers
-        )
+        try:
+            await client._perform_request(
+                "HEAD", _make_path(index), params=params, headers=headers
+            )
+            return True
+        except NotFoundError:
+            return False
 
     @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable", "local")
     async def exists_type(self, index, doc_type, params=None, headers=None):
@@ -346,16 +362,21 @@ class IndicesClient(NamespacedClient):
         :arg local: Return local information, do not retrieve the state
             from master node (default: false)
         """
+        client, params = _deprecated_options(self, params)
         for param in (index, doc_type):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
-            "HEAD",
-            _make_path(index, "_mapping", doc_type),
-            params=params,
-            headers=headers,
-        )
+        try:
+            await client._perform_request(
+                "HEAD",
+                _make_path(index, "_mapping", doc_type),
+                params=params,
+                headers=headers,
+            )
+            return True
+        except NotFoundError:
+            return False
 
     @query_params(
         "allow_no_indices",
@@ -388,11 +409,12 @@ class IndicesClient(NamespacedClient):
         :arg write_index_only: When true, applies mappings only to the
             write index of an alias or data stream
         """
+        client, params = _deprecated_options(self, params)
         for param in (index, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT",
             _make_path(index, "_mapping"),
             params=params,
@@ -426,7 +448,8 @@ class IndicesClient(NamespacedClient):
             from master node (default: false)
         :arg master_timeout: Specify timeout for connection to master
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", _make_path(index, "_mapping"), params=params, headers=headers
         )
 
@@ -446,11 +469,12 @@ class IndicesClient(NamespacedClient):
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit timestamp for the document
         """
+        client, params = _deprecated_options(self, params)
         for param in (index, name):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT",
             _make_path(index, "_alias", name),
             params=params,
@@ -479,12 +503,20 @@ class IndicesClient(NamespacedClient):
         :arg local: Return local information, do not retrieve the state
             from master node (default: false)
         """
+        client, params = _deprecated_options(self, params)
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return await self.transport.perform_request(
-            "HEAD", _make_path(index, "_alias", name), params=params, headers=headers
-        )
+        try:
+            await client._perform_request(
+                "HEAD",
+                _make_path(index, "_alias", name),
+                params=params,
+                headers=headers,
+            )
+            return True
+        except NotFoundError:
+            return False
 
     @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable", "local")
     async def get_alias(self, index=None, name=None, params=None, headers=None):
@@ -507,7 +539,8 @@ class IndicesClient(NamespacedClient):
         :arg local: Return local information, do not retrieve the state
             from master node (default: false)
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", _make_path(index, "_alias", name), params=params, headers=headers
         )
 
@@ -522,10 +555,11 @@ class IndicesClient(NamespacedClient):
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Request timeout
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST", "/_aliases", params=params, headers=headers, body=body
         )
 
@@ -543,11 +577,12 @@ class IndicesClient(NamespacedClient):
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit timestamp for the document
         """
+        client, params = _deprecated_options(self, params)
         for param in (index, name):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "DELETE", _make_path(index, "_alias", name), params=params, headers=headers
         )
 
@@ -567,11 +602,12 @@ class IndicesClient(NamespacedClient):
             matching ones (higher numbers are merged later, overriding the lower
             numbers)
         """
+        client, params = _deprecated_options(self, params)
         for param in (name, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT",
             _make_path("_template", name),
             params=params,
@@ -594,12 +630,17 @@ class IndicesClient(NamespacedClient):
         :arg master_timeout: Explicit operation timeout for connection
             to master node
         """
+        client, params = _deprecated_options(self, params)
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return await self.transport.perform_request(
-            "HEAD", _make_path("_template", name), params=params, headers=headers
-        )
+        try:
+            await client._perform_request(
+                "HEAD", _make_path("_template", name), params=params, headers=headers
+            )
+            return True
+        except NotFoundError:
+            return False
 
     @query_params("flat_settings", "local", "master_timeout")
     async def get_template(self, name=None, params=None, headers=None):
@@ -616,7 +657,8 @@ class IndicesClient(NamespacedClient):
         :arg master_timeout: Explicit operation timeout for connection
             to master node
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", _make_path("_template", name), params=params, headers=headers
         )
 
@@ -631,10 +673,11 @@ class IndicesClient(NamespacedClient):
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         """
+        client, params = _deprecated_options(self, params)
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "DELETE", _make_path("_template", name), params=params, headers=headers
         )
 
@@ -672,7 +715,8 @@ class IndicesClient(NamespacedClient):
             from master node (default: false)
         :arg master_timeout: Specify timeout for connection to master
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", _make_path(index, "_settings", name), params=params, headers=headers
         )
 
@@ -710,10 +754,11 @@ class IndicesClient(NamespacedClient):
             default is `false`
         :arg timeout: Explicit operation timeout
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT",
             _make_path(index, "_settings"),
             params=params,
@@ -770,7 +815,8 @@ class IndicesClient(NamespacedClient):
         :arg types: A comma-separated list of document types for the
             `indexing` index metric
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", _make_path(index, "_stats", metric), params=params, headers=headers
         )
 
@@ -795,7 +841,8 @@ class IndicesClient(NamespacedClient):
             should be ignored when unavailable (missing or closed)
         :arg verbose: Includes detailed memory usage by Lucene.
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", _make_path(index, "_segments"), params=params, headers=headers
         )
 
@@ -830,7 +877,8 @@ class IndicesClient(NamespacedClient):
         :arg query: Clear query caches
         :arg request: Clear request cache
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "POST", _make_path(index, "_cache", "clear"), params=params, headers=headers
         )
 
@@ -848,7 +896,8 @@ class IndicesClient(NamespacedClient):
         :arg detailed: Whether to display detailed information about
             shard recovery
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", _make_path(index, "_recovery"), params=params, headers=headers
         )
 
@@ -875,7 +924,8 @@ class IndicesClient(NamespacedClient):
             on shards to get store information for  Valid choices: green, yellow,
             red, all
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", _make_path(index, "_shard_stores"), params=params, headers=headers
         )
 
@@ -910,7 +960,8 @@ class IndicesClient(NamespacedClient):
         :arg only_expunge_deletes: Specify whether the operation should
             only expunge deleted documents
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "POST", _make_path(index, "_forcemerge"), params=params, headers=headers
         )
 
@@ -930,11 +981,12 @@ class IndicesClient(NamespacedClient):
         :arg wait_for_active_shards: Set the number of active shards to
             wait for on the shrunken index before the operation returns.
         """
+        client, params = _deprecated_options(self, params)
         for param in (index, target):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT",
             _make_path(index, "_shrink", target),
             params=params,
@@ -959,11 +1011,12 @@ class IndicesClient(NamespacedClient):
         :arg wait_for_active_shards: Set the number of active shards to
             wait for on the shrunken index before the operation returns.
         """
+        client, params = _deprecated_options(self, params)
         for param in (index, target):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT",
             _make_path(index, "_split", target),
             params=params,
@@ -994,10 +1047,11 @@ class IndicesClient(NamespacedClient):
             wait for on the newly created rollover index before the operation
             returns.
         """
+        client, params = _deprecated_options(self, params)
         if alias in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'alias'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path(alias, "_rollover", new_index),
             params=params,
@@ -1034,10 +1088,11 @@ class IndicesClient(NamespacedClient):
         :arg wait_for_active_shards: Sets the number of active shards to
             wait for before the operation returns.
         """
+        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST", _make_path(index, "_freeze"), params=params, headers=headers
         )
 
@@ -1070,10 +1125,11 @@ class IndicesClient(NamespacedClient):
         :arg wait_for_active_shards: Sets the number of active shards to
             wait for before the operation returns.
         """
+        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST", _make_path(index, "_unfreeze"), params=params, headers=headers
         )
 
@@ -1095,10 +1151,11 @@ class IndicesClient(NamespacedClient):
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         """
+        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "GET",
             _make_path(index, "_reload_search_analyzers"),
             params=params,
@@ -1133,10 +1190,11 @@ class IndicesClient(NamespacedClient):
         :arg local: Return local information, do not retrieve the state
             from master node (default: false)
         """
+        client, params = _deprecated_options(self, params)
         if fields in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'fields'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "GET",
             _make_path(index, "_mapping", "field", fields),
             params=params,
@@ -1196,7 +1254,8 @@ class IndicesClient(NamespacedClient):
         :arg rewrite: Provide a more detailed explanation showing the
             actual Lucene query that will be executed.
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "POST",
             _make_path(index, doc_type, "_validate", "query"),
             params=params,
@@ -1213,10 +1272,11 @@ class IndicesClient(NamespacedClient):
 
         :arg name: The name of the data stream
         """
+        client, params = _deprecated_options(self, params)
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT", _make_path("_data_stream", name), params=params, headers=headers
         )
 
@@ -1233,10 +1293,11 @@ class IndicesClient(NamespacedClient):
             expanded to open or closed indices (default: open)  Valid choices: open,
             closed, hidden, none, all  Default: open
         """
+        client, params = _deprecated_options(self, params)
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "DELETE", _make_path("_data_stream", name), params=params, headers=headers
         )
 
@@ -1251,10 +1312,11 @@ class IndicesClient(NamespacedClient):
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         """
+        client, params = _deprecated_options(self, params)
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "DELETE",
             _make_path("_index_template", name),
             params=params,
@@ -1268,7 +1330,7 @@ class IndicesClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
 
-        :arg name: The comma separated names of the index templates
+        :arg name: A pattern that returned template names must match
         :arg flat_settings: Return settings in flat format (default:
             false)
         :arg local: Return local information, do not retrieve the state
@@ -1276,7 +1338,8 @@ class IndicesClient(NamespacedClient):
         :arg master_timeout: Explicit operation timeout for connection
             to master node
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", _make_path("_index_template", name), params=params, headers=headers
         )
 
@@ -1295,11 +1358,12 @@ class IndicesClient(NamespacedClient):
             new or can also replace an existing one
         :arg master_timeout: Specify timeout for connection to master
         """
+        client, params = _deprecated_options(self, params)
         for param in (name, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT",
             _make_path("_index_template", name),
             params=params,
@@ -1322,12 +1386,20 @@ class IndicesClient(NamespacedClient):
         :arg master_timeout: Explicit operation timeout for connection
             to master node
         """
+        client, params = _deprecated_options(self, params)
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return await self.transport.perform_request(
-            "HEAD", _make_path("_index_template", name), params=params, headers=headers
-        )
+        try:
+            await client._perform_request(
+                "HEAD",
+                _make_path("_index_template", name),
+                params=params,
+                headers=headers,
+            )
+            return True
+        except NotFoundError:
+            return False
 
     @query_params("cause", "create", "master_timeout")
     async def simulate_index_template(self, name, body=None, params=None, headers=None):
@@ -1348,10 +1420,11 @@ class IndicesClient(NamespacedClient):
             existing one
         :arg master_timeout: Specify timeout for connection to master
         """
+        client, params = _deprecated_options(self, params)
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path("_index_template", "_simulate_index", name),
             params=params,
@@ -1372,7 +1445,8 @@ class IndicesClient(NamespacedClient):
             expanded to open or closed indices (default: open)  Valid choices: open,
             closed, hidden, none, all  Default: open
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", _make_path("_data_stream", name), params=params, headers=headers
         )
 
@@ -1393,7 +1467,8 @@ class IndicesClient(NamespacedClient):
             existing one
         :arg master_timeout: Specify timeout for connection to master
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "POST",
             _make_path("_index_template", "_simulate", name),
             params=params,
@@ -1414,10 +1489,11 @@ class IndicesClient(NamespacedClient):
             expanded to open or closed indices (default: open)  Valid choices: open,
             closed, hidden, none, all  Default: open
         """
+        client, params = _deprecated_options(self, params)
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "GET", _make_path("_resolve", "index", name), params=params, headers=headers
         )
 
@@ -1448,11 +1524,12 @@ class IndicesClient(NamespacedClient):
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         """
+        client, params = _deprecated_options(self, params)
         for param in (index, block):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT", _make_path(index, "_block", block), params=params, headers=headers
         )
 
@@ -1466,7 +1543,8 @@ class IndicesClient(NamespacedClient):
         :arg name: A comma-separated list of data stream names; use
             `_all` or empty string to perform the operation on all data streams
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET",
             _make_path("_data_stream", name, "_stats"),
             params=params,
@@ -1482,10 +1560,11 @@ class IndicesClient(NamespacedClient):
 
         :arg name: The name of the alias to migrate
         """
+        client, params = _deprecated_options(self, params)
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path("_data_stream", "_migrate", name),
             params=params,
@@ -1502,10 +1581,11 @@ class IndicesClient(NamespacedClient):
 
         :arg name: The name of the data stream
         """
+        client, params = _deprecated_options(self, params)
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path("_data_stream", "_promote", name),
             params=params,
@@ -1545,10 +1625,11 @@ class IndicesClient(NamespacedClient):
         :arg run_expensive_tasks: Must be set to [true] in order for the
             task to be performed. Defaults to false.
         """
+        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST", _make_path(index, "_disk_usage"), params=params, headers=headers
         )
 
@@ -1579,10 +1660,11 @@ class IndicesClient(NamespacedClient):
         :arg ignore_unavailable: Whether specified concrete indices
             should be ignored when unavailable (missing or closed)
         """
+        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "GET",
             _make_path(index, "_field_usage_stats"),
             params=params,

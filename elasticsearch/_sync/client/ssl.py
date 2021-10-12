@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import NamespacedClient, query_params
+from ._base import NamespacedClient
+from .utils import _deprecated_options, query_params
 
 
 class SslClient(NamespacedClient):
@@ -27,6 +28,7 @@ class SslClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-ssl.html>`_
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "GET", "/_ssl/certificates", params=params, headers=headers
         )

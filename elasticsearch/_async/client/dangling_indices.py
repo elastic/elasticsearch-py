@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
+from ._base import NamespacedClient
+from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
 
 
 class DanglingIndicesClient(NamespacedClient):
@@ -32,10 +33,11 @@ class DanglingIndicesClient(NamespacedClient):
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         """
+        client, params = _deprecated_options(self, params)
         if index_uuid in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index_uuid'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "DELETE",
             _make_path("_dangling", index_uuid),
             params=params,
@@ -55,10 +57,11 @@ class DanglingIndicesClient(NamespacedClient):
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         """
+        client, params = _deprecated_options(self, params)
         if index_uuid in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index_uuid'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST", _make_path("_dangling", index_uuid), params=params, headers=headers
         )
 
@@ -69,6 +72,7 @@ class DanglingIndicesClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-gateway-dangling-indices.html>`_
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", "/_dangling", params=params, headers=headers
         )

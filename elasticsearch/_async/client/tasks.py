@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
+from ._base import NamespacedClient
+from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
 
 
 class TasksClient(NamespacedClient):
@@ -53,7 +54,8 @@ class TasksClient(NamespacedClient):
         :arg wait_for_completion: Wait for the matching tasks to
             complete (default: false)
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", "/_tasks", params=params, headers=headers
         )
 
@@ -82,7 +84,8 @@ class TasksClient(NamespacedClient):
             cancellation of the task and its descendant tasks is completed. Defaults
             to false
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "POST",
             _make_path("_tasks", task_id, "_cancel"),
             params=params,
@@ -107,9 +110,10 @@ class TasksClient(NamespacedClient):
         :arg wait_for_completion: Wait for the matching tasks to
             complete (default: false)
         """
+        client, params = _deprecated_options(self, params)
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'task_id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "GET", _make_path("_tasks", task_id), params=params, headers=headers
         )

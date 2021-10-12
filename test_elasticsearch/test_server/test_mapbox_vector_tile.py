@@ -21,12 +21,7 @@ import re
 
 import pytest
 
-from elasticsearch import (
-    Elasticsearch,
-    RequestError,
-    RequestsHttpConnection,
-    Urllib3HttpConnection,
-)
+from elasticsearch import Elasticsearch, RequestError
 
 
 @pytest.fixture(scope="function")
@@ -80,15 +75,9 @@ def mvt_setup(sync_client):
     )
 
 
-@pytest.mark.parametrize(
-    "connection_class", [Urllib3HttpConnection, RequestsHttpConnection]
-)
-def test_mapbox_vector_tile_logging(
-    elasticsearch_url, mvt_setup, connection_class, ca_certs
-):
-    client = Elasticsearch(
-        elasticsearch_url, connection_class=connection_class, ca_certs=ca_certs
-    )
+@pytest.mark.parametrize("node_class", ["urllib3", "requests"])
+def test_mapbox_vector_tile_logging(elasticsearch_url, mvt_setup, node_class, ca_certs):
+    client = Elasticsearch(elasticsearch_url, node_class=node_class, ca_certs=ca_certs)
 
     output = io.StringIO()
     handler = logging.StreamHandler(output)
@@ -157,20 +146,16 @@ def test_mapbox_vector_tile_logging(
     )
 
 
-@pytest.mark.parametrize(
-    "connection_class", [Urllib3HttpConnection, RequestsHttpConnection]
-)
+@pytest.mark.parametrize("node_class", ["urllib3", "requests"])
 def test_mapbox_vector_tile_response(
-    elasticsearch_url, mvt_setup, connection_class, ca_certs
+    elasticsearch_url, mvt_setup, node_class, ca_certs
 ):
     try:
         import mapbox_vector_tile
     except ImportError:
         return pytest.skip(reason="Requires the 'mapbox-vector-tile' package")
 
-    client = Elasticsearch(
-        elasticsearch_url, connection_class=connection_class, ca_certs=ca_certs
-    )
+    client = Elasticsearch(elasticsearch_url, node_class=node_class, ca_certs=ca_certs)
 
     resp = client.search_mvt(
         index="museums",

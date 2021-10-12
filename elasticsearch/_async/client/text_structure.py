@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import SKIP_IN_PATH, NamespacedClient, _bulk_body, query_params
+from ._base import NamespacedClient
+from .utils import SKIP_IN_PATH, _deprecated_options, query_params
 
 
 class TextStructureClient(NamespacedClient):
@@ -75,11 +76,12 @@ class TextStructureClient(NamespacedClient):
         :arg timestamp_format: Optional parameter to specify the
             timestamp format in the file - may be either a Joda or Java time format
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        body = _bulk_body(self.transport.serializer, body)
-        return await self.transport.perform_request(
+        headers["content-type"] = "application/x-ndjson"
+        return await client._perform_request(
             "POST",
             "/_text_structure/find_structure",
             params=params,

@@ -51,10 +51,7 @@ packages = [
     if package == package_name or package.startswith(package_name + ".")
 ]
 
-install_requires = [
-    "urllib3>=1.26, <2",
-    "certifi",
-]
+install_requires = ["elastic-transport>=8,<9"]
 async_requires = ["aiohttp>=3,<4"]
 
 setup(

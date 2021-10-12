@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import SKIP_IN_PATH, NamespacedClient, _bulk_body, _make_path, query_params
+from ._base import NamespacedClient
+from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
 
 
 class MlClient(NamespacedClient):
@@ -39,10 +40,11 @@ class MlClient(NamespacedClient):
         :arg timeout: Controls the time to wait until a job has closed.
             Default to 30 minutes
         """
+        client, params = _deprecated_options(self, params)
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path("_ml", "anomaly_detectors", job_id, "_close"),
             params=params,
@@ -59,12 +61,13 @@ class MlClient(NamespacedClient):
 
         :arg calendar_id: The ID of the calendar to delete
         """
+        client, params = _deprecated_options(self, params)
         if calendar_id in SKIP_IN_PATH:
             raise ValueError(
                 "Empty value passed for a required argument 'calendar_id'."
             )
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "DELETE",
             _make_path("_ml", "calendars", calendar_id),
             params=params,
@@ -83,11 +86,12 @@ class MlClient(NamespacedClient):
         :arg calendar_id: The ID of the calendar to modify
         :arg event_id: The ID of the event to remove from the calendar
         """
+        client, params = _deprecated_options(self, params)
         for param in (calendar_id, event_id):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "DELETE",
             _make_path("_ml", "calendars", calendar_id, "events", event_id),
             params=params,
@@ -104,11 +108,12 @@ class MlClient(NamespacedClient):
         :arg calendar_id: The ID of the calendar to modify
         :arg job_id: The ID of the job to remove from the calendar
         """
+        client, params = _deprecated_options(self, params)
         for param in (calendar_id, job_id):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "DELETE",
             _make_path("_ml", "calendars", calendar_id, "jobs", job_id),
             params=params,
@@ -125,12 +130,13 @@ class MlClient(NamespacedClient):
         :arg datafeed_id: The ID of the datafeed to delete
         :arg force: True if the datafeed should be forcefully deleted
         """
+        client, params = _deprecated_options(self, params)
         if datafeed_id in SKIP_IN_PATH:
             raise ValueError(
                 "Empty value passed for a required argument 'datafeed_id'."
             )
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "DELETE",
             _make_path("_ml", "datafeeds", datafeed_id),
             params=params,
@@ -154,7 +160,8 @@ class MlClient(NamespacedClient):
         :arg timeout: How long can the underlying delete processes run
             until they are canceled
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "DELETE",
             _make_path("_ml", "_delete_expired_data", job_id),
             params=params,
@@ -171,10 +178,11 @@ class MlClient(NamespacedClient):
 
         :arg filter_id: The ID of the filter to delete
         """
+        client, params = _deprecated_options(self, params)
         if filter_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'filter_id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "DELETE",
             _make_path("_ml", "filters", filter_id),
             params=params,
@@ -198,10 +206,11 @@ class MlClient(NamespacedClient):
         :arg timeout: Controls the time to wait until the forecast(s)
             are deleted. Default to 30 seconds
         """
+        client, params = _deprecated_options(self, params)
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "DELETE",
             _make_path("_ml", "anomaly_detectors", job_id, "_forecast", forecast_id),
             params=params,
@@ -220,10 +229,11 @@ class MlClient(NamespacedClient):
         :arg wait_for_completion: Should this request wait until the
             operation has completed before returning  Default: True
         """
+        client, params = _deprecated_options(self, params)
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "DELETE",
             _make_path("_ml", "anomaly_detectors", job_id),
             params=params,
@@ -242,11 +252,12 @@ class MlClient(NamespacedClient):
         :arg job_id: The ID of the job to fetch
         :arg snapshot_id: The ID of the snapshot to delete
         """
+        client, params = _deprecated_options(self, params)
         for param in (job_id, snapshot_id):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "DELETE",
             _make_path(
                 "_ml", "anomaly_detectors", job_id, "model_snapshots", snapshot_id
@@ -275,10 +286,11 @@ class MlClient(NamespacedClient):
         :arg start: When used in conjunction with calc_interim,
             specifies the range of buckets on which to calculate interim results
         """
+        client, params = _deprecated_options(self, params)
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path("_ml", "anomaly_detectors", job_id, "_flush"),
             params=params,
@@ -300,10 +312,11 @@ class MlClient(NamespacedClient):
         :arg max_model_memory: The max memory able to be used by the
             forecast. Default is 20mb.
         """
+        client, params = _deprecated_options(self, params)
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path("_ml", "anomaly_detectors", job_id, "_forecast"),
             params=params,
@@ -343,14 +356,14 @@ class MlClient(NamespacedClient):
         :arg sort: Sort buckets by a particular field
         :arg start: Start time filter for buckets
         """
-        # from is a reserved word so it cannot be used, use from_ instead
-        if "from_" in params:
+        client, params = _deprecated_options(self, params)
+        if params and "from_" in params:
             params["from"] = params.pop("from_")
 
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path(
                 "_ml", "anomaly_detectors", job_id, "results", "buckets", timestamp
@@ -375,8 +388,8 @@ class MlClient(NamespacedClient):
         :arg size: Specifies a max number of events to get
         :arg start: Get events after this time
         """
-        # from is a reserved word so it cannot be used, use from_ instead
-        if "from_" in params:
+        client, params = _deprecated_options(self, params)
+        if params and "from_" in params:
             params["from"] = params.pop("from_")
 
         if calendar_id in SKIP_IN_PATH:
@@ -384,7 +397,7 @@ class MlClient(NamespacedClient):
                 "Empty value passed for a required argument 'calendar_id'."
             )
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "GET",
             _make_path("_ml", "calendars", calendar_id, "events"),
             params=params,
@@ -406,11 +419,11 @@ class MlClient(NamespacedClient):
         :arg from\\_: skips a number of calendars
         :arg size: specifies a max number of calendars to get
         """
-        # from is a reserved word so it cannot be used, use from_ instead
-        if "from_" in params:
+        client, params = _deprecated_options(self, params)
+        if params and "from_" in params:
             params["from"] = params.pop("from_")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path("_ml", "calendars", calendar_id),
             params=params,
@@ -433,7 +446,8 @@ class MlClient(NamespacedClient):
             matches no datafeeds. (This includes `_all` string or when no datafeeds
             have been specified)
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET",
             _make_path("_ml", "datafeeds", datafeed_id, "_stats"),
             params=params,
@@ -457,7 +471,8 @@ class MlClient(NamespacedClient):
         :arg exclude_generated: Omits fields that are illegal to set on
             datafeed PUT
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET",
             _make_path("_ml", "datafeeds", datafeed_id),
             params=params,
@@ -475,11 +490,11 @@ class MlClient(NamespacedClient):
         :arg from\\_: skips a number of filters
         :arg size: specifies a max number of filters to get
         """
-        # from is a reserved word so it cannot be used, use from_ instead
-        if "from_" in params:
+        client, params = _deprecated_options(self, params)
+        if params and "from_" in params:
             params["from"] = params.pop("from_")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "GET",
             _make_path("_ml", "filters", filter_id),
             params=params,
@@ -515,14 +530,14 @@ class MlClient(NamespacedClient):
         :arg sort: sort field for the requested influencers
         :arg start: start timestamp for the requested influencers
         """
-        # from is a reserved word so it cannot be used, use from_ instead
-        if "from_" in params:
+        client, params = _deprecated_options(self, params)
+        if params and "from_" in params:
             params["from"] = params.pop("from_")
 
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path("_ml", "anomaly_detectors", job_id, "results", "influencers"),
             params=params,
@@ -545,7 +560,8 @@ class MlClient(NamespacedClient):
             matches no jobs. (This includes `_all` string or when no jobs have been
             specified)
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET",
             _make_path("_ml", "anomaly_detectors", job_id, "_stats"),
             params=params,
@@ -569,7 +585,8 @@ class MlClient(NamespacedClient):
         :arg exclude_generated: Omits fields that are illegal to set on
             job PUT
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET",
             _make_path("_ml", "anomaly_detectors", job_id),
             params=params,
@@ -616,10 +633,11 @@ class MlClient(NamespacedClient):
         :arg top_n: The number of top job bucket scores to be used in
             the overall_score calculation
         """
+        client, params = _deprecated_options(self, params)
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path(
                 "_ml", "anomaly_detectors", job_id, "results", "overall_buckets"
@@ -657,14 +675,14 @@ class MlClient(NamespacedClient):
         :arg sort: Sort records by a particular field
         :arg start: Start time filter for records
         """
-        # from is a reserved word so it cannot be used, use from_ instead
-        if "from_" in params:
+        client, params = _deprecated_options(self, params)
+        if params and "from_" in params:
             params["from"] = params.pop("from_")
 
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path("_ml", "anomaly_detectors", job_id, "results", "records"),
             params=params,
@@ -679,7 +697,8 @@ class MlClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-ml-info.html>`_
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", "/_ml/info", params=params, headers=headers
         )
 
@@ -692,10 +711,11 @@ class MlClient(NamespacedClient):
 
         :arg job_id: The ID of the job to open
         """
+        client, params = _deprecated_options(self, params)
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path("_ml", "anomaly_detectors", job_id, "_open"),
             params=params,
@@ -712,11 +732,12 @@ class MlClient(NamespacedClient):
         :arg calendar_id: The ID of the calendar to modify
         :arg body: A list of events
         """
+        client, params = _deprecated_options(self, params)
         for param in (calendar_id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path("_ml", "calendars", calendar_id, "events"),
             params=params,
@@ -738,12 +759,13 @@ class MlClient(NamespacedClient):
         :arg reset_start: Optional parameter to specify the start of the
             bucket resetting range
         """
+        client, params = _deprecated_options(self, params)
         for param in (job_id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        body = _bulk_body(self.transport.serializer, body)
-        return await self.transport.perform_request(
+        headers["content-type"] = "application/x-ndjson"
+        return await client._perform_request(
             "POST",
             _make_path("_ml", "anomaly_detectors", job_id, "_data"),
             params=params,
@@ -764,7 +786,8 @@ class MlClient(NamespacedClient):
             execute the preview
         :arg datafeed_id: The ID of the datafeed to preview
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "POST",
             _make_path("_ml", "datafeeds", datafeed_id, "_preview"),
             params=params,
@@ -782,12 +805,13 @@ class MlClient(NamespacedClient):
         :arg calendar_id: The ID of the calendar to create
         :arg body: The calendar details
         """
+        client, params = _deprecated_options(self, params)
         if calendar_id in SKIP_IN_PATH:
             raise ValueError(
                 "Empty value passed for a required argument 'calendar_id'."
             )
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT",
             _make_path("_ml", "calendars", calendar_id),
             params=params,
@@ -805,11 +829,12 @@ class MlClient(NamespacedClient):
         :arg calendar_id: The ID of the calendar to modify
         :arg job_id: The ID of the job to add to the calendar
         """
+        client, params = _deprecated_options(self, params)
         for param in (calendar_id, job_id):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT",
             _make_path("_ml", "calendars", calendar_id, "jobs", job_id),
             params=params,
@@ -837,11 +862,12 @@ class MlClient(NamespacedClient):
         :arg ignore_unavailable: Ignore unavailable indexes (default:
             false)
         """
+        client, params = _deprecated_options(self, params)
         for param in (datafeed_id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT",
             _make_path("_ml", "datafeeds", datafeed_id),
             params=params,
@@ -859,11 +885,12 @@ class MlClient(NamespacedClient):
         :arg filter_id: The ID of the filter to create
         :arg body: The filter details
         """
+        client, params = _deprecated_options(self, params)
         for param in (filter_id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT",
             _make_path("_ml", "filters", filter_id),
             params=params,
@@ -894,11 +921,12 @@ class MlClient(NamespacedClient):
         :arg ignore_unavailable: Ignore unavailable indexes (default:
             false). Only set if datafeed_config is provided.
         """
+        client, params = _deprecated_options(self, params)
         for param in (job_id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT",
             _make_path("_ml", "anomaly_detectors", job_id),
             params=params,
@@ -919,7 +947,8 @@ class MlClient(NamespacedClient):
         :arg timeout: Controls the time to wait before action times out.
             Defaults to 30 seconds
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "POST", "/_ml/set_upgrade_mode", params=params, headers=headers
         )
 
@@ -938,12 +967,13 @@ class MlClient(NamespacedClient):
         :arg timeout: Controls the time to wait until a datafeed has
             started. Default to 20 seconds
         """
+        client, params = _deprecated_options(self, params)
         if datafeed_id in SKIP_IN_PATH:
             raise ValueError(
                 "Empty value passed for a required argument 'datafeed_id'."
             )
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path("_ml", "datafeeds", datafeed_id, "_start"),
             params=params,
@@ -970,12 +1000,13 @@ class MlClient(NamespacedClient):
         :arg timeout: Controls the time to wait until a datafeed has
             stopped. Default to 20 seconds
         """
+        client, params = _deprecated_options(self, params)
         if datafeed_id in SKIP_IN_PATH:
             raise ValueError(
                 "Empty value passed for a required argument 'datafeed_id'."
             )
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path("_ml", "datafeeds", datafeed_id, "_stop"),
             params=params,
@@ -1004,11 +1035,12 @@ class MlClient(NamespacedClient):
         :arg ignore_unavailable: Ignore unavailable indexes (default:
             false)
         """
+        client, params = _deprecated_options(self, params)
         for param in (datafeed_id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path("_ml", "datafeeds", datafeed_id, "_update"),
             params=params,
@@ -1026,11 +1058,12 @@ class MlClient(NamespacedClient):
         :arg filter_id: The ID of the filter to update
         :arg body: The filter update
         """
+        client, params = _deprecated_options(self, params)
         for param in (filter_id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path("_ml", "filters", filter_id, "_update"),
             params=params,
@@ -1048,11 +1081,12 @@ class MlClient(NamespacedClient):
         :arg job_id: The ID of the job to create
         :arg body: The job update settings
         """
+        client, params = _deprecated_options(self, params)
         for param in (job_id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path("_ml", "anomaly_detectors", job_id, "_update"),
             params=params,
@@ -1069,10 +1103,11 @@ class MlClient(NamespacedClient):
 
         :arg body: The job config
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             "/_ml/anomaly_detectors/_validate",
             params=params,
@@ -1089,10 +1124,11 @@ class MlClient(NamespacedClient):
 
         :arg body: The detector
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             "/_ml/anomaly_detectors/_validate/detector",
             params=params,
@@ -1112,10 +1148,11 @@ class MlClient(NamespacedClient):
         :arg timeout: Controls the time to wait until a job is deleted.
             Defaults to 1 minute
         """
+        client, params = _deprecated_options(self, params)
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "DELETE",
             _make_path("_ml", "data_frame", "analytics", id),
             params=params,
@@ -1131,10 +1168,11 @@ class MlClient(NamespacedClient):
 
         :arg body: The evaluation definition
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             "/_ml/data_frame/_evaluate",
             params=params,
@@ -1159,11 +1197,11 @@ class MlClient(NamespacedClient):
         :arg size: specifies a max number of analytics to get  Default:
             100
         """
-        # from is a reserved word so it cannot be used, use from_ instead
-        if "from_" in params:
+        client, params = _deprecated_options(self, params)
+        if params and "from_" in params:
             params["from"] = params.pop("from_")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "GET",
             _make_path("_ml", "data_frame", "analytics", id),
             params=params,
@@ -1186,11 +1224,11 @@ class MlClient(NamespacedClient):
             100
         :arg verbose: whether the stats response should be verbose
         """
-        # from is a reserved word so it cannot be used, use from_ instead
-        if "from_" in params:
+        client, params = _deprecated_options(self, params)
+        if params and "from_" in params:
             params["from"] = params.pop("from_")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "GET",
             _make_path("_ml", "data_frame", "analytics", id, "_stats"),
             params=params,
@@ -1207,11 +1245,12 @@ class MlClient(NamespacedClient):
         :arg id: The ID of the data frame analytics to create
         :arg body: The data frame analytics configuration
         """
+        client, params = _deprecated_options(self, params)
         for param in (id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT",
             _make_path("_ml", "data_frame", "analytics", id),
             params=params,
@@ -1233,10 +1272,11 @@ class MlClient(NamespacedClient):
         :arg timeout: Controls the time to wait until the task has
             started. Defaults to 20 seconds
         """
+        client, params = _deprecated_options(self, params)
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path("_ml", "data_frame", "analytics", id, "_start"),
             params=params,
@@ -1261,10 +1301,11 @@ class MlClient(NamespacedClient):
         :arg timeout: Controls the time to wait until the task has
             stopped. Defaults to 20 seconds
         """
+        client, params = _deprecated_options(self, params)
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path("_ml", "data_frame", "analytics", id, "_stop"),
             params=params,
@@ -1282,10 +1323,11 @@ class MlClient(NamespacedClient):
 
         :arg model_id: The ID of the trained model to delete
         """
+        client, params = _deprecated_options(self, params)
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'model_id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "DELETE",
             _make_path("_ml", "trained_models", model_id),
             params=params,
@@ -1329,11 +1371,11 @@ class MlClient(NamespacedClient):
         :arg tags: A comma-separated list of tags that the model must
             have.
         """
-        # from is a reserved word so it cannot be used, use from_ instead
-        if "from_" in params:
+        client, params = _deprecated_options(self, params)
+        if params and "from_" in params:
             params["from"] = params.pop("from_")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "GET",
             _make_path("_ml", "trained_models", model_id),
             params=params,
@@ -1355,11 +1397,11 @@ class MlClient(NamespacedClient):
         :arg size: specifies a max number of trained models to get
             Default: 100
         """
-        # from is a reserved word so it cannot be used, use from_ instead
-        if "from_" in params:
+        client, params = _deprecated_options(self, params)
+        if params and "from_" in params:
             params["from"] = params.pop("from_")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "GET",
             _make_path("_ml", "trained_models", model_id, "_stats"),
             params=params,
@@ -1379,11 +1421,12 @@ class MlClient(NamespacedClient):
             `compressed_definition` is provided, the request defers definition
             decompression and skips relevant validations.
         """
+        client, params = _deprecated_options(self, params)
         for param in (model_id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT",
             _make_path("_ml", "trained_models", model_id),
             params=params,
@@ -1401,10 +1444,11 @@ class MlClient(NamespacedClient):
         :arg body: The analysis config, plus cardinality estimates for
             fields it references
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             "/_ml/anomaly_detectors/_estimate_model_memory",
             params=params,
@@ -1424,7 +1468,8 @@ class MlClient(NamespacedClient):
         :arg body: The data frame analytics config to explain
         :arg id: The ID of the data frame analytics to explain
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "POST",
             _make_path("_ml", "data_frame", "analytics", id, "_explain"),
             params=params,
@@ -1451,14 +1496,14 @@ class MlClient(NamespacedClient):
             where per-partition categorization is disabled.
         :arg size: specifies a max number of categories to get
         """
-        # from is a reserved word so it cannot be used, use from_ instead
-        if "from_" in params:
+        client, params = _deprecated_options(self, params)
+        if params and "from_" in params:
             params["from"] = params.pop("from_")
 
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path(
                 "_ml", "anomaly_detectors", job_id, "results", "categories", category_id
@@ -1489,14 +1534,14 @@ class MlClient(NamespacedClient):
         :arg sort: Name of the field to sort on
         :arg start: The filter 'start' query parameter
         """
-        # from is a reserved word so it cannot be used, use from_ instead
-        if "from_" in params:
+        client, params = _deprecated_options(self, params)
+        if params and "from_" in params:
             params["from"] = params.pop("from_")
 
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path(
                 "_ml", "anomaly_detectors", job_id, "model_snapshots", snapshot_id
@@ -1521,11 +1566,12 @@ class MlClient(NamespacedClient):
         :arg delete_intervening_results: Should we reset the results
             back to the time of the snapshot?
         """
+        client, params = _deprecated_options(self, params)
         for param in (job_id, snapshot_id):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path(
                 "_ml",
@@ -1553,11 +1599,12 @@ class MlClient(NamespacedClient):
         :arg snapshot_id: The ID of the snapshot to update
         :arg body: The model snapshot properties to update
         """
+        client, params = _deprecated_options(self, params)
         for param in (job_id, snapshot_id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path(
                 "_ml",
@@ -1582,11 +1629,12 @@ class MlClient(NamespacedClient):
         :arg id: The ID of the data frame analytics to update
         :arg body: The data frame analytics settings to update
         """
+        client, params = _deprecated_options(self, params)
         for param in (id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path("_ml", "data_frame", "analytics", id, "_update"),
             params=params,
@@ -1610,11 +1658,12 @@ class MlClient(NamespacedClient):
         :arg wait_for_completion: Should the request wait until the task
             is complete before responding to the caller. Default is false.
         """
+        client, params = _deprecated_options(self, params)
         for param in (job_id, snapshot_id):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path(
                 "_ml",
@@ -1641,11 +1690,12 @@ class MlClient(NamespacedClient):
             assigned
         :arg model_alias: The trained model alias to delete
         """
+        client, params = _deprecated_options(self, params)
         for param in (model_id, model_alias):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "DELETE",
             _make_path("_ml", "trained_models", model_id, "model_aliases", model_alias),
             params=params,
@@ -1668,11 +1718,12 @@ class MlClient(NamespacedClient):
         :arg reassign: If the model_alias already exists and points to a
             separate model_id, this parameter must be true. Defaults to false.
         """
+        client, params = _deprecated_options(self, params)
         for param in (model_id, model_alias):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT",
             _make_path("_ml", "trained_models", model_id, "model_aliases", model_alias),
             params=params,
@@ -1691,7 +1742,8 @@ class MlClient(NamespacedClient):
         :arg body: The data frame analytics config to preview
         :arg id: The ID of the data frame analytics to preview
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "POST",
             _make_path("_ml", "data_frame", "analytics", id, "_preview"),
             params=params,
@@ -1718,11 +1770,12 @@ class MlClient(NamespacedClient):
         :arg timeout: Controls the amount of time to wait for inference
             results.  Default: 10s
         """
+        client, params = _deprecated_options(self, params)
         for param in (model_id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path("_ml", "trained_models", model_id, "deployment", "_infer"),
             params=params,
@@ -1741,10 +1794,11 @@ class MlClient(NamespacedClient):
         :arg wait_for_completion: Should this request wait until the
             operation has completed before returning  Default: True
         """
+        client, params = _deprecated_options(self, params)
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'job_id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path("_ml", "anomaly_detectors", job_id, "_reset"),
             params=params,
@@ -1769,10 +1823,11 @@ class MlClient(NamespacedClient):
         :arg wait_for: The allocation status for which to wait  Valid
             choices: starting, started, fully_allocated  Default: started
         """
+        client, params = _deprecated_options(self, params)
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'model_id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path("_ml", "trained_models", model_id, "deployment", "_start"),
             params=params,
@@ -1793,10 +1848,11 @@ class MlClient(NamespacedClient):
 
         :arg model_id: The unique identifier of the trained model.
         """
+        client, params = _deprecated_options(self, params)
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'model_id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path("_ml", "trained_models", model_id, "deployment", "_stop"),
             params=params,
@@ -1810,15 +1866,16 @@ class MlClient(NamespacedClient):
         """
         Get information about trained model deployments.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-trained-model-deployment-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-trained-model-deployment-stats.html>`_
 
         :arg model_id: The ID of the trained model deployment stats to
             fetch
         """
+        client, params = _deprecated_options(self, params)
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'model_id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "GET",
             _make_path("_ml", "trained_models", model_id, "deployment", "_stats"),
             params=params,
@@ -1844,11 +1901,12 @@ class MlClient(NamespacedClient):
         :arg part: The part number
         :arg body: The trained model definition part
         """
+        client, params = _deprecated_options(self, params)
         for param in (model_id, part, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT",
             _make_path("_ml", "trained_models", model_id, "definition", part),
             params=params,
@@ -1873,11 +1931,12 @@ class MlClient(NamespacedClient):
         :arg model_id: The ID of the trained model for this vocabulary
         :arg body: The trained model vocabulary
         """
+        client, params = _deprecated_options(self, params)
         for param in (model_id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT",
             _make_path("_ml", "trained_models", model_id, "vocabulary"),
             params=params,

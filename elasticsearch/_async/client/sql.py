@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
+from ._base import NamespacedClient
+from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
 
 
 class SqlClient(NamespacedClient):
@@ -29,10 +30,11 @@ class SqlClient(NamespacedClient):
         :arg body: Specify the cursor value in the `cursor` element to
             clean the cursor.
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST", "/_sql/close", params=params, headers=headers, body=body
         )
 
@@ -48,10 +50,11 @@ class SqlClient(NamespacedClient):
         :arg format: a short version of the Accept header, e.g. json,
             yaml
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST", "/_sql", params=params, headers=headers, body=body
         )
 
@@ -64,10 +67,11 @@ class SqlClient(NamespacedClient):
 
         :arg body: Specify the query in the `query` element.
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST", "/_sql/translate", params=params, headers=headers, body=body
         )
 
@@ -81,10 +85,11 @@ class SqlClient(NamespacedClient):
 
         :arg id: The async search ID
         """
+        client, params = _deprecated_options(self, params)
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "DELETE",
             _make_path("_sql", "async", "delete", id),
             params=params,
@@ -107,10 +112,11 @@ class SqlClient(NamespacedClient):
         :arg wait_for_completion_timeout: Duration to wait for complete
             results
         """
+        client, params = _deprecated_options(self, params)
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "GET", _make_path("_sql", "async", id), params=params, headers=headers
         )
 
@@ -124,10 +130,11 @@ class SqlClient(NamespacedClient):
 
         :arg id: The async search ID
         """
+        client, params = _deprecated_options(self, params)
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "GET",
             _make_path("_sql", "async", "status", id),
             params=params,

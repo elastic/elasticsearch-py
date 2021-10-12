@@ -32,12 +32,7 @@ import pytest
 import urllib3
 import yaml
 
-from elasticsearch import (
-    Elasticsearch,
-    ElasticsearchWarning,
-    RequestError,
-    TransportError,
-)
+from elasticsearch import ApiError, Elasticsearch, ElasticsearchWarning, RequestError
 from elasticsearch._sync.client.utils import _base64_auth_header
 from elasticsearch.compat import string_types
 
@@ -278,15 +273,15 @@ class YamlRunner:
             assert isinstance(exception, TypeError)
             return
 
-        assert isinstance(exception, TransportError)
+        assert isinstance(exception, ApiError)
         if catch in CATCH_CODES:
-            assert CATCH_CODES[catch] == exception.status_code
+            assert CATCH_CODES[catch] == exception.status
         elif catch[0] == "/" and catch[-1] == "/":
             assert (
-                re.search(catch[1:-1], exception.error + " " + repr(exception.info)),
-                f"{catch} not in {exception.info!r}",
+                re.search(catch[1:-1], str(exception.message)),
+                f"{catch} not in {str(exception.message)!r}",
             ) is not None
-        self.last_response = exception.info
+        self.last_response = exception.message
 
     def run_skip(self, skip):
         global IMPLEMENTED_FEATURES

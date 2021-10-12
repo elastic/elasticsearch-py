@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
+from ._base import NamespacedClient
+from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
 
 
 class SecurityClient(NamespacedClient):
@@ -27,7 +28,8 @@ class SecurityClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-authenticate.html>`_
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", "/_security/_authenticate", params=params, headers=headers
         )
 
@@ -46,10 +48,11 @@ class SecurityClient(NamespacedClient):
             for a refresh to make this operation visible to search, if `false` then
             do nothing with refreshes.  Valid choices: true, false, wait_for
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT",
             _make_path("_security", "user", username, "_password"),
             params=params,
@@ -69,10 +72,11 @@ class SecurityClient(NamespacedClient):
         :arg usernames: Comma-separated list of usernames to clear from
             the cache
         """
+        client, params = _deprecated_options(self, params)
         if realms in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'realms'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path("_security", "realm", realms, "_clear_cache"),
             params=params,
@@ -88,10 +92,11 @@ class SecurityClient(NamespacedClient):
 
         :arg name: Role name
         """
+        client, params = _deprecated_options(self, params)
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path("_security", "role", name, "_clear_cache"),
             params=params,
@@ -111,10 +116,11 @@ class SecurityClient(NamespacedClient):
             for a refresh to make this operation visible to search, if `false` then
             do nothing with refreshes.  Valid choices: true, false, wait_for
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT", "/_security/api_key", params=params, headers=headers, body=body
         )
 
@@ -132,11 +138,12 @@ class SecurityClient(NamespacedClient):
             for a refresh to make this operation visible to search, if `false` then
             do nothing with refreshes.  Valid choices: true, false, wait_for
         """
+        client, params = _deprecated_options(self, params)
         for param in (application, name):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "DELETE",
             _make_path("_security", "privilege", application, name),
             params=params,
@@ -156,10 +163,11 @@ class SecurityClient(NamespacedClient):
             for a refresh to make this operation visible to search, if `false` then
             do nothing with refreshes.  Valid choices: true, false, wait_for
         """
+        client, params = _deprecated_options(self, params)
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "DELETE",
             _make_path("_security", "role", name),
             params=params,
@@ -179,10 +187,11 @@ class SecurityClient(NamespacedClient):
             for a refresh to make this operation visible to search, if `false` then
             do nothing with refreshes.  Valid choices: true, false, wait_for
         """
+        client, params = _deprecated_options(self, params)
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "DELETE",
             _make_path("_security", "role_mapping", name),
             params=params,
@@ -202,10 +211,11 @@ class SecurityClient(NamespacedClient):
             for a refresh to make this operation visible to search, if `false` then
             do nothing with refreshes.  Valid choices: true, false, wait_for
         """
+        client, params = _deprecated_options(self, params)
         if username in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'username'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "DELETE",
             _make_path("_security", "user", username),
             params=params,
@@ -225,10 +235,11 @@ class SecurityClient(NamespacedClient):
             for a refresh to make this operation visible to search, if `false` then
             do nothing with refreshes.  Valid choices: true, false, wait_for
         """
+        client, params = _deprecated_options(self, params)
         if username in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'username'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT",
             _make_path("_security", "user", username, "_disable"),
             params=params,
@@ -248,10 +259,11 @@ class SecurityClient(NamespacedClient):
             for a refresh to make this operation visible to search, if `false` then
             do nothing with refreshes.  Valid choices: true, false, wait_for
         """
+        client, params = _deprecated_options(self, params)
         if username in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'username'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT",
             _make_path("_security", "user", username, "_enable"),
             params=params,
@@ -274,7 +286,8 @@ class SecurityClient(NamespacedClient):
         :arg username: user name of the user who created this API key to
             be retrieved
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", "/_security/api_key", params=params, headers=headers
         )
 
@@ -290,7 +303,8 @@ class SecurityClient(NamespacedClient):
         :arg application: Application name
         :arg name: Privilege name
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET",
             _make_path("_security", "privilege", application, name),
             params=params,
@@ -306,7 +320,8 @@ class SecurityClient(NamespacedClient):
 
         :arg name: A comma-separated list of role names
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", _make_path("_security", "role", name), params=params, headers=headers
         )
 
@@ -319,7 +334,8 @@ class SecurityClient(NamespacedClient):
 
         :arg name: A comma-separated list of role-mapping names
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET",
             _make_path("_security", "role_mapping", name),
             params=params,
@@ -335,10 +351,11 @@ class SecurityClient(NamespacedClient):
 
         :arg body: The token request to get
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST", "/_security/oauth2/token", params=params, headers=headers, body=body
         )
 
@@ -351,7 +368,8 @@ class SecurityClient(NamespacedClient):
 
         :arg username: A comma-separated list of usernames
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET",
             _make_path("_security", "user", username),
             params=params,
@@ -365,7 +383,8 @@ class SecurityClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-user-privileges.html>`_
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", "/_security/user/_privileges", params=params, headers=headers
         )
 
@@ -379,10 +398,11 @@ class SecurityClient(NamespacedClient):
         :arg body: The privileges to test
         :arg user: Username
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path("_security", "user", user, "_has_privileges"),
             params=params,
@@ -399,10 +419,11 @@ class SecurityClient(NamespacedClient):
 
         :arg body: The api key request to invalidate API key(s)
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "DELETE", "/_security/api_key", params=params, headers=headers, body=body
         )
 
@@ -415,10 +436,11 @@ class SecurityClient(NamespacedClient):
 
         :arg body: The token to invalidate
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "DELETE",
             "/_security/oauth2/token",
             params=params,
@@ -439,10 +461,11 @@ class SecurityClient(NamespacedClient):
             for a refresh to make this operation visible to search, if `false` then
             do nothing with refreshes.  Valid choices: true, false, wait_for
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT", "/_security/privilege/", params=params, headers=headers, body=body
         )
 
@@ -460,11 +483,12 @@ class SecurityClient(NamespacedClient):
             for a refresh to make this operation visible to search, if `false` then
             do nothing with refreshes.  Valid choices: true, false, wait_for
         """
+        client, params = _deprecated_options(self, params)
         for param in (name, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT",
             _make_path("_security", "role", name),
             params=params,
@@ -486,11 +510,12 @@ class SecurityClient(NamespacedClient):
             for a refresh to make this operation visible to search, if `false` then
             do nothing with refreshes.  Valid choices: true, false, wait_for
         """
+        client, params = _deprecated_options(self, params)
         for param in (name, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT",
             _make_path("_security", "role_mapping", name),
             params=params,
@@ -513,11 +538,12 @@ class SecurityClient(NamespacedClient):
             for a refresh to make this operation visible to search, if `false` then
             do nothing with refreshes.  Valid choices: true, false, wait_for
         """
+        client, params = _deprecated_options(self, params)
         for param in (username, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT",
             _make_path("_security", "user", username),
             params=params,
@@ -533,7 +559,8 @@ class SecurityClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-builtin-privileges.html>`_
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", "/_security/privilege/_builtin", params=params, headers=headers
         )
 
@@ -546,12 +573,13 @@ class SecurityClient(NamespacedClient):
 
         :arg application: A comma-separated list of application names
         """
+        client, params = _deprecated_options(self, params)
         if application in SKIP_IN_PATH:
             raise ValueError(
                 "Empty value passed for a required argument 'application'."
             )
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path("_security", "privilege", application, "_clear_cache"),
             params=params,
@@ -568,10 +596,11 @@ class SecurityClient(NamespacedClient):
         :arg ids: A comma-separated list of IDs of API keys to clear
             from the cache
         """
+        client, params = _deprecated_options(self, params)
         if ids in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'ids'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path("_security", "api_key", ids, "_clear_cache"),
             params=params,
@@ -591,10 +620,11 @@ class SecurityClient(NamespacedClient):
             for a refresh to make this operation visible to search, if `false` then
             do nothing with refreshes.  Valid choices: true, false, wait_for
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             "/_security/api_key/grant",
             params=params,
@@ -615,11 +645,12 @@ class SecurityClient(NamespacedClient):
         :arg service: An identifier for the service name
         :arg name: A comma-separated list of service token names
         """
+        client, params = _deprecated_options(self, params)
         for param in (namespace, service, name):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path(
                 "_security",
@@ -653,11 +684,12 @@ class SecurityClient(NamespacedClient):
             for a refresh to make this operation visible to search, if `false` then
             do nothing with refreshes.  Valid choices: true, false, wait_for
         """
+        client, params = _deprecated_options(self, params)
         for param in (namespace, service):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT",
             _make_path(
                 "_security", "service", namespace, service, "credential", "token", name
@@ -683,11 +715,12 @@ class SecurityClient(NamespacedClient):
             for a refresh to make this operation visible to search, if `false` then
             do nothing with refreshes.  Valid choices: true, false, wait_for
         """
+        client, params = _deprecated_options(self, params)
         for param in (namespace, service, name):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "DELETE",
             _make_path(
                 "_security", "service", namespace, service, "credential", "token", name
@@ -708,7 +741,8 @@ class SecurityClient(NamespacedClient):
         :arg namespace: An identifier for the namespace
         :arg service: An identifier for the service name
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET",
             _make_path("_security", "service", namespace, service),
             params=params,
@@ -727,11 +761,12 @@ class SecurityClient(NamespacedClient):
         :arg namespace: An identifier for the namespace
         :arg service: An identifier for the service name
         """
+        client, params = _deprecated_options(self, params)
         for param in (namespace, service):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "GET",
             _make_path("_security", "service", namespace, service, "credential"),
             params=params,
@@ -745,7 +780,8 @@ class SecurityClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-node-enrollment.html>`_
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", "/_security/enroll/node", params=params, headers=headers
         )
 
@@ -758,10 +794,11 @@ class SecurityClient(NamespacedClient):
 
         :arg body: The logout response to verify
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             "/_security/saml/complete_logout",
             params=params,
@@ -777,7 +814,8 @@ class SecurityClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-kibana-enrollment.html>`_
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", "/_security/enroll/kibana", params=params, headers=headers
         )
 
@@ -791,10 +829,11 @@ class SecurityClient(NamespacedClient):
 
         :arg body: The SAML response to authenticate
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             "/_security/saml/authenticate",
             params=params,
@@ -811,10 +850,11 @@ class SecurityClient(NamespacedClient):
 
         :arg body: The LogoutRequest message
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             "/_security/saml/invalidate",
             params=params,
@@ -832,10 +872,11 @@ class SecurityClient(NamespacedClient):
 
         :arg body: The tokens to invalidate
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST", "/_security/saml/logout", params=params, headers=headers, body=body
         )
 
@@ -849,10 +890,11 @@ class SecurityClient(NamespacedClient):
         :arg body: The realm for which to create the authentication
             request, identified by either its name or the ACS URL
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST", "/_security/saml/prepare", params=params, headers=headers, body=body
         )
 
@@ -868,10 +910,11 @@ class SecurityClient(NamespacedClient):
         :arg realm_name: The name of the SAML realm to get the metadata
             for
         """
+        client, params = _deprecated_options(self, params)
         if realm_name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'realm_name'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "GET",
             _make_path("_security", "saml", "metadata", realm_name),
             params=params,
@@ -887,7 +930,8 @@ class SecurityClient(NamespacedClient):
 
         :arg body: From, size, query, sort and search_after
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "POST",
             "/_security/_query/api_key",
             params=params,

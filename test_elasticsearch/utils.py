@@ -21,6 +21,8 @@ import time
 from pathlib import Path
 from typing import Optional, Tuple
 
+from elastic_transport import TransportError
+
 from elasticsearch import Elasticsearch, NotFoundError, RequestError
 
 SOURCE_DIR = Path(__file__).absolute().parent.parent
@@ -49,7 +51,10 @@ def es_url() -> str:
 
     error = None
     for url in urls_to_try:
-        client = Elasticsearch(url, timeout=3, ca_certs=CA_CERTS)
+        if url.startswith("https://"):
+            client = Elasticsearch(url, ca_certs=CA_CERTS)
+        else:
+            client = Elasticsearch(url)
         try:
             # Check that we get any sort of connection first.
             client.info()
@@ -64,7 +69,7 @@ def es_url() -> str:
                 except ConnectionError:
                     time.sleep(0.1)
 
-        except Exception as e:
+        except TransportError as e:
             if error is None:
                 error = str(e)
         else:
@@ -225,7 +230,7 @@ def wipe_xpack_templates(client):
         try:
             client.indices.delete_template(name=template)
         except NotFoundError as e:
-            if f"index_template [{template}] missing" in str(e.info):
+            if f"index_template [{template}] missing" in str(e):
                 client.indices.delete_index_template(name=template)
 
     # Delete component templates, need to retry because sometimes

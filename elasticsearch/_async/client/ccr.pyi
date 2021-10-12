@@ -17,7 +17,7 @@
 
 from typing import Any, Collection, MutableMapping, Optional, Tuple, Union
 
-from .utils import NamespacedClient
+from ._base import NamespacedClient
 
 class CcrClient(NamespacedClient):
     async def delete_auto_follow_pattern(

@@ -19,14 +19,12 @@
 
 import logging
 import re
-import sys
 import warnings
 
 from ._version import __versionstr__
 
-_major, _minor, _patch = (
-    int(x) for x in re.search(r"^(\d+)\.(\d+)\.(\d+)", __versionstr__).groups()
-)
+_version_groups = re.search(r"^(\d+)\.(\d+)\.(\d+)", __versionstr__).groups()  # type: ignore
+_major, _minor, _patch = (int(x) for x in _version_groups)
 VERSION = __version__ = (_major, _minor, _patch)
 
 logger = logging.getLogger("elasticsearch")
@@ -34,15 +32,8 @@ logger.addHandler(logging.NullHandler())
 
 from ._async.client import AsyncElasticsearch
 from ._sync.client import Elasticsearch
-from .connection import (
-    AIOHttpConnection,
-    AsyncConnection,
-    Connection,
-    RequestsHttpConnection,
-    Urllib3HttpConnection,
-)
-from .connection_pool import ConnectionPool, ConnectionSelector, RoundRobinSelector
 from .exceptions import (
+    ApiError,
     AuthenticationException,
     AuthorizationException,
     ConflictError,
@@ -51,7 +42,6 @@ from .exceptions import (
     ElasticsearchDeprecationWarning,
     ElasticsearchException,
     ElasticsearchWarning,
-    ImproperlyConfigured,
     NotFoundError,
     RequestError,
     SerializationError,
@@ -59,24 +49,17 @@ from .exceptions import (
     TransportError,
     UnsupportedProductError,
 )
-from .serializer import JSONSerializer
-from .transport import AsyncTransport, Transport
+from .serializer import JSONSerializer, JsonSerializer
 
 # Only raise one warning per deprecation message so as not
 # to spam up the user if the same action is done multiple times.
-warnings.simplefilter("default", category=ElasticsearchDeprecationWarning, append=True)
+warnings.simplefilter("default", category=ElasticsearchWarning, append=True)
 
 __all__ = [
+    "ApiError",
+    "AsyncElasticsearch",
     "Elasticsearch",
-    "Transport",
-    "ConnectionPool",
-    "ConnectionSelector",
-    "RoundRobinSelector",
-    "JSONSerializer",
-    "Connection",
-    "RequestsHttpConnection",
-    "Urllib3HttpConnection",
-    "ImproperlyConfigured",
+    "JsonSerializer",
     "ElasticsearchException",
     "SerializationError",
     "TransportError",

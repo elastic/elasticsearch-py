@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
+from ._base import NamespacedClient
+from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
 
 
 class IlmClient(NamespacedClient):
@@ -29,10 +30,11 @@ class IlmClient(NamespacedClient):
 
         :arg policy: The name of the index lifecycle policy
         """
+        client, params = _deprecated_options(self, params)
         if policy in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'policy'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "DELETE",
             _make_path("_ilm", "policy", policy),
             params=params,
@@ -53,10 +55,11 @@ class IlmClient(NamespacedClient):
         :arg only_managed: filters the indices included in the response
             to ones managed by ILM
         """
+        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "GET", _make_path(index, "_ilm", "explain"), params=params, headers=headers
         )
 
@@ -70,7 +73,8 @@ class IlmClient(NamespacedClient):
 
         :arg policy: The name of the index lifecycle policy
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "GET", _make_path("_ilm", "policy", policy), params=params, headers=headers
         )
 
@@ -81,7 +85,8 @@ class IlmClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-get-status.html>`_
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "GET", "/_ilm/status", params=params, headers=headers
         )
 
@@ -96,10 +101,11 @@ class IlmClient(NamespacedClient):
             change
         :arg body: The new lifecycle step to move to
         """
+        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST",
             _make_path("_ilm", "move", index),
             params=params,
@@ -117,10 +123,11 @@ class IlmClient(NamespacedClient):
         :arg policy: The name of the index lifecycle policy
         :arg body: The lifecycle policy definition to register
         """
+        client, params = _deprecated_options(self, params)
         if policy in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'policy'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "PUT",
             _make_path("_ilm", "policy", policy),
             params=params,
@@ -137,10 +144,11 @@ class IlmClient(NamespacedClient):
 
         :arg index: The name of the index to remove policy on
         """
+        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST", _make_path(index, "_ilm", "remove"), params=params, headers=headers
         )
 
@@ -154,10 +162,11 @@ class IlmClient(NamespacedClient):
         :arg index: The name of the indices (comma-separated) whose
             failed lifecycle step is to be retry
         """
+        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST", _make_path(index, "_ilm", "retry"), params=params, headers=headers
         )
 
@@ -168,7 +177,8 @@ class IlmClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-start.html>`_
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "POST", "/_ilm/start", params=params, headers=headers
         )
 
@@ -180,7 +190,8 @@ class IlmClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-stop.html>`_
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "POST", "/_ilm/stop", params=params, headers=headers
         )
 
@@ -199,7 +210,8 @@ class IlmClient(NamespacedClient):
             providing a way to retrieve the ILM policies and indices that need to be
             migrated. The default is false
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "POST",
             "/_ilm/migrate_to_data_tiers",
             params=params,

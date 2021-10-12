@@ -31,6 +31,7 @@ SOURCE_FILES = (
 
 @nox.session(python=["3.6", "3.7", "3.8", "3.9", "3.10"])
 def test(session):
+    session.install("git+https://github.com/elastic/elastic-transport-python")
     session.install(".")
     session.install("-r", "dev-requirements.txt")
 
@@ -75,7 +76,8 @@ def lint(session):
     session.run("python", "utils/license-headers.py", "check", *SOURCE_FILES)
 
     # Workaround to make '-r' to still work despite uninstalling aiohttp below.
-    session.install("aiohttp")
+    session.install("git+https://github.com/elastic/elastic-transport-python")
+    session.install(".[async,requests]")
 
     # Run mypy on the package and then the type examples separately for
     # the two different mypy use-cases, ourselves and our users.

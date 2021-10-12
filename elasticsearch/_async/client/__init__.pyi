@@ -18,7 +18,9 @@
 import logging
 from typing import Any, Collection, MutableMapping, Optional, Tuple, Type, Union
 
-from ...transport import AsyncTransport
+from elastic_transport import AsyncTransport
+
+from ._base import BaseClient
 from .async_search import AsyncSearchClient
 from .autoscaling import AutoscalingClient
 from .cat import CatClient
@@ -50,13 +52,11 @@ from .tasks import TasksClient
 from .text_structure import TextStructureClient
 from .transform import TransformClient
 from .watcher import WatcherClient
-
-# xpack APIs
 from .xpack import XPackClient
 
 logger: logging.Logger
 
-class AsyncElasticsearch:
+class AsyncElasticsearch(BaseClient):
     transport: AsyncTransport
 
     async_search: AsyncSearchClient

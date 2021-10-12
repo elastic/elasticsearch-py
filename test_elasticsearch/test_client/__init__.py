@@ -18,45 +18,8 @@
 from __future__ import unicode_literals
 
 from elasticsearch import Elasticsearch
-from elasticsearch._sync.client import _normalize_hosts
 
 from ..test_cases import DummyTransportTestCase
-
-
-class TestNormalizeHosts:
-    def test_none_uses_defaults(self):
-        assert [{}] == _normalize_hosts(None)
-
-    def test_strings_are_used_as_hostnames(self):
-        assert [{"host": "elastic.co"}] == _normalize_hosts(["elastic.co"])
-
-    def test_strings_are_parsed_for_port_and_user(self):
-        assert [
-            {"host": "elastic.co", "port": 42},
-            {"host": "elastic.co", "http_auth": "user:secre]"},
-        ] == _normalize_hosts(["elastic.co:42", "user:secre%5D@elastic.co"])
-
-    def test_strings_are_parsed_for_scheme(self):
-        assert [
-            {"host": "elastic.co", "port": 42, "use_ssl": True},
-            {
-                "host": "elastic.co",
-                "http_auth": "user:secret",
-                "use_ssl": True,
-                "port": 443,
-                "url_prefix": "/prefix",
-            },
-        ] == _normalize_hosts(
-            ["https://elastic.co:42", "https://user:secret@elastic.co/prefix"]
-        )
-
-    def test_dicts_are_left_unchanged(self):
-        assert [{"host": "local", "extra": 123}] == _normalize_hosts(
-            [{"host": "local", "extra": 123}]
-        )
-
-    def test_single_string_is_wrapped_in_list(self):
-        assert [{"host": "elastic.co"}] == _normalize_hosts("elastic.co")
 
 
 class TestClient(DummyTransportTestCase):

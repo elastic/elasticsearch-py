@@ -17,7 +17,7 @@
 
 
 import base64
-import weakref
+import warnings
 from datetime import date, datetime
 from functools import wraps
 from typing import (
@@ -25,17 +25,26 @@ from typing import (
     Any,
     Callable,
     Collection,
-    Dict,
     List,
+    Mapping,
+    MutableMapping,
     Optional,
     Tuple,
     TypeVar,
     Union,
 )
 
-from ...compat import quote, string_types, to_bytes, to_str, unquote, urlparse
+from elastic_transport import NodeConfig
+from elastic_transport.client_utils import (
+    DEFAULT,
+    client_meta_version,
+    parse_cloud_id,
+    url_to_node_config,
+)
+
+from ..._version import __versionstr__
+from ...compat import quote, string_types, to_bytes, to_str
 from ...serializer import Serializer
-from ...transport import Transport
 
 if TYPE_CHECKING:
     from ... import Elasticsearch
@@ -43,55 +52,133 @@ if TYPE_CHECKING:
 # parts of URL to be omitted
 SKIP_IN_PATH: Collection[Any] = (None, "", b"", [], ())
 
+# To be passed to 'client_meta_service' on the Transport
+CLIENT_META_SERVICE = ("es", client_meta_version(__versionstr__))
 
-def _normalize_hosts(
-    hosts: Optional[Union[str, Collection[Union[str, Dict[str, Any]]]]]
-) -> List[Dict[str, Any]]:
-    """
-    Helper function to transform hosts argument to
-    :class:`~elasticsearch.Elasticsearch` to a list of dicts.
-    """
-    # if hosts are empty, just defer to defaults down the line
-    if hosts is None:
-        return [{}]
+_TYPE_HOSTS = Union[str, List[Union[str, Mapping[str, Union[str, int]], NodeConfig]]]
 
-    # passed in just one string
-    if isinstance(hosts, string_types):
-        hosts = [hosts]
 
-    out: List[Dict[str, Any]] = []
-    # normalize hosts to dicts
+def client_node_configs(
+    hosts: _TYPE_HOSTS, cloud_id: str, **kwargs: Any
+) -> List[NodeConfig]:
+    if cloud_id is not None:
+        if hosts is not None:
+            raise ValueError(
+                "The 'cloud_id' and 'hosts' parameters are mutually exclusive"
+            )
+        node_configs = cloud_id_to_node_configs(cloud_id)
+    else:
+        node_configs = hosts_to_node_configs(hosts)
+
+    # Remove all values which are 'DEFAULT' to avoid overwriting actual defaults.
+    node_options = {k: v for k, v in kwargs.items() if v is not DEFAULT}
+    return [node_config.replace(**node_options) for node_config in node_configs]
+
+
+def hosts_to_node_configs(hosts: _TYPE_HOSTS) -> List[NodeConfig]:
+    """Transforms the many formats of 'hosts' into NodeConfigs"""
+
+    # To make the logic here simpler we reroute everything to be List[X]
+    if not isinstance(hosts, (tuple, list)):
+        return hosts_to_node_configs([hosts])
+
+    node_configs: List[NodeConfig] = []
     for host in hosts:
-        if isinstance(host, string_types):
-            if "://" not in host:
-                host = f"//{host}"
+        if isinstance(host, NodeConfig):
+            node_configs.append(host)
 
-            parsed_url = urlparse(host)
-            h: Dict[str, Any] = {"host": parsed_url.hostname}
+        elif isinstance(host, str):
+            node_configs.append(url_to_node_config(host))
 
-            if parsed_url.port:
-                h["port"] = parsed_url.port
-
-            if parsed_url.scheme == "https":
-                h["port"] = parsed_url.port or 443
-                h["use_ssl"] = True
-
-            if parsed_url.username or parsed_url.password:
-                h["http_auth"] = "{}:{}".format(
-                    unquote(parsed_url.username or ""),
-                    unquote(parsed_url.password or ""),
-                )
-
-            if parsed_url.path and parsed_url.path != "/":
-                h["url_prefix"] = parsed_url.path
-
-            out.append(h)
+        elif isinstance(host, Mapping):
+            node_configs.append(host_mapping_to_node_config(host))
         else:
-            out.append(host)  # type: ignore
-    return out
+            raise ValueError(
+                "'hosts' must be a list of URLs, NodeConfigs, or dictionaries"
+            )
+
+    return node_configs
 
 
-def _escape(value: Any) -> Union[str, bytes]:
+def host_mapping_to_node_config(host: Mapping[str, Union[str, int]]) -> NodeConfig:
+    """Converts an old-style dictionary host specification to a NodeConfig"""
+
+    allow_hosts_keys = {
+        "scheme",
+        "host",
+        "port",
+        "path_prefix",
+        "url_prefix",
+        "use_ssl",
+    }
+    disallowed_keys = set(host.keys()).difference(allow_hosts_keys)
+    if disallowed_keys:
+        bad_keys_used = "', '".join(sorted(disallowed_keys))
+        allowed_keys = "', '".join(sorted(allow_hosts_keys))
+        raise ValueError(
+            f"Can't specify the options '{bad_keys_used}' via a "
+            f"dictionary in 'hosts', only '{allowed_keys}' options "
+            "are allowed"
+        )
+
+    options = dict(host)
+
+    # Handle the deprecated option 'use_ssl'
+    if "use_ssl" in options:
+        use_ssl = options.pop("use_ssl")
+        if not isinstance(use_ssl, bool):
+            raise TypeError("'use_ssl' must be of type 'bool'")
+
+        # Ensure the user isn't specifying scheme=http use_ssl=True or vice-versa
+        if "scheme" in options and (options["scheme"] == "https") != use_ssl:
+            raise ValueError(
+                f"Cannot specify conflicting options 'scheme={options['scheme']}' "
+                f"and 'use_ssl={use_ssl}'. Use 'scheme' only instead"
+            )
+
+        warnings.warn(
+            "The 'use_ssl' option is no longer needed as specifying a 'scheme' is now required",
+            category=DeprecationWarning,
+            stacklevel=3,
+        )
+        options.setdefault("scheme", "https" if use_ssl else "http")
+
+    # Handle the deprecated option 'url_prefix'
+    if "url_prefix" in options:
+        if "path_prefix" in options:
+            raise ValueError(
+                "Cannot specify conflicting options 'url_prefix' and "
+                "'path_prefix'. Use 'path_prefix' only instead"
+            )
+
+        warnings.warn(
+            "The 'url_prefix' option is deprecated in favor of 'path_prefix'",
+            category=DeprecationWarning,
+            stacklevel=3,
+        )
+        options["path_prefix"] = options.pop("url_prefix")
+
+    return NodeConfig(**options)  # type: ignore
+
+
+def cloud_id_to_node_configs(cloud_id: str) -> List[NodeConfig]:
+    """Transforms an Elastic Cloud ID into a NodeConfig"""
+    es_addr = parse_cloud_id(cloud_id).es_address
+    if es_addr is None or not all(es_addr):
+        raise ValueError("Cloud ID missing host and port information for Elasticsearch")
+    host, port = es_addr
+    return [
+        NodeConfig(
+            scheme="https",
+            host=host,
+            port=port,
+            http_compress=True,
+            # TODO: Set TLSv1.2+
+        )
+    ]
+
+
+def _escape(value: Any) -> Union[bytes, str]:
     """
     Escape a single value of a URL string or a query parameter. If it is a list
     or tuple, turn it into a comma-separated string first.
@@ -109,7 +196,6 @@ def _escape(value: Any) -> Union[str, bytes]:
     elif isinstance(value, bool):
         value = str(value).lower()
 
-    # don't decode bytestrings
     elif isinstance(value, bytes):
         return value
 
@@ -146,7 +232,7 @@ T = TypeVar("T")
 
 def query_params(
     *es_query_params: str,
-) -> Callable[[Callable[..., T]], Callable[..., T]]:
+) -> Callable[[T], T]:
     """
     Decorator that pops all accepted parameters from method's kwargs and puts
     them in the params argument.
@@ -198,7 +284,7 @@ def _bulk_body(
 ) -> Union[str, bytes]:
     # if not passed in a string, serialize items and join by newline
     if not isinstance(body, string_types):
-        body = "\n".join(map(serializer.dumps, body))
+        body = b"\n".join(map(serializer.dumps, body))
 
     # bulk body must end with a newline
     if isinstance(body, bytes):
@@ -222,20 +308,56 @@ def _base64_auth_header(
     return to_str(auth_value)
 
 
-class NamespacedClient:
-    client: "Elasticsearch"
+def _deprecated_options(
+    client: "Elasticsearch",
+    params: Optional[MutableMapping[str, Any]],
+) -> Tuple["Elasticsearch", Optional[Mapping[str, Any]]]:
+    """Applies the deprecated logic for per-request options. When passed deprecated options
+    this function will convert them into a Elasticsearch.options() or encoded params"""
+    if params:
+        options_kwargs = {}
+        opaque_id = params.pop("opaque_id", None)
+        api_key = params.pop("api_key", None)
+        http_auth = params.pop("http_auth", None)
+        headers = {}
+        if opaque_id is not None:
+            headers["x-opaque-id"] = opaque_id
+        if http_auth is not None and api_key is not None:
+            raise ValueError(
+                "Only one of 'http_auth' and 'api_key' may be passed at a time"
+            )
+        elif api_key is not None:
+            headers["authorization"] = f"ApiKey {_base64_auth_header(api_key)}"
+        elif http_auth is not None:
+            if isinstance(http_auth, str):
+                headers["authorization"] = f"Bearer {_base64_auth_header(http_auth)}"
+            else:
+                headers["authorization"] = f"Basic {_base64_auth_header(http_auth)}"
+        if headers:
+            options_kwargs["headers"] = headers
 
-    def __init__(self, client: "Elasticsearch") -> None:
-        self.client = client
+        request_timeout = params.pop("request_timeout", None)
+        if request_timeout is not None:
+            options_kwargs["request_timeout"] = request_timeout
 
-    @property
-    def transport(self) -> Transport:
-        return self.client.transport
+        ignore = params.pop("ignore", None)
+        if ignore is not None:
+            options_kwargs["ignore_status"] = ignore
 
+        if options_kwargs:
+            warnings.warn(
+                "Passing transport options in the API method is deprecated. Use 'Elasticsearch.options()' instead.",
+                category=DeprecationWarning,
+                stacklevel=3,
+            )
+            client = client.options(**options_kwargs)  # type: ignore
 
-class AddonClient(NamespacedClient):
-    @classmethod
-    def infect_client(cls, client: "Elasticsearch") -> "Elasticsearch":
-        addon = cls(weakref.proxy(client))
-        setattr(client, cls.namespace, addon)  # type: ignore
-        return client
+        # If there are any query params left we warn about API parameters.
+        if params:
+            warnings.warn(
+                "Passing options via 'params' is deprecated, instead use API parameters directly.",
+                category=DeprecationWarning,
+                stacklevel=3,
+            )
+
+    return client, params or None

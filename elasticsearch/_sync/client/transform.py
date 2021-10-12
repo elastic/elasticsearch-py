@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
+from ._base import NamespacedClient
+from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
 
 
 class TransformClient(NamespacedClient):
@@ -31,12 +32,13 @@ class TransformClient(NamespacedClient):
             its current state. The default value is `false`, meaning that the
             transform must be `stopped` before it can be deleted.
         """
+        client, params = _deprecated_options(self, params)
         if transform_id in SKIP_IN_PATH:
             raise ValueError(
                 "Empty value passed for a required argument 'transform_id'."
             )
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "DELETE",
             _make_path("_transform", transform_id),
             params=params,
@@ -62,11 +64,11 @@ class TransformClient(NamespacedClient):
         :arg size: specifies a max number of transforms to get, defaults
             to 100
         """
-        # from is a reserved word so it cannot be used, use from_ instead
-        if "from_" in params:
+        client, params = _deprecated_options(self, params)
+        if params and "from_" in params:
             params["from"] = params.pop("from_")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "GET",
             _make_path("_transform", transform_id),
             params=params,
@@ -89,8 +91,8 @@ class TransformClient(NamespacedClient):
         :arg size: specifies a max number of transform stats to get,
             defaults to 100
         """
-        # from is a reserved word so it cannot be used, use from_ instead
-        if "from_" in params:
+        client, params = _deprecated_options(self, params)
+        if params and "from_" in params:
             params["from"] = params.pop("from_")
 
         if transform_id in SKIP_IN_PATH:
@@ -98,7 +100,7 @@ class TransformClient(NamespacedClient):
                 "Empty value passed for a required argument 'transform_id'."
             )
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "GET",
             _make_path("_transform", transform_id, "_stats"),
             params=params,
@@ -117,7 +119,8 @@ class TransformClient(NamespacedClient):
         :arg body: The definition for the transform to preview
         :arg transform_id: The id of the transform to preview.
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "POST",
             _make_path("_transform", transform_id, "_preview"),
             params=params,
@@ -137,11 +140,12 @@ class TransformClient(NamespacedClient):
         :arg defer_validation: If validations should be deferred until
             transform starts, defaults to false.
         """
+        client, params = _deprecated_options(self, params)
         for param in (transform_id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "PUT",
             _make_path("_transform", transform_id),
             params=params,
@@ -160,12 +164,13 @@ class TransformClient(NamespacedClient):
         :arg timeout: Controls the time to wait for the transform to
             start
         """
+        client, params = _deprecated_options(self, params)
         if transform_id in SKIP_IN_PATH:
             raise ValueError(
                 "Empty value passed for a required argument 'transform_id'."
             )
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST",
             _make_path("_transform", transform_id, "_start"),
             params=params,
@@ -198,12 +203,13 @@ class TransformClient(NamespacedClient):
         :arg wait_for_completion: Whether to wait for the transform to
             fully stop before returning or not. Default to false
         """
+        client, params = _deprecated_options(self, params)
         if transform_id in SKIP_IN_PATH:
             raise ValueError(
                 "Empty value passed for a required argument 'transform_id'."
             )
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST",
             _make_path("_transform", transform_id, "_stop"),
             params=params,
@@ -222,14 +228,30 @@ class TransformClient(NamespacedClient):
         :arg defer_validation: If validations should be deferred until
             transform starts, defaults to false.
         """
+        client, params = _deprecated_options(self, params)
         for param in (transform_id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST",
             _make_path("_transform", transform_id, "_update"),
             params=params,
             headers=headers,
             body=body,
+        )
+
+    @query_params("dry_run")
+    def upgrade_transforms(self, params=None, headers=None):
+        """
+        Upgrades all transforms.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/upgrade-transforms.html>`_
+
+        :arg dry_run: Whether to only check for updates but don't
+            execute
+        """
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
+            "POST", "/_transform/_upgrade", params=params, headers=headers
         )

@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
+from ._base import NamespacedClient
+from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
 
 
 class LogstashClient(NamespacedClient):
@@ -28,10 +29,11 @@ class LogstashClient(NamespacedClient):
 
         :arg id: The ID of the Pipeline
         """
+        client, params = _deprecated_options(self, params)
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "DELETE",
             _make_path("_logstash", "pipeline", id),
             params=params,
@@ -47,10 +49,11 @@ class LogstashClient(NamespacedClient):
 
         :arg id: A comma-separated list of Pipeline IDs
         """
+        client, params = _deprecated_options(self, params)
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "GET",
             _make_path("_logstash", "pipeline", id),
             params=params,
@@ -67,11 +70,12 @@ class LogstashClient(NamespacedClient):
         :arg id: The ID of the Pipeline
         :arg body: The Pipeline to add or update
         """
+        client, params = _deprecated_options(self, params)
         for param in (id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT",
             _make_path("_logstash", "pipeline", id),
             params=params,

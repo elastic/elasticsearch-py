@@ -15,25 +15,34 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+from elastic_transport import ApiResponseMeta
+
 from elasticsearch.exceptions import TransportError
+
+error_meta = ApiResponseMeta(
+    status=500, http_version="1.1", headers={}, duration=0.0, node=None
+)
 
 
 class TestTransformError:
     def test_transform_error_parse_with_error_reason(self):
         e = TransportError(
-            500,
-            "InternalServerError",
-            {"error": {"root_cause": [{"type": "error", "reason": "error reason"}]}},
+            message="InternalServerError",
+            meta=error_meta,
+            body={
+                "error": {"root_cause": [{"type": "error", "reason": "error reason"}]}
+            },
         )
 
-        assert str(e) == "TransportError(500, 'InternalServerError', 'error reason')"
+        assert str(e) == "ApiError(500, 'InternalServerError', 'error reason')"
 
     def test_transform_error_parse_with_error_string(self):
         e = TransportError(
-            500, "InternalServerError", {"error": "something error message"}
+            message="InternalServerError",
+            meta=error_meta,
+            body={"error": "something error message"},
         )
 
         assert (
-            str(e)
-            == "TransportError(500, 'InternalServerError', 'something error message')"
+            str(e) == "ApiError(500, 'InternalServerError', 'something error message')"
         )

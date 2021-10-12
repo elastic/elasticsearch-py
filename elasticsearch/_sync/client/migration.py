@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import NamespacedClient, _make_path, query_params
+from ._base import NamespacedClient
+from .utils import _deprecated_options, _make_path, query_params
 
 
 class MigrationClient(NamespacedClient):
@@ -30,7 +31,8 @@ class MigrationClient(NamespacedClient):
 
         :arg index: Index pattern
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "GET",
             _make_path(index, "_migration", "deprecations"),
             params=params,
@@ -44,7 +46,8 @@ class MigrationClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/migration-api-feature-upgrade.html>`_
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "GET", "/_migration/system_features", params=params, headers=headers
         )
 
@@ -55,6 +58,7 @@ class MigrationClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/migration-api-feature-upgrade.html>`_
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "POST", "/_migration/system_features", params=params, headers=headers
         )

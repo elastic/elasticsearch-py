@@ -17,6 +17,8 @@
 
 from collections import defaultdict
 
+from elastic_transport import ApiResponseMeta, HttpHeaders
+
 from elasticsearch import Elasticsearch
 
 
@@ -27,18 +29,29 @@ class DummyTransport(object):
         self.call_count = 0
         self.calls = defaultdict(list)
 
-    def perform_request(self, method, url, params=None, headers=None, body=None):
-        resp = 200, {}
+    def perform_request(self, method, target, **kwargs):
+        status, resp = 200, {}
         if self.responses:
-            resp = self.responses[self.call_count]
+            status, resp = self.responses[self.call_count]
         self.call_count += 1
-        self.calls[(method, url)].append((params, headers, body))
-        return resp
+        self.calls[(method, target)].append(kwargs)
+        return (
+            ApiResponseMeta(
+                status=status,
+                http_version="1.1",
+                headers=HttpHeaders({"X-elastic-product": "Elasticsearch"}),
+                duration=0.0,
+                node=None,
+            ),
+            resp,
+        )
 
 
 class DummyTransportTestCase:
     def setup_method(self, _):
-        self.client = Elasticsearch(transport_class=DummyTransport)
+        self.client = Elasticsearch(
+            "http://localhost:9200", transport_class=DummyTransport
+        )
 
     def assert_call_count_equals(self, count):
         assert count == self.client.transport.call_count

@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
+from ._base import NamespacedClient
+from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
 
 
 class EnrichClient(NamespacedClient):
@@ -28,10 +29,11 @@ class EnrichClient(NamespacedClient):
 
         :arg name: The name of the enrich policy
         """
+        client, params = _deprecated_options(self, params)
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "DELETE",
             _make_path("_enrich", "policy", name),
             params=params,
@@ -49,10 +51,11 @@ class EnrichClient(NamespacedClient):
         :arg wait_for_completion: Should the request should block until
             the execution is complete.  Default: True
         """
+        client, params = _deprecated_options(self, params)
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "PUT",
             _make_path("_enrich", "policy", name, "_execute"),
             params=params,
@@ -68,7 +71,8 @@ class EnrichClient(NamespacedClient):
 
         :arg name: A comma-separated list of enrich policy names
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "GET", _make_path("_enrich", "policy", name), params=params, headers=headers
         )
 
@@ -82,11 +86,12 @@ class EnrichClient(NamespacedClient):
         :arg name: The name of the enrich policy
         :arg body: The enrich policy to register
         """
+        client, params = _deprecated_options(self, params)
         for param in (name, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "PUT",
             _make_path("_enrich", "policy", name),
             params=params,
@@ -102,6 +107,7 @@ class EnrichClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/enrich-stats-api.html>`_
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "GET", "/_enrich/_stats", params=params, headers=headers
         )

@@ -17,8 +17,15 @@
 
 
 import logging
+import warnings
+from typing import Optional
 
-from ...transport import Transport, TransportError
+from elastic_transport import Transport, TransportError
+from elastic_transport.client_utils import DEFAULT
+
+from ...exceptions import NotFoundError
+from ...serializer import DEFAULT_SERIALIZERS
+from ._base import BaseClient
 from .async_search import AsyncSearchClient
 from .autoscaling import AutoscalingClient
 from .cat import CatClient
@@ -50,14 +57,22 @@ from .ssl import SslClient
 from .tasks import TasksClient
 from .text_structure import TextStructureClient
 from .transform import TransformClient
-from .utils import SKIP_IN_PATH, _bulk_body, _make_path, _normalize_hosts, query_params
+from .utils import (
+    _TYPE_HOSTS,
+    CLIENT_META_SERVICE,
+    SKIP_IN_PATH,
+    _deprecated_options,
+    _make_path,
+    client_node_configs,
+    query_params,
+)
 from .watcher import WatcherClient
 from .xpack import XPackClient
 
 logger = logging.getLogger("elasticsearch")
 
 
-class Elasticsearch:
+class Elasticsearch(BaseClient):
     """
     Elasticsearch low-level client. Provides a straightforward mapping from
     Python to ES REST endpoints.
@@ -73,12 +88,6 @@ class Elasticsearch:
     :class:`~elasticsearch.client.TasksClient` respectively. This is the
     preferred (and only supported) way to get access to those classes and their
     methods.
-
-    You can specify your own connection class which should be used by providing
-    the ``connection_class`` parameter::
-
-        # create connection to localhost using the ThriftConnection
-        es = Elasticsearch(connection_class=ThriftConnection)
 
     If you want to turn on :ref:`sniffing` you have several options (described
     in :class:`~elasticsearch.Transport`)::
@@ -111,7 +120,7 @@ class Elasticsearch:
     detailed description of the options)::
 
         es = Elasticsearch(
-            ['localhost:443', 'other_host:443'],
+            ['https://localhost:443', 'https://other_host:443'],
             # turn on SSL
             use_ssl=True,
             # make sure we verify SSL certificates
@@ -125,7 +134,7 @@ class Elasticsearch:
     detailed description of the options)::
 
         es = Elasticsearch(
-            ['localhost:443', 'other_host:443'],
+            ['https://localhost:443', 'https://other_host:443'],
             # turn on SSL
             use_ssl=True,
             # no verify SSL certificates
@@ -139,7 +148,7 @@ class Elasticsearch:
     detailed description of the options)::
 
         es = Elasticsearch(
-            ['localhost:443', 'other_host:443'],
+            ['https://localhost:443', 'https://other_host:443'],
             # turn on SSL
             use_ssl=True,
             # make sure we verify SSL certificates
@@ -163,41 +172,153 @@ class Elasticsearch:
             verify_certs=True
         )
 
-    By default, `JSONSerializer
-    <https://github.com/elastic/elasticsearch-py/blob/main/elasticsearch/serializer.py>`_
-    is used to encode all outgoing requests.
+    By default, ``JsonSerializer`` is used to encode all outgoing requests.
     However, you can implement your own custom serializer::
 
-        from elasticsearch.serializer import JSONSerializer
+        from elasticsearch.serializer import JsonSerializer
 
-        class SetEncoder(JSONSerializer):
+        class SetEncoder(JsonSerializer):
             def default(self, obj):
                 if isinstance(obj, set):
                     return list(obj)
                 if isinstance(obj, Something):
                     return 'CustomSomethingRepresentation'
-                return JSONSerializer.default(self, obj)
+                return JsonSerializer.default(self, obj)
 
         es = Elasticsearch(serializer=SetEncoder())
 
     """
 
-    def __init__(self, hosts=None, transport_class=Transport, **kwargs):
-        """
-        :arg hosts: list of nodes, or a single node, we should connect to.
-            Node should be a dictionary ({"host": "localhost", "port": 9200}),
-            the entire dictionary will be passed to the :class:`~elasticsearch.Connection`
-            class as kwargs, or a string in the format of ``host[:port]`` which will be
-            translated to a dictionary automatically.  If no value is given the
-            :class:`~elasticsearch.Connection` class defaults will be used.
+    def __init__(
+        self,
+        hosts: Optional[_TYPE_HOSTS] = None,
+        *,
+        # API
+        cloud_id: Optional[str] = None,
+        api_key=None,
+        basic_auth=None,
+        bearer_auth=None,
+        opaque_id=None,
+        # Node
+        headers=DEFAULT,
+        connections_per_node=DEFAULT,
+        http_compress=DEFAULT,
+        verify_certs=DEFAULT,
+        ca_certs=DEFAULT,
+        client_cert=DEFAULT,
+        client_key=DEFAULT,
+        ssl_assert_hostname=DEFAULT,
+        ssl_assert_fingerprint=DEFAULT,
+        ssl_version=DEFAULT,
+        ssl_context=DEFAULT,
+        ssl_show_warn=DEFAULT,
+        # Transport
+        transport_class=Transport,
+        request_timeout=DEFAULT,
+        node_class=DEFAULT,
+        node_pool_class=DEFAULT,
+        randomize_nodes_in_pool=DEFAULT,
+        node_selector_class=DEFAULT,
+        dead_backoff_factor=DEFAULT,
+        max_dead_backoff=DEFAULT,
+        serializers=DEFAULT,
+        default_mimetype="application/json",
+        max_retries=DEFAULT,
+        retry_on_status=DEFAULT,
+        retry_on_timeout=DEFAULT,
+        sniff_on_start=DEFAULT,
+        sniff_before_requests=DEFAULT,
+        sniff_on_node_failure=DEFAULT,
+        sniff_timeout=DEFAULT,
+        min_delay_between_sniffing=DEFAULT,
+        meta_header=DEFAULT,
+        # Deprecated
+        timeout=DEFAULT,
+        # Internal use only
+        _transport: Optional[Transport] = None,
+    ) -> None:
+        if hosts is None and cloud_id is None and _transport is None:
+            raise ValueError("Either 'hosts' or 'cloud_id' must be specified")
 
-        :arg transport_class: :class:`~elasticsearch.Transport` subclass to use.
+        if timeout is not DEFAULT:
+            if request_timeout is not DEFAULT:
+                raise ValueError(
+                    "Can't specify both 'timeout' and 'request_timeout', "
+                    "instead only specify 'request_timeout'"
+                )
+            warnings.warn(
+                "The 'timeout' parameter is deprecated in favor of 'request_timeout'",
+                category=DeprecationWarning,
+                stacklevel=2,
+            )
+            request_timeout = timeout
 
-        :arg kwargs: any additional arguments will be passed on to the
-            :class:`~elasticsearch.Transport` class and, subsequently, to the
-            :class:`~elasticsearch.Connection` instances.
-        """
-        self.transport = transport_class(_normalize_hosts(hosts), **kwargs)
+        if _transport is None:
+            node_configs = client_node_configs(
+                hosts,
+                cloud_id=cloud_id,
+                headers=headers,
+                connections_per_node=connections_per_node,
+                http_compress=http_compress,
+                verify_certs=verify_certs,
+                ca_certs=ca_certs,
+                client_cert=client_cert,
+                client_key=client_key,
+                ssl_assert_hostname=ssl_assert_hostname,
+                ssl_assert_fingerprint=ssl_assert_fingerprint,
+                ssl_version=ssl_version,
+                ssl_context=ssl_context,
+                ssl_show_warn=ssl_show_warn,
+            )
+            transport_kwargs = {}
+            if node_class is not DEFAULT:
+                transport_kwargs["node_class"] = node_class
+            if node_pool_class is not DEFAULT:
+                transport_kwargs["node_pool_class"] = node_class
+            if randomize_nodes_in_pool is not DEFAULT:
+                transport_kwargs["randomize_nodes_in_pool"] = randomize_nodes_in_pool
+            if node_selector_class is not DEFAULT:
+                transport_kwargs["node_selector_class"] = node_selector_class
+            if dead_backoff_factor is not DEFAULT:
+                transport_kwargs["dead_backoff_factor"] = dead_backoff_factor
+            if max_dead_backoff is not DEFAULT:
+                transport_kwargs["max_dead_backoff"] = max_dead_backoff
+            if meta_header is not DEFAULT:
+                transport_kwargs["meta_header"] = meta_header
+            if serializers is DEFAULT:
+                transport_kwargs["serializers"] = DEFAULT_SERIALIZERS
+            else:
+                transport_kwargs["serializers"] = serializers
+            transport_kwargs["default_mimetype"] = default_mimetype
+            if sniff_on_start is not DEFAULT:
+                transport_kwargs["sniff_on_start"] = sniff_on_start
+            if sniff_before_requests is not DEFAULT:
+                transport_kwargs["sniff_before_requests"] = sniff_before_requests
+            if sniff_on_node_failure is not DEFAULT:
+                transport_kwargs["sniff_on_node_failure"] = sniff_on_node_failure
+            if sniff_timeout is not DEFAULT:
+                transport_kwargs["sniff_timeout"] = sniff_timeout
+            if min_delay_between_sniffing is not DEFAULT:
+                transport_kwargs[
+                    "min_delay_between_sniffing"
+                ] = min_delay_between_sniffing
+
+            # These are set per-request so are stored separately.
+            self._request_timeout = request_timeout
+            self._max_retries = max_retries
+            self._retry_on_status = retry_on_status
+            self._retry_on_timeout = retry_on_timeout
+
+            _transport = transport_class(
+                node_configs,
+                client_meta_service=CLIENT_META_SERVICE,
+                **transport_kwargs,
+            )
+
+        super().__init__(_transport)
+
+        if opaque_id is not DEFAULT and opaque_id is not None:
+            self._headers["x-opaque-id"] = opaque_id
 
         # namespaced clients for compatibility with API names
         self.async_search = AsyncSearchClient(self)
@@ -267,10 +388,10 @@ class Elasticsearch:
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/index.html>`_
         """
+        client, params = _deprecated_options(self, params)
         try:
-            return self.transport.perform_request(
-                "HEAD", "/", params=params, headers=headers
-            )
+            client._perform_request("HEAD", "/", params=params, headers=headers)
+            return True
         except TransportError:
             return False
 
@@ -281,9 +402,8 @@ class Elasticsearch:
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/index.html>`_
         """
-        return self.transport.perform_request(
-            "GET", "/", params=params, headers=headers
-        )
+        client, params = _deprecated_options(self, params)
+        return client._perform_request("GET", "/", params=params, headers=headers)
 
     @query_params(
         "pipeline",
@@ -322,6 +442,7 @@ class Elasticsearch:
             otherwise set to any non-negative value less than or equal to the total
             number of copies for the shard (number of replicas + 1)
         """
+        client, params = _deprecated_options(self, params)
         for param in (index, id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
@@ -331,7 +452,7 @@ class Elasticsearch:
         else:
             path = _make_path(index, doc_type, id, "_create")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST" if id in SKIP_IN_PATH else "PUT",
             path,
             params=params,
@@ -389,11 +510,12 @@ class Elasticsearch:
             otherwise set to any non-negative value less than or equal to the total
             number of copies for the shard (number of replicas + 1)
         """
+        client, params = _deprecated_options(self, params)
         for param in (index, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST" if id in SKIP_IN_PATH else "PUT",
             _make_path(index, "_doc", id),
             params=params,
@@ -446,11 +568,12 @@ class Elasticsearch:
             otherwise set to any non-negative value less than or equal to the total
             number of copies for the shard (number of replicas + 1)
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        body = _bulk_body(self.transport.serializer, body)
-        return self.transport.perform_request(
+        headers["content-type"] = "application/x-ndjson"
+        return client._perform_request(
             "POST",
             _make_path(index, doc_type, "_bulk"),
             params=params,
@@ -469,6 +592,7 @@ class Elasticsearch:
             was specified via the scroll_id parameter
         :arg scroll_id: A comma-separated list of scroll IDs to clear
         """
+        client, params = _deprecated_options(self, params)
         if scroll_id in SKIP_IN_PATH and body in SKIP_IN_PATH:
             raise ValueError("You need to supply scroll_id or body.")
         elif scroll_id and not body:
@@ -476,7 +600,7 @@ class Elasticsearch:
         elif scroll_id:
             params["scroll_id"] = scroll_id
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "DELETE", "/_search/scroll", params=params, headers=headers, body=body
         )
 
@@ -534,7 +658,8 @@ class Elasticsearch:
         :arg terminate_after: The maximum count for each shard, upon
             reaching which the query execution will terminate early
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "POST",
             _make_path(index, "_count"),
             params=params,
@@ -582,6 +707,7 @@ class Elasticsearch:
             shard copies, otherwise set to any non-negative value less than or equal
             to the total number of copies for the shard (number of replicas + 1)
         """
+        client, params = _deprecated_options(self, params)
         for param in (index, id):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
@@ -589,7 +715,7 @@ class Elasticsearch:
         if doc_type in SKIP_IN_PATH:
             doc_type = "_doc"
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "DELETE", _make_path(index, doc_type, id), params=params, headers=headers
         )
 
@@ -703,15 +829,15 @@ class Elasticsearch:
         :arg wait_for_completion: Should the request should block until
             the delete by query is complete.  Default: True
         """
-        # from is a reserved word so it cannot be used, use from_ instead
-        if "from_" in params:
+        client, params = _deprecated_options(self, params)
+        if params and "from_" in params:
             params["from"] = params.pop("from_")
 
         for param in (index, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST",
             _make_path(index, "_delete_by_query"),
             params=params,
@@ -731,10 +857,11 @@ class Elasticsearch:
         :arg requests_per_second: The throttle to set on this request in
             floating sub-requests per second. -1 means set no throttle.
         """
+        client, params = _deprecated_options(self, params)
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'task_id'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST",
             _make_path("_delete_by_query", task_id, "_rethrottle"),
             params=params,
@@ -752,10 +879,11 @@ class Elasticsearch:
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         """
+        client, params = _deprecated_options(self, params)
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "DELETE", _make_path("_scripts", id), params=params, headers=headers
         )
 
@@ -798,13 +926,18 @@ class Elasticsearch:
         :arg version_type: Specific version type  Valid choices:
             internal, external, external_gte
         """
+        client, params = _deprecated_options(self, params)
         for param in (index, id):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
-            "HEAD", _make_path(index, "_doc", id), params=params, headers=headers
-        )
+        try:
+            client._perform_request(
+                "HEAD", _make_path(index, "_doc", id), params=params, headers=headers
+            )
+            return True
+        except NotFoundError:
+            return False
 
     @query_params(
         "_source",
@@ -844,16 +977,21 @@ class Elasticsearch:
         :arg version_type: Specific version type  Valid choices:
             internal, external, external_gte
         """
+        client, params = _deprecated_options(self, params)
         for param in (index, id):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
-            "HEAD",
-            _make_path(index, doc_type, id, "_source"),
-            params=params,
-            headers=headers,
-        )
+        try:
+            client._perform_request(
+                "HEAD",
+                _make_path(index, doc_type, id, "_source"),
+                params=params,
+                headers=headers,
+            )
+            return True
+        except NotFoundError:
+            return False
 
     @query_params(
         "_source",
@@ -900,11 +1038,12 @@ class Elasticsearch:
         :arg stored_fields: A comma-separated list of stored fields to
             return in the response
         """
+        client, params = _deprecated_options(self, params)
         for param in (index, id):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST",
             _make_path(index, "_explain", id),
             params=params,
@@ -941,7 +1080,8 @@ class Elasticsearch:
         :arg include_unmapped: Indicates whether unmapped fields should
             be included in the response.
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "POST",
             _make_path(index, "_field_caps"),
             params=params,
@@ -988,11 +1128,12 @@ class Elasticsearch:
         :arg version_type: Specific version type  Valid choices:
             internal, external, external_gte
         """
+        client, params = _deprecated_options(self, params)
         for param in (index, id):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "GET", _make_path(index, "_doc", id), params=params, headers=headers
         )
 
@@ -1006,10 +1147,11 @@ class Elasticsearch:
         :arg id: Script ID
         :arg master_timeout: Specify timeout for connection to master
         """
+        client, params = _deprecated_options(self, params)
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "GET", _make_path("_scripts", id), params=params, headers=headers
         )
 
@@ -1049,11 +1191,12 @@ class Elasticsearch:
         :arg version_type: Specific version type  Valid choices:
             internal, external, external_gte
         """
+        client, params = _deprecated_options(self, params)
         for param in (index, id):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "GET", _make_path(index, "_source", id), params=params, headers=headers
         )
 
@@ -1093,10 +1236,11 @@ class Elasticsearch:
         :arg stored_fields: A comma-separated list of stored fields to
             return in the response
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST",
             _make_path(index, "_mget"),
             params=params,
@@ -1146,11 +1290,12 @@ class Elasticsearch:
         :arg typed_keys: Specify whether aggregation and suggester names
             should be prefixed by their respective types in the response
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        body = _bulk_body(self.transport.serializer, body)
-        return self.transport.perform_request(
+        headers["content-type"] = "application/x-ndjson"
+        return client._perform_request(
             "POST",
             _make_path(index, "_msearch"),
             params=params,
@@ -1171,11 +1316,12 @@ class Elasticsearch:
         :arg master_timeout: Specify timeout for connection to master
         :arg timeout: Explicit operation timeout
         """
+        client, params = _deprecated_options(self, params)
         for param in (id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "PUT",
             _make_path("_scripts", id, context),
             params=params,
@@ -1208,10 +1354,11 @@ class Elasticsearch:
         :arg search_type: Search operation type  Valid choices:
             query_then_fetch, dfs_query_then_fetch
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST",
             _make_path(index, "_rank_eval"),
             params=params,
@@ -1259,10 +1406,11 @@ class Elasticsearch:
         :arg wait_for_completion: Should the request should block until
             the reindex is complete.  Default: True
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST", "/_reindex", params=params, headers=headers, body=body
         )
 
@@ -1277,10 +1425,11 @@ class Elasticsearch:
         :arg requests_per_second: The throttle to set on this request in
             floating sub-requests per second. -1 means set no throttle.
         """
+        client, params = _deprecated_options(self, params)
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'task_id'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST",
             _make_path("_reindex", task_id, "_rethrottle"),
             params=params,
@@ -1297,7 +1446,8 @@ class Elasticsearch:
         :arg body: The search definition template and its params
         :arg id: The id of the stored search template
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "POST",
             _make_path("_render", "template", id),
             params=params,
@@ -1319,7 +1469,8 @@ class Elasticsearch:
 
         :arg body: The script to execute
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "POST",
             "/_scripts/painless/_execute",
             params=params,
@@ -1342,6 +1493,7 @@ class Elasticsearch:
         :arg scroll: Specify how long a consistent view of the index
             should be maintained for scrolled search
         """
+        client, params = _deprecated_options(self, params)
         if scroll_id in SKIP_IN_PATH and body in SKIP_IN_PATH:
             raise ValueError("You need to supply scroll_id or body.")
         elif scroll_id and not body:
@@ -1349,7 +1501,7 @@ class Elasticsearch:
         elif scroll_id:
             params["scroll_id"] = scroll_id
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST", "/_search/scroll", params=params, headers=headers, body=body
         )
 
@@ -1502,11 +1654,11 @@ class Elasticsearch:
         :arg version: Specify whether to return document version as part
             of a hit
         """
-        # from is a reserved word so it cannot be used, use from_ instead
-        if "from_" in params:
+        client, params = _deprecated_options(self, params)
+        if params and "from_" in params:
             params["from"] = params.pop("from_")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST",
             _make_path(index, "_search"),
             params=params,
@@ -1545,7 +1697,8 @@ class Elasticsearch:
             be performed on (default: random)
         :arg routing: Specific routing value
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "GET", _make_path(index, "_search_shards"), params=params, headers=headers
         )
 
@@ -1603,6 +1756,7 @@ class Elasticsearch:
             shard copies, otherwise set to any non-negative value less than or equal
             to the total number of copies for the shard (number of replicas + 1)
         """
+        client, params = _deprecated_options(self, params)
         for param in (index, id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
@@ -1612,7 +1766,7 @@ class Elasticsearch:
         else:
             path = _make_path(index, doc_type, id, "_update")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST", path, params=params, headers=headers, body=body
         )
 
@@ -1628,10 +1782,11 @@ class Elasticsearch:
         :arg requests_per_second: The throttle to set on this request in
             floating sub-requests per second. -1 means set no throttle.
         """
+        client, params = _deprecated_options(self, params)
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'task_id'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST",
             _make_path("_update_by_query", task_id, "_rethrottle"),
             params=params,
@@ -1645,7 +1800,8 @@ class Elasticsearch:
 
         `<https://www.elastic.co/guide/en/elasticsearch/painless/master/painless-contexts.html>`_
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "GET", "/_script_context", params=params, headers=headers
         )
 
@@ -1656,7 +1812,8 @@ class Elasticsearch:
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "GET", "/_script_language", params=params, headers=headers
         )
 
@@ -1689,11 +1846,12 @@ class Elasticsearch:
         :arg typed_keys: Specify whether aggregation and suggester names
             should be prefixed by their respective types in the response
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        body = _bulk_body(self.transport.serializer, body)
-        return self.transport.perform_request(
+        headers["content-type"] = "application/x-ndjson"
+        return client._perform_request(
             "POST",
             _make_path(index, "_msearch", "template"),
             params=params,
@@ -1757,7 +1915,8 @@ class Elasticsearch:
         :arg version_type: Specific version type  Valid choices:
             internal, external, external_gte
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "POST",
             _make_path(index, "_mtermvectors"),
             params=params,
@@ -1817,10 +1976,11 @@ class Elasticsearch:
         :arg typed_keys: Specify whether aggregation and suggester names
             should be prefixed by their respective types in the response
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST",
             _make_path(index, "_search", "template"),
             params=params,
@@ -1874,10 +2034,11 @@ class Elasticsearch:
         :arg version_type: Specific version type  Valid choices:
             internal, external, external_gte
         """
+        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST",
             _make_path(index, "_termvectors", id),
             params=params,
@@ -2002,14 +2163,14 @@ class Elasticsearch:
         :arg wait_for_completion: Should the request should block until
             the update by query operation is complete.  Default: True
         """
-        # from is a reserved word so it cannot be used, use from_ instead
-        if "from_" in params:
+        client, params = _deprecated_options(self, params)
+        if params and "from_" in params:
             params["from"] = params.pop("from_")
 
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST",
             _make_path(index, "_update_by_query"),
             params=params,
@@ -2026,7 +2187,8 @@ class Elasticsearch:
 
         :arg body: a point-in-time id to close
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "DELETE", "/_pit", params=params, headers=headers, body=body
         )
 
@@ -2052,10 +2214,11 @@ class Elasticsearch:
             be performed on (default: random)
         :arg routing: Specific routing value
         """
+        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST", _make_path(index, "_pit"), params=params, headers=headers
         )
 
@@ -2073,10 +2236,11 @@ class Elasticsearch:
         :arg body: field name, string which is the prefix expected in
             matching terms, timeout and size for max number of results
         """
+        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST",
             _make_path(index, "_terms_enum"),
             params=params,
@@ -2128,11 +2292,12 @@ class Elasticsearch:
             match the query should be tracked. A number can also be specified, to
             accurately track the total hit count up to the number.
         """
+        client, params = _deprecated_options(self, params)
         for param in (index, field, zoom, x, y):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST",
             _make_path(index, "_mvt", field, zoom, x, y),
             params=params,

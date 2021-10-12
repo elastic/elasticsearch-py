@@ -17,12 +17,7 @@
 
 from typing import Any, AsyncGenerator, Dict
 
-from elasticsearch import (
-    AIOHttpConnection,
-    AsyncElasticsearch,
-    AsyncTransport,
-    ConnectionPool,
-)
+from elasticsearch import AsyncElasticsearch
 from elasticsearch.helpers import (
     async_bulk,
     async_reindex,
@@ -32,12 +27,6 @@ from elasticsearch.helpers import (
 
 es = AsyncElasticsearch(
     [{"host": "localhost", "port": 9443}],
-    transport_class=AsyncTransport,
-)
-t = AsyncTransport(
-    [{}],
-    connection_class=AIOHttpConnection,
-    connection_pool_class=ConnectionPool,
     sniff_on_start=True,
     sniffer_timeout=0.1,
     sniff_timeout=1,
@@ -45,8 +34,17 @@ t = AsyncTransport(
     max_retries=1,
     retry_on_status={100, 400, 503},
     retry_on_timeout=True,
-    send_get_body_as="source",
 )
+
+
+async def main() -> None:
+    await es.options(
+        request_timeout=1.0, max_retries=0, api_key="api-key-example"
+    ).search(index="test-index")
+
+    await es.indices.options(
+        request_timeout=1.0, max_retries=0, api_key="api-key-example"
+    ).exists(index="test-index")
 
 
 async def async_gen() -> AsyncGenerator[Dict[Any, Any], None]:

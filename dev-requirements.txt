@@ -1,11 +1,20 @@
+git+https://github.com/elastic/elastic-transport-python
+
 requests>=2, <3
+aiohttp
 pytest
 pytest-cov
+pytest-asyncio
 coverage
 mock
 sphinx
 jinja2
 python-dateutil
+unasync
+pyyaml>=5.4
+isort
+black
+twine
 
 # Testing the 'search_mvt' API response
 mapbox-vector-tile
@@ -13,17 +22,3 @@ mapbox-vector-tile
 # No wheels for Python 3.10 yet!
 numpy; python_version<"3.10"
 pandas; python_version<"3.10"
-
-# PyYAML 5.3 dropped support for Python 3.4 while
-# not amending that requirement to the package. :(
-pyyaml>=5.4; python_version>="3.6"
-pyyaml<5.3; python_version<"3.6"
-
-isort
-black; python_version>="3.6"
-twine
-
-# Requirements for testing [async] extra
-aiohttp; python_version>="3.6"
-pytest-asyncio; python_version>="3.6"
-unasync; python_version>="3.6"

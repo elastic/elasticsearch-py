@@ -44,7 +44,7 @@ def test_bulk_works_with_string_body(sync_client):
 
 def test_bulk_works_with_bytestring_body(sync_client):
     docs = (
-        b'{ "index" : { "_index" : "bulk_test_index", "_id" : "2" } }\n{"answer": 42}'
+        b'{ "index" : { "_index" : "bulk_test_index", "_id" : "2" } }\n{"answer": 42}\n'
     )
     resp = sync_client.bulk(body=docs)
 

@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
+from ._base import NamespacedClient
+from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
 
 
 class ShutdownClient(NamespacedClient):
@@ -30,10 +31,11 @@ class ShutdownClient(NamespacedClient):
         :arg node_id: The node id of node to be removed from the
             shutdown state
         """
+        client, params = _deprecated_options(self, params)
         if node_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'node_id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "DELETE",
             _make_path("_nodes", node_id, "shutdown"),
             params=params,
@@ -51,7 +53,8 @@ class ShutdownClient(NamespacedClient):
         :arg node_id: Which node for which to retrieve the shutdown
             status
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET",
             _make_path("_nodes", node_id, "shutdown"),
             params=params,
@@ -69,11 +72,12 @@ class ShutdownClient(NamespacedClient):
         :arg node_id: The node id of node to be shut down
         :arg body: The shutdown type definition to register
         """
+        client, params = _deprecated_options(self, params)
         for param in (node_id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT",
             _make_path("_nodes", node_id, "shutdown"),
             params=params,

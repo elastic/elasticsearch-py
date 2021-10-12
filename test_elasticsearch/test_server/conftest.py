@@ -37,7 +37,6 @@ def sync_client_factory(elasticsearch_url):
         # Configure the client with certificates and optionally
         # an HTTP conn class depending on 'PYTHON_CONNECTION_CLASS' envvar
         kw = {
-            "timeout": 3,
             "ca_certs": CA_CERTS,
             "headers": {"Authorization": "Basic ZWxhc3RpYzpjaGFuZ2VtZQ=="},
         }
