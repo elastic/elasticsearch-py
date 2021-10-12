@@ -20,6 +20,7 @@ import logging
 import sys
 from itertools import chain
 
+from ..connection import AIOHttpConnection
 from ..connection_pool import ConnectionPool
 from ..exceptions import (
     ConnectionError,
@@ -31,7 +32,6 @@ from ..exceptions import (
 from ..serializer import JSONSerializer
 from ..transport import Transport, get_host_info
 from .compat import get_running_loop
-from .http_aiohttp import AIOHttpConnection
 
 logger = logging.getLogger("elasticsearch")
 

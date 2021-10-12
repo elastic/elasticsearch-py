@@ -1350,7 +1350,7 @@ class MlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params()
+    @query_params("defer_definition_decompression")
     def put_trained_model(self, model_id, body, params=None, headers=None):
         """
         Creates an inference trained model.
@@ -1359,6 +1359,9 @@ class MlClient(NamespacedClient):
 
         :arg model_id: The ID of the trained models to store
         :arg body: The trained model configuration
+        :arg defer_definition_decompression: If set to `true` and a
+            `compressed_definition` is provided, the request defers definition
+            decompression and skips relevant validations.
         """
         for param in (model_id, body):
             if param in SKIP_IN_PATH:
@@ -1726,7 +1729,7 @@ class MlClient(NamespacedClient):
             headers=headers,
         )
 
-    @query_params("timeout")
+    @query_params("timeout", "wait_for")
     def start_trained_model_deployment(self, model_id, params=None, headers=None):
         """
         Start a trained model deployment.
@@ -1741,6 +1744,8 @@ class MlClient(NamespacedClient):
         :arg model_id: The unique identifier of the trained model.
         :arg timeout: Controls the amount of time to wait for the model
             to deploy.  Default: 20s
+        :arg wait_for: The allocation status for which to wait  Valid
+            choices: starting, started, fully_allocated  Default: started
         """
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'model_id'.")
@@ -1783,11 +1788,6 @@ class MlClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-trained-model-deployment-stats.html>`_
 
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
-
         :arg model_id: The ID of the trained model deployment stats to
             fetch
         """
@@ -1799,4 +1799,62 @@ class MlClient(NamespacedClient):
             _make_path("_ml", "trained_models", model_id, "deployment", "_stats"),
             params=params,
             headers=headers,
+        )
+
+    @query_params()
+    def put_trained_model_definition_part(
+        self, model_id, part, body, params=None, headers=None
+    ):
+        """
+        Creates part of a trained model definition
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-trained-model-definition-part.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
+        :arg model_id: The ID of the trained model for this definition
+            part
+        :arg part: The part number
+        :arg body: The trained model definition part
+        """
+        for param in (model_id, part, body):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
+
+        return self.transport.perform_request(
+            "PUT",
+            _make_path("_ml", "trained_models", model_id, "definition", part),
+            params=params,
+            headers=headers,
+            body=body,
+        )
+
+    @query_params()
+    def put_trained_model_vocabulary(self, model_id, body, params=None, headers=None):
+        """
+        Creates a trained model vocabulary
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-trained-model-vocabulary.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
+        :arg model_id: The ID of the trained model for this vocabulary
+        :arg body: The trained model vocabulary
+        """
+        for param in (model_id, body):
+            if param in SKIP_IN_PATH:
+                raise ValueError("Empty value passed for a required argument.")
+
+        return self.transport.perform_request(
+            "PUT",
+            _make_path("_ml", "trained_models", model_id, "vocabulary"),
+            params=params,
+            headers=headers,
+            body=body,
         )

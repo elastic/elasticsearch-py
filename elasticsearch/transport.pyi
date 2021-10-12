@@ -17,6 +17,7 @@
 
 from typing import Any, Callable, Collection, Dict, List, Mapping, Optional, Type, Union
 
+from ._async.transport import AsyncTransport as AsyncTransport
 from .connection import Connection
 from .connection_pool import ConnectionPool
 from .serializer import Deserializer, Serializer

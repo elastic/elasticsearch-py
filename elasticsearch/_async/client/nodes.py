@@ -153,7 +153,7 @@ class NodesClient(NamespacedClient):
             metric to the specific index metrics. Isn't used if `indices` (or `all`)
             metric isn't specified.  Valid choices: _all, completion, docs,
             fielddata, query_cache, flush, get, indexing, merge, request_cache,
-            refresh, search, segments, store, warmer, bulk, shards
+            refresh, search, segments, store, warmer, bulk, shard_stats
         :arg completion_fields: A comma-separated list of fields for the
             `completion` index metric (supports wildcards)
         :arg fielddata_fields: A comma-separated list of fields for the
@@ -182,7 +182,7 @@ class NodesClient(NamespacedClient):
         )
 
     @query_params()
-    async def clear_metering_archive(
+    async def clear_repositories_metering_archive(
         self, node_id, max_archive_version, params=None, headers=None
     ):
         """
@@ -214,7 +214,7 @@ class NodesClient(NamespacedClient):
         )
 
     @query_params()
-    async def get_metering_info(self, node_id, params=None, headers=None):
+    async def get_repositories_metering_info(self, node_id, params=None, headers=None):
         """
         Returns cluster repositories metering information.
 

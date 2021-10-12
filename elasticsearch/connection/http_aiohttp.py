@@ -22,8 +22,9 @@ import warnings
 
 import urllib3  # type: ignore
 
+from .._async._extra_imports import aiohttp, aiohttp_exceptions, yarl
+from .._async.compat import get_running_loop
 from ..compat import reraise_exceptions, urlencode
-from ..connection.base import Connection
 from ..exceptions import (
     ConnectionError,
     ConnectionTimeout,
@@ -31,8 +32,7 @@ from ..exceptions import (
     SSLError,
 )
 from ..utils import _client_meta_version
-from ._extra_imports import aiohttp, aiohttp_exceptions, yarl
-from .compat import get_running_loop
+from .base import Connection
 
 # sentinel value for `verify_certs`.
 # This is used to detect if a user is passing in a value

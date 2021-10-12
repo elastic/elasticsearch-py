@@ -31,7 +31,7 @@ from typing import (
     Union,
 )
 
-from ..client import Elasticsearch
+from .. import Elasticsearch
 from ..serializer import Serializer
 
 logger: logging.Logger

@@ -344,6 +344,9 @@ def download_artifact(version):
     for name in zip.namelist():
         if not name.endswith(".json") or name == "schema.json":
             continue
+        # Compatibility APIs/tests should be skipped
+        if "/compatApi" in name or "/compatTest" in name:
+            continue
         with (tmp / name.replace("rest-api-spec/api/", "")).open("wb") as f:
             f.write(zip.read(name))
 
@@ -396,7 +399,7 @@ def dump_modules(modules):
     rules = [
         unasync.Rule(
             fromdir="/elasticsearch/_async/client/",
-            todir="/elasticsearch/client/",
+            todir="/elasticsearch/_sync/client/",
             additional_replacements=additional_replacements,
         ),
     ]

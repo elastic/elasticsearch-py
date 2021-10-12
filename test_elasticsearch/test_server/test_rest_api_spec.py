@@ -38,7 +38,7 @@ from elasticsearch import (
     RequestError,
     TransportError,
 )
-from elasticsearch.client.utils import _base64_auth_header
+from elasticsearch._sync.client.utils import _base64_auth_header
 from elasticsearch.compat import string_types
 
 from ..utils import CA_CERTS, es_url, parse_version

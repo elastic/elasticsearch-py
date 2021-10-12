@@ -20,7 +20,7 @@ from .utils import NamespacedClient, _make_path, query_params
 
 class MigrationClient(NamespacedClient):
     @query_params()
-    async def deprecations(self, index=None, params=None, headers=None):
+    def deprecations(self, index=None, params=None, headers=None):
         """
         Retrieves information about different cluster, node, and index level settings
         that use deprecated features that will be removed or changed in the next major
@@ -30,7 +30,7 @@ class MigrationClient(NamespacedClient):
 
         :arg index: Index pattern
         """
-        return await self.transport.perform_request(
+        return self.transport.perform_request(
             "GET",
             _make_path(index, "_migration", "deprecations"),
             params=params,
@@ -38,23 +38,23 @@ class MigrationClient(NamespacedClient):
         )
 
     @query_params()
-    async def get_feature_upgrade_status(self, params=None, headers=None):
+    def get_feature_upgrade_status(self, params=None, headers=None):
         """
         Find out whether system features need to be upgraded or not
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/migration-api-feature-upgrade.html>`_
         """
-        return await self.transport.perform_request(
+        return self.transport.perform_request(
             "GET", "/_migration/system_features", params=params, headers=headers
         )
 
     @query_params()
-    async def post_feature_upgrade(self, params=None, headers=None):
+    def post_feature_upgrade(self, params=None, headers=None):
         """
         Begin upgrades for system features
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/migration-api-feature-upgrade.html>`_
         """
-        return await self.transport.perform_request(
+        return self.transport.perform_request(
             "POST", "/_migration/system_features", params=params, headers=headers
         )
