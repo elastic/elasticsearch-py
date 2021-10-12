@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
+from ._base import NamespacedClient
+from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
 
 
 class SearchableSnapshotsClient(NamespacedClient):
@@ -56,11 +57,6 @@ class SearchableSnapshotsClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-api-mount-snapshot.html>`_
 
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
-
         :arg repository: The name of the repository containing the
             snapshot of the index to mount
         :arg snapshot: The name of the snapshot of the index to mount
@@ -91,11 +87,6 @@ class SearchableSnapshotsClient(NamespacedClient):
         Retrieve shard-level statistics about searchable snapshots.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-apis.html>`_
-
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
 
         :arg index: A comma-separated list of index names
         :arg level: Return stats aggregated at cluster, index or shard

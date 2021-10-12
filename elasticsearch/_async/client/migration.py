@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import NamespacedClient, _make_path, query_params
+from ._base import NamespacedClient
+from .utils import _deprecated_options, _make_path, query_params
 
 
 class MigrationClient(NamespacedClient):
@@ -35,4 +36,26 @@ class MigrationClient(NamespacedClient):
             _make_path(index, "_migration", "deprecations"),
             params=params,
             headers=headers,
+        )
+
+    @query_params()
+    async def get_feature_upgrade_status(self, params=None, headers=None):
+        """
+        Find out whether system features need to be upgraded or not
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/migration-api-feature-upgrade.html>`_
+        """
+        return await self.transport.perform_request(
+            "GET", "/_migration/system_features", params=params, headers=headers
+        )
+
+    @query_params()
+    async def post_feature_upgrade(self, params=None, headers=None):
+        """
+        Begin upgrades for system features
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/migration-api-feature-upgrade.html>`_
+        """
+        return await self.transport.perform_request(
+            "POST", "/_migration/system_features", params=params, headers=headers
         )

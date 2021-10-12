@@ -15,7 +15,14 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import SKIP_IN_PATH, NamespacedClient, _bulk_body, _make_path, query_params
+from ._base import NamespacedClient
+from .utils import (
+    SKIP_IN_PATH,
+    _bulk_body,
+    _deprecated_options,
+    _make_path,
+    query_params,
+)
 
 
 class MonitoringClient(NamespacedClient):
@@ -25,11 +32,6 @@ class MonitoringClient(NamespacedClient):
         Used by the monitoring features to send monitoring data.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/monitor-elasticsearch-cluster.html>`_
-
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
 
         :arg body: The operation definition and data (action-data
             pairs), separated by newlines

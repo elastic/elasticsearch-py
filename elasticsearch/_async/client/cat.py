@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import NamespacedClient, _make_path, query_params
+from ._base import NamespacedClient
+from .utils import _deprecated_options, _make_path, query_params
 
 
 class CatClient(NamespacedClient):

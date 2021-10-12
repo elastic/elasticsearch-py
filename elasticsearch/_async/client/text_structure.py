@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import SKIP_IN_PATH, NamespacedClient, _bulk_body, query_params
+from ._base import NamespacedClient
+from .utils import SKIP_IN_PATH, _bulk_body, _deprecated_options, query_params
 
 
 class TextStructureClient(NamespacedClient):

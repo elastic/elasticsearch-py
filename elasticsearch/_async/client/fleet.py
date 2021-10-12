@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
+from ._base import NamespacedClient
+from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
 
 
 class FleetClient(NamespacedClient):
@@ -25,10 +26,7 @@ class FleetClient(NamespacedClient):
         Returns the current global checkpoints for an index. This API is design for
         internal use by the fleet server project.
 
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-global-checkpoints.html>`_
 
         :arg index: The name of the index.
         :arg checkpoints: Comma separated list of checkpoints

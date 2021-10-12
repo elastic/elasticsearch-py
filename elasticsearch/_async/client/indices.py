@@ -15,7 +15,10 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
+from elastic_transport import NotFoundError
+
+from ._base import NamespacedClient
+from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
 
 
 class IndicesClient(NamespacedClient):
@@ -274,8 +277,8 @@ class IndicesClient(NamespacedClient):
         :arg allow_no_indices: Ignore if a wildcard expression resolves
             to no concrete indices (default: false)
         :arg expand_wildcards: Whether wildcard expressions should get
-            expanded to open or closed indices (default: open)  Valid choices: open,
-            closed, hidden, none, all  Default: open
+            expanded to open, closed, or hidden indices  Valid choices: open,
+            closed, hidden, none, all  Default: open,closed
         :arg ignore_unavailable: Ignore unavailable indexes (default:
             false)
         :arg master_timeout: Specify timeout for connection to master
@@ -1407,11 +1410,6 @@ class IndicesClient(NamespacedClient):
         Returns information about any matching indices, aliases, and data streams
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-resolve-index-api.html>`_
-
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
 
         :arg name: A comma-separated list of names or wildcard
             expressions

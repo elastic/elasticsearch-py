@@ -18,7 +18,8 @@
 import logging
 from typing import Any, Collection, MutableMapping, Optional, Tuple, Type, Union
 
-from ..transport import AsyncTransport
+from elastic_transport import AsyncTransport
+
 from .async_search import AsyncSearchClient
 from .autoscaling import AutoscalingClient
 from .cat import CatClient
@@ -1110,8 +1111,8 @@ class AsyncElasticsearch:
     ) -> Any: ...
     async def open_point_in_time(
         self,
+        index: Any,
         *,
-        index: Optional[Any] = ...,
         expand_wildcards: Optional[Any] = ...,
         ignore_unavailable: Optional[Any] = ...,
         keep_alive: Optional[Any] = ...,
@@ -1162,6 +1163,7 @@ class AsyncElasticsearch:
         grid_precision: Optional[Any] = ...,
         grid_type: Optional[Any] = ...,
         size: Optional[Any] = ...,
+        track_total_hits: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,

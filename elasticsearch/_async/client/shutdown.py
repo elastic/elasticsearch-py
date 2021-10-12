@@ -15,21 +15,18 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
+from ._base import NamespacedClient
+from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
 
 
 class ShutdownClient(NamespacedClient):
     @query_params()
     async def delete_node(self, node_id, params=None, headers=None):
         """
-        Removes a node from the shutdown list
+        Removes a node from the shutdown list. Designed for indirect use by ECE/ESS and
+        ECK. Direct use is not supported.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current>`_
-
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
 
         :arg node_id: The node id of node to be removed from the
             shutdown state
@@ -47,14 +44,10 @@ class ShutdownClient(NamespacedClient):
     @query_params()
     async def get_node(self, node_id=None, params=None, headers=None):
         """
-        Retrieve status of a node or nodes that are currently marked as shutting down
+        Retrieve status of a node or nodes that are currently marked as shutting down.
+        Designed for indirect use by ECE/ESS and ECK. Direct use is not supported.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current>`_
-
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
 
         :arg node_id: Which node for which to retrieve the shutdown
             status
@@ -69,14 +62,10 @@ class ShutdownClient(NamespacedClient):
     @query_params()
     async def put_node(self, node_id, body, params=None, headers=None):
         """
-        Adds a node to be shut down
+        Adds a node to be shut down. Designed for indirect use by ECE/ESS and ECK.
+        Direct use is not supported.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current>`_
-
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
 
         :arg node_id: The node id of node to be shut down
         :arg body: The shutdown type definition to register

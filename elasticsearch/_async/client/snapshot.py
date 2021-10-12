@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
+from ._base import NamespacedClient
+from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
 
 
 class SnapshotClient(NamespacedClient):
