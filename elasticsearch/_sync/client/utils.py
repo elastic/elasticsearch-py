@@ -33,12 +33,12 @@ from typing import (
     Union,
 )
 
-from ..compat import quote, string_types, to_bytes, to_str, unquote, urlparse
-from ..serializer import Serializer
-from ..transport import Transport
+from ...compat import quote, string_types, to_bytes, to_str, unquote, urlparse
+from ...serializer import Serializer
+from ...transport import Transport
 
 if TYPE_CHECKING:
-    from ..client import Elasticsearch
+    from ... import Elasticsearch
 
 # parts of URL to be omitted
 SKIP_IN_PATH: Collection[Any] = (None, "", b"", [], ())

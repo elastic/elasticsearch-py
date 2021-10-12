@@ -129,7 +129,7 @@ class NodesClient(NamespacedClient):
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
-    async def clear_metering_archive(
+    async def clear_repositories_metering_archive(
         self,
         node_id: Any,
         max_archive_version: Any,
@@ -147,7 +147,7 @@ class NodesClient(NamespacedClient):
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
     ) -> Any: ...
-    async def get_metering_info(
+    async def get_repositories_metering_info(
         self,
         node_id: Any,
         *,

@@ -18,7 +18,7 @@
 
 import logging
 
-from ..transport import Transport, TransportError
+from ...transport import Transport, TransportError
 from .async_search import AsyncSearchClient
 from .autoscaling import AutoscalingClient
 from .cat import CatClient
@@ -1193,11 +1193,6 @@ class Elasticsearch:
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-rank-eval.html>`_
 
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
-
         :arg body: The ranking evaluation search definition, including
             search requests, document ratings and ranking metric definition.
         :arg index: A comma-separated list of index names to search; use
@@ -1649,11 +1644,6 @@ class Elasticsearch:
         Returns all script contexts.
 
         `<https://www.elastic.co/guide/en/elasticsearch/painless/master/painless-contexts.html>`_
-
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
         """
         return self.transport.perform_request(
             "GET", "/_script_context", params=params, headers=headers
@@ -1665,11 +1655,6 @@ class Elasticsearch:
         Returns available script types, languages and contexts
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
-
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
         """
         return self.transport.perform_request(
             "GET", "/_script_language", params=params, headers=headers
@@ -2048,7 +2033,7 @@ class Elasticsearch:
     @query_params(
         "expand_wildcards", "ignore_unavailable", "keep_alive", "preference", "routing"
     )
-    def open_point_in_time(self, index=None, params=None, headers=None):
+    def open_point_in_time(self, index, params=None, headers=None):
         """
         Open a point in time that can be used in subsequent searches
 
@@ -2067,6 +2052,9 @@ class Elasticsearch:
             be performed on (default: random)
         :arg routing: Specific routing value
         """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'index'.")
+
         return self.transport.perform_request(
             "POST", _make_path(index, "_pit"), params=params, headers=headers
         )
@@ -2079,11 +2067,6 @@ class Elasticsearch:
         complete scenarios.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-terms-enum.html>`_
-
-        .. warning::
-
-            This API is **beta** so may include breaking changes
-            or be removed in a future version
 
         :arg index: A comma-separated list of index names to search; use
             `_all` or empty string to perform the operation on all indices
@@ -2101,7 +2084,14 @@ class Elasticsearch:
             body=body,
         )
 
-    @query_params("exact_bounds", "extent", "grid_precision", "grid_type", "size")
+    @query_params(
+        "exact_bounds",
+        "extent",
+        "grid_precision",
+        "grid_type",
+        "size",
+        "track_total_hits",
+    )
     def search_mvt(
         self, index, field, zoom, x, y, body=None, params=None, headers=None
     ):
@@ -2131,9 +2121,12 @@ class Elasticsearch:
         :arg grid_precision: Additional zoom levels available through
             the aggs layer. Accepts 0-8.  Default: 8
         :arg grid_type: Determines the geometry type for features in the
-            aggs layer.  Valid choices: grid, point  Default: grid
+            aggs layer.  Valid choices: grid, point, centroid  Default: grid
         :arg size: Maximum number of features to return in the hits
             layer. Accepts 0-10000.  Default: 10000
+        :arg track_total_hits: Indicate if the number of documents that
+            match the query should be tracked. A number can also be specified, to
+            accurately track the total hit count up to the number.
         """
         for param in (index, field, zoom, x, y):
             if param in SKIP_IN_PATH:

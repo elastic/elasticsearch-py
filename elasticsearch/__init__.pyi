@@ -18,7 +18,11 @@
 import sys
 from typing import Tuple
 
-from .client import Elasticsearch as Elasticsearch
+from ._async.client import AsyncElasticsearch as AsyncElasticsearch
+from ._async.transport import AsyncTransport as AsyncTransport
+from ._sync.client import Elasticsearch as Elasticsearch
+from .connection import AIOHttpConnection as AIOHttpConnection
+from .connection import AsyncConnection as AsyncConnection
 from .connection import Connection as Connection
 from .connection import RequestsHttpConnection as RequestsHttpConnection
 from .connection import Urllib3HttpConnection as Urllib3HttpConnection
@@ -43,13 +47,6 @@ from .exceptions import TransportError as TransportError
 from .exceptions import UnsupportedProductError as UnsupportedProductError
 from .serializer import JSONSerializer as JSONSerializer
 from .transport import Transport as Transport
-
-try:
-    from ._async.client import AsyncElasticsearch as AsyncElasticsearch
-    from ._async.http_aiohttp import AIOHttpConnection as AIOHttpConnection
-    from ._async.transport import AsyncTransport as AsyncTransport
-except ImportError:
-    pass
 
 VERSION: Tuple[int, int, int]
 __version__: Tuple[int, int, int]

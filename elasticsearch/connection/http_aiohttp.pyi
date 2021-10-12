@@ -18,8 +18,8 @@
 from asyncio import AbstractEventLoop
 from typing import Any, Collection, Mapping, MutableMapping, Optional, Tuple, Union
 
-from ..connection import Connection
-from ._extra_imports import aiohttp  # type: ignore
+from ._async._extra_imports import aiohttp  # type: ignore
+from .base import Connection
 
 class AsyncConnection(Connection):
     async def perform_request(  # type: ignore

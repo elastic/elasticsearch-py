@@ -496,3 +496,6 @@ class Transport:
             )
 
         return method, headers, params, body, ignore, timeout
+
+
+from ._async.transport import AsyncTransport as AsyncTransport  # noqa

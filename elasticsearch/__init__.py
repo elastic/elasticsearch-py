@@ -32,8 +32,15 @@ VERSION = __version__ = (_major, _minor, _patch)
 logger = logging.getLogger("elasticsearch")
 logger.addHandler(logging.NullHandler())
 
-from .client import Elasticsearch
-from .connection import Connection, RequestsHttpConnection, Urllib3HttpConnection
+from ._async.client import AsyncElasticsearch
+from ._sync.client import Elasticsearch
+from .connection import (
+    AIOHttpConnection,
+    AsyncConnection,
+    Connection,
+    RequestsHttpConnection,
+    Urllib3HttpConnection,
+)
 from .connection_pool import ConnectionPool, ConnectionSelector, RoundRobinSelector
 from .exceptions import (
     AuthenticationException,
@@ -53,7 +60,7 @@ from .exceptions import (
     UnsupportedProductError,
 )
 from .serializer import JSONSerializer
-from .transport import Transport
+from .transport import AsyncTransport, Transport
 
 # Only raise one warning per deprecation message so as not
 # to spam up the user if the same action is done multiple times.
@@ -85,17 +92,3 @@ __all__ = [
     "ElasticsearchWarning",
     "ElasticsearchDeprecationWarning",
 ]
-
-try:
-    from ._async.client import AsyncElasticsearch
-    from ._async.http_aiohttp import AIOHttpConnection, AsyncConnection
-    from ._async.transport import AsyncTransport
-
-    __all__ += [
-        "AIOHttpConnection",
-        "AsyncConnection",
-        "AsyncTransport",
-        "AsyncElasticsearch",
-    ]
-except ImportError:  # pragma: nocover
-    pass

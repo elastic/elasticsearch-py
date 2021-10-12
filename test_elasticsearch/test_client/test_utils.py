@@ -20,7 +20,12 @@ from __future__ import unicode_literals
 
 import pytest
 
-from elasticsearch.client.utils import _bulk_body, _escape, _make_path, query_params
+from elasticsearch._sync.client.utils import (
+    _bulk_body,
+    _escape,
+    _make_path,
+    query_params,
+)
 
 
 class TestQueryParams:
