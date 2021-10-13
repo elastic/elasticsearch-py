@@ -1,4 +1,4 @@
-= elasticsearch-py
+= Elasticsearch Python Client
 
 :doctype:           book
 
