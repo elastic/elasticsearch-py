@@ -133,6 +133,14 @@ class Transport(object):
         if not isinstance(meta_header, bool):
             raise TypeError("meta_header must be of type bool")
 
+        if send_get_body_as != "GET":
+            warnings.warn(
+                "The 'send_get_body_as' parameter is no longer necessary "
+                "and will be removed in 8.0",
+                category=DeprecationWarning,
+                stacklevel=2,
+            )
+
         # serialization config
         _serializers = DEFAULT_SERIALIZERS.copy()
         # if a serializer has been specified, use it for deserialization as well

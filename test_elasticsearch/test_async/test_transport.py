@@ -21,6 +21,7 @@ from __future__ import unicode_literals
 import asyncio
 import json
 import re
+import warnings
 
 import pytest
 from mock import patch
@@ -181,8 +182,13 @@ class TestTransport:
         } == t.get_connection().calls[0][1]
 
     async def test_send_get_body_as_source(self):
-        t = AsyncTransport(
-            [{}], send_get_body_as="source", connection_class=DummyConnection
+        with warnings.catch_warnings(record=True) as w:
+            t = AsyncTransport(
+                [{}], send_get_body_as="source", connection_class=DummyConnection
+            )
+        assert len(w) == 1
+        assert str(w[0].message) == (
+            "The 'send_get_body_as' parameter is no longer necessary and will be removed in 8.0"
         )
         t._verified_elasticsearch = True
 
@@ -191,8 +197,13 @@ class TestTransport:
         assert ("GET", "/", {"source": "{}"}, None) == t.get_connection().calls[0][0]
 
     async def test_send_get_body_as_post(self):
-        t = AsyncTransport(
-            [{}], send_get_body_as="POST", connection_class=DummyConnection
+        with warnings.catch_warnings(record=True) as w:
+            t = AsyncTransport(
+                [{}], send_get_body_as="POST", connection_class=DummyConnection
+            )
+        assert len(w) == 1
+        assert str(w[0].message) == (
+            "The 'send_get_body_as' parameter is no longer necessary and will be removed in 8.0"
         )
         t._verified_elasticsearch = True
 

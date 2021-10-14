@@ -20,6 +20,7 @@ from __future__ import unicode_literals
 
 import json
 import time
+import warnings
 
 import pytest
 from mock import patch
@@ -187,7 +188,14 @@ class TestTransport(TestCase):
         )
 
     def test_send_get_body_as_source(self):
-        t = Transport([{}], send_get_body_as="source", connection_class=DummyConnection)
+        with warnings.catch_warnings(record=True) as w:
+            t = Transport(
+                [{}], send_get_body_as="source", connection_class=DummyConnection
+            )
+        assert len(w) == 1
+        assert str(w[0].message) == (
+            "The 'send_get_body_as' parameter is no longer necessary and will be removed in 8.0"
+        )
         t._verified_elasticsearch = True
 
         t.perform_request("GET", "/", body={})
@@ -197,7 +205,14 @@ class TestTransport(TestCase):
         )
 
     def test_send_get_body_as_post(self):
-        t = Transport([{}], send_get_body_as="POST", connection_class=DummyConnection)
+        with warnings.catch_warnings(record=True) as w:
+            t = Transport(
+                [{}], send_get_body_as="POST", connection_class=DummyConnection
+            )
+        assert len(w) == 1
+        assert str(w[0].message) == (
+            "The 'send_get_body_as' parameter is no longer necessary and will be removed in 8.0"
+        )
         t._verified_elasticsearch = True
 
         t.perform_request("GET", "/", body={})
