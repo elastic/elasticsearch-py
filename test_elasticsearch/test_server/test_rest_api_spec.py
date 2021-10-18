@@ -249,6 +249,9 @@ class YamlRunner:
 
         # locate api endpoint
         for m in method.split("."):
+            # Some deprecated APIs are prefixed with 'xpack-*'
+            if m.startswith("xpack-"):
+                m = m.replace("xpack-", "")
             assert hasattr(api, m)
             api = getattr(api, m)
 
