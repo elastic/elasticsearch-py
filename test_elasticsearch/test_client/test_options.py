@@ -17,9 +17,14 @@
 #  under the License.
 
 import pytest
+from elastic_transport.client_utils import DEFAULT
 
-from elasticsearch import Elasticsearch
-from test_elasticsearch.test_cases import DummyTransport, DummyTransportTestCase
+from elasticsearch import AsyncElasticsearch, Elasticsearch
+from test_elasticsearch.test_cases import (
+    DummyAsyncTransport,
+    DummyTransport,
+    DummyTransportTestCase,
+)
 
 
 class TestOptions(DummyTransportTestCase):
@@ -88,3 +93,146 @@ class TestOptions(DummyTransportTestCase):
         client = self.client.options(**options)
         client.indices.exists(index="test")
         self.assert_called_with_headers(client, "HEAD", "/test", headers=headers)
+
+    @pytest.mark.parametrize("api_key", [None, "api-key", ("api", "key")])
+    @pytest.mark.parametrize("bearer_auth", [None, "bearer"])
+    @pytest.mark.parametrize("basic_auth", [None, "user:pass", ("user", "pass")])
+    @pytest.mark.parametrize(
+        "headers", [None, {"Authorization": "value"}, {"authorization": "value"}]
+    )
+    def test_options_auth_conflicts(self, api_key, bearer_auth, basic_auth, headers):
+        if sum(x is not None for x in (api_key, bearer_auth, basic_auth, headers)) < 2:
+            pytest.skip("Skip the cases where 1 or fewer options are unset")
+        kwargs = {
+            k: v
+            for k, v in {
+                "api_key": api_key,
+                "bearer_auth": bearer_auth,
+                "basic_auth": basic_auth,
+                "headers": headers,
+            }.items()
+            if v is not None
+        }
+
+        with pytest.raises(ValueError) as e:
+            self.client.options(**kwargs)
+        assert str(e.value) in (
+            "Can only set one of 'api_key', 'basic_auth', and 'bearer_auth'",
+            "Can't set 'Authorization' HTTP header with other authentication options",
+        )
+
+    def test_options_passed_to_perform_request(self):
+        # Default transport options are 'DEFAULT' to rely on 'elastic_transport' defaults.
+        client = Elasticsearch(
+            "http://localhost:9200",
+            transport_class=DummyTransport,
+        )
+        client.indices.get(index="test")
+
+        calls = client.transport.calls
+        call = calls[("GET", "/test")][0]
+        assert call.pop("request_timeout") is DEFAULT
+        assert call.pop("max_retries") is DEFAULT
+        assert call.pop("retry_on_timeout") is DEFAULT
+        assert call.pop("retry_on_status") is DEFAULT
+        assert call == {"headers": {"content-type": "application/json"}, "body": None}
+
+        # Can be overwritten with .options()
+        client.options(
+            request_timeout=1,
+            max_retries=2,
+            retry_on_timeout=False,
+            retry_on_status=(404,),
+        ).indices.get(index="test")
+
+        calls = client.transport.calls
+        call = calls[("GET", "/test")][1]
+        assert call == {
+            "headers": {"content-type": "application/json"},
+            "body": None,
+            "request_timeout": 1,
+            "max_retries": 2,
+            "retry_on_status": (404,),
+            "retry_on_timeout": False,
+        }
+
+        # Can be overwritten on constructor
+        client = Elasticsearch(
+            "http://localhost:9200",
+            transport_class=DummyTransport,
+            request_timeout=1,
+            max_retries=2,
+            retry_on_timeout=False,
+            retry_on_status=(404,),
+        )
+        client.indices.get(index="test")
+
+        calls = client.transport.calls
+        call = calls[("GET", "/test")][0]
+        assert call == {
+            "headers": {"content-type": "application/json"},
+            "body": None,
+            "request_timeout": 1,
+            "max_retries": 2,
+            "retry_on_status": (404,),
+            "retry_on_timeout": False,
+        }
+
+    @pytest.mark.asyncio
+    async def test_options_passed_to_async_perform_request(self):
+        # Default transport options are 'DEFAULT' to rely on 'elastic_transport' defaults.
+        client = AsyncElasticsearch(
+            "http://localhost:9200",
+            transport_class=DummyAsyncTransport,
+        )
+        await client.indices.get(index="test")
+
+        calls = client.transport.calls
+        call = calls[("GET", "/test")][0]
+        assert call.pop("request_timeout") is DEFAULT
+        assert call.pop("max_retries") is DEFAULT
+        assert call.pop("retry_on_timeout") is DEFAULT
+        assert call.pop("retry_on_status") is DEFAULT
+        assert call == {"headers": {"content-type": "application/json"}, "body": None}
+
+        # Can be overwritten with .options()
+        await client.options(
+            request_timeout=1,
+            max_retries=2,
+            retry_on_timeout=False,
+            retry_on_status=(404,),
+        ).indices.get(index="test")
+
+        calls = client.transport.calls
+        call = calls[("GET", "/test")][1]
+        assert call == {
+            "headers": {"content-type": "application/json"},
+            "body": None,
+            "request_timeout": 1,
+            "max_retries": 2,
+            "retry_on_status": (404,),
+            "retry_on_timeout": False,
+        }
+
+        # Can be overwritten on constructor
+        client = AsyncElasticsearch(
+            "http://localhost:9200",
+            transport_class=DummyAsyncTransport,
+            request_timeout=1,
+            max_retries=2,
+            retry_on_timeout=False,
+            retry_on_status=(404,),
+        )
+        await client.indices.get(index="test")
+
+        calls = client.transport.calls
+        call = calls[("GET", "/test")][0]
+        print(call)
+        assert call == {
+            "headers": {"content-type": "application/json"},
+            "body": None,
+            "request_timeout": 1,
+            "max_retries": 2,
+            "retry_on_status": (404,),
+            "retry_on_timeout": False,
+        }

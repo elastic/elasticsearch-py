@@ -58,7 +58,7 @@ def resolve_auth_headers(
             raise ValueError(
                 "Can only set one of 'api_key', 'basic_auth', and 'bearer_auth'"
             )
-        if headers and headers.get("authoization", None) is not None:
+        if headers and headers.get("authorization", None) is not None:
             raise ValueError(
                 "Can't set 'Authorization' HTTP header with other authentication options"
             )

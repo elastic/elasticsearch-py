@@ -22,7 +22,7 @@ from elastic_transport import ApiResponseMeta, HttpHeaders
 from elasticsearch import Elasticsearch
 
 
-class DummyTransport(object):
+class DummyTransport:
     def __init__(self, hosts, responses=None, **_):
         self.hosts = hosts
         self.responses = responses
@@ -30,6 +30,31 @@ class DummyTransport(object):
         self.calls = defaultdict(list)
 
     def perform_request(self, method, target, **kwargs):
+        status, resp = 200, {}
+        if self.responses:
+            status, resp = self.responses[self.call_count]
+        self.call_count += 1
+        self.calls[(method, target)].append(kwargs)
+        return (
+            ApiResponseMeta(
+                status=status,
+                http_version="1.1",
+                headers=HttpHeaders({"X-elastic-product": "Elasticsearch"}),
+                duration=0.0,
+                node=None,
+            ),
+            resp,
+        )
+
+
+class DummyAsyncTransport:
+    def __init__(self, hosts, responses=None, **_):
+        self.hosts = hosts
+        self.responses = responses
+        self.call_count = 0
+        self.calls = defaultdict(list)
+
+    async def perform_request(self, method, target, **kwargs):
         status, resp = 200, {}
         if self.responses:
             status, resp = self.responses[self.call_count]

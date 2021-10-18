@@ -302,19 +302,22 @@ class Elasticsearch(BaseClient):
                     "min_delay_between_sniffing"
                 ] = min_delay_between_sniffing
 
-            # These are set per-request so are stored separately.
-            self._request_timeout = request_timeout
-            self._max_retries = max_retries
-            self._retry_on_status = retry_on_status
-            self._retry_on_timeout = retry_on_timeout
-
             _transport = transport_class(
                 node_configs,
                 client_meta_service=CLIENT_META_SERVICE,
                 **transport_kwargs,
             )
 
-        super().__init__(_transport)
+            super().__init__(_transport)
+
+            # These are set per-request so are stored separately.
+            self._request_timeout = request_timeout
+            self._max_retries = max_retries
+            self._retry_on_status = retry_on_status
+            self._retry_on_timeout = retry_on_timeout
+
+        else:
+            super().__init__(_transport)
 
         if headers is not DEFAULT and headers is not None:
             self._headers.update(headers)
