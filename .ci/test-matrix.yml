@@ -9,9 +9,10 @@ PYTHON_VERSION:
   - "3.7"
   - "3.8"
   - "3.9"
+  - "3.10"
 
-PYTHON_CONNECTION_CLASS:
-  - Urllib3HttpConnection
-  - RequestsHttpConnection
+PYTHON_NODE_CLASS:
+  - urllib3
+  - requests
 
 exclude: ~
