@@ -109,7 +109,8 @@ def wipe_cluster(client):
         from elasticsearch import AsyncElasticsearch
 
         if isinstance(client, AsyncElasticsearch):
-            client = Elasticsearch(client.transport.hosts, verify_certs=False)
+            node_config = client.transport.node_pool.get().config
+            client = Elasticsearch([node_config], verify_certs=False)
             close_after_wipe = True
     except ImportError:
         pass
