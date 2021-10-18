@@ -327,12 +327,9 @@ def _deprecated_options(
                 "Only one of 'http_auth' and 'api_key' may be passed at a time"
             )
         elif api_key is not None:
-            headers["authorization"] = f"ApiKey {_base64_auth_header(api_key)}"
+            options_kwargs["api_key"] = api_key
         elif http_auth is not None:
-            if isinstance(http_auth, str):
-                headers["authorization"] = f"Bearer {_base64_auth_header(http_auth)}"
-            else:
-                headers["authorization"] = f"Basic {_base64_auth_header(http_auth)}"
+            options_kwargs["basic_auth"] = http_auth
         if headers:
             options_kwargs["headers"] = headers
 
@@ -350,7 +347,7 @@ def _deprecated_options(
                 category=DeprecationWarning,
                 stacklevel=3,
             )
-            client = client.options(**options_kwargs)  # type: ignore
+            client = client.options(**options_kwargs)
 
         # If there are any query params left we warn about API parameters.
         if params:

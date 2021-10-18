@@ -25,7 +25,7 @@ from elastic_transport.client_utils import DEFAULT
 
 from ...exceptions import NotFoundError
 from ...serializer import DEFAULT_SERIALIZERS
-from ._base import BaseClient
+from ._base import BaseClient, resolve_auth_headers
 from .async_search import AsyncSearchClient
 from .autoscaling import AutoscalingClient
 from .cat import CatClient
@@ -257,7 +257,6 @@ class AsyncElasticsearch(BaseClient):
             node_configs = client_node_configs(
                 hosts,
                 cloud_id=cloud_id,
-                headers=headers,
                 connections_per_node=connections_per_node,
                 http_compress=http_compress,
                 verify_certs=verify_certs,
@@ -317,8 +316,16 @@ class AsyncElasticsearch(BaseClient):
 
         super().__init__(_transport)
 
+        if headers is not DEFAULT and headers is not None:
+            self._headers.update(headers)
         if opaque_id is not DEFAULT and opaque_id is not None:
             self._headers["x-opaque-id"] = opaque_id
+        self._headers = resolve_auth_headers(
+            self._headers,
+            api_key=api_key,
+            basic_auth=basic_auth,
+            bearer_auth=bearer_auth,
+        )
 
         # namespaced clients for compatibility with API names
         self.async_search = AsyncSearchClient(self)

@@ -22,9 +22,56 @@ from elastic_transport.client_utils import DEFAULT, DefaultType, resolve_default
 
 from ...compat import urlencode
 from ...exceptions import HTTP_EXCEPTIONS, ApiError, UnsupportedProductError
+from .utils import _base64_auth_header
 
 SelfType = TypeVar("SelfType", bound="BaseClient")
 SelfNamespacedType = TypeVar("SelfNamespacedType", bound="NamespacedClient")
+
+
+def resolve_auth_headers(
+    headers: Optional[Mapping[str, str]],
+    api_key: Union[DefaultType, None, Tuple[str, str], str] = DEFAULT,
+    basic_auth: Union[DefaultType, None, Tuple[str, str], str] = DEFAULT,
+    bearer_auth: Union[DefaultType, None, str] = DEFAULT,
+) -> HttpHeaders:
+
+    if headers is None:
+        headers = HttpHeaders()
+    elif not isinstance(headers, HttpHeaders):
+        headers = HttpHeaders(headers)
+
+    resolved_api_key = resolve_default(api_key, None)
+    resolved_basic_auth = resolve_default(basic_auth, None)
+    resolved_bearer_auth = resolve_default(bearer_auth, None)
+    if resolved_api_key or resolved_basic_auth or resolved_bearer_auth:
+        if (
+            sum(
+                x is not None
+                for x in (
+                    resolved_api_key,
+                    resolved_basic_auth,
+                    resolved_bearer_auth,
+                )
+            )
+            > 1
+        ):
+            raise ValueError(
+                "Can only set one of 'api_key', 'basic_auth', and 'bearer_auth'"
+            )
+        if headers and headers.get("authoization", None) is not None:
+            raise ValueError(
+                "Can't set 'Authorization' HTTP header with other authentication options"
+            )
+        if resolved_api_key:
+            headers["authorization"] = f"ApiKey {_base64_auth_header(resolved_api_key)}"
+        if resolved_basic_auth:
+            headers[
+                "authorization"
+            ] = f"Basic {_base64_auth_header(resolved_basic_auth)}"
+        if resolved_bearer_auth:
+            headers["authorization"] = f"Bearer {resolved_bearer_auth}"
+
+    return headers
 
 
 class BaseClient:
@@ -74,7 +121,8 @@ class BaseClient:
         )
 
         if not 200 <= meta.status < 299 and (
-            self._ignore_status in (DEFAULT, None)
+            self._ignore_status is DEFAULT
+            or self._ignore_status is None
             or meta.status not in self._ignore_status
         ):
             message = str(response)
@@ -112,9 +160,9 @@ class BaseClient:
         *,
         opaque_id: Union[DefaultType, str] = DEFAULT,
         api_key: Union[DefaultType, str, Tuple[str, str]] = DEFAULT,
-        basic_auth: Union[DefaultType, Tuple[str, str]] = DEFAULT,
+        basic_auth: Union[DefaultType, str, Tuple[str, str]] = DEFAULT,
         bearer_auth: Union[DefaultType, str] = DEFAULT,
-        headers: Union[DefaultType, Mapping[str, Optional[str]]] = DEFAULT,
+        headers: Union[DefaultType, Mapping[str, str]] = DEFAULT,
         request_timeout: Union[DefaultType, Optional[float]] = DEFAULT,
         ignore_status: Union[DefaultType, int, Collection[int]] = DEFAULT,
         max_retries: Union[DefaultType, int] = DEFAULT,
@@ -123,40 +171,47 @@ class BaseClient:
     ) -> SelfType:
         client = type(self)(_transport=self.transport)
 
-        new_headers = self._headers.copy()
         resolved_headers = resolve_default(headers, None)
-        if resolved_headers:
-            for header, value in resolved_headers.items():
-                if value is None:
-                    new_headers.pop(header, None)
-                else:
-                    new_headers[header] = value
-
+        resolved_headers = resolve_auth_headers(
+            headers=resolved_headers,
+            api_key=api_key,
+            basic_auth=basic_auth,
+            bearer_auth=bearer_auth,
+        )
         resolved_opaque_id = resolve_default(opaque_id, None)
         if resolved_opaque_id:
-            new_headers["x-opaque-id"] = resolved_opaque_id
+            resolved_headers["x-opaque-id"] = resolved_opaque_id
 
-        if (
-            api_key is not DEFAULT
-            or basic_auth is not DEFAULT
-            or bearer_auth is not DEFAULT
-        ):
-            pass  # TODO
+        if resolved_headers:
+            new_headers = self._headers.copy()
+            new_headers.update(resolved_headers)
+            client._headers = new_headers
+        else:
+            client._headers = self._headers.copy()
 
         if request_timeout is not DEFAULT:
             client._request_timeout = request_timeout
+
         if ignore_status is not DEFAULT:
             if isinstance(ignore_status, int):
                 ignore_status = (ignore_status,)
             client._ignore_status = ignore_status
+
         if max_retries is not DEFAULT:
+            if not isinstance(max_retries, int):
+                raise TypeError("'max_retries' must be of type 'int'")
             client._max_retries = max_retries
-        if retry_on_timeout is not DEFAULT:
-            client._retry_on_timeout = retry_on_timeout
+
         if retry_on_status is not DEFAULT:
             if isinstance(retry_on_status, int):
                 retry_on_status = (retry_on_status,)
             client._retry_on_status = retry_on_status
+
+        if retry_on_timeout is not DEFAULT:
+            if not isinstance(retry_on_timeout, bool):
+                raise TypeError("'retry_on_timeout' must be of type 'bool'")
+            client._retry_on_timeout = retry_on_timeout
+
         return client
 
 
@@ -184,9 +239,9 @@ class NamespacedClient(BaseClient):
         *,
         opaque_id: Union[DefaultType, str] = DEFAULT,
         api_key: Union[DefaultType, str, Tuple[str, str]] = DEFAULT,
-        basic_auth: Union[DefaultType, Tuple[str, str]] = DEFAULT,
+        basic_auth: Union[DefaultType, str, Tuple[str, str]] = DEFAULT,
         bearer_auth: Union[DefaultType, str] = DEFAULT,
-        headers: Union[DefaultType, Mapping[str, Optional[str]]] = DEFAULT,
+        headers: Union[DefaultType, Mapping[str, str]] = DEFAULT,
         request_timeout: Union[DefaultType, Optional[float]] = DEFAULT,
         ignore_status: Union[DefaultType, int, Collection[int]] = DEFAULT,
         max_retries: Union[DefaultType, int] = DEFAULT,

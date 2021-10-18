@@ -121,7 +121,8 @@ SKIP_TESTS = {
 XPACK_FEATURES = None
 ES_VERSION = None
 RUN_ASYNC_REST_API_TESTS = (
-    sys.version_info >= (3, 8) and os.environ.get("PYTHON_NODE_CLASS") == "requests"
+    sys.version_info >= (3, 8)
+    and os.environ.get("PYTHON_CONNECTION_CLASS") == "requests"
 )
 
 FALSEY_VALUES = ("", None, False, 0, 0.0)

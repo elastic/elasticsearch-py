@@ -19,6 +19,7 @@ from ..._sync.client.utils import (
     _TYPE_HOSTS,
     CLIENT_META_SERVICE,
     SKIP_IN_PATH,
+    _base64_auth_header,
     _bulk_body,
     _deprecated_options,
     _escape,
@@ -37,4 +38,5 @@ __all__ = [
     "_make_path",
     "query_params",
     "client_node_configs",
+    "_base64_auth_header",
 ]

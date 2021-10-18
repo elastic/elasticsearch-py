@@ -11,7 +11,7 @@ PYTHON_VERSION:
   - "3.9"
   - "3.10"
 
-PYTHON_NODE_CLASS:
+PYTHON_CONNECTION_CLASS:
   - urllib3
   - requests
 
