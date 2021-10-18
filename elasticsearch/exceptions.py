@@ -15,84 +15,52 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Dict, Type, Union
+from typing import Any, Dict, Type
+
+from elastic_transport import ApiError as _ApiError
+from elastic_transport import ConnectionError as ConnectionError
+from elastic_transport import ConnectionTimeout as ConnectionTimeout
+from elastic_transport import SerializationError as SerializationError
+from elastic_transport import TlsError as SSLError
+from elastic_transport import TransportError as _TransportError
+from elastic_transport import TransportWarning
 
 __all__ = [
-    "ImproperlyConfigured",
-    "ElasticsearchException",
     "SerializationError",
     "TransportError",
-    "NotFoundError",
-    "ConflictError",
-    "RequestError",
     "ConnectionError",
     "SSLError",
     "ConnectionTimeout",
-    "AuthenticationException",
     "AuthorizationException",
+    "AuthenticationException",
+    "NotFoundError",
+    "ConflictError",
+    "BadRequestError",
 ]
 
 
-class ImproperlyConfigured(Exception):
-    """
-    Exception raised when the config passed to the client is inconsistent or invalid.
-    """
-
-
-class ElasticsearchException(Exception):
-    """
-    Base class for all exceptions raised by this package's operations (doesn't
-    apply to :class:`~elasticsearch.ImproperlyConfigured`).
-    """
-
-
-class SerializationError(ElasticsearchException):
-    """
-    Data passed in failed to serialize properly in the ``Serializer`` being
-    used.
-    """
-
-
-class UnsupportedProductError(ElasticsearchException):
-    """Error which is raised when the client detects
-    it's not connected to a supported product.
-    """
-
-
-class TransportError(ElasticsearchException):
-    """
-    Exception raised when ES returns a non-OK (>=400) HTTP status code. Or when
-    an actual connection error happens; in that case the ``status_code`` will
-    be set to ``'N/A'``.
-    """
-
+class ApiError(_ApiError):
     @property
-    def status_code(self) -> Union[str, int]:
-        """
-        The HTTP status code of the response that precipitated the error or
-        ``'N/A'`` if not applicable.
-        """
-        return self.args[0]  # type: ignore
+    def status_code(self) -> int:
+        """Backwards-compatible shorthand for 'self.meta.status'"""
+        return self.meta.status
 
     @property
     def error(self) -> str:
         """A string error message."""
-        return self.args[1]  # type: ignore
+        return self.message  # type: ignore
 
     @property
-    def info(self) -> Union[Dict[str, Any], Exception, Any]:
-        """
-        Dict of returned error info from ES, where available, underlying
-        exception when not.
-        """
-        return self.args[2]
+    def info(self) -> Any:
+        """Backwards-compatible way to access '.body'"""
+        return self.body
 
     def __str__(self) -> str:
         cause = ""
         try:
-            if self.info and "error" in self.info:  # type: ignore
-                if isinstance(self.info["error"], dict):  # type: ignore
-                    root_cause = self.info["error"]["root_cause"][0]  # type: ignore
+            if self.body and isinstance(self.body, dict) and "error" in self.body:
+                if isinstance(self.body["error"], dict):
+                    root_cause = self.body["error"]["root_cause"][0]
                     cause = ", ".join(
                         filter(
                             None,
@@ -105,76 +73,56 @@ class TransportError(ElasticsearchException):
                     )
 
                 else:
-                    cause = repr(self.info["error"])  # type: ignore
+                    cause = repr(self.body["error"])
         except LookupError:
             pass
         msg = ", ".join(filter(None, [str(self.status_code), repr(self.error), cause]))
         return f"{self.__class__.__name__}({msg})"
 
 
-class ConnectionError(TransportError):
-    """
-    Error raised when there was an exception while talking to ES. Original
-    exception from the underlying :class:`~elasticsearch.Connection`
-    implementation is available as ``.info``.
+class UnsupportedProductError(ApiError):
+    """Error which is raised when the client detects
+    it's not connected to a supported product.
     """
 
     def __str__(self) -> str:
-        return "ConnectionError({}) caused by: {}({})".format(
-            self.error,
-            self.info.__class__.__name__,
-            self.info,
-        )
+        return self.message  # type: ignore
 
 
-class SSLError(ConnectionError):
-    """Error raised when encountering SSL errors."""
-
-
-class ConnectionTimeout(ConnectionError):
-    """A network timeout. Doesn't cause a node retry by default."""
-
-    def __str__(self) -> str:
-        return "ConnectionTimeout caused by - {}({})".format(
-            self.info.__class__.__name__,
-            self.info,
-        )
-
-
-class NotFoundError(TransportError):
+class NotFoundError(ApiError):
     """Exception representing a 404 status code."""
 
 
-class ConflictError(TransportError):
+class ConflictError(ApiError):
     """Exception representing a 409 status code."""
 
 
-class RequestError(TransportError):
+class BadRequestError(ApiError):
     """Exception representing a 400 status code."""
 
 
-class AuthenticationException(TransportError):
+class AuthenticationException(ApiError):
     """Exception representing a 401 status code."""
 
 
-class AuthorizationException(TransportError):
+class AuthorizationException(ApiError):
     """Exception representing a 403 status code."""
 
 
-class ElasticsearchWarning(Warning):
+class ElasticsearchWarning(TransportWarning):
     """Warning that is raised when a deprecated option
     or incorrect usage is flagged via the 'Warning' HTTP header.
     """
 
 
-# Alias of 'ElasticsearchWarning' for backwards compatibility.
-# Additional functionality was added to the 'Warning' HTTP header
-# not related to deprecations.
+# Aliases for backwards compatibility
+ElasticsearchException = _TransportError
 ElasticsearchDeprecationWarning = ElasticsearchWarning
+TransportError = ApiError
+RequestError = BadRequestError
 
 
-# more generic mappings from status_code to python exceptions
-HTTP_EXCEPTIONS: Dict[int, Type[ElasticsearchException]] = {
+HTTP_EXCEPTIONS: Dict[int, Type[ApiError]] = {
     400: RequestError,
     401: AuthenticationException,
     403: AuthorizationException,

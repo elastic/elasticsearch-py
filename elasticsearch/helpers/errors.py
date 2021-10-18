@@ -22,7 +22,7 @@ from ..exceptions import ElasticsearchException
 
 class BulkIndexError(ElasticsearchException):
     @property
-    def errors(self) -> List[Any]:
+    def errors(self) -> List[Any]:  # type: ignore
         """List of errors from execution of the last chunk."""
         return self.args[1]  # type: ignore
 
@@ -31,5 +31,5 @@ class ScanError(ElasticsearchException):
     scroll_id: str
 
     def __init__(self, scroll_id: str, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)  # type: ignore
+        super().__init__(*args, **kwargs)
         self.scroll_id = scroll_id

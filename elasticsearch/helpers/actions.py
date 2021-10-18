@@ -19,7 +19,7 @@ import logging
 import time
 from operator import methodcaller
 
-from ..compat import Mapping, Queue, string_types
+from ..compat import Mapping, Queue, string_types, to_bytes
 from ..exceptions import NotFoundError, TransportError
 from .errors import BulkIndexError, ScanError
 
@@ -108,13 +108,13 @@ class _ActionChunker:
     def feed(self, action, data):
         ret = None
         raw_data, raw_action = data, action
-        action = self.serializer.dumps(action)
+        action = to_bytes(self.serializer.dumps(action), "utf-8")
         # +1 to account for the trailing new line character
-        cur_size = len(action.encode("utf-8")) + 1
+        cur_size = len(action) + 1
 
         if data is not None:
-            data = self.serializer.dumps(data)
-            cur_size += len(data.encode("utf-8")) + 1
+            data = to_bytes(self.serializer.dumps(data), "utf-8")
+            cur_size += len(data) + 1
 
         # full chunk, send it and start a new one
         if self.bulk_actions and (
@@ -314,9 +314,10 @@ def streaming_bulk(
     :arg ignore_status: list of HTTP status code that you want to ignore
     """
     actions = map(expand_action_callback, actions)
+    serializer = client.transport.serializers.get_serializer("application/json")
 
     for bulk_data, bulk_actions in _chunk_actions(
-        actions, chunk_size, max_chunk_bytes, client.transport.serializer
+        actions, chunk_size, max_chunk_bytes, serializer
     ):
 
         for attempt in range(max_retries + 1):
@@ -350,9 +351,7 @@ def streaming_bulk(
                         ):
                             # _process_bulk_chunk expects strings so we need to
                             # re-serialize the data
-                            to_retry.extend(
-                                map(client.transport.serializer.dumps, data)
-                            )
+                            to_retry.extend(map(serializer.dumps, data))
                             to_retry_data.append(data)
                         else:
                             yield ok, {action: info}
@@ -456,6 +455,7 @@ def parallel_bulk(
     from multiprocessing.pool import ThreadPool
 
     actions = map(expand_action_callback, actions)
+    serializer = client.transport.serializers.get_serializer("application/json")
 
     class BlockingPool(ThreadPool):
         def _setup_queues(self):
@@ -479,9 +479,7 @@ def parallel_bulk(
                     **kwargs,
                 )
             ),
-            _chunk_actions(
-                actions, chunk_size, max_chunk_bytes, client.transport.serializer
-            ),
+            _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer),
         ):
             yield from result
 

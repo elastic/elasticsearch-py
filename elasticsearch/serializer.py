@@ -15,45 +15,35 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import json
 import uuid
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, ClassVar, Dict, Tuple
 
-from .compat import string_types
-from .exceptions import ImproperlyConfigured, SerializationError
+from elastic_transport import JsonSerializer as _JsonSerializer
+from elastic_transport import NdjsonSerializer as _NdjsonSerializer
+from elastic_transport import Serializer as Serializer
+from elastic_transport import TextSerializer as TextSerializer
+
+from .compat import to_bytes
+from .exceptions import SerializationError
 
 INTEGER_TYPES = ()
 FLOAT_TYPES = (Decimal,)
 TIME_TYPES = (date, datetime)
 
-
-class Serializer:
-    mimetype: str = ""
-
-    def loads(self, s: str) -> Any:
-        raise NotImplementedError()
-
-    def dumps(self, data: Any) -> str:
-        raise NotImplementedError()
-
-
-class TextSerializer(Serializer):
-    mimetype: str = "text/plain"
-
-    def loads(self, s: str) -> Any:
-        return s
-
-    def dumps(self, data: Any) -> str:
-        if isinstance(data, string_types):
-            return data  # type: ignore
-
-        raise SerializationError(f"Cannot serialize {data!r} into text.")
+__all__ = [
+    "Serializer",
+    "JsonSerializer",
+    "TextSerializer",
+    "NdjsonSerializer",
+    "CompatibilityModeSerializer",
+    "MapboxVectorTileSerializer",
+]
 
 
-class JSONSerializer(Serializer):
-    mimetype: str = "application/json"
+class JsonSerializer(_JsonSerializer):
+    mimetype: ClassVar[str] = "application/json"
 
     def default(self, data: Any) -> Any:
         if isinstance(data, TIME_TYPES):
@@ -82,77 +72,58 @@ class JSONSerializer(Serializer):
 
         raise TypeError(f"Unable to serialize {data!r} (type: {type(data)})")
 
-    def loads(self, s: str) -> Any:
-        try:
-            return json.loads(s)
-        except (ValueError, TypeError) as e:
-            raise SerializationError(s, e)
 
-    def dumps(self, data: Any) -> str:
-        # don't serialize strings
-        if isinstance(data, string_types):
-            return data  # type: ignore
+class NdjsonSerializer(JsonSerializer, _NdjsonSerializer):
+    mimetype: ClassVar[str] = "application/x-ndjson"
 
-        try:
-            return json.dumps(
-                data, default=self.default, ensure_ascii=False, separators=(",", ":")
-            )
-        except (ValueError, TypeError) as e:
-            raise SerializationError(data, e)
+    def default(self, data: Any) -> Any:
+        return JsonSerializer.default(self, data)
+
+
+class CompatibilityModeSerializer(JsonSerializer):
+    mimetype: ClassVar[str] = "application/vnd.elasticsearch+json"
+
+    def dumps(self, data: Any) -> bytes:
+        if isinstance(data, str):
+            data = data.encode("utf-8", "surrogatepass")
+        if isinstance(data, bytes):
+            return data
+        if isinstance(data, (tuple, list)):
+            return NdjsonSerializer.dumps(self, data)  # type: ignore
+        return JsonSerializer.dumps(self, data)
+
+    def loads(self, data: bytes) -> Any:
+        if isinstance(data, str):
+            data = to_bytes(data, "utf-8")
+        if isinstance(data, bytes) and data.endswith(b"\n"):
+            return NdjsonSerializer.loads(self, data)  # type: ignore
+        try:  # Try as JSON first but if that fails then try NDJSON.
+            return JsonSerializer.loads(self, data)
+        except SerializationError:
+            return NdjsonSerializer.loads(self, data)  # type: ignore
 
 
 class MapboxVectorTileSerializer(Serializer):
-    mimetype: str = "application/vnd.mapbox-vector-tile"
+    mimetype: ClassVar[str] = "application/vnd.mapbox-vector-tile"
 
-    def loads(self, s: bytes) -> bytes:  # type: ignore
-        return s
+    def loads(self, data: bytes) -> bytes:
+        return data
 
-    def dumps(self, data: bytes) -> bytes:  # type: ignore
-        if isinstance(data, string_types):
+    def dumps(self, data: bytes) -> bytes:
+        if isinstance(data, bytes):
             return data
-
         raise SerializationError(f"Cannot serialize {data!r} into a MapBox vector tile")
 
 
 DEFAULT_SERIALIZERS: Dict[str, Serializer] = {
-    JSONSerializer.mimetype: JSONSerializer(),
-    TextSerializer.mimetype: TextSerializer(),
+    JsonSerializer.mimetype: JsonSerializer(),
     MapboxVectorTileSerializer.mimetype: MapboxVectorTileSerializer(),
+    NdjsonSerializer.mimetype: NdjsonSerializer(),
+    CompatibilityModeSerializer.mimetype: CompatibilityModeSerializer(),
 }
 
-
-class Deserializer:
-    def __init__(
-        self,
-        serializers: Dict[str, Serializer],
-        default_mimetype: str = "application/json",
-    ) -> None:
-        try:
-            self.default = serializers[default_mimetype]
-        except KeyError:
-            raise ImproperlyConfigured(
-                f"Cannot find default serializer ({default_mimetype})"
-            )
-        self.serializers = serializers
-
-    def loads(self, s: str, mimetype: Optional[str] = None) -> Any:
-        if not mimetype:
-            deserializer = self.default
-        else:
-            # split out 'charset' and 'compatible-width' options
-            mimetype = mimetype.partition(";")[0].strip()
-            # Treat 'application/vnd.elasticsearch+json'
-            # as application/json for compatibility.
-            if mimetype == "application/vnd.elasticsearch+json":
-                mimetype = "application/json"
-            try:
-                deserializer = self.serializers[mimetype]
-            except KeyError:
-                raise SerializationError(
-                    f"Unknown mimetype, unable to deserialize: {mimetype}"
-                )
-
-        return deserializer.loads(s)
+# Alias for backwards compatibility
+JSONSerializer = JsonSerializer
 
 
 def _attempt_serialize_numpy_or_pandas(data: Any) -> Tuple[bool, Any]:
@@ -179,7 +150,7 @@ def _attempt_serialize_numpy_or_pandas(data: Any) -> Tuple[bool, Any]:
 def _attempt_serialize_numpy(data: Any) -> Tuple[bool, Any]:
     global _attempt_serialize_numpy
     try:
-        import numpy as np  # type: ignore
+        import numpy as np
 
         if isinstance(
             data,
@@ -224,7 +195,7 @@ def _attempt_serialize_numpy(data: Any) -> Tuple[bool, Any]:
 def _attempt_serialize_pandas(data: Any) -> Tuple[bool, Any]:
     global _attempt_serialize_pandas
     try:
-        import pandas as pd  # type: ignore
+        import pandas as pd
 
         if isinstance(data, (pd.Series, pd.Categorical)):
             return True, data.tolist()

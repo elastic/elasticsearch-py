@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
+from ._base import NamespacedClient
+from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
 
 
 class RollupClient(NamespacedClient):
@@ -33,10 +34,11 @@ class RollupClient(NamespacedClient):
 
         :arg id: The ID of the job to delete
         """
+        client, params = _deprecated_options(self, params)
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "DELETE", _make_path("_rollup", "job", id), params=params, headers=headers
         )
 
@@ -55,7 +57,8 @@ class RollupClient(NamespacedClient):
         :arg id: The ID of the job(s) to fetch. Accepts glob patterns,
             or left blank for all jobs
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "GET", _make_path("_rollup", "job", id), params=params, headers=headers
         )
 
@@ -75,7 +78,8 @@ class RollupClient(NamespacedClient):
         :arg id: The ID of the index to check rollup capabilities on, or
             left blank for all jobs
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "GET", _make_path("_rollup", "data", id), params=params, headers=headers
         )
 
@@ -95,10 +99,11 @@ class RollupClient(NamespacedClient):
         :arg index: The rollup index or index pattern to obtain rollup
             capabilities from.
         """
+        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "GET", _make_path(index, "_rollup", "data"), params=params, headers=headers
         )
 
@@ -117,11 +122,12 @@ class RollupClient(NamespacedClient):
         :arg id: The ID of the job to create
         :arg body: The job configuration
         """
+        client, params = _deprecated_options(self, params)
         for param in (id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "PUT",
             _make_path("_rollup", "job", id),
             params=params,
@@ -150,11 +156,12 @@ class RollupClient(NamespacedClient):
         :arg typed_keys: Specify whether aggregation and suggester names
             should be prefixed by their respective types in the response
         """
+        client, params = _deprecated_options(self, params)
         for param in (index, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST",
             _make_path(index, doc_type, "_rollup_search"),
             params=params,
@@ -176,10 +183,11 @@ class RollupClient(NamespacedClient):
 
         :arg id: The ID of the job to start
         """
+        client, params = _deprecated_options(self, params)
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST",
             _make_path("_rollup", "job", id, "_start"),
             params=params,
@@ -205,10 +213,11 @@ class RollupClient(NamespacedClient):
             job has fully stopped, false if should be executed async. Defaults to
             false.
         """
+        client, params = _deprecated_options(self, params)
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST",
             _make_path("_rollup", "job", id, "_stop"),
             params=params,
@@ -231,11 +240,12 @@ class RollupClient(NamespacedClient):
         :arg rollup_index: The name of the rollup index to create
         :arg body: The rollup configuration
         """
+        client, params = _deprecated_options(self, params)
         for param in (index, rollup_index, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST",
             _make_path(index, "_rollup", rollup_index),
             params=params,

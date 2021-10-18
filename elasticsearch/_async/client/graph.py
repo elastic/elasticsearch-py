@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
+from ._base import NamespacedClient
+from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
 
 
 class GraphClient(NamespacedClient):
@@ -33,10 +34,11 @@ class GraphClient(NamespacedClient):
         :arg routing: Specific routing value
         :arg timeout: Explicit operation timeout
         """
+        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path(index, "_graph", "explore"),
             params=params,

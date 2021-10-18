@@ -17,15 +17,7 @@
 
 from typing import Any, AsyncGenerator, Dict, Generator
 
-from elasticsearch8 import (
-    AIOHttpConnection,
-    AsyncElasticsearch,
-    AsyncTransport,
-    ConnectionPool,
-    Elasticsearch,
-    RequestsHttpConnection,
-    Transport,
-)
+from elasticsearch8 import AsyncElasticsearch, Elasticsearch, Transport
 from elasticsearch8.helpers import (
     async_bulk,
     async_reindex,
@@ -40,11 +32,6 @@ from elasticsearch8.helpers import (
 es = Elasticsearch(
     [{"host": "localhost", "port": 9443}],
     transport_class=Transport,
-)
-t = Transport(
-    [{}],
-    connection_class=RequestsHttpConnection,
-    connection_pool_class=ConnectionPool,
     sniff_on_start=True,
     sniffer_timeout=0.1,
     sniff_timeout=1,
@@ -52,7 +39,6 @@ t = Transport(
     max_retries=1,
     retry_on_status={100, 400, 503},
     retry_on_timeout=True,
-    send_get_body_as="source",
 )
 
 
@@ -118,12 +104,6 @@ def reindex_types() -> None:
 
 es2 = AsyncElasticsearch(
     [{"host": "localhost", "port": 9443}],
-    transport_class=AsyncTransport,
-)
-t2 = AsyncTransport(
-    [{}],
-    connection_class=AIOHttpConnection,
-    connection_pool_class=ConnectionPool,
     sniff_on_start=True,
     sniffer_timeout=0.1,
     sniff_timeout=1,
@@ -131,7 +111,6 @@ t2 = AsyncTransport(
     max_retries=1,
     retry_on_status={100, 400, 503},
     retry_on_timeout=True,
-    send_get_body_as="source",
 )
 
 

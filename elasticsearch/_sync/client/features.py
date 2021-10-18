@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import NamespacedClient, query_params
+from ._base import NamespacedClient
+from .utils import _deprecated_options, query_params
 
 
 class FeaturesClient(NamespacedClient):
@@ -30,7 +31,8 @@ class FeaturesClient(NamespacedClient):
         :arg master_timeout: Explicit operation timeout for connection
             to master node
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "GET", "/_features", params=params, headers=headers
         )
 
@@ -46,6 +48,7 @@ class FeaturesClient(NamespacedClient):
             This API is **experimental** so may include breaking changes
             or be removed in a future version
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "POST", "/_features/_reset", params=params, headers=headers
         )

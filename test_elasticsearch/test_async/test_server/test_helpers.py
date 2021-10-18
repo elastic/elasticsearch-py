@@ -24,7 +24,7 @@ from mock import MagicMock, patch
 from elasticsearch import TransportError, helpers
 from elasticsearch.helpers import ScanError
 
-pytestmark = pytest.mark.asyncio
+pytestmark = [pytest.mark.xfail, pytest.mark.asyncio]
 
 
 class AsyncMock(MagicMock):

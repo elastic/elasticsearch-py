@@ -77,6 +77,7 @@ async def mvt_setup(async_client):
     )
 
 
+@pytest.mark.xfail
 async def test_mapbox_vector_tile_logging(elasticsearch_url, mvt_setup, ca_certs):
     client = AsyncElasticsearch(elasticsearch_url, ca_certs=ca_certs)
 

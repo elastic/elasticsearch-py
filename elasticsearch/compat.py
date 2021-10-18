@@ -16,10 +16,18 @@
 #  under the License.
 
 from queue import Queue
-from typing import Tuple, Type, Union
-from urllib.parse import quote, quote_plus, unquote, urlencode, urlparse
+from typing import Mapping, Tuple, Type, Union
+from urllib.parse import quote, quote_plus, unquote
+from urllib.parse import urlencode as _urlencode
+from urllib.parse import urlparse
+
+from elastic_transport.client_utils import percent_encode
 
 string_types: Tuple[Type[str], Type[bytes]] = (str, bytes)
+
+
+def urlencode(query: Mapping[str, str]) -> str:
+    return _urlencode(query, quote_via=percent_encode)
 
 
 def to_str(x: Union[str, bytes], encoding: str = "ascii") -> str:

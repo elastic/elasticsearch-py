@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
+from ._base import NamespacedClient
+from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
 
 
 class SlmClient(NamespacedClient):
@@ -29,10 +30,11 @@ class SlmClient(NamespacedClient):
         :arg policy_id: The id of the snapshot lifecycle policy to
             remove
         """
+        client, params = _deprecated_options(self, params)
         if policy_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'policy_id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "DELETE",
             _make_path("_slm", "policy", policy_id),
             params=params,
@@ -50,10 +52,11 @@ class SlmClient(NamespacedClient):
         :arg policy_id: The id of the snapshot lifecycle policy to be
             executed
         """
+        client, params = _deprecated_options(self, params)
         if policy_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'policy_id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT",
             _make_path("_slm", "policy", policy_id, "_execute"),
             params=params,
@@ -68,7 +71,8 @@ class SlmClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/slm-api-execute-retention.html>`_
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "POST", "/_slm/_execute_retention", params=params, headers=headers
         )
 
@@ -83,7 +87,8 @@ class SlmClient(NamespacedClient):
         :arg policy_id: Comma-separated list of snapshot lifecycle
             policies to retrieve
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET",
             _make_path("_slm", "policy", policy_id),
             params=params,
@@ -98,7 +103,8 @@ class SlmClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/slm-api-get-stats.html>`_
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", "/_slm/stats", params=params, headers=headers
         )
 
@@ -112,10 +118,11 @@ class SlmClient(NamespacedClient):
         :arg policy_id: The id of the snapshot lifecycle policy
         :arg body: The snapshot lifecycle policy definition to register
         """
+        client, params = _deprecated_options(self, params)
         if policy_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'policy_id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT",
             _make_path("_slm", "policy", policy_id),
             params=params,
@@ -130,7 +137,8 @@ class SlmClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/slm-api-get-status.html>`_
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", "/_slm/status", params=params, headers=headers
         )
 
@@ -141,7 +149,8 @@ class SlmClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/slm-api-start.html>`_
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "POST", "/_slm/start", params=params, headers=headers
         )
 
@@ -152,6 +161,7 @@ class SlmClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/slm-api-stop.html>`_
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "POST", "/_slm/stop", params=params, headers=headers
         )

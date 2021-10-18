@@ -26,12 +26,13 @@
         {% endfor %}
         {% endif %}
         """
+        client, params = _deprecated_options(self, params)
         {% include "substitutions" %}
         {% include "required" %}
         {% if api.body.serialize == "bulk" %}
-        body = _bulk_body(self.transport.serializer, body)
+        headers["content-type"] = "application/x-ndjson"
         {% endif %}
         {% block request %}
-        return await self.transport.perform_request("{{ api.method }}", {% include "url" %}, params=params, headers=headers{% if api.body %}, body=body{% endif %})
+        return await client._perform_request("{{ api.method }}", {% include "url" %}, params=params, headers=headers{% if api.body %}, body=body{% endif %})
         {% endblock %}
 

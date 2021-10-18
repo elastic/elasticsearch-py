@@ -17,22 +17,11 @@
 
 from typing import Any, Dict, Generator
 
-from elasticsearch import (
-    ConnectionPool,
-    Elasticsearch,
-    RequestsHttpConnection,
-    Transport,
-)
+from elasticsearch import Elasticsearch
 from elasticsearch.helpers import bulk, reindex, scan, streaming_bulk
 
 es = Elasticsearch(
     [{"host": "localhost", "port": 9443}],
-    transport_class=Transport,
-)
-t = Transport(
-    [{}],
-    connection_class=RequestsHttpConnection,
-    connection_pool_class=ConnectionPool,
     sniff_on_start=True,
     sniffer_timeout=0.1,
     sniff_timeout=1,
@@ -40,8 +29,15 @@ t = Transport(
     max_retries=1,
     retry_on_status={100, 400, 503},
     retry_on_timeout=True,
-    send_get_body_as="source",
 )
+
+es.options(request_timeout=1.0, max_retries=0, api_key="api-key-example").search(
+    index="test-index"
+)
+
+es.indices.options(
+    request_timeout=1.0, max_retries=0, api_key="api-key-example"
+).exists(index="test-index")
 
 
 def sync_gen() -> Generator[Dict[Any, Any], None, None]:

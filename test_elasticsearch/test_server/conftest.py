@@ -37,16 +37,11 @@ def sync_client_factory(elasticsearch_url):
         # Configure the client with certificates and optionally
         # an HTTP conn class depending on 'PYTHON_CONNECTION_CLASS' envvar
         kw = {
-            "timeout": 3,
             "ca_certs": CA_CERTS,
             "headers": {"Authorization": "Basic ZWxhc3RpYzpjaGFuZ2VtZQ=="},
         }
         if "PYTHON_CONNECTION_CLASS" in os.environ:
-            from elasticsearch import connection
-
-            kw["connection_class"] = getattr(
-                connection, os.environ["PYTHON_CONNECTION_CLASS"]
-            )
+            kw["node_class"] = os.environ["PYTHON_CONNECTION_CLASS"]
 
         # We do this little dance with the URL to force
         # Requests to respect 'headers: None' within rest API spec tests.

@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
+from ._base import NamespacedClient
+from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
 
 
 class CcrClient(NamespacedClient):
@@ -28,10 +29,11 @@ class CcrClient(NamespacedClient):
 
         :arg name: The name of the auto follow pattern.
         """
+        client, params = _deprecated_options(self, params)
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "DELETE",
             _make_path("_ccr", "auto_follow", name),
             params=params,
@@ -54,11 +56,12 @@ class CcrClient(NamespacedClient):
             equal to the total number of copies for the shard (number of replicas +
             1)  Default: 0
         """
+        client, params = _deprecated_options(self, params)
         for param in (index, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "PUT",
             _make_path(index, "_ccr", "follow"),
             params=params,
@@ -77,10 +80,11 @@ class CcrClient(NamespacedClient):
         :arg index: A comma-separated list of index patterns; use `_all`
             to perform the operation on all indices
         """
+        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "GET", _make_path(index, "_ccr", "info"), params=params, headers=headers
         )
 
@@ -95,10 +99,11 @@ class CcrClient(NamespacedClient):
         :arg index: A comma-separated list of index patterns; use `_all`
             to perform the operation on all indices
         """
+        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "GET", _make_path(index, "_ccr", "stats"), params=params, headers=headers
         )
 
@@ -116,11 +121,12 @@ class CcrClient(NamespacedClient):
             perspective of that cluster for the remote cluster containing the leader
             index
         """
+        client, params = _deprecated_options(self, params)
         for param in (index, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST",
             _make_path(index, "_ccr", "forget_follower"),
             params=params,
@@ -138,7 +144,8 @@ class CcrClient(NamespacedClient):
 
         :arg name: The name of the auto follow pattern.
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "GET",
             _make_path("_ccr", "auto_follow", name),
             params=params,
@@ -156,10 +163,11 @@ class CcrClient(NamespacedClient):
         :arg index: The name of the follower index that should pause
             following its leader index.
         """
+        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST",
             _make_path(index, "_ccr", "pause_follow"),
             params=params,
@@ -178,11 +186,12 @@ class CcrClient(NamespacedClient):
         :arg name: The name of the auto follow pattern.
         :arg body: The specification of the auto follow pattern
         """
+        client, params = _deprecated_options(self, params)
         for param in (name, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "PUT",
             _make_path("_ccr", "auto_follow", name),
             params=params,
@@ -201,10 +210,11 @@ class CcrClient(NamespacedClient):
         :arg body: The name of the leader index and other optional ccr
             related parameters
         """
+        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST",
             _make_path(index, "_ccr", "resume_follow"),
             params=params,
@@ -219,7 +229,8 @@ class CcrClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ccr-get-stats.html>`_
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "GET", "/_ccr/stats", params=params, headers=headers
         )
 
@@ -234,10 +245,11 @@ class CcrClient(NamespacedClient):
         :arg index: The name of the follower index that should be turned
             into a regular index.
         """
+        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST",
             _make_path(index, "_ccr", "unfollow"),
             params=params,
@@ -254,10 +266,11 @@ class CcrClient(NamespacedClient):
         :arg name: The name of the auto follow pattern that should pause
             discovering new indices to follow.
         """
+        client, params = _deprecated_options(self, params)
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST",
             _make_path("_ccr", "auto_follow", name, "pause"),
             params=params,
@@ -274,10 +287,11 @@ class CcrClient(NamespacedClient):
         :arg name: The name of the auto follow pattern to resume
             discovering new indices to follow.
         """
+        client, params = _deprecated_options(self, params)
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "POST",
             _make_path("_ccr", "auto_follow", name, "resume"),
             params=params,

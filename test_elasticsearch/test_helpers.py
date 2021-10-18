@@ -51,7 +51,11 @@ class TestParallelBulk:
     )
     def test_all_chunks_sent(self, _process_bulk_chunk):
         actions = ({"x": i} for i in range(100))
-        list(helpers.parallel_bulk(Elasticsearch(), actions, chunk_size=2))
+        list(
+            helpers.parallel_bulk(
+                Elasticsearch("http://localhost:9200"), actions, chunk_size=2
+            )
+        )
 
         assert 50 == mock_process_bulk_chunk.call_count
 
@@ -67,7 +71,10 @@ class TestParallelBulk:
         actions = ({"x": i} for i in range(100))
         results = list(
             helpers.parallel_bulk(
-                Elasticsearch(), actions, thread_count=10, chunk_size=2
+                Elasticsearch("http://localhost:9200"),
+                actions,
+                thread_count=10,
+                chunk_size=2,
             )
         )
         assert len(set([r[1] for r in results])) > 1
@@ -173,8 +180,7 @@ class TestChunkActions:
         )
         assert 25 == len(chunks)
         for chunk_data, chunk_actions in chunks:
-            chunk = "".join(chunk_actions)
-            chunk = chunk if isinstance(chunk, str) else chunk.encode("utf-8")
+            chunk = b"".join(chunk_actions)
             assert len(chunk) <= max_byte_size
 
     def test_add_helper_meta_to_kwargs(self):

@@ -167,8 +167,10 @@ async def async_streaming_bulk(
         async for item in aiter(actions):
             yield expand_action_callback(item)
 
+    serializer = client.transport.serializers.get_serializer("application/json")
+
     async for bulk_data, bulk_actions in _chunk_actions(
-        map_actions(), chunk_size, max_chunk_bytes, client.transport.serializer
+        map_actions(), chunk_size, max_chunk_bytes, serializer
     ):
 
         for attempt in range(max_retries + 1):
@@ -204,9 +206,7 @@ async def async_streaming_bulk(
                         ):
                             # _process_bulk_chunk expects strings so we need to
                             # re-serialize the data
-                            to_retry.extend(
-                                map(client.transport.serializer.dumps, data)
-                            )
+                            to_retry.extend(map(serializer.dumps, data))
                             to_retry_data.append(data)
                         else:
                             yield ok, {action: info}

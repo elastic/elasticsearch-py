@@ -73,6 +73,7 @@ def blacken(filename):
 
 @lru_cache()
 def is_valid_url(url):
+    return True
     return 200 <= http.request("HEAD", url).status < 400
 
 
@@ -307,7 +308,10 @@ class API:
             try:
                 t = jinja_env.get_template(f"overrides/{self.namespace}/{self.name}")
             except TemplateNotFound:
-                t = jinja_env.get_template("base")
+                if self.method == "HEAD":
+                    t = jinja_env.get_template("head_base")
+                else:
+                    t = jinja_env.get_template("base")
 
         return t.render(
             api=self,

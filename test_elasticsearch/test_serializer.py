@@ -31,13 +31,9 @@ except ImportError:
 
 import re
 
-from elasticsearch.exceptions import ImproperlyConfigured, SerializationError
-from elasticsearch.serializer import (
-    DEFAULT_SERIALIZERS,
-    Deserializer,
-    JSONSerializer,
-    TextSerializer,
-)
+from elasticsearch import Elasticsearch
+from elasticsearch.exceptions import SerializationError
+from elasticsearch.serializer import JSONSerializer, TextSerializer
 
 requires_numpy_and_pandas = pytest.mark.skipif(
     np is None or pd is None, reason="Test requires numpy or pandas to be available"
@@ -45,7 +41,7 @@ requires_numpy_and_pandas = pytest.mark.skipif(
 
 
 def test_datetime_serialization():
-    assert '{"d":"2010-10-01T02:30:00"}' == JSONSerializer().dumps(
+    assert b'{"d":"2010-10-01T02:30:00"}' == JSONSerializer().dumps(
         {"d": datetime(2010, 10, 1, 2, 30)}
     )
 
@@ -55,18 +51,18 @@ def test_decimal_serialization():
 
     if sys.version_info[:2] == (2, 6):
         pytest.skip("Float rounding is broken in 2.6.")
-    assert '{"d":3.8}' == JSONSerializer().dumps({"d": Decimal("3.8")})
+    assert b'{"d":3.8}' == JSONSerializer().dumps({"d": Decimal("3.8")})
 
 
 def test_uuid_serialization():
-    assert '{"d":"00000000-0000-0000-0000-000000000003"}' == JSONSerializer().dumps(
+    assert b'{"d":"00000000-0000-0000-0000-000000000003"}' == JSONSerializer().dumps(
         {"d": uuid.UUID("00000000-0000-0000-0000-000000000003")}
     )
 
 
 @requires_numpy_and_pandas
 def test_serializes_numpy_bool():
-    assert '{"d":true}' == JSONSerializer().dumps({"d": np.bool_(True)})
+    assert b'{"d":true}' == JSONSerializer().dumps({"d": np.bool_(True)})
 
 
 @requires_numpy_and_pandas
@@ -79,7 +75,7 @@ def test_serializes_numpy_integers():
         np.int32,
         np.int64,
     ):
-        assert ser.dumps({"d": np_type(-1)}) == '{"d":-1}'
+        assert ser.dumps({"d": np_type(-1)}) == b'{"d":-1}'
 
     for np_type in (
         np.uint8,
@@ -87,7 +83,7 @@ def test_serializes_numpy_integers():
         np.uint32,
         np.uint64,
     ):
-        assert ser.dumps({"d": np_type(1)}) == '{"d":1}'
+        assert ser.dumps({"d": np_type(1)}) == b'{"d":1}'
 
 
 @requires_numpy_and_pandas
@@ -98,42 +94,42 @@ def test_serializes_numpy_floats():
         np.float32,
         np.float64,
     ):
-        assert re.search(r'^\{"d":1\.2[\d]*}$', ser.dumps({"d": np_type(1.2)}))
+        assert re.search(br'^{"d":1\.2[\d]*}$', ser.dumps({"d": np_type(1.2)}))
 
 
 @requires_numpy_and_pandas
 def test_serializes_numpy_datetime():
-    assert '{"d":"2010-10-01T02:30:00"}' == JSONSerializer().dumps(
+    assert b'{"d":"2010-10-01T02:30:00"}' == JSONSerializer().dumps(
         {"d": np.datetime64("2010-10-01T02:30:00")}
     )
 
 
 @requires_numpy_and_pandas
 def test_serializes_numpy_ndarray():
-    assert '{"d":[0,0,0,0,0]}' == JSONSerializer().dumps(
+    assert b'{"d":[0,0,0,0,0]}' == JSONSerializer().dumps(
         {"d": np.zeros((5,), dtype=np.uint8)}
     )
     # This isn't useful for Elasticsearch, just want to make sure it works.
-    assert '{"d":[[0,0],[0,0]]}' == JSONSerializer().dumps(
+    assert b'{"d":[[0,0],[0,0]]}' == JSONSerializer().dumps(
         {"d": np.zeros((2, 2), dtype=np.uint8)}
     )
 
 
 @requires_numpy_and_pandas
 def test_serializes_numpy_nan_to_nan():
-    assert '{"d":NaN}' == JSONSerializer().dumps({"d": np.nan})
+    assert b'{"d":NaN}' == JSONSerializer().dumps({"d": np.nan})
 
 
 @requires_numpy_and_pandas
 def test_serializes_pandas_timestamp():
-    assert '{"d":"2010-10-01T02:30:00"}' == JSONSerializer().dumps(
+    assert b'{"d":"2010-10-01T02:30:00"}' == JSONSerializer().dumps(
         {"d": pd.Timestamp("2010-10-01T02:30:00")}
     )
 
 
 @requires_numpy_and_pandas
 def test_serializes_pandas_series():
-    assert '{"d":["a","b","c","d"]}' == JSONSerializer().dumps(
+    assert b'{"d":["a","b","c","d"]}' == JSONSerializer().dumps(
         {"d": pd.Series(["a", "b", "c", "d"])}
     )
 
@@ -141,7 +137,7 @@ def test_serializes_pandas_series():
 @requires_numpy_and_pandas
 @pytest.mark.skipif(not hasattr(pd, "NA"), reason="pandas.NA is required")
 def test_serializes_pandas_na():
-    assert '{"d":null}' == JSONSerializer().dumps({"d": pd.NA})
+    assert b'{"d":null}' == JSONSerializer().dumps({"d": pd.NA})
 
 
 @requires_numpy_and_pandas
@@ -154,10 +150,10 @@ def test_raises_serialization_error_pandas_nat():
 @requires_numpy_and_pandas
 def test_serializes_pandas_category():
     cat = pd.Categorical(["a", "c", "b", "a"], categories=["a", "b", "c"])
-    assert '{"d":["a","c","b","a"]}' == JSONSerializer().dumps({"d": cat})
+    assert b'{"d":["a","c","b","a"]}' == JSONSerializer().dumps({"d": cat})
 
     cat = pd.Categorical([1, 2, 3], categories=[1, 2, 3])
-    assert '{"d":[1,2,3]}' == JSONSerializer().dumps({"d": cat})
+    assert b'{"d":[1,2,3]}' == JSONSerializer().dumps({"d": cat})
 
 
 def test_json_raises_serialization_error_on_dump_error():
@@ -175,7 +171,7 @@ def test_raises_serialization_error_on_load_error():
 
 
 def test_strings_are_left_untouched():
-    assert "你好" == TextSerializer().dumps("你好")
+    assert b"\xe4\xbd\xa0\xe5\xa5\xbd" == TextSerializer().dumps("你好")
 
 
 def test_text_raises_serialization_error_on_dump_error():
@@ -185,15 +181,16 @@ def test_text_raises_serialization_error_on_dump_error():
 
 class TestDeserializer:
     def setup_method(self, _):
-        self.de = Deserializer(DEFAULT_SERIALIZERS)
+        self.serializers = Elasticsearch("http://localhost:9200").transport.serializers
 
     def test_deserializes_json_by_default(self):
-        assert {"some": "data"} == self.de.loads('{"some":"data"}')
+        assert {"some": "data"} == self.serializers.loads('{"some":"data"}')
 
-    def test_deserializes_text_with_correct_ct(self):
-        assert '{"some":"data"}' == self.de.loads('{"some":"data"}', "text/plain")
-        assert '{"some":"data"}' == self.de.loads(
-            '{"some":"data"}', "text/plain; charset=whatever"
+    @pytest.mark.parametrize("data", ['{"some":"data"}', b'{"some":"data"}'])
+    def test_deserializes_text_with_correct_ct(self, data):
+        assert '{"some":"data"}' == self.serializers.loads(data, "text/plain")
+        assert '{"some":"data"}' == self.serializers.loads(
+            data, "text/plain; charset=whatever"
         )
 
     def test_deserialize_compatibility_header(self):
@@ -203,14 +200,16 @@ class TestDeserializer:
             "application/vnd.elasticsearch+json;compatible-with=8",
             "application/vnd.elasticsearch+json; compatible-with=8",
         ):
-            assert {"some": "data"} == self.de.loads('{"some":"data"}', content_type)
+            assert {"some": "data"} == self.serializers.loads(
+                '{"some":"data"}', content_type
+            )
+            assert b'{"some":"data"}' == self.serializers.dumps(
+                '{"some":"data"}', content_type
+            )
 
-    def test_raises_serialization_error_on_unknown_mimetype(self):
-        with pytest.raises(SerializationError):
-            self.de.loads("{}", "text/html")
-
-    def test_raises_improperly_configured_when_default_mimetype_cannot_be_deserialized(
-        self,
-    ):
-        with pytest.raises(ImproperlyConfigured):
-            Deserializer({})
+            assert b'{"some":"data"}\n{"some":"data"}\n' == self.serializers.dumps(
+                ['{"some":"data"}', {"some": "data"}], content_type
+            )
+            assert [{"some": "data"}, {"some": "data"}] == self.serializers.loads(
+                b'{"some":"data"}\n{"some":"data"}\n', content_type
+            )

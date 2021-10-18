@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
+from ._base import NamespacedClient
+from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
 
 
 class AsyncSearchClient(NamespacedClient):
@@ -29,10 +30,11 @@ class AsyncSearchClient(NamespacedClient):
 
         :arg id: The async search ID
         """
+        client, params = _deprecated_options(self, params)
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "DELETE", _make_path("_async_search", id), params=params, headers=headers
         )
 
@@ -52,10 +54,11 @@ class AsyncSearchClient(NamespacedClient):
         :arg wait_for_completion_timeout: Specify the time that the
             request should block waiting for the final response
         """
+        client, params = _deprecated_options(self, params)
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "GET", _make_path("_async_search", id), params=params, headers=headers
         )
 
@@ -195,11 +198,11 @@ class AsyncSearchClient(NamespacedClient):
         :arg wait_for_completion_timeout: Specify the time that the
             request should block waiting for the final response  Default: 1s
         """
-        # from is a reserved word so it cannot be used, use from_ instead
-        if "from_" in params:
+        client, params = _deprecated_options(self, params)
+        if params and "from_" in params:
             params["from"] = params.pop("from_")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path(index, "_async_search"),
             params=params,
@@ -217,10 +220,11 @@ class AsyncSearchClient(NamespacedClient):
 
         :arg id: The async search ID
         """
+        client, params = _deprecated_options(self, params)
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "GET",
             _make_path("_async_search", "status", id),
             params=params,

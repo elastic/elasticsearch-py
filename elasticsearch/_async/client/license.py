@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import NamespacedClient, query_params
+from ._base import NamespacedClient
+from .utils import _deprecated_options, query_params
 
 
 class LicenseClient(NamespacedClient):
@@ -26,7 +27,8 @@ class LicenseClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-license.html>`_
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "DELETE", "/_license", params=params, headers=headers
         )
 
@@ -42,7 +44,8 @@ class LicenseClient(NamespacedClient):
         :arg local: Return local information, do not retrieve the state
             from master node (default: false)
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", "/_license", params=params, headers=headers
         )
 
@@ -53,7 +56,8 @@ class LicenseClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-basic-status.html>`_
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", "/_license/basic_status", params=params, headers=headers
         )
 
@@ -64,7 +68,8 @@ class LicenseClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-trial-status.html>`_
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", "/_license/trial_status", params=params, headers=headers
         )
 
@@ -79,7 +84,8 @@ class LicenseClient(NamespacedClient):
         :arg acknowledge: whether the user has acknowledged acknowledge
             messages (default: false)
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "PUT", "/_license", params=params, headers=headers, body=body
         )
 
@@ -93,7 +99,8 @@ class LicenseClient(NamespacedClient):
         :arg acknowledge: whether the user has acknowledged acknowledge
             messages (default: false)
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "POST", "/_license/start_basic", params=params, headers=headers
         )
 
@@ -109,10 +116,10 @@ class LicenseClient(NamespacedClient):
         :arg doc_type: The type of trial license to generate (default:
             "trial")
         """
-        # type is a reserved word so it cannot be used, use doc_type instead
-        if "doc_type" in params:
+        client, params = _deprecated_options(self, params)
+        if params and "doc_type" in params:
             params["type"] = params.pop("doc_type")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST", "/_license/start_trial", params=params, headers=headers
         )

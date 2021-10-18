@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
+from ._base import NamespacedClient
+from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
 
 
 class WatcherClient(NamespacedClient):
@@ -30,10 +31,11 @@ class WatcherClient(NamespacedClient):
         :arg action_id: A comma-separated list of the action ids to be
             acked
         """
+        client, params = _deprecated_options(self, params)
         if watch_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'watch_id'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "PUT",
             _make_path("_watcher", "watch", watch_id, "_ack", action_id),
             params=params,
@@ -49,10 +51,11 @@ class WatcherClient(NamespacedClient):
 
         :arg watch_id: Watch ID
         """
+        client, params = _deprecated_options(self, params)
         if watch_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'watch_id'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "PUT",
             _make_path("_watcher", "watch", watch_id, "_activate"),
             params=params,
@@ -68,10 +71,11 @@ class WatcherClient(NamespacedClient):
 
         :arg watch_id: Watch ID
         """
+        client, params = _deprecated_options(self, params)
         if watch_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'watch_id'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "PUT",
             _make_path("_watcher", "watch", watch_id, "_deactivate"),
             params=params,
@@ -87,10 +91,11 @@ class WatcherClient(NamespacedClient):
 
         :arg id: Watch ID
         """
+        client, params = _deprecated_options(self, params)
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "DELETE",
             _make_path("_watcher", "watch", id),
             params=params,
@@ -109,7 +114,8 @@ class WatcherClient(NamespacedClient):
         :arg debug: indicates whether the watch should execute in debug
             mode
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "PUT",
             _make_path("_watcher", "watch", id, "_execute"),
             params=params,
@@ -126,10 +132,11 @@ class WatcherClient(NamespacedClient):
 
         :arg id: Watch ID
         """
+        client, params = _deprecated_options(self, params)
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "GET", _make_path("_watcher", "watch", id), params=params, headers=headers
         )
 
@@ -149,10 +156,11 @@ class WatcherClient(NamespacedClient):
             has changed the watch has the specified sequence number
         :arg version: Explicit version number for concurrency control
         """
+        client, params = _deprecated_options(self, params)
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
 
-        return self.transport.perform_request(
+        return client._perform_request(
             "PUT",
             _make_path("_watcher", "watch", id),
             params=params,
@@ -167,7 +175,8 @@ class WatcherClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/watcher-api-start.html>`_
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "POST", "/_watcher/_start", params=params, headers=headers
         )
 
@@ -184,7 +193,8 @@ class WatcherClient(NamespacedClient):
         :arg emit_stacktraces: Emits stack traces of currently running
             watches
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "GET",
             _make_path("_watcher", "stats", metric),
             params=params,
@@ -198,7 +208,8 @@ class WatcherClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/watcher-api-stop.html>`_
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "POST", "/_watcher/_stop", params=params, headers=headers
         )
 
@@ -211,7 +222,8 @@ class WatcherClient(NamespacedClient):
 
         :arg body: From, size, query, sort and search_after
         """
-        return self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return client._perform_request(
             "POST",
             "/_watcher/_query/watches",
             params=params,

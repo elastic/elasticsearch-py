@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import SKIP_IN_PATH, NamespacedClient, _bulk_body, _make_path, query_params
+from ._base import NamespacedClient
+from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
 
 
 class MonitoringClient(NamespacedClient):
@@ -35,11 +36,12 @@ class MonitoringClient(NamespacedClient):
         :arg system_api_version: API Version of the monitored system
         :arg system_id: Identifier of the monitored system
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        body = _bulk_body(self.transport.serializer, body)
-        return await self.transport.perform_request(
+        headers["content-type"] = "application/x-ndjson"
+        return await client._perform_request(
             "POST",
             _make_path("_monitoring", doc_type, "bulk"),
             params=params,

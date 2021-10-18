@@ -15,7 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
+from ._base import NamespacedClient
+from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
 
 
 class IngestClient(NamespacedClient):
@@ -33,7 +34,8 @@ class IngestClient(NamespacedClient):
         :arg summary: Return pipelines without their definitions
             (default: false)
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", _make_path("_ingest", "pipeline", id), params=params, headers=headers
         )
 
@@ -50,11 +52,12 @@ class IngestClient(NamespacedClient):
             to master node
         :arg timeout: Explicit operation timeout
         """
+        client, params = _deprecated_options(self, params)
         for param in (id, body):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "PUT",
             _make_path("_ingest", "pipeline", id),
             params=params,
@@ -74,10 +77,11 @@ class IngestClient(NamespacedClient):
             to master node
         :arg timeout: Explicit operation timeout
         """
+        client, params = _deprecated_options(self, params)
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'id'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "DELETE",
             _make_path("_ingest", "pipeline", id),
             params=params,
@@ -96,10 +100,11 @@ class IngestClient(NamespacedClient):
         :arg verbose: Verbose mode. Display data output for each
             processor in executed pipeline
         """
+        client, params = _deprecated_options(self, params)
         if body in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'body'.")
 
-        return await self.transport.perform_request(
+        return await client._perform_request(
             "POST",
             _make_path("_ingest", "pipeline", id, "_simulate"),
             params=params,
@@ -114,7 +119,8 @@ class IngestClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/grok-processor.html#grok-processor-rest-get>`_
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", "/_ingest/processor/grok", params=params, headers=headers
         )
 
@@ -125,6 +131,7 @@ class IngestClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/geoip-stats-api.html>`_
         """
-        return await self.transport.perform_request(
+        client, params = _deprecated_options(self, params)
+        return await client._perform_request(
             "GET", "/_ingest/geoip/stats", params=params, headers=headers
         )
