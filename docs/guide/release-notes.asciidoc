@@ -1,6 +1,7 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-7-15-1>>
 * <<rn-7-15-0>>
 * <<rn-7-14-0>>
 * <<rn-7-13-4>>
@@ -28,6 +29,22 @@
 * <<rn-7-0-2>>
 * <<rn-7-0-1>>
 * <<rn-7-0-0>>
+
+
+[discrete]
+[[rn-7-15-1]]
+=== 7.15.1 (2021-10-14)
+
+[discrete]
+==== Client
+
+- Fixed a performance regression in `JSONSerializer.default()` when `numpy` and `pandas` weren't installed.
+- Changed the `DeprecationWarning` for the `body` parameter to be a "removed in a future version" instead of "removed in 8.0" in line with the 8.0 roadmap.
+
+[discrete]
+==== Search
+
+- The `index` parameter of the `open_point_in_time` API is now required, was optional.
 
 
 [discrete]
