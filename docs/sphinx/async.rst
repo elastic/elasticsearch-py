@@ -223,21 +223,3 @@ AsyncElasticsearch
 
  .. autoclass:: AsyncElasticsearch
    :members:
-
-AsyncTransport
-~~~~~~~~~~~~~~
-
- .. autoclass:: AsyncTransport
-   :members:
-
-AsyncConnection
-~~~~~~~~~~~~~~~~~
-
- .. autoclass:: AsyncConnection
-   :members:
-
-AIOHttpConnection
-~~~~~~~~~~~~~~~~~
-
- .. autoclass:: AIOHttpConnection
-   :members:

@@ -22,15 +22,15 @@ To index a document, you need to specify three pieces of information: `index`,
 ----------------------------
 from datetime import datetime
 from elasticsearch import Elasticsearch
-es = Elasticsearch()
+es = Elasticsearch('https://localhost:9200')
 
 doc = {
     'author': 'author_name',
     'text': 'Interensting content...',
     'timestamp': datetime.now(),
 }
-res = es.index(index="test-index", id=1, body=doc)
-print(res['result'])
+resp = es.index(index="test-index", id=1, document=doc)
+print(resp['result'])
 ----------------------------
 
 
@@ -42,8 +42,8 @@ To get a document, you need to specify its `index` and `id`:
 
 [source,py]
 ----------------------------
-res = es.get(index="test-index", id=1)
-print(res['_source'])
+resp = es.get(index="test-index", id=1)
+print(resp['_source'])
 ----------------------------
 
 
@@ -67,7 +67,7 @@ The `search()` method returns results that are matching a query:
 
 [source,py]
 ----------------------------
-res = es.search(index="test-index", body={"query": {"match_all": {}}})
+resp = es.search(index="test-index", query={"match_all": {}})
 print("Got %d Hits:" % res['hits']['total']['value'])
 for hit in res['hits']['hits']:
     print("%(timestamp)s %(author)s: %(text)s" % hit["_source"])
@@ -85,15 +85,15 @@ To update a document, you need to specify three pieces of information: `index`,
 ----------------------------
 from datetime import datetime
 from elasticsearch import Elasticsearch
-es = Elasticsearch()
+es = Elasticsearch('https://localhost:9200')
 
 doc = {
     'author': 'author_name',
     'text': 'Interensting modified content...',
     'timestamp': datetime.now(),
 }
-res = es.update(index="test-index", id=1, body=doc)
-print(res['result'])
+resp = es.update(index="test-index", id=1, document=doc)
+print(resp['result'])
 ----------------------------
 
 
