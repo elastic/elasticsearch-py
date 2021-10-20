@@ -44,6 +44,7 @@ class IngestClient(NamespacedClient):
         id: Any,
         *,
         body: Any,
+        if_version: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,

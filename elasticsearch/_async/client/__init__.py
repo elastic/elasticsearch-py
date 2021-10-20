@@ -104,103 +104,6 @@ class AsyncElasticsearch(BaseClient):
 
         # Set 'api_key' per request
         client.options(api_key=("id", "api_key")).search(...)
-
-    If you want to turn on :ref:`sniffing` you have several options (described
-    in :class:`~elastic_transport.Transport`):
-
-    .. code-block:: python
-
-        # create connection that will automatically inspect the cluster to get
-        # the list of active nodes. Start with nodes running on 'esnode1' and
-        # 'esnode2'
-        es = Elasticsearch(
-            ['esnode1', 'esnode2'],
-            # sniff before doing anything
-            sniff_on_start=True,
-            # refresh nodes after a node fails to respond
-            sniff_on_connection_fail=True,
-            # and also every 60 seconds
-            sniffer_timeout=60
-        )
-
-    Different hosts can have different parameters, use a dictionary per node to
-    specify those::
-
-        # connect to localhost directly and another node using SSL on port 443
-        # and an url_prefix. Note that ``port`` needs to be an int.
-        es = Elasticsearch([
-            {'host': 'localhost'},
-            {'host': 'othernode', 'port': 443, 'url_prefix': 'es', 'use_ssl': True},
-        ])
-
-    If using TLS/SSL, there are several parameters that control how we deal with
-    certificates (see :class:`~elasticsearch.Urllib3HttpConnection` for
-    detailed description of the options)::
-
-        es = Elasticsearch(
-            ['https://localhost:443', 'https://other_host:443'],
-            # turn on SSL
-            use_ssl=True,
-            # make sure we verify SSL certificates
-            verify_certs=True,
-            # provide a path to CA certs on disk
-            ca_certs='/path/to/CA_certs'
-        )
-
-    If using SSL, but don't verify the certs, a warning message is showed
-    optionally (see :class:`~elasticsearch.Urllib3HttpConnection` for
-    detailed description of the options)::
-
-        es = Elasticsearch(
-            ['https://localhost:443', 'https://other_host:443'],
-            # no verify SSL certificates
-            verify_certs=False,
-            # don't show warnings about ssl certs verification
-            ssl_show_warn=False
-        )
-
-    SSL client authentication is supported
-    (see :class:`~elasticsearch.Urllib3HttpConnection` for
-    detailed description of the options)::
-
-        es = Elasticsearch(
-            ['https://localhost:443', 'https://other_host:443'],
-            # make sure we verify SSL certificates
-            verify_certs=True,
-            # provide a path to CA certs on disk
-            ca_certs='/path/to/CA_certs',
-            # PEM formatted SSL client certificate
-            client_cert='/path/to/clientcert.pem',
-            # PEM formatted SSL client key
-            client_key='/path/to/clientkey.pem'
-        )
-
-    Alternatively you can use RFC-1738 formatted URLs, as long as they are not
-    in conflict with other options::
-
-        es = Elasticsearch(
-            [
-                'http://user:secret@localhost:9200/',
-                'https://user:secret@other_host:443/production'
-            ],
-            verify_certs=True
-        )
-
-    By default, ``JsonSerializer`` is used to encode all outgoing requests.
-    However, you can implement your own custom serializer::
-
-        from elasticsearch.serializer import JsonSerializer
-
-        class SetEncoder(JsonSerializer):
-            def default(self, obj):
-                if isinstance(obj, set):
-                    return list(obj)
-                if isinstance(obj, Something):
-                    return 'CustomSomethingRepresentation'
-                return JsonSerializer.default(self, obj)
-
-        es = Elasticsearch(serializer=SetEncoder())
-
     """
 
     def __init__(
@@ -233,8 +136,8 @@ class AsyncElasticsearch(BaseClient):
         node_pool_class=DEFAULT,
         randomize_nodes_in_pool=DEFAULT,
         node_selector_class=DEFAULT,
-        dead_backoff_factor=DEFAULT,
-        max_dead_backoff=DEFAULT,
+        dead_node_backoff_factor=DEFAULT,
+        max_dead_node_backoff=DEFAULT,
         serializers=DEFAULT,
         default_mimetype="application/json",
         max_retries=DEFAULT,
@@ -292,10 +195,10 @@ class AsyncElasticsearch(BaseClient):
                 transport_kwargs["randomize_nodes_in_pool"] = randomize_nodes_in_pool
             if node_selector_class is not DEFAULT:
                 transport_kwargs["node_selector_class"] = node_selector_class
-            if dead_backoff_factor is not DEFAULT:
-                transport_kwargs["dead_backoff_factor"] = dead_backoff_factor
-            if max_dead_backoff is not DEFAULT:
-                transport_kwargs["max_dead_backoff"] = max_dead_backoff
+            if dead_node_backoff_factor is not DEFAULT:
+                transport_kwargs["dead_node_backoff_factor"] = dead_node_backoff_factor
+            if max_dead_node_backoff is not DEFAULT:
+                transport_kwargs["max_dead_node_backoff"] = max_dead_node_backoff
             if meta_header is not DEFAULT:
                 transport_kwargs["meta_header"] = meta_header
             if serializers is DEFAULT:
@@ -2326,6 +2229,35 @@ class AsyncElasticsearch(BaseClient):
         return await client._perform_request(
             "POST",
             _make_path(index, "_mvt", field, zoom, x, y),
+            params=params,
+            headers=headers,
+            body=body,
+        )
+
+    @query_params("routing")
+    async def knn_search(self, index, body=None, params=None, headers=None):
+        """
+        Performs a kNN search.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-search.html>`_
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
+        :arg index: A comma-separated list of index names to search; use
+            `_all` or empty string to perform the operation on all indices
+        :arg body: The search definition
+        :arg routing: A comma-separated list of specific routing values
+        """
+        client, params = _deprecated_options(self, params)
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'index'.")
+
+        return await client._perform_request(
+            "POST",
+            _make_path(index, "_knn_search"),
             params=params,
             headers=headers,
             body=body,

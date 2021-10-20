@@ -26,6 +26,7 @@ class ClusterClient(NamespacedClient):
         "level",
         "local",
         "master_timeout",
+        "return_200_for_cluster_health_timeout",
         "timeout",
         "wait_for_active_shards",
         "wait_for_events",
@@ -50,6 +51,9 @@ class ClusterClient(NamespacedClient):
             from master node (default: false)
         :arg master_timeout: Explicit operation timeout for connection
             to master node
+        :arg return_200_for_cluster_health_timeout: Whether to return
+            HTTP 200 instead of 408 in case of a cluster health timeout from the
+            server side
         :arg timeout: Explicit operation timeout
         :arg wait_for_active_shards: Wait until the specified number of
             shards is active

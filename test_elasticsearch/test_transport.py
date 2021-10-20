@@ -229,8 +229,8 @@ class TestTransport:
 
     def test_kwargs_passed_on_to_node_pool(self):
         dt = object()
-        client = Elasticsearch("http://localhost:9200", dead_backoff_factor=dt)
-        assert dt is client.transport.node_pool.dead_backoff_factor
+        client = Elasticsearch("http://localhost:9200", dead_node_backoff_factor=dt)
+        assert dt is client.transport.node_pool.dead_node_backoff_factor
 
     def test_custom_node_class(self):
         class MyConnection(object):

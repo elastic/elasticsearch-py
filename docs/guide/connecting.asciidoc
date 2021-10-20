@@ -126,7 +126,7 @@ from elasticsearch import Elasticsearch
 
 # Adds the HTTP header 'Authorization: Bearer token-value'
 es = Elasticsearch(
-    bearer_token="token-value"
+    bearer_auth="token-value"
 )
 ----------------------------
 

@@ -1668,3 +1668,20 @@ class IndicesClient(NamespacedClient):
             params=params,
             headers=headers,
         )
+
+    @query_params()
+    def modify_data_stream(self, body, params=None, headers=None):
+        """
+        Modifies a data stream
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
+
+        :arg body: The data stream modifications
+        """
+        client, params = _deprecated_options(self, params)
+        if body in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'body'.")
+
+        return client._perform_request(
+            "POST", "/_data_stream/_modify", params=params, headers=headers, body=body
+        )

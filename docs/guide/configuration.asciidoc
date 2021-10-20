@@ -207,13 +207,13 @@ es.options(retry_on_timeout=False).info()
 [discrete]
 ==== Retrying status codes
 
-By default if retries are enabled `retry_on_status` is set to `(429, 502, 503, 504)`. This parameter can be set on the client constructor or via the client `.options()` method. Setting this value to `False` or `()` will disable the default behavior.
+By default if retries are enabled `retry_on_status` is set to `(429, 502, 503, 504)`. This parameter can be set on the client constructor or via the client `.options()` method. Setting this value to `()` will disable the default behavior.
 
 [source,python]
 ------------------------------------
 es = Elasticsearch(
     ...,
-    retry_on_status=False
+    retry_on_status=()
 )
 
 # Retry this API on '500 Internal Error' statuses
@@ -265,12 +265,12 @@ IMPORTANT: When using an HTTP load balancer or proxy you cannot use sniffing fun
 [discrete]
 ==== Waiting between sniffing attempts
 
-To avoid needlessly sniffing too often there is a delay between attempts to discover new nodes. This value can be controlled via the `min_wait_between_sniffing` parameter.
+To avoid needlessly sniffing too often there is a delay between attempts to discover new nodes. This value can be controlled via the `min_delay_between_sniffing` parameter.
 
 [discrete]
 ==== Filtering nodes which are sniffed
 
-By default nodes which are marked with only a `master` role will not be used. To change the behavior the parameter `sniff_filter`
+By default nodes which are marked with only a `master` role will not be used. To change the behavior the parameter `sniff_node_filter`
 
 
 [discrete]

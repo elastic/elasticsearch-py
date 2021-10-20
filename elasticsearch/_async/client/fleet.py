@@ -47,3 +47,70 @@ class FleetClient(NamespacedClient):
             params=params,
             headers=headers,
         )
+
+    @query_params()
+    async def msearch(self, body, index=None, params=None, headers=None):
+        """
+        Multi Search API where the search will only be executed after specified
+        checkpoints are available due to a refresh. This API is designed for internal
+        use by the fleet server project.
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
+        :arg body: The request definitions (metadata-fleet search
+            request definition pairs), separated by newlines
+        :arg index: The index name to use as the default
+        """
+        client, params = _deprecated_options(self, params)
+        if body in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'body'.")
+
+        headers["content-type"] = "application/x-ndjson"
+        return await client._perform_request(
+            "POST",
+            _make_path(index, "_fleet", "_msearch"),
+            params=params,
+            headers=headers,
+            body=body,
+        )
+
+    @query_params(
+        "allow_partial_search_results",
+        "wait_for_checkpoints",
+        "wait_for_checkpoints_timeout",
+    )
+    async def search(self, index, body=None, params=None, headers=None):
+        """
+        Search API where the search will only be executed after specified checkpoints
+        are available due to a refresh. This API is designed for internal use by the
+        fleet server project.
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
+        :arg index: The index name to search.
+        :arg body: The search definition using the Query DSL
+        :arg allow_partial_search_results: Indicate if an error should
+            be returned if there is a partial search failure or timeout  Default:
+            True
+        :arg wait_for_checkpoints: Comma separated list of checkpoints,
+            one per shard
+        :arg wait_for_checkpoints_timeout: Explicit wait_for_checkpoints
+            timeout
+        """
+        client, params = _deprecated_options(self, params)
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'index'.")
+
+        return await client._perform_request(
+            "POST",
+            _make_path(index, "_fleet", "_search"),
+            params=params,
+            headers=headers,
+            body=body,
+        )

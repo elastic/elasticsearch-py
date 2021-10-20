@@ -218,8 +218,10 @@ class TestTransport:
 
     def test_kwargs_passed_on_to_node_pool(self):
         dt = object()
-        client = AsyncElasticsearch("http://localhost:9200", dead_backoff_factor=dt)
-        assert dt is client.transport.node_pool.dead_backoff_factor
+        client = AsyncElasticsearch(
+            "http://localhost:9200", dead_node_backoff_factor=dt
+        )
+        assert dt is client.transport.node_pool.dead_node_backoff_factor
 
         class MyConnection(object):
             def __init__(self, *_, **__):

@@ -39,7 +39,7 @@ class IngestClient(NamespacedClient):
             "GET", _make_path("_ingest", "pipeline", id), params=params, headers=headers
         )
 
-    @query_params("master_timeout", "timeout")
+    @query_params("if_version", "master_timeout", "timeout")
     async def put_pipeline(self, id, body, params=None, headers=None):
         """
         Creates or updates a pipeline.
@@ -48,6 +48,8 @@ class IngestClient(NamespacedClient):
 
         :arg id: Pipeline ID
         :arg body: The ingest definition
+        :arg if_version: Required version for optimistic concurrency
+            control for pipeline updates
         :arg master_timeout: Explicit operation timeout for connection
             to master node
         :arg timeout: Explicit operation timeout
