@@ -5,26 +5,49 @@ This page contains the information you need to connect the Client with {es}.
 
 
 [discrete]
-[[authentication]]
-=== Authentication
+[[connect-url]]
+==== Connecting with URLs
 
-This section contains code snippets to show you how to connect to various {es} 
-providers.
+A single node can be specified via a `scheme`, `host`, `port`, and optional `path_prefix`. These values can either be specified manually via a URL in a string, dictionary, `NodeConfig`, or a list of these values. You must specify at least `scheme`, `host` and `port` for each node. All of the following are valid configurations:
 
+[source,python]
+----------------------------
+from elasticsearch import Elasticsearch
+
+# Single node via URL
+es = Elasticsearch("http://localhost:9200")
+
+# Multiple nodes via URL
+es = Elasticsearch([
+    "http://localhost:9200",
+    "http://localhost:9201",
+    "http://localhost:9202"
+])
+
+# Single node via dictionary
+es = Elasticsearch({"scheme": "http", "host": "localhost", "port": 9200})
+
+# Multiple nodes via dictionary
+es = Elasticsearch([
+    {"scheme": "http", "host": "localhost", "port": 9200},
+    {"scheme": "http", "host": "localhost", "port": 9201},
+])
+----------------------------
 
 [discrete]
-[[auth-ec]]
-==== Elastic Cloud
+[[connect-ec]]
+==== Connecting to Elastic Cloud
 
 Cloud ID is an easy way to configure your client to work with your Elastic Cloud 
-deployment. Combine the `cloud_id` with either `http_auth` or `api_key` to 
+deployment. Combine the `cloud_id` with either `basic_auth` or `api_key` to 
 authenticate with your Elastic Cloud deployment.
 
 Using `cloud_id` enables TLS verification and HTTP compression by default and 
 sets the port to 443 unless otherwise overwritten via the port parameter or the 
-port value encoded within `cloud_id`. Using Cloud ID also disables sniffing.
+port value encoded within `cloud_id`. Using Cloud ID also disables sniffing as
+a proxy is in use.
 
-[source,py]
+[source,python]
 ----------------------------
 from elasticsearch import Elasticsearch
 
@@ -35,35 +58,94 @@ es = Elasticsearch(
 
 
 [discrete]
-[[auth-http]]
-==== HTTP Authentication
+[[authentication]]
+=== Authentication
 
-HTTP authentication uses the `http_auth` parameter by passing in a username and 
-password within a tuple:
+This section contains code snippets to show you how to connect to various {es} 
+providers. All authentication methods are supported on the client constructor
+or via the per-request `.options()` method:
 
-[source,py]
+[source,python]
 ----------------------------
 from elasticsearch import Elasticsearch
 
+# Authenticate from the constructor
 es = Elasticsearch(
-    http_auth=(“username”, “password”)
+    "http://localhost:9200",
+    basic_auth=("username", "password")
+)
+
+# Authenticate via the .options() method:
+es.options(
+    basic_auth=("username", "password")
+).indices.get(index="*")
+
+# You can persist the authenticated client to use
+# later or use for multiple API calls:
+auth_client = es.options(
+    api_key=("api-key-id", "api-key-secret")
+)
+for i in range(10):
+    auth_client.index(
+        index="example-index",
+        document={"field": i}
+    )
+----------------------------
+
+
+[discrete]
+[[auth-basic]]
+==== HTTP Basic authentication (Username and Password)
+
+HTTP Basic authentication uses the `basic_auth` parameter by passing in a username and 
+password within a tuple:
+
+[source,python]
+----------------------------
+from elasticsearch import Elasticsearch
+
+# Adds the HTTP header 'Authorization: Basic <base64 username:password>'
+es = Elasticsearch(
+    basic_auth=(“username”, “password”)
+)
+----------------------------
+
+
+[discrete]
+[[auth-bearer]]
+==== HTTP Bearer authentication
+
+HTTP Bearer authentication uses the `bearer_auth` parameter by passing the token
+as a string. This authentication method is used by 
+https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-create-service-token.html[Service Account Tokens]
+and https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-token.html[Bearer Tokens].
+
+[source,python]
+----------------------------
+from elasticsearch import Elasticsearch
+
+# Adds the HTTP header 'Authorization: Bearer token-value'
+es = Elasticsearch(
+    bearer_token="token-value"
 )
 ----------------------------
 
 
 [discrete]
 [[auth-apikey]]
-==== ApiKey authentication
+==== API Key authentication
 
 You can configure the client to use {es}'s API Key for connecting to your 
-cluster.
+cluster. Note that you need the values of `id` and `api_key` to
+[authenticate via an API Key](https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-create-api-key.html).
 
-[source,py]
+[source,python]
 ----------------------------
 from elasticsearch import Elasticsearch
 
+# Adds the HTTP header 'Authorization: ApiKey <base64 api_key.id:api_key.api_key>'
 es = Elasticsearch(
-    api_key=(“api_key_id”, “api_key_secret”)
+    api_key=(“api_key.id”, “api_key.api_key”)
 )
 ----------------------------
 
@@ -90,11 +172,15 @@ This practice does not only improve performance but also enables background func
 https://www.elastic.co/blog/elasticsearch-sniffing-best-practices-what-when-why-how[sniffing].
 The following examples provide a skeleton for the best practices.
 
+IMPORTANT: The async client shouldn't be used within Function-as-a-Service as a new event
+           loop must be started for each invocation. Instead the synchronous `Elasticsearch`
+           client is recommended.
+
 [discrete]
 [[connecting-faas-gcp]]
 ==== GCP Cloud Functions
 
-[source,py]
+[source,python]
 ----------------------------
 from elasticsearch import Elasticsearch
 
@@ -111,7 +197,7 @@ def main(request):
 [[connecting-faas-aws]]
 ==== AWS Lambda
 
-[source,py]
+[source,python]
 ----------------------------
 from elasticsearch import Elasticsearch
 
@@ -128,7 +214,7 @@ def main(event, context):
 [[connecting-faas-azure]]
 ==== Azure Functions
 
-[source,py]
+[source,python]
 ----------------------------
 import azure.functions as func
 from elasticsearch import Elasticsearch
@@ -141,10 +227,6 @@ def main(request: func.HttpRequest) -> func.HttpResponse:
     ... # Use the client
 
 ----------------------------
-
-IMPORTANT: The async client shouldn't be used within Function-as-a-Service as a new event
-           loop must be started for each invocation. Instead the synchronous `Elasticsearch`
-           client is recommended.
 
 Resources used to assess these recommendations:
 

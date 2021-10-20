@@ -1,109 +1,23 @@
 .. _api:
 
-API Documentation
-=================
+Elasticsearch API Reference
+===========================
 
-All the API calls map the raw REST api as closely as possible, including the
-distinction between required and optional arguments to the calls. This means
-that the code makes distinction between positional and keyword arguments; we,
-however, recommend that people **use keyword arguments for all calls for
-consistency and safety**.
+All the API calls map the raw REST API as closely as possible, including the
+distinction between required and optional arguments to the calls. Keyword
+arguments are required for all 
 
 .. note::
 
-    for compatibility with the Python ecosystem we use ``from_`` instead of
-    ``from`` and ``doc_type`` instead of ``type`` as parameter names.
+   Some API parameters in Elasticsearch are reserved keywords in Python.
+   For example the ``from`` query parameter for pagination would be
+   aliased as ``from_``.
 
-
-Global Options
---------------
-
-Some parameters are added by the client itself and can be used in all API
-calls.
-
-Ignore
-~~~~~~
-
-An API call is considered successful (and will return a response) if
-elasticsearch returns a 2XX response. Otherwise an instance of
-:class:`~elasticsearch.TransportError` (or a more specific subclass) will be
-raised. You can see other exception and error states in :ref:`exceptions`. If
-you do not wish an exception to be raised you can always pass in an ``ignore``
-parameter with either a single status code that should be ignored or a list of
-them:
-
-.. code-block:: python
-
-    from elasticsearch import Elasticsearch
-    es = Elasticsearch()
-
-    # ignore 400 cause by IndexAlreadyExistsException when creating an index
-    es.indices.create(index='test-index', ignore=400)
-
-    # ignore 404 and 400
-    es.indices.delete(index='test-index', ignore=[400, 404])
-
-
-Timeout
-~~~~~~~
-
-Global timeout can be set when constructing the client (see
-:class:`~elasticsearch.Connection`'s ``timeout`` parameter) or on a per-request
-basis using ``request_timeout`` (float value in seconds) as part of any API
-call, this value will get passed to the ``perform_request`` method of the
-connection class:
-
-.. code-block:: python
-
-    # only wait for 1 second, regardless of the client's default
-    es.cluster.health(wait_for_status='yellow', request_timeout=1)
-
-.. note::
-
-    Some API calls also accept a ``timeout`` parameter that is passed to
-    Elasticsearch server. This timeout is internal and doesn't guarantee that the
-    request will end in the specified time.
-
-Tracking Requests with Opaque ID
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-You can enrich your requests against Elasticsearch with an identifier string, that allows you to discover this identifier
-in `deprecation logs <https://www.elastic.co/guide/en/elasticsearch/reference/7.4/logging.html#deprecation-logging>`_, to support you with
-`identifying search slow log origin <https://www.elastic.co/guide/en/elasticsearch/reference/7.4/index-modules-slowlog.html#_identifying_search_slow_log_origin>`_
-or to help with `identifying running tasks <https://www.elastic.co/guide/en/elasticsearch/reference/current/tasks.html#_identifying_running_tasks>`_.
-
- .. code-block:: python
-
-    import elasticsearch
-
-    # You can add to the client to apply to all requests
-    client = elasticsearch.Elasticsearch(opaque_id="app17@dc06.eu_user1234")
-
-    # Or you can apply per-request for more granularity.
-    resp = client.get(index="test", id="1", opaque_id="app17@dc06.eu_user1234")
-
-
-.. py:module:: elasticsearch
-
-Response Filtering
-~~~~~~~~~~~~~~~~~~
-
-The ``filter_path`` parameter is used to reduce the response returned by
-elasticsearch.  For example, to only return ``_id`` and ``_type``, do:
-
-.. code-block:: python
-
-    es.search(index='test-index', filter_path=['hits.hits._id', 'hits.hits._type'])
-
-It also supports the ``*`` wildcard character to match any field or part of a
-field's name:
-
-.. code-block:: python
-
-    es.search(index='test-index', filter_path=['hits.hits._*'])
 
 Elasticsearch
 -------------
+
+.. py:module:: elasticsearch
 
 .. autoclass:: Elasticsearch
    :members:

@@ -17,7 +17,7 @@
 
 import warnings
 
-from ._sync.client import Elasticsearch  # noqa: F401
+from ._sync.client import Elasticsearch as Elasticsearch  # noqa: F401
 from ._sync.client.async_search import (  # noqa: F401
     AsyncSearchClient as AsyncSearchClient,
 )

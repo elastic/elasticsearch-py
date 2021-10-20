@@ -21,6 +21,7 @@ import nox
 
 SOURCE_DIR = os.path.dirname(os.path.abspath(__file__))
 SOURCE_FILES = (
+    "docs/sphinx/conf.py",
     "setup.py",
     "noxfile.py",
     "elasticsearch/",
@@ -94,10 +95,10 @@ def lint(session):
 
 @nox.session()
 def docs(session):
-    session.install(".")
     session.install(
         "-rdev-requirements.txt", "sphinx-rtd-theme", "sphinx-autodoc-typehints"
     )
+    session.install(".")
     session.run("python", "-m", "pip", "install", "sphinx-autodoc-typehints")
 
     session.run("sphinx-build", "docs/sphinx/", "docs/sphinx/_build", "-b", "html")

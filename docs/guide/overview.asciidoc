@@ -3,7 +3,7 @@
 
 This is the official low-level Python client for {es}. Its goal is to provide 
 common ground for all {es}-related code in Python. For this reason, the client 
-is designed to be unopinionated and extendable. Full documentation is available 
+is designed to be unopinionated and extendable. An API reference is available 
 on https://elasticsearch-py.readthedocs.io[Read the Docs].
 
 
@@ -28,10 +28,10 @@ Simple use-case:
 >>> from datetime import datetime
 >>> from elasticsearch import Elasticsearch
 
-# By default we connect to localhost:9200
->>> es = Elasticsearch()
+# Connect to 'http://localhost:9200'
+>>> es = Elasticsearch("http://localhost:9200")
 
-# Datetimes will be serialized...
+# Datetimes will be serialized:
 >>> es.index(index="my-index-000001", doc_type="test-type", id=42, body={"any": "data", "timestamp": datetime.now()})
 {'_id': '42', '_index': 'my-index-000001', '_type': 'test-type', '_version': 1, 'ok': True}
 
@@ -39,13 +39,6 @@ Simple use-case:
 >>> es.get(index="my-index-000001", doc_type="test-type", id=42)['_source']
 {'any': 'data', 'timestamp': '2013-05-12T19:45:31.804229'}
 ------------------------------------
-
-[NOTE]
-All the API calls map the raw REST API as closely as possible, including
-the distinction between required and optional arguments to the calls. This
-means that the code makes distinction between positional and keyword arguments;
-we, however, recommend that people use keyword arguments for all calls for
-consistency and safety.
 
 TIP: For an elaborate example of how to ingest data into Elastic Cloud, 
 refer to {cloud}/ec-getting-started-python.html[this page].
@@ -64,8 +57,7 @@ The client's features include:
 
 * Load balancing (with pluggable selection strategy) across all available nodes
 
-* Failed connection penalization (time based - failed connections won't be
-  retried until a timeout is reached)
+* Node timeouts on transient errors
 
 * Thread safety
 

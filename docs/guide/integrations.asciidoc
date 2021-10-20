@@ -8,20 +8,48 @@ You can find integration options and information on this page.
 [[transport]]
 === Transport
 
-The `Transport` class is a subclass of the 
-https://elasticsearch-py.readthedocs.io/en/latest/connection.html[Connection Layer API]
-that contains all the classes that are responsible for handling the connection 
-to the {es} cluster. 
-
-The `Transport` class is an encapsulation of the transport-related logic of the 
-Python client. For the exhaustive list of parameters, refer to the 
-https://elasticsearch-py.readthedocs.io/en/latest/connection.html#transport[documentation].
+The handling of connections, retries, and pooling is handled by the https://github.com/elastic/elastic-transport-python[Elastic Transport Python] library.
+Documentation on the low-level classes is available on https://elastic-transport-python.readthedocs.io[Read the Docs].
 
 
 [discrete]
-[[transport-classes]]
-==== Transport classes
+[[opaque-id]]
+=== Tracking requests with Opaque ID
 
-The `Transport` classes can be used to maintain connection with an {es} cluster. 
-For the reference information of these classes, refer to the 
-https://elasticsearch-py.readthedocs.io/en/latest/transports.html[documentation].
+You can enrich your requests against Elasticsearch with an identifier string, that allows you to discover this identifier in https://www.elastic.co/guide/en/elasticsearch/reference/current/logging.html#deprecation-logging[deprecation logs], to support you with https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules-slowlog.html#_identifying_search_slow_log_origin[identifying search slow log origin]
+or to help with https://www.elastic.co/guide/en/elasticsearch/reference/current/tasks.html#_identifying_running_tasks[identifying running tasks].
+
+The opaque ID can be set via the `opaque_id` parameter via the client `.options()` method:
+
+[source,python]
+------------------------------------
+es = Elasticsearch(...)
+es.options(opaque_id="request-id-...").search(...)
+------------------------------------
+
+
+[discrete]
+[[type-hints]]
+=== Type Hints
+
+Starting in `elasticsearch-py` v7.10.0 the library now ships with https://www.python.org/dev/peps/pep-0484[type hints] and supports basic static type analysis with tools like http://mypy-lang.org[Mypy] and https://github.com/microsoft/pyright[Pyright].
+
+If we write a script that has a type error like using `request_timeout` with a `str` argument instead of `float` and then run Mypy on the script:
+
+[source,python]
+------------------------------------
+# script.py
+from elasticsearch import Elasticsearch
+
+es = Elasticsearch(...)
+es.options(
+    request_timeout="5"  # type error!
+).search(...)
+
+# $ mypy script.py
+# script.py:5: error: Argument "request_timeout" to "search" of "Elasticsearch" has 
+#                     incompatible type "str"; expected "Union[int, float, None]"
+# Found 1 error in 1 file (checked 1 source file)
+------------------------------------
+
+Type hints also allow tools like your IDE to check types and provide better auto-complete functionality.

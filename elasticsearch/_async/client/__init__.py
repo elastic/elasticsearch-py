@@ -75,22 +75,40 @@ logger = logging.getLogger("elasticsearch")
 class AsyncElasticsearch(BaseClient):
     """
     Elasticsearch low-level client. Provides a straightforward mapping from
-    Python to ES REST endpoints.
+    Python to Elasticsearch REST APIs.
 
-    The instance has attributes ``cat``, ``cluster``, ``indices``, ``ingest``,
-    ``nodes``, ``snapshot`` and ``tasks`` that provide access to instances of
-    :class:`~elasticsearch.client.CatClient`,
-    :class:`~elasticsearch.client.ClusterClient`,
-    :class:`~elasticsearch.client.IndicesClient`,
-    :class:`~elasticsearch.client.IngestClient`,
-    :class:`~elasticsearch.client.NodesClient`,
-    :class:`~elasticsearch.client.SnapshotClient` and
-    :class:`~elasticsearch.client.TasksClient` respectively. This is the
-    preferred (and only supported) way to get access to those classes and their
-    methods.
+    The client instance has additional attributes to update APIs in different
+    namespaces such as ``async_search``, ``indices``, ``security``, and more:
+
+    .. code-block:: python
+
+        client = Elasticsearch("http://localhost:9200")
+
+        # Get Document API
+        client.get(index="*", id="1")
+
+        # Get Index API
+        client.indices.get(index="*")
+
+    Transport options can be set on the client constructor or using
+    the :meth:`~elasticsearch.Elasticsearch.options` method:
+
+    .. code-block:: python
+
+        # Set 'api_key' on the constructor
+        client = Elasticsearch(
+            "http://localhost:9200",
+            api_key=("id", "api_key")
+        )
+        client.search(...)
+
+        # Set 'api_key' per request
+        client.options(api_key=("id", "api_key")).search(...)
 
     If you want to turn on :ref:`sniffing` you have several options (described
-    in :class:`~elasticsearch.Transport`)::
+    in :class:`~elastic_transport.Transport`):
+
+    .. code-block:: python
 
         # create connection that will automatically inspect the cluster to get
         # the list of active nodes. Start with nodes running on 'esnode1' and
@@ -115,7 +133,7 @@ class AsyncElasticsearch(BaseClient):
             {'host': 'othernode', 'port': 443, 'url_prefix': 'es', 'use_ssl': True},
         ])
 
-    If using SSL, there are several parameters that control how we deal with
+    If using TLS/SSL, there are several parameters that control how we deal with
     certificates (see :class:`~elasticsearch.Urllib3HttpConnection` for
     detailed description of the options)::
 
@@ -135,8 +153,6 @@ class AsyncElasticsearch(BaseClient):
 
         es = Elasticsearch(
             ['https://localhost:443', 'https://other_host:443'],
-            # turn on SSL
-            use_ssl=True,
             # no verify SSL certificates
             verify_certs=False,
             # don't show warnings about ssl certs verification
@@ -149,8 +165,6 @@ class AsyncElasticsearch(BaseClient):
 
         es = Elasticsearch(
             ['https://localhost:443', 'https://other_host:443'],
-            # turn on SSL
-            use_ssl=True,
             # make sure we verify SSL certificates
             verify_certs=True,
             # provide a path to CA certs on disk
