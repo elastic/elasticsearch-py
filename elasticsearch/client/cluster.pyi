@@ -37,6 +37,7 @@ class ClusterClient(NamespacedClient):
         level: Optional[Any] = ...,
         local: Optional[bool] = ...,
         master_timeout: Optional[Any] = ...,
+        return_200_for_cluster_health_timeout: Optional[bool] = ...,
         timeout: Optional[Any] = ...,
         wait_for_active_shards: Optional[Any] = ...,
         wait_for_events: Optional[Any] = ...,

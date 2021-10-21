@@ -32,7 +32,7 @@ class FleetClient(NamespacedClient):
         Returns the current global checkpoints for an index. This API is design for
         internal use by the fleet server project.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/get-global-checkpoints.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/get-global-checkpoints.html>`_
 
         :arg index: The name of the index.
         :arg checkpoints: Comma separated list of checkpoints
@@ -51,4 +51,74 @@ class FleetClient(NamespacedClient):
             _make_path(index, "_fleet", "global_checkpoints"),
             params=params,
             headers=headers,
+        )
+
+    @query_params(
+        request_mimetypes=["application/x-ndjson"],
+        response_mimetypes=["application/json"],
+    )
+    def msearch(self, body, index=None, params=None, headers=None):
+        """
+        Multi Search API where the search will only be executed after specified
+        checkpoints are available due to a refresh. This API is designed for internal
+        use by the fleet server project.
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
+        :arg body: The request definitions (metadata-fleet search
+            request definition pairs), separated by newlines
+        :arg index: The index name to use as the default
+        """
+        if body in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'body'.")
+
+        body = _bulk_body(self.transport.serializer, body)
+        return self.transport.perform_request(
+            "POST",
+            _make_path(index, "_fleet", "_msearch"),
+            params=params,
+            headers=headers,
+            body=body,
+        )
+
+    @query_params(
+        "allow_partial_search_results",
+        "wait_for_checkpoints",
+        "wait_for_checkpoints_timeout",
+        request_mimetypes=["application/json"],
+        response_mimetypes=["application/json"],
+    )
+    def search(self, index, body=None, params=None, headers=None):
+        """
+        Search API where the search will only be executed after specified checkpoints
+        are available due to a refresh. This API is designed for internal use by the
+        fleet server project.
+
+        .. warning::
+
+            This API is **experimental** so may include breaking changes
+            or be removed in a future version
+
+        :arg index: The index name to search.
+        :arg body: The search definition using the Query DSL
+        :arg allow_partial_search_results: Indicate if an error should
+            be returned if there is a partial search failure or timeout  Default:
+            True
+        :arg wait_for_checkpoints: Comma separated list of checkpoints,
+            one per shard
+        :arg wait_for_checkpoints_timeout: Explicit wait_for_checkpoints
+            timeout
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for a required argument 'index'.")
+
+        return self.transport.perform_request(
+            "POST",
+            _make_path(index, "_fleet", "_search"),
+            params=params,
+            headers=headers,
+            body=body,
         )

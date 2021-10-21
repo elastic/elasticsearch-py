@@ -53,6 +53,7 @@ class IngestClient(NamespacedClient):
         *,
         id: Any,
         body: Mapping[str, Any],
+        if_version: Optional[Any] = ...,
         master_timeout: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,

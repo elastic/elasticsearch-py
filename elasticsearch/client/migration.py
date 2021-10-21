@@ -28,7 +28,7 @@ class MigrationClient(NamespacedClient):
         that use deprecated features that will be removed or changed in the next major
         version.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/migration-api-deprecation.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/migration-api-deprecation.html>`_
 
         :arg index: Index pattern
         """
@@ -46,7 +46,7 @@ class MigrationClient(NamespacedClient):
         """
         Find out whether system features need to be upgraded or not
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/migration-api-feature-upgrade.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/migration-api-feature-upgrade.html>`_
         """
         return self.transport.perform_request(
             "GET", "/_migration/system_features", params=params, headers=headers
@@ -59,7 +59,7 @@ class MigrationClient(NamespacedClient):
         """
         Begin upgrades for system features
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/migration-api-feature-upgrade.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/migration-api-feature-upgrade.html>`_
         """
         return self.transport.perform_request(
             "POST", "/_migration/system_features", params=params, headers=headers

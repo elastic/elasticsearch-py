@@ -28,7 +28,7 @@ class IngestClient(NamespacedClient):
         """
         Returns a pipeline.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/get-pipeline-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/get-pipeline-api.html>`_
 
         :arg id: Comma separated list of pipeline ids. Wildcards
             supported
@@ -42,6 +42,7 @@ class IngestClient(NamespacedClient):
         )
 
     @query_params(
+        "if_version",
         "master_timeout",
         "timeout",
         request_mimetypes=["application/json"],
@@ -51,10 +52,12 @@ class IngestClient(NamespacedClient):
         """
         Creates or updates a pipeline.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/put-pipeline-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/put-pipeline-api.html>`_
 
         :arg id: Pipeline ID
         :arg body: The ingest definition
+        :arg if_version: Required version for optimistic concurrency
+            control for pipeline updates
         :arg master_timeout: Explicit operation timeout for connection
             to master node
         :arg timeout: Explicit operation timeout
@@ -80,7 +83,7 @@ class IngestClient(NamespacedClient):
         """
         Deletes a pipeline.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/delete-pipeline-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/delete-pipeline-api.html>`_
 
         :arg id: Pipeline ID
         :arg master_timeout: Explicit operation timeout for connection
@@ -106,7 +109,7 @@ class IngestClient(NamespacedClient):
         """
         Allows to simulate a pipeline with example documents.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/simulate-pipeline-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/simulate-pipeline-api.html>`_
 
         :arg body: The simulate definition
         :arg id: Pipeline ID
@@ -131,7 +134,7 @@ class IngestClient(NamespacedClient):
         """
         Returns a list of the built-in patterns.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/grok-processor.html#grok-processor-rest-get>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/grok-processor.html#grok-processor-rest-get>`_
         """
         return await self.transport.perform_request(
             "GET", "/_ingest/processor/grok", params=params, headers=headers
@@ -144,7 +147,7 @@ class IngestClient(NamespacedClient):
         """
         Returns statistical information about geoip databases
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/geoip-stats-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/geoip-stats-api.html>`_
         """
         return await self.transport.perform_request(
             "GET", "/_ingest/geoip/stats", params=params, headers=headers

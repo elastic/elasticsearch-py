@@ -27,7 +27,7 @@ class SqlClient(NamespacedClient):
         """
         Clears the SQL cursor
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/clear-sql-cursor-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/clear-sql-cursor-api.html>`_
 
         :arg body: Specify the cursor value in the `cursor` element to
             clean the cursor.
@@ -48,7 +48,7 @@ class SqlClient(NamespacedClient):
         """
         Executes a SQL request
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/sql-search-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/sql-search-api.html>`_
 
         :arg body: Use the `query` element to start a query. Use the
             `cursor` element to continue a query.
@@ -70,7 +70,7 @@ class SqlClient(NamespacedClient):
         """
         Translates SQL into Elasticsearch queries
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/sql-translate-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/sql-translate-api.html>`_
 
         :arg body: Specify the query in the `query` element.
         """
@@ -89,7 +89,7 @@ class SqlClient(NamespacedClient):
         Deletes an async SQL search or a stored synchronous SQL search. If the search
         is still running, the API cancels it.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/delete-async-sql-search-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/delete-async-sql-search-api.html>`_
 
         :arg id: The async search ID
         """
@@ -115,7 +115,7 @@ class SqlClient(NamespacedClient):
         Returns the current status and available results for an async SQL search or
         stored synchronous SQL search
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/get-async-sql-search-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/get-async-sql-search-api.html>`_
 
         :arg id: The async search ID
         :arg delimiter: Separator for CSV results  Default: ,
@@ -140,7 +140,7 @@ class SqlClient(NamespacedClient):
         Returns the current status of an async SQL search or a stored synchronous SQL
         search
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/get-async-sql-search-status-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/get-async-sql-search-status-api.html>`_
 
         :arg id: The async search ID
         """

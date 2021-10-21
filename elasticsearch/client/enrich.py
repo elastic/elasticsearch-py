@@ -26,7 +26,7 @@ class EnrichClient(NamespacedClient):
         """
         Deletes an existing enrich policy and its enrich index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/delete-enrich-policy-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/delete-enrich-policy-api.html>`_
 
         :arg name: The name of the enrich policy
         """
@@ -48,7 +48,7 @@ class EnrichClient(NamespacedClient):
         """
         Creates the enrich index for an existing enrich policy.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/execute-enrich-policy-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/execute-enrich-policy-api.html>`_
 
         :arg name: The name of the enrich policy
         :arg wait_for_completion: Should the request should block until
@@ -71,7 +71,7 @@ class EnrichClient(NamespacedClient):
         """
         Gets information about an enrich policy.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/get-enrich-policy-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/get-enrich-policy-api.html>`_
 
         :arg name: A comma-separated list of enrich policy names
         """
@@ -87,7 +87,7 @@ class EnrichClient(NamespacedClient):
         """
         Creates a new enrich policy.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/put-enrich-policy-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/put-enrich-policy-api.html>`_
 
         :arg name: The name of the enrich policy
         :arg body: The enrich policy to register
@@ -112,7 +112,7 @@ class EnrichClient(NamespacedClient):
         Gets enrich coordinator statistics and information about enrich policies that
         are currently executing.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/enrich-stats-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/enrich-stats-api.html>`_
         """
         return self.transport.perform_request(
             "GET", "/_enrich/_stats", params=params, headers=headers

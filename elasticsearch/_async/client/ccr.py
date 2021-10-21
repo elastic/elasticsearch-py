@@ -26,7 +26,7 @@ class CcrClient(NamespacedClient):
         """
         Deletes auto-follow patterns.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ccr-delete-auto-follow-pattern.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/ccr-delete-auto-follow-pattern.html>`_
 
         :arg name: The name of the auto follow pattern.
         """
@@ -49,7 +49,7 @@ class CcrClient(NamespacedClient):
         """
         Creates a new follower index configured to follow the referenced leader index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ccr-put-follow.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/ccr-put-follow.html>`_
 
         :arg index: The name of the follower index
         :arg body: The name of the leader index and other optional ccr
@@ -80,7 +80,7 @@ class CcrClient(NamespacedClient):
         Retrieves information about all follower indices, including parameters and
         status for each follower index
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ccr-get-follow-info.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/ccr-get-follow-info.html>`_
 
         :arg index: A comma-separated list of index patterns; use `_all`
             to perform the operation on all indices
@@ -100,7 +100,7 @@ class CcrClient(NamespacedClient):
         Retrieves follower stats. return shard-level stats about the following tasks
         associated with each shard for the specified indices.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ccr-get-follow-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/ccr-get-follow-stats.html>`_
 
         :arg index: A comma-separated list of index patterns; use `_all`
             to perform the operation on all indices
@@ -120,7 +120,7 @@ class CcrClient(NamespacedClient):
         """
         Removes the follower retention leases from the leader.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ccr-post-forget-follower.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/ccr-post-forget-follower.html>`_
 
         :arg index: the name of the leader index for which specified
             follower retention leases should be removed
@@ -149,7 +149,7 @@ class CcrClient(NamespacedClient):
         Gets configured auto-follow patterns. Returns the specified auto-follow pattern
         collection.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ccr-get-auto-follow-pattern.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/ccr-get-auto-follow-pattern.html>`_
 
         :arg name: The name of the auto follow pattern.
         """
@@ -168,7 +168,7 @@ class CcrClient(NamespacedClient):
         Pauses a follower index. The follower index will not fetch any additional
         operations from the leader index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ccr-post-pause-follow.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/ccr-post-pause-follow.html>`_
 
         :arg index: The name of the follower index that should pause
             following its leader index.
@@ -193,7 +193,7 @@ class CcrClient(NamespacedClient):
         remote cluster. Newly created indices on the remote cluster matching any of the
         specified patterns will be automatically configured as follower indices.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ccr-put-auto-follow-pattern.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/ccr-put-auto-follow-pattern.html>`_
 
         :arg name: The name of the auto follow pattern.
         :arg body: The specification of the auto follow pattern
@@ -218,7 +218,7 @@ class CcrClient(NamespacedClient):
         """
         Resumes a follower index that has been paused
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ccr-post-resume-follow.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/ccr-post-resume-follow.html>`_
 
         :arg index: The name of the follow index to resume following.
         :arg body: The name of the leader index and other optional ccr
@@ -242,7 +242,7 @@ class CcrClient(NamespacedClient):
         """
         Gets all stats related to cross-cluster replication.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ccr-get-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/ccr-get-stats.html>`_
         """
         return await self.transport.perform_request(
             "GET", "/_ccr/stats", params=params, headers=headers
@@ -256,7 +256,7 @@ class CcrClient(NamespacedClient):
         Stops the following task associated with a follower index and removes index
         metadata and settings associated with cross-cluster replication.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ccr-post-unfollow.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/ccr-post-unfollow.html>`_
 
         :arg index: The name of the follower index that should be turned
             into a regular index.
@@ -278,7 +278,7 @@ class CcrClient(NamespacedClient):
         """
         Pauses an auto-follow pattern
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ccr-pause-auto-follow-pattern.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/ccr-pause-auto-follow-pattern.html>`_
 
         :arg name: The name of the auto follow pattern that should pause
             discovering new indices to follow.
@@ -300,7 +300,7 @@ class CcrClient(NamespacedClient):
         """
         Resumes an auto-follow pattern that has been paused
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.x/ccr-resume-auto-follow-pattern.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/ccr-resume-auto-follow-pattern.html>`_
 
         :arg name: The name of the auto follow pattern to resume
             discovering new indices to follow.
