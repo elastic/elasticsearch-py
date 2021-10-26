@@ -23,6 +23,7 @@ from functools import wraps
 from typing import (
     TYPE_CHECKING,
     Any,
+    Awaitable,
     Callable,
     Collection,
     List,
@@ -34,7 +35,7 @@ from typing import (
     Union,
 )
 
-from elastic_transport import NodeConfig
+from elastic_transport import AsyncTransport, NodeConfig, SniffOptions, Transport
 from elastic_transport.client_utils import (
     DEFAULT,
     client_meta_version,
@@ -56,6 +57,11 @@ SKIP_IN_PATH: Collection[Any] = (None, "", b"", [], ())
 CLIENT_META_SERVICE = ("es", client_meta_version(__versionstr__))
 
 _TYPE_HOSTS = Union[str, List[Union[str, Mapping[str, Union[str, int]], NodeConfig]]]
+
+_TYPE_ASYNC_SNIFF_CALLBACK = Callable[
+    [AsyncTransport, SniffOptions], Awaitable[List[NodeConfig]]
+]
+_TYPE_SYNC_SNIFF_CALLBACK = Callable[[Transport, SniffOptions], List[NodeConfig]]
 
 
 def client_node_configs(

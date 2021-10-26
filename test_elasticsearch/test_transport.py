@@ -18,15 +18,14 @@
 
 from __future__ import unicode_literals
 
-import json
 import re
 import time
 import warnings
+from typing import Any, Dict, Optional, Union
 
 import pytest
 from elastic_transport import ApiResponseMeta, BaseNode, HttpHeaders, NodeConfig
 from elastic_transport.client_utils import DEFAULT
-from mock import patch
 
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import (
@@ -36,8 +35,6 @@ from elasticsearch.exceptions import (
     UnsupportedProductError,
 )
 from elasticsearch.transport import get_host_info
-
-sniffing_xfail = pytest.mark.xfail(strict=True)
 
 
 class DummyNode(BaseNode):
@@ -112,6 +109,45 @@ CLUSTER_NODES_7x_PUBLISH_HOST = """{
       "http" : {
         "bound_address" : [ "[fe80::1]:9200", "[::1]:9200", "127.0.0.1:9200" ],
         "publish_address" : "somehost.tld/1.1.1.1:123",
+        "max_content_length_in_bytes" : 104857600
+      }
+    }
+  }
+}"""
+
+CLUSTER_NODES_MASTER_ONLY = """{
+  "_nodes" : {
+    "total" : 2,
+    "successful" : 2,
+    "failed" : 0
+  },
+  "cluster_name" : "elasticsearch",
+  "nodes" : {
+    "SRZpKFZdQguhhvifmN6UVA" : {
+      "name" : "SRZpKFZa",
+      "transport_address" : "127.0.0.1:9300",
+      "host" : "127.0.0.1",
+      "ip" : "127.0.0.1",
+      "version" : "5.0.0",
+      "build_hash" : "253032b",
+      "roles" : ["master"],
+      "http" : {
+        "bound_address" : [ "[fe80::1]:9200", "[::1]:9200", "127.0.0.1:9200" ],
+        "publish_address" : "somehost.tld/1.1.1.1:123",
+        "max_content_length_in_bytes" : 104857600
+      }
+    },
+    "SRZpKFZdQguhhvifmN6UVB" : {
+      "name" : "SRZpKFZb",
+      "transport_address" : "127.0.0.1:9300",
+      "host" : "127.0.0.1",
+      "ip" : "127.0.0.1",
+      "version" : "5.0.0",
+      "build_hash" : "253032b",
+      "roles" : [ "master", "data", "ingest" ],
+      "http" : {
+        "bound_address" : [ "[fe80::1]:9200", "[::1]:9200", "127.0.0.1:9200" ],
+        "publish_address" : "somehost.tld/1.1.1.1:124",
         "max_content_length_in_bytes" : 104857600
       }
     }
@@ -313,145 +349,215 @@ class TestTransport:
         assert len(client.transport.node_pool.alive_nodes) == 1
         assert len(client.transport.node_pool.dead_consecutive_failures) == 1
 
-    @sniffing_xfail
-    def test_sniff_will_use_seed_connections(self):
-        t = Transport(  # noqa: F821
-            [{"data": CLUSTER_NODES}], connection_class=DummyNode
-        )
-        t.set_connections([{"data": "invalid"}])
-
-        t.sniff_hosts()
-        assert 1 == len(t.connection_pool.connections)
-        assert "http://1.1.1.1:123" == t.get_connection().host
-
-    @sniffing_xfail
-    def test_sniff_on_start_fetches_and_uses_nodes_list(self):
-        t = Transport(  # noqa: F821
-            [{"data": CLUSTER_NODES}],
-            connection_class=DummyNode,
+    @pytest.mark.parametrize(
+        ["nodes_info_response", "node_host"],
+        [(CLUSTER_NODES, "1.1.1.1"), (CLUSTER_NODES_7x_PUBLISH_HOST, "somehost.tld")],
+    )
+    def test_sniff_will_use_seed_connections(self, nodes_info_response, node_host):
+        client = Elasticsearch(
+            [
+                NodeConfig(
+                    "http", "localhost", 9200, _extras={"data": nodes_info_response}
+                )
+            ],
+            node_class=DummyNode,
             sniff_on_start=True,
         )
-        assert 1 == len(t.connection_pool.connections)
-        assert "http://1.1.1.1:123" == t.get_connection().host
 
-    @sniffing_xfail
+        node_configs = [node.config for node in client.transport.node_pool.all()]
+        assert len(node_configs) == 2
+        assert NodeConfig("http", node_host, 123) in node_configs
+
     def test_sniff_on_start_ignores_sniff_timeout(self):
-        t = Transport(  # noqa: F821
-            [{"data": CLUSTER_NODES}],
-            connection_class=DummyNode,
+        client = Elasticsearch(
+            [NodeConfig("http", "localhost", 9200, _extras={"data": CLUSTER_NODES})],
+            node_class=DummyNode,
             sniff_on_start=True,
             sniff_timeout=12,
+            meta_header=False,
         )
-        assert (("GET", "/_nodes/_all/http"), {"timeout": None}) == t.seed_connections[
-            0
-        ].calls[0]
 
-    @sniffing_xfail
+        node_config = client.transport.node_pool.seed_nodes[0]
+        calls = client.transport.node_pool.all_nodes[node_config].calls
+
+        assert len(calls) == 1
+        assert calls[0] == (
+            ("GET", "/_nodes/_all/http"),
+            {
+                "body": None,
+                "headers": {"accept": "application/json"},
+                "request_timeout": None,  # <-- Should be None instead of 12
+            },
+        )
+
     def test_sniff_uses_sniff_timeout(self):
-        t = Transport(  # noqa: F821
-            [{"data": CLUSTER_NODES}],
-            connection_class=DummyNode,
-            sniff_timeout=42,
+        client = Elasticsearch(
+            [NodeConfig("http", "localhost", 9200, _extras={"data": CLUSTER_NODES})],
+            node_class=DummyNode,
+            sniff_before_requests=True,
+            sniff_timeout=12,
+            meta_header=False,
         )
-        t.sniff_hosts()
-        assert (("GET", "/_nodes/_all/http"), {"timeout": 42}) == t.seed_connections[
-            0
-        ].calls[0]
+        client.info()
 
-    @sniffing_xfail
-    def test_sniff_reuses_connection_instances_if_possible(self):
-        t = Transport(  # noqa: F821
-            [{"data": CLUSTER_NODES}, {"host": "1.1.1.1", "port": 123}],
-            connection_class=DummyNode,
-            randomize_hosts=False,
+        node_config = client.transport.node_pool.seed_nodes[0]
+        calls = client.transport.node_pool.all_nodes[node_config].calls
+
+        assert len(calls) == 2
+        assert calls[0] == (
+            ("GET", "/_nodes/_all/http"),
+            {
+                "body": None,
+                "headers": {"accept": "application/json"},
+                "request_timeout": 12,
+            },
         )
-        connection = t.connection_pool.connections[1]
-
-        t.sniff_hosts()
-        assert 1 == len(t.connection_pool.connections)
-        assert connection is t.get_connection()
-
-    @sniffing_xfail
-    def test_sniff_on_fail_triggers_sniffing_on_fail(self):
-        t = Transport(  # noqa: F821
-            [{"exception": ConnectionError("abandon ship")}, {"data": CLUSTER_NODES}],
-            connection_class=DummyNode,
-            sniff_on_connection_fail=True,
-            max_retries=0,
-            randomize_hosts=False,
+        assert calls[1] == (
+            ("GET", "/"),
+            {
+                "body": None,
+                "headers": {"content-type": "application/json"},
+                "request_timeout": DEFAULT,
+            },
         )
 
-        with pytest.raises(ConnectionError):
-            t.perform_request("GET", "/")
-        assert 1 == len(t.connection_pool.connections)
-        assert "http://1.1.1.1:123" == t.get_connection().host
-
-    @sniffing_xfail
-    @patch("elasticsearch.transport.Transport.sniff_hosts")
-    def test_sniff_on_fail_failing_does_not_prevent_retires(self, sniff_hosts):
-        sniff_hosts.side_effect = [TransportError("sniff failed")]
-        t = Transport(  # noqa: F821
-            [{"exception": ConnectionError("abandon ship")}, {"data": CLUSTER_NODES}],
-            connection_class=DummyNode,
-            sniff_on_connection_fail=True,
-            max_retries=3,
-            randomize_hosts=False,
+    def test_sniff_reuses_node_instances(self):
+        client = Elasticsearch(
+            [NodeConfig("http", "1.1.1.1", 123, _extras={"data": CLUSTER_NODES})],
+            node_class=DummyNode,
+            sniff_on_start=True,
         )
 
-        conn_err, conn_data = t.connection_pool.connections
-        response = t.perform_request("GET", "/")
-        assert json.loads(CLUSTER_NODES) == response
-        assert 1 == sniff_hosts.call_count
-        assert 1 == len(conn_err.calls)
-        assert 1 == len(conn_data.calls)
+        assert len(client.transport.node_pool.all_nodes) == 1
+        client.info()
+        assert len(client.transport.node_pool.all_nodes) == 1
 
-    @sniffing_xfail
     def test_sniff_after_n_seconds(self):
-        t = Transport(  # noqa: F821
-            [{"data": CLUSTER_NODES}],
-            connection_class=DummyNode,
-            sniffer_timeout=5,
+        client = Elasticsearch(  # noqa: F821
+            [NodeConfig("http", "localhost", 9200, _extras={"data": CLUSTER_NODES})],
+            node_class=DummyNode,
+            min_delay_between_sniffing=5,
         )
+        client.transport._last_sniffed_at = time.time()
+        client.info()
 
         for _ in range(4):
-            t.perform_request("GET", "/")
-        assert 1 == len(t.connection_pool.connections)
-        assert isinstance(t.get_connection(), DummyNode)
-        t.last_sniff = time.time() - 5.1
+            client.info()
 
-        t.perform_request("GET", "/")
-        assert 1 == len(t.connection_pool.connections)
-        assert "http://1.1.1.1:123" == t.get_connection().host
-        assert time.time() - 1 < t.last_sniff < time.time() + 0.01
+        assert 1 == len(client.transport.node_pool.all_nodes)
 
-    @sniffing_xfail
-    def test_sniff_7x_publish_host(self):
-        # Test the response shaped when a 7.x node has publish_host set
-        # and the returend data is shaped in the fqdn/ip:port format.
-        t = Transport(  # noqa: F821
-            [{"data": CLUSTER_NODES_7x_PUBLISH_HOST}],
-            connection_class=DummyNode,
-            sniff_timeout=42,
+        client.transport._last_sniffed_at = time.time() - 5.1
+
+        client.info()
+
+        assert 2 == len(client.transport.node_pool.all_nodes)
+        assert "http://1.1.1.1:123" in (
+            node.base_url for node in client.transport.node_pool.all()
         )
-        t.sniff_hosts()
-        # Ensure we parsed out the fqdn and port from the fqdn/ip:port string.
-        assert t.connection_pool.connection_opts[0][1] == {
-            "host": "somehost.tld",
-            "port": 123,
-        }
+        assert time.time() - 1 < client.transport._last_sniffed_at < time.time() + 0.01
 
-    @sniffing_xfail
-    @patch("elasticsearch.transport.Transport.sniff_hosts")
-    def test_sniffing_disabled_on_cloud_instances(self, sniff_hosts):
-        t = Transport(  # noqa: F821
-            [{}],
+    @pytest.mark.parametrize(
+        "kwargs",
+        [
+            {"sniff_on_start": True},
+            {"sniff_on_connection_fail": True},
+            {"sniff_on_node_failure": True},
+            {"sniff_before_requests": True},
+            {"sniffer_timeout": 1},
+            {"sniff_timeout": 1},
+        ],
+    )
+    def test_sniffing_disabled_on_elastic_cloud(self, kwargs):
+        with pytest.raises(ValueError) as e:
+            Elasticsearch(
+                cloud_id="cluster:dXMtZWFzdC0xLmF3cy5mb3VuZC5pbyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5NyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5Ng==",
+                **kwargs,
+            )
+
+        assert (
+            str(e.value)
+            == "Sniffing should not be enabled when connecting to Elastic Cloud"
+        )
+
+    def test_sniffing_master_only_filtered_by_default(self):
+        client = Elasticsearch(  # noqa: F821
+            [
+                NodeConfig(
+                    "http",
+                    "localhost",
+                    9200,
+                    _extras={"data": CLUSTER_NODES_MASTER_ONLY},
+                )
+            ],
+            node_class=DummyNode,
             sniff_on_start=True,
-            sniff_on_connection_fail=True,
-            cloud_id="cluster:dXMtZWFzdC0xLmF3cy5mb3VuZC5pbyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5NyQ0ZmE4ODIxZTc1NjM0MDMyYmVkMWNmMjIxMTBlMmY5Ng==",
         )
 
-        assert not t.sniff_on_connection_fail
-        assert sniff_hosts.call_args is None  # Assert not called.
+        assert len(client.transport.node_pool.all_nodes) == 2
+
+    def test_sniff_node_callback(self):
+        def sniffed_node_callback(
+            node_info: Dict[str, Any], node_config: NodeConfig
+        ) -> Optional[NodeConfig]:
+            return (
+                node_config
+                if node_info["http"]["publish_address"].endswith(":124")
+                else None
+            )
+
+        client = Elasticsearch(  # noqa: F821
+            [
+                NodeConfig(
+                    "http",
+                    "localhost",
+                    9200,
+                    _extras={"data": CLUSTER_NODES_MASTER_ONLY},
+                )
+            ],
+            node_class=DummyNode,
+            sniff_on_start=True,
+            sniffed_node_callback=sniffed_node_callback,
+        )
+
+        assert len(client.transport.node_pool.all_nodes) == 2
+
+        ports = {node.config.port for node in client.transport.node_pool.all()}
+        assert ports == {9200, 124}
+
+    def test_sniffing_deprecated_host_info_callback(self):
+        def host_info_callback(
+            node_info: Dict[str, Any], host: Dict[str, Union[int, str]]
+        ) -> Dict[str, Any]:
+            return (
+                host if node_info["http"]["publish_address"].endswith(":124") else None
+            )
+
+        with warnings.catch_warnings(record=True) as w:
+            client = Elasticsearch(  # noqa: F821
+                [
+                    NodeConfig(
+                        "http",
+                        "localhost",
+                        9200,
+                        _extras={"data": CLUSTER_NODES_MASTER_ONLY},
+                    )
+                ],
+                node_class=DummyNode,
+                sniff_on_start=True,
+                host_info_callback=host_info_callback,
+            )
+
+        assert len(w) == 1
+        assert w[0].category == DeprecationWarning
+        assert (
+            str(w[0].message)
+            == "The 'host_info_callback' parameter is deprecated in favor of 'sniffed_node_callback'"
+        )
+
+        assert len(client.transport.node_pool.all_nodes) == 2
+
+        ports = {node.config.port for node in client.transport.node_pool.all()}
+        assert ports == {9200, 124}
 
 
 @pytest.mark.parametrize("headers", [{}, {"X-elastic-product": "BAD HEADER"}])

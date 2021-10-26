@@ -32,6 +32,7 @@ logger.addHandler(logging.NullHandler())
 
 from ._async.client import AsyncElasticsearch
 from ._sync.client import Elasticsearch
+from .exceptions import ElasticsearchDeprecationWarning  # noqa: F401
 from .exceptions import (
     ApiError,
     AuthenticationException,
@@ -39,7 +40,6 @@ from .exceptions import (
     ConflictError,
     ConnectionError,
     ConnectionTimeout,
-    ElasticsearchDeprecationWarning,
     ElasticsearchException,
     ElasticsearchWarning,
     NotFoundError,
@@ -73,5 +73,4 @@ __all__ = [
     "AuthorizationException",
     "UnsupportedProductError",
     "ElasticsearchWarning",
-    "ElasticsearchDeprecationWarning",
 ]
