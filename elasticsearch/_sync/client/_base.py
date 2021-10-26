@@ -17,7 +17,7 @@
 
 from typing import Any, Collection, Mapping, Optional, Tuple, TypeVar, Union
 
-from elastic_transport import Transport, HttpHeaders
+from elastic_transport import HttpHeaders, Transport
 from elastic_transport.client_utils import DEFAULT, DefaultType, resolve_default
 
 from ...compat import urlencode
