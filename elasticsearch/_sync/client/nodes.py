@@ -71,7 +71,13 @@ class NodesClient(NamespacedClient):
         )
 
     @query_params(
-        "doc_type", "ignore_idle_threads", "interval", "snapshots", "threads", "timeout"
+        "doc_type",
+        "ignore_idle_threads",
+        "interval",
+        "snapshots",
+        "sort",
+        "threads",
+        "timeout",
     )
     def hot_threads(self, node_id=None, params=None, headers=None):
         """
@@ -84,13 +90,15 @@ class NodesClient(NamespacedClient):
             the node you're connecting to, leave empty to get information from all
             nodes
         :arg doc_type: The type to sample (default: cpu)  Valid choices:
-            cpu, wait, block
+            cpu, wait, block, mem
         :arg ignore_idle_threads: Don't show threads that are in known-
             idle places, such as waiting on a socket select or pulling from an empty
             task queue (default: true)
         :arg interval: The interval for the second sampling of threads
         :arg snapshots: Number of samples of thread stacktrace (default:
             10)
+        :arg sort: The sort order for 'cpu' type (default: total)  Valid
+            choices: cpu, total
         :arg threads: Specify the number of threads to provide
             information for (default: 3)
         :arg timeout: Explicit operation timeout

@@ -1297,7 +1297,7 @@ class MlClient(NamespacedClient):
             body=body,
         )
 
-    @query_params()
+    @query_params("timeout")
     def delete_trained_model(self, model_id, params=None, headers=None):
         """
         Deletes an existing trained inference model that is currently not referenced by
@@ -1306,6 +1306,8 @@ class MlClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-trained-models.html>`_
 
         :arg model_id: The ID of the trained model to delete
+        :arg timeout: Controls the amount of time to wait for the model
+            to be deleted.  Default: 30s
         """
         client, params = _deprecated_options(self, params)
         if model_id in SKIP_IN_PATH:
