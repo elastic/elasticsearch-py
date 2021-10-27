@@ -275,13 +275,13 @@ class YamlRunner:
 
         assert isinstance(exception, ApiError)
         if catch in CATCH_CODES:
-            assert CATCH_CODES[catch] == exception.status
+            assert CATCH_CODES[catch] == exception.meta.status
         elif catch[0] == "/" and catch[-1] == "/":
             assert (
-                re.search(catch[1:-1], str(exception.message)),
-                f"{catch} not in {str(exception.message)!r}",
+                re.search(catch[1:-1], str(exception.body)),
+                f"{catch} not in {str(exception.body)!r}",
             ) is not None
-        self.last_response = exception.message
+        self.last_response = exception.body
 
     def run_skip(self, skip):
         global IMPLEMENTED_FEATURES

@@ -21,6 +21,7 @@ from __future__ import unicode_literals
 import json
 import re
 import time
+import warnings
 
 import pytest
 from elastic_transport import ApiResponseMeta, BaseNode, HttpHeaders, NodeConfig
@@ -30,6 +31,7 @@ from mock import patch
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import (
     ConnectionError,
+    ElasticsearchWarning,
     TransportError,
     UnsupportedProductError,
 )
@@ -504,3 +506,34 @@ def test_transport_error_raised_before_product_error(status):
     calls = client.transport.node_pool.get().calls
     assert len(calls) == 1
     assert calls[0][0] == ("GET", "/")
+
+
+@pytest.mark.parametrize(
+    "headers",
+    [
+        {
+            "Warning": '299 Elasticsearch-8.0.0-SNAPSHOT-ad975cacd240b3329e160673c432e768dcd7899a "[xpack.monitoring.history.duration] setting was deprecated in Elasticsearch and will be removed in a future release! See the breaking changes documentation for the next major version."',
+            "X-elastic-product": "Elasticsearch",
+        },
+        {
+            "Warning": '299 Elasticsearch-8.0.0-SNAPSHOT-ad975cacd240b3329e160673c432e768dcd7899a "[xpack.monitoring.history.duration] setting was deprecated in Elasticsearch and will be removed in a future release! See the breaking changes documentation for the next major version.", 299 Elasticsearch-8.0.0-SNAPSHOT-ad975cacd240b3329e160673c432e768dcd7899a "[xpack.monitoring.history.duration2] setting was deprecated in Elasticsearch and will be removed in a future release! See the breaking changes documentation for the next major version."',
+            "X-elastic-product": "Elasticsearch",
+        },
+    ],
+)
+def test_warning_header(headers):
+    client = Elasticsearch(
+        [NodeConfig("http", "localhost", 9200, _extras={"headers": headers})],
+        meta_header=False,
+        node_class=DummyNode,
+    )
+
+    with warnings.catch_warnings(record=True) as w:
+        client.info()
+
+    assert len(w) == headers["Warning"].count("299")
+    assert w[0].category == ElasticsearchWarning
+    assert (
+        str(w[0].message)
+        == "[xpack.monitoring.history.duration] setting was deprecated in Elasticsearch and will be removed in a future release! See the breaking changes documentation for the next major version."
+    )
