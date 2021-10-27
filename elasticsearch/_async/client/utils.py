@@ -16,6 +16,7 @@
 #  under the License.
 
 from ..._sync.client.utils import (
+    _TYPE_ASYNC_SNIFF_CALLBACK,
     _TYPE_HOSTS,
     CLIENT_META_SERVICE,
     SKIP_IN_PATH,
@@ -30,6 +31,7 @@ from ..._sync.client.utils import (
 
 __all__ = [
     "CLIENT_META_SERVICE",
+    "_TYPE_ASYNC_SNIFF_CALLBACK",
     "_deprecated_options",
     "_TYPE_HOSTS",
     "SKIP_IN_PATH",
