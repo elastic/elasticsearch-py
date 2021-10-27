@@ -15,17 +15,26 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+import re
+import warnings
 from typing import Any, Collection, Mapping, Optional, Tuple, TypeVar, Union
 
 from elastic_transport import HttpHeaders, Transport
 from elastic_transport.client_utils import DEFAULT, DefaultType, resolve_default
 
-from ...compat import urlencode
-from ...exceptions import HTTP_EXCEPTIONS, ApiError, UnsupportedProductError
+from ...compat import urlencode, warn_stacklevel
+from ...exceptions import (
+    HTTP_EXCEPTIONS,
+    ApiError,
+    ElasticsearchWarning,
+    UnsupportedProductError,
+)
 from .utils import _base64_auth_header
 
 SelfType = TypeVar("SelfType", bound="BaseClient")
 SelfNamespacedType = TypeVar("SelfNamespacedType", bound="NamespacedClient")
+
+_WARNING_RE = re.compile(r"\"([^\"]*)\"")
 
 
 def resolve_auth_headers(
@@ -152,6 +161,18 @@ class BaseClient:
                 meta=meta,
                 body=response,
             )
+
+        # 'Warning' headers should be reraised as 'ElasticsearchWarning'
+        warning_header = (meta.headers.get("warning") or "").strip()
+        if warning_header:
+            for warning_message in _WARNING_RE.findall(warning_header) or (
+                warning_header,
+            ):
+                warnings.warn(
+                    warning_message,
+                    category=ElasticsearchWarning,
+                    stacklevel=warn_stacklevel(),
+                )
 
         return response
 

@@ -18,8 +18,10 @@
 import logging
 import time
 from operator import methodcaller
+from queue import Queue
+from typing import Mapping
 
-from ..compat import Mapping, Queue, string_types, to_bytes
+from ..compat import string_types, to_bytes
 from ..exceptions import NotFoundError, TransportError
 from .errors import BulkIndexError, ScanError
 

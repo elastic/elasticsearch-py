@@ -15,11 +15,12 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from queue import Queue
+import inspect
+import sys
+from pathlib import Path
 from typing import Mapping, Tuple, Type, Union
-from urllib.parse import quote, quote_plus, unquote
+from urllib.parse import quote
 from urllib.parse import urlencode as _urlencode
-from urllib.parse import urlparse
 
 from elastic_transport.client_utils import percent_encode
 
@@ -42,30 +43,47 @@ def to_bytes(x: Union[str, bytes], encoding: str = "ascii") -> bytes:
     return x
 
 
-try:
-    from collections.abc import Mapping
-except ImportError:
-    from collections import Mapping
+def warn_stacklevel() -> int:
+    """Dynamically determine warning stacklevel for warnings based on the call stack"""
+    try:
+        # Grab the root module from the current module '__name__'
+        module_name = __name__.partition(".")[0]
+        module_path = Path(sys.modules[module_name].__file__)
 
+        # If the module is a folder we're looking at
+        # subdirectories, otherwise we're looking for
+        # an exact match.
+        module_is_folder = module_path.name == "__init__.py"
+        if module_is_folder:
+            module_path = module_path.parent
 
-reraise_exceptions: Tuple[Type[Exception], ...] = (RecursionError,)
+        # Look through frames until we find a file that
+        # isn't a part of our module, then return that stacklevel.
+        for level, frame in enumerate(inspect.stack()):
+            # Garbage collecting frames
+            frame_filename = Path(frame.filename)
+            del frame
 
-try:
-    import asyncio
-
-    reraise_exceptions += (asyncio.CancelledError,)
-except (ImportError, AttributeError):
-    pass
+            if (
+                # If the module is a folder we look at subdirectory
+                module_is_folder
+                and module_path not in frame_filename.parents
+            ) or (
+                # Otherwise we're looking for an exact match.
+                not module_is_folder
+                and module_path != frame_filename
+            ):
+                return level
+    except KeyError:
+        pass
+    return 0
 
 
 __all__ = [
     "string_types",
-    "reraise_exceptions",
-    "quote_plus",
+    "to_str",
+    "to_bytes",
     "quote",
     "urlencode",
-    "unquote",
-    "urlparse",
-    "Queue",
-    "Mapping",
+    "warn_stacklevel",
 ]
