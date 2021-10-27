@@ -975,6 +975,7 @@ class MlClient(NamespacedClient):
         self,
         model_id: Any,
         *,
+        timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
         error_trace: Optional[bool] = ...,
