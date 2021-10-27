@@ -31,7 +31,6 @@ from itertools import chain
 from pathlib import Path
 
 import black
-import unasync
 import urllib3
 from click.testing import CliRunner
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound
@@ -392,36 +391,7 @@ def dump_modules(modules):
     for mod in modules.values():
         mod.dump()
 
-    # Unasync all the generated async code
-    additional_replacements = {
-        # We want to rewrite to 'Transport' instead of 'SyncTransport', etc
-        "AsyncTransport": "Transport",
-        "AsyncElasticsearch": "Elasticsearch",
-        # We don't want to rewrite this class
-        "AsyncSearchClient": "AsyncSearchClient",
-    }
-    rules = [
-        unasync.Rule(
-            fromdir="/elasticsearch/_async/client/",
-            todir="/elasticsearch/_sync/client/",
-            additional_replacements=additional_replacements,
-        ),
-    ]
-
-    filepaths = []
-    for root, _, filenames in os.walk(CODE_ROOT / "elasticsearch/_async"):
-        for filename in filenames:
-            if (
-                filename.rpartition(".")[-1]
-                in (
-                    "py",
-                    "pyi",
-                )
-                and not filename.startswith("utils.py")
-            ):
-                filepaths.append(os.path.join(root, filename))
-
-    unasync.unasync_files(filepaths, rules)
+    os.system("python utils/run-unasync.py")
     blacken(CODE_ROOT / "elasticsearch")
 
 

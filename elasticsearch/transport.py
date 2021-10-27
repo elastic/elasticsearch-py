@@ -15,9 +15,18 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+import warnings
 from typing import Any, Dict, Optional, Union
 
-from elastic_transport import Transport  # noqa: F401
+from elastic_transport import AsyncTransport, Transport  # noqa: F401
+
+# This file exists for backwards compatibility.
+warnings.warn(
+    "Importing from the 'elasticsearch.transport' module is deprecated. "
+    "Instead import from 'elastic_transport'",
+    category=DeprecationWarning,
+    stacklevel=2,
+)
 
 
 def get_host_info(
@@ -34,6 +43,14 @@ def get_host_info(
     :arg node_info: node information from `/_cluster/nodes`
     :arg host: connection information (host, port) extracted from the node info
     """
+
+    warnings.warn(
+        "The 'get_host_info' function is deprecated. Instead "
+        "use the 'sniff_node_callback' parameter on the client",
+        category=DeprecationWarning,
+        stacklevel=2,
+    )
+
     # ignore master only nodes
     if node_info.get("roles", []) == ["master"]:
         return None
