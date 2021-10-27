@@ -168,6 +168,7 @@ class AsyncElasticsearch(BaseClient):
         ] = None,
         sniffer_timeout=DEFAULT,
         sniff_on_connection_fail=DEFAULT,
+        http_auth=DEFAULT,
         # Internal use only
         _transport: Optional[AsyncTransport] = None,
     ) -> None:
@@ -346,6 +347,7 @@ class AsyncElasticsearch(BaseClient):
             self._headers["x-opaque-id"] = opaque_id
         self._headers = resolve_auth_headers(
             self._headers,
+            http_auth=http_auth,
             api_key=api_key,
             basic_auth=basic_auth,
             bearer_auth=bearer_auth,
