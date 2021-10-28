@@ -71,7 +71,7 @@ class FleetClient(NamespacedClient):
         headers["content-type"] = "application/x-ndjson"
         return await client._perform_request(
             "POST",
-            _make_path(index, "_fleet", "_msearch"),
+            _make_path(index, "_fleet", "_fleet_msearch"),
             params=params,
             headers=headers,
             body=body,
@@ -109,7 +109,7 @@ class FleetClient(NamespacedClient):
 
         return await client._perform_request(
             "POST",
-            _make_path(index, "_fleet", "_search"),
+            _make_path(index, "_fleet", "_fleet_search"),
             params=params,
             headers=headers,
             body=body,

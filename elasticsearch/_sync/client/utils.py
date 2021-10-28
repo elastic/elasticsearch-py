@@ -31,6 +31,7 @@ from typing import (
     MutableMapping,
     Optional,
     Tuple,
+    Type,
     TypeVar,
     Union,
 )
@@ -44,11 +45,12 @@ from elastic_transport.client_utils import (
 )
 
 from ..._version import __versionstr__
-from ...compat import quote, string_types, to_bytes, to_str
+from ...compat import quote, string_types, to_bytes, to_str, warn_stacklevel
 from ...serializer import Serializer
 
 if TYPE_CHECKING:
     from ... import Elasticsearch
+    from ._base import NamespacedClient
 
 # parts of URL to be omitted
 SKIP_IN_PATH: Collection[Any] = (None, "", b"", [], ())
@@ -145,7 +147,7 @@ def host_mapping_to_node_config(host: Mapping[str, Union[str, int]]) -> NodeConf
         warnings.warn(
             "The 'use_ssl' option is no longer needed as specifying a 'scheme' is now required",
             category=DeprecationWarning,
-            stacklevel=3,
+            stacklevel=warn_stacklevel(),
         )
         options.setdefault("scheme", "https" if use_ssl else "http")
 
@@ -160,7 +162,7 @@ def host_mapping_to_node_config(host: Mapping[str, Union[str, int]]) -> NodeConf
         warnings.warn(
             "The 'url_prefix' option is deprecated in favor of 'path_prefix'",
             category=DeprecationWarning,
-            stacklevel=3,
+            stacklevel=warn_stacklevel(),
         )
         options["path_prefix"] = options.pop("url_prefix")
 
@@ -315,11 +317,12 @@ def _base64_auth_header(
 
 
 def _deprecated_options(
-    client: "Elasticsearch",
+    client: Union["Elasticsearch", "NamespacedClient"],
     params: Optional[MutableMapping[str, Any]],
-) -> Tuple["Elasticsearch", Optional[Mapping[str, Any]]]:
+) -> Tuple[Union["Elasticsearch", "NamespacedClient"], Optional[Mapping[str, Any]]]:
     """Applies the deprecated logic for per-request options. When passed deprecated options
     this function will convert them into a Elasticsearch.options() or encoded params"""
+
     if params:
         options_kwargs = {}
         opaque_id = params.pop("opaque_id", None)
@@ -351,16 +354,27 @@ def _deprecated_options(
             warnings.warn(
                 "Passing transport options in the API method is deprecated. Use 'Elasticsearch.options()' instead.",
                 category=DeprecationWarning,
-                stacklevel=3,
+                stacklevel=warn_stacklevel(),
             )
+
+            # Namespaced clients need to unwrapped.
+            namespaced_client: Optional[Type["NamespacedClient"]] = None
+            if hasattr(client, "_client"):
+                namespaced_client = type(client)  # type: ignore[assignment]
+                client = client._client  # type: ignore[attr-defined,assignment,union-attr]
+
             client = client.options(**options_kwargs)
+
+            # Re-wrap the client if we unwrapped due to being namespaced.
+            if namespaced_client is not None:
+                client = namespaced_client(client)
 
         # If there are any query params left we warn about API parameters.
         if params:
             warnings.warn(
                 "Passing options via 'params' is deprecated, instead use API parameters directly.",
                 category=DeprecationWarning,
-                stacklevel=3,
+                stacklevel=warn_stacklevel(),
             )
 
     return client, params or None

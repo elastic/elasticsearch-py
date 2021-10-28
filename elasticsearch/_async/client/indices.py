@@ -15,7 +15,6 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from ...exceptions import NotFoundError
 from ._base import NamespacedClient
 from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
 
@@ -332,13 +331,9 @@ class IndicesClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        try:
-            await client._perform_request(
-                "HEAD", _make_path(index), params=params, headers=headers
-            )
-            return True
-        except NotFoundError:
-            return False
+        return await client._perform_request(
+            "HEAD", _make_path(index), params=params, headers=headers
+        )
 
     @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable", "local")
     async def exists_type(self, index, doc_type, params=None, headers=None):
@@ -367,16 +362,12 @@ class IndicesClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        try:
-            await client._perform_request(
-                "HEAD",
-                _make_path(index, "_mapping", doc_type),
-                params=params,
-                headers=headers,
-            )
-            return True
-        except NotFoundError:
-            return False
+        return await client._perform_request(
+            "HEAD",
+            _make_path(index, "_mapping", doc_type),
+            params=params,
+            headers=headers,
+        )
 
     @query_params(
         "allow_no_indices",
@@ -507,16 +498,9 @@ class IndicesClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        try:
-            await client._perform_request(
-                "HEAD",
-                _make_path(index, "_alias", name),
-                params=params,
-                headers=headers,
-            )
-            return True
-        except NotFoundError:
-            return False
+        return await client._perform_request(
+            "HEAD", _make_path(index, "_alias", name), params=params, headers=headers
+        )
 
     @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable", "local")
     async def get_alias(self, index=None, name=None, params=None, headers=None):
@@ -634,13 +618,9 @@ class IndicesClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        try:
-            await client._perform_request(
-                "HEAD", _make_path("_template", name), params=params, headers=headers
-            )
-            return True
-        except NotFoundError:
-            return False
+        return await client._perform_request(
+            "HEAD", _make_path("_template", name), params=params, headers=headers
+        )
 
     @query_params("flat_settings", "local", "master_timeout")
     async def get_template(self, name=None, params=None, headers=None):
@@ -1353,16 +1333,9 @@ class IndicesClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        try:
-            await client._perform_request(
-                "HEAD",
-                _make_path("_index_template", name),
-                params=params,
-                headers=headers,
-            )
-            return True
-        except NotFoundError:
-            return False
+        return await client._perform_request(
+            "HEAD", _make_path("_index_template", name), params=params, headers=headers
+        )
 
     @query_params("cause", "create", "master_timeout")
     async def simulate_index_template(self, name, body=None, params=None, headers=None):

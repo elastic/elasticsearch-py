@@ -15,10 +15,6 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import io
-import logging
-import re
-
 import pytest
 
 from elasticsearch import AsyncElasticsearch, RequestError
@@ -77,75 +73,44 @@ async def mvt_setup(async_client):
     )
 
 
-@pytest.mark.xfail
-async def test_mapbox_vector_tile_logging(elasticsearch_url, mvt_setup, ca_certs):
+async def test_mapbox_vector_tile_error(elasticsearch_url, mvt_setup, ca_certs):
     client = AsyncElasticsearch(elasticsearch_url, ca_certs=ca_certs)
+    await client.search_mvt(
+        index="museums",
+        zoom=13,
+        x=4207,
+        y=2692,
+        field="location",
+    )
 
-    output = io.StringIO()
-    handler = logging.StreamHandler(output)
-    logger = logging.getLogger("elasticsearch")
-    logger.addHandler(handler)
-    logger.setLevel(logging.DEBUG)
-
-    try:
+    with pytest.raises(RequestError) as e:
         await client.search_mvt(
             index="museums",
-            zoom=13,
+            zoom=-100,
             x=4207,
             y=2692,
             field="location",
         )
-    finally:
-        logger.removeHandler(handler)
-
-    handler.flush()
-    logs = output.getvalue()
-    assert re.search(
-        r"^POST https?://[^/]+/museums/_mvt/location/13/4207/2692 \[status:200 request:0\.[0-9]{3}s\]\n"
-        r"> None\n"
-        r"< b'.+'$",
-        logs,
-        flags=re.DOTALL,
-    )
-
-    output = io.StringIO()
-    handler = logging.StreamHandler(output)
-    logger = logging.getLogger("elasticsearch")
-    logger.addHandler(handler)
-
-    # Errors should still be JSON
-    try:
-        with pytest.raises(RequestError) as e:
-            await client.search_mvt(
-                index="museums",
-                zoom=-100,
-                x=4207,
-                y=2692,
-                field="location",
-            )
-    finally:
-        logger.removeHandler(handler)
 
     assert str(e.value) == (
-        "RequestError(400, 'illegal_argument_exception', "
+        "BadRequestError(400, 'illegal_argument_exception', "
         "'Invalid geotile_grid precision of -100. Must be between 0 and 29.')"
     )
+    assert e.value.meta.status == 400
     assert e.value.status_code == 400
-
-    handler.flush()
-    logs = output.getvalue()
-    assert re.search(
-        r"^POST https?://[^/]+/museums/_mvt/location/-100/4207/2692 \[status:400 request:0\.[0-9]{3}s\]\n",
-        logs,
-        flags=re.DOTALL,
-    )
-
-    # The JSON error body is still logged properly.
-    assert logs.endswith(
-        '> None\n< {"error":{"root_cause":[{"type":"illegal_argument_exception","reason":"Invalid '
-        'geotile_grid precision of -100. Must be between 0 and 29."}],"type":"illegal_argument_exception",'
-        '"reason":"Invalid geotile_grid precision of -100. Must be between 0 and 29."},"status":400}\n'
-    )
+    assert e.value.body == {
+        "error": {
+            "root_cause": [
+                {
+                    "type": "illegal_argument_exception",
+                    "reason": "Invalid geotile_grid precision of -100. Must be between 0 and 29.",
+                }
+            ],
+            "type": "illegal_argument_exception",
+            "reason": "Invalid geotile_grid precision of -100. Must be between 0 and 29.",
+        },
+        "status": 400,
+    }
 
 
 async def test_mapbox_vector_tile_response(elasticsearch_url, mvt_setup, ca_certs):
@@ -173,10 +138,12 @@ async def test_mapbox_vector_tile_response(elasticsearch_url, mvt_setup, ca_cert
             },
         },
     )
-    assert isinstance(resp, bytes)
+
+    assert resp.meta.status == 200
+    assert isinstance(resp.raw, bytes)
 
     # Decode the binary as MVT
-    tile = mapbox_vector_tile.decode(resp)
+    tile = mapbox_vector_tile.decode(resp.raw)
 
     # Assert some general things about the structure, mostly we want
     # to know that we got back a valid MVT.

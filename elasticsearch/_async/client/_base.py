@@ -31,7 +31,18 @@ from typing import (
     Union,
 )
 
-from elastic_transport import AsyncTransport, HttpHeaders, NodeConfig, SniffOptions
+from elastic_transport import (
+    ApiResponse,
+    AsyncTransport,
+    BinaryApiResponse,
+    HeadApiResponse,
+    HttpHeaders,
+    ListApiResponse,
+    NodeConfig,
+    ObjectApiResponse,
+    SniffOptions,
+    TextApiResponse,
+)
 from elastic_transport.client_utils import DEFAULT, DefaultType, resolve_default
 
 from ...compat import urlencode, warn_stacklevel
@@ -240,7 +251,7 @@ class BaseClient:
         headers: Optional[Mapping[str, str]] = None,
         params: Optional[Mapping[str, str]] = None,
         body: Optional[Any] = None,
-    ) -> Any:
+    ) -> ApiResponse[Any, Any]:
         # Handle the passing of 'params' as additional query parameters.
         # This behavior is deprecated and should be removed in 9.0.0.
         if params:
@@ -254,7 +265,7 @@ class BaseClient:
         else:
             request_headers = self._headers
 
-        meta, response = await self.transport.perform_request(
+        meta, resp_body = await self.transport.perform_request(
             method,
             target,
             headers=request_headers,
@@ -265,18 +276,23 @@ class BaseClient:
             retry_on_timeout=self._retry_on_timeout,
         )
 
-        if not 200 <= meta.status < 299 and (
-            self._ignore_status is DEFAULT
-            or self._ignore_status is None
-            or meta.status not in self._ignore_status
+        # HEAD with a 404 is returned as a normal response
+        # since this is used as an 'exists' functionality.
+        if not (method == "HEAD" and meta.status == 404) and (
+            not 200 <= meta.status < 299
+            and (
+                self._ignore_status is DEFAULT
+                or self._ignore_status is None
+                or meta.status not in self._ignore_status
+            )
         ):
-            message = str(response)
+            message = str(resp_body)
 
             # If the response is an error response try parsing
             # the raw Elasticsearch error before raising.
-            if isinstance(response, dict):
+            if isinstance(resp_body, dict):
                 try:
-                    error = response.get("error", message)
+                    error = resp_body.get("error", message)
                     if isinstance(error, dict) and "type" in error:
                         error = error["type"]
                     message = error
@@ -284,7 +300,7 @@ class BaseClient:
                     pass
 
             raise HTTP_EXCEPTIONS.get(meta.status, ApiError)(
-                message=message, meta=meta, body=response
+                message=message, meta=meta, body=resp_body
             )
 
         # 'X-Elastic-Product: Elasticsearch' should be on every response.
@@ -295,7 +311,7 @@ class BaseClient:
                     "and we do not support this unknown product"
                 ),
                 meta=meta,
-                body=response,
+                body=resp_body,
             )
 
         # 'Warning' headers should be reraised as 'ElasticsearchWarning'
@@ -310,6 +326,22 @@ class BaseClient:
                     category=ElasticsearchWarning,
                     stacklevel=warn_stacklevel(),
                 )
+
+        if method == "HEAD":
+            response = HeadApiResponse(meta=meta)
+        elif isinstance(resp_body, dict):
+            response = ObjectApiResponse(raw=resp_body, meta=meta)  # type: ignore[assignment]
+        elif isinstance(resp_body, list):
+            response = ListApiResponse(raw=resp_body, meta=meta)  # type: ignore[assignment]
+        elif isinstance(resp_body, str):
+            response = TextApiResponse(  # type: ignore[assignment]
+                raw=resp_body,
+                meta=meta,
+            )
+        elif isinstance(resp_body, bytes):
+            response = BinaryApiResponse(raw=resp_body, meta=meta)  # type: ignore[assignment]
+        else:
+            response = ApiResponse(raw=resp_body, meta=meta)  # type: ignore[assignment]
 
         return response
 
@@ -390,33 +422,4 @@ class NamespacedClient(BaseClient):
         # so we take advantage of their transport options.
         return await self._client._perform_request(
             method, target, headers=headers, params=params, body=body
-        )
-
-    def options(
-        self: SelfNamespacedType,
-        *,
-        opaque_id: Union[DefaultType, str] = DEFAULT,
-        api_key: Union[DefaultType, str, Tuple[str, str]] = DEFAULT,
-        basic_auth: Union[DefaultType, str, Tuple[str, str]] = DEFAULT,
-        bearer_auth: Union[DefaultType, str] = DEFAULT,
-        headers: Union[DefaultType, Mapping[str, str]] = DEFAULT,
-        request_timeout: Union[DefaultType, Optional[float]] = DEFAULT,
-        ignore_status: Union[DefaultType, int, Collection[int]] = DEFAULT,
-        max_retries: Union[DefaultType, int] = DEFAULT,
-        retry_on_status: Union[DefaultType, int, Collection[int]] = DEFAULT,
-        retry_on_timeout: Union[DefaultType, bool] = DEFAULT,
-    ) -> SelfNamespacedType:
-        return type(self)(
-            self._client.options(
-                opaque_id=opaque_id,
-                api_key=api_key,
-                basic_auth=basic_auth,
-                bearer_auth=bearer_auth,
-                headers=headers,
-                request_timeout=request_timeout,
-                ignore_status=ignore_status,
-                max_retries=max_retries,
-                retry_on_status=retry_on_status,
-                retry_on_timeout=retry_on_timeout,
-            )
         )

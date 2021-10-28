@@ -30,8 +30,8 @@ VERSION = __version__ = (_major, _minor, _patch)
 logger = logging.getLogger("elasticsearch")
 logger.addHandler(logging.NullHandler())
 
-from ._async.client import AsyncElasticsearch
-from ._sync.client import Elasticsearch
+from ._async.client import AsyncElasticsearch as AsyncElasticsearch
+from ._sync.client import Elasticsearch as Elasticsearch
 from .exceptions import ElasticsearchDeprecationWarning  # noqa: F401
 from .exceptions import (
     ApiError,

@@ -23,7 +23,12 @@ from typing import Optional, Tuple
 
 from elastic_transport import TransportError
 
-from elasticsearch import Elasticsearch, NotFoundError, RequestError
+from elasticsearch import (
+    AuthorizationException,
+    Elasticsearch,
+    NotFoundError,
+    RequestError,
+)
 
 SOURCE_DIR = Path(__file__).absolute().parent.parent
 CA_CERTS = str(SOURCE_DIR / ".ci/certs/ca.crt")
@@ -52,7 +57,7 @@ def es_url() -> str:
     error = None
     for url in urls_to_try:
         if url.startswith("https://"):
-            client = Elasticsearch(url, ca_certs=CA_CERTS)
+            client = Elasticsearch(url, ca_certs=CA_CERTS, verify_certs=False)
         else:
             client = Elasticsearch(url)
         try:
@@ -167,8 +172,10 @@ def wipe_rollup_jobs(client):
     rollup_jobs = client.rollup.get_jobs(id="_all").get("jobs", ())
     for job in rollup_jobs:
         job_id = job["config"]["id"]
-        client.rollup.stop_job(id=job_id, wait_for_completion=True, ignore=404)
-        client.rollup.delete_job(id=job_id, ignore=404)
+        client.options(ignore_status=404).rollup.stop_job(
+            id=job_id, wait_for_completion=True
+        )
+        client.options(ignore_status=404).rollup.delete_job(id=job_id)
 
 
 def wipe_snapshots(client):
@@ -177,6 +184,9 @@ def wipe_snapshots(client):
 
     repos = client.snapshot.get_repository(repository="_all")
     for repo_name, repo in repos.items():
+        if repo_name in {"found-snapshots"}:
+            continue
+
         if repo["type"] == "fs":
             snapshots = client.snapshot.get(
                 repository=repo_name, snapshot="_all", ignore_unavailable=True
@@ -185,13 +195,14 @@ def wipe_snapshots(client):
                 if snapshot["state"] == "IN_PROGRESS":
                     in_progress_snapshots.append(snapshot)
                 else:
-                    client.snapshot.delete(
+                    client.options(ignore_status=404).snapshot.delete(
                         repository=repo_name,
                         snapshot=snapshot["snapshot"],
-                        ignore=404,
                     )
 
-        client.snapshot.delete_repository(repository=repo_name, ignore=404)
+        client.options(ignore_status=404).snapshot.delete_repository(
+            repository=repo_name
+        )
 
     assert in_progress_snapshots == []
 
@@ -204,10 +215,9 @@ def wipe_data_streams(client):
 
 
 def wipe_indices(client):
-    client.indices.delete(
+    client.options(ignore_status=404).indices.delete(
         index="*,-.ds-ilm-history-*",
         expand_wildcards="all",
-        ignore=404,
     )
 
 
@@ -265,13 +275,23 @@ def wipe_ilm_policies(client):
             "ml-size-based-ilm-policy",
             "logs",
             "metrics",
+            "synthetics",
+            "7-days-default",
+            "30-days-default",
+            "90-days-default",
+            "180-days-default",
+            "365-days-default",
+            ".fleet-actions-results-ilm-policy",
+            ".deprecation-indexing-ilm-policy",
         }:
             client.ilm.delete_lifecycle(policy=policy)
 
 
 def wipe_slm_policies(client):
-    for policy in client.slm.get_lifecycle():
-        client.slm.delete_lifecycle(policy_id=policy["name"])
+    policies = client.slm.get_lifecycle()
+    for policy in policies:
+        if policy not in {"cloud-snapshot-policy"}:
+            client.slm.delete_lifecycle(policy_id=policy)
 
 
 def wipe_auto_follow_patterns(client):
@@ -280,15 +300,20 @@ def wipe_auto_follow_patterns(client):
 
 
 def wipe_node_shutdown_metadata(client):
-    shutdown_status = client.shutdown.get_node()
-    # If response contains these two keys the feature flag isn't enabled
-    # on this cluster so skip this step now.
-    if "_nodes" in shutdown_status and "cluster_name" in shutdown_status:
-        return
+    try:
+        shutdown_status = client.shutdown.get_node()
+        # If response contains these two keys the feature flag isn't enabled
+        # on this cluster so skip this step now.
+        if "_nodes" in shutdown_status and "cluster_name" in shutdown_status:
+            return
 
-    for shutdown_node in shutdown_status.get("nodes", []):
-        node_id = shutdown_node["node_id"]
-        client.shutdown.delete_node(node_id=node_id)
+        for shutdown_node in shutdown_status.get("nodes", []):
+            node_id = shutdown_node["node_id"]
+            client.shutdown.delete_node(node_id=node_id)
+
+    # Elastic Cloud doesn't allow this so we skip.
+    except AuthorizationException:
+        pass
 
 
 def wipe_tasks(client):
@@ -309,13 +334,10 @@ def wait_for_pending_tasks(client, filter, timeout=30):
 def wait_for_pending_datafeeds_and_jobs(client, timeout=30):
     end_time = time.time() + timeout
     while time.time() < end_time:
-        if (
-            client.ml.get_datafeeds(datafeed_id="*", allow_no_datafeeds=True)["count"]
-            == 0
-        ):
+        if client.ml.get_datafeeds(datafeed_id="*", allow_no_match=True)["count"] == 0:
             break
     while time.time() < end_time:
-        if client.ml.get_jobs(job_id="*", allow_no_jobs=True)["count"] == 0:
+        if client.ml.get_jobs(job_id="*", allow_no_match=True)["count"] == 0:
             break
 
 

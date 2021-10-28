@@ -17,6 +17,8 @@
 
 from typing import Any, Collection, MutableMapping, Optional, Tuple, Union
 
+from elastic_transport import ObjectApiResponse, TextApiResponse
+
 from ._base import NamespacedClient
 
 class CatClient(NamespacedClient):
@@ -42,7 +44,7 @@ class CatClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Union[ObjectApiResponse[None], TextApiResponse]: ...
     async def allocation(
         self,
         *,
@@ -66,7 +68,7 @@ class CatClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Union[ObjectApiResponse[None], TextApiResponse]: ...
     async def count(
         self,
         *,
@@ -87,7 +89,7 @@ class CatClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Union[ObjectApiResponse[None], TextApiResponse]: ...
     async def health(
         self,
         *,
@@ -109,7 +111,7 @@ class CatClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Union[ObjectApiResponse[None], TextApiResponse]: ...
     async def help(
         self,
         *,
@@ -127,7 +129,7 @@ class CatClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> TextApiResponse: ...
     async def indices(
         self,
         *,
@@ -155,7 +157,7 @@ class CatClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Union[ObjectApiResponse[None], TextApiResponse]: ...
     async def master(
         self,
         *,
@@ -177,7 +179,7 @@ class CatClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Union[ObjectApiResponse[None], TextApiResponse]: ...
     async def nodes(
         self,
         *,
@@ -202,7 +204,7 @@ class CatClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Union[ObjectApiResponse[None], TextApiResponse]: ...
     async def recovery(
         self,
         *,
@@ -227,7 +229,7 @@ class CatClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Union[ObjectApiResponse[None], TextApiResponse]: ...
     async def shards(
         self,
         *,
@@ -251,7 +253,7 @@ class CatClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Union[ObjectApiResponse[None], TextApiResponse]: ...
     async def segments(
         self,
         *,
@@ -273,7 +275,7 @@ class CatClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Union[ObjectApiResponse[None], TextApiResponse]: ...
     async def pending_tasks(
         self,
         *,
@@ -296,7 +298,7 @@ class CatClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Union[ObjectApiResponse[None], TextApiResponse]: ...
     async def thread_pool(
         self,
         *,
@@ -320,7 +322,7 @@ class CatClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Union[ObjectApiResponse[None], TextApiResponse]: ...
     async def fielddata(
         self,
         *,
@@ -342,7 +344,7 @@ class CatClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Union[ObjectApiResponse[None], TextApiResponse]: ...
     async def plugins(
         self,
         *,
@@ -365,7 +367,7 @@ class CatClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Union[ObjectApiResponse[None], TextApiResponse]: ...
     async def nodeattrs(
         self,
         *,
@@ -387,7 +389,7 @@ class CatClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Union[ObjectApiResponse[None], TextApiResponse]: ...
     async def repositories(
         self,
         *,
@@ -409,7 +411,7 @@ class CatClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Union[ObjectApiResponse[None], TextApiResponse]: ...
     async def snapshots(
         self,
         *,
@@ -433,7 +435,7 @@ class CatClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Union[ObjectApiResponse[None], TextApiResponse]: ...
     async def tasks(
         self,
         *,
@@ -458,7 +460,7 @@ class CatClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Union[ObjectApiResponse[None], TextApiResponse]: ...
     async def templates(
         self,
         *,
@@ -481,7 +483,7 @@ class CatClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Union[ObjectApiResponse[None], TextApiResponse]: ...
     async def ml_data_frame_analytics(
         self,
         *,
@@ -505,7 +507,7 @@ class CatClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Union[ObjectApiResponse[None], TextApiResponse]: ...
     async def ml_datafeeds(
         self,
         *,
@@ -529,7 +531,7 @@ class CatClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Union[ObjectApiResponse[None], TextApiResponse]: ...
     async def ml_jobs(
         self,
         *,
@@ -554,7 +556,7 @@ class CatClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Union[ObjectApiResponse[None], TextApiResponse]: ...
     async def ml_trained_models(
         self,
         *,
@@ -580,7 +582,7 @@ class CatClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Union[ObjectApiResponse[None], TextApiResponse]: ...
     async def transforms(
         self,
         *,
@@ -605,4 +607,4 @@ class CatClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> Union[ObjectApiResponse[None], TextApiResponse]: ...

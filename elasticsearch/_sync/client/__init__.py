@@ -23,7 +23,6 @@ from typing import Any, Callable, Dict, Optional, Union
 from elastic_transport import NodeConfig, Transport, TransportError
 from elastic_transport.client_utils import DEFAULT
 
-from ...exceptions import NotFoundError
 from ...serializer import DEFAULT_SERIALIZERS
 from ._base import (
     BaseClient,
@@ -964,13 +963,9 @@ class Elasticsearch(BaseClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        try:
-            client._perform_request(
-                "HEAD", _make_path(index, "_doc", id), params=params, headers=headers
-            )
-            return True
-        except NotFoundError:
-            return False
+        return client._perform_request(
+            "HEAD", _make_path(index, "_doc", id), params=params, headers=headers
+        )
 
     @query_params(
         "_source",
@@ -1015,16 +1010,12 @@ class Elasticsearch(BaseClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        try:
-            client._perform_request(
-                "HEAD",
-                _make_path(index, doc_type, id, "_source"),
-                params=params,
-                headers=headers,
-            )
-            return True
-        except NotFoundError:
-            return False
+        return client._perform_request(
+            "HEAD",
+            _make_path(index, doc_type, id, "_source"),
+            params=params,
+            headers=headers,
+        )
 
     @query_params(
         "_source",
