@@ -59,6 +59,7 @@ IMPLEMENTED_FEATURES = {
     "default_shards",
     "warnings",
     "allowed_warnings",
+    "allowed_warnings_regex",
     "contains",
     "arbitrary_key",
     "transform_and_set",
@@ -223,6 +224,11 @@ class YamlRunner:
         catch = action.pop("catch", None)
         warn = action.pop("warnings", ())
         allowed_warnings = action.pop("allowed_warnings", ())
+        if isinstance(allowed_warnings, str):
+            allowed_warnings = (allowed_warnings,)
+        allowed_warnings_regex = action.pop("allowed_warnings_regex", ())
+        if isinstance(allowed_warnings_regex, str):
+            allowed_warnings_regex = (allowed_warnings_regex,)
         assert len(action) == 1
 
         # Remove the x_pack_rest_user authentication
@@ -243,6 +249,9 @@ class YamlRunner:
 
         # locate api endpoint
         for m in method.split("."):
+            # Some deprecated APIs are prefixed with 'xpack-*'
+            if m.startswith("xpack-"):
+                m = m.replace("xpack-", "")
             assert hasattr(api, m)
             api = getattr(api, m)
 
@@ -291,7 +300,14 @@ class YamlRunner:
             str(w.message)
             for w in caught_warnings
             if w.category == ElasticsearchWarning
-            and str(w.message) not in allowed_warnings
+            and (not allowed_warnings or str(w.message) not in allowed_warnings)
+            and (
+                not allowed_warnings_regex
+                or all(
+                    re.search(pattern, str(w.message)) is None
+                    for pattern in allowed_warnings_regex
+                )
+            )
         ]
 
         # This warning can show up in many places but isn't accounted for
@@ -579,7 +595,10 @@ try:
     # Download the zip and start reading YAML from the files in memory
     package_zip = zipfile.ZipFile(io.BytesIO(http.request("GET", package_url).data))
     for yaml_file in package_zip.namelist():
-        if not re.match(r"^rest-api-spec/test/.*\.ya?ml$", yaml_file):
+        yaml_filter_pattern = r"^rest-api-spec/%s/.*\.ya?ml$" % (
+            "compatTest" if COMPATIBILITY_MODE_ENABLED else "test"
+        )
+        if not re.match(yaml_filter_pattern, yaml_file):
             continue
         yaml_tests = list(yaml.safe_load_all(package_zip.read(yaml_file)))
 
@@ -608,7 +627,13 @@ try:
             # is to remove most of the file path prefixes and
             # the .yml suffix.
             pytest_test_name = yaml_file.rpartition(".")[0].replace(".", "/")
-            for prefix in ("rest-api-spec/", "test/", "free/", "platinum/"):
+            for prefix in (
+                "rest-api-spec/",
+                "compatTest/",
+                "test/",
+                "free/",
+                "platinum/",
+            ):
                 if pytest_test_name.startswith(prefix):
                     pytest_test_name = pytest_test_name[len(prefix) :]
             pytest_param_id = "%s[%d]" % (pytest_test_name, test_number)

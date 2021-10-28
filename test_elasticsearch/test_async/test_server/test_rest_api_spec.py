@@ -21,6 +21,7 @@ some integration tests. These files are shared among all official Elasticsearch
 clients.
 """
 import inspect
+import re
 import warnings
 
 import pytest
@@ -118,6 +119,11 @@ class AsyncYamlRunner(YamlRunner):
         catch = action.pop("catch", None)
         warn = action.pop("warnings", ())
         allowed_warnings = action.pop("allowed_warnings", ())
+        if isinstance(allowed_warnings, str):
+            allowed_warnings = (allowed_warnings,)
+        allowed_warnings_regex = action.pop("allowed_warnings_regex", ())
+        if isinstance(allowed_warnings_regex, str):
+            allowed_warnings_regex = (allowed_warnings_regex,)
         assert len(action) == 1
 
         # Remove the x_pack_rest_user authentication
@@ -138,6 +144,9 @@ class AsyncYamlRunner(YamlRunner):
 
         # locate api endpoint
         for m in method.split("."):
+            # Some deprecated APIs are prefixed with 'xpack-*'
+            if m.startswith("xpack-"):
+                m = m.replace("xpack-", "")
             assert hasattr(api, m)
             api = getattr(api, m)
 
@@ -186,7 +195,14 @@ class AsyncYamlRunner(YamlRunner):
             str(w.message)
             for w in caught_warnings
             if w.category == ElasticsearchWarning
-            and str(w.message) not in allowed_warnings
+            and (not allowed_warnings or str(w.message) not in allowed_warnings)
+            and (
+                not allowed_warnings_regex
+                or all(
+                    re.search(pattern, str(w.message)) is None
+                    for pattern in allowed_warnings_regex
+                )
+            )
         ]
 
         # This warning can show up in many places but isn't accounted for
