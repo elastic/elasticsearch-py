@@ -241,7 +241,7 @@ class YamlRunner:
         warnings.simplefilter("always", category=ElasticsearchWarning)
         with warnings.catch_warnings(record=True) as caught_warnings:
             try:
-                self.last_response = api(**args)
+                self.last_response = api(**args).raw
             except Exception as e:
                 if not catch:
                     raise
