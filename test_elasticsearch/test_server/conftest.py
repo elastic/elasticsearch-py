@@ -36,7 +36,7 @@ def sync_client_factory(elasticsearch_url):
     try:
         # Configure the client with certificates and optionally
         # an HTTP conn class depending on 'PYTHON_CONNECTION_CLASS' envvar
-        kw = {"ca_certs": CA_CERTS, "verify_certs": False}
+        kw = {"ca_certs": CA_CERTS}
         if "PYTHON_CONNECTION_CLASS" in os.environ:
             kw["node_class"] = os.environ["PYTHON_CONNECTION_CLASS"]
 
