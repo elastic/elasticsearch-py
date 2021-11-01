@@ -186,6 +186,25 @@ class API:
                     print(f"URL {revised_url!r}, falling back on {self.doc_url!r}")
 
     @property
+    def response_type(self) -> str:
+        if self.method == "HEAD":
+            return "HeadApiResponse"
+
+        types = []
+        accept_headers = self._def["headers"].get("accept", ())
+        if "application/json" in accept_headers:
+            types.append("ObjectApiResponse[None]")
+        if "application/mapbox-vector-tile" in accept_headers:
+            types.append("BinaryApiResponse")
+        if any(mimetype.startswith("text/") for mimetype in accept_headers):
+            types.append("TextApiResponse")
+        if not types:
+            return "Any"
+        if len(types) == 1:
+            return types[0]
+        return f"Union[{', '.join(sorted(types))}]"
+
+    @property
     def all_parts(self):
         parts = {}
         for url in self._def["url"]["paths"]:
@@ -307,10 +326,7 @@ class API:
             try:
                 t = jinja_env.get_template(f"overrides/{self.namespace}/{self.name}")
             except TemplateNotFound:
-                if self.method == "HEAD":
-                    t = jinja_env.get_template("head_base")
-                else:
-                    t = jinja_env.get_template("base")
+                t = jinja_env.get_template("base")
 
         return t.render(
             api=self,

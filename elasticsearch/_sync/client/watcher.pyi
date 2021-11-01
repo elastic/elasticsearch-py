@@ -17,6 +17,8 @@
 
 from typing import Any, Collection, MutableMapping, Optional, Tuple, Union
 
+from elastic_transport import ObjectApiResponse
+
 from ._base import NamespacedClient
 
 class WatcherClient(NamespacedClient):
@@ -37,7 +39,7 @@ class WatcherClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     def activate_watch(
         self,
         watch_id: Any,
@@ -54,7 +56,7 @@ class WatcherClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     def deactivate_watch(
         self,
         watch_id: Any,
@@ -71,7 +73,7 @@ class WatcherClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     def delete_watch(
         self,
         id: Any,
@@ -88,7 +90,7 @@ class WatcherClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     def execute_watch(
         self,
         *,
@@ -107,7 +109,7 @@ class WatcherClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     def get_watch(
         self,
         id: Any,
@@ -124,7 +126,7 @@ class WatcherClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     def put_watch(
         self,
         id: Any,
@@ -146,7 +148,7 @@ class WatcherClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     def start(
         self,
         *,
@@ -162,7 +164,7 @@ class WatcherClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     def stats(
         self,
         *,
@@ -180,7 +182,7 @@ class WatcherClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     def stop(
         self,
         *,
@@ -196,7 +198,7 @@ class WatcherClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     def query_watches(
         self,
         *,
@@ -213,4 +215,4 @@ class WatcherClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...

@@ -18,7 +18,7 @@
 import logging
 from typing import Any, Collection, MutableMapping, Optional, Tuple, Type, Union
 
-from elastic_transport import AsyncTransport
+from elastic_transport import AsyncTransport, HeadApiResponse, ObjectApiResponse
 
 from ._base import BaseClient
 from .async_search import AsyncSearchClient
@@ -118,7 +118,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> bool: ...
+    ) -> HeadApiResponse: ...
     async def info(
         self,
         *,
@@ -134,7 +134,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def create(
         self,
         index: Any,
@@ -161,7 +161,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def index(
         self,
         index: Any,
@@ -191,7 +191,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def bulk(
         self,
         *,
@@ -219,7 +219,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def clear_scroll(
         self,
         *,
@@ -237,7 +237,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def count(
         self,
         *,
@@ -269,7 +269,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def delete(
         self,
         index: Any,
@@ -296,7 +296,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def delete_by_query(
         self,
         index: Any,
@@ -346,7 +346,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def delete_by_query_rethrottle(
         self,
         task_id: Any,
@@ -364,7 +364,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def delete_script(
         self,
         id: Any,
@@ -383,7 +383,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def exists(
         self,
         index: Any,
@@ -411,7 +411,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> bool: ...
+    ) -> HeadApiResponse: ...
     async def exists_source(
         self,
         index: Any,
@@ -439,7 +439,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> bool: ...
+    ) -> HeadApiResponse: ...
     async def explain(
         self,
         index: Any,
@@ -470,7 +470,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def field_caps(
         self,
         *,
@@ -493,7 +493,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def get(
         self,
         index: Any,
@@ -521,7 +521,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def get_script(
         self,
         id: Any,
@@ -539,7 +539,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def get_source(
         self,
         index: Any,
@@ -566,7 +566,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def mget(
         self,
         *,
@@ -592,7 +592,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def msearch(
         self,
         *,
@@ -617,7 +617,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def put_script(
         self,
         id: Any,
@@ -638,7 +638,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def rank_eval(
         self,
         *,
@@ -660,7 +660,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def reindex(
         self,
         *,
@@ -685,7 +685,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def reindex_rethrottle(
         self,
         task_id: Any,
@@ -703,7 +703,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def render_search_template(
         self,
         *,
@@ -721,7 +721,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def scripts_painless_execute(
         self,
         *,
@@ -738,7 +738,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def scroll(
         self,
         *,
@@ -758,7 +758,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def search(
         self,
         *,
@@ -819,7 +819,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def search_shards(
         self,
         *,
@@ -842,7 +842,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def update(
         self,
         index: Any,
@@ -874,7 +874,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def update_by_query_rethrottle(
         self,
         task_id: Any,
@@ -892,7 +892,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def get_script_context(
         self,
         *,
@@ -908,7 +908,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def get_script_languages(
         self,
         *,
@@ -924,7 +924,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def msearch_template(
         self,
         *,
@@ -947,7 +947,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def mtermvectors(
         self,
         *,
@@ -977,7 +977,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def search_template(
         self,
         *,
@@ -1008,7 +1008,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def termvectors(
         self,
         index: Any,
@@ -1038,7 +1038,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def update_by_query(
         self,
         index: Any,
@@ -1090,7 +1090,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def close_point_in_time(
         self,
         *,
@@ -1107,7 +1107,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def open_point_in_time(
         self,
         index: Any,
@@ -1129,7 +1129,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def terms_enum(
         self,
         index: Any,
@@ -1147,7 +1147,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def search_mvt(
         self,
         index: Any,
@@ -1175,7 +1175,7 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> bytes: ...
+    ) -> Any: ...
     async def knn_search(
         self,
         index: Any,
@@ -1194,4 +1194,4 @@ class AsyncElasticsearch(BaseClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...

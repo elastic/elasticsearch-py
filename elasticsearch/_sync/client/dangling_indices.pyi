@@ -17,6 +17,8 @@
 
 from typing import Any, Collection, MutableMapping, Optional, Tuple, Union
 
+from elastic_transport import ObjectApiResponse
+
 from ._base import NamespacedClient
 
 class DanglingIndicesClient(NamespacedClient):
@@ -39,7 +41,7 @@ class DanglingIndicesClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     def import_dangling_index(
         self,
         index_uuid: Any,
@@ -59,7 +61,7 @@ class DanglingIndicesClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     def list_dangling_indices(
         self,
         *,
@@ -75,4 +77,4 @@ class DanglingIndicesClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...

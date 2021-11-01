@@ -15,7 +15,6 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from ...exceptions import NotFoundError
 from ._base import NamespacedClient
 from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
 
@@ -363,16 +362,12 @@ class ClusterClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        try:
-            await client._perform_request(
-                "HEAD",
-                _make_path("_component_template", name),
-                params=params,
-                headers=headers,
-            )
-            return True
-        except NotFoundError:
-            return False
+        return await client._perform_request(
+            "HEAD",
+            _make_path("_component_template", name),
+            params=params,
+            headers=headers,
+        )
 
     @query_params("wait_for_removal")
     async def delete_voting_config_exclusions(self, params=None, headers=None):

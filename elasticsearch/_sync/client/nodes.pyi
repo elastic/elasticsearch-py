@@ -17,6 +17,8 @@
 
 from typing import Any, Collection, MutableMapping, Optional, Tuple, Union
 
+from elastic_transport import ObjectApiResponse, TextApiResponse
+
 from ._base import NamespacedClient
 
 class NodesClient(NamespacedClient):
@@ -38,7 +40,7 @@ class NodesClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     def info(
         self,
         *,
@@ -58,7 +60,7 @@ class NodesClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     def hot_threads(
         self,
         *,
@@ -67,6 +69,7 @@ class NodesClient(NamespacedClient):
         ignore_idle_threads: Optional[Any] = ...,
         interval: Optional[Any] = ...,
         snapshots: Optional[Any] = ...,
+        sort: Optional[Any] = ...,
         threads: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
         pretty: Optional[bool] = ...,
@@ -81,7 +84,7 @@ class NodesClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> TextApiResponse: ...
     def usage(
         self,
         *,
@@ -100,7 +103,7 @@ class NodesClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     def stats(
         self,
         *,
@@ -128,7 +131,7 @@ class NodesClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     def clear_repositories_metering_archive(
         self,
         node_id: Any,
@@ -146,7 +149,7 @@ class NodesClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     def get_repositories_metering_info(
         self,
         node_id: Any,
@@ -163,4 +166,4 @@ class NodesClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...

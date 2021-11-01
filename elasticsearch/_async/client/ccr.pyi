@@ -17,6 +17,8 @@
 
 from typing import Any, Collection, MutableMapping, Optional, Tuple, Union
 
+from elastic_transport import ObjectApiResponse
+
 from ._base import NamespacedClient
 
 class CcrClient(NamespacedClient):
@@ -36,7 +38,7 @@ class CcrClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def follow(
         self,
         index: Any,
@@ -55,7 +57,7 @@ class CcrClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def follow_info(
         self,
         index: Any,
@@ -72,7 +74,7 @@ class CcrClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def follow_stats(
         self,
         index: Any,
@@ -89,7 +91,7 @@ class CcrClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def forget_follower(
         self,
         index: Any,
@@ -107,7 +109,7 @@ class CcrClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def get_auto_follow_pattern(
         self,
         *,
@@ -124,7 +126,7 @@ class CcrClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def pause_follow(
         self,
         index: Any,
@@ -141,7 +143,7 @@ class CcrClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def put_auto_follow_pattern(
         self,
         name: Any,
@@ -159,7 +161,7 @@ class CcrClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def resume_follow(
         self,
         index: Any,
@@ -177,7 +179,7 @@ class CcrClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def stats(
         self,
         *,
@@ -193,7 +195,7 @@ class CcrClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def unfollow(
         self,
         index: Any,
@@ -210,7 +212,7 @@ class CcrClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def pause_auto_follow_pattern(
         self,
         name: Any,
@@ -227,7 +229,7 @@ class CcrClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...
     async def resume_auto_follow_pattern(
         self,
         name: Any,
@@ -244,4 +246,4 @@ class CcrClient(NamespacedClient):
         api_key: Optional[Union[str, Tuple[str, str]]] = ...,
         params: Optional[MutableMapping[str, Any]] = ...,
         headers: Optional[MutableMapping[str, str]] = ...,
-    ) -> Any: ...
+    ) -> ObjectApiResponse[None]: ...

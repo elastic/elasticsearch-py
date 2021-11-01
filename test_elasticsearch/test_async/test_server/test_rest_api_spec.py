@@ -147,7 +147,7 @@ class AsyncYamlRunner(YamlRunner):
         warnings.simplefilter("always", category=ElasticsearchWarning)
         with warnings.catch_warnings(record=True) as caught_warnings:
             try:
-                self.last_response = await api(**args)
+                self.last_response = await api(**args).raw
             except Exception as e:
                 if not catch:
                     raise

@@ -15,7 +15,6 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from ...exceptions import NotFoundError
 from ._base import NamespacedClient
 from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
 
@@ -332,13 +331,9 @@ class IndicesClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'index'.")
 
-        try:
-            await client._perform_request(
-                "HEAD", _make_path(index), params=params, headers=headers
-            )
-            return True
-        except NotFoundError:
-            return False
+        return await client._perform_request(
+            "HEAD", _make_path(index), params=params, headers=headers
+        )
 
     @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable", "local")
     async def exists_type(self, index, doc_type, params=None, headers=None):
@@ -367,16 +362,12 @@ class IndicesClient(NamespacedClient):
             if param in SKIP_IN_PATH:
                 raise ValueError("Empty value passed for a required argument.")
 
-        try:
-            await client._perform_request(
-                "HEAD",
-                _make_path(index, "_mapping", doc_type),
-                params=params,
-                headers=headers,
-            )
-            return True
-        except NotFoundError:
-            return False
+        return await client._perform_request(
+            "HEAD",
+            _make_path(index, "_mapping", doc_type),
+            params=params,
+            headers=headers,
+        )
 
     @query_params(
         "allow_no_indices",
@@ -507,16 +498,9 @@ class IndicesClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        try:
-            await client._perform_request(
-                "HEAD",
-                _make_path(index, "_alias", name),
-                params=params,
-                headers=headers,
-            )
-            return True
-        except NotFoundError:
-            return False
+        return await client._perform_request(
+            "HEAD", _make_path(index, "_alias", name), params=params, headers=headers
+        )
 
     @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable", "local")
     async def get_alias(self, index=None, name=None, params=None, headers=None):
@@ -634,13 +618,9 @@ class IndicesClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        try:
-            await client._perform_request(
-                "HEAD", _make_path("_template", name), params=params, headers=headers
-            )
-            return True
-        except NotFoundError:
-            return False
+        return await client._perform_request(
+            "HEAD", _make_path("_template", name), params=params, headers=headers
+        )
 
     @query_params("flat_settings", "local", "master_timeout")
     async def get_template(self, name=None, params=None, headers=None):
@@ -1067,43 +1047,6 @@ class IndicesClient(NamespacedClient):
         "timeout",
         "wait_for_active_shards",
     )
-    async def freeze(self, index, params=None, headers=None):
-        """
-        Freezes an index. A frozen index has almost no overhead on the cluster (except
-        for maintaining its metadata in memory) and is read-only.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/freeze-index-api.html>`_
-
-        :arg index: The name of the index to freeze
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: closed
-        :arg ignore_unavailable: Whether specified concrete indices
-            should be ignored when unavailable (missing or closed)
-        :arg master_timeout: Specify timeout for connection to master
-        :arg timeout: Explicit operation timeout
-        :arg wait_for_active_shards: Sets the number of active shards to
-            wait for before the operation returns.
-        """
-        client, params = _deprecated_options(self, params)
-        if index in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'index'.")
-
-        return await client._perform_request(
-            "POST", _make_path(index, "_freeze"), params=params, headers=headers
-        )
-
-    @query_params(
-        "allow_no_indices",
-        "expand_wildcards",
-        "ignore_unavailable",
-        "master_timeout",
-        "timeout",
-        "wait_for_active_shards",
-    )
     async def unfreeze(self, index, params=None, headers=None):
         """
         Unfreezes an index. When a frozen index is unfrozen, the index goes through the
@@ -1390,16 +1333,9 @@ class IndicesClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for a required argument 'name'.")
 
-        try:
-            await client._perform_request(
-                "HEAD",
-                _make_path("_index_template", name),
-                params=params,
-                headers=headers,
-            )
-            return True
-        except NotFoundError:
-            return False
+        return await client._perform_request(
+            "HEAD", _make_path("_index_template", name), params=params, headers=headers
+        )
 
     @query_params("cause", "create", "master_timeout")
     async def simulate_index_template(self, name, body=None, params=None, headers=None):
