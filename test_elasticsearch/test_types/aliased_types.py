@@ -17,7 +17,8 @@
 
 from typing import Any, AsyncGenerator, Dict, Generator
 
-from elasticsearch8 import AsyncElasticsearch, Elasticsearch, Transport
+from elastic_transport import Transport
+from elasticsearch8 import AsyncElasticsearch, Elasticsearch
 from elasticsearch8.helpers import (
     async_bulk,
     async_reindex,

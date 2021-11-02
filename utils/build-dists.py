@@ -43,20 +43,24 @@ def set_tmp_dir():
 
 def run(*argv, expect_exit_code=0):
     global tmp_dir
-    if tmp_dir is None:
-        os.chdir(base_dir)
-    else:
-        os.chdir(tmp_dir)
+    try:
+        prev_dir = os.getcwd()
+        if tmp_dir is None:
+            os.chdir(base_dir)
+        else:
+            os.chdir(tmp_dir)
 
-    cmd = " ".join(shlex.quote(x) for x in argv)
-    print("$ " + cmd)
-    exit_code = os.system(cmd)
-    if exit_code != expect_exit_code:
-        print(
-            "Command exited incorrectly: should have been %d was %d"
-            % (expect_exit_code, exit_code)
-        )
-        exit(exit_code or 1)
+        cmd = " ".join(shlex.quote(x) for x in argv)
+        print("$ " + cmd)
+        exit_code = os.system(cmd)
+        if exit_code != expect_exit_code:
+            print(
+                "Command exited incorrectly: should have been %d was %d"
+                % (expect_exit_code, exit_code)
+            )
+            exit(exit_code or 1)
+    finally:
+        os.chdir(prev_dir)
 
 
 def test_dist(dist):
@@ -76,25 +80,15 @@ def test_dist(dist):
             "-c",
             f"from {dist_name}.helpers import scan, bulk, streaming_bulk, reindex",
         )
-        run(venv_python, "-c", f"from {dist_name} import Elasticsearch")
         run(
             venv_python,
             "-c",
-            f"from {dist_name}.helpers import scan, bulk, streaming_bulk, reindex",
-        )
-
-        # Ensure that async is not available yet
-        run(
-            venv_python,
-            "-c",
-            f"from {dist_name} import AsyncElasticsearch",
-            expect_exit_code=256,
+            f"from {dist_name} import Elasticsearch, AsyncElasticsearch",
         )
         run(
             venv_python,
             "-c",
-            f"from {dist_name}.helpers import async_scan, async_bulk, async_streaming_bulk, async_reindex",
-            expect_exit_code=256,
+            f"from {dist_name}.helpers import scan, bulk, streaming_bulk, reindex, async_scan, async_bulk, async_streaming_bulk, async_reindex",
         )
 
         # Install aiohttp and see that async is now available
@@ -253,7 +247,7 @@ def main():
             )
 
         # Build the sdist/wheels
-        run("python", "setup.py", "sdist", "bdist_wheel")
+        run("python", "-m", "build")
 
         # Clean up everything.
         run("git", "checkout", "--", "setup.py", "elasticsearch/")
@@ -265,7 +259,7 @@ def main():
     assert len(dists) == 4
     for dist in dists:
         test_dist(os.path.join(base_dir, "dist", dist))
-    os.system("chmod a+w dist/*")
+    os.system('bash -c "chmod a+w dist/*"')
 
     # After this run 'python -m twine upload dist/*'
     print(
