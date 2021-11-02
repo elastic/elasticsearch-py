@@ -168,6 +168,7 @@ class Elasticsearch(BaseClient):
         sniffer_timeout=DEFAULT,
         sniff_on_connection_fail=DEFAULT,
         http_auth=DEFAULT,
+        maxsize=DEFAULT,
         # Internal use only
         _transport: Optional[Transport] = None,
     ) -> None:
@@ -225,6 +226,19 @@ class Elasticsearch(BaseClient):
                 stacklevel=2,
             )
             sniff_on_node_failure = sniff_on_connection_fail
+
+        if maxsize is not DEFAULT:
+            if connections_per_node is not DEFAULT:
+                raise ValueError(
+                    "Can't specify both 'maxsize' and 'connections_per_node', "
+                    "instead only specify 'connections_per_node'"
+                )
+            warnings.warn(
+                "The 'maxsize' parameter is deprecated in favor of 'connections_per_node'",
+                category=DeprecationWarning,
+                stacklevel=2,
+            )
+            connections_per_node = maxsize
 
         # Setting min_delay_between_sniffing=True implies sniff_before_requests=True
         if min_delay_between_sniffing is not DEFAULT:

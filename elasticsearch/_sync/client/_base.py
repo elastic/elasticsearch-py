@@ -233,6 +233,7 @@ default_sniff_callback = create_sniff_callback(
 class BaseClient:
     def __init__(self, _transport: Transport) -> None:
         self._transport = _transport
+        self._client_meta: Tuple[Tuple[str, str], ...] = DEFAULT
         self._headers = HttpHeaders({"content-type": "application/json"})
         self._request_timeout: Union[DefaultType, Optional[float]] = DEFAULT
         self._ignore_status: Union[DefaultType, Collection[int]] = DEFAULT
@@ -274,6 +275,7 @@ class BaseClient:
             max_retries=self._max_retries,
             retry_on_status=self._retry_on_status,
             retry_on_timeout=self._retry_on_timeout,
+            client_meta=self._client_meta,
         )
 
         # HEAD with a 404 is returned as a normal response
