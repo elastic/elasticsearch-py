@@ -14,6 +14,7 @@ pyyaml>=5.4
 isort
 black
 twine
+build
 
 # No wheels for Python 3.10 yet!
 numpy; python_version<"3.10"
