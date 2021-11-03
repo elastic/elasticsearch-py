@@ -55,8 +55,10 @@ class NodesClient(NamespacedClient):
             the node you're connecting to, leave empty to get information from all
             nodes
         :arg metric: A comma-separated list of metrics you wish
-            returned. Leave empty to return all.  Valid choices: settings, os,
-            process, jvm, thread_pool, transport, http, plugins, ingest
+            returned. Use `_all` to retrieve all metrics and `_none` to retrieve the
+            node identity without any additional metrics.  Valid choices: settings,
+            os, process, jvm, thread_pool, transport, http, plugins, ingest,
+            indices, aggregations, _all, _none
         :arg flat_settings: Return settings in flat format (default:
             false)
         :arg timeout: Explicit operation timeout
