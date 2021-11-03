@@ -103,6 +103,7 @@ class NodesClient(NamespacedClient):
         ignore_idle_threads: Optional[bool] = ...,
         interval: Optional[Any] = ...,
         snapshots: Optional[Any] = ...,
+        sort: Optional[Any] = ...,
         threads: Optional[Any] = ...,
         timeout: Optional[Any] = ...,
         type: Optional[Any] = ...,

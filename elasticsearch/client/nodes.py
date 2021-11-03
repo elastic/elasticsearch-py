@@ -138,6 +138,7 @@ class NodesClient(NamespacedClient):
         "ignore_idle_threads",
         "interval",
         "snapshots",
+        "sort",
         "threads",
         "timeout",
         "type",
@@ -159,11 +160,13 @@ class NodesClient(NamespacedClient):
         :arg interval: The interval for the second sampling of threads
         :arg snapshots: Number of samples of thread stacktrace (default:
             10)
+        :arg sort: The sort order for 'cpu' type (default: total)  Valid
+            choices: cpu, total
         :arg threads: Specify the number of threads to provide
             information for (default: 3)
         :arg timeout: Explicit operation timeout
         :arg type: The type to sample (default: cpu)  Valid choices:
-            cpu, wait, block
+            cpu, wait, block, mem
         """
         return self.transport.perform_request(
             "GET",

@@ -78,7 +78,7 @@ class FleetClient(NamespacedClient):
         body = _bulk_body(self.transport.serializer, body)
         return self.transport.perform_request(
             "POST",
-            _make_path(index, "_fleet", "_msearch"),
+            _make_path(index, "_fleet", "_fleet_msearch"),
             params=params,
             headers=headers,
             body=body,
@@ -117,7 +117,7 @@ class FleetClient(NamespacedClient):
 
         return self.transport.perform_request(
             "POST",
-            _make_path(index, "_fleet", "_search"),
+            _make_path(index, "_fleet", "_fleet_search"),
             params=params,
             headers=headers,
             body=body,
