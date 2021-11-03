@@ -233,7 +233,7 @@ default_sniff_callback = create_sniff_callback(
 class BaseClient:
     def __init__(self, _transport: AsyncTransport) -> None:
         self._transport = _transport
-        self._client_meta: Tuple[Tuple[str, str], ...] = DEFAULT
+        self._client_meta: Union[DefaultType, Tuple[Tuple[str, str], ...]] = DEFAULT
         self._headers = HttpHeaders({"content-type": "application/json"})
         self._request_timeout: Union[DefaultType, Optional[float]] = DEFAULT
         self._ignore_status: Union[DefaultType, Collection[int]] = DEFAULT
@@ -322,11 +322,12 @@ class BaseClient:
             warning_messages: Iterable[str] = _WARNING_RE.findall(warning_header) or (
                 warning_header,
             )
+            stacklevel = warn_stacklevel()
             for warning_message in warning_messages:
                 warnings.warn(
                     warning_message,
                     category=ElasticsearchWarning,
-                    stacklevel=warn_stacklevel(),
+                    stacklevel=stacklevel,
                 )
 
         if method == "HEAD":

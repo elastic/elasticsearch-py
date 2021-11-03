@@ -19,12 +19,14 @@ import asyncio
 from datetime import datetime, timedelta, timezone
 
 import pytest
-from mock import MagicMock, patch
+from elastic_transport import ApiResponseMeta, ObjectApiResponse
+from mock import MagicMock, call, patch
 
 from elasticsearch import TransportError, helpers
+from elasticsearch.exceptions import ApiError
 from elasticsearch.helpers import ScanError
 
-pytestmark = [pytest.mark.xfail, pytest.mark.asyncio]
+pytestmark = [pytest.mark.asyncio]
 
 
 class AsyncMock(MagicMock):
@@ -37,7 +39,16 @@ class AsyncMock(MagicMock):
 
 class FailingBulkClient(object):
     def __init__(
-        self, client, fail_at=(2,), fail_with=TransportError(599, "Error!", {})
+        self,
+        client,
+        fail_at=(2,),
+        fail_with=TransportError(
+            message="Error!",
+            body={},
+            meta=ApiResponseMeta(
+                status=599, headers={}, http_version="1.1", duration=0, node=None
+            ),
+        ),
     ):
         self.client = client
         self._called = 0
@@ -50,6 +61,9 @@ class FailingBulkClient(object):
         if self._called in self._fail_at:
             raise self._fail_with
         return await self.client.bulk(*args, **kwargs)
+
+    def options(self, **_):
+        return self
 
 
 class TestStreamingBulk(object):
@@ -171,14 +185,21 @@ class TestStreamingBulk(object):
                 "_index": "i",
                 "_id": 45,
                 "data": {"f": "v"},
-                "error": "TransportError(599, 'Error!')",
+                "error": "ApiError(599, 'Error!')",
                 "status": 599,
             }
         } == results[1][1]
 
     async def test_rejected_documents_are_retried(self, async_client):
         failing_client = FailingBulkClient(
-            async_client, fail_with=TransportError(429, "Rejected!", {})
+            async_client,
+            fail_with=ApiError(
+                message="Rejected!",
+                body={},
+                meta=ApiResponseMeta(
+                    status=429, headers={}, http_version="1.1", duration=0, node=None
+                ),
+            ),
         )
         docs = [
             {"_index": "i", "_id": 47, "f": "v"},
@@ -208,7 +229,15 @@ class TestStreamingBulk(object):
         self, async_client
     ):
         failing_client = FailingBulkClient(
-            async_client, fail_at=(1, 2), fail_with=TransportError(429, "Rejected!", {})
+            async_client,
+            fail_at=(1, 2),
+            fail_with=ApiError(
+                message="Rejected!",
+                body={},
+                meta=ApiResponseMeta(
+                    status=429, headers={}, http_version="1.1", duration=0, node=None
+                ),
+            ),
         )
 
         docs = [
@@ -239,7 +268,13 @@ class TestStreamingBulk(object):
         failing_client = FailingBulkClient(
             async_client,
             fail_at=(1, 2, 3, 4),
-            fail_with=TransportError(429, "Rejected!", {}),
+            fail_with=ApiError(
+                message="Rejected!",
+                body={},
+                meta=ApiResponseMeta(
+                    status=429, headers={}, http_version="1.1", duration=0, node=None
+                ),
+            ),
         )
 
         async def streaming_bulk():
@@ -397,17 +432,23 @@ class MockScroll:
     async def __call__(self, *args, **kwargs):
         self.calls.append((args, kwargs))
         if len(self.calls) == 1:
-            return {
-                "_scroll_id": "dummy_id",
-                "_shards": {"successful": 4, "total": 5, "skipped": 0},
-                "hits": {"hits": [{"scroll_data": 42}]},
-            }
+            return ObjectApiResponse(
+                raw={
+                    "_scroll_id": "dummy_id",
+                    "_shards": {"successful": 4, "total": 5, "skipped": 0},
+                    "hits": {"hits": [{"scroll_data": 42}]},
+                },
+                meta=None,
+            )
         elif len(self.calls) == 2:
-            return {
-                "_scroll_id": "dummy_id",
-                "_shards": {"successful": 4, "total": 5, "skipped": 0},
-                "hits": {"hits": []},
-            }
+            return ObjectApiResponse(
+                raw={
+                    "_scroll_id": "dummy_id",
+                    "_shards": {"successful": 4, "total": 5, "skipped": 0},
+                    "hits": {"hits": []},
+                },
+                meta=None,
+            )
         else:
             raise Exception("no more responses")
 
@@ -474,7 +515,9 @@ class TestScan(object):
             bulk.append({"value": x})
         await async_client.bulk(bulk, refresh=True)
 
-        with patch.object(async_client, "scroll", MockScroll()):
+        with patch.object(
+            async_client, "options", return_value=async_client
+        ), patch.object(async_client, "scroll", MockScroll()):
             data = [
                 x
                 async for x in helpers.async_scan(
@@ -488,7 +531,9 @@ class TestScan(object):
             assert len(data) == 3
             assert data[-1] == {"scroll_data": 42}
 
-        with patch.object(async_client, "scroll", MockScroll()):
+        with patch.object(
+            async_client, "options", return_value=async_client
+        ), patch.object(async_client, "scroll", MockScroll()):
             with pytest.raises(ScanError):
                 data = [
                     x
@@ -504,16 +549,21 @@ class TestScan(object):
             assert data[-1] == {"scroll_data": 42}
 
     async def test_initial_search_error(self, async_client, scan_teardown):
-        with patch.object(async_client, "clear_scroll", new_callable=AsyncMock):
+        with patch.object(
+            async_client, "options", return_value=async_client
+        ), patch.object(async_client, "clear_scroll", new_callable=AsyncMock):
             with patch.object(
                 async_client,
                 "search",
                 MockResponse(
-                    {
-                        "_scroll_id": "dummy_id",
-                        "_shards": {"successful": 4, "total": 5, "skipped": 0},
-                        "hits": {"hits": [{"search_data": 1}]},
-                    }
+                    ObjectApiResponse(
+                        raw={
+                            "_scroll_id": "dummy_id",
+                            "_shards": {"successful": 4, "total": 5, "skipped": 0},
+                            "hits": {"hits": [{"search_data": 1}]},
+                        },
+                        meta=None,
+                    )
                 ),
             ):
                 with patch.object(async_client, "scroll", MockScroll()):
@@ -533,11 +583,14 @@ class TestScan(object):
                 async_client,
                 "search",
                 MockResponse(
-                    {
-                        "_scroll_id": "dummy_id",
-                        "_shards": {"successful": 4, "total": 5, "skipped": 0},
-                        "hits": {"hits": [{"search_data": 1}]},
-                    }
+                    ObjectApiResponse(
+                        raw={
+                            "_scroll_id": "dummy_id",
+                            "_shards": {"successful": 4, "total": 5, "skipped": 0},
+                            "hits": {"hits": [{"search_data": 1}]},
+                        },
+                        meta=None,
+                    )
                 ),
             ):
                 with patch.object(async_client, "scroll", MockScroll()) as mock_scroll:
@@ -556,19 +609,22 @@ class TestScan(object):
                         assert mock_scroll.calls == []
 
     async def test_no_scroll_id_fast_route(self, async_client, scan_teardown):
-        with patch.object(async_client, "search", MockResponse({"no": "_scroll_id"})):
-            with patch.object(async_client, "scroll") as scroll_mock:
-                with patch.object(async_client, "clear_scroll") as clear_mock:
-                    data = [
-                        x
-                        async for x in helpers.async_scan(
-                            async_client, index="test_index"
-                        )
-                    ]
+        with patch.object(
+            async_client, "options", return_value=async_client
+        ), patch.object(async_client, "scroll") as scroll_mock, patch.object(
+            async_client,
+            "search",
+            MockResponse(ObjectApiResponse(raw={"no": "_scroll_id"}, meta=None)),
+        ), patch.object(
+            async_client, "clear_scroll"
+        ) as clear_mock:
+            data = [
+                x async for x in helpers.async_scan(async_client, index="test_index")
+            ]
 
-                    assert data == []
-                    scroll_mock.assert_not_called()
-                    clear_mock.assert_not_called()
+            assert data == []
+            scroll_mock.assert_not_called()
+            clear_mock.assert_not_called()
 
     @patch("elasticsearch._async.helpers.logger")
     async def test_logger(self, logger_mock, async_client, scan_teardown):
@@ -578,7 +634,9 @@ class TestScan(object):
             bulk.append({"value": x})
         await async_client.bulk(bulk, refresh=True)
 
-        with patch.object(async_client, "scroll", MockScroll()):
+        with patch.object(
+            async_client, "options", return_value=async_client
+        ), patch.object(async_client, "scroll", MockScroll()):
             _ = [
                 x
                 async for x in helpers.async_scan(
@@ -591,7 +649,9 @@ class TestScan(object):
             ]
             logger_mock.warning.assert_called()
 
-        with patch.object(async_client, "scroll", MockScroll()):
+        with patch.object(
+            async_client, "options", return_value=async_client
+        ), patch.object(async_client, "scroll", MockScroll()):
             try:
                 _ = [
                     x
@@ -620,6 +680,8 @@ class TestScan(object):
         await async_client.bulk(bulk, refresh=True)
 
         with patch.object(
+            async_client, "options", return_value=async_client
+        ), patch.object(
             async_client, "clear_scroll", wraps=async_client.clear_scroll
         ) as spy:
             _ = [
@@ -659,33 +721,39 @@ class TestScan(object):
     async def test_scan_auth_kwargs_forwarded(
         self, async_client, scan_teardown, kwargs
     ):
-        ((key, val),) = kwargs.items()
-
         with patch.object(
+            async_client, "options", return_value=async_client
+        ) as options, patch.object(
             async_client,
             "search",
             return_value=MockResponse(
-                {
-                    "_scroll_id": "scroll_id",
-                    "_shards": {"successful": 5, "total": 5, "skipped": 0},
-                    "hits": {"hits": [{"search_data": 1}]},
-                }
+                ObjectApiResponse(
+                    raw={
+                        "_scroll_id": "scroll_id",
+                        "_shards": {"successful": 5, "total": 5, "skipped": 0},
+                        "hits": {"hits": [{"search_data": 1}]},
+                    },
+                    meta=None,
+                )
             ),
-        ) as search_mock:
+        ):
             with patch.object(
                 async_client,
                 "scroll",
                 return_value=MockResponse(
-                    {
-                        "_scroll_id": "scroll_id",
-                        "_shards": {"successful": 5, "total": 5, "skipped": 0},
-                        "hits": {"hits": []},
-                    }
+                    ObjectApiResponse(
+                        raw={
+                            "_scroll_id": "scroll_id",
+                            "_shards": {"successful": 5, "total": 5, "skipped": 0},
+                            "hits": {"hits": []},
+                        },
+                        meta=None,
+                    )
                 ),
-            ) as scroll_mock:
+            ):
                 with patch.object(
                     async_client, "clear_scroll", return_value=MockResponse({})
-                ) as clear_mock:
+                ):
                     data = [
                         x
                         async for x in helpers.async_scan(
@@ -695,32 +763,45 @@ class TestScan(object):
 
                     assert data == [{"search_data": 1}]
 
-        for api_mock in (search_mock, scroll_mock, clear_mock):
-            assert api_mock.call_args[1][key] == val
+        if "http_auth" in kwargs:
+            kwargs = {"basic_auth": kwargs.pop("http_auth")}
+
+        assert options.call_args_list == [
+            call(request_timeout=None, **kwargs),
+            call(ignore_status=404),
+        ]
 
     async def test_scan_auth_kwargs_favor_scroll_kwargs_option(
         self, async_client, scan_teardown
     ):
         with patch.object(
+            async_client, "options", return_value=async_client
+        ) as options, patch.object(
             async_client,
             "search",
             return_value=MockResponse(
-                {
-                    "_scroll_id": "scroll_id",
-                    "_shards": {"successful": 5, "total": 5, "skipped": 0},
-                    "hits": {"hits": [{"search_data": 1}]},
-                }
+                ObjectApiResponse(
+                    raw={
+                        "_scroll_id": "scroll_id",
+                        "_shards": {"successful": 5, "total": 5, "skipped": 0},
+                        "hits": {"hits": [{"search_data": 1}]},
+                    },
+                    meta=None,
+                )
             ),
         ):
             with patch.object(
                 async_client,
                 "scroll",
                 return_value=MockResponse(
-                    {
-                        "_scroll_id": "scroll_id",
-                        "_shards": {"successful": 5, "total": 5, "skipped": 0},
-                        "hits": {"hits": []},
-                    }
+                    ObjectApiResponse(
+                        raw={
+                            "_scroll_id": "scroll_id",
+                            "_shards": {"successful": 5, "total": 5, "skipped": 0},
+                            "hits": {"hits": []},
+                        },
+                        meta=None,
+                    )
                 ),
             ):
                 with patch.object(
@@ -742,10 +823,20 @@ class TestScan(object):
                     assert data == [{"search_data": 1}]
 
                     # Assert that we see 'scroll_kwargs' options used instead of 'kwargs'
-                    assert async_client.scroll.call_args[1]["headers"] == {
-                        "scroll": "kwargs"
-                    }
-                    assert async_client.scroll.call_args[1]["sort"] == "asc"
+                    assert options.call_args_list == [
+                        call(request_timeout=None, headers={"not scroll": "kwargs"}),
+                        call(headers={"scroll": "kwargs"}),
+                        call(ignore_status=404),
+                    ]
+                    assert async_client.search.call_args_list == [
+                        call(sort="_doc", index="test_index", scroll="5m", size=1000)
+                    ]
+                    assert async_client.scroll.call_args_list == [
+                        call(scroll_id="scroll_id", scroll="5m", sort="asc")
+                    ]
+                    assert async_client.clear_scroll.call_args_list == [
+                        call(scroll_id="scroll_id")
+                    ]
 
 
 @pytest.fixture(scope="function")
