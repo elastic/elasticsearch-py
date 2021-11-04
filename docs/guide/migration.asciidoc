@@ -1,0 +1,173 @@
+[[migration]]
+== Migrating to 8.0
+
+The client has major changes that require changes to how you use the client.
+Below outlines all the changes you'll have to take into account when upgrading
+from 7.x to 8.0.
+
+* <<migration-compat-mode>>
+* <<migration-upgrade-client>>
+* <<migration-remove-deprecations>>
+** <<migration-strict-client-config>>
+** <<migration-keyword-only-args>>
+** <<migration-options>>
+
+[discrete]
+[[migration-compat-mode]]
+=== Enable compatibility mode and upgrade Elasticsearch
+
+Upgrade your Elasticsearch client to 7.16:
+
+[source,bash]
+------------------------------------
+$ python -m pip install 'elasticsearch>=7.16,<8'
+------------------------------------
+
+If you have an existing application enable the compatibility mode
+by setting `ELASTIC_CLIENT_APIVERSIONING=1` environment variable.
+This will instruct the Elasticsearch server to accept and respond
+with 7.x-compatibile requests and responses.
+
+After you've done this you can upgrade Elasticsearch to 8.0.
+
+[discrete]
+[[migration-upgrade-client]]
+=== Upgrading the client
+
+After you've deployed your application with the 7.16 client and
+using an 8.0 Elasticsearch server you can upgrade your client to
+be 8.0.
+
+[source,bash]
+------------------------------------
+$ python -m pip install 'elasticsearch>=8,<9'
+------------------------------------
+
+[discrete]
+[[migration-remove-deprecations]]
+=== Removing deprecation warnings
+
+You'll likely notice after upgrading the client to 8.0 your code is
+either raising errors or `DeprecationWarning` to signal where you need
+to change your code before using the 8.0 client.
+
+[discrete]
+[[migration-strict-client-config]]
+==== Strict client configuration
+
+Previously the client would use `scheme="http"`, `host="localhost"`, and `port=9200` defaults
+when specifying which node(s) to connect to. Starting in 8.0 these defaults have been removed
+and instead require explicit configuration of scheme, host, and port.
+
+This choice was made because in Elasticsearch 8.0 HTTPS is enabled by default, so it's no
+longer a good assumption that `http://localhost:9200` is a locally running cluster.
+
+See documentation on <<connecting, connecting to Elasticsearch>> and <<tls-and-ssl, configuring HTTPS>>.
+
+
+[discrete]
+[[migration-keyword-only-args]]
+==== Keyword-only arguments for APIs
+
+APIs used to support both positional and keyword arguments, however
+using **keyword-only arguments was always recommended** in the documentation.
+Starting in 7.14 using positional arguments would raise a `DeprecationWarning` but would still work.
+
+Now starting in 8.0 keyword-only arguments are now required for APIs for better forwards-compatibility
+with new API options. When attempting to use positional arguments a `TypeError` will be raised.
+
+[source,python]
+------------------------------------
+# 8.0+ SUPPORTED USAGE:
+client.indices.get(index="*")
+
+# 7.x UNSUPPORTED USAGE (Don't do this!):
+client.indices.get("*")
+------------------------------------
+
+
+[discrete]
+[[migration-options]]
+==== Start using .options()
+
+Previously some per-request options like `api_key` and `ignore` were allowed within
+client API methods. Starting in 8.0 this is deprecated for all APIs and for a small
+number of APIs may break in unexpected ways if not changed.
+
+The parameters `headers`, `params`, `api_key`, `http_auth`, `opaque_id`, `request_timeout`, and `ignore`
+are effected:
+
+[source,python]
+------------------------------------
+from elasticsearch import Elasticsearch
+
+client = Elasticsearch("http://localhost:9200")
+
+# 8.0+ SUPPORTED USAGE:
+client.options(api_key=("id", "api_key")).search(index="blogs")
+
+# 7.x DEPRECATED USAGE (Don't do this!):
+client.search(index="blogs", api_key=("id", "api_key"))
+------------------------------------
+
+Some of these parameters have been renamed to be more readable and to fit other APIs.
+`ignore` should be `ignore_status` and `http_auth` should be `basic_auth`:
+
+[source,python]
+------------------------------------
+# 8.0+ SUPPORTED USAGES:
+client.options(basic_auth=("username", "password")).search(...)
+client.options(ignore_status=404).indices.delete(index=...)
+
+# 7.x DEPRECATED USAGES (Don't do this!):
+client.search(http_auth=("username", "password"), ...)
+client.indices.delete(index=..., ignore=404)
+------------------------------------
+
+APIs where this change is breaking and doesn't have a deprecation period due to conflicts
+between the client API and Elasticsearch's API:
+
+- `sql.query` using `request_timeout`
+- `security.grant_api_key` using `api_key`
+- `render_search_template` using `params`
+- `search_template` using `params`
+
+You should immediately evaluate the usage of these parameters and start using `.options(...)`
+to avoid unexpected behavior. Below is an example of migrating away from using per-request `api_key`
+with the `security.grant_api_key` API:
+
+[source,python]
+------------------------------------
+# 8.0+ SUPPORTED USAGES:
+resp = (
+    client.options(
+        # This is the API key being used for the request
+        api_key=("request-id", "request-api-key")
+    ).security.grant_api_key(
+        # This is the API key being granted
+        api_key={
+            "name": "granted-api-key"
+        },
+        grant_type="password",
+        username="elastic",
+        password="changeme"
+    )
+)
+
+# 7.x DEPRECATED USAGES (Don't do this!):
+resp = (
+    # This is the API key being used for the request
+    client.security.grant_api_key(
+        api_key=("request-id", "request-api-key"),
+        # This is the API key being granted
+        body={
+            "api_key": {
+                "name": "granted-api-key"
+            },
+            "grant_type": "password",
+            "username": "elastic",
+            "password": "changeme"
+        }
+    )
+)
+------------------------------------
