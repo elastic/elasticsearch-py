@@ -135,6 +135,7 @@ class TestOptions(DummyTransportTestCase):
         assert call.pop("max_retries") is DEFAULT
         assert call.pop("retry_on_timeout") is DEFAULT
         assert call.pop("retry_on_status") is DEFAULT
+        assert call.pop("client_meta") is DEFAULT
         assert call == {"headers": {"content-type": "application/json"}, "body": None}
 
         # Can be overwritten with .options()
@@ -147,6 +148,7 @@ class TestOptions(DummyTransportTestCase):
 
         calls = client.transport.calls
         call = calls[("GET", "/test")][1]
+        assert call.pop("client_meta") is DEFAULT
         assert call == {
             "headers": {"content-type": "application/json"},
             "body": None,
@@ -169,6 +171,7 @@ class TestOptions(DummyTransportTestCase):
 
         calls = client.transport.calls
         call = calls[("GET", "/test")][0]
+        assert call.pop("client_meta") is DEFAULT
         assert call == {
             "headers": {"content-type": "application/json"},
             "body": None,
@@ -193,6 +196,7 @@ class TestOptions(DummyTransportTestCase):
         assert call.pop("max_retries") is DEFAULT
         assert call.pop("retry_on_timeout") is DEFAULT
         assert call.pop("retry_on_status") is DEFAULT
+        assert call.pop("client_meta") is DEFAULT
         assert call == {"headers": {"content-type": "application/json"}, "body": None}
 
         # Can be overwritten with .options()
@@ -205,6 +209,7 @@ class TestOptions(DummyTransportTestCase):
 
         calls = client.transport.calls
         call = calls[("GET", "/test")][1]
+        assert call.pop("client_meta") is DEFAULT
         assert call == {
             "headers": {"content-type": "application/json"},
             "body": None,
@@ -227,7 +232,7 @@ class TestOptions(DummyTransportTestCase):
 
         calls = client.transport.calls
         call = calls[("GET", "/test")][0]
-        print(call)
+        assert call.pop("client_meta") is DEFAULT
         assert call == {
             "headers": {"content-type": "application/json"},
             "body": None,
