@@ -181,7 +181,6 @@ def cloud_id_to_node_configs(cloud_id: str) -> List[NodeConfig]:
             host=host,
             port=port,
             http_compress=True,
-            # TODO: Set TLSv1.2+
         )
     ]
 
