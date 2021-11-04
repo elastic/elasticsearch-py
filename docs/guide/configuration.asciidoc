@@ -124,6 +124,7 @@ es = Elasticsearch(
 ------------------------------------
 
 HTTP compression is recommended to be enabled when requests are traversing the network.
+Compression is automatically enabled when connecting to Elastic Cloud.
 
 
 [discrete]
@@ -270,7 +271,51 @@ To avoid needlessly sniffing too often there is a delay between attempts to disc
 [discrete]
 ==== Filtering nodes which are sniffed
 
-By default nodes which are marked with only a `master` role will not be used. To change the behavior the parameter `sniff_node_filter`
+By default nodes which are marked with only a `master` role will not be used. To change the behavior the parameter `sniffed_node_callback` can be used. To mark a sniffed node not to be added to the node pool
+return `None` from the `sniffed_node_callback`, otherwise return a `NodeConfig` instance.
+
+[source,python]
+------------------------------------
+from typing import Optional, Dict, Any
+from elastic_transport import NodeConfig
+from elasticsearch import Elasticsearch
+
+def filter_master_eligible_nodes(
+    node_info: Dict[str, Any],
+    node_config: NodeConfig
+) -> Optional[NodeConfig]:
+    # This callback ignores all nodes that are master eligible
+    # instead of master-only nodes (default behavior)
+    if "master" in node_info.get("roles", ()):
+        return None
+    return node_config
+
+client = Elasticsearch(
+    "https://localhost:9200",
+    sniffed_node_callback=filter_master_eligible_nodes
+)
+------------------------------------
+
+The `node_info` parameter is part of the response from the `nodes.info()` API, below is an example
+of what that object looks like:
+
+[source,json]
+------------------------------------
+{
+  "name": "SRZpKFZ",
+  "transport_address": "127.0.0.1:9300",
+  "host": "127.0.0.1",
+  "ip": "127.0.0.1",
+  "version": "5.0.0",
+  "build_hash": "253032b",
+  "roles": ["master", "data", "ingest"],
+  "http": {
+    "bound_address": ["[fe80::1]:9200", "[::1]:9200", "127.0.0.1:9200"],
+    "publish_address": "1.1.1.1:123",
+    "max_content_length_in_bytes": 104857600
+  }
+}
+------------------------------------
 
 
 [discrete]
