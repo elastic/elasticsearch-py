@@ -66,7 +66,7 @@ async def _process_bulk_chunk(
 
     try:
         # send the actual request
-        resp = await client.bulk("\n".join(bulk_actions) + "\n", *args, **kwargs)
+        resp = await client.bulk(*args, body=bulk_actions, **kwargs)
     except TransportError as e:
         gen = _process_bulk_chunk_error(
             error=e,
@@ -162,6 +162,9 @@ async def async_streaming_bulk(
     :arg yield_ok: if set to False will skip successful documents in the output
     :arg ignore_status: list of HTTP status code that you want to ignore
     """
+
+    client = client.options()
+    client._client_meta = (("h", "bp"),)
 
     async def map_actions():
         async for item in aiter(actions):
@@ -333,35 +336,52 @@ async def async_scan(
         query = query.copy() if query else {}
         query["sort"] = "_doc"
 
-    # Grab options that should be propagated to every
-    # API call within this helper instead of just 'search()'
-    transport_kwargs = {}
-    for key in ("headers", "api_key", "http_auth"):
-        if key in kwargs:
-            transport_kwargs[key] = kwargs[key]
+    def pop_transport_kwargs(kw):
+        # Grab options that should be propagated to every
+        # API call within this helper instead of just 'search()'
+        transport_kwargs = {}
+        for key in ("headers", "api_key", "http_auth", "basic_auth", "bearer_auth"):
+            try:
+                value = kw.pop(key)
+                if key == "http_auth":
+                    key = "basic_auth"
+                transport_kwargs[key] = value
+            except KeyError:
+                pass
+        return transport_kwargs
 
-    # If the user is using 'scroll_kwargs' we want
-    # to propagate there too, but to not break backwards
-    # compatibility we'll not override anything already given.
-    if scroll_kwargs is not None and transport_kwargs:
-        for key, val in transport_kwargs.items():
-            scroll_kwargs.setdefault(key, val)
+    client = client.options(
+        request_timeout=request_timeout, **pop_transport_kwargs(kwargs)
+    )
+    client._client_meta = (("h", "s"),)
 
     # initial search
-    resp = await client.search(
-        body=query, scroll=scroll, size=size, request_timeout=request_timeout, **kwargs
-    )
-    scroll_id = resp.get("_scroll_id")
+    search_kwargs = query.copy() if query else {}
+    search_kwargs.update(kwargs)
+    search_kwargs["scroll"] = scroll
+    search_kwargs["size"] = size
 
     try:
-        while scroll_id and resp["hits"]["hits"]:
-            for hit in resp["hits"]["hits"]:
+        resp = await client.search(**search_kwargs)
+    except TypeError:
+        resp = await client.search(body=query, scroll=scroll, size=size, **kwargs)
+
+    scroll_id = resp.raw.get("_scroll_id")
+    scroll_transport_kwargs = pop_transport_kwargs(scroll_kwargs)
+    if scroll_transport_kwargs:
+        scroll_client = client.options(**scroll_transport_kwargs)
+    else:
+        scroll_client = client
+
+    try:
+        while scroll_id and resp.raw["hits"]["hits"]:
+            for hit in resp.raw["hits"]["hits"]:
                 yield hit
 
             # Default to 0 if the value isn't included in the response
-            shards_successful = resp["_shards"].get("successful", 0)
-            shards_skipped = resp["_shards"].get("skipped", 0)
-            shards_total = resp["_shards"].get("total", 0)
+            shards_successful = resp.raw["_shards"].get("successful", 0)
+            shards_skipped = resp.raw["_shards"].get("skipped", 0)
+            shards_total = resp.raw["_shards"].get("total", 0)
 
             # check if we have any errors
             if (shards_successful + shards_skipped) < shards_total:
@@ -382,19 +402,14 @@ async def async_scan(
                             shards_total,
                         ),
                     )
-            resp = await client.scroll(
-                body={"scroll_id": scroll_id, "scroll": scroll}, **scroll_kwargs
+            resp = await scroll_client.scroll(
+                scroll_id=scroll_id, scroll=scroll, **scroll_kwargs
             )
-            scroll_id = resp.get("_scroll_id")
+            scroll_id = resp.raw.get("_scroll_id")
 
     finally:
         if scroll_id and clear_scroll:
-            await client.clear_scroll(
-                body={"scroll_id": [scroll_id]},
-                **transport_kwargs,
-                ignore=(404,),
-                params={"__elastic_client_meta": (("h", "s"),)},
-            )
+            await client.options(ignore_status=404).clear_scroll(scroll_id=scroll_id)
 
 
 async def async_reindex(
