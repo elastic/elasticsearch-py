@@ -24,7 +24,7 @@ from urllib3.exceptions import ReadTimeoutError
 from urllib3.exceptions import SSLError as UrllibSSLError  # type: ignore
 from urllib3.util.retry import Retry  # type: ignore
 
-from ..compat import reraise_exceptions, urlencode
+from ..compat import reraise_exceptions, to_str, urlencode
 from ..exceptions import (
     ConnectionError,
     ConnectionTimeout,
@@ -243,6 +243,10 @@ class Urllib3HttpConnection(Connection):
 
             request_headers = self.headers.copy()
             request_headers.update(headers or ())
+            request_headers = {
+                to_str(header, "latin-1"): to_str(value, "latin-1")
+                for header, value in request_headers.items()
+            }
 
             if self.http_compress and body:
                 body = self._gzip_compress(body)
