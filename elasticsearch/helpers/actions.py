@@ -543,7 +543,8 @@ def scan(
         )
 
     """
-    scroll_kwargs = scroll_kwargs or {}
+    scroll_kwargs = scroll_kwargs.copy() if scroll_kwargs else {}
+    scroll_kwargs["scroll"] = scroll
     _add_helper_meta_to_kwargs(scroll_kwargs, "s")
 
     if not preserve_order:
@@ -568,9 +569,11 @@ def scan(
     search_kwargs = kwargs.copy()
     if query:
         search_kwargs.update(query)
-    resp = client.search(
-        scroll=scroll, size=size, request_timeout=request_timeout, **search_kwargs
-    )
+    search_kwargs["scroll"] = scroll
+    search_kwargs["size"] = size
+    search_kwargs["request_timeout"] = request_timeout
+    _add_helper_meta_to_kwargs(search_kwargs, "s")
+    resp = client.search(**search_kwargs)
     scroll_id = resp.get("_scroll_id")
 
     try:
@@ -602,7 +605,9 @@ def scan(
                             shards_total,
                         ),
                     )
-            resp = client.scroll(scroll_id=scroll_id, scroll=scroll, **scroll_kwargs)
+
+            scroll_kwargs["scroll_id"] = scroll_id
+            resp = client.scroll(**scroll_kwargs)
             scroll_id = resp.get("_scroll_id")
 
     finally:

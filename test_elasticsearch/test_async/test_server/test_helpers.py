@@ -756,6 +756,59 @@ class TestScan(object):
                     }
                     assert async_client.scroll.call_args[1]["sort"] == "asc"
 
+    async def test_scan_duplicate_parameters(self, async_client):
+        with patch.object(async_client, "search") as search_mock, patch.object(
+            async_client, "scroll"
+        ) as scroll_mock, patch.object(
+            async_client, "clear_scroll"
+        ) as clear_scroll_mock:
+            search_mock.return_value = MockResponse(
+                {
+                    "_scroll_id": "scroll_id",
+                    "_shards": {"successful": 5, "total": 5, "skipped": 0},
+                    "hits": {"hits": [{"field": "value"}]},
+                }
+            )
+            scroll_mock.return_value = MockResponse(
+                {
+                    "_scroll_id": "scroll_id",
+                    "_shards": {"successful": 5, "total": 5, "skipped": 0},
+                    "hits": {"hits": []},
+                }
+            )
+            clear_scroll_mock.return_value = MockResponse({"acknowledged": True})
+            data = [
+                x
+                async for x in helpers.async_scan(
+                    async_client,
+                    index="test_index",
+                    size=10,
+                    query={"size": 1},
+                    scroll_kwargs={"scroll": "10m", "rest_total_hits_as_int": True},
+                )
+            ]
+
+            assert data == [{"field": "value"}]
+            search_mock.assert_called_with(
+                index="test_index",
+                size=10,
+                sort="_doc",
+                scroll="5m",
+                request_timeout=None,
+                params={"__elastic_client_meta": (("h", "s"),)},
+            )
+            scroll_mock.assert_called_with(
+                scroll="5m",
+                rest_total_hits_as_int=True,
+                params={"__elastic_client_meta": (("h", "s"),)},
+                scroll_id="scroll_id",
+            )
+            clear_scroll_mock.assert_called_with(
+                scroll_id="scroll_id",
+                ignore=(404,),
+                params={"__elastic_client_meta": (("h", "s"),)},
+            )
+
 
 @pytest.fixture(scope="function")
 async def reindex_setup(async_client):

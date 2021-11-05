@@ -26,6 +26,7 @@ from ..compat import map
 from ..exceptions import NotFoundError, TransportError
 from ..helpers.actions import (
     _ActionChunker,
+    _add_helper_meta_to_kwargs,
     _process_bulk_chunk_error,
     _process_bulk_chunk_success,
     expand_action,
@@ -332,7 +333,9 @@ async def async_scan(
         )
 
     """
-    scroll_kwargs = scroll_kwargs or {}
+    scroll_kwargs = scroll_kwargs.copy() if scroll_kwargs else {}
+    scroll_kwargs["scroll"] = scroll
+    _add_helper_meta_to_kwargs(scroll_kwargs, "s")
 
     if not preserve_order:
         query = query.copy() if query else {}
@@ -356,9 +359,11 @@ async def async_scan(
     search_kwargs = kwargs.copy()
     if query:
         search_kwargs.update(query)
-    resp = await client.search(
-        scroll=scroll, size=size, request_timeout=request_timeout, **search_kwargs
-    )
+    search_kwargs["scroll"] = scroll
+    search_kwargs["size"] = size
+    search_kwargs["request_timeout"] = request_timeout
+    _add_helper_meta_to_kwargs(search_kwargs, "s")
+    resp = await client.search(**search_kwargs)
     scroll_id = resp.get("_scroll_id")
 
     try:
@@ -390,9 +395,9 @@ async def async_scan(
                             shards_total,
                         ),
                     )
-            resp = await client.scroll(
-                scroll_id=scroll_id, scroll=scroll, **scroll_kwargs
-            )
+
+            scroll_kwargs["scroll_id"] = scroll_id
+            resp = await client.scroll(**scroll_kwargs)
             scroll_id = resp.get("_scroll_id")
 
     finally:
