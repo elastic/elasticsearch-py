@@ -355,16 +355,19 @@ async def async_scan(
     )
     client._client_meta = (("h", "s"),)
 
-    # initial search
-    search_kwargs = query.copy() if query else {}
-    search_kwargs.update(kwargs)
-    search_kwargs["scroll"] = scroll
-    search_kwargs["size"] = size
-
     try:
+        search_kwargs = query.copy() if query else {}
+        search_kwargs.update(kwargs)
+        search_kwargs["scroll"] = scroll
+        search_kwargs["size"] = size
         resp = await client.search(**search_kwargs)
+
+    # Try the old deprecated way if we fail immediately on parameters.
     except TypeError:
-        resp = await client.search(body=query, scroll=scroll, size=size, **kwargs)
+        search_kwargs = kwargs.copy()
+        search_kwargs["scroll"] = scroll
+        search_kwargs["size"] = size
+        resp = await client.search(body=query, **search_kwargs)
 
     scroll_id = resp.raw.get("_scroll_id")
     scroll_transport_kwargs = pop_transport_kwargs(scroll_kwargs)
