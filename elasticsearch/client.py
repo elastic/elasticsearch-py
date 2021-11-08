@@ -61,6 +61,7 @@ from ._sync.client.text_structure import (  # noqa: F401
 from ._sync.client.transform import TransformClient as TransformClient  # noqa: F401
 from ._sync.client.watcher import WatcherClient as WatcherClient  # noqa: F401
 from ._sync.client.xpack import XPackClient as XPackClient  # noqa: F401
+from ._utils import fixup_module_metadata
 
 # This file exists for backwards compatibility.
 warnings.warn(
@@ -69,3 +70,43 @@ warnings.warn(
     category=DeprecationWarning,
     stacklevel=2,
 )
+
+__all__ = [
+    "AsyncSearchClient",
+    "AutoscalingClient",
+    "CatClient",
+    "CcrClient",
+    "ClusterClient",
+    "DanglingIndicesClient",
+    "Elasticsearch",
+    "EnrichClient",
+    "EqlClient",
+    "FeaturesClient",
+    "FleetClient",
+    "GraphClient",
+    "IlmClient",
+    "IndicesClient",
+    "IngestClient",
+    "LicenseClient",
+    "LogstashClient",
+    "MigrationClient",
+    "MlClient",
+    "MonitoringClient",
+    "NodesClient",
+    "RollupClient",
+    "SearchableSnapshotsClient",
+    "SecurityClient",
+    "ShutdownClient",
+    "SlmClient",
+    "SnapshotClient",
+    "SqlClient",
+    "SslClient",
+    "TasksClient",
+    "TextStructureClient",
+    "TransformClient",
+    "WatcherClient",
+    "XPackClient",
+]
+
+fixup_module_metadata(__name__, globals())
+del fixup_module_metadata
