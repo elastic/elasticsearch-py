@@ -15,27 +15,20 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from .._async.helpers import async_bulk, async_reindex, async_scan, async_streaming_bulk
-from .._utils import fixup_module_metadata
-from .actions import _chunk_actions  # noqa: F401
-from .actions import _process_bulk_chunk  # noqa: F401
-from .actions import bulk, expand_action, parallel_bulk, reindex, scan, streaming_bulk
-from .errors import BulkIndexError, ScanError
+import re
+from typing import Any, Dict
 
-__all__ = [
-    "BulkIndexError",
-    "ScanError",
-    "expand_action",
-    "streaming_bulk",
-    "bulk",
-    "parallel_bulk",
-    "scan",
-    "reindex",
-    "async_scan",
-    "async_bulk",
-    "async_reindex",
-    "async_streaming_bulk",
-]
 
-fixup_module_metadata(__name__, globals())
-del fixup_module_metadata
+def fixup_module_metadata(module_name: str, namespace: Dict[str, Any]) -> None:
+    # Yoinked from python-trio/outcome, thanks Nathaniel! License: MIT
+    def fix_one(obj: Any) -> None:
+        mod = getattr(obj, "__module__", None)
+        if mod is not None and re.match(r"^elasticsearch[0-9]*\.", mod) is not None:
+            obj.__module__ = module_name
+            if isinstance(obj, type):
+                for attr_value in obj.__dict__.values():
+                    fix_one(attr_value)
+
+    for objname in namespace["__all__"]:
+        obj = namespace[objname]
+        fix_one(obj)

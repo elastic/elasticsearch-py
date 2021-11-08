@@ -21,6 +21,7 @@ import logging
 import re
 import warnings
 
+from ._utils import fixup_module_metadata
 from ._version import __versionstr__
 
 _version_groups = re.search(r"^(\d+)\.(\d+)\.(\d+)", __versionstr__).groups()  # type: ignore
@@ -74,3 +75,6 @@ __all__ = [
     "UnsupportedProductError",
     "ElasticsearchWarning",
 ]
+
+fixup_module_metadata(__name__, globals())
+del fixup_module_metadata
