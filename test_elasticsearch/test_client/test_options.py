@@ -136,7 +136,13 @@ class TestOptions(DummyTransportTestCase):
         assert call.pop("retry_on_timeout") is DEFAULT
         assert call.pop("retry_on_status") is DEFAULT
         assert call.pop("client_meta") is DEFAULT
-        assert call == {"headers": {"content-type": "application/json"}, "body": None}
+        assert call == {
+            "headers": {
+                "accept": "application/json",
+                "content-type": "application/json",
+            },
+            "body": None,
+        }
 
         # Can be overwritten with .options()
         client.options(
@@ -150,7 +156,10 @@ class TestOptions(DummyTransportTestCase):
         call = calls[("GET", "/test")][1]
         assert call.pop("client_meta") is DEFAULT
         assert call == {
-            "headers": {"content-type": "application/json"},
+            "headers": {
+                "accept": "application/json",
+                "content-type": "application/json",
+            },
             "body": None,
             "request_timeout": 1,
             "max_retries": 2,
@@ -173,7 +182,10 @@ class TestOptions(DummyTransportTestCase):
         call = calls[("GET", "/test")][0]
         assert call.pop("client_meta") is DEFAULT
         assert call == {
-            "headers": {"content-type": "application/json"},
+            "headers": {
+                "accept": "application/json",
+                "content-type": "application/json",
+            },
             "body": None,
             "request_timeout": 1,
             "max_retries": 2,
@@ -197,7 +209,13 @@ class TestOptions(DummyTransportTestCase):
         assert call.pop("retry_on_timeout") is DEFAULT
         assert call.pop("retry_on_status") is DEFAULT
         assert call.pop("client_meta") is DEFAULT
-        assert call == {"headers": {"content-type": "application/json"}, "body": None}
+        assert call == {
+            "headers": {
+                "accept": "application/json",
+                "content-type": "application/json",
+            },
+            "body": None,
+        }
 
         # Can be overwritten with .options()
         await client.options(
@@ -211,7 +229,10 @@ class TestOptions(DummyTransportTestCase):
         call = calls[("GET", "/test")][1]
         assert call.pop("client_meta") is DEFAULT
         assert call == {
-            "headers": {"content-type": "application/json"},
+            "headers": {
+                "accept": "application/json",
+                "content-type": "application/json",
+            },
             "body": None,
             "request_timeout": 1,
             "max_retries": 2,
@@ -234,7 +255,10 @@ class TestOptions(DummyTransportTestCase):
         call = calls[("GET", "/test")][0]
         assert call.pop("client_meta") is DEFAULT
         assert call == {
-            "headers": {"content-type": "application/json"},
+            "headers": {
+                "accept": "application/json",
+                "content-type": "application/json",
+            },
             "body": None,
             "request_timeout": 1,
             "max_retries": 2,

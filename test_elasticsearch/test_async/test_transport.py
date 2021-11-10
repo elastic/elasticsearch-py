@@ -243,16 +243,22 @@ class TestTransport:
 
         calls = client.transport.node_pool.get().calls
         assert 1 == len(calls)
-        assert calls[0][1]["headers"] == {"content-type": "application/json"}
+        assert calls[0][1]["headers"] == {
+            "accept": "application/json",
+            "content-type": "application/json",
+        }
 
     async def test_body_surrogates_replaced_encoded_into_bytes(self):
         client = AsyncElasticsearch("http://localhost:9200", node_class=DummyNode)
 
-        await client.search(body="你好\uda6a")
+        await client.search(query={"match": "你好\uda6a"})
 
         calls = client.transport.node_pool.get().calls
         assert 1 == len(calls)
-        assert calls[0][1]["body"] == b"\xe4\xbd\xa0\xe5\xa5\xbd\xed\xa9\xaa"
+        assert (
+            calls[0][1]["body"]
+            == b'{"query":{"match":"\xe4\xbd\xa0\xe5\xa5\xbd\xed\xa9\xaa"}}'
+        )
 
     def test_kwargs_passed_on_to_node_pool(self):
         dt = object()
@@ -265,11 +271,12 @@ class TestTransport:
             def __init__(self, *_, **__):
                 pass
 
+            async def perform_request(*_, **__):
+                pass
+
         client = AsyncElasticsearch("http://localhost:9200", node_class=MyConnection)
-        assert 1 == len(client.transport.node_pool.all_nodes)
-        assert isinstance(
-            client.transport.node_pool.all_nodes.popitem()[1], MyConnection
-        )
+        assert 1 == len(client.transport.node_pool)
+        assert isinstance(client.transport.node_pool.all()[0], MyConnection)
 
     async def test_request_will_fail_after_x_retries(self):
         client = AsyncElasticsearch(
@@ -317,7 +324,7 @@ class TestTransport:
 
         with pytest.raises(ConnectionError):
             await client.info()
-        assert 0 == len(client.transport.node_pool.alive_nodes)
+        assert 0 == len(client.transport.node_pool._alive_nodes)
 
     async def test_resurrected_connection_will_be_marked_as_live_on_success(self):
         client = AsyncElasticsearch(
@@ -332,12 +339,12 @@ class TestTransport:
         assert node1 is not node2
         client.transport.node_pool.mark_dead(node1)
         client.transport.node_pool.mark_dead(node2)
-        assert len(client.transport.node_pool.alive_nodes) == 0
+        assert len(client.transport.node_pool._alive_nodes) == 0
 
         await client.info()
 
-        assert len(client.transport.node_pool.alive_nodes) == 1
-        assert len(client.transport.node_pool.dead_consecutive_failures) == 1
+        assert len(client.transport.node_pool._alive_nodes) == 1
+        assert len(client.transport.node_pool._dead_consecutive_failures) == 1
 
     @pytest.mark.parametrize(
         ["nodes_info_response", "node_host"],
@@ -379,8 +386,7 @@ class TestTransport:
         assert client.transport._sniffing_task is not None
         await client.transport._sniffing_task
 
-        node_config = client.transport.node_pool.seed_nodes[0]
-        calls = client.transport.node_pool.all_nodes[node_config].calls
+        calls = client.transport.node_pool.all()[0].calls
 
         assert len(calls) == 1
         assert calls[0] == (
@@ -406,15 +412,17 @@ class TestTransport:
         assert client.transport._sniffing_task is not None
         await client.transport._sniffing_task
 
-        node_config = client.transport.node_pool.seed_nodes[0]
-        calls = client.transport.node_pool.all_nodes[node_config].calls
+        calls = client.transport.node_pool.all()[0].calls
 
         assert len(calls) == 2
         assert calls[0] == (
             ("GET", "/"),
             {
                 "body": None,
-                "headers": {"content-type": "application/json"},
+                "headers": {
+                    "accept": "application/json",
+                    "content-type": "application/json",
+                },
                 "request_timeout": DEFAULT,
             },
         )
@@ -438,8 +446,7 @@ class TestTransport:
 
         await client.info()
 
-        node_config = client.transport.node_pool.seed_nodes[0]
-        calls = client.transport.node_pool.all_nodes[node_config].calls
+        calls = client.transport.node_pool.all()[0].calls
 
         assert len(calls) == 2
         # The sniff request happens first.
@@ -453,18 +460,18 @@ class TestTransport:
             sniff_on_start=True,
         )
 
-        assert len(client.transport.node_pool.all_nodes) == 1
+        assert len(client.transport.node_pool) == 1
         await client.info()
-        assert len(client.transport.node_pool.all_nodes) == 1
+        assert len(client.transport.node_pool) == 1
 
     @pytest.mark.parametrize(
-        "bad_node_extras",
-        [{"exception": ConnectionError("Abandon ship!")}, {"status": 500}],
+        ["extra_key", "extra_value"],
+        [("exception", ConnectionError("Abandon ship!")), ("status", 500)],
     )
-    async def test_sniff_on_node_failure_triggers(self, bad_node_extras):
+    async def test_sniff_on_node_failure_triggers(self, extra_key, extra_value):
         client = AsyncElasticsearch(
             [
-                NodeConfig("http", "localhost", 9200, _extras=bad_node_extras),
+                NodeConfig("http", "localhost", 9200, _extras={extra_key: extra_value}),
                 NodeConfig("http", "localhost", 9201, _extras={"data": CLUSTER_NODES}),
             ],
             node_class=DummyNode,
@@ -483,7 +490,7 @@ class TestTransport:
         await client.transport._sniffing_task
 
         assert request_failed_in_error
-        assert len(client.transport.node_pool.all_nodes) == 3
+        assert len(client.transport.node_pool) == 3
 
     async def test_sniff_after_n_seconds(self, event_loop):
         client = AsyncElasticsearch(  # noqa: F821
@@ -499,14 +506,14 @@ class TestTransport:
             await client.info()
             await asyncio.sleep(0)
 
-        assert 1 == len(client.transport.node_pool.all_nodes)
+        assert 1 == len(client.transport.node_pool)
 
         client.transport._last_sniffed_at = event_loop.time() - 5.1
 
         await client.info()
         await client.transport._sniffing_task  # Need to wait for the sniffing task to complete
 
-        assert 2 == len(client.transport.node_pool.all_nodes)
+        assert 2 == len(client.transport.node_pool)
         assert "http://1.1.1.1:123" in (
             node.base_url for node in client.transport.node_pool.all()
         )
@@ -586,7 +593,7 @@ class TestTransport:
         )
         await client.transport._async_call()
 
-        assert len(client.transport.node_pool.all_nodes) == 2
+        assert len(client.transport.node_pool) == 2
 
     async def test_sniff_node_callback(self):
         def sniffed_node_callback(
@@ -613,7 +620,7 @@ class TestTransport:
         )
         await client.transport._async_call()
 
-        assert len(client.transport.node_pool.all_nodes) == 2
+        assert len(client.transport.node_pool) == 2
 
         ports = {node.config.port for node in client.transport.node_pool.all()}
         assert ports == {9200, 124}
@@ -649,7 +656,7 @@ class TestTransport:
             == "The 'host_info_callback' parameter is deprecated in favor of 'sniffed_node_callback'"
         )
 
-        assert len(client.transport.node_pool.all_nodes) == 2
+        assert len(client.transport.node_pool) == 2
 
         ports = {node.config.port for node in client.transport.node_pool.all()}
         assert ports == {9200, 124}
@@ -676,7 +683,10 @@ async def test_unsupported_product_error(headers):
         ("GET", "/"),
         {
             "body": None,
-            "headers": {"content-type": "application/json"},
+            "headers": {
+                "accept": "application/json",
+                "content-type": "application/json",
+            },
             "request_timeout": DEFAULT,
         },
     )

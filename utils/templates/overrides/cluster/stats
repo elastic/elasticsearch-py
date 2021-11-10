@@ -1,5 +1,0 @@
-{% extends "base" %}
-{% block request %}
-        return await client._perform_request("{{ api.method }}", "/_cluster/stats" if node_id in SKIP_IN_PATH else _make_path("_cluster", "stats", "nodes", node_id), params=params, headers=headers)
-{% endblock%}
-

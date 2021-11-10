@@ -1,8 +1,0 @@
-{% for p, info in api.params %}
-    {% if p in substitutions and p not in api.url_parts.1 %}
-        if params and "{{ p }}" in params:
-            params["{{ substitutions[p] }}"] = params.pop("{{ p }}")
-
-    {% endif %}
-{% endfor %}
-

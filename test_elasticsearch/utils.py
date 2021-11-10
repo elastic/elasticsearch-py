@@ -182,7 +182,7 @@ def wipe_snapshots(client):
     """Deletes all the snapshots and repositories from the cluster"""
     in_progress_snapshots = []
 
-    repos = client.snapshot.get_repository(repository="_all")
+    repos = client.snapshot.get_repository(name="_all")
     for repo_name, repo in repos.items():
         if repo_name in {"found-snapshots"}:
             continue
@@ -284,7 +284,7 @@ def wipe_ilm_policies(client):
             ".fleet-actions-results-ilm-policy",
             ".deprecation-indexing-ilm-policy",
         }:
-            client.ilm.delete_lifecycle(policy=policy)
+            client.ilm.delete_lifecycle(name=policy)
 
 
 def wipe_slm_policies(client):

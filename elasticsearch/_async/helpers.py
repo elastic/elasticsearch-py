@@ -482,7 +482,7 @@ async def async_reindex(
     try:
         # Verify if the target_index is data stream or index
         data_streams = await target_client.indices.get_data_stream(
-            target_index, expand_wildcards="all"
+            name=target_index, expand_wildcards="all"
         )
         is_data_stream = any(
             data_stream["name"] == target_index

@@ -45,7 +45,7 @@ from elastic_transport import (
 )
 from elastic_transport.client_utils import DEFAULT, DefaultType, resolve_default
 
-from ...compat import urlencode, warn_stacklevel
+from ...compat import warn_stacklevel
 from ...exceptions import (
     HTTP_EXCEPTIONS,
     ApiError,
@@ -250,16 +250,8 @@ class BaseClient:
         method: str,
         target: str,
         headers: Optional[Mapping[str, str]] = None,
-        params: Optional[Mapping[str, str]] = None,
         body: Optional[Any] = None,
     ) -> ApiResponse[Any, Any]:
-        # Handle the passing of 'params' as additional query parameters.
-        # This behavior is deprecated and should be removed in 9.0.0.
-        if params:
-            if "?" in target:
-                raise ValueError("Can't add query to a target that already has a query")
-            target = f"{target}?{urlencode(params)}"
-
         if headers:
             request_headers = self._headers.copy()
             request_headers.update(headers)
@@ -418,11 +410,10 @@ class NamespacedClient(BaseClient):
         method: str,
         target: str,
         headers: Optional[Mapping[str, str]] = None,
-        params: Optional[Mapping[str, str]] = None,
         body: Optional[Any] = None,
     ) -> Any:
         # Use the internal clients .perform_request() implementation
         # so we take advantage of their transport options.
         return await self._client._perform_request(
-            method, target, headers=headers, params=params, body=body
+            method, target, headers=headers, body=body
         )

@@ -15,40 +15,72 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+from typing import Any, Dict, List, Optional, Union
+
 from ._base import NamespacedClient
-from .utils import _deprecated_options, query_params
+from .utils import _quote_query, _rewrite_parameters
 
 
 class FeaturesClient(NamespacedClient):
-    @query_params("master_timeout")
-    async def get_features(self, params=None, headers=None):
+    @_rewrite_parameters()
+    async def get_features(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
-        Gets a list of features which can be included in snapshots using the
-        feature_states field when creating a snapshot
+        Gets a list of features which can be included in snapshots using the feature_states
+        field when creating a snapshot
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-features-api.html>`_
-
-        :arg master_timeout: Explicit operation timeout for connection
-            to master node
         """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "GET", "/_features", params=params, headers=headers
-        )
+        __path = "/_features"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
 
-    @query_params()
-    async def reset_features(self, params=None, headers=None):
+    @_rewrite_parameters()
+    async def reset_features(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Resets the internal state of features, usually by deleting system indices
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
-
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
         """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "POST", "/_features/_reset", params=params, headers=headers
-        )
+        __path = "/_features/_reset"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("POST", __target, headers=__headers)

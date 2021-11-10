@@ -15,206 +15,414 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+from typing import Any, Dict, List, Optional, Union
+
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
+from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
 
 class IlmClient(NamespacedClient):
-    @query_params()
-    def delete_lifecycle(self, policy, params=None, headers=None):
+    @_rewrite_parameters()
+    def delete_lifecycle(
+        self,
+        *,
+        name: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
-        Deletes the specified lifecycle policy definition. A currently used policy
-        cannot be deleted.
+        Deletes the specified lifecycle policy definition. A currently used policy cannot
+        be deleted.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-delete-lifecycle.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-delete-lifecycle.html>`_
 
-        :arg policy: The name of the index lifecycle policy
+        :param name: The name of the index lifecycle policy
         """
-        client, params = _deprecated_options(self, params)
-        if policy in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'policy'.")
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_ilm/policy/{_quote(name)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("DELETE", __target, headers=__headers)
 
-        return client._perform_request(
-            "DELETE",
-            _make_path("_ilm", "policy", policy),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params("only_errors", "only_managed")
-    def explain_lifecycle(self, index, params=None, headers=None):
+    @_rewrite_parameters()
+    def explain_lifecycle(
+        self,
+        *,
+        index: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        only_errors: Optional[bool] = None,
+        only_managed: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Retrieves information about the index's current lifecycle state, such as the
         currently executing phase, action, and step.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-explain-lifecycle.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-explain-lifecycle.html>`_
 
-        :arg index: The name of the index to explain
-        :arg only_errors: filters the indices included in the response
-            to ones in an ILM error state, implies only_managed
-        :arg only_managed: filters the indices included in the response
-            to ones managed by ILM
+        :param index: The name of the index to explain
+        :param only_errors: filters the indices included in the response to ones in an
+            ILM error state, implies only_managed
+        :param only_managed: filters the indices included in the response to ones managed
+            by ILM
         """
-        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'index'.")
+            raise ValueError("Empty value passed for parameter 'index'")
+        __path = f"/{_quote(index)}/_ilm/explain"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if only_errors is not None:
+            __query["only_errors"] = only_errors
+        if only_managed is not None:
+            __query["only_managed"] = only_managed
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
 
-        return client._perform_request(
-            "GET", _make_path(index, "_ilm", "explain"), params=params, headers=headers
-        )
-
-    @query_params()
-    def get_lifecycle(self, policy=None, params=None, headers=None):
+    @_rewrite_parameters()
+    def get_lifecycle(
+        self,
+        *,
+        name: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Returns the specified policy definition. Includes the policy version and last
         modified date.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-get-lifecycle.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-get-lifecycle.html>`_
 
-        :arg policy: The name of the index lifecycle policy
+        :param name: The name of the index lifecycle policy
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", _make_path("_ilm", "policy", policy), params=params, headers=headers
-        )
+        if name not in SKIP_IN_PATH:
+            __path = f"/_ilm/policy/{_quote(name)}"
+        else:
+            __path = "/_ilm/policy"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
 
-    @query_params()
-    def get_status(self, params=None, headers=None):
+    @_rewrite_parameters()
+    def get_status(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Retrieves the current index lifecycle management (ILM) status.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-get-status.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-get-status.html>`_
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", "/_ilm/status", params=params, headers=headers
-        )
+        __path = "/_ilm/status"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
 
-    @query_params()
-    def move_to_step(self, index, body=None, params=None, headers=None):
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    def move_to_step(
+        self,
+        *,
+        index: Any,
+        current_step: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        next_step: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Manually moves an index into the specified step and executes that step.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-move-to-step.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-move-to-step.html>`_
 
-        :arg index: The name of the index whose lifecycle step is to
-            change
-        :arg body: The new lifecycle step to move to
+        :param index: The name of the index whose lifecycle step is to change
+        :param current_step:
+        :param next_step:
         """
-        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'index'.")
+            raise ValueError("Empty value passed for parameter 'index'")
+        __path = f"/_ilm/move/{_quote(index)}"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if current_step is not None:
+            __body["current_step"] = current_step
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if next_step is not None:
+            __body["next_step"] = next_step
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return self._perform_request("POST", __target, headers=__headers, body=__body)
 
-        return client._perform_request(
-            "POST",
-            _make_path("_ilm", "move", index),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params()
-    def put_lifecycle(self, policy, body=None, params=None, headers=None):
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    def put_lifecycle(
+        self,
+        *,
+        name: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        policy: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Creates a lifecycle policy
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-put-lifecycle.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-put-lifecycle.html>`_
 
-        :arg policy: The name of the index lifecycle policy
-        :arg body: The lifecycle policy definition to register
+        :param name: The name of the index lifecycle policy
+        :param policy:
         """
-        client, params = _deprecated_options(self, params)
-        if policy in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'policy'.")
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_ilm/policy/{_quote(name)}"
+        __query: Dict[str, Any] = {}
+        __body: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if policy is not None:
+            __body["policy"] = policy
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)
 
-        return client._perform_request(
-            "PUT",
-            _make_path("_ilm", "policy", policy),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params()
-    def remove_policy(self, index, params=None, headers=None):
+    @_rewrite_parameters()
+    def remove_policy(
+        self,
+        *,
+        index: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Removes the assigned lifecycle policy and stops managing the specified index
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-remove-policy.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-remove-policy.html>`_
 
-        :arg index: The name of the index to remove policy on
+        :param index: The name of the index to remove policy on
         """
-        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'index'.")
+            raise ValueError("Empty value passed for parameter 'index'")
+        __path = f"/{_quote(index)}/_ilm/remove"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("POST", __target, headers=__headers)
 
-        return client._perform_request(
-            "POST", _make_path(index, "_ilm", "remove"), params=params, headers=headers
-        )
-
-    @query_params()
-    def retry(self, index, params=None, headers=None):
+    @_rewrite_parameters()
+    def retry(
+        self,
+        *,
+        index: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Retries executing the policy for an index that is in the ERROR step.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-retry-policy.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-retry-policy.html>`_
 
-        :arg index: The name of the indices (comma-separated) whose
-            failed lifecycle step is to be retry
+        :param index: The name of the indices (comma-separated) whose failed lifecycle
+            step is to be retry
         """
-        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'index'.")
+            raise ValueError("Empty value passed for parameter 'index'")
+        __path = f"/{_quote(index)}/_ilm/retry"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("POST", __target, headers=__headers)
 
-        return client._perform_request(
-            "POST", _make_path(index, "_ilm", "retry"), params=params, headers=headers
-        )
-
-    @query_params()
-    def start(self, params=None, headers=None):
+    @_rewrite_parameters()
+    def start(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+    ) -> Any:
         """
         Start the index lifecycle management (ILM) plugin.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-start.html>`_
-        """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "POST", "/_ilm/start", params=params, headers=headers
-        )
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-start.html>`_
 
-    @query_params()
-    def stop(self, params=None, headers=None):
+        :param master_timeout:
+        :param timeout:
         """
-        Halts all lifecycle management operations and stops the index lifecycle
-        management (ILM) plugin
+        __path = "/_ilm/start"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("POST", __target, headers=__headers)
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-stop.html>`_
+    @_rewrite_parameters()
+    def stop(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+    ) -> Any:
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "POST", "/_ilm/stop", params=params, headers=headers
-        )
+        Halts all lifecycle management operations and stops the index lifecycle management
+        (ILM) plugin
 
-    @query_params("dry_run")
-    def migrate_to_data_tiers(self, body=None, params=None, headers=None):
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-stop.html>`_
+
+        :param master_timeout:
+        :param timeout:
         """
-        Migrates the indices and ILM policies away from custom node attribute
-        allocation routing to data tiers routing
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ilm-migrate-to-data-tiers.html>`_
-
-        :arg body: Optionally specify a legacy index template name to
-            delete and optionally specify a node attribute name used for index shard
-            routing (defaults to "data")
-        :arg dry_run: If set to true it will simulate the migration,
-            providing a way to retrieve the ILM policies and indices that need to be
-            migrated. The default is false
-        """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "POST",
-            "/_ilm/migrate_to_data_tiers",
-            params=params,
-            headers=headers,
-            body=body,
-        )
+        __path = "/_ilm/stop"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("POST", __target, headers=__headers)
