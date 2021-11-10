@@ -1,6 +1,7 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-7-15-2>>
 * <<rn-7-15-1>>
 * <<rn-7-15-0>>
 * <<rn-7-14-0>>
@@ -29,6 +30,16 @@
 * <<rn-7-0-2>>
 * <<rn-7-0-1>>
 * <<rn-7-0-0>>
+
+
+[discrete]
+[[rn-7-15-2]]
+=== 7.15.2 (2021-11-10)
+
+[discrete]
+==== Nodes
+
+- Documented additional options the `metric` parameter of the `nodes.info` API.
 
 
 [discrete]
