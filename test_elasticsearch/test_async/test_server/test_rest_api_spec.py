@@ -142,9 +142,21 @@ class AsyncYamlRunner(YamlRunner):
                 args["body"] = json.loads(args["body"])
             except (TypeError, ValueError):
                 pass
+
             if isinstance(args["body"], dict):
-                body = args.pop("body")
-                args.update(body)
+                # Detect when there are duplicate options that aren't the same value.
+                # In this case the test isn't testing the client, it's testing Elasticsearch
+                # and its ability to reject multiple values so we either combine
+                # like values or skip the test entirely as unnecessary for the client.
+                duplicate_args = set(args["body"]).intersection(args)
+                if duplicate_args:
+                    for arg in list(duplicate_args):
+                        if args["body"][arg] == args[arg]:
+                            args["body"].pop(arg)
+                        else:
+                            pytest.skip(
+                                "Contains a duplicate parameter with a different value"
+                            )
 
         # some parameters had to be renamed to not clash with python builtins,
         # compensate

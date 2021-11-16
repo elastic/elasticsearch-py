@@ -74,7 +74,7 @@ _TRANSPORT_OPTIONS = {
     "ignore",
 }
 
-RT = TypeVar("RT")
+F = TypeVar("F", bound=Callable[..., Any])
 
 
 def client_node_configs(
@@ -255,17 +255,16 @@ def _rewrite_parameters(
     body_name: Optional[str] = None,
     body_fields: bool = False,
     parameter_aliases: Optional[Dict[str, str]] = None,
-    ignore_deprecated_options: Optional[Union[bool, Set[str]]] = None,
-) -> Callable[[Callable[..., RT]], Callable[..., RT]]:
-    def wrapper(api: Callable[..., RT]) -> Callable[..., RT]:
+    ignore_deprecated_options: Optional[Set[str]] = None,
+) -> Callable[[F], F]:
+    def wrapper(api: F) -> F:
         @wraps(api)
-        def wrapped(*args: Any, **kwargs: Any) -> RT:
+        def wrapped(*args: Any, **kwargs: Any) -> Any:
             nonlocal api, body_name, body_fields
 
             # We merge 'params' first as transport options can be specified using params.
             if "params" in kwargs and (
-                ignore_deprecated_options is not True
-                or ignore_deprecated_options is not None
+                not ignore_deprecated_options
                 or "params" not in ignore_deprecated_options
             ):
                 params = kwargs.pop("params")
@@ -277,15 +276,14 @@ def _rewrite_parameters(
                         )
                     _merge_kwargs_no_duplicates(kwargs, params)
 
-            if ignore_deprecated_options is not True:
+            maybe_transport_options = _TRANSPORT_OPTIONS.intersection(kwargs)
+            if maybe_transport_options:
                 transport_options = {}
-                options_to_skip: Set[str] = (
-                    ignore_deprecated_options
-                    if isinstance(ignore_deprecated_options, set)
-                    else set()
-                )
-                for option in _TRANSPORT_OPTIONS:
-                    if option in options_to_skip:
+                for option in maybe_transport_options:
+                    if (
+                        ignore_deprecated_options
+                        and option in ignore_deprecated_options
+                    ):
                         continue
                     try:
                         option_rename = option
@@ -315,7 +313,9 @@ def _rewrite_parameters(
                         client = namespaced_client(client)
                     args = (client,) + args[1:]
 
-            if "body" in kwargs and ignore_deprecated_options is not True:
+            if "body" in kwargs and (
+                not ignore_deprecated_options or "body" not in ignore_deprecated_options
+            ):
                 body = kwargs.pop("body")
                 if body is not None:
                     if body_name:
@@ -359,6 +359,6 @@ def _rewrite_parameters(
 
             return api(*args, **kwargs)
 
-        return wrapped
+        return wrapped  # type: ignore[return-value]
 
     return wrapper

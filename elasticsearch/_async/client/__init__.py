@@ -34,14 +34,15 @@ from typing import (
 from elastic_transport import (
     AsyncTransport,
     BaseNode,
+    HeadApiResponse,
     NodeConfig,
     NodePool,
     NodeSelector,
     Serializer,
-    TransportError,
 )
 from elastic_transport.client_utils import DEFAULT, DefaultType
 
+from ...exceptions import ApiError
 from ...serializer import DEFAULT_SERIALIZERS
 from ._base import (
     BaseClient,
@@ -456,7 +457,7 @@ class AsyncElasticsearch(BaseClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> bool:
+    ) -> Any:
         """
         Returns basic information about the cluster.
 
@@ -479,9 +480,9 @@ class AsyncElasticsearch(BaseClient):
         __headers = {"accept": "application/json"}
         try:
             resp = await self._perform_request("HEAD", __target, headers=__headers)
-            return bool(resp)
-        except TransportError:
-            return False
+            return resp
+        except ApiError as e:
+            return HeadApiResponse(meta=e.meta)
 
     # AUTO-GENERATED-API-DEFINITIONS #
 
@@ -2089,7 +2090,6 @@ class AsyncElasticsearch(BaseClient):
     @_rewrite_parameters(
         body_fields=True,
         parameter_aliases={"_source": "source"},
-        ignore_deprecated_options=True,
     )
     async def knn_search(
         self,

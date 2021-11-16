@@ -948,6 +948,7 @@ class MlClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         from_: Optional[int] = None,
         human: Optional[bool] = None,
+        page: Optional[Any] = None,
         pretty: Optional[bool] = None,
         size: Optional[int] = None,
         sort: Optional[Any] = None,
@@ -961,18 +962,18 @@ class MlClient(NamespacedClient):
         :param job_id: Identifier for the anomaly detection job.
         :param timestamp: The timestamp of a single bucket result. If you do not specify
             this parameter, the API returns information about all buckets.
-        :param anomaly_score: Returns buckets with anomaly scores greater or equal than
-            this value.
-        :param desc: If `true`, the buckets are sorted in descending order.
-        :param end: Returns buckets with timestamps earlier than this time. `-1` means
-            it is unset and results are not limited to specific timestamps.
-        :param exclude_interim: If `true`, the output excludes interim results.
-        :param expand: If true, the output includes anomaly records.
+        :param anomaly_score: Refer to the description for the `anomaly_score` query
+            parameter.
+        :param desc: Refer to the description for the `desc` query parameter.
+        :param end: Refer to the description for the `end` query parameter.
+        :param exclude_interim: Refer to the description for the `exclude_interim` query
+            parameter.
+        :param expand: Refer to the description for the `expand` query parameter.
         :param from_: Skips the specified number of buckets.
+        :param page:
         :param size: Specifies the maximum number of buckets to obtain.
-        :param sort: Specifies the sort field for the requested buckets.
-        :param start: Returns buckets with timestamps after this time. `-1` means it
-            is unset and results are not limited to specific timestamps.
+        :param sort: Refer to the desription for the `sort` query parameter.
+        :param start: Refer to the description for the `start` query parameter.
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
@@ -1002,6 +1003,8 @@ class MlClient(NamespacedClient):
             __query["from"] = from_
         if human is not None:
             __query["human"] = human
+        if page is not None:
+            __body["page"] = page
         if pretty is not None:
             __query["pretty"] = pretty
         if size is not None:
@@ -2770,10 +2773,10 @@ class MlClient(NamespacedClient):
         *,
         job_id: Any,
         analysis_config: Any,
-        background_persist_interval: Any,
         data_description: Any,
         allow_lazy_open: Optional[bool] = None,
         analysis_limits: Optional[Any] = None,
+        background_persist_interval: Optional[Any] = None,
         custom_settings: Optional[Any] = None,
         daily_model_snapshot_retention_after_days: Optional[int] = None,
         datafeed_config: Optional[Any] = None,
@@ -2800,12 +2803,6 @@ class MlClient(NamespacedClient):
         :param analysis_config: Specifies how to analyze the data. After you create a
             job, you cannot change the analysis configuration; all the properties are
             informational.
-        :param background_persist_interval: Advanced configuration option. The time between
-            each periodic persistence of the model. The default value is a randomized
-            value between 3 to 4 hours, which avoids all jobs persisting at exactly the
-            same time. The smallest allowed value is 1 hour. For very large models (several
-            GB), persistence could take 10-20 minutes, so do not set the `background_persist_interval`
-            value too low.
         :param data_description: Defines the format of the input data when you send data
             to the job by using the post data API. Note that when configure a datafeed,
             these properties are automatically set. When data is received via the post
@@ -2824,6 +2821,12 @@ class MlClient(NamespacedClient):
             the mathematical models in memory. These limits are approximate and can be
             set per job. They do not control the memory used by other processes, for
             example the Elasticsearch Java processes.
+        :param background_persist_interval: Advanced configuration option. The time between
+            each periodic persistence of the model. The default value is a randomized
+            value between 3 to 4 hours, which avoids all jobs persisting at exactly the
+            same time. The smallest allowed value is 1 hour. For very large models (several
+            GB), persistence could take 10-20 minutes, so do not set the `background_persist_interval`
+            value too low.
         :param custom_settings: Advanced configuration option. Contains custom meta data
             about the job.
         :param daily_model_snapshot_retention_after_days: Advanced configuration option,
@@ -2871,10 +2874,6 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'job_id'")
         if analysis_config is None:
             raise ValueError("Empty value passed for parameter 'analysis_config'")
-        if background_persist_interval is None:
-            raise ValueError(
-                "Empty value passed for parameter 'background_persist_interval'"
-            )
         if data_description is None:
             raise ValueError("Empty value passed for parameter 'data_description'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}"
@@ -2882,14 +2881,14 @@ class MlClient(NamespacedClient):
         __query: Dict[str, Any] = {}
         if analysis_config is not None:
             __body["analysis_config"] = analysis_config
-        if background_persist_interval is not None:
-            __body["background_persist_interval"] = background_persist_interval
         if data_description is not None:
             __body["data_description"] = data_description
         if allow_lazy_open is not None:
             __body["allow_lazy_open"] = allow_lazy_open
         if analysis_limits is not None:
             __body["analysis_limits"] = analysis_limits
+        if background_persist_interval is not None:
+            __body["background_persist_interval"] = background_persist_interval
         if custom_settings is not None:
             __body["custom_settings"] = custom_settings
         if daily_model_snapshot_retention_after_days is not None:
