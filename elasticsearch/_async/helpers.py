@@ -66,7 +66,7 @@ async def _process_bulk_chunk(
 
     try:
         # send the actual request
-        resp = await client.bulk(*args, body=bulk_actions, **kwargs)
+        resp = await client.bulk(*args, operations=bulk_actions, **kwargs)
     except TransportError as e:
         gen = _process_bulk_chunk_error(
             error=e,

@@ -2576,6 +2576,7 @@ class MlClient(NamespacedClient):
         human: Optional[bool] = None,
         ignore_throttled: Optional[bool] = None,
         ignore_unavailable: Optional[bool] = None,
+        indexes: Optional[List[str]] = None,
         indices: Optional[List[str]] = None,
         indices_options: Optional[Any] = None,
         job_id: Optional[Any] = None,
@@ -2625,6 +2626,9 @@ class MlClient(NamespacedClient):
         :param ignore_throttled: Ignore indices that are marked as throttled (default:
             true)
         :param ignore_unavailable: Ignore unavailable indexes (default: false)
+        :param indexes: An array of index names. Wildcards are supported. If any of the
+            indices are in remote clusters, the machine learning nodes must have the
+            `remote_cluster_client` role.
         :param indices: An array of index names. Wildcards are supported. If any of the
             indices are in remote clusters, the machine learning nodes must have the
             `remote_cluster_client` role.
@@ -2681,6 +2685,8 @@ class MlClient(NamespacedClient):
             __query["ignore_throttled"] = ignore_throttled
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
+        if indexes is not None:
+            __body["indexes"] = indexes
         if indices is not None:
             __body["indices"] = indices
         if indices_options is not None:

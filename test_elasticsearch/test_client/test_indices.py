@@ -42,5 +42,7 @@ class TestIndices(DummyTransportTestCase):
             self.client.indices.exists(index="")
 
     def test_query_params(self):
-        self.client.indices.delete(index=["test1", "test*"], expand_wildcards=["open", "closed"])
+        self.client.indices.delete(
+            index=["test1", "test*"], expand_wildcards=["open", "closed"]
+        )
         self.assert_url_called("DELETE", "/test1,test*?expand_wildcards=open,closed")

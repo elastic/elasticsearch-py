@@ -23,22 +23,35 @@ import pytest
 pytestmark = pytest.mark.asyncio
 
 
-class TestUnicode:
-    async def test_indices_analyze(self, async_client):
-        await async_client.indices.analyze(body='{"text": "привет"}')
+@pytest.mark.parametrize("kwargs", [{"body": {"text": "привет"}}, {"text": "привет"}])
+async def test_indices_analyze_unicode(async_client, kwargs):
+    resp = await async_client.indices.analyze(**kwargs)
+    assert resp == {
+        "tokens": [
+            {
+                "end_offset": 6,
+                "position": 0,
+                "start_offset": 0,
+                "token": "привет",
+                "type": "<ALPHANUM>",
+            }
+        ]
+    }
 
 
-class TestBulk:
-    async def test_bulk_works_with_string_body(self, async_client):
-        docs = '{ "index" : { "_index" : "bulk_test_index", "_id" : "1" } }\n{"answer": 42}'
-        response = await async_client.bulk(body=docs)
+async def test_bulk_works_with_string_body(self, async_client):
+    docs = '{ "index" : { "_index" : "bulk_test_index", "_id" : "1" } }\n{"answer": 42}'
+    response = await async_client.bulk(body=docs)
 
-        assert response["errors"] is False
-        assert len(response["items"]) == 1
+    assert response["errors"] is False
+    assert len(response["items"]) == 1
 
-    async def test_bulk_works_with_bytestring_body(self, async_client):
-        docs = b'{ "index" : { "_index" : "bulk_test_index", "_id" : "2" } }\n{"answer": 42}'
-        response = await async_client.bulk(body=docs)
 
-        assert response["errors"] is False
-        assert len(response["items"]) == 1
+async def test_bulk_works_with_bytestring_body(self, async_client):
+    docs = (
+        b'{ "index" : { "_index" : "bulk_test_index", "_id" : "2" } }\n{"answer": 42}'
+    )
+    response = await async_client.bulk(body=docs)
+
+    assert response["errors"] is False
+    assert len(response["items"]) == 1

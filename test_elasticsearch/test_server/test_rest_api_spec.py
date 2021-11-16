@@ -41,6 +41,16 @@ from ..utils import CA_CERTS, es_url, parse_version
 # some params had to be changed in python, keep track of them so we can rename
 # those in the tests accordingly
 PARAMS_RENAMES = {"type": "doc_type", "from": "from_"}
+API_PARAMS_RENAMES = {
+    "snapshot.create_repository": {"repository": "name"},
+    "snapshot.delete_repository": {"repository": "name"},
+    "snapshot.get_repository": {"repository": "name"},
+    "snapshot.cleanup_repository": {"repository": "name"},
+    "snapshot.verify_repository": {"repository": "name"},
+    "ilm.delete_lifecycle": {"policy", "name"},
+    "ilm.get_lifecycle": {"policy": "name"},
+    "ilm.put_lifecycle": {"policy": "name"},
+}
 
 # mapping from catch values to http status codes
 CATCH_CODES = {"missing": 404, "conflict": 409, "unauthorized": 401}
@@ -228,11 +238,20 @@ class YamlRunner:
             assert hasattr(api, m)
             api = getattr(api, m)
 
+        # Sometimes the 'body' parameter is encoded as a string instead of raw.
+        if "body" in args:
+            try:
+                args["body"] = json.loads(args["body"])
+            except (TypeError, ValueError):
+                pass
+
         # some parameters had to be renamed to not clash with python builtins,
         # compensate
-        for k in PARAMS_RENAMES:
+        renames = PARAMS_RENAMES.copy()
+        renames.update(API_PARAMS_RENAMES.get(method, {}))
+        for k in renames:
             if k in args:
-                args[PARAMS_RENAMES[k]] = args.pop(k)
+                args[renames[k]] = args.pop(k)
 
         # resolve vars
         for k in args:
@@ -269,8 +288,9 @@ class YamlRunner:
             )
 
     def run_catch(self, catch, exception):
-        if catch == "param":
+        if catch == "param" or isinstance(exception, TypeError):
             assert isinstance(exception, TypeError)
+            self.last_response = None
             return
 
         assert isinstance(exception, ApiError)
@@ -501,7 +521,7 @@ YAML_TEST_SPECS = []
 try:
     # Construct the HTTP and Elasticsearch client
     http = urllib3.PoolManager(retries=10)
-    client = Elasticsearch(es_url(), timeout=3, ca_certs=CA_CERTS)
+    client = Elasticsearch(es_url(), request_timeout=3, ca_certs=CA_CERTS)
 
     # Make a request to Elasticsearch for the build hash, we'll be looking for
     # an artifact with this same hash to download test specs for.

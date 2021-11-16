@@ -71,6 +71,7 @@ _TRANSPORT_OPTIONS = {
     "request_timeout",
     "opaque_id",
     "headers",
+    "ignore",
 }
 
 RT = TypeVar("RT")
@@ -237,7 +238,7 @@ def _quote(value: Any) -> str:
 
 
 def _quote_query(query: Dict[str, Any]) -> str:
-    return "&".join([f"{k}={percent_encode(_escape(v), ',*')}" for k, v in query.items()])
+    return "&".join([f"{k}={_quote(v)}" for k, v in query.items()])
 
 
 def _merge_kwargs_no_duplicates(kwargs: Dict[str, Any], values: Dict[str, Any]) -> None:
@@ -287,7 +288,10 @@ def _rewrite_parameters(
                     if option in options_to_skip:
                         continue
                     try:
-                        transport_options[option] = kwargs.pop(option)
+                        option_rename = option
+                        if option == "ignore":
+                            option_rename = "ignore_status"
+                        transport_options[option_rename] = kwargs.pop(option)
                     except KeyError:
                         pass
                 if transport_options:

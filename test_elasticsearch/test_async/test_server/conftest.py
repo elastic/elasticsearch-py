@@ -38,7 +38,7 @@ async def async_client(elasticsearch_url):
     client = None
     try:
         client = elasticsearch.AsyncElasticsearch(
-            elasticsearch_url, timeout=3, ca_certs=CA_CERTS
+            elasticsearch_url, request_timeout=3, ca_certs=CA_CERTS
         )
         yield client
     finally:

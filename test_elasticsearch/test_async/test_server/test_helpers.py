@@ -476,7 +476,7 @@ class TestScan(object):
         for x in range(100):
             bulk.append({"index": {"_index": "test_index", "_id": x}})
             bulk.append({"answer": x, "correct": x == 42})
-        await async_client.bulk(bulk, refresh=True)
+        await async_client.bulk(operations=bulk, refresh=True)
 
         docs = [
             doc
@@ -497,7 +497,7 @@ class TestScan(object):
         for x in range(100):
             bulk.append({"index": {"_index": "test_index", "_id": x}})
             bulk.append({"answer": x, "correct": x == 42})
-        await async_client.bulk(bulk, refresh=True)
+        await async_client.bulk(operations=bulk, refresh=True)
 
         docs = [
             x
@@ -513,7 +513,7 @@ class TestScan(object):
         for x in range(4):
             bulk.append({"index": {"_index": "test_index"}})
             bulk.append({"value": x})
-        await async_client.bulk(bulk, refresh=True)
+        await async_client.bulk(operations=bulk, refresh=True)
 
         with patch.object(
             async_client, "options", return_value=async_client
@@ -632,7 +632,7 @@ class TestScan(object):
         for x in range(4):
             bulk.append({"index": {"_index": "test_index"}})
             bulk.append({"value": x})
-        await async_client.bulk(bulk, refresh=True)
+        await async_client.bulk(operations=bulk, refresh=True)
 
         with patch.object(
             async_client, "options", return_value=async_client
@@ -677,7 +677,7 @@ class TestScan(object):
         for x in range(4):
             bulk.append({"index": {"_index": "test_index"}})
             bulk.append({"value": x})
-        await async_client.bulk(bulk, refresh=True)
+        await async_client.bulk(operations=bulk, refresh=True)
 
         with patch.object(
             async_client, "options", return_value=async_client
@@ -851,7 +851,7 @@ async def reindex_setup(async_client):
                 "type": "answers" if x % 2 == 0 else "questions",
             }
         )
-    await async_client.bulk(bulk, refresh=True)
+    await async_client.bulk(operations=bulk, refresh=True)
     yield
 
 
@@ -992,7 +992,7 @@ async def reindex_data_stream_setup(async_client):
                 "@timestamp": (dt - timedelta(days=x)).isoformat(),
             }
         )
-    await async_client.bulk(bulk, refresh=True)
+    await async_client.bulk(operations=bulk, refresh=True)
     await async_client.indices.put_index_template(
         name="my-index-template",
         body={

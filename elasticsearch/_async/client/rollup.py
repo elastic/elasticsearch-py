@@ -296,6 +296,7 @@ class RollupClient(NamespacedClient):
         index: Any,
         type: Optional[Any] = None,
         aggregations: Optional[Dict[str, Any]] = None,
+        aggs: Optional[Dict[str, Any]] = None,
         error_trace: Optional[bool] = None,
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
@@ -314,6 +315,7 @@ class RollupClient(NamespacedClient):
             that should be searched
         :param type: The doc type inside the index
         :param aggregations:
+        :param aggs:
         :param query:
         :param rest_total_hits_as_int: Indicates whether hits.total should be rendered
             as an integer or an object in the rest search response
@@ -333,6 +335,8 @@ class RollupClient(NamespacedClient):
         __query: Dict[str, Any] = {}
         if aggregations is not None:
             __body["aggregations"] = aggregations
+        if aggs is not None:
+            __body["aggs"] = aggs
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:

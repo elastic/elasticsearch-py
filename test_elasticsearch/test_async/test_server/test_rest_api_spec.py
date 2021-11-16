@@ -21,6 +21,7 @@ some integration tests. These files are shared among all official Elasticsearch
 clients.
 """
 import inspect
+import json
 import warnings
 
 import pytest
@@ -28,6 +29,7 @@ import pytest
 from elasticsearch import ElasticsearchWarning, RequestError
 
 from ...test_server.test_rest_api_spec import (
+    API_PARAMS_RENAMES,
     IMPLEMENTED_FEATURES,
     PARAMS_RENAMES,
     RUN_ASYNC_REST_API_TESTS,
@@ -134,11 +136,23 @@ class AsyncYamlRunner(YamlRunner):
             assert hasattr(api, m)
             api = getattr(api, m)
 
+        # Sometimes the 'body' parameter is encoded as a string instead of raw.
+        if "body" in args:
+            try:
+                args["body"] = json.loads(args["body"])
+            except (TypeError, ValueError):
+                pass
+            if isinstance(args["body"], dict):
+                body = args.pop("body")
+                args.update(body)
+
         # some parameters had to be renamed to not clash with python builtins,
         # compensate
-        for k in PARAMS_RENAMES:
+        renames = PARAMS_RENAMES.copy()
+        renames.update(API_PARAMS_RENAMES.get(method, {}))
+        for k in renames:
             if k in args:
-                args[PARAMS_RENAMES[k]] = args.pop(k)
+                args[renames[k]] = args.pop(k)
 
         # resolve vars
         for k in args:

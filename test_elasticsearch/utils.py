@@ -200,9 +200,7 @@ def wipe_snapshots(client):
                         snapshot=snapshot["snapshot"],
                     )
 
-        client.options(ignore_status=404).snapshot.delete_repository(
-            repository=repo_name
-        )
+        client.options(ignore_status=404).snapshot.delete_repository(name=repo_name)
 
     assert in_progress_snapshots == []
 
