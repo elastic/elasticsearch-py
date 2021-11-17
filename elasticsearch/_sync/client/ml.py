@@ -1704,6 +1704,7 @@ class MlClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         from_: Optional[int] = None,
         human: Optional[bool] = None,
+        page: Optional[Any] = None,
         pretty: Optional[bool] = None,
         size: Optional[int] = None,
         sort: Optional[Any] = None,
@@ -1716,16 +1717,17 @@ class MlClient(NamespacedClient):
 
         :param job_id: Identifier for the anomaly detection job.
         :param snapshot_id: A numerical character string that uniquely identifies the
-            model snapshot.
-        :param desc: If true, the results are sorted in descending order.
-        :param end: Returns snapshots with timestamps earlier than this time. Defaults
-            to unset, which means results are not limited to specific timestamps.
+            model snapshot. You can get information for multiple snapshots by using a
+            comma-separated list or a wildcard expression. You can get all snapshots
+            by using `_all`, by specifying `*` as the snapshot ID, or by omitting the
+            snapshot ID.
+        :param desc: Refer to the description for the `desc` query parameter.
+        :param end: Refer to the description for the `end` query parameter.
         :param from_: Skips the specified number of snapshots.
+        :param page:
         :param size: Specifies the maximum number of snapshots to obtain.
-        :param sort: Specifies the sort field for the requested snapshots. By default,
-            the snapshots are sorted by their timestamp.
-        :param start: Returns snapshots with timestamps after this time. Defaults to
-            unset, which means results are not limited to specific timestamps.
+        :param sort: Refer to the description for the `sort` query parameter.
+        :param start: Refer to the description for the `start` query parameter.
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
@@ -1735,10 +1737,10 @@ class MlClient(NamespacedClient):
             __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots"
         else:
             raise ValueError("Couldn't find a path for the given parameters")
-        __query: Dict[str, Any] = {}
         __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
         if desc is not None:
-            __query["desc"] = desc
+            __body["desc"] = desc
         if end is not None:
             __body["end"] = end
         if error_trace is not None:
@@ -1749,12 +1751,14 @@ class MlClient(NamespacedClient):
             __query["from"] = from_
         if human is not None:
             __query["human"] = human
+        if page is not None:
+            __body["page"] = page
         if pretty is not None:
             __query["pretty"] = pretty
         if size is not None:
             __query["size"] = size
         if sort is not None:
-            __query["sort"] = sort
+            __body["sort"] = sort
         if start is not None:
             __body["start"] = start
         if not __body:
@@ -3467,6 +3471,173 @@ class MlClient(NamespacedClient):
             __body["model_memory_limit"] = model_memory_limit
         if pretty is not None:
             __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self._perform_request("POST", __target, headers=__headers, body=__body)
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    def update_datafeed(
+        self,
+        *,
+        datafeed_id: Any,
+        aggregations: Optional[Dict[str, Any]] = None,
+        allow_no_indices: Optional[bool] = None,
+        chunking_config: Optional[Any] = None,
+        delayed_data_check_config: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        frequency: Optional[Any] = None,
+        human: Optional[bool] = None,
+        ignore_throttled: Optional[bool] = None,
+        ignore_unavailable: Optional[bool] = None,
+        indexes: Optional[List[str]] = None,
+        indices: Optional[List[str]] = None,
+        indices_options: Optional[Any] = None,
+        max_empty_searches: Optional[int] = None,
+        pretty: Optional[bool] = None,
+        query: Optional[Any] = None,
+        query_delay: Optional[Any] = None,
+        runtime_mappings: Optional[Any] = None,
+        script_fields: Optional[Dict[str, Any]] = None,
+        scroll_size: Optional[int] = None,
+    ) -> Any:
+        """
+        Updates certain properties of a datafeed.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-update-datafeed.html>`_
+
+        :param datafeed_id: A numerical character string that uniquely identifies the
+            datafeed. This identifier can contain lowercase alphanumeric characters (a-z
+            and 0-9), hyphens, and underscores. It must start and end with alphanumeric
+            characters.
+        :param aggregations: If set, the datafeed performs aggregation searches. Support
+            for aggregations is limited and should be used only with low cardinality
+            data.
+        :param allow_no_indices: If `true`, wildcard indices expressions that resolve
+            into no concrete indices are ignored. This includes the `_all` string or
+            when no indices are specified.
+        :param chunking_config: Datafeeds might search over long time periods, for several
+            months or years. This search is split into time chunks in order to ensure
+            the load on Elasticsearch is managed. Chunking configuration controls how
+            the size of these time chunks are calculated; it is an advanced configuration
+            option.
+        :param delayed_data_check_config: Specifies whether the datafeed checks for missing
+            data and the size of the window. The datafeed can optionally search over
+            indices that have already been read in an effort to determine whether any
+            data has subsequently been added to the index. If missing data is found,
+            it is a good indication that the `query_delay` is set too low and the data
+            is being indexed after the datafeed has passed that moment in time. This
+            check runs only on real-time datafeeds.
+        :param expand_wildcards: Type of index that wildcard patterns can match. If the
+            request can target data streams, this argument determines whether wildcard
+            expressions match hidden data streams. Supports comma-separated values. Valid
+            values are: * `all`: Match any data stream or index, including hidden ones.
+            * `closed`: Match closed, non-hidden indices. Also matches any non-hidden
+            data stream. Data streams cannot be closed. * `hidden`: Match hidden data
+            streams and hidden indices. Must be combined with `open`, `closed`, or both.
+            * `none`: Wildcard patterns are not accepted. * `open`: Match open, non-hidden
+            indices. Also matches any non-hidden data stream.
+        :param frequency: The interval at which scheduled queries are made while the
+            datafeed runs in real time. The default value is either the bucket span for
+            short bucket spans, or, for longer bucket spans, a sensible fraction of the
+            bucket span. When `frequency` is shorter than the bucket span, interim results
+            for the last (partial) bucket are written then eventually overwritten by
+            the full bucket results. If the datafeed uses aggregations, this value must
+            be divisible by the interval of the date histogram aggregation.
+        :param ignore_throttled: If `true`, concrete, expanded or aliased indices are
+            ignored when frozen.
+        :param ignore_unavailable: If `true`, unavailable indices (missing or closed)
+            are ignored.
+        :param indexes: An array of index names. Wildcards are supported. If any of the
+            indices are in remote clusters, the machine learning nodes must have the
+            `remote_cluster_client` role.
+        :param indices: An array of index names. Wildcards are supported. If any of the
+            indices are in remote clusters, the machine learning nodes must have the
+            `remote_cluster_client` role.
+        :param indices_options: Specifies index expansion options that are used during
+            search.
+        :param max_empty_searches: If a real-time datafeed has never seen any data (including
+            during any initial training period), it automatically stops and closes the
+            associated job after this many real-time searches return no documents. In
+            other words, it stops after `frequency` times `max_empty_searches` of real-time
+            operation. If not set, a datafeed with no end time that sees no data remains
+            started until it is explicitly stopped. By default, it is not set.
+        :param query: The Elasticsearch query domain-specific language (DSL). This value
+            corresponds to the query object in an Elasticsearch search POST body. All
+            the options that are supported by Elasticsearch can be used, as this object
+            is passed verbatim to Elasticsearch. Note that if you change the query, the
+            analyzed data is also changed. Therefore, the time required to learn might
+            be long and the understandability of the results is unpredictable. If you
+            want to make significant changes to the source data, it is recommended that
+            you clone the job and datafeed and make the amendments in the clone. Let
+            both run in parallel and close one when you are satisfied with the results
+            of the job.
+        :param query_delay: The number of seconds behind real time that data is queried.
+            For example, if data from 10:04 a.m. might not be searchable in Elasticsearch
+            until 10:06 a.m., set this property to 120 seconds. The default value is
+            randomly selected between `60s` and `120s`. This randomness improves the
+            query performance when there are multiple jobs running on the same node.
+        :param runtime_mappings: Specifies runtime fields for the datafeed search.
+        :param script_fields: Specifies scripts that evaluate custom expressions and
+            returns script fields to the datafeed. The detector configuration objects
+            in a job can contain functions that use these script fields.
+        :param scroll_size: The size parameter that is used in Elasticsearch searches
+            when the datafeed does not use aggregations. The maximum value is the value
+            of `index.max_result_window`.
+        """
+        if datafeed_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'datafeed_id'")
+        __path = f"/_ml/datafeeds/{_quote(datafeed_id)}/_update"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if aggregations is not None:
+            __body["aggregations"] = aggregations
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if chunking_config is not None:
+            __body["chunking_config"] = chunking_config
+        if delayed_data_check_config is not None:
+            __body["delayed_data_check_config"] = delayed_data_check_config
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if frequency is not None:
+            __body["frequency"] = frequency
+        if human is not None:
+            __query["human"] = human
+        if ignore_throttled is not None:
+            __query["ignore_throttled"] = ignore_throttled
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if indexes is not None:
+            __body["indexes"] = indexes
+        if indices is not None:
+            __body["indices"] = indices
+        if indices_options is not None:
+            __body["indices_options"] = indices_options
+        if max_empty_searches is not None:
+            __body["max_empty_searches"] = max_empty_searches
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if query is not None:
+            __body["query"] = query
+        if query_delay is not None:
+            __body["query_delay"] = query_delay
+        if runtime_mappings is not None:
+            __body["runtime_mappings"] = runtime_mappings
+        if script_fields is not None:
+            __body["script_fields"] = script_fields
+        if scroll_size is not None:
+            __body["scroll_size"] = scroll_size
         if __query:
             __target = f"{__path}?{_quote_query(__query)}"
         else:

@@ -133,7 +133,8 @@ class AsyncYamlRunner(YamlRunner):
 
         # locate api endpoint
         for m in method.split("."):
-            assert hasattr(api, m)
+            if not hasattr(api, m):
+                pytest.skip("This API isn't implemented yet")
             api = getattr(api, m)
 
         # Sometimes the 'body' parameter is encoded as a string instead of raw.
@@ -175,6 +176,7 @@ class AsyncYamlRunner(YamlRunner):
             try:
                 self.last_response = (await api(**args)).raw
             except Exception as e:
+                self._skip_intentional_type_errors(e)
                 if not catch:
                     raise
                 self.run_catch(catch, e)

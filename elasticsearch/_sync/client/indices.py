@@ -2886,7 +2886,6 @@ class IndicesClient(NamespacedClient):
     def simulate_template(
         self,
         *,
-        template: Any,
         name: Optional[Any] = None,
         create: Optional[bool] = None,
         error_trace: Optional[bool] = None,
@@ -2894,13 +2893,13 @@ class IndicesClient(NamespacedClient):
         human: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
+        template: Optional[Any] = None,
     ) -> Any:
         """
         Simulate resolving the given template name or body
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
 
-        :param template:
         :param name: Name of the index template to simulate. To test a template configuration
             before you add it to the cluster, omit this parameter and specify the template
             configuration in the request body.
@@ -2911,9 +2910,8 @@ class IndicesClient(NamespacedClient):
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
+        :param template:
         """
-        if template is None:
-            raise ValueError("Empty value passed for parameter 'template'")
         if name not in SKIP_IN_PATH:
             __path = f"/_index_template/_simulate/{_quote(name)}"
         else:
