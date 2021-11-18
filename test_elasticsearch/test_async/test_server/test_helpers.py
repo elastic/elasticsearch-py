@@ -123,11 +123,9 @@ class TestStreamingBulk(object):
 
     async def test_all_errors_from_chunk_are_raised_on_failure(self, async_client):
         await async_client.indices.create(
-            "i",
-            {
-                "mappings": {"properties": {"a": {"type": "integer"}}},
-                "settings": {"number_of_shards": 1, "number_of_replicas": 0},
-            },
+            index="i",
+            mappings={"properties": {"a": {"type": "integer"}}},
+            settings={"number_of_shards": 1, "number_of_replicas": 0},
         )
         await async_client.cluster.health(wait_for_status="yellow")
 
@@ -334,11 +332,9 @@ class TestBulk(object):
 
     async def test_errors_are_reported_correctly(self, async_client):
         await async_client.indices.create(
-            "i",
-            {
-                "mappings": {"properties": {"a": {"type": "integer"}}},
-                "settings": {"number_of_shards": 1, "number_of_replicas": 0},
-            },
+            index="i",
+            mappings={"properties": {"a": {"type": "integer"}}},
+            settings={"number_of_shards": 1, "number_of_replicas": 0},
         )
         await async_client.cluster.health(wait_for_status="yellow")
 
@@ -360,11 +356,9 @@ class TestBulk(object):
 
     async def test_error_is_raised(self, async_client):
         await async_client.indices.create(
-            "i",
-            {
-                "mappings": {"properties": {"a": {"type": "integer"}}},
-                "settings": {"number_of_shards": 1, "number_of_replicas": 0},
-            },
+            index="i",
+            mappings={"properties": {"a": {"type": "integer"}}},
+            settings={"number_of_shards": 1, "number_of_replicas": 0},
         )
         await async_client.cluster.health(wait_for_status="yellow")
 
@@ -406,11 +400,9 @@ class TestBulk(object):
 
     async def test_errors_are_collected_properly(self, async_client):
         await async_client.indices.create(
-            "i",
-            {
-                "mappings": {"properties": {"a": {"type": "integer"}}},
-                "settings": {"number_of_shards": 1, "number_of_replicas": 0},
-            },
+            index="i",
+            mappings={"properties": {"a": {"type": "integer"}}},
+            settings={"number_of_shards": 1, "number_of_replicas": 0},
         )
         await async_client.cluster.health(wait_for_status="yellow")
 
@@ -867,7 +859,7 @@ class TestReindex(object):
             bulk_kwargs={"refresh": True},
         )
 
-        assert await async_client.indices.exists("prod_index")
+        assert await async_client.indices.exists(index="prod_index")
         assert (
             50
             == (await async_client.count(index="prod_index", q="type:answers"))["count"]
@@ -886,7 +878,7 @@ class TestReindex(object):
         )
         await async_client.indices.refresh()
 
-        assert await async_client.indices.exists("prod_index")
+        assert await async_client.indices.exists(index="prod_index")
         assert (
             50
             == (await async_client.count(index="prod_index", q="type:answers"))["count"]
@@ -900,7 +892,7 @@ class TestReindex(object):
         await helpers.async_reindex(async_client, "test_index", "prod_index")
         await async_client.indices.refresh()
 
-        assert await async_client.indices.exists("prod_index")
+        assert await async_client.indices.exists(index="prod_index")
         assert (
             50
             == (await async_client.count(index="prod_index", q="type:questions"))[

@@ -39,7 +39,7 @@ async def test_indices_analyze_unicode(async_client, kwargs):
     }
 
 
-async def test_bulk_works_with_string_body(self, async_client):
+async def test_bulk_works_with_string_body(async_client):
     docs = '{ "index" : { "_index" : "bulk_test_index", "_id" : "1" } }\n{"answer": 42}'
     response = await async_client.bulk(body=docs)
 
@@ -47,7 +47,7 @@ async def test_bulk_works_with_string_body(self, async_client):
     assert len(response["items"]) == 1
 
 
-async def test_bulk_works_with_bytestring_body(self, async_client):
+async def test_bulk_works_with_bytestring_body(async_client):
     docs = (
         b'{ "index" : { "_index" : "bulk_test_index", "_id" : "2" } }\n{"answer": 42}'
     )
