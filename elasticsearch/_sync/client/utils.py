@@ -274,6 +274,13 @@ def _rewrite_parameters(
                             "Couldn't merge 'params' with other parameters as it wasn't a mapping. "
                             "Instead of using 'params' use individual API parameters"
                         )
+                    warnings.warn(
+                        f"The 'params' parameter is deprecated for the '{api.__name__!s}' API and "
+                        "will be removed in a future version. Instead use individual "
+                        "parameters.",
+                        category=DeprecationWarning,
+                        stacklevel=warn_stacklevel(),
+                    )
                     _merge_kwargs_no_duplicates(kwargs, params)
 
             maybe_transport_options = _TRANSPORT_OPTIONS.intersection(kwargs)
@@ -321,15 +328,10 @@ def _rewrite_parameters(
                     if body_name:
                         if body_name in kwargs:
                             raise TypeError(
-                                "Can't use '%s' and 'body' parameters together because '%s' "
+                                f"Can't use '{body_name}' and 'body' parameters together because '{body_name}' "
                                 "is an alias for 'body'. Instead you should only use the "
-                                "'%s' parameter. See https://github.com/elastic/elasticsearch-py/"
+                                f"'{body_name}' parameter. See https://github.com/elastic/elasticsearch-py/"
                                 "issues/1698 for more information"
-                                % (
-                                    body_name,
-                                    body_name,
-                                    body_name,
-                                )
                             )
 
                         warnings.warn(
@@ -348,6 +350,13 @@ def _rewrite_parameters(
                                 "Couldn't merge 'body' with other parameters as it wasn't a mapping. "
                                 "Instead of using 'body' use individual API parameters"
                             )
+                        warnings.warn(
+                            f"The 'body' parameter is deprecated for the '{api.__name__!s}' API and "
+                            "will be removed in a future version. Instead use individual "
+                            "parameters.",
+                            category=DeprecationWarning,
+                            stacklevel=warn_stacklevel(),
+                        )
                         _merge_kwargs_no_duplicates(kwargs, body)
 
             if parameter_aliases:
