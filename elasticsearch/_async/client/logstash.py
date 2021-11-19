@@ -15,70 +15,126 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+from typing import Any, Dict, List, Optional, Union
+
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
+from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
 
 class LogstashClient(NamespacedClient):
-    @query_params()
-    async def delete_pipeline(self, id, params=None, headers=None):
+    @_rewrite_parameters()
+    async def delete_pipeline(
+        self,
+        *,
+        id: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Deletes Logstash Pipelines used by Central Management
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/logstash-api-delete-pipeline.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/logstash-api-delete-pipeline.html>`_
 
-        :arg id: The ID of the Pipeline
+        :param id: The ID of the Pipeline
         """
-        client, params = _deprecated_options(self, params)
         if id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'id'.")
+            raise ValueError("Empty value passed for parameter 'id'")
+        __path = f"/_logstash/pipeline/{_quote(id)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("DELETE", __target, headers=__headers)
 
-        return await client._perform_request(
-            "DELETE",
-            _make_path("_logstash", "pipeline", id),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params()
-    async def get_pipeline(self, id, params=None, headers=None):
+    @_rewrite_parameters()
+    async def get_pipeline(
+        self,
+        *,
+        id: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Retrieves Logstash Pipelines used by Central Management
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/logstash-api-get-pipeline.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/logstash-api-get-pipeline.html>`_
 
-        :arg id: A comma-separated list of Pipeline IDs
+        :param id: A comma-separated list of Pipeline IDs
         """
-        client, params = _deprecated_options(self, params)
         if id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'id'.")
+            raise ValueError("Empty value passed for parameter 'id'")
+        __path = f"/_logstash/pipeline/{_quote(id)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
 
-        return await client._perform_request(
-            "GET",
-            _make_path("_logstash", "pipeline", id),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params()
-    async def put_pipeline(self, id, body, params=None, headers=None):
+    @_rewrite_parameters(
+        body_name="pipeline",
+    )
+    async def put_pipeline(
+        self,
+        *,
+        id: Any,
+        pipeline: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Adds and updates Logstash Pipelines used for Central Management
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/logstash-api-put-pipeline.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/logstash-api-put-pipeline.html>`_
 
-        :arg id: The ID of the Pipeline
-        :arg body: The Pipeline to add or update
+        :param id: The ID of the Pipeline
+        :param pipeline:
         """
-        client, params = _deprecated_options(self, params)
-        for param in (id, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return await client._perform_request(
-            "PUT",
-            _make_path("_logstash", "pipeline", id),
-            params=params,
-            headers=headers,
-            body=body,
+        if id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'id'")
+        if pipeline is None:
+            raise ValueError("Empty value passed for parameter 'pipeline'")
+        __path = f"/_logstash/pipeline/{_quote(id)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __body = pipeline
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self._perform_request(
+            "PUT", __target, headers=__headers, body=__body
         )

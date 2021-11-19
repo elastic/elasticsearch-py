@@ -15,72 +15,121 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+from typing import Any, Dict, List, Optional, Union
+
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
+from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
 
 class ShutdownClient(NamespacedClient):
-    @query_params()
-    def delete_node(self, node_id, params=None, headers=None):
+    @_rewrite_parameters()
+    def delete_node(
+        self,
+        *,
+        node_id: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Removes a node from the shutdown list. Designed for indirect use by ECE/ESS and
         ECK. Direct use is not supported.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current>`_
 
-        :arg node_id: The node id of node to be removed from the
-            shutdown state
+        :param node_id: The node id of node to be removed from the shutdown state
         """
-        client, params = _deprecated_options(self, params)
         if node_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'node_id'.")
+            raise ValueError("Empty value passed for parameter 'node_id'")
+        __path = f"/_nodes/{_quote(node_id)}/shutdown"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("DELETE", __target, headers=__headers)
 
-        return client._perform_request(
-            "DELETE",
-            _make_path("_nodes", node_id, "shutdown"),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params()
-    def get_node(self, node_id=None, params=None, headers=None):
+    @_rewrite_parameters()
+    def get_node(
+        self,
+        *,
+        node_id: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Retrieve status of a node or nodes that are currently marked as shutting down.
         Designed for indirect use by ECE/ESS and ECK. Direct use is not supported.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current>`_
 
-        :arg node_id: Which node for which to retrieve the shutdown
-            status
+        :param node_id: Which node for which to retrieve the shutdown status
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET",
-            _make_path("_nodes", node_id, "shutdown"),
-            params=params,
-            headers=headers,
-        )
+        if node_id not in SKIP_IN_PATH:
+            __path = f"/_nodes/{_quote(node_id)}/shutdown"
+        else:
+            __path = "/_nodes/shutdown"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
 
-    @query_params()
-    def put_node(self, node_id, body, params=None, headers=None):
+    @_rewrite_parameters()
+    def put_node(
+        self,
+        *,
+        node_id: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
-        Adds a node to be shut down. Designed for indirect use by ECE/ESS and ECK.
-        Direct use is not supported.
+        Adds a node to be shut down. Designed for indirect use by ECE/ESS and ECK. Direct
+        use is not supported.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current>`_
 
-        :arg node_id: The node id of node to be shut down
-        :arg body: The shutdown type definition to register
+        :param node_id: The node id of node to be shut down
         """
-        client, params = _deprecated_options(self, params)
-        for param in (node_id, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return client._perform_request(
-            "PUT",
-            _make_path("_nodes", node_id, "shutdown"),
-            params=params,
-            headers=headers,
-            body=body,
-        )
+        if node_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'node_id'")
+        __path = f"/_nodes/{_quote(node_id)}/shutdown"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("PUT", __target, headers=__headers)

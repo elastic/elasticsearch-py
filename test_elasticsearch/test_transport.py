@@ -16,8 +16,6 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from __future__ import unicode_literals
-
 import re
 import time
 import warnings
@@ -250,7 +248,10 @@ class TestTransport:
 
         calls = client.transport.node_pool.get().calls
         assert 1 == len(calls)
-        assert calls[0][1]["headers"] == {"content-type": "application/json"}
+        assert calls[0][1]["headers"] == {
+            "accept": "application/json",
+            "content-type": "application/json",
+        }
 
     def test_meta_header_type_error(self):
         with pytest.raises(TypeError) as e:
@@ -259,11 +260,14 @@ class TestTransport:
 
     def test_body_surrogates_replaced_encoded_into_bytes(self):
         client = Elasticsearch("http://localhost:9200", node_class=DummyNode)
-        client.search(body="你好\uda6a")
+        client.search(query={"match": "你好\uda6a"})
 
         calls = client.transport.node_pool.get().calls
         assert 1 == len(calls)
-        assert calls[0][1]["body"] == b"\xe4\xbd\xa0\xe5\xa5\xbd\xed\xa9\xaa"
+        assert (
+            calls[0][1]["body"]
+            == b'{"query":{"match":"\xe4\xbd\xa0\xe5\xa5\xbd\xed\xa9\xaa"}}'
+        )
 
     def test_kwargs_passed_on_to_node_pool(self):
         dt = object()
@@ -275,11 +279,12 @@ class TestTransport:
             def __init__(self, *_, **__):
                 pass
 
+            def perform_request(*_, **__):
+                pass
+
         client = Elasticsearch("http://localhost:9200", node_class=MyConnection)
-        assert 1 == len(client.transport.node_pool.all_nodes)
-        assert isinstance(
-            client.transport.node_pool.all_nodes.popitem()[1], MyConnection
-        )
+        assert 1 == len(client.transport.node_pool)
+        assert isinstance(client.transport.node_pool.all()[0], MyConnection)
 
     def test_request_will_fail_after_x_retries(self):
         client = Elasticsearch(
@@ -327,7 +332,7 @@ class TestTransport:
 
         with pytest.raises(ConnectionError):
             client.info()
-        assert 0 == len(client.transport.node_pool.alive_nodes)
+        assert 0 == len(client.transport.node_pool._alive_nodes)
 
     def test_resurrected_connection_will_be_marked_as_live_on_success(self):
         client = Elasticsearch(
@@ -342,12 +347,12 @@ class TestTransport:
         assert node1 is not node2
         client.transport.node_pool.mark_dead(node1)
         client.transport.node_pool.mark_dead(node2)
-        assert len(client.transport.node_pool.alive_nodes) == 0
+        assert len(client.transport.node_pool._alive_nodes) == 0
 
         client.info()
 
-        assert len(client.transport.node_pool.alive_nodes) == 1
-        assert len(client.transport.node_pool.dead_consecutive_failures) == 1
+        assert len(client.transport.node_pool._alive_nodes) == 1
+        assert len(client.transport.node_pool._dead_consecutive_failures) == 1
 
     @pytest.mark.parametrize(
         ["nodes_info_response", "node_host"],
@@ -377,8 +382,7 @@ class TestTransport:
             meta_header=False,
         )
 
-        node_config = client.transport.node_pool.seed_nodes[0]
-        calls = client.transport.node_pool.all_nodes[node_config].calls
+        calls = client.transport.node_pool.all()[0].calls
 
         assert len(calls) == 1
         assert calls[0] == (
@@ -400,8 +404,7 @@ class TestTransport:
         )
         client.info()
 
-        node_config = client.transport.node_pool.seed_nodes[0]
-        calls = client.transport.node_pool.all_nodes[node_config].calls
+        calls = client.transport.node_pool.all()[0].calls
 
         assert len(calls) == 2
         assert calls[0] == (
@@ -416,7 +419,10 @@ class TestTransport:
             ("GET", "/"),
             {
                 "body": None,
-                "headers": {"content-type": "application/json"},
+                "headers": {
+                    "accept": "application/json",
+                    "content-type": "application/json",
+                },
                 "request_timeout": DEFAULT,
             },
         )
@@ -428,9 +434,9 @@ class TestTransport:
             sniff_on_start=True,
         )
 
-        assert len(client.transport.node_pool.all_nodes) == 1
+        assert len(client.transport.node_pool) == 1
         client.info()
-        assert len(client.transport.node_pool.all_nodes) == 1
+        assert len(client.transport.node_pool) == 1
 
     def test_sniff_after_n_seconds(self):
         client = Elasticsearch(  # noqa: F821
@@ -444,13 +450,13 @@ class TestTransport:
         for _ in range(4):
             client.info()
 
-        assert 1 == len(client.transport.node_pool.all_nodes)
+        assert 1 == len(client.transport.node_pool)
 
         client.transport._last_sniffed_at = time.time() - 5.1
 
         client.info()
 
-        assert 2 == len(client.transport.node_pool.all_nodes)
+        assert 2 == len(client.transport.node_pool)
         assert "http://1.1.1.1:123" in (
             node.base_url for node in client.transport.node_pool.all()
         )
@@ -493,7 +499,7 @@ class TestTransport:
             sniff_on_start=True,
         )
 
-        assert len(client.transport.node_pool.all_nodes) == 2
+        assert len(client.transport.node_pool) == 2
 
     def test_sniff_node_callback(self):
         def sniffed_node_callback(
@@ -519,7 +525,7 @@ class TestTransport:
             sniffed_node_callback=sniffed_node_callback,
         )
 
-        assert len(client.transport.node_pool.all_nodes) == 2
+        assert len(client.transport.node_pool) == 2
 
         ports = {node.config.port for node in client.transport.node_pool.all()}
         assert ports == {9200, 124}
@@ -554,7 +560,7 @@ class TestTransport:
             == "The 'host_info_callback' parameter is deprecated in favor of 'sniffed_node_callback'"
         )
 
-        assert len(client.transport.node_pool.all_nodes) == 2
+        assert len(client.transport.node_pool) == 2
 
         ports = {node.config.port for node in client.transport.node_pool.all()}
         assert ports == {9200, 124}
@@ -581,7 +587,10 @@ def test_unsupported_product_error(headers):
         ("GET", "/"),
         {
             "body": None,
-            "headers": {"content-type": "application/json"},
+            "headers": {
+                "accept": "application/json",
+                "content-type": "application/json",
+            },
             "request_timeout": DEFAULT,
         },
     )

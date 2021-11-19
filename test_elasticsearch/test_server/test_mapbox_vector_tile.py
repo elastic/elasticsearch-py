@@ -119,7 +119,7 @@ def test_mapbox_vector_tile_response(
     try:
         import mapbox_vector_tile
     except ImportError:
-        return pytest.skip(reason="Requires the 'mapbox-vector-tile' package")
+        return pytest.skip("Requires the 'mapbox-vector-tile' package")
 
     client = Elasticsearch(elasticsearch_url, node_class=node_class, ca_certs=ca_certs)
 

@@ -15,242 +15,347 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+from typing import Any, Dict, List, Optional, Union
+
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
+from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
 
 class NodesClient(NamespacedClient):
-    @query_params("timeout")
-    async def reload_secure_settings(
-        self, body=None, node_id=None, params=None, headers=None
-    ):
-        """
-        Reloads secure settings.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/secure-settings.html#reloadable-secure-settings>`_
-
-        :arg body: An object containing the password for the
-            elasticsearch keystore
-        :arg node_id: A comma-separated list of node IDs to span the
-            reload/reinit call. Should stay empty because reloading usually involves
-            all cluster nodes.
-        :arg timeout: Explicit operation timeout
-        """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "POST",
-            _make_path("_nodes", node_id, "reload_secure_settings"),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params("flat_settings", "timeout")
-    async def info(self, node_id=None, metric=None, params=None, headers=None):
-        """
-        Returns information about nodes in the cluster.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-info.html>`_
-
-        :arg node_id: A comma-separated list of node IDs or names to
-            limit the returned information; use `_local` to return information from
-            the node you're connecting to, leave empty to get information from all
-            nodes
-        :arg metric: A comma-separated list of metrics you wish
-            returned. Use `_all` to retrieve all metrics and `_none` to retrieve the
-            node identity without any additional metrics.  Valid choices: settings,
-            os, process, jvm, thread_pool, transport, http, plugins, ingest,
-            indices, aggregations, _all, _none
-        :arg flat_settings: Return settings in flat format (default:
-            false)
-        :arg timeout: Explicit operation timeout
-        """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "GET", _make_path("_nodes", node_id, metric), params=params, headers=headers
-        )
-
-    @query_params(
-        "doc_type",
-        "ignore_idle_threads",
-        "interval",
-        "snapshots",
-        "sort",
-        "threads",
-        "timeout",
-    )
-    async def hot_threads(self, node_id=None, params=None, headers=None):
+    @_rewrite_parameters()
+    async def hot_threads(
+        self,
+        *,
+        node_id: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        ignore_idle_threads: Optional[bool] = None,
+        interval: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        snapshots: Optional[int] = None,
+        thread_type: Optional[Any] = None,
+        threads: Optional[int] = None,
+        timeout: Optional[Any] = None,
+    ) -> Any:
         """
         Returns information about hot threads on each node in the cluster.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-hot-threads.html>`_
 
-        :arg node_id: A comma-separated list of node IDs or names to
-            limit the returned information; use `_local` to return information from
-            the node you're connecting to, leave empty to get information from all
-            nodes
-        :arg doc_type: The type to sample (default: cpu)  Valid choices:
-            cpu, wait, block, mem
-        :arg ignore_idle_threads: Don't show threads that are in known-
-            idle places, such as waiting on a socket select or pulling from an empty
-            task queue (default: true)
-        :arg interval: The interval for the second sampling of threads
-        :arg snapshots: Number of samples of thread stacktrace (default:
-            10)
-        :arg sort: The sort order for 'cpu' type (default: total)  Valid
-            choices: cpu, total
-        :arg threads: Specify the number of threads to provide
-            information for (default: 3)
-        :arg timeout: Explicit operation timeout
+        :param node_id: A comma-separated list of node IDs or names to limit the returned
+            information; use `_local` to return information from the node you're connecting
+            to, leave empty to get information from all nodes
+        :param ignore_idle_threads: Don't show threads that are in known-idle places,
+            such as waiting on a socket select or pulling from an empty task queue (default:
+            true)
+        :param interval: The interval for the second sampling of threads
+        :param snapshots: Number of samples of thread stacktrace (default: 10)
+        :param thread_type:
+        :param threads: Specify the number of threads to provide information for (default:
+            3)
+        :param timeout: Explicit operation timeout
         """
-        client, params = _deprecated_options(self, params)
-        if params and "doc_type" in params:
-            params["type"] = params.pop("doc_type")
+        if node_id not in SKIP_IN_PATH:
+            __path = f"/_nodes/{_quote(node_id)}/hot_threads"
+        else:
+            __path = "/_nodes/hot_threads"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if ignore_idle_threads is not None:
+            __query["ignore_idle_threads"] = ignore_idle_threads
+        if interval is not None:
+            __query["interval"] = interval
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if snapshots is not None:
+            __query["snapshots"] = snapshots
+        if thread_type is not None:
+            __query["thread_type"] = thread_type
+        if threads is not None:
+            __query["threads"] = threads
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "text/plain"}
+        return await self._perform_request("GET", __target, headers=__headers)
 
-        return await client._perform_request(
-            "GET",
-            _make_path("_nodes", node_id, "hot_threads"),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params("timeout")
-    async def usage(self, node_id=None, metric=None, params=None, headers=None):
+    @_rewrite_parameters()
+    async def info(
+        self,
+        *,
+        node_id: Optional[Any] = None,
+        metric: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        flat_settings: Optional[bool] = None,
+        human: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+    ) -> Any:
         """
-        Returns low-level information about REST actions usage on nodes.
+        Returns information about nodes in the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-usage.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-info.html>`_
 
-        :arg node_id: A comma-separated list of node IDs or names to
-            limit the returned information; use `_local` to return information from
-            the node you're connecting to, leave empty to get information from all
-            nodes
-        :arg metric: Limit the information returned to the specified
-            metrics  Valid choices: _all, rest_actions
-        :arg timeout: Explicit operation timeout
+        :param node_id: Comma-separated list of node IDs or names used to limit returned
+            information.
+        :param metric: Limits the information returned to the specific metrics. Supports
+            a comma-separated list, such as http,ingest.
+        :param flat_settings: If true, returns settings in flat format.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "GET",
-            _make_path("_nodes", node_id, "usage", metric),
-            params=params,
-            headers=headers,
-        )
+        if node_id not in SKIP_IN_PATH and metric not in SKIP_IN_PATH:
+            __path = f"/_nodes/{_quote(node_id)}/{_quote(metric)}"
+        elif node_id not in SKIP_IN_PATH:
+            __path = f"/_nodes/{_quote(node_id)}"
+        elif metric not in SKIP_IN_PATH:
+            __path = f"/_nodes/{_quote(metric)}"
+        else:
+            __path = "/_nodes"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if flat_settings is not None:
+            __query["flat_settings"] = flat_settings
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
 
-    @query_params(
-        "completion_fields",
-        "fielddata_fields",
-        "fields",
-        "groups",
-        "include_segment_file_sizes",
-        "include_unloaded_segments",
-        "level",
-        "timeout",
-        "types",
+    @_rewrite_parameters(
+        body_fields=True,
     )
+    async def reload_secure_settings(
+        self,
+        *,
+        node_id: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        secure_settings_password: Optional[Any] = None,
+        timeout: Optional[Any] = None,
+    ) -> Any:
+        """
+        Reloads secure settings.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/secure-settings.html#reloadable-secure-settings>`_
+
+        :param node_id: A comma-separated list of node IDs to span the reload/reinit
+            call. Should stay empty because reloading usually involves all cluster nodes.
+        :param secure_settings_password:
+        :param timeout: Explicit operation timeout
+        """
+        if node_id not in SKIP_IN_PATH:
+            __path = f"/_nodes/{_quote(node_id)}/reload_secure_settings"
+        else:
+            __path = "/_nodes/reload_secure_settings"
+        __query: Dict[str, Any] = {}
+        __body: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if secure_settings_password is not None:
+            __body["secure_settings_password"] = secure_settings_password
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
+        )
+
+    @_rewrite_parameters()
     async def stats(
-        self, node_id=None, metric=None, index_metric=None, params=None, headers=None
-    ):
+        self,
+        *,
+        node_id: Optional[Any] = None,
+        metric: Optional[Any] = None,
+        index_metric: Optional[Any] = None,
+        completion_fields: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        fielddata_fields: Optional[Any] = None,
+        fields: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        groups: Optional[bool] = None,
+        human: Optional[bool] = None,
+        include_segment_file_sizes: Optional[bool] = None,
+        include_unloaded_segments: Optional[bool] = None,
+        level: Optional[Any] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+        types: Optional[List[str]] = None,
+    ) -> Any:
         """
         Returns statistical information about nodes in the cluster.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-stats.html>`_
 
-        :arg node_id: A comma-separated list of node IDs or names to
-            limit the returned information; use `_local` to return information from
-            the node you're connecting to, leave empty to get information from all
-            nodes
-        :arg metric: Limit the information returned to the specified
-            metrics  Valid choices: _all, breaker, fs, http, indices, jvm, os,
-            process, thread_pool, transport, discovery, indexing_pressure
-        :arg index_metric: Limit the information returned for `indices`
-            metric to the specific index metrics. Isn't used if `indices` (or `all`)
-            metric isn't specified.  Valid choices: _all, completion, docs,
-            fielddata, query_cache, flush, get, indexing, merge, request_cache,
-            refresh, search, segments, store, warmer, bulk, shard_stats
-        :arg completion_fields: A comma-separated list of fields for the
-            `completion` index metric (supports wildcards)
-        :arg fielddata_fields: A comma-separated list of fields for the
-            `fielddata` index metric (supports wildcards)
-        :arg fields: A comma-separated list of fields for `fielddata`
-            and `completion` index metric (supports wildcards)
-        :arg groups: A comma-separated list of search groups for
-            `search` index metric
-        :arg include_segment_file_sizes: Whether to report the
-            aggregated disk usage of each one of the Lucene index files (only
-            applies if segment stats are requested)
-        :arg include_unloaded_segments: If set to true segment stats
-            will include stats for segments that are not currently loaded into
-            memory
-        :arg level: Return indices stats aggregated at index, node or
-            shard level  Valid choices: indices, node, shards  Default: node
-        :arg timeout: Explicit operation timeout
-        :arg types: A comma-separated list of document types for the
-            `indexing` index metric
+        :param node_id: Comma-separated list of node IDs or names used to limit returned
+            information.
+        :param metric: Limit the information returned to the specified metrics
+        :param index_metric: Limit the information returned for indices metric to the
+            specific index metrics. It can be used only if indices (or all) metric is
+            specified.
+        :param completion_fields: Comma-separated list or wildcard expressions of fields
+            to include in fielddata and suggest statistics.
+        :param fielddata_fields: Comma-separated list or wildcard expressions of fields
+            to include in fielddata statistics.
+        :param fields: Comma-separated list or wildcard expressions of fields to include
+            in the statistics.
+        :param groups: Comma-separated list of search groups to include in the search
+            statistics.
+        :param include_segment_file_sizes: If true, the call reports the aggregated disk
+            usage of each one of the Lucene index files (only applies if segment stats
+            are requested).
+        :param include_unloaded_segments: If set to true segment stats will include stats
+            for segments that are not currently loaded into memory
+        :param level: Indicates whether statistics are aggregated at the cluster, index,
+            or shard level.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
+        :param types: A comma-separated list of document types for the indexing index
+            metric.
         """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "GET",
-            _make_path("_nodes", node_id, "stats", metric, index_metric),
-            params=params,
-            headers=headers,
-        )
+        if (
+            node_id not in SKIP_IN_PATH
+            and metric not in SKIP_IN_PATH
+            and index_metric not in SKIP_IN_PATH
+        ):
+            __path = f"/_nodes/{_quote(node_id)}/stats/{_quote(metric)}/{_quote(index_metric)}"
+        elif node_id not in SKIP_IN_PATH and metric not in SKIP_IN_PATH:
+            __path = f"/_nodes/{_quote(node_id)}/stats/{_quote(metric)}"
+        elif metric not in SKIP_IN_PATH and index_metric not in SKIP_IN_PATH:
+            __path = f"/_nodes/stats/{_quote(metric)}/{_quote(index_metric)}"
+        elif node_id not in SKIP_IN_PATH:
+            __path = f"/_nodes/{_quote(node_id)}/stats"
+        elif metric not in SKIP_IN_PATH:
+            __path = f"/_nodes/stats/{_quote(metric)}"
+        else:
+            __path = "/_nodes/stats"
+        __query: Dict[str, Any] = {}
+        if completion_fields is not None:
+            __query["completion_fields"] = completion_fields
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if fielddata_fields is not None:
+            __query["fielddata_fields"] = fielddata_fields
+        if fields is not None:
+            __query["fields"] = fields
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if groups is not None:
+            __query["groups"] = groups
+        if human is not None:
+            __query["human"] = human
+        if include_segment_file_sizes is not None:
+            __query["include_segment_file_sizes"] = include_segment_file_sizes
+        if include_unloaded_segments is not None:
+            __query["include_unloaded_segments"] = include_unloaded_segments
+        if level is not None:
+            __query["level"] = level
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if types is not None:
+            __query["types"] = types
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
 
-    @query_params()
-    async def clear_repositories_metering_archive(
-        self, node_id, max_archive_version, params=None, headers=None
-    ):
+    @_rewrite_parameters()
+    async def usage(
+        self,
+        *,
+        node_id: Optional[Any] = None,
+        metric: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+    ) -> Any:
         """
-        Removes the archived repositories metering information present in the cluster.
+        Returns low-level information about REST actions usage on nodes.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/clear-repositories-metering-archive-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-usage.html>`_
 
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
-
-        :arg node_id: Comma-separated list of node IDs or names used to
-            limit returned information.
-        :arg max_archive_version: Specifies the maximum archive_version
-            to be cleared from the archive.
+        :param node_id: A comma-separated list of node IDs or names to limit the returned
+            information; use `_local` to return information from the node you're connecting
+            to, leave empty to get information from all nodes
+        :param metric: Limit the information returned to the specified metrics
+        :param timeout: Explicit operation timeout
         """
-        client, params = _deprecated_options(self, params)
-        for param in (node_id, max_archive_version):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return await client._perform_request(
-            "DELETE",
-            _make_path(
-                "_nodes", node_id, "_repositories_metering", max_archive_version
-            ),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params()
-    async def get_repositories_metering_info(self, node_id, params=None, headers=None):
-        """
-        Returns cluster repositories metering information.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-repositories-metering-api.html>`_
-
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
-
-        :arg node_id: A comma-separated list of node IDs or names to
-            limit the returned information.
-        """
-        client, params = _deprecated_options(self, params)
-        if node_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'node_id'.")
-
-        return await client._perform_request(
-            "GET",
-            _make_path("_nodes", node_id, "_repositories_metering"),
-            params=params,
-            headers=headers,
-        )
+        if node_id not in SKIP_IN_PATH and metric not in SKIP_IN_PATH:
+            __path = f"/_nodes/{_quote(node_id)}/usage/{_quote(metric)}"
+        elif node_id not in SKIP_IN_PATH:
+            __path = f"/_nodes/{_quote(node_id)}/usage"
+        elif metric not in SKIP_IN_PATH:
+            __path = f"/_nodes/usage/{_quote(metric)}"
+        else:
+            __path = "/_nodes/usage"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)

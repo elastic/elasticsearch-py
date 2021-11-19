@@ -1,9 +1,0 @@
-{% extends "base" %}
-{% block request %}
-        try:
-            await client._perform_request("{{ api.method }}", {% include "url" %}, params=params, headers=headers{% if api.body %}, body=body{% endif %})
-            return True
-        except TransportError:
-            return False
-{% endblock %}
-

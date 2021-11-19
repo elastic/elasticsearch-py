@@ -16,11 +16,12 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from __future__ import unicode_literals
+import pytest
 
 
-def test_indices_analyze_unicode(sync_client):
-    resp = sync_client.indices.analyze(body='{"text": "привет"}')
+@pytest.mark.parametrize("kwargs", [{"body": {"text": "привет"}}, {"text": "привет"}])
+def test_indices_analyze_unicode(sync_client, kwargs):
+    resp = sync_client.indices.analyze(**kwargs)
     assert resp == {
         "tokens": [
             {

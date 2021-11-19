@@ -117,7 +117,7 @@ async def test_mapbox_vector_tile_response(elasticsearch_url, mvt_setup, ca_cert
     try:
         import mapbox_vector_tile
     except ImportError:
-        return pytest.skip(reason="Requires the 'mapbox-vector-tile' package")
+        return pytest.skip("Requires the 'mapbox-vector-tile' package")
 
     client = AsyncElasticsearch(elasticsearch_url, ca_certs=ca_certs)
 

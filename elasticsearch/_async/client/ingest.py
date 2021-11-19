@@ -15,125 +15,297 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+from typing import Any, Dict, List, Optional, Union
+
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
+from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
 
 class IngestClient(NamespacedClient):
-    @query_params("master_timeout", "summary")
-    async def get_pipeline(self, id=None, params=None, headers=None):
-        """
-        Returns a pipeline.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-pipeline-api.html>`_
-
-        :arg id: Comma separated list of pipeline ids. Wildcards
-            supported
-        :arg master_timeout: Explicit operation timeout for connection
-            to master node
-        :arg summary: Return pipelines without their definitions
-            (default: false)
-        """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "GET", _make_path("_ingest", "pipeline", id), params=params, headers=headers
-        )
-
-    @query_params("if_version", "master_timeout", "timeout")
-    async def put_pipeline(self, id, body, params=None, headers=None):
-        """
-        Creates or updates a pipeline.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-pipeline-api.html>`_
-
-        :arg id: Pipeline ID
-        :arg body: The ingest definition
-        :arg if_version: Required version for optimistic concurrency
-            control for pipeline updates
-        :arg master_timeout: Explicit operation timeout for connection
-            to master node
-        :arg timeout: Explicit operation timeout
-        """
-        client, params = _deprecated_options(self, params)
-        for param in (id, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return await client._perform_request(
-            "PUT",
-            _make_path("_ingest", "pipeline", id),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params("master_timeout", "timeout")
-    async def delete_pipeline(self, id, params=None, headers=None):
+    @_rewrite_parameters()
+    async def delete_pipeline(
+        self,
+        *,
+        id: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+    ) -> Any:
         """
         Deletes a pipeline.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-pipeline-api.html>`_
 
-        :arg id: Pipeline ID
-        :arg master_timeout: Explicit operation timeout for connection
-            to master node
-        :arg timeout: Explicit operation timeout
+        :param id: Pipeline ID
+        :param master_timeout: Explicit operation timeout for connection to master node
+        :param timeout: Explicit operation timeout
         """
-        client, params = _deprecated_options(self, params)
         if id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'id'.")
+            raise ValueError("Empty value passed for parameter 'id'")
+        __path = f"/_ingest/pipeline/{_quote(id)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("DELETE", __target, headers=__headers)
 
-        return await client._perform_request(
-            "DELETE",
-            _make_path("_ingest", "pipeline", id),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params("verbose")
-    async def simulate(self, body, id=None, params=None, headers=None):
-        """
-        Allows to simulate a pipeline with example documents.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/simulate-pipeline-api.html>`_
-
-        :arg body: The simulate definition
-        :arg id: Pipeline ID
-        :arg verbose: Verbose mode. Display data output for each
-            processor in executed pipeline
-        """
-        client, params = _deprecated_options(self, params)
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
-
-        return await client._perform_request(
-            "POST",
-            _make_path("_ingest", "pipeline", id, "_simulate"),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params()
-    async def processor_grok(self, params=None, headers=None):
-        """
-        Returns a list of the built-in patterns.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/grok-processor.html#grok-processor-rest-get>`_
-        """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "GET", "/_ingest/processor/grok", params=params, headers=headers
-        )
-
-    @query_params()
-    async def geo_ip_stats(self, params=None, headers=None):
+    @_rewrite_parameters()
+    async def geo_ip_stats(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Returns statistical information about geoip databases
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/geoip-stats-api.html>`_
         """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "GET", "/_ingest/geoip/stats", params=params, headers=headers
+        __path = "/_ingest/geoip/stats"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def get_pipeline(
+        self,
+        *,
+        id: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        summary: Optional[bool] = None,
+    ) -> Any:
+        """
+        Returns a pipeline.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-pipeline-api.html>`_
+
+        :param id: Comma separated list of pipeline ids. Wildcards supported
+        :param master_timeout: Explicit operation timeout for connection to master node
+        :param summary: Return pipelines without their definitions (default: false)
+        """
+        if id not in SKIP_IN_PATH:
+            __path = f"/_ingest/pipeline/{_quote(id)}"
+        else:
+            __path = "/_ingest/pipeline"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if summary is not None:
+            __query["summary"] = summary
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def processor_grok(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Returns a list of the built-in patterns.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/grok-processor.html#grok-processor-rest-get>`_
+        """
+        __path = "/_ingest/processor/grok"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters(
+        body_fields=True,
+        parameter_aliases={"_meta": "meta"},
+    )
+    async def put_pipeline(
+        self,
+        *,
+        id: Any,
+        description: Optional[str] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        meta: Optional[Any] = None,
+        on_failure: Optional[List[Any]] = None,
+        pretty: Optional[bool] = None,
+        processors: Optional[List[Any]] = None,
+        timeout: Optional[Any] = None,
+        version: Optional[Any] = None,
+    ) -> Any:
+        """
+        Creates or updates a pipeline.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-pipeline-api.html>`_
+
+        :param id: ID of the ingest pipeline to create or update.
+        :param description: Description of the ingest pipeline.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param meta: Optional metadata about the ingest pipeline. May have any contents.
+            This map is not automatically generated by Elasticsearch.
+        :param on_failure: Processors to run immediately after a processor failure. Each
+            processor supports a processor-level `on_failure` value. If a processor without
+            an `on_failure` value fails, Elasticsearch uses this pipeline-level parameter
+            as a fallback. The processors in this parameter run sequentially in the order
+            specified. Elasticsearch will not attempt to run the pipeline's remaining
+            processors.
+        :param processors: Processors used to perform transformations on documents before
+            indexing. Processors run sequentially in the order specified.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
+        :param version: Version number used by external systems to track ingest pipelines.
+            This parameter is intended for external systems only. Elasticsearch does
+            not use or validate pipeline version numbers.
+        """
+        if id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'id'")
+        __path = f"/_ingest/pipeline/{_quote(id)}"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if description is not None:
+            __body["description"] = description
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if meta is not None:
+            __body["_meta"] = meta
+        if on_failure is not None:
+            __body["on_failure"] = on_failure
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if processors is not None:
+            __body["processors"] = processors
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if version is not None:
+            __body["version"] = version
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self._perform_request(
+            "PUT", __target, headers=__headers, body=__body
+        )
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def simulate(
+        self,
+        *,
+        id: Optional[Any] = None,
+        docs: Optional[List[Any]] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pipeline: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        verbose: Optional[bool] = None,
+    ) -> Any:
+        """
+        Allows to simulate a pipeline with example documents.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/simulate-pipeline-api.html>`_
+
+        :param id: Pipeline ID
+        :param docs:
+        :param pipeline:
+        :param verbose: Verbose mode. Display data output for each processor in executed
+            pipeline
+        """
+        if id not in SKIP_IN_PATH:
+            __path = f"/_ingest/pipeline/{_quote(id)}/_simulate"
+        else:
+            __path = "/_ingest/pipeline/_simulate"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if docs is not None:
+            __body["docs"] = docs
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pipeline is not None:
+            __body["pipeline"] = pipeline
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if verbose is not None:
+            __query["verbose"] = verbose
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
         )

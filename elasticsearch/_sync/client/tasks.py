@@ -15,103 +15,177 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+from typing import Any, Dict, List, Optional, Union
+
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
+from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
 
 class TasksClient(NamespacedClient):
-    @query_params(
-        "actions",
-        "detailed",
-        "group_by",
-        "nodes",
-        "parent_task_id",
-        "timeout",
-        "wait_for_completion",
-    )
-    def list(self, params=None, headers=None):
-        """
-        Returns a list of tasks.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
-
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
-
-        :arg actions: A comma-separated list of actions that should be
-            returned. Leave empty to return all.
-        :arg detailed: Return detailed task information (default: false)
-        :arg group_by: Group tasks by nodes or parent/child
-            relationships  Valid choices: nodes, parents, none  Default: nodes
-        :arg nodes: A comma-separated list of node IDs or names to limit
-            the returned information; use `_local` to return information from the
-            node you're connecting to, leave empty to get information from all nodes
-        :arg parent_task_id: Return tasks with specified parent task id
-            (node_id:task_number). Set to -1 to return all.
-        :arg timeout: Explicit operation timeout
-        :arg wait_for_completion: Wait for the matching tasks to
-            complete (default: false)
-        """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request("GET", "/_tasks", params=params, headers=headers)
-
-    @query_params("actions", "nodes", "parent_task_id", "wait_for_completion")
-    def cancel(self, task_id=None, params=None, headers=None):
+    @_rewrite_parameters()
+    def cancel(
+        self,
+        *,
+        task_id: Optional[Any] = None,
+        actions: Optional[Union[List[str], str]] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        nodes: Optional[List[str]] = None,
+        parent_task_id: Optional[str] = None,
+        pretty: Optional[bool] = None,
+        wait_for_completion: Optional[bool] = None,
+    ) -> Any:
         """
         Cancels a task, if it can be cancelled through an API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
 
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
-
-        :arg task_id: Cancel the task with specified task id
-            (node_id:task_number)
-        :arg actions: A comma-separated list of actions that should be
-            cancelled. Leave empty to cancel all.
-        :arg nodes: A comma-separated list of node IDs or names to limit
-            the returned information; use `_local` to return information from the
-            node you're connecting to, leave empty to get information from all nodes
-        :arg parent_task_id: Cancel tasks with specified parent task id
-            (node_id:task_number). Set to -1 to cancel all.
-        :arg wait_for_completion: Should the request block until the
-            cancellation of the task and its descendant tasks is completed. Defaults
-            to false
+        :param task_id: Cancel the task with specified task id (node_id:task_number)
+        :param actions: A comma-separated list of actions that should be cancelled. Leave
+            empty to cancel all.
+        :param nodes: A comma-separated list of node IDs or names to limit the returned
+            information; use `_local` to return information from the node you're connecting
+            to, leave empty to get information from all nodes
+        :param parent_task_id: Cancel tasks with specified parent task id (node_id:task_number).
+            Set to -1 to cancel all.
+        :param wait_for_completion: Should the request block until the cancellation of
+            the task and its descendant tasks is completed. Defaults to false
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "POST",
-            _make_path("_tasks", task_id, "_cancel"),
-            params=params,
-            headers=headers,
-        )
+        if task_id not in SKIP_IN_PATH:
+            __path = f"/_tasks/{_quote(task_id)}/_cancel"
+        else:
+            __path = "/_tasks/_cancel"
+        __query: Dict[str, Any] = {}
+        if actions is not None:
+            __query["actions"] = actions
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if nodes is not None:
+            __query["nodes"] = nodes
+        if parent_task_id is not None:
+            __query["parent_task_id"] = parent_task_id
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if wait_for_completion is not None:
+            __query["wait_for_completion"] = wait_for_completion
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("POST", __target, headers=__headers)
 
-    @query_params("timeout", "wait_for_completion")
-    def get(self, task_id, params=None, headers=None):
+    @_rewrite_parameters()
+    def get(
+        self,
+        *,
+        task_id: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+        wait_for_completion: Optional[bool] = None,
+    ) -> Any:
         """
         Returns information about a task.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
 
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
-
-        :arg task_id: Return the task with specified id
-            (node_id:task_number)
-        :arg timeout: Explicit operation timeout
-        :arg wait_for_completion: Wait for the matching tasks to
-            complete (default: false)
+        :param task_id: Return the task with specified id (node_id:task_number)
+        :param timeout: Explicit operation timeout
+        :param wait_for_completion: Wait for the matching tasks to complete (default:
+            false)
         """
-        client, params = _deprecated_options(self, params)
         if task_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'task_id'.")
+            raise ValueError("Empty value passed for parameter 'task_id'")
+        __path = f"/_tasks/{_quote(task_id)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if wait_for_completion is not None:
+            __query["wait_for_completion"] = wait_for_completion
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
 
-        return client._perform_request(
-            "GET", _make_path("_tasks", task_id), params=params, headers=headers
-        )
+    @_rewrite_parameters()
+    def list(
+        self,
+        *,
+        actions: Optional[Union[List[str], str]] = None,
+        detailed: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        group_by: Optional[Any] = None,
+        human: Optional[bool] = None,
+        nodes: Optional[List[str]] = None,
+        parent_task_id: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+        wait_for_completion: Optional[bool] = None,
+    ) -> Any:
+        """
+        Returns a list of tasks.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
+
+        :param actions: A comma-separated list of actions that should be returned. Leave
+            empty to return all.
+        :param detailed: Return detailed task information (default: false)
+        :param group_by: Group tasks by nodes or parent/child relationships
+        :param nodes: A comma-separated list of node IDs or names to limit the returned
+            information; use `_local` to return information from the node you're connecting
+            to, leave empty to get information from all nodes
+        :param parent_task_id: Return tasks with specified parent task id (node_id:task_number).
+            Set to -1 to return all.
+        :param timeout: Explicit operation timeout
+        :param wait_for_completion: Wait for the matching tasks to complete (default:
+            false)
+        """
+        __path = "/_tasks"
+        __query: Dict[str, Any] = {}
+        if actions is not None:
+            __query["actions"] = actions
+        if detailed is not None:
+            __query["detailed"] = detailed
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if group_by is not None:
+            __query["group_by"] = group_by
+        if human is not None:
+            __query["human"] = human
+        if nodes is not None:
+            __query["nodes"] = nodes
+        if parent_task_id is not None:
+            __query["parent_task_id"] = parent_task_id
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if wait_for_completion is not None:
+            __query["wait_for_completion"] = wait_for_completion
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
