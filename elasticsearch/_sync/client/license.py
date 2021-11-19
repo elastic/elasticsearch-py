@@ -15,111 +15,274 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+from typing import Any, Dict, List, Optional, Union
+
 from ._base import NamespacedClient
-from .utils import _deprecated_options, query_params
+from .utils import _quote_query, _rewrite_parameters
 
 
 class LicenseClient(NamespacedClient):
-    @query_params()
-    def delete(self, params=None, headers=None):
+    @_rewrite_parameters()
+    def delete(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Deletes licensing information for the cluster
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-license.html>`_
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "DELETE", "/_license", params=params, headers=headers
-        )
+        __path = "/_license"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("DELETE", __target, headers=__headers)
 
-    @query_params("accept_enterprise", "local")
-    def get(self, params=None, headers=None):
+    @_rewrite_parameters()
+    def get(
+        self,
+        *,
+        accept_enterprise: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        local: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Retrieves licensing information for the cluster
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-license.html>`_
 
-        :arg accept_enterprise: Supported for backwards compatibility
-            with 7.x. If this param is used it must be set to true
-        :arg local: Return local information, do not retrieve the state
-            from master node (default: false)
+        :param accept_enterprise: Supported for backwards compatibility with 7.x. If
+            this param is used it must be set to true
+        :param local: Return local information, do not retrieve the state from master
+            node (default: false)
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", "/_license", params=params, headers=headers
-        )
+        __path = "/_license"
+        __query: Dict[str, Any] = {}
+        if accept_enterprise is not None:
+            __query["accept_enterprise"] = accept_enterprise
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if local is not None:
+            __query["local"] = local
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
 
-    @query_params()
-    def get_basic_status(self, params=None, headers=None):
+    @_rewrite_parameters()
+    def get_basic_status(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Retrieves information about the status of the basic license.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-basic-status.html>`_
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", "/_license/basic_status", params=params, headers=headers
-        )
+        __path = "/_license/basic_status"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
 
-    @query_params()
-    def get_trial_status(self, params=None, headers=None):
+    @_rewrite_parameters()
+    def get_trial_status(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Retrieves information about the status of the trial license.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-trial-status.html>`_
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", "/_license/trial_status", params=params, headers=headers
-        )
+        __path = "/_license/trial_status"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
 
-    @query_params("acknowledge")
-    def post(self, body=None, params=None, headers=None):
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    def post(
+        self,
+        *,
+        acknowledge: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        license: Optional[Any] = None,
+        licenses: Optional[List[Any]] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Updates the license for the cluster.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/update-license.html>`_
 
-        :arg body: licenses to be installed
-        :arg acknowledge: whether the user has acknowledged acknowledge
-            messages (default: false)
+        :param acknowledge: whether the user has acknowledged acknowledge messages (default:
+            false)
+        :param license:
+        :param licenses:
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "PUT", "/_license", params=params, headers=headers, body=body
-        )
+        __path = "/_license"
+        __query: Dict[str, Any] = {}
+        __body: Dict[str, Any] = {}
+        if acknowledge is not None:
+            __query["acknowledge"] = acknowledge
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if license is not None:
+            __body["license"] = license
+        if licenses is not None:
+            __body["licenses"] = licenses
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)
 
-    @query_params("acknowledge")
-    def post_start_basic(self, params=None, headers=None):
+    @_rewrite_parameters()
+    def post_start_basic(
+        self,
+        *,
+        acknowledge: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Starts an indefinite basic license.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/start-basic.html>`_
 
-        :arg acknowledge: whether the user has acknowledged acknowledge
-            messages (default: false)
+        :param acknowledge: whether the user has acknowledged acknowledge messages (default:
+            false)
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "POST", "/_license/start_basic", params=params, headers=headers
-        )
+        __path = "/_license/start_basic"
+        __query: Dict[str, Any] = {}
+        if acknowledge is not None:
+            __query["acknowledge"] = acknowledge
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("POST", __target, headers=__headers)
 
-    @query_params("acknowledge", "doc_type")
-    def post_start_trial(self, params=None, headers=None):
+    @_rewrite_parameters()
+    def post_start_trial(
+        self,
+        *,
+        acknowledge: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        type_query_string: Optional[str] = None,
+    ) -> Any:
         """
         starts a limited time trial license.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/start-trial.html>`_
 
-        :arg acknowledge: whether the user has acknowledged acknowledge
-            messages (default: false)
-        :arg doc_type: The type of trial license to generate (default:
-            "trial")
+        :param acknowledge: whether the user has acknowledged acknowledge messages (default:
+            false)
+        :param type_query_string:
         """
-        client, params = _deprecated_options(self, params)
-        if params and "doc_type" in params:
-            params["type"] = params.pop("doc_type")
-
-        return client._perform_request(
-            "POST", "/_license/start_trial", params=params, headers=headers
-        )
+        __path = "/_license/start_trial"
+        __query: Dict[str, Any] = {}
+        if acknowledge is not None:
+            __query["acknowledge"] = acknowledge
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if type_query_string is not None:
+            __query["type_query_string"] = type_query_string
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("POST", __target, headers=__headers)

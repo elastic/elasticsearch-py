@@ -15,99 +15,202 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+from typing import Any, Dict, List, Optional, Union
+
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
+from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
 
 class EnrichClient(NamespacedClient):
-    @query_params()
-    def delete_policy(self, name, params=None, headers=None):
+    @_rewrite_parameters()
+    def delete_policy(
+        self,
+        *,
+        name: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Deletes an existing enrich policy and its enrich index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-enrich-policy-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-enrich-policy-api.html>`_
 
-        :arg name: The name of the enrich policy
+        :param name: The name of the enrich policy
         """
-        client, params = _deprecated_options(self, params)
         if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'name'.")
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_enrich/policy/{_quote(name)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("DELETE", __target, headers=__headers)
 
-        return client._perform_request(
-            "DELETE",
-            _make_path("_enrich", "policy", name),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params("wait_for_completion")
-    def execute_policy(self, name, params=None, headers=None):
+    @_rewrite_parameters()
+    def execute_policy(
+        self,
+        *,
+        name: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        wait_for_completion: Optional[bool] = None,
+    ) -> Any:
         """
         Creates the enrich index for an existing enrich policy.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/execute-enrich-policy-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/execute-enrich-policy-api.html>`_
 
-        :arg name: The name of the enrich policy
-        :arg wait_for_completion: Should the request should block until
-            the execution is complete.  Default: True
+        :param name: The name of the enrich policy
+        :param wait_for_completion: Should the request should block until the execution
+            is complete.
         """
-        client, params = _deprecated_options(self, params)
         if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'name'.")
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_enrich/policy/{_quote(name)}/_execute"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if wait_for_completion is not None:
+            __query["wait_for_completion"] = wait_for_completion
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("PUT", __target, headers=__headers)
 
-        return client._perform_request(
-            "PUT",
-            _make_path("_enrich", "policy", name, "_execute"),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params()
-    def get_policy(self, name=None, params=None, headers=None):
+    @_rewrite_parameters()
+    def get_policy(
+        self,
+        *,
+        name: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Gets information about an enrich policy.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-enrich-policy-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-enrich-policy-api.html>`_
 
-        :arg name: A comma-separated list of enrich policy names
+        :param name: A comma-separated list of enrich policy names
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", _make_path("_enrich", "policy", name), params=params, headers=headers
-        )
+        if name not in SKIP_IN_PATH:
+            __path = f"/_enrich/policy/{_quote(name)}"
+        else:
+            __path = "/_enrich/policy"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
 
-    @query_params()
-    def put_policy(self, name, body, params=None, headers=None):
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    def put_policy(
+        self,
+        *,
+        name: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        geo_match: Optional[Any] = None,
+        human: Optional[bool] = None,
+        match: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Creates a new enrich policy.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-enrich-policy-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/put-enrich-policy-api.html>`_
 
-        :arg name: The name of the enrich policy
-        :arg body: The enrich policy to register
+        :param name: The name of the enrich policy
+        :param geo_match:
+        :param match:
         """
-        client, params = _deprecated_options(self, params)
-        for param in (name, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_enrich/policy/{_quote(name)}"
+        __query: Dict[str, Any] = {}
+        __body: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if geo_match is not None:
+            __body["geo_match"] = geo_match
+        if human is not None:
+            __query["human"] = human
+        if match is not None:
+            __body["match"] = match
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)
 
-        return client._perform_request(
-            "PUT",
-            _make_path("_enrich", "policy", name),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params()
-    def stats(self, params=None, headers=None):
+    @_rewrite_parameters()
+    def stats(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Gets enrich coordinator statistics and information about enrich policies that
         are currently executing.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/enrich-stats-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/enrich-stats-api.html>`_
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", "/_enrich/_stats", params=params, headers=headers
-        )
+        __path = "/_enrich/_stats"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("GET", __target, headers=__headers)

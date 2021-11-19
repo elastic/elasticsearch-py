@@ -15,1611 +15,3345 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+from typing import Any, Dict, List, Optional, Union
+
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
+from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
 
 class IndicesClient(NamespacedClient):
-    @query_params()
-    async def analyze(self, body=None, index=None, params=None, headers=None):
+    @_rewrite_parameters()
+    async def add_block(
+        self,
+        *,
+        index: Any,
+        block: Any,
+        allow_no_indices: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        ignore_unavailable: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+    ) -> Any:
+        """
+        Adds a block to an index.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/index-modules-blocks.html>`_
+
+        :param index: A comma separated list of indices to add a block to
+        :param block: The block to add (one of read, write, read_only or metadata)
+        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
+            into no concrete indices. (This includes `_all` string or when no indices
+            have been specified)
+        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :param ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
+        :param master_timeout: Specify timeout for connection to master
+        :param timeout: Explicit operation timeout
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'index'")
+        if block in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'block'")
+        __path = f"/{_quote(index)}/_block/{_quote(block)}"
+        __query: Dict[str, Any] = {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("PUT", __target, headers=__headers)
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def analyze(
+        self,
+        *,
+        index: Optional[Any] = None,
+        analyzer: Optional[str] = None,
+        attributes: Optional[List[str]] = None,
+        char_filter: Optional[List[Union[Any, str]]] = None,
+        error_trace: Optional[bool] = None,
+        explain: Optional[bool] = None,
+        field: Optional[Any] = None,
+        filter: Optional[List[Union[Any, str]]] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        normalizer: Optional[str] = None,
+        pretty: Optional[bool] = None,
+        text: Optional[Any] = None,
+        tokenizer: Optional[Union[Any, str]] = None,
+    ) -> Any:
         """
         Performs the analysis process on a text and return the tokens breakdown of the
         text.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-analyze.html>`_
 
-        :arg body: Define analyzer/tokenizer parameters and the text on
-            which the analysis should be performed
-        :arg index: The name of the index to scope the operation
+        :param index: The name of the index to scope the operation
+        :param analyzer:
+        :param attributes:
+        :param char_filter:
+        :param explain:
+        :param field:
+        :param filter:
+        :param normalizer:
+        :param text:
+        :param tokenizer:
         """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "POST",
-            _make_path(index, "_analyze"),
-            params=params,
-            headers=headers,
-            body=body,
+        if index not in SKIP_IN_PATH:
+            __path = f"/{_quote(index)}/_analyze"
+        else:
+            __path = "/_analyze"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if analyzer is not None:
+            __body["analyzer"] = analyzer
+        if attributes is not None:
+            __body["attributes"] = attributes
+        if char_filter is not None:
+            __body["char_filter"] = char_filter
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if explain is not None:
+            __body["explain"] = explain
+        if field is not None:
+            __body["field"] = field
+        if filter is not None:
+            __body["filter"] = filter
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if normalizer is not None:
+            __body["normalizer"] = normalizer
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if text is not None:
+            __body["text"] = text
+        if tokenizer is not None:
+            __body["tokenizer"] = tokenizer
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
         )
 
-    @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable")
-    async def refresh(self, index=None, params=None, headers=None):
-        """
-        Performs the refresh operation in one or more indices.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-refresh.html>`_
-
-        :arg index: A comma-separated list of index names; use `_all` or
-            empty string to perform the operation on all indices
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
-        :arg ignore_unavailable: Whether specified concrete indices
-            should be ignored when unavailable (missing or closed)
-        """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "POST", _make_path(index, "_refresh"), params=params, headers=headers
-        )
-
-    @query_params(
-        "allow_no_indices",
-        "expand_wildcards",
-        "force",
-        "ignore_unavailable",
-        "wait_if_ongoing",
-    )
-    async def flush(self, index=None, params=None, headers=None):
-        """
-        Performs the flush operation on one or more indices.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-flush.html>`_
-
-        :arg index: A comma-separated list of index names; use `_all` or
-            empty string for all indices
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
-        :arg force: Whether a flush should be forced even if it is not
-            necessarily needed ie. if no changes will be committed to the index.
-            This is useful if transaction log IDs should be incremented even if no
-            uncommitted changes are present. (This setting can be considered as
-            internal)
-        :arg ignore_unavailable: Whether specified concrete indices
-            should be ignored when unavailable (missing or closed)
-        :arg wait_if_ongoing: If set to true the flush operation will
-            block until the flush can be executed if another flush operation is
-            already executing. The default is true. If set to false the flush will
-            be skipped iff if another flush operation is already running.
-        """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "POST", _make_path(index, "_flush"), params=params, headers=headers
-        )
-
-    @query_params("master_timeout", "timeout", "wait_for_active_shards")
-    async def create(self, index, body=None, params=None, headers=None):
-        """
-        Creates an index with optional settings and mappings.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-create-index.html>`_
-
-        :arg index: The name of the index
-        :arg body: The configuration for the index (`settings` and
-            `mappings`)
-        :arg master_timeout: Specify timeout for connection to master
-        :arg timeout: Explicit operation timeout
-        :arg wait_for_active_shards: Set the number of active shards to
-            wait for before the operation returns.
-        """
-        client, params = _deprecated_options(self, params)
-        if index in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'index'.")
-
-        return await client._perform_request(
-            "PUT", _make_path(index), params=params, headers=headers, body=body
-        )
-
-    @query_params("master_timeout", "timeout", "wait_for_active_shards")
-    async def clone(self, index, target, body=None, params=None, headers=None):
-        """
-        Clones an index
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-clone-index.html>`_
-
-        :arg index: The name of the source index to clone
-        :arg target: The name of the target index to clone into
-        :arg body: The configuration for the target index (`settings`
-            and `aliases`)
-        :arg master_timeout: Specify timeout for connection to master
-        :arg timeout: Explicit operation timeout
-        :arg wait_for_active_shards: Set the number of active shards to
-            wait for on the cloned index before the operation returns.
-        """
-        client, params = _deprecated_options(self, params)
-        for param in (index, target):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return await client._perform_request(
-            "PUT",
-            _make_path(index, "_clone", target),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params(
-        "allow_no_indices",
-        "expand_wildcards",
-        "flat_settings",
-        "ignore_unavailable",
-        "include_defaults",
-        "local",
-        "master_timeout",
-    )
-    async def get(self, index, params=None, headers=None):
-        """
-        Returns information about one or more indices.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-get-index.html>`_
-
-        :arg index: A comma-separated list of index names
-        :arg allow_no_indices: Ignore if a wildcard expression resolves
-            to no concrete indices (default: false)
-        :arg expand_wildcards: Whether wildcard expressions should get
-            expanded to open or closed indices (default: open)  Valid choices: open,
-            closed, hidden, none, all  Default: open
-        :arg flat_settings: Return settings in flat format (default:
-            false)
-        :arg ignore_unavailable: Ignore unavailable indexes (default:
-            false)
-        :arg include_defaults: Whether to return all default setting for
-            each of the indices.
-        :arg local: Return local information, do not retrieve the state
-            from master node (default: false)
-        :arg master_timeout: Specify timeout for connection to master
-        """
-        client, params = _deprecated_options(self, params)
-        if index in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'index'.")
-
-        return await client._perform_request(
-            "GET", _make_path(index), params=params, headers=headers
-        )
-
-    @query_params(
-        "allow_no_indices",
-        "expand_wildcards",
-        "ignore_unavailable",
-        "master_timeout",
-        "timeout",
-        "wait_for_active_shards",
-    )
-    async def open(self, index, params=None, headers=None):
-        """
-        Opens an index.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-open-close.html>`_
-
-        :arg index: A comma separated list of indices to open
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: closed
-        :arg ignore_unavailable: Whether specified concrete indices
-            should be ignored when unavailable (missing or closed)
-        :arg master_timeout: Specify timeout for connection to master
-        :arg timeout: Explicit operation timeout
-        :arg wait_for_active_shards: Sets the number of active shards to
-            wait for before the operation returns.
-        """
-        client, params = _deprecated_options(self, params)
-        if index in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'index'.")
-
-        return await client._perform_request(
-            "POST", _make_path(index, "_open"), params=params, headers=headers
-        )
-
-    @query_params(
-        "allow_no_indices",
-        "expand_wildcards",
-        "ignore_unavailable",
-        "master_timeout",
-        "timeout",
-        "wait_for_active_shards",
-    )
-    async def close(self, index, params=None, headers=None):
-        """
-        Closes an index.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-open-close.html>`_
-
-        :arg index: A comma separated list of indices to close
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
-        :arg ignore_unavailable: Whether specified concrete indices
-            should be ignored when unavailable (missing or closed)
-        :arg master_timeout: Specify timeout for connection to master
-        :arg timeout: Explicit operation timeout
-        :arg wait_for_active_shards: Sets the number of active shards to
-            wait for before the operation returns.
-        """
-        client, params = _deprecated_options(self, params)
-        if index in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'index'.")
-
-        return await client._perform_request(
-            "POST", _make_path(index, "_close"), params=params, headers=headers
-        )
-
-    @query_params(
-        "allow_no_indices",
-        "expand_wildcards",
-        "ignore_unavailable",
-        "master_timeout",
-        "timeout",
-    )
-    async def delete(self, index, params=None, headers=None):
-        """
-        Deletes an index.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-delete-index.html>`_
-
-        :arg index: A comma-separated list of indices to delete; use
-            `_all` or `*` string to delete all indices
-        :arg allow_no_indices: Ignore if a wildcard expression resolves
-            to no concrete indices (default: false)
-        :arg expand_wildcards: Whether wildcard expressions should get
-            expanded to open, closed, or hidden indices  Valid choices: open,
-            closed, hidden, none, all  Default: open,closed
-        :arg ignore_unavailable: Ignore unavailable indexes (default:
-            false)
-        :arg master_timeout: Specify timeout for connection to master
-        :arg timeout: Explicit operation timeout
-        """
-        client, params = _deprecated_options(self, params)
-        if index in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'index'.")
-
-        return await client._perform_request(
-            "DELETE", _make_path(index), params=params, headers=headers
-        )
-
-    @query_params(
-        "allow_no_indices",
-        "expand_wildcards",
-        "flat_settings",
-        "ignore_unavailable",
-        "include_defaults",
-        "local",
-    )
-    async def exists(self, index, params=None, headers=None):
-        """
-        Returns information about whether a particular index exists.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-exists.html>`_
-
-        :arg index: A comma-separated list of index names
-        :arg allow_no_indices: Ignore if a wildcard expression resolves
-            to no concrete indices (default: false)
-        :arg expand_wildcards: Whether wildcard expressions should get
-            expanded to open or closed indices (default: open)  Valid choices: open,
-            closed, hidden, none, all  Default: open
-        :arg flat_settings: Return settings in flat format (default:
-            false)
-        :arg ignore_unavailable: Ignore unavailable indexes (default:
-            false)
-        :arg include_defaults: Whether to return all default setting for
-            each of the indices.
-        :arg local: Return local information, do not retrieve the state
-            from master node (default: false)
-        """
-        client, params = _deprecated_options(self, params)
-        if index in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'index'.")
-
-        return await client._perform_request(
-            "HEAD", _make_path(index), params=params, headers=headers
-        )
-
-    @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable", "local")
-    async def exists_type(self, index, doc_type, params=None, headers=None):
-        """
-        Returns information about whether a particular document type exists.
-        (DEPRECATED)
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-types-exists.html>`_
-
-        :arg index: A comma-separated list of index names; use `_all` to
-            check the types across all indices
-        :arg doc_type: A comma-separated list of document types to check
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
-        :arg ignore_unavailable: Whether specified concrete indices
-            should be ignored when unavailable (missing or closed)
-        :arg local: Return local information, do not retrieve the state
-            from master node (default: false)
-        """
-        client, params = _deprecated_options(self, params)
-        for param in (index, doc_type):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return await client._perform_request(
-            "HEAD",
-            _make_path(index, "_mapping", doc_type),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params(
-        "allow_no_indices",
-        "expand_wildcards",
-        "ignore_unavailable",
-        "master_timeout",
-        "timeout",
-        "write_index_only",
-    )
-    async def put_mapping(self, index, body, params=None, headers=None):
-        """
-        Updates the index mappings.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-put-mapping.html>`_
-
-        :arg index: A comma-separated list of index names the mapping
-            should be added to (supports wildcards); use `_all` or omit to add the
-            mapping on all indices.
-        :arg body: The mapping definition
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
-        :arg ignore_unavailable: Whether specified concrete indices
-            should be ignored when unavailable (missing or closed)
-        :arg master_timeout: Specify timeout for connection to master
-        :arg timeout: Explicit operation timeout
-        :arg write_index_only: When true, applies mappings only to the
-            write index of an alias or data stream
-        """
-        client, params = _deprecated_options(self, params)
-        for param in (index, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return await client._perform_request(
-            "PUT",
-            _make_path(index, "_mapping"),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params(
-        "allow_no_indices",
-        "expand_wildcards",
-        "ignore_unavailable",
-        "local",
-        "master_timeout",
-    )
-    async def get_mapping(self, index=None, params=None, headers=None):
-        """
-        Returns mappings for one or more indices.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-get-mapping.html>`_
-
-        :arg index: A comma-separated list of index names
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
-        :arg ignore_unavailable: Whether specified concrete indices
-            should be ignored when unavailable (missing or closed)
-        :arg local: Return local information, do not retrieve the state
-            from master node (default: false)
-        :arg master_timeout: Specify timeout for connection to master
-        """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "GET", _make_path(index, "_mapping"), params=params, headers=headers
-        )
-
-    @query_params("master_timeout", "timeout")
-    async def put_alias(self, index, name, body=None, params=None, headers=None):
-        """
-        Creates or updates an alias.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-aliases.html>`_
-
-        :arg index: A comma-separated list of index names the alias
-            should point to (supports wildcards); use `_all` to perform the
-            operation on all indices.
-        :arg name: The name of the alias to be created or updated
-        :arg body: The settings for the alias, such as `routing` or
-            `filter`
-        :arg master_timeout: Specify timeout for connection to master
-        :arg timeout: Explicit timestamp for the document
-        """
-        client, params = _deprecated_options(self, params)
-        for param in (index, name):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return await client._perform_request(
-            "PUT",
-            _make_path(index, "_alias", name),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable", "local")
-    async def exists_alias(self, name, index=None, params=None, headers=None):
-        """
-        Returns information about whether a particular alias exists.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-aliases.html>`_
-
-        :arg name: A comma-separated list of alias names to return
-        :arg index: A comma-separated list of index names to filter
-            aliases
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: all
-        :arg ignore_unavailable: Whether specified concrete indices
-            should be ignored when unavailable (missing or closed)
-        :arg local: Return local information, do not retrieve the state
-            from master node (default: false)
-        """
-        client, params = _deprecated_options(self, params)
-        if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'name'.")
-
-        return await client._perform_request(
-            "HEAD", _make_path(index, "_alias", name), params=params, headers=headers
-        )
-
-    @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable", "local")
-    async def get_alias(self, index=None, name=None, params=None, headers=None):
-        """
-        Returns an alias.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-aliases.html>`_
-
-        :arg index: A comma-separated list of index names to filter
-            aliases
-        :arg name: A comma-separated list of alias names to return
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: all
-        :arg ignore_unavailable: Whether specified concrete indices
-            should be ignored when unavailable (missing or closed)
-        :arg local: Return local information, do not retrieve the state
-            from master node (default: false)
-        """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "GET", _make_path(index, "_alias", name), params=params, headers=headers
-        )
-
-    @query_params("master_timeout", "timeout")
-    async def update_aliases(self, body, params=None, headers=None):
-        """
-        Updates index aliases.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-aliases.html>`_
-
-        :arg body: The definition of `actions` to perform
-        :arg master_timeout: Specify timeout for connection to master
-        :arg timeout: Request timeout
-        """
-        client, params = _deprecated_options(self, params)
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
-
-        return await client._perform_request(
-            "POST", "/_aliases", params=params, headers=headers, body=body
-        )
-
-    @query_params("master_timeout", "timeout")
-    async def delete_alias(self, index, name, params=None, headers=None):
-        """
-        Deletes an alias.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-aliases.html>`_
-
-        :arg index: A comma-separated list of index names (supports
-            wildcards); use `_all` for all indices
-        :arg name: A comma-separated list of aliases to delete (supports
-            wildcards); use `_all` to delete all aliases for the specified indices.
-        :arg master_timeout: Specify timeout for connection to master
-        :arg timeout: Explicit timestamp for the document
-        """
-        client, params = _deprecated_options(self, params)
-        for param in (index, name):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return await client._perform_request(
-            "DELETE", _make_path(index, "_alias", name), params=params, headers=headers
-        )
-
-    @query_params("create", "master_timeout", "order")
-    async def put_template(self, name, body, params=None, headers=None):
-        """
-        Creates or updates an index template.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
-
-        :arg name: The name of the template
-        :arg body: The template definition
-        :arg create: Whether the index template should only be added if
-            new or can also replace an existing one
-        :arg master_timeout: Specify timeout for connection to master
-        :arg order: The order for this template when merging multiple
-            matching ones (higher numbers are merged later, overriding the lower
-            numbers)
-        """
-        client, params = _deprecated_options(self, params)
-        for param in (name, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return await client._perform_request(
-            "PUT",
-            _make_path("_template", name),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params("flat_settings", "local", "master_timeout")
-    async def exists_template(self, name, params=None, headers=None):
-        """
-        Returns information about whether a particular index template exists.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
-
-        :arg name: The comma separated names of the index templates
-        :arg flat_settings: Return settings in flat format (default:
-            false)
-        :arg local: Return local information, do not retrieve the state
-            from master node (default: false)
-        :arg master_timeout: Explicit operation timeout for connection
-            to master node
-        """
-        client, params = _deprecated_options(self, params)
-        if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'name'.")
-
-        return await client._perform_request(
-            "HEAD", _make_path("_template", name), params=params, headers=headers
-        )
-
-    @query_params("flat_settings", "local", "master_timeout")
-    async def get_template(self, name=None, params=None, headers=None):
-        """
-        Returns an index template.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
-
-        :arg name: The comma separated names of the index templates
-        :arg flat_settings: Return settings in flat format (default:
-            false)
-        :arg local: Return local information, do not retrieve the state
-            from master node (default: false)
-        :arg master_timeout: Explicit operation timeout for connection
-            to master node
-        """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "GET", _make_path("_template", name), params=params, headers=headers
-        )
-
-    @query_params("master_timeout", "timeout")
-    async def delete_template(self, name, params=None, headers=None):
-        """
-        Deletes an index template.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
-
-        :arg name: The name of the template
-        :arg master_timeout: Specify timeout for connection to master
-        :arg timeout: Explicit operation timeout
-        """
-        client, params = _deprecated_options(self, params)
-        if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'name'.")
-
-        return await client._perform_request(
-            "DELETE", _make_path("_template", name), params=params, headers=headers
-        )
-
-    @query_params(
-        "allow_no_indices",
-        "expand_wildcards",
-        "flat_settings",
-        "ignore_unavailable",
-        "include_defaults",
-        "local",
-        "master_timeout",
-    )
-    async def get_settings(self, index=None, name=None, params=None, headers=None):
-        """
-        Returns settings for one or more indices.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-get-settings.html>`_
-
-        :arg index: A comma-separated list of index names; use `_all` or
-            empty string to perform the operation on all indices
-        :arg name: The name of the settings that should be included
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: all
-        :arg flat_settings: Return settings in flat format (default:
-            false)
-        :arg ignore_unavailable: Whether specified concrete indices
-            should be ignored when unavailable (missing or closed)
-        :arg include_defaults: Whether to return all default setting for
-            each of the indices.
-        :arg local: Return local information, do not retrieve the state
-            from master node (default: false)
-        :arg master_timeout: Specify timeout for connection to master
-        """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "GET", _make_path(index, "_settings", name), params=params, headers=headers
-        )
-
-    @query_params(
-        "allow_no_indices",
-        "expand_wildcards",
-        "flat_settings",
-        "ignore_unavailable",
-        "master_timeout",
-        "preserve_existing",
-        "timeout",
-    )
-    async def put_settings(self, body, index=None, params=None, headers=None):
-        """
-        Updates the index settings.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-update-settings.html>`_
-
-        :arg body: The index settings to be updated
-        :arg index: A comma-separated list of index names; use `_all` or
-            empty string to perform the operation on all indices
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
-        :arg flat_settings: Return settings in flat format (default:
-            false)
-        :arg ignore_unavailable: Whether specified concrete indices
-            should be ignored when unavailable (missing or closed)
-        :arg master_timeout: Specify timeout for connection to master
-        :arg preserve_existing: Whether to update existing settings. If
-            set to `true` existing settings on an index remain unchanged, the
-            default is `false`
-        :arg timeout: Explicit operation timeout
-        """
-        client, params = _deprecated_options(self, params)
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
-
-        return await client._perform_request(
-            "PUT",
-            _make_path(index, "_settings"),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params(
-        "completion_fields",
-        "expand_wildcards",
-        "fielddata_fields",
-        "fields",
-        "forbid_closed_indices",
-        "groups",
-        "include_segment_file_sizes",
-        "include_unloaded_segments",
-        "level",
-        "types",
-    )
-    async def stats(self, index=None, metric=None, params=None, headers=None):
-        """
-        Provides statistics on operations happening in an index.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-stats.html>`_
-
-        :arg index: A comma-separated list of index names; use `_all` or
-            empty string to perform the operation on all indices
-        :arg metric: Limit the information returned the specific
-            metrics.  Valid choices: _all, completion, docs, fielddata, query_cache,
-            flush, get, indexing, merge, request_cache, refresh, search, segments,
-            store, warmer, bulk
-        :arg completion_fields: A comma-separated list of fields for the
-            `completion` index metric (supports wildcards)
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
-        :arg fielddata_fields: A comma-separated list of fields for the
-            `fielddata` index metric (supports wildcards)
-        :arg fields: A comma-separated list of fields for `fielddata`
-            and `completion` index metric (supports wildcards)
-        :arg forbid_closed_indices: If set to false stats will also
-            collected from closed indices if explicitly specified or if
-            expand_wildcards expands to closed indices  Default: True
-        :arg groups: A comma-separated list of search groups for
-            `search` index metric
-        :arg include_segment_file_sizes: Whether to report the
-            aggregated disk usage of each one of the Lucene index files (only
-            applies if segment stats are requested)
-        :arg include_unloaded_segments: If set to true segment stats
-            will include stats for segments that are not currently loaded into
-            memory
-        :arg level: Return stats aggregated at cluster, index or shard
-            level  Valid choices: cluster, indices, shards  Default: indices
-        :arg types: A comma-separated list of document types for the
-            `indexing` index metric
-        """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "GET", _make_path(index, "_stats", metric), params=params, headers=headers
-        )
-
-    @query_params(
-        "allow_no_indices", "expand_wildcards", "ignore_unavailable", "verbose"
-    )
-    async def segments(self, index=None, params=None, headers=None):
-        """
-        Provides low-level information about segments in a Lucene index.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-segments.html>`_
-
-        :arg index: A comma-separated list of index names; use `_all` or
-            empty string to perform the operation on all indices
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
-        :arg ignore_unavailable: Whether specified concrete indices
-            should be ignored when unavailable (missing or closed)
-        :arg verbose: Includes detailed memory usage by Lucene.
-        """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "GET", _make_path(index, "_segments"), params=params, headers=headers
-        )
-
-    @query_params(
-        "allow_no_indices",
-        "expand_wildcards",
-        "fielddata",
-        "fields",
-        "ignore_unavailable",
-        "query",
-        "request",
-    )
-    async def clear_cache(self, index=None, params=None, headers=None):
+    @_rewrite_parameters()
+    async def clear_cache(
+        self,
+        *,
+        index: Optional[Any] = None,
+        allow_no_indices: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        fielddata: Optional[bool] = None,
+        fields: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        ignore_unavailable: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        query: Optional[bool] = None,
+        request: Optional[bool] = None,
+    ) -> Any:
         """
         Clears all or specific caches for one or more indices.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-clearcache.html>`_
 
-        :arg index: A comma-separated list of index name to limit the
-            operation
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
-        :arg fielddata: Clear field data
-        :arg fields: A comma-separated list of fields to clear when
-            using the `fielddata` parameter (default: all)
-        :arg ignore_unavailable: Whether specified concrete indices
-            should be ignored when unavailable (missing or closed)
-        :arg query: Clear query caches
-        :arg request: Clear request cache
+        :param index: A comma-separated list of index name to limit the operation
+        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
+            into no concrete indices. (This includes `_all` string or when no indices
+            have been specified)
+        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :param fielddata: Clear field data
+        :param fields: A comma-separated list of fields to clear when using the `fielddata`
+            parameter (default: all)
+        :param ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
+        :param query: Clear query caches
+        :param request: Clear request cache
         """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "POST", _make_path(index, "_cache", "clear"), params=params, headers=headers
-        )
+        if index not in SKIP_IN_PATH:
+            __path = f"/{_quote(index)}/_cache/clear"
+        else:
+            __path = "/_cache/clear"
+        __query: Dict[str, Any] = {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if fielddata is not None:
+            __query["fielddata"] = fielddata
+        if fields is not None:
+            __query["fields"] = fields
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if query is not None:
+            __query["query"] = query
+        if request is not None:
+            __query["request"] = request
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("POST", __target, headers=__headers)
 
-    @query_params("active_only", "detailed")
-    async def recovery(self, index=None, params=None, headers=None):
-        """
-        Returns information about ongoing index shard recoveries.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-recovery.html>`_
-
-        :arg index: A comma-separated list of index names; use `_all` or
-            empty string to perform the operation on all indices
-        :arg active_only: Display only those recoveries that are
-            currently on-going
-        :arg detailed: Whether to display detailed information about
-            shard recovery
-        """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "GET", _make_path(index, "_recovery"), params=params, headers=headers
-        )
-
-    @query_params(
-        "allow_no_indices", "expand_wildcards", "ignore_unavailable", "status"
+    @_rewrite_parameters(
+        body_fields=True,
     )
-    async def shard_stores(self, index=None, params=None, headers=None):
+    async def clone(
+        self,
+        *,
+        index: Any,
+        target: Any,
+        aliases: Optional[Dict[Any, Any]] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        settings: Optional[Dict[str, Any]] = None,
+        timeout: Optional[Any] = None,
+        wait_for_active_shards: Optional[Any] = None,
+    ) -> Any:
         """
-        Provides store information for shard copies of indices.
+        Clones an index
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-shards-stores.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-clone-index.html>`_
 
-        :arg index: A comma-separated list of index names; use `_all` or
-            empty string to perform the operation on all indices
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
-        :arg ignore_unavailable: Whether specified concrete indices
-            should be ignored when unavailable (missing or closed)
-        :arg status: A comma-separated list of statuses used to filter
-            on shards to get store information for  Valid choices: green, yellow,
-            red, all
+        :param index: The name of the source index to clone
+        :param target: The name of the target index to clone into
+        :param aliases:
+        :param master_timeout: Specify timeout for connection to master
+        :param settings:
+        :param timeout: Explicit operation timeout
+        :param wait_for_active_shards: Set the number of active shards to wait for on
+            the cloned index before the operation returns.
         """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "GET", _make_path(index, "_shard_stores"), params=params, headers=headers
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'index'")
+        if target in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'target'")
+        __path = f"/{_quote(index)}/_clone/{_quote(target)}"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if aliases is not None:
+            __body["aliases"] = aliases
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if settings is not None:
+            __body["settings"] = settings
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if wait_for_active_shards is not None:
+            __query["wait_for_active_shards"] = wait_for_active_shards
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return await self._perform_request(
+            "PUT", __target, headers=__headers, body=__body
         )
 
-    @query_params(
-        "allow_no_indices",
-        "expand_wildcards",
-        "flush",
-        "ignore_unavailable",
-        "max_num_segments",
-        "only_expunge_deletes",
+    @_rewrite_parameters()
+    async def close(
+        self,
+        *,
+        index: Any,
+        allow_no_indices: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        ignore_unavailable: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+        wait_for_active_shards: Optional[Any] = None,
+    ) -> Any:
+        """
+        Closes an index.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-open-close.html>`_
+
+        :param index: A comma separated list of indices to close
+        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
+            into no concrete indices. (This includes `_all` string or when no indices
+            have been specified)
+        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :param ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
+        :param master_timeout: Specify timeout for connection to master
+        :param timeout: Explicit operation timeout
+        :param wait_for_active_shards: Sets the number of active shards to wait for before
+            the operation returns.
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'index'")
+        __path = f"/{_quote(index)}/_close"
+        __query: Dict[str, Any] = {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if wait_for_active_shards is not None:
+            __query["wait_for_active_shards"] = wait_for_active_shards
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("POST", __target, headers=__headers)
+
+    @_rewrite_parameters(
+        body_fields=True,
     )
-    async def forcemerge(self, index=None, params=None, headers=None):
+    async def create(
+        self,
+        *,
+        index: Any,
+        aliases: Optional[Dict[Any, Any]] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        include_type_name: Optional[bool] = None,
+        mappings: Optional[Any] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        settings: Optional[Any] = None,
+        timeout: Optional[Any] = None,
+        wait_for_active_shards: Optional[Any] = None,
+    ) -> Any:
+        """
+        Creates an index with optional settings and mappings.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-create-index.html>`_
+
+        :param index: The name of the index
+        :param aliases:
+        :param include_type_name:
+        :param mappings: Mapping for fields in the index. If specified, this mapping
+            can include: - Field names - Field data types - Mapping parameters
+        :param master_timeout: Specify timeout for connection to master
+        :param settings:
+        :param timeout: Explicit operation timeout
+        :param wait_for_active_shards: Set the number of active shards to wait for before
+            the operation returns.
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'index'")
+        __path = f"/{_quote(index)}"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if aliases is not None:
+            __body["aliases"] = aliases
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if include_type_name is not None:
+            __query["include_type_name"] = include_type_name
+        if mappings is not None:
+            __body["mappings"] = mappings
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if settings is not None:
+            __body["settings"] = settings
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if wait_for_active_shards is not None:
+            __query["wait_for_active_shards"] = wait_for_active_shards
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return await self._perform_request(
+            "PUT", __target, headers=__headers, body=__body
+        )
+
+    @_rewrite_parameters()
+    async def create_data_stream(
+        self,
+        *,
+        name: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Creates a data stream
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
+
+        :param name: The name of the data stream
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_data_stream/{_quote(name)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("PUT", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def data_streams_stats(
+        self,
+        *,
+        name: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Provides statistics on operations happening in a data stream.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
+
+        :param name: A comma-separated list of data stream names; use `_all` or empty
+            string to perform the operation on all data streams
+        :param expand_wildcards:
+        """
+        if name not in SKIP_IN_PATH:
+            __path = f"/_data_stream/{_quote(name)}/_stats"
+        else:
+            __path = "/_data_stream/_stats"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def delete(
+        self,
+        *,
+        index: Any,
+        allow_no_indices: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        ignore_unavailable: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+    ) -> Any:
+        """
+        Deletes an index.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-delete-index.html>`_
+
+        :param index: A comma-separated list of indices to delete; use `_all` or `*`
+            string to delete all indices
+        :param allow_no_indices: Ignore if a wildcard expression resolves to no concrete
+            indices (default: false)
+        :param expand_wildcards: Whether wildcard expressions should get expanded to
+            open, closed, or hidden indices
+        :param ignore_unavailable: Ignore unavailable indexes (default: false)
+        :param master_timeout: Specify timeout for connection to master
+        :param timeout: Explicit operation timeout
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'index'")
+        __path = f"/{_quote(index)}"
+        __query: Dict[str, Any] = {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("DELETE", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def delete_alias(
+        self,
+        *,
+        index: Any,
+        name: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+    ) -> Any:
+        """
+        Deletes an alias.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-aliases.html>`_
+
+        :param index: A comma-separated list of index names (supports wildcards); use
+            `_all` for all indices
+        :param name: A comma-separated list of aliases to delete (supports wildcards);
+            use `_all` to delete all aliases for the specified indices.
+        :param master_timeout: Specify timeout for connection to master
+        :param timeout: Explicit timestamp for the document
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'index'")
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/{_quote(index)}/_alias/{_quote(name)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("DELETE", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def delete_data_stream(
+        self,
+        *,
+        name: Any,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Deletes a data stream.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
+
+        :param name: A comma-separated list of data streams to delete; use `*` to delete
+            all data streams
+        :param expand_wildcards: Whether wildcard expressions should get expanded to
+            open or closed indices (default: open)
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_data_stream/{_quote(name)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("DELETE", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def delete_index_template(
+        self,
+        *,
+        name: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Deletes an index template.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+
+        :param name: The name of the template
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_index_template/{_quote(name)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("DELETE", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def delete_template(
+        self,
+        *,
+        name: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+    ) -> Any:
+        """
+        Deletes an index template.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+
+        :param name: The name of the template
+        :param master_timeout: Specify timeout for connection to master
+        :param timeout: Explicit operation timeout
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_template/{_quote(name)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("DELETE", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def disk_usage(
+        self,
+        *,
+        index: Any,
+        allow_no_indices: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        flush: Optional[bool] = None,
+        human: Optional[bool] = None,
+        ignore_unavailable: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        run_expensive_tasks: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+        wait_for_active_shards: Optional[str] = None,
+    ) -> Any:
+        """
+        Analyzes the disk usage of each field of an index or data stream
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-disk-usage.html>`_
+
+        :param index: Comma-separated list of data streams, indices, and aliases used
+            to limit the request. It’s recommended to execute this API with a single
+            index (or the latest backing index of a data stream) as the API consumes
+            resources significantly.
+        :param allow_no_indices: If false, the request returns an error if any wildcard
+            expression, index alias, or _all value targets only missing or closed indices.
+            This behavior applies even if the request targets other open indices. For
+            example, a request targeting foo*,bar* returns an error if an index starts
+            with foo but no index starts with bar.
+        :param expand_wildcards: Type of index that wildcard patterns can match. If the
+            request can target data streams, this argument determines whether wildcard
+            expressions match hidden data streams. Supports comma-separated values, such
+            as open,hidden.
+        :param flush: If true, the API performs a flush before analysis. If false, the
+            response may not include uncommitted data.
+        :param ignore_unavailable: If true, missing or closed indices are not included
+            in the response.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param run_expensive_tasks: Analyzing field disk usage is resource-intensive.
+            To use the API, this parameter must be set to true.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
+        :param wait_for_active_shards: The number of shard copies that must be active
+            before proceeding with the operation. Set to all or any positive integer
+            up to the total number of shards in the index (number_of_replicas+1). Default:
+            1, the primary shard.
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'index'")
+        __path = f"/{_quote(index)}/_disk_usage"
+        __query: Dict[str, Any] = {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if flush is not None:
+            __query["flush"] = flush
+        if human is not None:
+            __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if run_expensive_tasks is not None:
+            __query["run_expensive_tasks"] = run_expensive_tasks
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if wait_for_active_shards is not None:
+            __query["wait_for_active_shards"] = wait_for_active_shards
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("POST", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def exists(
+        self,
+        *,
+        index: Any,
+        allow_no_indices: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        flat_settings: Optional[bool] = None,
+        human: Optional[bool] = None,
+        ignore_unavailable: Optional[bool] = None,
+        include_defaults: Optional[bool] = None,
+        local: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Returns information about whether a particular index exists.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-exists.html>`_
+
+        :param index: A comma-separated list of index names
+        :param allow_no_indices: Ignore if a wildcard expression resolves to no concrete
+            indices (default: false)
+        :param expand_wildcards: Whether wildcard expressions should get expanded to
+            open or closed indices (default: open)
+        :param flat_settings: Return settings in flat format (default: false)
+        :param ignore_unavailable: Ignore unavailable indexes (default: false)
+        :param include_defaults: Whether to return all default setting for each of the
+            indices.
+        :param local: Return local information, do not retrieve the state from master
+            node (default: false)
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'index'")
+        __path = f"/{_quote(index)}"
+        __query: Dict[str, Any] = {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if flat_settings is not None:
+            __query["flat_settings"] = flat_settings
+        if human is not None:
+            __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if include_defaults is not None:
+            __query["include_defaults"] = include_defaults
+        if local is not None:
+            __query["local"] = local
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("HEAD", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def exists_alias(
+        self,
+        *,
+        name: Any,
+        index: Optional[Any] = None,
+        allow_no_indices: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        ignore_unavailable: Optional[bool] = None,
+        local: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Returns information about whether a particular alias exists.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-aliases.html>`_
+
+        :param name: A comma-separated list of alias names to return
+        :param index: A comma-separated list of index names to filter aliases
+        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
+            into no concrete indices. (This includes `_all` string or when no indices
+            have been specified)
+        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :param ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
+        :param local: Return local information, do not retrieve the state from master
+            node (default: false)
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        if index not in SKIP_IN_PATH and name not in SKIP_IN_PATH:
+            __path = f"/{_quote(index)}/_alias/{_quote(name)}"
+        elif name not in SKIP_IN_PATH:
+            __path = f"/_alias/{_quote(name)}"
+        else:
+            raise ValueError("Couldn't find a path for the given parameters")
+        __query: Dict[str, Any] = {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if local is not None:
+            __query["local"] = local
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("HEAD", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def exists_index_template(
+        self,
+        *,
+        name: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Returns information about whether a particular index template exists.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+
+        :param name: Comma-separated list of index template names used to limit the request.
+            Wildcard (*) expressions are supported.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_index_template/{_quote(name)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("HEAD", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def exists_template(
+        self,
+        *,
+        name: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        flat_settings: Optional[bool] = None,
+        human: Optional[bool] = None,
+        local: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Returns information about whether a particular index template exists.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+
+        :param name: The comma separated names of the index templates
+        :param flat_settings: Return settings in flat format (default: false)
+        :param local: Return local information, do not retrieve the state from master
+            node (default: false)
+        :param master_timeout: Explicit operation timeout for connection to master node
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_template/{_quote(name)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if flat_settings is not None:
+            __query["flat_settings"] = flat_settings
+        if human is not None:
+            __query["human"] = human
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("HEAD", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def exists_type(
+        self,
+        *,
+        index: Any,
+        type: Any,
+        allow_no_indices: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        ignore_unavailable: Optional[bool] = None,
+        local: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Returns information about whether a particular document type exists. (DEPRECATED)
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-types-exists.html>`_
+
+        :param index: A comma-separated list of index names; use `_all` to check the
+            types across all indices
+        :param type: A comma-separated list of document types to check
+        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
+            into no concrete indices. (This includes `_all` string or when no indices
+            have been specified)
+        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :param ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
+        :param local: Return local information, do not retrieve the state from master
+            node (default: false)
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'index'")
+        if type in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'type'")
+        __path = f"/{_quote(index)}/_mapping/{_quote(type)}"
+        __query: Dict[str, Any] = {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if local is not None:
+            __query["local"] = local
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("HEAD", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def flush(
+        self,
+        *,
+        index: Optional[Any] = None,
+        allow_no_indices: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        force: Optional[bool] = None,
+        human: Optional[bool] = None,
+        ignore_unavailable: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        wait_if_ongoing: Optional[bool] = None,
+    ) -> Any:
+        """
+        Performs the flush operation on one or more indices.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-flush.html>`_
+
+        :param index: A comma-separated list of index names; use `_all` or empty string
+            for all indices
+        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
+            into no concrete indices. (This includes `_all` string or when no indices
+            have been specified)
+        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :param force: Whether a flush should be forced even if it is not necessarily
+            needed ie. if no changes will be committed to the index. This is useful if
+            transaction log IDs should be incremented even if no uncommitted changes
+            are present. (This setting can be considered as internal)
+        :param ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
+        :param wait_if_ongoing: If set to true the flush operation will block until the
+            flush can be executed if another flush operation is already executing. The
+            default is true. If set to false the flush will be skipped iff if another
+            flush operation is already running.
+        """
+        if index not in SKIP_IN_PATH:
+            __path = f"/{_quote(index)}/_flush"
+        else:
+            __path = "/_flush"
+        __query: Dict[str, Any] = {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if force is not None:
+            __query["force"] = force
+        if human is not None:
+            __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if wait_if_ongoing is not None:
+            __query["wait_if_ongoing"] = wait_if_ongoing
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("POST", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def forcemerge(
+        self,
+        *,
+        index: Optional[Any] = None,
+        allow_no_indices: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        flush: Optional[bool] = None,
+        human: Optional[bool] = None,
+        ignore_unavailable: Optional[bool] = None,
+        max_num_segments: Optional[int] = None,
+        only_expunge_deletes: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Performs the force merge operation on one or more indices.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-forcemerge.html>`_
 
-        :arg index: A comma-separated list of index names; use `_all` or
-            empty string to perform the operation on all indices
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
-        :arg flush: Specify whether the index should be flushed after
-            performing the operation (default: true)
-        :arg ignore_unavailable: Whether specified concrete indices
-            should be ignored when unavailable (missing or closed)
-        :arg max_num_segments: The number of segments the index should
-            be merged into (default: dynamic)
-        :arg only_expunge_deletes: Specify whether the operation should
-            only expunge deleted documents
+        :param index: A comma-separated list of index names; use `_all` or empty string
+            to perform the operation on all indices
+        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
+            into no concrete indices. (This includes `_all` string or when no indices
+            have been specified)
+        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :param flush: Specify whether the index should be flushed after performing the
+            operation (default: true)
+        :param ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
+        :param max_num_segments: The number of segments the index should be merged into
+            (default: dynamic)
+        :param only_expunge_deletes: Specify whether the operation should only expunge
+            deleted documents
         """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "POST", _make_path(index, "_forcemerge"), params=params, headers=headers
+        if index not in SKIP_IN_PATH:
+            __path = f"/{_quote(index)}/_forcemerge"
+        else:
+            __path = "/_forcemerge"
+        __query: Dict[str, Any] = {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if flush is not None:
+            __query["flush"] = flush
+        if human is not None:
+            __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if max_num_segments is not None:
+            __query["max_num_segments"] = max_num_segments
+        if only_expunge_deletes is not None:
+            __query["only_expunge_deletes"] = only_expunge_deletes
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("POST", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def get(
+        self,
+        *,
+        index: Any,
+        allow_no_indices: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        flat_settings: Optional[bool] = None,
+        human: Optional[bool] = None,
+        ignore_unavailable: Optional[bool] = None,
+        include_defaults: Optional[bool] = None,
+        include_type_name: Optional[bool] = None,
+        local: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Returns information about one or more indices.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-get-index.html>`_
+
+        :param index: Comma-separated list of data streams, indices, and index aliases
+            used to limit the request. Wildcard expressions (*) are supported.
+        :param allow_no_indices: Ignore if a wildcard expression resolves to no concrete
+            indices (default: false)
+        :param expand_wildcards: Type of index that wildcard expressions can match. If
+            the request can target data streams, this argument determines whether wildcard
+            expressions match hidden data streams. Supports comma-separated values, such
+            as open,hidden.
+        :param flat_settings: If true, returns settings in flat format.
+        :param ignore_unavailable: If false, requests that target a missing index return
+            an error.
+        :param include_defaults: If true, return all default settings in the response.
+        :param include_type_name: If true, a mapping type is expected in the body of
+            mappings.
+        :param local: If true, the request retrieves information from the local node
+            only. Defaults to false, which means information is retrieved from the master
+            node.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'index'")
+        __path = f"/{_quote(index)}"
+        __query: Dict[str, Any] = {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if flat_settings is not None:
+            __query["flat_settings"] = flat_settings
+        if human is not None:
+            __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if include_defaults is not None:
+            __query["include_defaults"] = include_defaults
+        if include_type_name is not None:
+            __query["include_type_name"] = include_type_name
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def get_alias(
+        self,
+        *,
+        index: Optional[Any] = None,
+        name: Optional[Any] = None,
+        allow_no_indices: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        ignore_unavailable: Optional[bool] = None,
+        local: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Returns an alias.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-aliases.html>`_
+
+        :param index: A comma-separated list of index names to filter aliases
+        :param name: A comma-separated list of alias names to return
+        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
+            into no concrete indices. (This includes `_all` string or when no indices
+            have been specified)
+        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :param ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
+        :param local: Return local information, do not retrieve the state from master
+            node (default: false)
+        """
+        if index not in SKIP_IN_PATH and name not in SKIP_IN_PATH:
+            __path = f"/{_quote(index)}/_alias/{_quote(name)}"
+        elif index not in SKIP_IN_PATH:
+            __path = f"/{_quote(index)}/_alias"
+        elif name not in SKIP_IN_PATH:
+            __path = f"/_alias/{_quote(name)}"
+        else:
+            __path = "/_alias"
+        __query: Dict[str, Any] = {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if local is not None:
+            __query["local"] = local
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def get_data_stream(
+        self,
+        *,
+        name: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Returns data streams.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
+
+        :param name: A comma-separated list of data streams to get; use `*` to get all
+            data streams
+        :param expand_wildcards: Whether wildcard expressions should get expanded to
+            open or closed indices (default: open)
+        """
+        if name not in SKIP_IN_PATH:
+            __path = f"/_data_stream/{_quote(name)}"
+        else:
+            __path = "/_data_stream"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def get_field_mapping(
+        self,
+        *,
+        fields: Any,
+        index: Optional[Any] = None,
+        allow_no_indices: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        ignore_unavailable: Optional[bool] = None,
+        include_defaults: Optional[bool] = None,
+        include_type_name: Optional[bool] = None,
+        local: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Returns mapping for one or more fields.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-get-field-mapping.html>`_
+
+        :param fields: A comma-separated list of fields
+        :param index: A comma-separated list of index names
+        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
+            into no concrete indices. (This includes `_all` string or when no indices
+            have been specified)
+        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :param ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
+        :param include_defaults: Whether the default mapping values should be returned
+            as well
+        :param include_type_name:
+        :param local: Return local information, do not retrieve the state from master
+            node (default: false)
+        """
+        if fields in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'fields'")
+        if index not in SKIP_IN_PATH and fields not in SKIP_IN_PATH:
+            __path = f"/{_quote(index)}/_mapping/field/{_quote(fields)}"
+        elif fields not in SKIP_IN_PATH:
+            __path = f"/_mapping/field/{_quote(fields)}"
+        else:
+            raise ValueError("Couldn't find a path for the given parameters")
+        __query: Dict[str, Any] = {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if include_defaults is not None:
+            __query["include_defaults"] = include_defaults
+        if include_type_name is not None:
+            __query["include_type_name"] = include_type_name
+        if local is not None:
+            __query["local"] = local
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def get_index_template(
+        self,
+        *,
+        name: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        flat_settings: Optional[bool] = None,
+        human: Optional[bool] = None,
+        include_type_name: Optional[bool] = None,
+        local: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Returns an index template.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+
+        :param name: Comma-separated list of index template names used to limit the request.
+            Wildcard (*) expressions are supported.
+        :param flat_settings: If true, returns settings in flat format.
+        :param include_type_name: If true, a mapping type is expected in the body of
+            mappings.
+        :param local: If true, the request retrieves information from the local node
+            only. Defaults to false, which means information is retrieved from the master
+            node.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        """
+        if name not in SKIP_IN_PATH:
+            __path = f"/_index_template/{_quote(name)}"
+        else:
+            __path = "/_index_template"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if flat_settings is not None:
+            __query["flat_settings"] = flat_settings
+        if human is not None:
+            __query["human"] = human
+        if include_type_name is not None:
+            __query["include_type_name"] = include_type_name
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def get_mapping(
+        self,
+        *,
+        index: Optional[Any] = None,
+        allow_no_indices: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        ignore_unavailable: Optional[bool] = None,
+        include_type_name: Optional[bool] = None,
+        local: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Returns mappings for one or more indices.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-get-mapping.html>`_
+
+        :param index: A comma-separated list of index names
+        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
+            into no concrete indices. (This includes `_all` string or when no indices
+            have been specified)
+        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :param ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
+        :param include_type_name:
+        :param local: Return local information, do not retrieve the state from master
+            node (default: false)
+        :param master_timeout: Specify timeout for connection to master
+        """
+        if index not in SKIP_IN_PATH:
+            __path = f"/{_quote(index)}/_mapping"
+        else:
+            __path = "/_mapping"
+        __query: Dict[str, Any] = {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if include_type_name is not None:
+            __query["include_type_name"] = include_type_name
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def get_settings(
+        self,
+        *,
+        index: Optional[Any] = None,
+        name: Optional[Any] = None,
+        allow_no_indices: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        flat_settings: Optional[bool] = None,
+        human: Optional[bool] = None,
+        ignore_unavailable: Optional[bool] = None,
+        include_defaults: Optional[bool] = None,
+        local: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Returns settings for one or more indices.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-get-settings.html>`_
+
+        :param index: A comma-separated list of index names; use `_all` or empty string
+            to perform the operation on all indices
+        :param name: The name of the settings that should be included
+        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
+            into no concrete indices. (This includes `_all` string or when no indices
+            have been specified)
+        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :param flat_settings: Return settings in flat format (default: false)
+        :param ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
+        :param include_defaults: Whether to return all default setting for each of the
+            indices.
+        :param local: Return local information, do not retrieve the state from master
+            node (default: false)
+        :param master_timeout: Specify timeout for connection to master
+        """
+        if index not in SKIP_IN_PATH and name not in SKIP_IN_PATH:
+            __path = f"/{_quote(index)}/_settings/{_quote(name)}"
+        elif index not in SKIP_IN_PATH:
+            __path = f"/{_quote(index)}/_settings"
+        elif name not in SKIP_IN_PATH:
+            __path = f"/_settings/{_quote(name)}"
+        else:
+            __path = "/_settings"
+        __query: Dict[str, Any] = {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if flat_settings is not None:
+            __query["flat_settings"] = flat_settings
+        if human is not None:
+            __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if include_defaults is not None:
+            __query["include_defaults"] = include_defaults
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def get_template(
+        self,
+        *,
+        name: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        flat_settings: Optional[bool] = None,
+        human: Optional[bool] = None,
+        include_type_name: Optional[bool] = None,
+        local: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Returns an index template.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+
+        :param name: The comma separated names of the index templates
+        :param flat_settings: Return settings in flat format (default: false)
+        :param include_type_name:
+        :param local: Return local information, do not retrieve the state from master
+            node (default: false)
+        :param master_timeout: Explicit operation timeout for connection to master node
+        """
+        if name not in SKIP_IN_PATH:
+            __path = f"/_template/{_quote(name)}"
+        else:
+            __path = "/_template"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if flat_settings is not None:
+            __query["flat_settings"] = flat_settings
+        if human is not None:
+            __query["human"] = human
+        if include_type_name is not None:
+            __query["include_type_name"] = include_type_name
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def migrate_to_data_stream(
+        self,
+        *,
+        name: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Migrates an alias to a data stream
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
+
+        :param name: The name of the alias to migrate
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_data_stream/_migrate/{_quote(name)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("POST", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def open(
+        self,
+        *,
+        index: Any,
+        allow_no_indices: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        ignore_unavailable: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+        wait_for_active_shards: Optional[Any] = None,
+    ) -> Any:
+        """
+        Opens an index.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-open-close.html>`_
+
+        :param index: A comma separated list of indices to open
+        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
+            into no concrete indices. (This includes `_all` string or when no indices
+            have been specified)
+        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :param ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
+        :param master_timeout: Specify timeout for connection to master
+        :param timeout: Explicit operation timeout
+        :param wait_for_active_shards: Sets the number of active shards to wait for before
+            the operation returns.
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'index'")
+        __path = f"/{_quote(index)}/_open"
+        __query: Dict[str, Any] = {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if wait_for_active_shards is not None:
+            __query["wait_for_active_shards"] = wait_for_active_shards
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("POST", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def promote_data_stream(
+        self,
+        *,
+        name: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Promotes a data stream from a replicated data stream managed by CCR to a regular
+        data stream
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
+
+        :param name: The name of the data stream
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_data_stream/_promote/{_quote(name)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("POST", __target, headers=__headers)
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def put_alias(
+        self,
+        *,
+        index: Any,
+        name: Any,
+        error_trace: Optional[bool] = None,
+        filter: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        index_routing: Optional[Any] = None,
+        is_write_index: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        routing: Optional[Any] = None,
+        search_routing: Optional[Any] = None,
+        timeout: Optional[Any] = None,
+    ) -> Any:
+        """
+        Creates or updates an alias.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-aliases.html>`_
+
+        :param index: A comma-separated list of index names the alias should point to
+            (supports wildcards); use `_all` to perform the operation on all indices.
+        :param name: The name of the alias to be created or updated
+        :param filter:
+        :param index_routing:
+        :param is_write_index:
+        :param master_timeout: Specify timeout for connection to master
+        :param routing:
+        :param search_routing:
+        :param timeout: Explicit timestamp for the document
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'index'")
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/{_quote(index)}/_alias/{_quote(name)}"
+        __query: Dict[str, Any] = {}
+        __body: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter is not None:
+            __body["filter"] = filter
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if index_routing is not None:
+            __body["index_routing"] = index_routing
+        if is_write_index is not None:
+            __body["is_write_index"] = is_write_index
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if routing is not None:
+            __body["routing"] = routing
+        if search_routing is not None:
+            __body["search_routing"] = search_routing
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return await self._perform_request(
+            "PUT", __target, headers=__headers, body=__body
         )
 
-    @query_params("master_timeout", "timeout", "wait_for_active_shards")
-    async def shrink(self, index, target, body=None, params=None, headers=None):
+    @_rewrite_parameters(
+        body_fields=True,
+        parameter_aliases={"_meta": "meta"},
+    )
+    async def put_index_template(
+        self,
+        *,
+        name: Any,
+        composed_of: Optional[List[Any]] = None,
+        data_stream: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        index_patterns: Optional[Any] = None,
+        meta: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        priority: Optional[int] = None,
+        template: Optional[Any] = None,
+        version: Optional[Any] = None,
+    ) -> Any:
         """
-        Allow to shrink an existing index into a new index with fewer primary shards.
+        Creates or updates an index template.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-shrink-index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
 
-        :arg index: The name of the source index to shrink
-        :arg target: The name of the target index to shrink into
-        :arg body: The configuration for the target index (`settings`
-            and `aliases`)
-        :arg master_timeout: Specify timeout for connection to master
-        :arg timeout: Explicit operation timeout
-        :arg wait_for_active_shards: Set the number of active shards to
-            wait for on the shrunken index before the operation returns.
+        :param name: Index or template name
+        :param composed_of:
+        :param data_stream:
+        :param index_patterns:
+        :param meta:
+        :param priority:
+        :param template:
+        :param version:
         """
-        client, params = _deprecated_options(self, params)
-        for param in (index, target):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return await client._perform_request(
-            "PUT",
-            _make_path(index, "_shrink", target),
-            params=params,
-            headers=headers,
-            body=body,
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_index_template/{_quote(name)}"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if composed_of is not None:
+            __body["composed_of"] = composed_of
+        if data_stream is not None:
+            __body["data_stream"] = data_stream
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if index_patterns is not None:
+            __body["index_patterns"] = index_patterns
+        if meta is not None:
+            __body["_meta"] = meta
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if priority is not None:
+            __body["priority"] = priority
+        if template is not None:
+            __body["template"] = template
+        if version is not None:
+            __body["version"] = version
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self._perform_request(
+            "PUT", __target, headers=__headers, body=__body
         )
 
-    @query_params("master_timeout", "timeout", "wait_for_active_shards")
-    async def split(self, index, target, body=None, params=None, headers=None):
+    @_rewrite_parameters(
+        body_fields=True,
+        parameter_aliases={
+            "_field_names": "field_names",
+            "_meta": "meta",
+            "_routing": "routing",
+            "_source": "source",
+        },
+    )
+    async def put_mapping(
+        self,
+        *,
+        index: Any,
+        allow_no_indices: Optional[bool] = None,
+        date_detection: Optional[bool] = None,
+        dynamic: Optional[Union[Any, bool]] = None,
+        dynamic_date_formats: Optional[List[str]] = None,
+        dynamic_templates: Optional[Union[Dict[str, Any], List[Dict[str, Any]]]] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        field_names: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        ignore_unavailable: Optional[bool] = None,
+        include_type_name: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        meta: Optional[Dict[str, Any]] = None,
+        numeric_detection: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        properties: Optional[Dict[Any, Any]] = None,
+        routing: Optional[Any] = None,
+        runtime: Optional[Any] = None,
+        source: Optional[Any] = None,
+        timeout: Optional[Any] = None,
+        write_index_only: Optional[bool] = None,
+    ) -> Any:
         """
-        Allows you to split an existing index into a new index with more primary
-        shards.
+        Updates the index mappings.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-split-index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-put-mapping.html>`_
 
-        :arg index: The name of the source index to split
-        :arg target: The name of the target index to split into
-        :arg body: The configuration for the target index (`settings`
-            and `aliases`)
-        :arg master_timeout: Specify timeout for connection to master
-        :arg timeout: Explicit operation timeout
-        :arg wait_for_active_shards: Set the number of active shards to
-            wait for on the shrunken index before the operation returns.
+        :param index: A comma-separated list of index names the mapping should be added
+            to (supports wildcards); use `_all` or omit to add the mapping on all indices.
+        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
+            into no concrete indices. (This includes `_all` string or when no indices
+            have been specified)
+        :param date_detection: Controls whether dynamic date detection is enabled.
+        :param dynamic: Controls whether new fields are added dynamically.
+        :param dynamic_date_formats: If date detection is enabled then new string fields
+            are checked against 'dynamic_date_formats' and if the value matches then
+            a new date field is added instead of string.
+        :param dynamic_templates: Specify dynamic templates for the mapping.
+        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :param field_names: Control whether field names are enabled for the index.
+        :param ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
+        :param include_type_name:
+        :param master_timeout: Specify timeout for connection to master
+        :param meta: A mapping type can have custom meta data associated with it. These
+            are not used at all by Elasticsearch, but can be used to store application-specific
+            metadata.
+        :param numeric_detection: Automatically map strings into numeric data types for
+            all fields.
+        :param properties: Mapping for a field. For new fields, this mapping can include:
+            - Field name - Field data type - Mapping parameters
+        :param routing: Enable making a routing value required on indexed documents.
+        :param runtime: Mapping of runtime fields for the index.
+        :param source: Control whether the _source field is enabled on the index.
+        :param timeout: Explicit operation timeout
+        :param write_index_only: When true, applies mappings only to the write index
+            of an alias or data stream
         """
-        client, params = _deprecated_options(self, params)
-        for param in (index, target):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return await client._perform_request(
-            "PUT",
-            _make_path(index, "_split", target),
-            params=params,
-            headers=headers,
-            body=body,
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'index'")
+        __path = f"/{_quote(index)}/_mapping"
+        __query: Dict[str, Any] = {}
+        __body: Dict[str, Any] = {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if date_detection is not None:
+            __body["date_detection"] = date_detection
+        if dynamic is not None:
+            __body["dynamic"] = dynamic
+        if dynamic_date_formats is not None:
+            __body["dynamic_date_formats"] = dynamic_date_formats
+        if dynamic_templates is not None:
+            __body["dynamic_templates"] = dynamic_templates
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if field_names is not None:
+            __body["_field_names"] = field_names
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if include_type_name is not None:
+            __query["include_type_name"] = include_type_name
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if meta is not None:
+            __body["_meta"] = meta
+        if numeric_detection is not None:
+            __body["numeric_detection"] = numeric_detection
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if properties is not None:
+            __body["properties"] = properties
+        if routing is not None:
+            __body["_routing"] = routing
+        if runtime is not None:
+            __body["runtime"] = runtime
+        if source is not None:
+            __body["_source"] = source
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if write_index_only is not None:
+            __query["write_index_only"] = write_index_only
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self._perform_request(
+            "PUT", __target, headers=__headers, body=__body
         )
 
-    @query_params("dry_run", "master_timeout", "timeout", "wait_for_active_shards")
+    @_rewrite_parameters(
+        body_name="settings",
+    )
+    async def put_settings(
+        self,
+        *,
+        settings: Any,
+        index: Optional[Any] = None,
+        allow_no_indices: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        flat_settings: Optional[bool] = None,
+        human: Optional[bool] = None,
+        ignore_unavailable: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        preserve_existing: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+    ) -> Any:
+        """
+        Updates the index settings.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-update-settings.html>`_
+
+        :param settings:
+        :param index: A comma-separated list of index names; use `_all` or empty string
+            to perform the operation on all indices
+        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
+            into no concrete indices. (This includes `_all` string or when no indices
+            have been specified)
+        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :param flat_settings: Return settings in flat format (default: false)
+        :param ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
+        :param master_timeout: Specify timeout for connection to master
+        :param preserve_existing: Whether to update existing settings. If set to `true`
+            existing settings on an index remain unchanged, the default is `false`
+        :param timeout: Explicit operation timeout
+        """
+        if settings is None:
+            raise ValueError("Empty value passed for parameter 'settings'")
+        if index not in SKIP_IN_PATH:
+            __path = f"/{_quote(index)}/_settings"
+        else:
+            __path = "/_settings"
+        __query: Dict[str, Any] = {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if flat_settings is not None:
+            __query["flat_settings"] = flat_settings
+        if human is not None:
+            __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if preserve_existing is not None:
+            __query["preserve_existing"] = preserve_existing
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        __body = settings
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self._perform_request(
+            "PUT", __target, headers=__headers, body=__body
+        )
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def put_template(
+        self,
+        *,
+        name: Any,
+        aliases: Optional[Dict[Any, Any]] = None,
+        create: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        flat_settings: Optional[bool] = None,
+        human: Optional[bool] = None,
+        include_type_name: Optional[bool] = None,
+        index_patterns: Optional[Union[List[str], str]] = None,
+        mappings: Optional[Any] = None,
+        master_timeout: Optional[Any] = None,
+        order: Optional[int] = None,
+        pretty: Optional[bool] = None,
+        settings: Optional[Dict[str, Any]] = None,
+        timeout: Optional[Any] = None,
+        version: Optional[Any] = None,
+    ) -> Any:
+        """
+        Creates or updates an index template.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+
+        :param name: The name of the template
+        :param aliases: Aliases for the index.
+        :param create: If true, this request cannot replace or update existing index
+            templates.
+        :param flat_settings:
+        :param include_type_name:
+        :param index_patterns: Array of wildcard expressions used to match the names
+            of indices during creation.
+        :param mappings: Mapping for fields in the index.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param order: Order in which Elasticsearch applies this template if index matches
+            multiple templates. Templates with lower 'order' values are merged first.
+            Templates with higher 'order' values are merged later, overriding templates
+            with lower values.
+        :param settings: Configuration options for the index.
+        :param timeout:
+        :param version: Version number used to manage index templates externally. This
+            number is not automatically generated by Elasticsearch.
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_template/{_quote(name)}"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if aliases is not None:
+            __body["aliases"] = aliases
+        if create is not None:
+            __query["create"] = create
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if flat_settings is not None:
+            __query["flat_settings"] = flat_settings
+        if human is not None:
+            __query["human"] = human
+        if include_type_name is not None:
+            __query["include_type_name"] = include_type_name
+        if index_patterns is not None:
+            __body["index_patterns"] = index_patterns
+        if mappings is not None:
+            __body["mappings"] = mappings
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if order is not None:
+            __body["order"] = order
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if settings is not None:
+            __body["settings"] = settings
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if version is not None:
+            __body["version"] = version
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self._perform_request(
+            "PUT", __target, headers=__headers, body=__body
+        )
+
+    @_rewrite_parameters()
+    async def recovery(
+        self,
+        *,
+        index: Optional[Any] = None,
+        active_only: Optional[bool] = None,
+        detailed: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Returns information about ongoing index shard recoveries.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-recovery.html>`_
+
+        :param index: A comma-separated list of index names; use `_all` or empty string
+            to perform the operation on all indices
+        :param active_only: Display only those recoveries that are currently on-going
+        :param detailed: Whether to display detailed information about shard recovery
+        """
+        if index not in SKIP_IN_PATH:
+            __path = f"/{_quote(index)}/_recovery"
+        else:
+            __path = "/_recovery"
+        __query: Dict[str, Any] = {}
+        if active_only is not None:
+            __query["active_only"] = active_only
+        if detailed is not None:
+            __query["detailed"] = detailed
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def refresh(
+        self,
+        *,
+        index: Optional[Any] = None,
+        allow_no_indices: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        ignore_unavailable: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Performs the refresh operation in one or more indices.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-refresh.html>`_
+
+        :param index: A comma-separated list of index names; use `_all` or empty string
+            to perform the operation on all indices
+        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
+            into no concrete indices. (This includes `_all` string or when no indices
+            have been specified)
+        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :param ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
+        """
+        if index not in SKIP_IN_PATH:
+            __path = f"/{_quote(index)}/_refresh"
+        else:
+            __path = "/_refresh"
+        __query: Dict[str, Any] = {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("POST", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def reload_search_analyzers(
+        self,
+        *,
+        index: Any,
+        allow_no_indices: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        ignore_unavailable: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Reloads an index's search analyzers and their resources.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-reload-analyzers.html>`_
+
+        :param index: A comma-separated list of index names to reload analyzers for
+        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
+            into no concrete indices. (This includes `_all` string or when no indices
+            have been specified)
+        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :param ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'index'")
+        __path = f"/{_quote(index)}/_reload_search_analyzers"
+        __query: Dict[str, Any] = {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("POST", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def resolve_index(
+        self,
+        *,
+        name: Any,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Returns information about any matching indices, aliases, and data streams
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-resolve-index-api.html>`_
+
+        :param name: A comma-separated list of names or wildcard expressions
+        :param expand_wildcards: Whether wildcard expressions should get expanded to
+            open or closed indices (default: open)
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_resolve/index/{_quote(name)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
     async def rollover(
-        self, alias, body=None, new_index=None, params=None, headers=None
-    ):
+        self,
+        *,
+        alias: Any,
+        new_index: Optional[Any] = None,
+        aliases: Optional[Dict[Any, Any]] = None,
+        conditions: Optional[Any] = None,
+        dry_run: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        include_type_name: Optional[bool] = None,
+        mappings: Optional[Union[Any, Dict[str, Any]]] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        settings: Optional[Dict[str, Any]] = None,
+        timeout: Optional[Any] = None,
+        wait_for_active_shards: Optional[Any] = None,
+    ) -> Any:
         """
         Updates an alias to point to a new index when the existing index is considered
         to be too large or too old.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-rollover-index.html>`_
 
-        :arg alias: The name of the alias to rollover
-        :arg body: The conditions that needs to be met for executing
-            rollover
-        :arg new_index: The name of the rollover index
-        :arg dry_run: If set to true the rollover action will only be
-            validated but not actually performed even if a condition matches. The
-            default is false
-        :arg master_timeout: Specify timeout for connection to master
-        :arg timeout: Explicit operation timeout
-        :arg wait_for_active_shards: Set the number of active shards to
-            wait for on the newly created rollover index before the operation
-            returns.
+        :param alias: The name of the alias to rollover
+        :param new_index: The name of the rollover index
+        :param aliases:
+        :param conditions:
+        :param dry_run: If set to true the rollover action will only be validated but
+            not actually performed even if a condition matches. The default is false
+        :param include_type_name:
+        :param mappings:
+        :param master_timeout: Specify timeout for connection to master
+        :param settings:
+        :param timeout: Explicit operation timeout
+        :param wait_for_active_shards: Set the number of active shards to wait for on
+            the newly created rollover index before the operation returns.
         """
-        client, params = _deprecated_options(self, params)
         if alias in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'alias'.")
-
-        return await client._perform_request(
-            "POST",
-            _make_path(alias, "_rollover", new_index),
-            params=params,
-            headers=headers,
-            body=body,
+            raise ValueError("Empty value passed for parameter 'alias'")
+        if alias not in SKIP_IN_PATH and new_index not in SKIP_IN_PATH:
+            __path = f"/{_quote(alias)}/_rollover/{_quote(new_index)}"
+        elif alias not in SKIP_IN_PATH:
+            __path = f"/{_quote(alias)}/_rollover"
+        else:
+            raise ValueError("Couldn't find a path for the given parameters")
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if aliases is not None:
+            __body["aliases"] = aliases
+        if conditions is not None:
+            __body["conditions"] = conditions
+        if dry_run is not None:
+            __query["dry_run"] = dry_run
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if include_type_name is not None:
+            __query["include_type_name"] = include_type_name
+        if mappings is not None:
+            __body["mappings"] = mappings
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if settings is not None:
+            __body["settings"] = settings
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if wait_for_active_shards is not None:
+            __query["wait_for_active_shards"] = wait_for_active_shards
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
         )
 
-    @query_params(
-        "allow_no_indices",
-        "expand_wildcards",
-        "ignore_unavailable",
-        "master_timeout",
-        "timeout",
-        "wait_for_active_shards",
+    @_rewrite_parameters()
+    async def segments(
+        self,
+        *,
+        index: Optional[Any] = None,
+        allow_no_indices: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        ignore_unavailable: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        verbose: Optional[bool] = None,
+    ) -> Any:
+        """
+        Provides low-level information about segments in a Lucene index.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-segments.html>`_
+
+        :param index: A comma-separated list of index names; use `_all` or empty string
+            to perform the operation on all indices
+        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
+            into no concrete indices. (This includes `_all` string or when no indices
+            have been specified)
+        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :param ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
+        :param verbose: Includes detailed memory usage by Lucene.
+        """
+        if index not in SKIP_IN_PATH:
+            __path = f"/{_quote(index)}/_segments"
+        else:
+            __path = "/_segments"
+        __query: Dict[str, Any] = {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if verbose is not None:
+            __query["verbose"] = verbose
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def shard_stores(
+        self,
+        *,
+        index: Optional[Any] = None,
+        allow_no_indices: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        ignore_unavailable: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        status: Optional[Union[Any, List[Any]]] = None,
+    ) -> Any:
+        """
+        Provides store information for shard copies of indices.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-shards-stores.html>`_
+
+        :param index: List of data streams, indices, and aliases used to limit the request.
+        :param allow_no_indices: If false, the request returns an error if any wildcard
+            expression, index alias, or _all value targets only missing or closed indices.
+            This behavior applies even if the request targets other open indices.
+        :param expand_wildcards: Type of index that wildcard patterns can match. If the
+            request can target data streams, this argument determines whether wildcard
+            expressions match hidden data streams.
+        :param ignore_unavailable: If true, missing or closed indices are not included
+            in the response.
+        :param status: List of shard health statuses used to limit the request.
+        """
+        if index not in SKIP_IN_PATH:
+            __path = f"/{_quote(index)}/_shard_stores"
+        else:
+            __path = "/_shard_stores"
+        __query: Dict[str, Any] = {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if status is not None:
+            __query["status"] = status
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters(
+        body_fields=True,
     )
-    async def unfreeze(self, index, params=None, headers=None):
+    async def shrink(
+        self,
+        *,
+        index: Any,
+        target: Any,
+        aliases: Optional[Dict[Any, Any]] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        settings: Optional[Dict[str, Any]] = None,
+        timeout: Optional[Any] = None,
+        wait_for_active_shards: Optional[Any] = None,
+    ) -> Any:
         """
-        Unfreezes an index. When a frozen index is unfrozen, the index goes through the
-        normal recovery process and becomes writeable again.
+        Allow to shrink an existing index into a new index with fewer primary shards.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/unfreeze-index-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-shrink-index.html>`_
 
-        :arg index: The name of the index to unfreeze
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: closed
-        :arg ignore_unavailable: Whether specified concrete indices
-            should be ignored when unavailable (missing or closed)
-        :arg master_timeout: Specify timeout for connection to master
-        :arg timeout: Explicit operation timeout
-        :arg wait_for_active_shards: Sets the number of active shards to
-            wait for before the operation returns.
+        :param index: The name of the source index to shrink
+        :param target: The name of the target index to shrink into
+        :param aliases:
+        :param master_timeout: Specify timeout for connection to master
+        :param settings:
+        :param timeout: Explicit operation timeout
+        :param wait_for_active_shards: Set the number of active shards to wait for on
+            the shrunken index before the operation returns.
         """
-        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'index'.")
-
-        return await client._perform_request(
-            "POST", _make_path(index, "_unfreeze"), params=params, headers=headers
+            raise ValueError("Empty value passed for parameter 'index'")
+        if target in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'target'")
+        __path = f"/{_quote(index)}/_shrink/{_quote(target)}"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if aliases is not None:
+            __body["aliases"] = aliases
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if settings is not None:
+            __body["settings"] = settings
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if wait_for_active_shards is not None:
+            __query["wait_for_active_shards"] = wait_for_active_shards
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return await self._perform_request(
+            "PUT", __target, headers=__headers, body=__body
         )
 
-    @query_params("allow_no_indices", "expand_wildcards", "ignore_unavailable")
-    async def reload_search_analyzers(self, index, params=None, headers=None):
-        """
-        Reloads an index's search analyzers and their resources.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-reload-analyzers.html>`_
-
-        :arg index: A comma-separated list of index names to reload
-            analyzers for
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
-        :arg ignore_unavailable: Whether specified concrete indices
-            should be ignored when unavailable (missing or closed)
-        """
-        client, params = _deprecated_options(self, params)
-        if index in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'index'.")
-
-        return await client._perform_request(
-            "GET",
-            _make_path(index, "_reload_search_analyzers"),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params(
-        "allow_no_indices",
-        "expand_wildcards",
-        "ignore_unavailable",
-        "include_defaults",
-        "local",
+    @_rewrite_parameters(
+        body_fields=True,
     )
-    async def get_field_mapping(self, fields, index=None, params=None, headers=None):
+    async def simulate_index_template(
+        self,
+        *,
+        name: Any,
+        composed_of: Optional[List[Any]] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        index_patterns: Optional[List[Any]] = None,
+        overlapping: Optional[List[Any]] = None,
+        pretty: Optional[bool] = None,
+        template: Optional[Any] = None,
+    ) -> Any:
         """
-        Returns mapping for one or more fields.
+        Simulate matching the given index name against the index templates in the system
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-get-field-mapping.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
 
-        :arg fields: A comma-separated list of fields
-        :arg index: A comma-separated list of index names
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
-        :arg ignore_unavailable: Whether specified concrete indices
-            should be ignored when unavailable (missing or closed)
-        :arg include_defaults: Whether the default mapping values should
-            be returned as well
-        :arg local: Return local information, do not retrieve the state
-            from master node (default: false)
+        :param name: Index or template name to simulate
+        :param composed_of:
+        :param index_patterns:
+        :param overlapping: Any overlapping templates that would have matched, but have
+            lower priority
+        :param template:
         """
-        client, params = _deprecated_options(self, params)
-        if fields in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'fields'.")
-
-        return await client._perform_request(
-            "GET",
-            _make_path(index, "_mapping", "field", fields),
-            params=params,
-            headers=headers,
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_index_template/_simulate_index/{_quote(name)}"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if composed_of is not None:
+            __body["composed_of"] = composed_of
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if index_patterns is not None:
+            __body["index_patterns"] = index_patterns
+        if overlapping is not None:
+            __body["overlapping"] = overlapping
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if template is not None:
+            __body["template"] = template
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
         )
 
-    @query_params(
-        "all_shards",
-        "allow_no_indices",
-        "analyze_wildcard",
-        "analyzer",
-        "default_operator",
-        "df",
-        "expand_wildcards",
-        "explain",
-        "ignore_unavailable",
-        "lenient",
-        "q",
-        "rewrite",
+    @_rewrite_parameters(
+        body_name="template",
     )
-    async def validate_query(
-        self, body=None, index=None, doc_type=None, params=None, headers=None
-    ):
-        """
-        Allows a user to validate a potentially expensive query without executing it.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-validate.html>`_
-
-        :arg body: The query definition specified with the Query DSL
-        :arg index: A comma-separated list of index names to restrict
-            the operation; use `_all` or empty string to perform the operation on
-            all indices
-        :arg doc_type: A comma-separated list of document types to
-            restrict the operation; leave empty to perform the operation on all
-            types
-        :arg all_shards: Execute validation on all shards instead of one
-            random shard per index
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg analyze_wildcard: Specify whether wildcard and prefix
-            queries should be analyzed (default: false)
-        :arg analyzer: The analyzer to use for the query string
-        :arg default_operator: The default operator for query string
-            query (AND or OR)  Valid choices: AND, OR  Default: OR
-        :arg df: The field to use as default where no field prefix is
-            given in the query string
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
-        :arg explain: Return detailed information about the error
-        :arg ignore_unavailable: Whether specified concrete indices
-            should be ignored when unavailable (missing or closed)
-        :arg lenient: Specify whether format-based query failures (such
-            as providing text to a numeric field) should be ignored
-        :arg q: Query in the Lucene query string syntax
-        :arg rewrite: Provide a more detailed explanation showing the
-            actual Lucene query that will be executed.
-        """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "POST",
-            _make_path(index, doc_type, "_validate", "query"),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params()
-    async def create_data_stream(self, name, params=None, headers=None):
-        """
-        Creates a data stream
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
-
-        :arg name: The name of the data stream
-        """
-        client, params = _deprecated_options(self, params)
-        if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'name'.")
-
-        return await client._perform_request(
-            "PUT", _make_path("_data_stream", name), params=params, headers=headers
-        )
-
-    @query_params("expand_wildcards")
-    async def delete_data_stream(self, name, params=None, headers=None):
-        """
-        Deletes a data stream.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
-
-        :arg name: A comma-separated list of data streams to delete; use
-            `*` to delete all data streams
-        :arg expand_wildcards: Whether wildcard expressions should get
-            expanded to open or closed indices (default: open)  Valid choices: open,
-            closed, hidden, none, all  Default: open
-        """
-        client, params = _deprecated_options(self, params)
-        if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'name'.")
-
-        return await client._perform_request(
-            "DELETE", _make_path("_data_stream", name), params=params, headers=headers
-        )
-
-    @query_params("master_timeout", "timeout")
-    async def delete_index_template(self, name, params=None, headers=None):
-        """
-        Deletes an index template.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
-
-        :arg name: The name of the template
-        :arg master_timeout: Specify timeout for connection to master
-        :arg timeout: Explicit operation timeout
-        """
-        client, params = _deprecated_options(self, params)
-        if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'name'.")
-
-        return await client._perform_request(
-            "DELETE",
-            _make_path("_index_template", name),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params("flat_settings", "local", "master_timeout")
-    async def get_index_template(self, name=None, params=None, headers=None):
-        """
-        Returns an index template.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
-
-        :arg name: A pattern that returned template names must match
-        :arg flat_settings: Return settings in flat format (default:
-            false)
-        :arg local: Return local information, do not retrieve the state
-            from master node (default: false)
-        :arg master_timeout: Explicit operation timeout for connection
-            to master node
-        """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "GET", _make_path("_index_template", name), params=params, headers=headers
-        )
-
-    @query_params("cause", "create", "master_timeout")
-    async def put_index_template(self, name, body, params=None, headers=None):
-        """
-        Creates or updates an index template.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
-
-        :arg name: The name of the template
-        :arg body: The template definition
-        :arg cause: User defined reason for creating/updating the index
-            template
-        :arg create: Whether the index template should only be added if
-            new or can also replace an existing one
-        :arg master_timeout: Specify timeout for connection to master
-        """
-        client, params = _deprecated_options(self, params)
-        for param in (name, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return await client._perform_request(
-            "PUT",
-            _make_path("_index_template", name),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params("flat_settings", "local", "master_timeout")
-    async def exists_index_template(self, name, params=None, headers=None):
-        """
-        Returns information about whether a particular index template exists.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
-
-        :arg name: The name of the template
-        :arg flat_settings: Return settings in flat format (default:
-            false)
-        :arg local: Return local information, do not retrieve the state
-            from master node (default: false)
-        :arg master_timeout: Explicit operation timeout for connection
-            to master node
-        """
-        client, params = _deprecated_options(self, params)
-        if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'name'.")
-
-        return await client._perform_request(
-            "HEAD", _make_path("_index_template", name), params=params, headers=headers
-        )
-
-    @query_params("cause", "create", "master_timeout")
-    async def simulate_index_template(self, name, body=None, params=None, headers=None):
-        """
-        Simulate matching the given index name against the index templates in the
-        system
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
-
-        :arg name: The name of the index (it must be a concrete index
-            name)
-        :arg body: New index template definition, which will be included
-            in the simulation, as if it already exists in the system
-        :arg cause: User defined reason for dry-run creating the new
-            template for simulation purposes
-        :arg create: Whether the index template we optionally defined in
-            the body should only be dry-run added if new or can also replace an
-            existing one
-        :arg master_timeout: Specify timeout for connection to master
-        """
-        client, params = _deprecated_options(self, params)
-        if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'name'.")
-
-        return await client._perform_request(
-            "POST",
-            _make_path("_index_template", "_simulate_index", name),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params("expand_wildcards")
-    async def get_data_stream(self, name=None, params=None, headers=None):
-        """
-        Returns data streams.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
-
-        :arg name: A comma-separated list of data streams to get; use
-            `*` to get all data streams
-        :arg expand_wildcards: Whether wildcard expressions should get
-            expanded to open or closed indices (default: open)  Valid choices: open,
-            closed, hidden, none, all  Default: open
-        """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "GET", _make_path("_data_stream", name), params=params, headers=headers
-        )
-
-    @query_params("cause", "create", "master_timeout")
-    async def simulate_template(self, body=None, name=None, params=None, headers=None):
+    async def simulate_template(
+        self,
+        *,
+        name: Optional[Any] = None,
+        create: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        template: Optional[Any] = None,
+    ) -> Any:
         """
         Simulate resolving the given template name or body
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
 
-        :arg body: New index template definition to be simulated, if no
-            index template name is specified
-        :arg name: The name of the index template
-        :arg cause: User defined reason for dry-run creating the new
-            template for simulation purposes
-        :arg create: Whether the index template we optionally defined in
-            the body should only be dry-run added if new or can also replace an
-            existing one
-        :arg master_timeout: Specify timeout for connection to master
+        :param name: Name of the index template to simulate. To test a template configuration
+            before you add it to the cluster, omit this parameter and specify the template
+            configuration in the request body.
+        :param create: If true, the template passed in the body is only used if no existing
+            templates match the same index patterns. If false, the simulation uses the
+            template with the highest priority. Note that the template is not permanently
+            added or updated in either case; it is only used for the simulation.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param template:
         """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "POST",
-            _make_path("_index_template", "_simulate", name),
-            params=params,
-            headers=headers,
-            body=body,
+        if name not in SKIP_IN_PATH:
+            __path = f"/_index_template/_simulate/{_quote(name)}"
+        else:
+            __path = "/_index_template/_simulate"
+        __query: Dict[str, Any] = {}
+        if create is not None:
+            __query["create"] = create
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __body = template
+        if not __body:
+            __body = None
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
         )
 
-    @query_params("expand_wildcards")
-    async def resolve_index(self, name, params=None, headers=None):
-        """
-        Returns information about any matching indices, aliases, and data streams
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-resolve-index-api.html>`_
-
-        :arg name: A comma-separated list of names or wildcard
-            expressions
-        :arg expand_wildcards: Whether wildcard expressions should get
-            expanded to open or closed indices (default: open)  Valid choices: open,
-            closed, hidden, none, all  Default: open
-        """
-        client, params = _deprecated_options(self, params)
-        if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'name'.")
-
-        return await client._perform_request(
-            "GET", _make_path("_resolve", "index", name), params=params, headers=headers
-        )
-
-    @query_params(
-        "allow_no_indices",
-        "expand_wildcards",
-        "ignore_unavailable",
-        "master_timeout",
-        "timeout",
+    @_rewrite_parameters(
+        body_fields=True,
     )
-    async def add_block(self, index, block, params=None, headers=None):
+    async def split(
+        self,
+        *,
+        index: Any,
+        target: Any,
+        aliases: Optional[Dict[Any, Any]] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        settings: Optional[Dict[str, Any]] = None,
+        timeout: Optional[Any] = None,
+        wait_for_active_shards: Optional[Any] = None,
+    ) -> Any:
         """
-        Adds a block to an index.
+        Allows you to split an existing index into a new index with more primary shards.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/index-modules-blocks.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-split-index.html>`_
 
-        :arg index: A comma separated list of indices to add a block to
-        :arg block: The block to add (one of read, write, read_only or
-            metadata)
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
-        :arg ignore_unavailable: Whether specified concrete indices
-            should be ignored when unavailable (missing or closed)
-        :arg master_timeout: Specify timeout for connection to master
-        :arg timeout: Explicit operation timeout
+        :param index: The name of the source index to split
+        :param target: The name of the target index to split into
+        :param aliases:
+        :param master_timeout: Specify timeout for connection to master
+        :param settings:
+        :param timeout: Explicit operation timeout
+        :param wait_for_active_shards: Set the number of active shards to wait for on
+            the shrunken index before the operation returns.
         """
-        client, params = _deprecated_options(self, params)
-        for param in (index, block):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return await client._perform_request(
-            "PUT", _make_path(index, "_block", block), params=params, headers=headers
-        )
-
-    @query_params()
-    async def data_streams_stats(self, name=None, params=None, headers=None):
-        """
-        Provides statistics on operations happening in a data stream.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
-
-        :arg name: A comma-separated list of data stream names; use
-            `_all` or empty string to perform the operation on all data streams
-        """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "GET",
-            _make_path("_data_stream", name, "_stats"),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params()
-    async def migrate_to_data_stream(self, name, params=None, headers=None):
-        """
-        Migrates an alias to a data stream
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
-
-        :arg name: The name of the alias to migrate
-        """
-        client, params = _deprecated_options(self, params)
-        if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'name'.")
-
-        return await client._perform_request(
-            "POST",
-            _make_path("_data_stream", "_migrate", name),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params()
-    async def promote_data_stream(self, name, params=None, headers=None):
-        """
-        Promotes a data stream from a replicated data stream managed by CCR to a
-        regular data stream
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
-
-        :arg name: The name of the data stream
-        """
-        client, params = _deprecated_options(self, params)
-        if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'name'.")
-
-        return await client._perform_request(
-            "POST",
-            _make_path("_data_stream", "_promote", name),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params(
-        "allow_no_indices",
-        "expand_wildcards",
-        "flush",
-        "ignore_unavailable",
-        "run_expensive_tasks",
-    )
-    async def disk_usage(self, index, params=None, headers=None):
-        """
-        Analyzes the disk usage of each field of an index or data stream
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-disk-usage.html>`_
-
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
-
-        :arg index: Comma-separated list of indices or data streams to
-            analyze the disk usage
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
-        :arg flush: Whether flush or not before analyzing the index disk
-            usage. Defaults to true
-        :arg ignore_unavailable: Whether specified concrete indices
-            should be ignored when unavailable (missing or closed)
-        :arg run_expensive_tasks: Must be set to [true] in order for the
-            task to be performed. Defaults to false.
-        """
-        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'index'.")
-
-        return await client._perform_request(
-            "POST", _make_path(index, "_disk_usage"), params=params, headers=headers
+            raise ValueError("Empty value passed for parameter 'index'")
+        if target in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'target'")
+        __path = f"/{_quote(index)}/_split/{_quote(target)}"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if aliases is not None:
+            __body["aliases"] = aliases
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if settings is not None:
+            __body["settings"] = settings
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if wait_for_active_shards is not None:
+            __query["wait_for_active_shards"] = wait_for_active_shards
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return await self._perform_request(
+            "PUT", __target, headers=__headers, body=__body
         )
 
-    @query_params(
-        "allow_no_indices", "expand_wildcards", "fields", "ignore_unavailable"
-    )
-    async def field_usage_stats(self, index, params=None, headers=None):
+    @_rewrite_parameters()
+    async def stats(
+        self,
+        *,
+        index: Optional[Any] = None,
+        metric: Optional[Any] = None,
+        completion_fields: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        fielddata_fields: Optional[Any] = None,
+        fields: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        forbid_closed_indices: Optional[bool] = None,
+        groups: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        include_segment_file_sizes: Optional[bool] = None,
+        include_unloaded_segments: Optional[bool] = None,
+        level: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        types: Optional[Any] = None,
+    ) -> Any:
         """
-        Returns the field usage stats for each field of an index
+        Provides statistics on operations happening in an index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/field-usage-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-stats.html>`_
 
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
-
-        :arg index: A comma-separated list of index names; use `_all` or
-            empty string to perform the operation on all indices
-        :arg allow_no_indices: Whether to ignore if a wildcard indices
-            expression resolves into no concrete indices. (This includes `_all`
-            string or when no indices have been specified)
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: open
-        :arg fields: A comma-separated list of fields to include in the
-            stats if only a subset of fields should be returned (supports wildcards)
-        :arg ignore_unavailable: Whether specified concrete indices
-            should be ignored when unavailable (missing or closed)
+        :param index: A comma-separated list of index names; use `_all` or empty string
+            to perform the operation on all indices
+        :param metric: Limit the information returned the specific metrics.
+        :param completion_fields: A comma-separated list of fields for the `completion`
+            index metric (supports wildcards)
+        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :param fielddata_fields: A comma-separated list of fields for the `fielddata`
+            index metric (supports wildcards)
+        :param fields: A comma-separated list of fields for `fielddata` and `completion`
+            index metric (supports wildcards)
+        :param forbid_closed_indices: If set to false stats will also collected from
+            closed indices if explicitly specified or if expand_wildcards expands to
+            closed indices
+        :param groups: A comma-separated list of search groups for `search` index metric
+        :param include_segment_file_sizes: Whether to report the aggregated disk usage
+            of each one of the Lucene index files (only applies if segment stats are
+            requested)
+        :param include_unloaded_segments: If set to true segment stats will include stats
+            for segments that are not currently loaded into memory
+        :param level: Return stats aggregated at cluster, index or shard level
+        :param types: A comma-separated list of document types for the `indexing` index
+            metric
         """
-        client, params = _deprecated_options(self, params)
+        if index not in SKIP_IN_PATH and metric not in SKIP_IN_PATH:
+            __path = f"/{_quote(index)}/_stats/{_quote(metric)}"
+        elif index not in SKIP_IN_PATH:
+            __path = f"/{_quote(index)}/_stats"
+        elif metric not in SKIP_IN_PATH:
+            __path = f"/_stats/{_quote(metric)}"
+        else:
+            __path = "/_stats"
+        __query: Dict[str, Any] = {}
+        if completion_fields is not None:
+            __query["completion_fields"] = completion_fields
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if fielddata_fields is not None:
+            __query["fielddata_fields"] = fielddata_fields
+        if fields is not None:
+            __query["fields"] = fields
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if forbid_closed_indices is not None:
+            __query["forbid_closed_indices"] = forbid_closed_indices
+        if groups is not None:
+            __query["groups"] = groups
+        if human is not None:
+            __query["human"] = human
+        if include_segment_file_sizes is not None:
+            __query["include_segment_file_sizes"] = include_segment_file_sizes
+        if include_unloaded_segments is not None:
+            __query["include_unloaded_segments"] = include_unloaded_segments
+        if level is not None:
+            __query["level"] = level
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if types is not None:
+            __query["types"] = types
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def unfreeze(
+        self,
+        *,
+        index: Any,
+        allow_no_indices: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        ignore_unavailable: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+        wait_for_active_shards: Optional[str] = None,
+    ) -> Any:
+        """
+        Unfreezes an index. When a frozen index is unfrozen, the index goes through the
+        normal recovery process and becomes writeable again.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/unfreeze-index-api.html>`_
+
+        :param index: The name of the index to unfreeze
+        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
+            into no concrete indices. (This includes `_all` string or when no indices
+            have been specified)
+        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :param ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
+        :param master_timeout: Specify timeout for connection to master
+        :param timeout: Explicit operation timeout
+        :param wait_for_active_shards: Sets the number of active shards to wait for before
+            the operation returns.
+        """
         if index in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'index'.")
+            raise ValueError("Empty value passed for parameter 'index'")
+        __path = f"/{_quote(index)}/_unfreeze"
+        __query: Dict[str, Any] = {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if wait_for_active_shards is not None:
+            __query["wait_for_active_shards"] = wait_for_active_shards
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("POST", __target, headers=__headers)
 
-        return await client._perform_request(
-            "GET",
-            _make_path(index, "_field_usage_stats"),
-            params=params,
-            headers=headers,
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def update_aliases(
+        self,
+        *,
+        actions: Optional[List[Any]] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+    ) -> Any:
+        """
+        Updates index aliases.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-aliases.html>`_
+
+        :param actions:
+        :param master_timeout: Specify timeout for connection to master
+        :param timeout: Request timeout
+        """
+        __path = "/_aliases"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if actions is not None:
+            __body["actions"] = actions
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
         )
 
-    @query_params()
-    async def modify_data_stream(self, body, params=None, headers=None):
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def validate_query(
+        self,
+        *,
+        index: Optional[Any] = None,
+        type: Optional[Any] = None,
+        all_shards: Optional[bool] = None,
+        allow_no_indices: Optional[bool] = None,
+        analyze_wildcard: Optional[bool] = None,
+        analyzer: Optional[str] = None,
+        default_operator: Optional[Any] = None,
+        df: Optional[str] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        explain: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        ignore_unavailable: Optional[bool] = None,
+        lenient: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        q: Optional[str] = None,
+        query: Optional[Any] = None,
+        rewrite: Optional[bool] = None,
+    ) -> Any:
         """
-        Modifies a data stream
+        Allows a user to validate a potentially expensive query without executing it.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-validate.html>`_
 
-        :arg body: The data stream modifications
+        :param index: A comma-separated list of index names to restrict the operation;
+            use `_all` or empty string to perform the operation on all indices
+        :param type: A comma-separated list of document types to restrict the operation;
+            leave empty to perform the operation on all types
+        :param all_shards: Execute validation on all shards instead of one random shard
+            per index
+        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
+            into no concrete indices. (This includes `_all` string or when no indices
+            have been specified)
+        :param analyze_wildcard: Specify whether wildcard and prefix queries should be
+            analyzed (default: false)
+        :param analyzer: The analyzer to use for the query string
+        :param default_operator: The default operator for query string query (AND or
+            OR)
+        :param df: The field to use as default where no field prefix is given in the
+            query string
+        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :param explain: Return detailed information about the error
+        :param ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
+        :param lenient: Specify whether format-based query failures (such as providing
+            text to a numeric field) should be ignored
+        :param q: Query in the Lucene query string syntax
+        :param query:
+        :param rewrite: Provide a more detailed explanation showing the actual Lucene
+            query that will be executed.
         """
-        client, params = _deprecated_options(self, params)
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
-
-        return await client._perform_request(
-            "POST", "/_data_stream/_modify", params=params, headers=headers, body=body
+        if index not in SKIP_IN_PATH and type not in SKIP_IN_PATH:
+            __path = f"/{_quote(index)}/{_quote(type)}/_validate/query"
+        elif index not in SKIP_IN_PATH:
+            __path = f"/{_quote(index)}/_validate/query"
+        else:
+            __path = "/_validate/query"
+        __query: Dict[str, Any] = {}
+        __body: Dict[str, Any] = {}
+        if all_shards is not None:
+            __query["all_shards"] = all_shards
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if analyze_wildcard is not None:
+            __query["analyze_wildcard"] = analyze_wildcard
+        if analyzer is not None:
+            __query["analyzer"] = analyzer
+        if default_operator is not None:
+            __query["default_operator"] = default_operator
+        if df is not None:
+            __query["df"] = df
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if explain is not None:
+            __query["explain"] = explain
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if lenient is not None:
+            __query["lenient"] = lenient
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if q is not None:
+            __query["q"] = q
+        if query is not None:
+            __body["query"] = query
+        if rewrite is not None:
+            __query["rewrite"] = rewrite
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
         )

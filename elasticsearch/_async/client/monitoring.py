@@ -15,36 +15,71 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+from typing import Any, Dict, List, Optional, Union
+
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
+from .utils import _quote_query, _rewrite_parameters
 
 
 class MonitoringClient(NamespacedClient):
-    @query_params("interval", "system_api_version", "system_id")
-    async def bulk(self, body, doc_type=None, params=None, headers=None):
+    @_rewrite_parameters(
+        body_name="operations",
+    )
+    async def bulk(
+        self,
+        *,
+        interval: Any,
+        operations: List[Any],
+        system_api_version: str,
+        system_id: str,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Used by the monitoring features to send monitoring data.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/monitor-elasticsearch-cluster.html>`_
 
-        :arg body: The operation definition and data (action-data
-            pairs), separated by newlines
-        :arg doc_type: Default document type for items which don't
-            provide one
-        :arg interval: Collection interval (e.g., '10s' or '10000ms') of
-            the payload
-        :arg system_api_version: API Version of the monitored system
-        :arg system_id: Identifier of the monitored system
+        :param interval: Collection interval (e.g., '10s' or '10000ms') of the payload
+        :param operations:
+        :param system_api_version:
+        :param system_id: Identifier of the monitored system
         """
-        client, params = _deprecated_options(self, params)
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
-
-        headers["content-type"] = "application/x-ndjson"
-        return await client._perform_request(
-            "POST",
-            _make_path("_monitoring", doc_type, "bulk"),
-            params=params,
-            headers=headers,
-            body=body,
+        if interval is None:
+            raise ValueError("Empty value passed for parameter 'interval'")
+        if operations is None:
+            raise ValueError("Empty value passed for parameter 'operations'")
+        if system_api_version is None:
+            raise ValueError("Empty value passed for parameter 'system_api_version'")
+        if system_id is None:
+            raise ValueError("Empty value passed for parameter 'system_id'")
+        __path = "/_monitoring/bulk"
+        __query: Dict[str, Any] = {}
+        if interval is not None:
+            __query["interval"] = interval
+        if system_api_version is not None:
+            __query["system_api_version"] = system_api_version
+        if system_id is not None:
+            __query["system_id"] = system_id
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __body = operations
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {
+            "accept": "application/json",
+            "content-type": "application/x-ndjson",
+        }
+        return await self._perform_request(
+            "PUT", __target, headers=__headers, body=__body
         )

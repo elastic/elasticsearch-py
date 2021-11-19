@@ -15,50 +15,49 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+from typing import Any, Dict, List, Optional, Union
+
 from ._base import NamespacedClient
-from .utils import _deprecated_options, _make_path, query_params
+from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
 
 class MigrationClient(NamespacedClient):
-    @query_params()
-    async def deprecations(self, index=None, params=None, headers=None):
+    @_rewrite_parameters()
+    async def deprecations(
+        self,
+        *,
+        index: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Retrieves information about different cluster, node, and index level settings
         that use deprecated features that will be removed or changed in the next major
         version.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/migration-api-deprecation.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/migration-api-deprecation.html>`_
 
-        :arg index: Index pattern
+        :param index: Comma-separate list of data streams or indices to check. Wildcard
+            (*) expressions are supported.
         """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "GET",
-            _make_path(index, "_migration", "deprecations"),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params()
-    async def get_feature_upgrade_status(self, params=None, headers=None):
-        """
-        Find out whether system features need to be upgraded or not
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/migration-api-feature-upgrade.html>`_
-        """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "GET", "/_migration/system_features", params=params, headers=headers
-        )
-
-    @query_params()
-    async def post_feature_upgrade(self, params=None, headers=None):
-        """
-        Begin upgrades for system features
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/migration-api-feature-upgrade.html>`_
-        """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "POST", "/_migration/system_features", params=params, headers=headers
-        )
+        if index not in SKIP_IN_PATH:
+            __path = f"/{_quote(index)}/_migration/deprecations"
+        else:
+            __path = "/_migration/deprecations"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)

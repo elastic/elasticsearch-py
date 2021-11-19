@@ -15,76 +15,146 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+from typing import Any, Dict, List, Optional
+
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _deprecated_options, query_params
+from .utils import _quote_query, _rewrite_parameters
 
 
 class TextStructureClient(NamespacedClient):
-    @query_params(
-        "charset",
-        "column_names",
-        "delimiter",
-        "explain",
-        "format",
-        "grok_pattern",
-        "has_header_row",
-        "line_merge_size_limit",
-        "lines_to_sample",
-        "quote",
-        "should_trim_fields",
-        "timeout",
-        "timestamp_field",
-        "timestamp_format",
+    @_rewrite_parameters(
+        body_name="text_files",
     )
-    async def find_structure(self, body, params=None, headers=None):
+    async def find_structure(
+        self,
+        *,
+        text_files: List[Any],
+        charset: Optional[str] = None,
+        column_names: Optional[str] = None,
+        delimiter: Optional[str] = None,
+        explain: Optional[bool] = None,
+        format: Optional[str] = None,
+        grok_pattern: Optional[str] = None,
+        has_header_row: Optional[bool] = None,
+        line_merge_size_limit: Optional[int] = None,
+        lines_to_sample: Optional[int] = None,
+        quote: Optional[str] = None,
+        should_trim_fields: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+        timestamp_field: Optional[Any] = None,
+        timestamp_format: Optional[str] = None,
+    ) -> Any:
         """
-        Finds the structure of a text file. The text file must contain data that is
-        suitable to be ingested into Elasticsearch.
+        Finds the structure of a text file. The text file must contain data that is suitable
+        to be ingested into Elasticsearch.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/find-structure.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/find-structure.html>`_
 
-        :arg body: The contents of the file to be analyzed
-        :arg charset: Optional parameter to specify the character set of
+        :param text_files:
+        :param charset: The text’s character set. It must be a character set that is
+            supported by the JVM that Elasticsearch uses. For example, UTF-8, UTF-16LE,
+            windows-1252, or EUC-JP. If this parameter is not specified, the structure
+            finder chooses an appropriate character set.
+        :param column_names: If you have set format to delimited, you can specify the
+            column names in a comma-separated list. If this parameter is not specified,
+            the structure finder uses the column names from the header row of the text.
+            If the text does not have a header role, columns are named "column1", "column2",
+            "column3", etc.
+        :param delimiter: If you have set format to delimited, you can specify the character
+            used to delimit the values in each row. Only a single character is supported;
+            the delimiter cannot have multiple characters. By default, the API considers
+            the following possibilities: comma, tab, semi-colon, and pipe (|). In this
+            default scenario, all rows must have the same number of fields for the delimited
+            format to be detected. If you specify a delimiter, up to 10% of the rows
+            can have a different number of columns than the first row.
+        :param explain: If this parameter is set to true, the response includes a field
+            named explanation, which is an array of strings that indicate how the structure
+            finder produced its result.
+        :param format: The high level structure of the text. Valid values are ndjson,
+            xml, delimited, and semi_structured_text. By default, the API chooses the
+            format. In this default scenario, all rows must have the same number of fields
+            for a delimited format to be detected. If the format is set to delimited
+            and the delimiter is not set, however, the API tolerates up to 5% of rows
+            that have a different number of columns than the first row.
+        :param grok_pattern: If you have set format to semi_structured_text, you can
+            specify a Grok pattern that is used to extract fields from every message
+            in the text. The name of the timestamp field in the Grok pattern must match
+            what is specified in the timestamp_field parameter. If that parameter is
+            not specified, the name of the timestamp field in the Grok pattern must match
+            "timestamp". If grok_pattern is not specified, the structure finder creates
+            a Grok pattern.
+        :param has_header_row: If you have set format to delimited, you can use this
+            parameter to indicate whether the column names are in the first row of the
+            text. If this parameter is not specified, the structure finder guesses based
+            on the similarity of the first row of the text to other rows.
+        :param line_merge_size_limit: The maximum number of characters in a message when
+            lines are merged to form messages while analyzing semi-structured text. If
+            you have extremely long messages you may need to increase this, but be aware
+            that this may lead to very long processing times if the way to group lines
+            into messages is misdetected.
+        :param lines_to_sample: The number of lines to include in the structural analysis,
+            starting from the beginning of the text. The minimum is 2; If the value of
+            this parameter is greater than the number of lines in the text, the analysis
+            proceeds (as long as there are at least two lines in the text) for all of
+            the lines.
+        :param quote: If you have set format to delimited, you can specify the character
+            used to quote the values in each row if they contain newlines or the delimiter
+            character. Only a single character is supported. If this parameter is not
+            specified, the default value is a double quote ("). If your delimited text
+            format does not use quoting, a workaround is to set this argument to a character
+            that does not appear anywhere in the sample.
+        :param should_trim_fields: If you have set format to delimited, you can specify
+            whether values between delimiters should have whitespace trimmed from them.
+            If this parameter is not specified and the delimiter is pipe (|), the default
+            value is true. Otherwise, the default value is false.
+        :param timeout: Sets the maximum amount of time that the structure analysis make
+            take. If the analysis is still running when the timeout expires then it will
+            be aborted.
+        :param timestamp_field: Optional parameter to specify the timestamp field in
             the file
-        :arg column_names: Optional parameter containing a comma
-            separated list of the column names for a delimited file
-        :arg delimiter: Optional parameter to specify the delimiter
-            character for a delimited file - must be a single character
-        :arg explain: Whether to include a commentary on how the
-            structure was derived
-        :arg format: Optional parameter to specify the high level file
-            format  Valid choices: ndjson, xml, delimited, semi_structured_text
-        :arg grok_pattern: Optional parameter to specify the Grok
-            pattern that should be used to extract fields from messages in a semi-
-            structured text file
-        :arg has_header_row: Optional parameter to specify whether a
-            delimited file includes the column names in its first row
-        :arg line_merge_size_limit: Maximum number of characters
-            permitted in a single message when lines are merged to create messages.
-            Default: 10000
-        :arg lines_to_sample: How many lines of the file should be
-            included in the analysis  Default: 1000
-        :arg quote: Optional parameter to specify the quote character
-            for a delimited file - must be a single character
-        :arg should_trim_fields: Optional parameter to specify whether
-            the values between delimiters in a delimited file should have whitespace
-            trimmed from them
-        :arg timeout: Timeout after which the analysis will be aborted
-            Default: 25s
-        :arg timestamp_field: Optional parameter to specify the
-            timestamp field in the file
-        :arg timestamp_format: Optional parameter to specify the
-            timestamp format in the file - may be either a Joda or Java time format
+        :param timestamp_format: The Java time format of the timestamp field in the text.
         """
-        client, params = _deprecated_options(self, params)
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
-
-        headers["content-type"] = "application/x-ndjson"
-        return await client._perform_request(
-            "POST",
-            "/_text_structure/find_structure",
-            params=params,
-            headers=headers,
-            body=body,
+        if text_files is None:
+            raise ValueError("Empty value passed for parameter 'text_files'")
+        __path = "/_text_structure/find_structure"
+        __query: Dict[str, Any] = {}
+        if charset is not None:
+            __query["charset"] = charset
+        if column_names is not None:
+            __query["column_names"] = column_names
+        if delimiter is not None:
+            __query["delimiter"] = delimiter
+        if explain is not None:
+            __query["explain"] = explain
+        if format is not None:
+            __query["format"] = format
+        if grok_pattern is not None:
+            __query["grok_pattern"] = grok_pattern
+        if has_header_row is not None:
+            __query["has_header_row"] = has_header_row
+        if line_merge_size_limit is not None:
+            __query["line_merge_size_limit"] = line_merge_size_limit
+        if lines_to_sample is not None:
+            __query["lines_to_sample"] = lines_to_sample
+        if quote is not None:
+            __query["quote"] = quote
+        if should_trim_fields is not None:
+            __query["should_trim_fields"] = should_trim_fields
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if timestamp_field is not None:
+            __query["timestamp_field"] = timestamp_field
+        if timestamp_format is not None:
+            __query["timestamp_format"] = timestamp_format
+        __body = text_files
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {
+            "accept": "application/json",
+            "content-type": "application/x-ndjson",
+        }
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
         )

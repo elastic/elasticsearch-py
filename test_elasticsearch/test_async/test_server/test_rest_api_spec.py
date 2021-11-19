@@ -21,6 +21,7 @@ some integration tests. These files are shared among all official Elasticsearch
 clients.
 """
 import inspect
+import json
 import warnings
 
 import pytest
@@ -28,6 +29,7 @@ import pytest
 from elasticsearch import ElasticsearchWarning, RequestError
 
 from ...test_server.test_rest_api_spec import (
+    API_PARAMS_RENAMES,
     IMPLEMENTED_FEATURES,
     PARAMS_RENAMES,
     RUN_ASYNC_REST_API_TESTS,
@@ -131,14 +133,39 @@ class AsyncYamlRunner(YamlRunner):
 
         # locate api endpoint
         for m in method.split("."):
-            assert hasattr(api, m)
+            if not hasattr(api, m):
+                pytest.skip("This API isn't implemented yet")
             api = getattr(api, m)
+
+        # Sometimes the 'body' parameter is encoded as a string instead of raw.
+        if "body" in args:
+            try:
+                args["body"] = json.loads(args["body"])
+            except (TypeError, ValueError):
+                pass
+
+            if isinstance(args["body"], dict):
+                # Detect when there are duplicate options that aren't the same value.
+                # In this case the test isn't testing the client, it's testing Elasticsearch
+                # and its ability to reject multiple values so we either combine
+                # like values or skip the test entirely as unnecessary for the client.
+                duplicate_args = set(args["body"]).intersection(args)
+                if duplicate_args:
+                    for arg in list(duplicate_args):
+                        if args["body"][arg] == args[arg]:
+                            args["body"].pop(arg)
+                        else:
+                            pytest.skip(
+                                "Contains a duplicate parameter with a different value"
+                            )
 
         # some parameters had to be renamed to not clash with python builtins,
         # compensate
-        for k in PARAMS_RENAMES:
+        renames = PARAMS_RENAMES.copy()
+        renames.update(API_PARAMS_RENAMES.get(method, {}))
+        for k in renames:
             if k in args:
-                args[PARAMS_RENAMES[k]] = args.pop(k)
+                args[renames[k]] = args.pop(k)
 
         # resolve vars
         for k in args:
@@ -149,6 +176,7 @@ class AsyncYamlRunner(YamlRunner):
             try:
                 self.last_response = (await api(**args)).raw
             except Exception as e:
+                self._skip_intentional_type_errors(e)
                 if not catch:
                     raise
                 self.run_catch(catch, e)
