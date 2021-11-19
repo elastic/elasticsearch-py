@@ -5,6 +5,8 @@ omit =
     */lib_pypy/*
     */site-packages/*
     *.egg/*
+    elasticsearch/_async/client/
+    elasticsearch/_sync/client/
     test_elasticsearch/*
 
 [report]

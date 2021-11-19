@@ -15,33 +15,78 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+from typing import Any, Dict, List, Optional, Union
+
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
+from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
 
 class GraphClient(NamespacedClient):
-    @query_params("routing", "timeout")
-    def explore(self, index, body=None, params=None, headers=None):
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    def explore(
+        self,
+        *,
+        index: Any,
+        connections: Optional[Any] = None,
+        controls: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        query: Optional[Any] = None,
+        routing: Optional[Any] = None,
+        timeout: Optional[Any] = None,
+        vertices: Optional[List[Any]] = None,
+    ) -> Any:
         """
         Explore extracted and summarized information about the documents and terms in
         an index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/graph-explore-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/graph-explore-api.html>`_
 
-        :arg index: A comma-separated list of index names to search; use
-            `_all` or empty string to perform the operation on all indices
-        :arg body: Graph Query DSL
-        :arg routing: Specific routing value
-        :arg timeout: Explicit operation timeout
+        :param index: A comma-separated list of index names to search; use `_all` or
+            empty string to perform the operation on all indices
+        :param connections:
+        :param controls:
+        :param query:
+        :param routing: Specific routing value
+        :param timeout: Explicit operation timeout
+        :param vertices:
         """
-        client, params = _deprecated_options(self, params)
         if index in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'index'.")
-
-        return client._perform_request(
-            "POST",
-            _make_path(index, "_graph", "explore"),
-            params=params,
-            headers=headers,
-            body=body,
-        )
+            raise ValueError("Empty value passed for parameter 'index'")
+        __path = f"/{_quote(index)}/_graph/explore"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if connections is not None:
+            __body["connections"] = connections
+        if controls is not None:
+            __body["controls"] = controls
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if query is not None:
+            __body["query"] = query
+        if routing is not None:
+            __query["routing"] = routing
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if vertices is not None:
+            __body["vertices"] = vertices
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return self._perform_request("POST", __target, headers=__headers, body=__body)

@@ -237,7 +237,7 @@ def _process_bulk_chunk(
 
     try:
         # send the actual request
-        resp = client.bulk(*args, body=bulk_actions, **kwargs)
+        resp = client.bulk(*args, operations=bulk_actions, **kwargs)
     except TransportError as e:
         gen = _process_bulk_chunk_error(
             error=e,
@@ -690,7 +690,7 @@ def reindex(
     try:
         # Verify if the target_index is data stream or index
         data_streams = target_client.indices.get_data_stream(
-            target_index, expand_wildcards="all"
+            name=target_index, expand_wildcards="all"
         )
         is_data_stream = any(
             data_stream["name"] == target_index

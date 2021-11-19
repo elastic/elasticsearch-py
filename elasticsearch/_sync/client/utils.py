@@ -26,10 +26,11 @@ from typing import (
     Awaitable,
     Callable,
     Collection,
+    Dict,
     List,
     Mapping,
-    MutableMapping,
     Optional,
+    Set,
     Tuple,
     Type,
     TypeVar,
@@ -41,15 +42,14 @@ from elastic_transport.client_utils import (
     DEFAULT,
     client_meta_version,
     parse_cloud_id,
+    percent_encode,
     url_to_node_config,
 )
 
 from ..._version import __versionstr__
-from ...compat import quote, string_types, to_bytes, to_str, warn_stacklevel
-from ...serializer import Serializer
+from ...compat import to_bytes, to_str, warn_stacklevel
 
 if TYPE_CHECKING:
-    from ... import Elasticsearch
     from ._base import NamespacedClient
 
 # parts of URL to be omitted
@@ -65,9 +65,20 @@ _TYPE_ASYNC_SNIFF_CALLBACK = Callable[
 ]
 _TYPE_SYNC_SNIFF_CALLBACK = Callable[[Transport, SniffOptions], List[NodeConfig]]
 
+_TRANSPORT_OPTIONS = {
+    "api_key",
+    "http_auth",
+    "request_timeout",
+    "opaque_id",
+    "headers",
+    "ignore",
+}
+
+F = TypeVar("F", bound=Callable[..., Any])
+
 
 def client_node_configs(
-    hosts: _TYPE_HOSTS, cloud_id: str, **kwargs: Any
+    hosts: Optional[_TYPE_HOSTS], cloud_id: Optional[str], **kwargs: Any
 ) -> List[NodeConfig]:
     if cloud_id is not None:
         if hosts is not None:
@@ -76,6 +87,7 @@ def client_node_configs(
             )
         node_configs = cloud_id_to_node_configs(cloud_id)
     else:
+        assert hosts is not None
         node_configs = hosts_to_node_configs(hosts)
 
     # Remove all values which are 'DEFAULT' to avoid overwriting actual defaults.
@@ -185,7 +197,17 @@ def cloud_id_to_node_configs(cloud_id: str) -> List[NodeConfig]:
     ]
 
 
-def _escape(value: Any) -> Union[bytes, str]:
+def _base64_auth_header(auth_value: Union[str, List[str], Tuple[str, str]]) -> str:
+    """Takes either a 2-tuple or a base64-encoded string
+    and returns a base64-encoded string to be used
+    as an HTTP authorization header.
+    """
+    if isinstance(auth_value, (list, tuple)):
+        return base64.b64encode(to_bytes(":".join(auth_value))).decode("ascii")
+    return to_str(auth_value)
+
+
+def _escape(value: Any) -> str:
     """
     Escape a single value of a URL string or a query parameter. If it is a list
     or tuple, turn it into a comma-separated string first.
@@ -193,7 +215,7 @@ def _escape(value: Any) -> Union[bytes, str]:
 
     # make sequences into comma-separated stings
     if isinstance(value, (list, tuple)):
-        value = ",".join(value)
+        value = ",".join([_escape(item) for item in value])
 
     # dates and datetimes into isoformat
     elif isinstance(value, (date, datetime)):
@@ -204,176 +226,148 @@ def _escape(value: Any) -> Union[bytes, str]:
         value = str(value).lower()
 
     elif isinstance(value, bytes):
-        return value
+        return value.decode("utf-8", "surrogatepass")
 
-    # encode strings to utf-8
     if not isinstance(value, str):
-        return str(value).encode("utf-8")
-    return value.encode("utf-8")
+        return str(value)
+    return value
 
 
-def _make_path(*parts: Any) -> str:
-    """
-    Create a URL string from parts, omit all `None` values and empty strings.
-    Convert lists and tuples to comma separated values.
-    """
-    # TODO: maybe only allow some parts to be lists/tuples ?
-    return "/" + "/".join(
-        # preserve ',' and '*' in url for nicer URLs in logs
-        quote(_escape(p), b",*")
-        for p in parts
-        if p not in SKIP_IN_PATH
-    )
+def _quote(value: Any) -> str:
+    return percent_encode(_escape(value), ",*")
 
 
-# parameters that apply to all methods
-GLOBAL_PARAMS: Tuple[str, ...] = (
-    "pretty",
-    "human",
-    "error_trace",
-    "format",
-    "filter_path",
-)
-T = TypeVar("T")
+def _quote_query(query: Dict[str, Any]) -> str:
+    return "&".join([f"{k}={_quote(v)}" for k, v in query.items()])
 
 
-def query_params(
-    *es_query_params: str,
-) -> Callable[[T], T]:
-    """
-    Decorator that pops all accepted parameters from method's kwargs and puts
-    them in the params argument.
-    """
-
-    def _wrapper(func: Any) -> Any:
-        @wraps(func)
-        def _wrapped(*args: Any, **kwargs: Any) -> Any:
-            params = (kwargs.pop("params", None) or {}).copy()
-            headers = {
-                k.lower(): v
-                for k, v in (kwargs.pop("headers", None) or {}).copy().items()
-            }
-
-            if "opaque_id" in kwargs:
-                headers["x-opaque-id"] = kwargs.pop("opaque_id")
-
-            http_auth = kwargs.pop("http_auth", None)
-            api_key = kwargs.pop("api_key", None)
-
-            if http_auth is not None and api_key is not None:
-                raise ValueError(
-                    "Only one of 'http_auth' and 'api_key' may be passed at a time"
-                )
-            elif http_auth is not None:
-                headers["authorization"] = f"Basic {_base64_auth_header(http_auth)}"
-            elif api_key is not None:
-                headers["authorization"] = f"ApiKey {_base64_auth_header(api_key)}"
-
-            for p in es_query_params + GLOBAL_PARAMS:
-                if p in kwargs:
-                    v = kwargs.pop(p)
-                    if v is not None:
-                        params[p] = _escape(v)
-
-            # don't treat ignore, request_timeout, and opaque_id as other params to avoid escaping
-            for p in ("ignore", "request_timeout"):
-                if p in kwargs:
-                    params[p] = kwargs.pop(p)
-            return func(*args, params=params, headers=headers, **kwargs)
-
-        return _wrapped
-
-    return _wrapper
-
-
-def _bulk_body(
-    serializer: Serializer, body: Union[str, bytes, Collection[Any]]
-) -> Union[str, bytes]:
-    # if not passed in a string, serialize items and join by newline
-    if not isinstance(body, string_types):
-        body = b"\n".join(map(serializer.dumps, body))
-
-    # bulk body must end with a newline
-    if isinstance(body, bytes):
-        if not body.endswith(b"\n"):
-            body += b"\n"
-    elif isinstance(body, str) and not body.endswith("\n"):
-        body += "\n"
-
-    return body
-
-
-def _base64_auth_header(
-    auth_value: Union[List[str], Tuple[str, ...], str, bytes]
-) -> str:
-    """Takes either a 2-tuple or a base64-encoded string
-    and returns a base64-encoded string to be used
-    as an HTTP authorization header.
-    """
-    if isinstance(auth_value, (list, tuple)):
-        auth_value = base64.b64encode(to_bytes(":".join(auth_value)))
-    return to_str(auth_value)
-
-
-def _deprecated_options(
-    client: Union["Elasticsearch", "NamespacedClient"],
-    params: Optional[MutableMapping[str, Any]],
-) -> Tuple[Union["Elasticsearch", "NamespacedClient"], Optional[Mapping[str, Any]]]:
-    """Applies the deprecated logic for per-request options. When passed deprecated options
-    this function will convert them into a Elasticsearch.options() or encoded params"""
-
-    if params:
-        options_kwargs = {}
-        opaque_id = params.pop("opaque_id", None)
-        api_key = params.pop("api_key", None)
-        http_auth = params.pop("http_auth", None)
-        headers = {}
-        if opaque_id is not None:
-            headers["x-opaque-id"] = opaque_id
-        if http_auth is not None and api_key is not None:
+def _merge_kwargs_no_duplicates(kwargs: Dict[str, Any], values: Dict[str, Any]) -> None:
+    for key, val in values.items():
+        if key in kwargs:
             raise ValueError(
-                "Only one of 'http_auth' and 'api_key' may be passed at a time"
+                f"Received multiple values for '{key}', specify parameters "
+                "directly instead of using 'body' or 'params'"
             )
-        elif api_key is not None:
-            options_kwargs["api_key"] = api_key
-        elif http_auth is not None:
-            options_kwargs["basic_auth"] = http_auth
-        if headers:
-            options_kwargs["headers"] = headers
+        kwargs[key] = val
 
-        request_timeout = params.pop("request_timeout", None)
-        if request_timeout is not None:
-            options_kwargs["request_timeout"] = request_timeout
 
-        ignore = params.pop("ignore", None)
-        if ignore is not None:
-            options_kwargs["ignore_status"] = ignore
+def _rewrite_parameters(
+    body_name: Optional[str] = None,
+    body_fields: bool = False,
+    parameter_aliases: Optional[Dict[str, str]] = None,
+    ignore_deprecated_options: Optional[Set[str]] = None,
+) -> Callable[[F], F]:
+    def wrapper(api: F) -> F:
+        @wraps(api)
+        def wrapped(*args: Any, **kwargs: Any) -> Any:
+            nonlocal api, body_name, body_fields
 
-        if options_kwargs:
-            warnings.warn(
-                "Passing transport options in the API method is deprecated. Use 'Elasticsearch.options()' instead.",
-                category=DeprecationWarning,
-                stacklevel=warn_stacklevel(),
-            )
+            # We merge 'params' first as transport options can be specified using params.
+            if "params" in kwargs and (
+                not ignore_deprecated_options
+                or "params" not in ignore_deprecated_options
+            ):
+                params = kwargs.pop("params")
+                if params:
+                    if not hasattr(params, "items"):
+                        raise ValueError(
+                            "Couldn't merge 'params' with other parameters as it wasn't a mapping. "
+                            "Instead of using 'params' use individual API parameters"
+                        )
+                    warnings.warn(
+                        f"The 'params' parameter is deprecated for the '{api.__name__!s}' API and "
+                        "will be removed in a future version. Instead use individual "
+                        "parameters.",
+                        category=DeprecationWarning,
+                        stacklevel=warn_stacklevel(),
+                    )
+                    _merge_kwargs_no_duplicates(kwargs, params)
 
-            # Namespaced clients need to unwrapped.
-            namespaced_client: Optional[Type["NamespacedClient"]] = None
-            if hasattr(client, "_client"):
-                namespaced_client = type(client)  # type: ignore[assignment]
-                client = client._client  # type: ignore[attr-defined,assignment,union-attr]
+            maybe_transport_options = _TRANSPORT_OPTIONS.intersection(kwargs)
+            if maybe_transport_options:
+                transport_options = {}
+                for option in maybe_transport_options:
+                    if (
+                        ignore_deprecated_options
+                        and option in ignore_deprecated_options
+                    ):
+                        continue
+                    try:
+                        option_rename = option
+                        if option == "ignore":
+                            option_rename = "ignore_status"
+                        transport_options[option_rename] = kwargs.pop(option)
+                    except KeyError:
+                        pass
+                if transport_options:
+                    warnings.warn(
+                        "Passing transport options in the API method is deprecated. Use 'Elasticsearch.options()' instead.",
+                        category=DeprecationWarning,
+                        stacklevel=warn_stacklevel(),
+                    )
+                    client = args[0]
 
-            client = client.options(**options_kwargs)
+                    # Namespaced clients need to unwrapped.
+                    namespaced_client: Optional[Type["NamespacedClient"]] = None
+                    if hasattr(client, "_client"):
+                        namespaced_client = type(client)
+                        client = client._client
 
-            # Re-wrap the client if we unwrapped due to being namespaced.
-            if namespaced_client is not None:
-                client = namespaced_client(client)
+                    client = client.options(**transport_options)
 
-        # If there are any query params left we warn about API parameters.
-        if params:
-            warnings.warn(
-                "Passing options via 'params' is deprecated, instead use API parameters directly.",
-                category=DeprecationWarning,
-                stacklevel=warn_stacklevel(),
-            )
+                    # Re-wrap the client if we unwrapped due to being namespaced.
+                    if namespaced_client is not None:
+                        client = namespaced_client(client)
+                    args = (client,) + args[1:]
 
-    return client, params or None
+            if "body" in kwargs and (
+                not ignore_deprecated_options or "body" not in ignore_deprecated_options
+            ):
+                body = kwargs.pop("body")
+                if body is not None:
+                    if body_name:
+                        if body_name in kwargs:
+                            raise TypeError(
+                                f"Can't use '{body_name}' and 'body' parameters together because '{body_name}' "
+                                "is an alias for 'body'. Instead you should only use the "
+                                f"'{body_name}' parameter. See https://github.com/elastic/elasticsearch-py/"
+                                "issues/1698 for more information"
+                            )
+
+                        warnings.warn(
+                            "The 'body' parameter is deprecated for the '%s' API and "
+                            "will be removed in a future version. Instead use the '%s' parameter. "
+                            "See https://github.com/elastic/elasticsearch-py/issues/1698 "
+                            "for more information" % (str(api.__name__), body_name),
+                            category=DeprecationWarning,
+                            stacklevel=warn_stacklevel(),
+                        )
+                        kwargs[body_name] = body
+
+                    elif body_fields:
+                        if not hasattr(body, "items"):
+                            raise ValueError(
+                                "Couldn't merge 'body' with other parameters as it wasn't a mapping. "
+                                "Instead of using 'body' use individual API parameters"
+                            )
+                        warnings.warn(
+                            f"The 'body' parameter is deprecated for the '{api.__name__!s}' API and "
+                            "will be removed in a future version. Instead use individual "
+                            "parameters.",
+                            category=DeprecationWarning,
+                            stacklevel=warn_stacklevel(),
+                        )
+                        _merge_kwargs_no_duplicates(kwargs, body)
+
+            if parameter_aliases:
+                for alias, rename_to in parameter_aliases.items():
+                    try:
+                        kwargs[rename_to] = kwargs.pop(alias)
+                    except KeyError:
+                        pass
+
+            return api(*args, **kwargs)
+
+        return wrapped  # type: ignore[return-value]
+
+    return wrapper

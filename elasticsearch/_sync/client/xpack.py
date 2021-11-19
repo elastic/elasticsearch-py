@@ -15,40 +15,87 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+from typing import Any, Dict, List, Optional, Union
+
 from ._base import NamespacedClient
-from .utils import _deprecated_options, query_params
+from .utils import _quote_query, _rewrite_parameters
 
 
 class XPackClient(NamespacedClient):
-    def __getattr__(self, attr_name):
+    def __getattr__(self, attr_name: str) -> Any:
         return getattr(self.client, attr_name)
 
     # AUTO-GENERATED-API-DEFINITIONS #
-    @query_params("accept_enterprise", "categories")
-    def info(self, params=None, headers=None):
+
+    @_rewrite_parameters()
+    def info(
+        self,
+        *,
+        categories: Optional[List[str]] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Retrieves information about the installed X-Pack features.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/info-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/info-api.html>`_
 
-        :arg accept_enterprise: If this param is used it must be set to
-            true
-        :arg categories: Comma-separated list of info categories. Can be
-            any of: build, license, features
+        :param categories: Comma-separated list of info categories. Can be any of: build,
+            license, features
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request("GET", "/_xpack", params=params, headers=headers)
+        __path = "/_xpack"
+        __query: Dict[str, Any] = {}
+        if categories is not None:
+            __query["categories"] = categories
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
 
-    @query_params("master_timeout")
-    def usage(self, params=None, headers=None):
+    @_rewrite_parameters()
+    def usage(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Retrieves usage information about the installed X-Pack features.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/usage-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/usage-api.html>`_
 
-        :arg master_timeout: Specify timeout for watch write operation
+        :param master_timeout: Specify timeout for watch write operation
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", "/_xpack/usage", params=params, headers=headers
-        )
+        __path = "/_xpack/usage"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("GET", __target, headers=__headers)

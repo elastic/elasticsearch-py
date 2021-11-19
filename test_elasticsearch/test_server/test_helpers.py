@@ -279,11 +279,9 @@ def test_stats_only_reports_numbers(sync_client):
 
 def test_errors_are_reported_correctly(sync_client):
     sync_client.indices.create(
-        "i",
-        {
-            "mappings": {"properties": {"a": {"type": "integer"}}},
-            "settings": {"number_of_shards": 1, "number_of_replicas": 0},
-        },
+        index="i",
+        mappings={"properties": {"a": {"type": "integer"}}},
+        settings={"number_of_shards": 1, "number_of_replicas": 0},
     )
     sync_client.cluster.health(wait_for_status="yellow")
 
@@ -306,11 +304,9 @@ def test_errors_are_reported_correctly(sync_client):
 
 def test_error_is_raised(sync_client):
     sync_client.indices.create(
-        "i",
-        {
-            "mappings": {"properties": {"a": {"type": "integer"}}},
-            "settings": {"number_of_shards": 1, "number_of_replicas": 0},
-        },
+        index="i",
+        mappings={"properties": {"a": {"type": "integer"}}},
+        settings={"number_of_shards": 1, "number_of_replicas": 0},
     )
     sync_client.cluster.health(wait_for_status="yellow")
 
@@ -355,11 +351,9 @@ def test_ignore_error_if_raised(sync_client):
 
 def test_errors_are_collected_properly(sync_client):
     sync_client.indices.create(
-        "i",
-        {
-            "mappings": {"properties": {"a": {"type": "integer"}}},
-            "settings": {"number_of_shards": 1, "number_of_replicas": 0},
-        },
+        index="i",
+        mappings={"properties": {"a": {"type": "integer"}}},
+        settings={"number_of_shards": 1, "number_of_replicas": 0},
     )
     sync_client.cluster.health(wait_for_status="yellow")
 
@@ -406,7 +400,7 @@ def test_order_can_be_preserved(sync_client):
     for x in range(100):
         bulk.append({"index": {"_index": "test_index", "_id": x}})
         bulk.append({"answer": x, "correct": x == 42})
-    sync_client.bulk(body=bulk, refresh=True)
+    sync_client.bulk(operations=bulk, refresh=True)
 
     docs = list(
         helpers.scan(
@@ -428,7 +422,7 @@ def test_all_documents_are_read(sync_client):
     for x in range(100):
         bulk.append({"index": {"_index": "test_index", "_id": x}})
         bulk.append({"answer": x, "correct": x == 42})
-    sync_client.bulk(body=bulk, refresh=True)
+    sync_client.bulk(operations=bulk, refresh=True)
 
     docs = list(helpers.scan(sync_client, index="test_index", size=2))
 
@@ -443,7 +437,7 @@ def test_scroll_error(sync_client):
     for x in range(4):
         bulk.append({"index": {"_index": "test_index"}})
         bulk.append({"value": x})
-    sync_client.bulk(body=bulk, refresh=True)
+    sync_client.bulk(operations=bulk, refresh=True)
 
     with patch.object(sync_client, "options", return_value=sync_client), patch.object(
         sync_client, "scroll"
@@ -667,7 +661,7 @@ def test_log_warning_on_shard_failures(sync_client):
     for x in range(4):
         bulk.append({"index": {"_index": "test_index"}})
         bulk.append({"value": x})
-    sync_client.bulk(bulk, refresh=True)
+    sync_client.bulk(operations=bulk, refresh=True)
 
     with patch("elasticsearch.helpers.actions.logger") as logger_mock, patch.object(
         sync_client, "options", return_value=sync_client
@@ -705,7 +699,7 @@ def test_clear_scroll(sync_client):
     for x in range(4):
         bulk.append({"index": {"_index": "test_index"}})
         bulk.append({"value": x})
-    sync_client.bulk(bulk, refresh=True)
+    sync_client.bulk(operations=bulk, refresh=True)
 
     with patch.object(sync_client, "options", return_value=sync_client), patch.object(
         sync_client, "clear_scroll", wraps=sync_client.clear_scroll
@@ -775,7 +769,7 @@ def reindex_setup(sync_client):
                 "type": "answers" if x % 2 == 0 else "questions",
             }
         )
-    sync_client.bulk(bulk, refresh=True)
+    sync_client.bulk(operations=bulk, refresh=True)
 
 
 @pytest.mark.usefixtures("reindex_setup")
@@ -788,7 +782,7 @@ def test_reindex_passes_kwargs_to_scan_and_bulk(sync_client):
         bulk_kwargs={"refresh": True},
     )
 
-    assert sync_client.indices.exists("prod_index")
+    assert sync_client.indices.exists(index="prod_index")
     assert 50 == sync_client.count(index="prod_index", q="type:answers")["count"]
 
     assert {"answer": 42, "correct": True, "type": "answers"} == sync_client.get(
@@ -806,7 +800,7 @@ def test_reindex_accepts_a_query(sync_client):
     )
     sync_client.indices.refresh()
 
-    assert sync_client.indices.exists("prod_index")
+    assert sync_client.indices.exists(index="prod_index")
     assert 50 == sync_client.count(index="prod_index", q="type:answers")["count"]
 
     assert {"answer": 42, "correct": True, "type": "answers"} == sync_client.get(
@@ -819,7 +813,7 @@ def test_all_documents_get_moved(sync_client):
     helpers.reindex(sync_client, "test_index", "prod_index")
     sync_client.indices.refresh()
 
-    assert sync_client.indices.exists("prod_index")
+    assert sync_client.indices.exists(index="prod_index")
     assert 50 == sync_client.count(index="prod_index", q="type:questions")["count"]
     assert 50 == sync_client.count(index="prod_index", q="type:answers")["count"]
 
@@ -898,7 +892,7 @@ def reindex_data_stream_setup(sync_client):
                 "@timestamp": (dt - timedelta(days=x)).isoformat(),
             }
         )
-    sync_client.bulk(bulk, refresh=True)
+    sync_client.bulk(operations=bulk, refresh=True)
     sync_client.indices.put_index_template(
         name="my-index-template",
         body={

@@ -15,64 +15,142 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+from typing import Any, Dict, List, Optional, Union
+
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
+from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
 
 class DanglingIndicesClient(NamespacedClient):
-    @query_params("accept_data_loss", "master_timeout", "timeout")
-    async def delete_dangling_index(self, index_uuid, params=None, headers=None):
+    @_rewrite_parameters()
+    async def delete_dangling_index(
+        self,
+        *,
+        index_uuid: Any,
+        accept_data_loss: bool,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+    ) -> Any:
         """
         Deletes the specified dangling index
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-gateway-dangling-indices.html>`_
 
-        :arg index_uuid: The UUID of the dangling index
-        :arg accept_data_loss: Must be set to true in order to delete
-            the dangling index
-        :arg master_timeout: Specify timeout for connection to master
-        :arg timeout: Explicit operation timeout
+        :param index_uuid: The UUID of the dangling index
+        :param accept_data_loss: Must be set to true in order to delete the dangling
+            index
+        :param master_timeout: Specify timeout for connection to master
+        :param timeout: Explicit operation timeout
         """
-        client, params = _deprecated_options(self, params)
         if index_uuid in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'index_uuid'.")
+            raise ValueError("Empty value passed for parameter 'index_uuid'")
+        if accept_data_loss is None:
+            raise ValueError("Empty value passed for parameter 'accept_data_loss'")
+        __path = f"/_dangling/{_quote(index_uuid)}"
+        __query: Dict[str, Any] = {}
+        if accept_data_loss is not None:
+            __query["accept_data_loss"] = accept_data_loss
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("DELETE", __target, headers=__headers)
 
-        return await client._perform_request(
-            "DELETE",
-            _make_path("_dangling", index_uuid),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params("accept_data_loss", "master_timeout", "timeout")
-    async def import_dangling_index(self, index_uuid, params=None, headers=None):
+    @_rewrite_parameters()
+    async def import_dangling_index(
+        self,
+        *,
+        index_uuid: Any,
+        accept_data_loss: bool,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+    ) -> Any:
         """
         Imports the specified dangling index
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-gateway-dangling-indices.html>`_
 
-        :arg index_uuid: The UUID of the dangling index
-        :arg accept_data_loss: Must be set to true in order to import
-            the dangling index
-        :arg master_timeout: Specify timeout for connection to master
-        :arg timeout: Explicit operation timeout
+        :param index_uuid: The UUID of the dangling index
+        :param accept_data_loss: Must be set to true in order to import the dangling
+            index
+        :param master_timeout: Specify timeout for connection to master
+        :param timeout: Explicit operation timeout
         """
-        client, params = _deprecated_options(self, params)
         if index_uuid in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'index_uuid'.")
+            raise ValueError("Empty value passed for parameter 'index_uuid'")
+        if accept_data_loss is None:
+            raise ValueError("Empty value passed for parameter 'accept_data_loss'")
+        __path = f"/_dangling/{_quote(index_uuid)}"
+        __query: Dict[str, Any] = {}
+        if accept_data_loss is not None:
+            __query["accept_data_loss"] = accept_data_loss
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("POST", __target, headers=__headers)
 
-        return await client._perform_request(
-            "POST", _make_path("_dangling", index_uuid), params=params, headers=headers
-        )
-
-    @query_params()
-    async def list_dangling_indices(self, params=None, headers=None):
+    @_rewrite_parameters()
+    async def list_dangling_indices(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Returns all dangling indices.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-gateway-dangling-indices.html>`_
         """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "GET", "/_dangling", params=params, headers=headers
-        )
+        __path = "/_dangling"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)

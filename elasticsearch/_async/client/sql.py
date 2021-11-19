@@ -15,128 +15,189 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+from typing import Any, Dict, List, Optional, Union
+
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
+from .utils import _quote_query, _rewrite_parameters
 
 
 class SqlClient(NamespacedClient):
-    @query_params()
-    async def clear_cursor(self, body, params=None, headers=None):
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def clear_cursor(
+        self,
+        *,
+        cursor: str,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Clears the SQL cursor
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/clear-sql-cursor-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/clear-sql-cursor-api.html>`_
 
-        :arg body: Specify the cursor value in the `cursor` element to
-            clean the cursor.
+        :param cursor:
         """
-        client, params = _deprecated_options(self, params)
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
-
-        return await client._perform_request(
-            "POST", "/_sql/close", params=params, headers=headers, body=body
+        if cursor is None:
+            raise ValueError("Empty value passed for parameter 'cursor'")
+        __path = "/_sql/close"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if cursor is not None:
+            __body["cursor"] = cursor
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
         )
 
-    @query_params("format")
-    async def query(self, body, params=None, headers=None):
+    @_rewrite_parameters(
+        body_fields=True,
+        ignore_deprecated_options={"request_timeout"},
+    )
+    async def query(
+        self,
+        *,
+        columnar: Optional[bool] = None,
+        cursor: Optional[str] = None,
+        error_trace: Optional[bool] = None,
+        fetch_size: Optional[int] = None,
+        field_multi_value_leniency: Optional[bool] = None,
+        filter: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        format: Optional[str] = None,
+        human: Optional[bool] = None,
+        page_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        query: Optional[str] = None,
+        request_timeout: Optional[Any] = None,
+        time_zone: Optional[str] = None,
+    ) -> Any:
         """
         Executes a SQL request
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/sql-search-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/sql-search-api.html>`_
 
-        :arg body: Use the `query` element to start a query. Use the
-            `cursor` element to continue a query.
-        :arg format: a short version of the Accept header, e.g. json,
-            yaml
+        :param columnar:
+        :param cursor:
+        :param fetch_size: The maximum number of rows (or entries) to return in one response
+        :param field_multi_value_leniency: Throw an exception when encountering multiple
+            values for a field (default) or be lenient and return the first value from
+            the list (without any guarantees of what that will be - typically the first
+            in natural ascending order).
+        :param filter: Optional Elasticsearch query DSL for additional filtering.
+        :param format: a short version of the Accept header, e.g. json, yaml
+        :param page_timeout: The timeout before a pagination request fails.
+        :param query: SQL query to execute
+        :param request_timeout: The timeout before the request fails.
+        :param time_zone: Time-zone in ISO 8601 used for executing the query on the server.
+            More information available here.
         """
-        client, params = _deprecated_options(self, params)
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
-
-        return await client._perform_request(
-            "POST", "/_sql", params=params, headers=headers, body=body
+        __path = "/_sql"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if columnar is not None:
+            __body["columnar"] = columnar
+        if cursor is not None:
+            __body["cursor"] = cursor
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if fetch_size is not None:
+            __body["fetch_size"] = fetch_size
+        if field_multi_value_leniency is not None:
+            __body["field_multi_value_leniency"] = field_multi_value_leniency
+        if filter is not None:
+            __body["filter"] = filter
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if format is not None:
+            __query["format"] = format
+        if human is not None:
+            __query["human"] = human
+        if page_timeout is not None:
+            __body["page_timeout"] = page_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if query is not None:
+            __body["query"] = query
+        if request_timeout is not None:
+            __body["request_timeout"] = request_timeout
+        if time_zone is not None:
+            __body["time_zone"] = time_zone
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
         )
 
-    @query_params()
-    async def translate(self, body, params=None, headers=None):
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def translate(
+        self,
+        *,
+        query: str,
+        error_trace: Optional[bool] = None,
+        fetch_size: Optional[int] = None,
+        filter: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        time_zone: Optional[str] = None,
+    ) -> Any:
         """
         Translates SQL into Elasticsearch queries
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/sql-translate-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/sql-translate-api.html>`_
 
-        :arg body: Specify the query in the `query` element.
+        :param query:
+        :param fetch_size:
+        :param filter:
+        :param time_zone:
         """
-        client, params = _deprecated_options(self, params)
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
-
-        return await client._perform_request(
-            "POST", "/_sql/translate", params=params, headers=headers, body=body
-        )
-
-    @query_params()
-    async def delete_async(self, id, params=None, headers=None):
-        """
-        Deletes an async SQL search or a stored synchronous SQL search. If the search
-        is still running, the API cancels it.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-async-sql-search-api.html>`_
-
-        :arg id: The async search ID
-        """
-        client, params = _deprecated_options(self, params)
-        if id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'id'.")
-
-        return await client._perform_request(
-            "DELETE",
-            _make_path("_sql", "async", "delete", id),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params("delimiter", "format", "keep_alive", "wait_for_completion_timeout")
-    async def get_async(self, id, params=None, headers=None):
-        """
-        Returns the current status and available results for an async SQL search or
-        stored synchronous SQL search
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-async-sql-search-api.html>`_
-
-        :arg id: The async search ID
-        :arg delimiter: Separator for CSV results  Default: ,
-        :arg format: Short version of the Accept header, e.g. json, yaml
-        :arg keep_alive: Retention period for the search and its results
-            Default: 5d
-        :arg wait_for_completion_timeout: Duration to wait for complete
-            results
-        """
-        client, params = _deprecated_options(self, params)
-        if id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'id'.")
-
-        return await client._perform_request(
-            "GET", _make_path("_sql", "async", id), params=params, headers=headers
-        )
-
-    @query_params()
-    async def get_async_status(self, id, params=None, headers=None):
-        """
-        Returns the current status of an async SQL search or a stored synchronous SQL
-        search
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-async-sql-search-status-api.html>`_
-
-        :arg id: The async search ID
-        """
-        client, params = _deprecated_options(self, params)
-        if id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'id'.")
-
-        return await client._perform_request(
-            "GET",
-            _make_path("_sql", "async", "status", id),
-            params=params,
-            headers=headers,
+        if query is None:
+            raise ValueError("Empty value passed for parameter 'query'")
+        __path = "/_sql/translate"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if query is not None:
+            __body["query"] = query
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if fetch_size is not None:
+            __body["fetch_size"] = fetch_size
+        if filter is not None:
+            __body["filter"] = filter
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if time_zone is not None:
+            __body["time_zone"] = time_zone
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
         )

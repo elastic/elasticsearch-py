@@ -15,87 +15,159 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+from typing import Any, Dict, List, Optional, Union
+
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
+from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
 
 class AutoscalingClient(NamespacedClient):
-    @query_params()
-    def delete_autoscaling_policy(self, name, params=None, headers=None):
+    @_rewrite_parameters()
+    def delete_autoscaling_policy(
+        self,
+        *,
+        name: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Deletes an autoscaling policy. Designed for indirect use by ECE/ESS and ECK.
         Direct use is not supported.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/autoscaling-delete-autoscaling-policy.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/autoscaling-delete-autoscaling-policy.html>`_
 
-        :arg name: the name of the autoscaling policy
+        :param name: the name of the autoscaling policy
         """
-        client, params = _deprecated_options(self, params)
         if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'name'.")
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_autoscaling/policy/{_quote(name)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("DELETE", __target, headers=__headers)
 
-        return client._perform_request(
-            "DELETE",
-            _make_path("_autoscaling", "policy", name),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params()
-    def put_autoscaling_policy(self, name, body, params=None, headers=None):
+    @_rewrite_parameters()
+    def get_autoscaling_capacity(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
-        Creates a new autoscaling policy. Designed for indirect use by ECE/ESS and ECK.
-        Direct use is not supported.
+        Gets the current autoscaling capacity based on the configured autoscaling policy.
+        Designed for indirect use by ECE/ESS and ECK. Direct use is not supported.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/autoscaling-put-autoscaling-policy.html>`_
-
-        :arg name: the name of the autoscaling policy
-        :arg body: the specification of the autoscaling policy
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/autoscaling-get-autoscaling-capacity.html>`_
         """
-        client, params = _deprecated_options(self, params)
-        for param in (name, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
+        __path = "/_autoscaling/capacity"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
 
-        return client._perform_request(
-            "PUT",
-            _make_path("_autoscaling", "policy", name),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params()
-    def get_autoscaling_policy(self, name, params=None, headers=None):
+    @_rewrite_parameters()
+    def get_autoscaling_policy(
+        self,
+        *,
+        name: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Retrieves an autoscaling policy. Designed for indirect use by ECE/ESS and ECK.
         Direct use is not supported.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/autoscaling-get-autoscaling-policy.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/autoscaling-get-autoscaling-policy.html>`_
 
-        :arg name: the name of the autoscaling policy
+        :param name: the name of the autoscaling policy
         """
-        client, params = _deprecated_options(self, params)
         if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'name'.")
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_autoscaling/policy/{_quote(name)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
 
-        return client._perform_request(
-            "GET",
-            _make_path("_autoscaling", "policy", name),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params()
-    def get_autoscaling_capacity(self, params=None, headers=None):
+    @_rewrite_parameters(
+        body_name="policy",
+    )
+    def put_autoscaling_policy(
+        self,
+        *,
+        name: Any,
+        policy: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
-        Gets the current autoscaling capacity based on the configured autoscaling
-        policy. Designed for indirect use by ECE/ESS and ECK. Direct use is not
-        supported.
+        Creates a new autoscaling policy. Designed for indirect use by ECE/ESS and ECK.
+        Direct use is not supported.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/autoscaling-get-autoscaling-capacity.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/autoscaling-put-autoscaling-policy.html>`_
+
+        :param name: the name of the autoscaling policy
+        :param policy:
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", "/_autoscaling/capacity", params=params, headers=headers
-        )
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        if policy is None:
+            raise ValueError("Empty value passed for parameter 'policy'")
+        __path = f"/_autoscaling/policy/{_quote(name)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __body = policy
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)

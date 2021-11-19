@@ -18,17 +18,9 @@
 import inspect
 import sys
 from pathlib import Path
-from typing import Mapping, Tuple, Type, Union
-from urllib.parse import quote
-from urllib.parse import urlencode as _urlencode
-
-from elastic_transport.client_utils import percent_encode
+from typing import Tuple, Type, Union
 
 string_types: Tuple[Type[str], Type[bytes]] = (str, bytes)
-
-
-def urlencode(query: Mapping[str, str]) -> str:
-    return _urlencode(query, quote_via=percent_encode)
 
 
 def to_str(x: Union[str, bytes], encoding: str = "ascii") -> str:
@@ -83,7 +75,5 @@ __all__ = [
     "string_types",
     "to_str",
     "to_bytes",
-    "quote",
-    "urlencode",
     "warn_stacklevel",
 ]

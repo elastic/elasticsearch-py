@@ -40,7 +40,17 @@ from ..utils import CA_CERTS, es_url, parse_version
 
 # some params had to be changed in python, keep track of them so we can rename
 # those in the tests accordingly
-PARAMS_RENAMES = {"type": "doc_type", "from": "from_"}
+PARAMS_RENAMES = {"from": "from_"}
+API_PARAMS_RENAMES = {
+    "snapshot.create_repository": {"repository": "name"},
+    "snapshot.delete_repository": {"repository": "name"},
+    "snapshot.get_repository": {"repository": "name"},
+    "snapshot.cleanup_repository": {"repository": "name"},
+    "snapshot.verify_repository": {"repository": "name"},
+    "ilm.delete_lifecycle": {"policy", "name"},
+    "ilm.get_lifecycle": {"policy": "name"},
+    "ilm.put_lifecycle": {"policy": "name"},
+}
 
 # mapping from catch values to http status codes
 CATCH_CODES = {"missing": 404, "conflict": 409, "unauthorized": 401}
@@ -225,14 +235,39 @@ class YamlRunner:
 
         # locate api endpoint
         for m in method.split("."):
-            assert hasattr(api, m)
+            if not hasattr(api, m):
+                pytest.skip("This API isn't implemented yet")
             api = getattr(api, m)
+
+        # Sometimes the 'body' parameter is encoded as a string instead of raw.
+        if "body" in args:
+            try:
+                args["body"] = json.loads(args["body"])
+            except (TypeError, ValueError):
+                pass
+
+            if isinstance(args["body"], dict):
+                # Detect when there are duplicate options that aren't the same value.
+                # In this case the test isn't testing the client, it's testing Elasticsearch
+                # and its ability to reject multiple values so we either combine
+                # like values or skip the test entirely as unnecessary for the client.
+                duplicate_args = set(args["body"]).intersection(args)
+                if duplicate_args:
+                    for arg in list(duplicate_args):
+                        if args["body"][arg] == args[arg]:
+                            args["body"].pop(arg)
+                        else:
+                            pytest.skip(
+                                "Contains a duplicate parameter with a different value"
+                            )
 
         # some parameters had to be renamed to not clash with python builtins,
         # compensate
-        for k in PARAMS_RENAMES:
+        renames = PARAMS_RENAMES.copy()
+        renames.update(API_PARAMS_RENAMES.get(method, {}))
+        for k in renames:
             if k in args:
-                args[PARAMS_RENAMES[k]] = args.pop(k)
+                args[renames[k]] = args.pop(k)
 
         # resolve vars
         for k in args:
@@ -243,6 +278,7 @@ class YamlRunner:
             try:
                 self.last_response = api(**args).raw
             except Exception as e:
+                self._skip_intentional_type_errors(e)
                 if not catch:
                     raise
                 self.run_catch(catch, e)
@@ -269,8 +305,9 @@ class YamlRunner:
             )
 
     def run_catch(self, catch, exception):
-        if catch == "param":
+        if catch == "param" or isinstance(exception, TypeError):
             assert isinstance(exception, TypeError)
+            self.last_response = None
             return
 
         assert isinstance(exception, ApiError)
@@ -469,6 +506,13 @@ class YamlRunner:
 
         assert a == b, f"{a!r} does not match {b!r}"
 
+    def _skip_intentional_type_errors(self, e: Exception):
+        if isinstance(e, TypeError) and (
+            "unexpected keyword argument" in str(e)
+            or "required keyword-only argument" in str(e)
+        ):
+            pytest.skip("API intentionally used incorrectly in test")
+
 
 @pytest.fixture(scope="function")
 def sync_runner(sync_client):
@@ -501,7 +545,7 @@ YAML_TEST_SPECS = []
 try:
     # Construct the HTTP and Elasticsearch client
     http = urllib3.PoolManager(retries=10)
-    client = Elasticsearch(es_url(), timeout=3, ca_certs=CA_CERTS)
+    client = Elasticsearch(es_url(), request_timeout=3, ca_certs=CA_CERTS)
 
     # Make a request to Elasticsearch for the build hash, we'll be looking for
     # an artifact with this same hash to download test specs for.

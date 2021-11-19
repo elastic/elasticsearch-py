@@ -24,33 +24,20 @@ class TestOverriddenUrlTargets(DummyTransportTestCase):
         self.client.create(index="test-index", id="test-id", body={})
         self.assert_url_called("PUT", "/test-index/_create/test-id")
 
-        self.client.create(
-            index="test-index", doc_type="test-type", id="test-id", body={}
-        )
-        self.assert_url_called("PUT", "/test-index/test-type/test-id/_create")
-
     def test_delete(self):
         self.client.delete(index="test-index", id="test-id")
         self.assert_url_called("DELETE", "/test-index/_doc/test-id")
 
-        self.client.delete(index="test-index", doc_type="test-type", id="test-id")
-        self.assert_url_called("DELETE", "/test-index/test-type/test-id")
-
     def test_index(self):
-        self.client.index(index="test-index", body={})
+        self.client.index(index="test-index", document={})
         self.assert_url_called("POST", "/test-index/_doc")
 
-        self.client.index(index="test-index", id="test-id", body={})
+        self.client.index(index="test-index", id="test-id", document={})
         self.assert_url_called("PUT", "/test-index/_doc/test-id")
 
     def test_update(self):
         self.client.update(index="test-index", id="test-id", body={})
         self.assert_url_called("POST", "/test-index/_update/test-id")
-
-        self.client.update(
-            index="test-index", doc_type="test-type", id="test-id", body={}
-        )
-        self.assert_url_called("POST", "/test-index/test-type/test-id/_update")
 
     def test_cluster_state(self):
         self.client.cluster.state()

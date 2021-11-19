@@ -15,20 +15,41 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+from typing import Any, Dict, List, Optional, Union
+
 from ._base import NamespacedClient
-from .utils import _deprecated_options, query_params
+from .utils import _quote_query, _rewrite_parameters
 
 
 class SslClient(NamespacedClient):
-    @query_params()
-    def certificates(self, params=None, headers=None):
+    @_rewrite_parameters()
+    def certificates(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
-        Retrieves information about the X.509 certificates used to encrypt
-        communications in the cluster.
+        Retrieves information about the X.509 certificates used to encrypt communications
+        in the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-ssl.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-ssl.html>`_
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", "/_ssl/certificates", params=params, headers=headers
-        )
+        __path = "/_ssl/certificates"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("GET", __target, headers=__headers)

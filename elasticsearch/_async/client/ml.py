@@ -15,1933 +15,4088 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+from typing import Any, Dict, List, Optional, Union
+
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
+from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
 
 class MlClient(NamespacedClient):
-    @query_params("allow_no_jobs", "allow_no_match", "force", "timeout")
-    async def close_job(self, job_id, body=None, params=None, headers=None):
+    @_rewrite_parameters()
+    async def close_job(
+        self,
+        *,
+        job_id: Any,
+        allow_no_match: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        force: Optional[bool] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+    ) -> Any:
         """
-        Closes one or more anomaly detection jobs. A job can be opened and closed
-        multiple times throughout its lifecycle.
+        Closes one or more anomaly detection jobs. A job can be opened and closed multiple
+        times throughout its lifecycle.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-close-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-close-job.html>`_
 
-        :arg job_id: The name of the job to close
-        :arg body: The URL params optionally sent in the body
-        :arg allow_no_jobs: Whether to ignore if a wildcard expression
-            matches no jobs. (This includes `_all` string or when no jobs have been
-            specified)
-        :arg allow_no_match: Whether to ignore if a wildcard expression
-            matches no jobs. (This includes `_all` string or when no jobs have been
-            specified)
-        :arg force: True if the job should be forcefully closed
-        :arg timeout: Controls the time to wait until a job has closed.
-            Default to 30 minutes
+        :param job_id: Identifier for the anomaly detection job. It can be a job identifier,
+            a group name, or a wildcard expression. You can close multiple anomaly detection
+            jobs in a single API request by using a group name, a comma-separated list
+            of jobs, or a wildcard expression. You can close all jobs by using `_all`
+            or by specifying `*` as the job identifier.
+        :param allow_no_match: Specifies what to do when the request: contains wildcard
+            expressions and there are no jobs that match; contains the `_all` string
+            or no identifiers and there are no matches; or contains wildcard expressions
+            and there are only partial matches. By default, it returns an empty jobs
+            array when there are no matches and the subset of results when there are
+            partial matches. If `false`, the request returns a 404 status code when there
+            are no matches or only partial matches.
+        :param force: Use to close a failed job, or to forcefully close a job which has
+            not responded to its initial close request; the request returns without performing
+            the associated actions such as flushing buffers and persisting the model
+            snapshots. If you want the job to be in a consistent state after the close
+            job API returns, do not set to `true`. This parameter should be used only
+            in situations where the job has already failed or where you are not interested
+            in results the job might have recently produced or might produce in the future.
+        :param timeout: Controls the time to wait until a job has closed.
         """
-        client, params = _deprecated_options(self, params)
         if job_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'job_id'.")
+            raise ValueError("Empty value passed for parameter 'job_id'")
+        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_close"
+        __query: Dict[str, Any] = {}
+        if allow_no_match is not None:
+            __query["allow_no_match"] = allow_no_match
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if force is not None:
+            __query["force"] = force
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("POST", __target, headers=__headers)
 
-        return await client._perform_request(
-            "POST",
-            _make_path("_ml", "anomaly_detectors", job_id, "_close"),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params()
-    async def delete_calendar(self, calendar_id, params=None, headers=None):
+    @_rewrite_parameters()
+    async def delete_calendar(
+        self,
+        *,
+        calendar_id: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Deletes a calendar.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-calendar.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-calendar.html>`_
 
-        :arg calendar_id: The ID of the calendar to delete
+        :param calendar_id: A string that uniquely identifies a calendar.
         """
-        client, params = _deprecated_options(self, params)
         if calendar_id in SKIP_IN_PATH:
-            raise ValueError(
-                "Empty value passed for a required argument 'calendar_id'."
-            )
+            raise ValueError("Empty value passed for parameter 'calendar_id'")
+        __path = f"/_ml/calendars/{_quote(calendar_id)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("DELETE", __target, headers=__headers)
 
-        return await client._perform_request(
-            "DELETE",
-            _make_path("_ml", "calendars", calendar_id),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params()
+    @_rewrite_parameters()
     async def delete_calendar_event(
-        self, calendar_id, event_id, params=None, headers=None
-    ):
+        self,
+        *,
+        calendar_id: Any,
+        event_id: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Deletes scheduled events from a calendar.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-calendar-event.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-calendar-event.html>`_
 
-        :arg calendar_id: The ID of the calendar to modify
-        :arg event_id: The ID of the event to remove from the calendar
+        :param calendar_id: The ID of the calendar to modify
+        :param event_id: The ID of the event to remove from the calendar
         """
-        client, params = _deprecated_options(self, params)
-        for param in (calendar_id, event_id):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
+        if calendar_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'calendar_id'")
+        if event_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'event_id'")
+        __path = f"/_ml/calendars/{_quote(calendar_id)}/events/{_quote(event_id)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("DELETE", __target, headers=__headers)
 
-        return await client._perform_request(
-            "DELETE",
-            _make_path("_ml", "calendars", calendar_id, "events", event_id),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params()
-    async def delete_calendar_job(self, calendar_id, job_id, params=None, headers=None):
+    @_rewrite_parameters()
+    async def delete_calendar_job(
+        self,
+        *,
+        calendar_id: Any,
+        job_id: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Deletes anomaly detection jobs from a calendar.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-calendar-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-calendar-job.html>`_
 
-        :arg calendar_id: The ID of the calendar to modify
-        :arg job_id: The ID of the job to remove from the calendar
+        :param calendar_id: A string that uniquely identifies a calendar.
+        :param job_id: An identifier for the anomaly detection jobs. It can be a job
+            identifier, a group name, or a comma-separated list of jobs or groups.
         """
-        client, params = _deprecated_options(self, params)
-        for param in (calendar_id, job_id):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
+        if calendar_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'calendar_id'")
+        if job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'job_id'")
+        __path = f"/_ml/calendars/{_quote(calendar_id)}/jobs/{_quote(job_id)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("DELETE", __target, headers=__headers)
 
-        return await client._perform_request(
-            "DELETE",
-            _make_path("_ml", "calendars", calendar_id, "jobs", job_id),
-            params=params,
-            headers=headers,
-        )
+    @_rewrite_parameters()
+    async def delete_data_frame_analytics(
+        self,
+        *,
+        id: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        force: Optional[bool] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+    ) -> Any:
+        """
+        Deletes an existing data frame analytics job.
 
-    @query_params("force")
-    async def delete_datafeed(self, datafeed_id, params=None, headers=None):
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-dfanalytics.html>`_
+
+        :param id: Identifier for the data frame analytics job.
+        :param force: If `true`, it deletes a job that is not stopped; this method is
+            quicker than stopping and deleting the job.
+        :param timeout: The time to wait for the job to be deleted.
+        """
+        if id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'id'")
+        __path = f"/_ml/data_frame/analytics/{_quote(id)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if force is not None:
+            __query["force"] = force
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("DELETE", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def delete_datafeed(
+        self,
+        *,
+        datafeed_id: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        force: Optional[bool] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Deletes an existing datafeed.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-datafeed.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-datafeed.html>`_
 
-        :arg datafeed_id: The ID of the datafeed to delete
-        :arg force: True if the datafeed should be forcefully deleted
+        :param datafeed_id: A numerical character string that uniquely identifies the
+            datafeed. This identifier can contain lowercase alphanumeric characters (a-z
+            and 0-9), hyphens, and underscores. It must start and end with alphanumeric
+            characters.
+        :param force: Use to forcefully delete a started datafeed; this method is quicker
+            than stopping and deleting the datafeed.
         """
-        client, params = _deprecated_options(self, params)
         if datafeed_id in SKIP_IN_PATH:
-            raise ValueError(
-                "Empty value passed for a required argument 'datafeed_id'."
-            )
+            raise ValueError("Empty value passed for parameter 'datafeed_id'")
+        __path = f"/_ml/datafeeds/{_quote(datafeed_id)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if force is not None:
+            __query["force"] = force
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("DELETE", __target, headers=__headers)
 
-        return await client._perform_request(
-            "DELETE",
-            _make_path("_ml", "datafeeds", datafeed_id),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params("requests_per_second", "timeout")
+    @_rewrite_parameters(
+        body_fields=True,
+    )
     async def delete_expired_data(
-        self, body=None, job_id=None, params=None, headers=None
-    ):
+        self,
+        *,
+        job_id: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        requests_per_second: Optional[float] = None,
+        timeout: Optional[Any] = None,
+    ) -> Any:
         """
         Deletes expired and unused machine learning data.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-expired-data.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-expired-data.html>`_
 
-        :arg body: deleting expired data parameters
-        :arg job_id: The ID of the job(s) to perform expired data
-            hygiene for
-        :arg requests_per_second: The desired requests per second for
-            the deletion processes.
-        :arg timeout: How long can the underlying delete processes run
-            until they are canceled
+        :param job_id: Identifier for an anomaly detection job. It can be a job identifier,
+            a group name, or a wildcard expression.
+        :param requests_per_second: The desired requests per second for the deletion
+            processes. The default behavior is no throttling.
+        :param timeout: How long can the underlying delete processes run until they are
+            canceled.
         """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "DELETE",
-            _make_path("_ml", "_delete_expired_data", job_id),
-            params=params,
-            headers=headers,
-            body=body,
+        if job_id not in SKIP_IN_PATH:
+            __path = f"/_ml/_delete_expired_data/{_quote(job_id)}"
+        else:
+            __path = "/_ml/_delete_expired_data"
+        __query: Dict[str, Any] = {}
+        __body: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if requests_per_second is not None:
+            __body["requests_per_second"] = requests_per_second
+        if timeout is not None:
+            __body["timeout"] = timeout
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return await self._perform_request(
+            "DELETE", __target, headers=__headers, body=__body
         )
 
-    @query_params()
-    async def delete_filter(self, filter_id, params=None, headers=None):
+    @_rewrite_parameters()
+    async def delete_filter(
+        self,
+        *,
+        filter_id: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Deletes a filter.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-filter.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-filter.html>`_
 
-        :arg filter_id: The ID of the filter to delete
+        :param filter_id: A string that uniquely identifies a filter.
         """
-        client, params = _deprecated_options(self, params)
         if filter_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'filter_id'.")
+            raise ValueError("Empty value passed for parameter 'filter_id'")
+        __path = f"/_ml/filters/{_quote(filter_id)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("DELETE", __target, headers=__headers)
 
-        return await client._perform_request(
-            "DELETE",
-            _make_path("_ml", "filters", filter_id),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params("allow_no_forecasts", "timeout")
+    @_rewrite_parameters()
     async def delete_forecast(
-        self, job_id, forecast_id=None, params=None, headers=None
-    ):
+        self,
+        *,
+        job_id: Any,
+        forecast_id: Optional[Any] = None,
+        allow_no_forecasts: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+    ) -> Any:
         """
         Deletes forecasts from a machine learning job.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-forecast.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-forecast.html>`_
 
-        :arg job_id: The ID of the job from which to delete forecasts
-        :arg forecast_id: The ID of the forecast to delete, can be comma
-            delimited list. Leaving blank implies `_all`
-        :arg allow_no_forecasts: Whether to ignore if `_all` matches no
-            forecasts
-        :arg timeout: Controls the time to wait until the forecast(s)
-            are deleted. Default to 30 seconds
+        :param job_id: Identifier for the anomaly detection job.
+        :param forecast_id: A comma-separated list of forecast identifiers. If you do
+            not specify this optional parameter or if you specify `_all` or `*` the API
+            deletes all forecasts from the job.
+        :param allow_no_forecasts: Specifies whether an error occurs when there are no
+            forecasts. In particular, if this parameter is set to `false` and there are
+            no forecasts associated with the job, attempts to delete all forecasts return
+            an error.
+        :param timeout: Specifies the period of time to wait for the completion of the
+            delete operation. When this period of time elapses, the API fails and returns
+            an error.
         """
-        client, params = _deprecated_options(self, params)
         if job_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'job_id'.")
+            raise ValueError("Empty value passed for parameter 'job_id'")
+        if job_id not in SKIP_IN_PATH and forecast_id not in SKIP_IN_PATH:
+            __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_forecast/{_quote(forecast_id)}"
+        elif job_id not in SKIP_IN_PATH:
+            __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_forecast"
+        else:
+            raise ValueError("Couldn't find a path for the given parameters")
+        __query: Dict[str, Any] = {}
+        if allow_no_forecasts is not None:
+            __query["allow_no_forecasts"] = allow_no_forecasts
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("DELETE", __target, headers=__headers)
 
-        return await client._perform_request(
-            "DELETE",
-            _make_path("_ml", "anomaly_detectors", job_id, "_forecast", forecast_id),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params("force", "wait_for_completion")
-    async def delete_job(self, job_id, params=None, headers=None):
+    @_rewrite_parameters()
+    async def delete_job(
+        self,
+        *,
+        job_id: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        force: Optional[bool] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        wait_for_completion: Optional[bool] = None,
+    ) -> Any:
         """
         Deletes an existing anomaly detection job.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-job.html>`_
 
-        :arg job_id: The ID of the job to delete
-        :arg force: True if the job should be forcefully deleted
-        :arg wait_for_completion: Should this request wait until the
-            operation has completed before returning  Default: True
+        :param job_id: Identifier for the anomaly detection job.
+        :param force: Use to forcefully delete an opened job; this method is quicker
+            than closing and deleting the job.
+        :param wait_for_completion: Specifies whether the request should return immediately
+            or wait until the job deletion completes.
         """
-        client, params = _deprecated_options(self, params)
         if job_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'job_id'.")
+            raise ValueError("Empty value passed for parameter 'job_id'")
+        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if force is not None:
+            __query["force"] = force
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if wait_for_completion is not None:
+            __query["wait_for_completion"] = wait_for_completion
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("DELETE", __target, headers=__headers)
 
-        return await client._perform_request(
-            "DELETE",
-            _make_path("_ml", "anomaly_detectors", job_id),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params()
+    @_rewrite_parameters()
     async def delete_model_snapshot(
-        self, job_id, snapshot_id, params=None, headers=None
-    ):
+        self,
+        *,
+        job_id: Any,
+        snapshot_id: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Deletes an existing model snapshot.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-snapshot.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-snapshot.html>`_
 
-        :arg job_id: The ID of the job to fetch
-        :arg snapshot_id: The ID of the snapshot to delete
+        :param job_id: Identifier for the anomaly detection job.
+        :param snapshot_id: Identifier for the model snapshot.
         """
-        client, params = _deprecated_options(self, params)
-        for param in (job_id, snapshot_id):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
+        if job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'job_id'")
+        if snapshot_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'snapshot_id'")
+        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots/{_quote(snapshot_id)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("DELETE", __target, headers=__headers)
 
-        return await client._perform_request(
-            "DELETE",
-            _make_path(
-                "_ml", "anomaly_detectors", job_id, "model_snapshots", snapshot_id
-            ),
-            params=params,
-            headers=headers,
+    @_rewrite_parameters()
+    async def delete_trained_model(
+        self,
+        *,
+        model_id: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Deletes an existing trained inference model that is currently not referenced
+        by an ingest pipeline.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-trained-models.html>`_
+
+        :param model_id: The unique identifier of the trained model.
+        """
+        if model_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'model_id'")
+        __path = f"/_ml/trained_models/{_quote(model_id)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("DELETE", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def delete_trained_model_alias(
+        self,
+        *,
+        model_id: Any,
+        model_alias: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Deletes a model alias that refers to the trained model
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-trained-models-aliases.html>`_
+
+        :param model_id: The trained model ID to which the model alias refers.
+        :param model_alias: The model alias to delete.
+        """
+        if model_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'model_id'")
+        if model_alias in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'model_alias'")
+        __path = f"/_ml/trained_models/{_quote(model_id)}/model_aliases/{_quote(model_alias)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("DELETE", __target, headers=__headers)
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def estimate_model_memory(
+        self,
+        *,
+        analysis_config: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        max_bucket_cardinality: Optional[Dict[Any, int]] = None,
+        overall_cardinality: Optional[Dict[Any, int]] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Estimates the model memory
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-apis.html>`_
+
+        :param analysis_config: For a list of the properties that you can specify in
+            the `analysis_config` component of the body of this API.
+        :param max_bucket_cardinality: Estimates of the highest cardinality in a single
+            bucket that is observed for influencer fields over the time period that the
+            job analyzes data. To produce a good answer, values must be provided for
+            all influencer fields. Providing values for fields that are not listed as
+            `influencers` has no effect on the estimation.
+        :param overall_cardinality: Estimates of the cardinality that is observed for
+            fields over the whole time period that the job analyzes data. To produce
+            a good answer, values must be provided for fields referenced in the `by_field_name`,
+            `over_field_name` and `partition_field_name` of any detectors. Providing
+            values for other fields has no effect on the estimation. It can be omitted
+            from the request if no detectors have a `by_field_name`, `over_field_name`
+            or `partition_field_name`.
+        """
+        __path = "/_ml/anomaly_detectors/_estimate_model_memory"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if analysis_config is not None:
+            __body["analysis_config"] = analysis_config
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if max_bucket_cardinality is not None:
+            __body["max_bucket_cardinality"] = max_bucket_cardinality
+        if overall_cardinality is not None:
+            __body["overall_cardinality"] = overall_cardinality
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
         )
 
-    @query_params("advance_time", "calc_interim", "end", "skip_time", "start")
-    async def flush_job(self, job_id, body=None, params=None, headers=None):
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def evaluate_data_frame(
+        self,
+        *,
+        evaluation: Any,
+        index: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        query: Optional[Any] = None,
+    ) -> Any:
+        """
+        Evaluates the data frame analytics for an annotated index.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/evaluate-dfanalytics.html>`_
+
+        :param evaluation: Defines the type of evaluation you want to perform.
+        :param index: Defines the index in which the evaluation will be performed.
+        :param query: A query clause that retrieves a subset of data from the source
+            index.
+        """
+        if evaluation is None:
+            raise ValueError("Empty value passed for parameter 'evaluation'")
+        if index is None:
+            raise ValueError("Empty value passed for parameter 'index'")
+        __path = "/_ml/data_frame/_evaluate"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if evaluation is not None:
+            __body["evaluation"] = evaluation
+        if index is not None:
+            __body["index"] = index
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if query is not None:
+            __body["query"] = query
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
+        )
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def explain_data_frame_analytics(
+        self,
+        *,
+        analysis: Any,
+        id: Optional[Any] = None,
+        allow_lazy_start: Optional[bool] = None,
+        analyzed_fields: Optional[Any] = None,
+        description: Optional[str] = None,
+        dest: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        max_num_threads: Optional[int] = None,
+        model_memory_limit: Optional[str] = None,
+        pretty: Optional[bool] = None,
+        source: Optional[Any] = None,
+    ) -> Any:
+        """
+        Explains a data frame analytics config.
+
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/explain-dfanalytics.html>`_
+
+        :param analysis: The analysis configuration, which contains the information necessary
+            to perform one of the following types of analysis: classification, outlier
+            detection, or regression.
+        :param id: Identifier for the data frame analytics job. This identifier can contain
+            lowercase alphanumeric characters (a-z and 0-9), hyphens, and underscores.
+            It must start and end with alphanumeric characters.
+        :param allow_lazy_start: Specifies whether this job can start when there is insufficient
+            machine learning node capacity for it to be immediately assigned to a node.
+        :param analyzed_fields: Specify includes and/or excludes patterns to select which
+            fields will be included in the analysis. The patterns specified in excludes
+            are applied last, therefore excludes takes precedence. In other words, if
+            the same field is specified in both includes and excludes, then the field
+            will not be included in the analysis.
+        :param description: A description of the job.
+        :param dest: The destination configuration, consisting of index and optionally
+            results_field (ml by default).
+        :param max_num_threads: The maximum number of threads to be used by the analysis.
+            The default value is 1. Using more threads may decrease the time necessary
+            to complete the analysis at the cost of using more CPU. Note that the process
+            may use additional threads for operational functionality other than the analysis
+            itself.
+        :param model_memory_limit: The approximate maximum amount of memory resources
+            that are permitted for analytical processing. The default value for data
+            frame analytics jobs is 1gb. If your elasticsearch.yml file contains an xpack.ml.max_model_memory_limit
+            setting, an error occurs when you try to create data frame analytics jobs
+            that have model_memory_limit values greater than that setting.
+        :param source: The configuration of how to source the analysis data. It requires
+            an index. Optionally, query and _source may be specified.
+        """
+        if analysis is None:
+            raise ValueError("Empty value passed for parameter 'analysis'")
+        if id not in SKIP_IN_PATH:
+            __path = f"/_ml/data_frame/analytics/{_quote(id)}/_explain"
+        else:
+            __path = "/_ml/data_frame/analytics/_explain"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if analysis is not None:
+            __body["analysis"] = analysis
+        if allow_lazy_start is not None:
+            __body["allow_lazy_start"] = allow_lazy_start
+        if analyzed_fields is not None:
+            __body["analyzed_fields"] = analyzed_fields
+        if description is not None:
+            __body["description"] = description
+        if dest is not None:
+            __body["dest"] = dest
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if max_num_threads is not None:
+            __body["max_num_threads"] = max_num_threads
+        if model_memory_limit is not None:
+            __body["model_memory_limit"] = model_memory_limit
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if source is not None:
+            __body["source"] = source
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
+        )
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def flush_job(
+        self,
+        *,
+        job_id: Any,
+        advance_time: Optional[Any] = None,
+        calc_interim: Optional[bool] = None,
+        end: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        skip_time: Optional[str] = None,
+        start: Optional[Any] = None,
+    ) -> Any:
         """
         Forces any buffered data to be processed by the job.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-flush-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-flush-job.html>`_
 
-        :arg job_id: The name of the job to flush
-        :arg body: Flush parameters
-        :arg advance_time: Advances time to the given value generating
-            results and updating the model for the advanced interval
-        :arg calc_interim: Calculates interim results for the most
-            recent bucket or all buckets within the latency period
-        :arg end: When used in conjunction with calc_interim, specifies
-            the range of buckets on which to calculate interim results
-        :arg skip_time: Skips time to the given value without generating
-            results or updating the model for the skipped interval
-        :arg start: When used in conjunction with calc_interim,
-            specifies the range of buckets on which to calculate interim results
+        :param job_id: Identifier for the anomaly detection job.
+        :param advance_time: Refer to the description for the `advance_time` query parameter.
+        :param calc_interim: Refer to the description for the `calc_interim` query parameter.
+        :param end: Refer to the description for the `end` query parameter.
+        :param skip_time: Refer to the description for the `skip_time` query parameter.
+        :param start: Refer to the description for the `start` query parameter.
         """
-        client, params = _deprecated_options(self, params)
         if job_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'job_id'.")
-
-        return await client._perform_request(
-            "POST",
-            _make_path("_ml", "anomaly_detectors", job_id, "_flush"),
-            params=params,
-            headers=headers,
-            body=body,
+            raise ValueError("Empty value passed for parameter 'job_id'")
+        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_flush"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if advance_time is not None:
+            __body["advance_time"] = advance_time
+        if calc_interim is not None:
+            __body["calc_interim"] = calc_interim
+        if end is not None:
+            __body["end"] = end
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if skip_time is not None:
+            __body["skip_time"] = skip_time
+        if start is not None:
+            __body["start"] = start
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
         )
 
-    @query_params("duration", "expires_in", "max_model_memory")
-    async def forecast(self, job_id, params=None, headers=None):
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def forecast(
+        self,
+        *,
+        job_id: Any,
+        duration: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        expires_in: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        max_model_memory: Optional[str] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Predicts the future behavior of a time series by using its historical behavior.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-forecast.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-forecast.html>`_
 
-        :arg job_id: The ID of the job to forecast for
-        :arg duration: The duration of the forecast
-        :arg expires_in: The time interval after which the forecast
-            expires. Expired forecasts will be deleted at the first opportunity.
-        :arg max_model_memory: The max memory able to be used by the
-            forecast. Default is 20mb.
+        :param job_id: Identifier for the anomaly detection job. The job must be open
+            when you create a forecast; otherwise, an error occurs.
+        :param duration: Refer to the description for the `duration` query parameter.
+        :param expires_in: Refer to the description for the `expires_in` query parameter.
+        :param max_model_memory: Refer to the description for the `max_model_memory`
+            query parameter.
         """
-        client, params = _deprecated_options(self, params)
         if job_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'job_id'.")
-
-        return await client._perform_request(
-            "POST",
-            _make_path("_ml", "anomaly_detectors", job_id, "_forecast"),
-            params=params,
-            headers=headers,
+            raise ValueError("Empty value passed for parameter 'job_id'")
+        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_forecast"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if duration is not None:
+            __body["duration"] = duration
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expires_in is not None:
+            __body["expires_in"] = expires_in
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if max_model_memory is not None:
+            __body["max_model_memory"] = max_model_memory
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
         )
 
-    @query_params(
-        "anomaly_score",
-        "desc",
-        "end",
-        "exclude_interim",
-        "expand",
-        "from_",
-        "size",
-        "sort",
-        "start",
+    @_rewrite_parameters(
+        body_fields=True,
+        parameter_aliases={"from": "from_"},
     )
     async def get_buckets(
-        self, job_id, body=None, timestamp=None, params=None, headers=None
-    ):
+        self,
+        *,
+        job_id: Any,
+        timestamp: Optional[Any] = None,
+        anomaly_score: Optional[float] = None,
+        desc: Optional[bool] = None,
+        end: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        exclude_interim: Optional[bool] = None,
+        expand: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        from_: Optional[int] = None,
+        human: Optional[bool] = None,
+        page: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        size: Optional[int] = None,
+        sort: Optional[Any] = None,
+        start: Optional[Any] = None,
+    ) -> Any:
         """
         Retrieves anomaly detection job results for one or more buckets.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-bucket.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-bucket.html>`_
 
-        :arg job_id: ID of the job to get bucket results from
-        :arg body: Bucket selection details if not provided in URI
-        :arg timestamp: The timestamp of the desired single bucket
-            result
-        :arg anomaly_score: Filter for the most anomalous buckets
-        :arg desc: Set the sort direction
-        :arg end: End time filter for buckets
-        :arg exclude_interim: Exclude interim results
-        :arg expand: Include anomaly records
-        :arg from\\_: skips a number of buckets
-        :arg size: specifies a max number of buckets to get
-        :arg sort: Sort buckets by a particular field
-        :arg start: Start time filter for buckets
+        :param job_id: Identifier for the anomaly detection job.
+        :param timestamp: The timestamp of a single bucket result. If you do not specify
+            this parameter, the API returns information about all buckets.
+        :param anomaly_score: Refer to the description for the `anomaly_score` query
+            parameter.
+        :param desc: Refer to the description for the `desc` query parameter.
+        :param end: Refer to the description for the `end` query parameter.
+        :param exclude_interim: Refer to the description for the `exclude_interim` query
+            parameter.
+        :param expand: Refer to the description for the `expand` query parameter.
+        :param from_: Skips the specified number of buckets.
+        :param page:
+        :param size: Specifies the maximum number of buckets to obtain.
+        :param sort: Refer to the desription for the `sort` query parameter.
+        :param start: Refer to the description for the `start` query parameter.
         """
-        client, params = _deprecated_options(self, params)
-        if params and "from_" in params:
-            params["from"] = params.pop("from_")
-
         if job_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'job_id'.")
-
-        return await client._perform_request(
-            "POST",
-            _make_path(
-                "_ml", "anomaly_detectors", job_id, "results", "buckets", timestamp
-            ),
-            params=params,
-            headers=headers,
-            body=body,
+            raise ValueError("Empty value passed for parameter 'job_id'")
+        if job_id not in SKIP_IN_PATH and timestamp not in SKIP_IN_PATH:
+            __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/results/buckets/{_quote(timestamp)}"
+        elif job_id not in SKIP_IN_PATH:
+            __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/results/buckets"
+        else:
+            raise ValueError("Couldn't find a path for the given parameters")
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if anomaly_score is not None:
+            __body["anomaly_score"] = anomaly_score
+        if desc is not None:
+            __body["desc"] = desc
+        if end is not None:
+            __body["end"] = end
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if exclude_interim is not None:
+            __body["exclude_interim"] = exclude_interim
+        if expand is not None:
+            __body["expand"] = expand
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if from_ is not None:
+            __query["from"] = from_
+        if human is not None:
+            __query["human"] = human
+        if page is not None:
+            __body["page"] = page
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if size is not None:
+            __query["size"] = size
+        if sort is not None:
+            __body["sort"] = sort
+        if start is not None:
+            __body["start"] = start
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
         )
 
-    @query_params("end", "from_", "job_id", "size", "start")
-    async def get_calendar_events(self, calendar_id, params=None, headers=None):
+    @_rewrite_parameters(
+        parameter_aliases={"from": "from_"},
+    )
+    async def get_calendar_events(
+        self,
+        *,
+        calendar_id: Any,
+        end: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        from_: Optional[int] = None,
+        human: Optional[bool] = None,
+        job_id: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        size: Optional[int] = None,
+        start: Optional[str] = None,
+    ) -> Any:
         """
         Retrieves information about the scheduled events in calendars.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-calendar-event.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-calendar-event.html>`_
 
-        :arg calendar_id: The ID of the calendar containing the events
-        :arg end: Get events before this time
-        :arg from\\_: Skips a number of events
-        :arg job_id: Get events for the job. When this option is used
-            calendar_id must be '_all'
-        :arg size: Specifies a max number of events to get
-        :arg start: Get events after this time
+        :param calendar_id: A string that uniquely identifies a calendar. You can get
+            information for multiple calendars by using a comma-separated list of ids
+            or a wildcard expression. You can get information for all calendars by using
+            `_all` or `*` or by omitting the calendar identifier.
+        :param end: Specifies to get events with timestamps earlier than this time.
+        :param from_: Skips the specified number of events.
+        :param job_id: Specifies to get events for a specific anomaly detection job identifier
+            or job group. It must be used with a calendar identifier of `_all` or `*`.
+        :param size: Specifies the maximum number of events to obtain.
+        :param start: Specifies to get events with timestamps after this time.
         """
-        client, params = _deprecated_options(self, params)
-        if params and "from_" in params:
-            params["from"] = params.pop("from_")
-
         if calendar_id in SKIP_IN_PATH:
-            raise ValueError(
-                "Empty value passed for a required argument 'calendar_id'."
-            )
+            raise ValueError("Empty value passed for parameter 'calendar_id'")
+        __path = f"/_ml/calendars/{_quote(calendar_id)}/events"
+        __query: Dict[str, Any] = {}
+        if end is not None:
+            __query["end"] = end
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if from_ is not None:
+            __query["from"] = from_
+        if human is not None:
+            __query["human"] = human
+        if job_id is not None:
+            __query["job_id"] = job_id
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if size is not None:
+            __query["size"] = size
+        if start is not None:
+            __query["start"] = start
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
 
-        return await client._perform_request(
-            "GET",
-            _make_path("_ml", "calendars", calendar_id, "events"),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params("from_", "size")
+    @_rewrite_parameters(
+        body_fields=True,
+        parameter_aliases={"from": "from_"},
+    )
     async def get_calendars(
-        self, body=None, calendar_id=None, params=None, headers=None
-    ):
+        self,
+        *,
+        calendar_id: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        from_: Optional[int] = None,
+        human: Optional[bool] = None,
+        page: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        size: Optional[int] = None,
+    ) -> Any:
         """
         Retrieves configuration information for calendars.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-calendar.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-calendar.html>`_
 
-        :arg body: The from and size parameters optionally sent in the
-            body
-        :arg calendar_id: The ID of the calendar to fetch
-        :arg from\\_: skips a number of calendars
-        :arg size: specifies a max number of calendars to get
+        :param calendar_id: A string that uniquely identifies a calendar. You can get
+            information for multiple calendars by using a comma-separated list of ids
+            or a wildcard expression. You can get information for all calendars by using
+            `_all` or `*` or by omitting the calendar identifier.
+        :param from_: Skips the specified number of calendars. This parameter is supported
+            only when you omit the calendar identifier.
+        :param page: This object is supported only when you omit the calendar identifier.
+        :param size: Specifies the maximum number of calendars to obtain. This parameter
+            is supported only when you omit the calendar identifier.
         """
-        client, params = _deprecated_options(self, params)
-        if params and "from_" in params:
-            params["from"] = params.pop("from_")
-
-        return await client._perform_request(
-            "POST",
-            _make_path("_ml", "calendars", calendar_id),
-            params=params,
-            headers=headers,
-            body=body,
+        if calendar_id not in SKIP_IN_PATH:
+            __path = f"/_ml/calendars/{_quote(calendar_id)}"
+        else:
+            __path = "/_ml/calendars"
+        __query: Dict[str, Any] = {}
+        __body: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if from_ is not None:
+            __query["from"] = from_
+        if human is not None:
+            __query["human"] = human
+        if page is not None:
+            __body["page"] = page
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if size is not None:
+            __query["size"] = size
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
         )
 
-    @query_params("allow_no_datafeeds", "allow_no_match")
-    async def get_datafeed_stats(self, datafeed_id=None, params=None, headers=None):
+    @_rewrite_parameters(
+        body_fields=True,
+        parameter_aliases={"from": "from_"},
+    )
+    async def get_categories(
+        self,
+        *,
+        job_id: Any,
+        category_id: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        from_: Optional[int] = None,
+        human: Optional[bool] = None,
+        page: Optional[Any] = None,
+        partition_field_value: Optional[str] = None,
+        pretty: Optional[bool] = None,
+        size: Optional[int] = None,
+    ) -> Any:
+        """
+        Retrieves anomaly detection job results for one or more categories.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-category.html>`_
+
+        :param job_id: Identifier for the anomaly detection job.
+        :param category_id: Identifier for the category, which is unique in the job.
+            If you specify neither the category ID nor the partition_field_value, the
+            API returns information about all categories. If you specify only the partition_field_value,
+            it returns information about all categories for the specified partition.
+        :param from_: Skips the specified number of categories.
+        :param page:
+        :param partition_field_value: Only return categories for the specified partition.
+        :param size: Specifies the maximum number of categories to obtain.
+        """
+        if job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'job_id'")
+        if job_id not in SKIP_IN_PATH and category_id not in SKIP_IN_PATH:
+            __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/results/categories/{_quote(category_id)}"
+        elif job_id not in SKIP_IN_PATH:
+            __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/results/categories"
+        else:
+            raise ValueError("Couldn't find a path for the given parameters")
+        __query: Dict[str, Any] = {}
+        __body: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if from_ is not None:
+            __query["from"] = from_
+        if human is not None:
+            __query["human"] = human
+        if page is not None:
+            __body["page"] = page
+        if partition_field_value is not None:
+            __query["partition_field_value"] = partition_field_value
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if size is not None:
+            __query["size"] = size
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
+        )
+
+    @_rewrite_parameters(
+        parameter_aliases={"from": "from_"},
+    )
+    async def get_data_frame_analytics(
+        self,
+        *,
+        id: Optional[Any] = None,
+        allow_no_match: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        exclude_generated: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        from_: Optional[int] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        size: Optional[int] = None,
+    ) -> Any:
+        """
+        Retrieves configuration information for data frame analytics jobs.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-dfanalytics.html>`_
+
+        :param id: Identifier for the data frame analytics job. If you do not specify
+            this option, the API returns information for the first hundred data frame
+            analytics jobs.
+        :param allow_no_match: Specifies what to do when the request: 1. Contains wildcard
+            expressions and there are no data frame analytics jobs that match. 2. Contains
+            the `_all` string or no identifiers and there are no matches. 3. Contains
+            wildcard expressions and there are only partial matches. The default value
+            returns an empty data_frame_analytics array when there are no matches and
+            the subset of results when there are partial matches. If this parameter is
+            `false`, the request returns a 404 status code when there are no matches
+            or only partial matches.
+        :param exclude_generated: Indicates if certain fields should be removed from
+            the configuration on retrieval. This allows the configuration to be in an
+            acceptable format to be retrieved and then added to another cluster.
+        :param from_: Skips the specified number of data frame analytics jobs.
+        :param size: Specifies the maximum number of data frame analytics jobs to obtain.
+        """
+        if id not in SKIP_IN_PATH:
+            __path = f"/_ml/data_frame/analytics/{_quote(id)}"
+        else:
+            __path = "/_ml/data_frame/analytics"
+        __query: Dict[str, Any] = {}
+        if allow_no_match is not None:
+            __query["allow_no_match"] = allow_no_match
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if exclude_generated is not None:
+            __query["exclude_generated"] = exclude_generated
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if from_ is not None:
+            __query["from"] = from_
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if size is not None:
+            __query["size"] = size
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters(
+        parameter_aliases={"from": "from_"},
+    )
+    async def get_data_frame_analytics_stats(
+        self,
+        *,
+        id: Optional[Any] = None,
+        allow_no_match: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        from_: Optional[int] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        size: Optional[int] = None,
+        verbose: Optional[bool] = None,
+    ) -> Any:
+        """
+        Retrieves usage information for data frame analytics jobs.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-dfanalytics-stats.html>`_
+
+        :param id: Identifier for the data frame analytics job. If you do not specify
+            this option, the API returns information for the first hundred data frame
+            analytics jobs.
+        :param allow_no_match: Specifies what to do when the request: 1. Contains wildcard
+            expressions and there are no data frame analytics jobs that match. 2. Contains
+            the `_all` string or no identifiers and there are no matches. 3. Contains
+            wildcard expressions and there are only partial matches. The default value
+            returns an empty data_frame_analytics array when there are no matches and
+            the subset of results when there are partial matches. If this parameter is
+            `false`, the request returns a 404 status code when there are no matches
+            or only partial matches.
+        :param from_: Skips the specified number of data frame analytics jobs.
+        :param size: Specifies the maximum number of data frame analytics jobs to obtain.
+        :param verbose: Defines whether the stats response should be verbose.
+        """
+        if id not in SKIP_IN_PATH:
+            __path = f"/_ml/data_frame/analytics/{_quote(id)}/_stats"
+        else:
+            __path = "/_ml/data_frame/analytics/_stats"
+        __query: Dict[str, Any] = {}
+        if allow_no_match is not None:
+            __query["allow_no_match"] = allow_no_match
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if from_ is not None:
+            __query["from"] = from_
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if size is not None:
+            __query["size"] = size
+        if verbose is not None:
+            __query["verbose"] = verbose
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def get_datafeed_stats(
+        self,
+        *,
+        datafeed_id: Optional[Any] = None,
+        allow_no_match: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Retrieves usage information for datafeeds.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-datafeed-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-datafeed-stats.html>`_
 
-        :arg datafeed_id: The ID of the datafeeds stats to fetch
-        :arg allow_no_datafeeds: Whether to ignore if a wildcard
-            expression matches no datafeeds. (This includes `_all` string or when no
-            datafeeds have been specified)
-        :arg allow_no_match: Whether to ignore if a wildcard expression
-            matches no datafeeds. (This includes `_all` string or when no datafeeds
-            have been specified)
+        :param datafeed_id: Identifier for the datafeed. It can be a datafeed identifier
+            or a wildcard expression. If you do not specify one of these options, the
+            API returns information about all datafeeds.
+        :param allow_no_match: Specifies what to do when the request: 1. Contains wildcard
+            expressions and there are no datafeeds that match. 2. Contains the `_all`
+            string or no identifiers and there are no matches. 3. Contains wildcard expressions
+            and there are only partial matches. The default value is `true`, which returns
+            an empty `datafeeds` array when there are no matches and the subset of results
+            when there are partial matches. If this parameter is `false`, the request
+            returns a `404` status code when there are no matches or only partial matches.
         """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "GET",
-            _make_path("_ml", "datafeeds", datafeed_id, "_stats"),
-            params=params,
-            headers=headers,
-        )
+        if datafeed_id not in SKIP_IN_PATH:
+            __path = f"/_ml/datafeeds/{_quote(datafeed_id)}/_stats"
+        else:
+            __path = "/_ml/datafeeds/_stats"
+        __query: Dict[str, Any] = {}
+        if allow_no_match is not None:
+            __query["allow_no_match"] = allow_no_match
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
 
-    @query_params("allow_no_datafeeds", "allow_no_match", "exclude_generated")
-    async def get_datafeeds(self, datafeed_id=None, params=None, headers=None):
+    @_rewrite_parameters()
+    async def get_datafeeds(
+        self,
+        *,
+        datafeed_id: Optional[Any] = None,
+        allow_no_match: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        exclude_generated: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Retrieves configuration information for datafeeds.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-datafeed.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-datafeed.html>`_
 
-        :arg datafeed_id: The ID of the datafeeds to fetch
-        :arg allow_no_datafeeds: Whether to ignore if a wildcard
-            expression matches no datafeeds. (This includes `_all` string or when no
-            datafeeds have been specified)
-        :arg allow_no_match: Whether to ignore if a wildcard expression
-            matches no datafeeds. (This includes `_all` string or when no datafeeds
-            have been specified)
-        :arg exclude_generated: Omits fields that are illegal to set on
-            datafeed PUT
+        :param datafeed_id: Identifier for the datafeed. It can be a datafeed identifier
+            or a wildcard expression. If you do not specify one of these options, the
+            API returns information about all datafeeds.
+        :param allow_no_match: Specifies what to do when the request: 1. Contains wildcard
+            expressions and there are no datafeeds that match. 2. Contains the `_all`
+            string or no identifiers and there are no matches. 3. Contains wildcard expressions
+            and there are only partial matches. The default value is `true`, which returns
+            an empty `datafeeds` array when there are no matches and the subset of results
+            when there are partial matches. If this parameter is `false`, the request
+            returns a `404` status code when there are no matches or only partial matches.
+        :param exclude_generated: Indicates if certain fields should be removed from
+            the configuration on retrieval. This allows the configuration to be in an
+            acceptable format to be retrieved and then added to another cluster.
         """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "GET",
-            _make_path("_ml", "datafeeds", datafeed_id),
-            params=params,
-            headers=headers,
-        )
+        if datafeed_id not in SKIP_IN_PATH:
+            __path = f"/_ml/datafeeds/{_quote(datafeed_id)}"
+        else:
+            __path = "/_ml/datafeeds"
+        __query: Dict[str, Any] = {}
+        if allow_no_match is not None:
+            __query["allow_no_match"] = allow_no_match
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if exclude_generated is not None:
+            __query["exclude_generated"] = exclude_generated
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
 
-    @query_params("from_", "size")
-    async def get_filters(self, filter_id=None, params=None, headers=None):
+    @_rewrite_parameters(
+        parameter_aliases={"from": "from_"},
+    )
+    async def get_filters(
+        self,
+        *,
+        filter_id: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        from_: Optional[int] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        size: Optional[int] = None,
+    ) -> Any:
         """
         Retrieves filters.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-filter.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-filter.html>`_
 
-        :arg filter_id: The ID of the filter to fetch
-        :arg from\\_: skips a number of filters
-        :arg size: specifies a max number of filters to get
+        :param filter_id: A string that uniquely identifies a filter.
+        :param from_: Skips the specified number of filters.
+        :param size: Specifies the maximum number of filters to obtain.
         """
-        client, params = _deprecated_options(self, params)
-        if params and "from_" in params:
-            params["from"] = params.pop("from_")
+        if filter_id not in SKIP_IN_PATH:
+            __path = f"/_ml/filters/{_quote(filter_id)}"
+        else:
+            __path = "/_ml/filters"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if from_ is not None:
+            __query["from"] = from_
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if size is not None:
+            __query["size"] = size
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
 
-        return await client._perform_request(
-            "GET",
-            _make_path("_ml", "filters", filter_id),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params(
-        "desc",
-        "end",
-        "exclude_interim",
-        "from_",
-        "influencer_score",
-        "size",
-        "sort",
-        "start",
+    @_rewrite_parameters(
+        body_fields=True,
+        parameter_aliases={"from": "from_"},
     )
-    async def get_influencers(self, job_id, body=None, params=None, headers=None):
+    async def get_influencers(
+        self,
+        *,
+        job_id: Any,
+        desc: Optional[bool] = None,
+        end: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        exclude_interim: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        from_: Optional[int] = None,
+        human: Optional[bool] = None,
+        influencer_score: Optional[float] = None,
+        page: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        size: Optional[int] = None,
+        sort: Optional[Any] = None,
+        start: Optional[Any] = None,
+    ) -> Any:
         """
         Retrieves anomaly detection job results for one or more influencers.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-influencer.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-influencer.html>`_
 
-        :arg job_id: Identifier for the anomaly detection job
-        :arg body: Influencer selection criteria
-        :arg desc: whether the results should be sorted in decending
-            order
-        :arg end: end timestamp for the requested influencers
-        :arg exclude_interim: Exclude interim results
-        :arg from\\_: skips a number of influencers
-        :arg influencer_score: influencer score threshold for the
-            requested influencers
-        :arg size: specifies a max number of influencers to get
-        :arg sort: sort field for the requested influencers
-        :arg start: start timestamp for the requested influencers
+        :param job_id: Identifier for the anomaly detection job.
+        :param desc: If true, the results are sorted in descending order.
+        :param end: Returns influencers with timestamps earlier than this time. The default
+            value means it is unset and results are not limited to specific timestamps.
+        :param exclude_interim: If true, the output excludes interim results. By default,
+            interim results are included.
+        :param from_: Skips the specified number of influencers.
+        :param influencer_score: Returns influencers with anomaly scores greater than
+            or equal to this value.
+        :param page:
+        :param size: Specifies the maximum number of influencers to obtain.
+        :param sort: Specifies the sort field for the requested influencers. By default,
+            the influencers are sorted by the `influencer_score` value.
+        :param start: Returns influencers with timestamps after this time. The default
+            value means it is unset and results are not limited to specific timestamps.
         """
-        client, params = _deprecated_options(self, params)
-        if params and "from_" in params:
-            params["from"] = params.pop("from_")
-
         if job_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'job_id'.")
-
-        return await client._perform_request(
-            "POST",
-            _make_path("_ml", "anomaly_detectors", job_id, "results", "influencers"),
-            params=params,
-            headers=headers,
-            body=body,
+            raise ValueError("Empty value passed for parameter 'job_id'")
+        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/results/influencers"
+        __query: Dict[str, Any] = {}
+        __body: Dict[str, Any] = {}
+        if desc is not None:
+            __query["desc"] = desc
+        if end is not None:
+            __query["end"] = end
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if exclude_interim is not None:
+            __query["exclude_interim"] = exclude_interim
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if from_ is not None:
+            __query["from"] = from_
+        if human is not None:
+            __query["human"] = human
+        if influencer_score is not None:
+            __query["influencer_score"] = influencer_score
+        if page is not None:
+            __body["page"] = page
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if size is not None:
+            __query["size"] = size
+        if sort is not None:
+            __query["sort"] = sort
+        if start is not None:
+            __query["start"] = start
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
         )
 
-    @query_params("allow_no_jobs", "allow_no_match")
-    async def get_job_stats(self, job_id=None, params=None, headers=None):
+    @_rewrite_parameters()
+    async def get_job_stats(
+        self,
+        *,
+        job_id: Optional[Any] = None,
+        allow_no_match: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Retrieves usage information for anomaly detection jobs.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-job-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-job-stats.html>`_
 
-        :arg job_id: The ID of the jobs stats to fetch
-        :arg allow_no_jobs: Whether to ignore if a wildcard expression
-            matches no jobs. (This includes `_all` string or when no jobs have been
-            specified)
-        :arg allow_no_match: Whether to ignore if a wildcard expression
-            matches no jobs. (This includes `_all` string or when no jobs have been
-            specified)
+        :param job_id: Identifier for the anomaly detection job. It can be a job identifier,
+            a group name, a comma-separated list of jobs, or a wildcard expression. If
+            you do not specify one of these options, the API returns information for
+            all anomaly detection jobs.
+        :param allow_no_match: Specifies what to do when the request: 1. Contains wildcard
+            expressions and there are no jobs that match. 2. Contains the _all string
+            or no identifiers and there are no matches. 3. Contains wildcard expressions
+            and there are only partial matches. If `true`, the API returns an empty `jobs`
+            array when there are no matches and the subset of results when there are
+            partial matches. If `false`, the API returns a `404` status code when there
+            are no matches or only partial matches.
         """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "GET",
-            _make_path("_ml", "anomaly_detectors", job_id, "_stats"),
-            params=params,
-            headers=headers,
-        )
+        if job_id not in SKIP_IN_PATH:
+            __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_stats"
+        else:
+            __path = "/_ml/anomaly_detectors/_stats"
+        __query: Dict[str, Any] = {}
+        if allow_no_match is not None:
+            __query["allow_no_match"] = allow_no_match
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
 
-    @query_params("allow_no_jobs", "allow_no_match", "exclude_generated")
-    async def get_jobs(self, job_id=None, params=None, headers=None):
+    @_rewrite_parameters()
+    async def get_jobs(
+        self,
+        *,
+        job_id: Optional[Any] = None,
+        allow_no_match: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        exclude_generated: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Retrieves configuration information for anomaly detection jobs.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-job.html>`_
 
-        :arg job_id: The ID of the jobs to fetch
-        :arg allow_no_jobs: Whether to ignore if a wildcard expression
-            matches no jobs. (This includes `_all` string or when no jobs have been
-            specified)
-        :arg allow_no_match: Whether to ignore if a wildcard expression
-            matches no jobs. (This includes `_all` string or when no jobs have been
-            specified)
-        :arg exclude_generated: Omits fields that are illegal to set on
-            job PUT
+        :param job_id: Identifier for the anomaly detection job. It can be a job identifier,
+            a group name, or a wildcard expression. If you do not specify one of these
+            options, the API returns information for all anomaly detection jobs.
+        :param allow_no_match: Specifies what to do when the request: 1. Contains wildcard
+            expressions and there are no jobs that match. 2. Contains the _all string
+            or no identifiers and there are no matches. 3. Contains wildcard expressions
+            and there are only partial matches. The default value is `true`, which returns
+            an empty `jobs` array when there are no matches and the subset of results
+            when there are partial matches. If this parameter is `false`, the request
+            returns a `404` status code when there are no matches or only partial matches.
+        :param exclude_generated: Indicates if certain fields should be removed from
+            the configuration on retrieval. This allows the configuration to be in an
+            acceptable format to be retrieved and then added to another cluster.
         """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "GET",
-            _make_path("_ml", "anomaly_detectors", job_id),
-            params=params,
-            headers=headers,
+        if job_id not in SKIP_IN_PATH:
+            __path = f"/_ml/anomaly_detectors/{_quote(job_id)}"
+        else:
+            __path = "/_ml/anomaly_detectors"
+        __query: Dict[str, Any] = {}
+        if allow_no_match is not None:
+            __query["allow_no_match"] = allow_no_match
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if exclude_generated is not None:
+            __query["exclude_generated"] = exclude_generated
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters(
+        body_fields=True,
+        parameter_aliases={"from": "from_"},
+    )
+    async def get_model_snapshots(
+        self,
+        *,
+        job_id: Any,
+        snapshot_id: Optional[Any] = None,
+        desc: Optional[bool] = None,
+        end: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        from_: Optional[int] = None,
+        human: Optional[bool] = None,
+        page: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        size: Optional[int] = None,
+        sort: Optional[Any] = None,
+        start: Optional[Any] = None,
+    ) -> Any:
+        """
+        Retrieves information about model snapshots.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-snapshot.html>`_
+
+        :param job_id: Identifier for the anomaly detection job.
+        :param snapshot_id: A numerical character string that uniquely identifies the
+            model snapshot. You can get information for multiple snapshots by using a
+            comma-separated list or a wildcard expression. You can get all snapshots
+            by using `_all`, by specifying `*` as the snapshot ID, or by omitting the
+            snapshot ID.
+        :param desc: Refer to the description for the `desc` query parameter.
+        :param end: Refer to the description for the `end` query parameter.
+        :param from_: Skips the specified number of snapshots.
+        :param page:
+        :param size: Specifies the maximum number of snapshots to obtain.
+        :param sort: Refer to the description for the `sort` query parameter.
+        :param start: Refer to the description for the `start` query parameter.
+        """
+        if job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'job_id'")
+        if job_id not in SKIP_IN_PATH and snapshot_id not in SKIP_IN_PATH:
+            __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots/{_quote(snapshot_id)}"
+        elif job_id not in SKIP_IN_PATH:
+            __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots"
+        else:
+            raise ValueError("Couldn't find a path for the given parameters")
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if desc is not None:
+            __body["desc"] = desc
+        if end is not None:
+            __body["end"] = end
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if from_ is not None:
+            __query["from"] = from_
+        if human is not None:
+            __query["human"] = human
+        if page is not None:
+            __body["page"] = page
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if size is not None:
+            __query["size"] = size
+        if sort is not None:
+            __body["sort"] = sort
+        if start is not None:
+            __body["start"] = start
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
         )
 
-    @query_params(
-        "allow_no_jobs",
-        "allow_no_match",
-        "bucket_span",
-        "end",
-        "exclude_interim",
-        "overall_score",
-        "start",
-        "top_n",
-    )
-    async def get_overall_buckets(self, job_id, body=None, params=None, headers=None):
+    @_rewrite_parameters()
+    async def get_overall_buckets(
+        self,
+        *,
+        job_id: Any,
+        allow_no_match: Optional[bool] = None,
+        bucket_span: Optional[Any] = None,
+        end: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        exclude_interim: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        overall_score: Optional[Union[float, str]] = None,
+        pretty: Optional[bool] = None,
+        start: Optional[Any] = None,
+        top_n: Optional[int] = None,
+    ) -> Any:
         """
         Retrieves overall bucket results that summarize the bucket results of multiple
         anomaly detection jobs.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-overall-buckets.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-overall-buckets.html>`_
 
-        :arg job_id: The job IDs for which to calculate overall bucket
-            results
-        :arg body: Overall bucket selection details if not provided in
-            URI
-        :arg allow_no_jobs: Whether to ignore if a wildcard expression
-            matches no jobs. (This includes `_all` string or when no jobs have been
-            specified)
-        :arg allow_no_match: Whether to ignore if a wildcard expression
-            matches no jobs. (This includes `_all` string or when no jobs have been
-            specified)
-        :arg bucket_span: The span of the overall buckets. Defaults to
-            the longest job bucket_span
-        :arg end: Returns overall buckets with timestamps earlier than
-            this time
-        :arg exclude_interim: If true overall buckets that include
-            interim buckets will be excluded
-        :arg overall_score: Returns overall buckets with overall scores
-            higher than this value
-        :arg start: Returns overall buckets with timestamps after this
-            time
-        :arg top_n: The number of top job bucket scores to be used in
-            the overall_score calculation
+        :param job_id: Identifier for the anomaly detection job. It can be a job identifier,
+            a group name, a comma-separated list of jobs or groups, or a wildcard expression.
+            You can summarize the bucket results for all anomaly detection jobs by using
+            `_all` or by specifying `*` as the `<job_id>`.
+        :param allow_no_match: Specifies what to do when the request: 1. Contains wildcard
+            expressions and there are no jobs that match. 2. Contains the `_all` string
+            or no identifiers and there are no matches. 3. Contains wildcard expressions
+            and there are only partial matches. If `true`, the request returns an empty
+            `jobs` array when there are no matches and the subset of results when there
+            are partial matches. If this parameter is `false`, the request returns a
+            `404` status code when there are no matches or only partial matches.
+        :param bucket_span: The span of the overall buckets. Must be greater or equal
+            to the largest bucket span of the specified anomaly detection jobs, which
+            is the default value. By default, an overall bucket has a span equal to the
+            largest bucket span of the specified anomaly detection jobs. To override
+            that behavior, use the optional `bucket_span` parameter.
+        :param end: Returns overall buckets with timestamps earlier than this time.
+        :param exclude_interim: If `true`, the output excludes interim results.
+        :param overall_score: Returns overall buckets with overall scores greater than
+            or equal to this value.
+        :param start: Returns overall buckets with timestamps after this time.
+        :param top_n: The number of top anomaly detection job bucket scores to be used
+            in the `overall_score` calculation.
         """
-        client, params = _deprecated_options(self, params)
         if job_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'job_id'.")
+            raise ValueError("Empty value passed for parameter 'job_id'")
+        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/results/overall_buckets"
+        __query: Dict[str, Any] = {}
+        if allow_no_match is not None:
+            __query["allow_no_match"] = allow_no_match
+        if bucket_span is not None:
+            __query["bucket_span"] = bucket_span
+        if end is not None:
+            __query["end"] = end
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if exclude_interim is not None:
+            __query["exclude_interim"] = exclude_interim
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if overall_score is not None:
+            __query["overall_score"] = overall_score
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if start is not None:
+            __query["start"] = start
+        if top_n is not None:
+            __query["top_n"] = top_n
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("POST", __target, headers=__headers)
 
-        return await client._perform_request(
-            "POST",
-            _make_path(
-                "_ml", "anomaly_detectors", job_id, "results", "overall_buckets"
-            ),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params(
-        "desc",
-        "end",
-        "exclude_interim",
-        "from_",
-        "record_score",
-        "size",
-        "sort",
-        "start",
+    @_rewrite_parameters(
+        body_fields=True,
+        parameter_aliases={"from": "from_"},
     )
-    async def get_records(self, job_id, body=None, params=None, headers=None):
+    async def get_records(
+        self,
+        *,
+        job_id: Any,
+        desc: Optional[bool] = None,
+        end: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        exclude_interim: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        from_: Optional[int] = None,
+        human: Optional[bool] = None,
+        page: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        record_score: Optional[float] = None,
+        size: Optional[int] = None,
+        sort: Optional[Any] = None,
+        start: Optional[Any] = None,
+    ) -> Any:
         """
         Retrieves anomaly records for an anomaly detection job.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-record.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-record.html>`_
 
-        :arg job_id: The ID of the job
-        :arg body: Record selection criteria
-        :arg desc: Set the sort direction
-        :arg end: End time filter for records
-        :arg exclude_interim: Exclude interim results
-        :arg from\\_: skips a number of records
-        :arg record_score: Returns records with anomaly scores greater
-            or equal than this value
-        :arg size: specifies a max number of records to get
-        :arg sort: Sort records by a particular field
-        :arg start: Start time filter for records
+        :param job_id: Identifier for the anomaly detection job.
+        :param desc: If true, the results are sorted in descending order.
+        :param end: Returns records with timestamps earlier than this time. The default
+            value means results are not limited to specific timestamps.
+        :param exclude_interim: If true, the output excludes interim results.
+        :param from_: Skips the specified number of records.
+        :param page:
+        :param record_score: Returns records with anomaly scores greater or equal than
+            this value.
+        :param size: Specifies the maximum number of records to obtain.
+        :param sort: Specifies the sort field for the requested records.
+        :param start: Returns records with timestamps earlier than this time. The default
+            value means results are not limited to specific timestamps.
         """
-        client, params = _deprecated_options(self, params)
-        if params and "from_" in params:
-            params["from"] = params.pop("from_")
-
         if job_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'job_id'.")
-
-        return await client._perform_request(
-            "POST",
-            _make_path("_ml", "anomaly_detectors", job_id, "results", "records"),
-            params=params,
-            headers=headers,
-            body=body,
+            raise ValueError("Empty value passed for parameter 'job_id'")
+        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/results/records"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if desc is not None:
+            __body["desc"] = desc
+        if end is not None:
+            __body["end"] = end
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if exclude_interim is not None:
+            __body["exclude_interim"] = exclude_interim
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if from_ is not None:
+            __query["from"] = from_
+        if human is not None:
+            __query["human"] = human
+        if page is not None:
+            __body["page"] = page
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if record_score is not None:
+            __body["record_score"] = record_score
+        if size is not None:
+            __query["size"] = size
+        if sort is not None:
+            __body["sort"] = sort
+        if start is not None:
+            __body["start"] = start
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
         )
 
-    @query_params()
-    async def info(self, params=None, headers=None):
+    @_rewrite_parameters(
+        parameter_aliases={"from": "from_"},
+    )
+    async def get_trained_models(
+        self,
+        *,
+        model_id: Optional[Any] = None,
+        allow_no_match: Optional[bool] = None,
+        decompress_definition: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        exclude_generated: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        from_: Optional[int] = None,
+        human: Optional[bool] = None,
+        include: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        size: Optional[int] = None,
+        tags: Optional[str] = None,
+    ) -> Any:
+        """
+        Retrieves configuration information for a trained inference model.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-trained-models.html>`_
+
+        :param model_id: The unique identifier of the trained model.
+        :param allow_no_match: Specifies what to do when the request: - Contains wildcard
+            expressions and there are no models that match. - Contains the _all string
+            or no identifiers and there are no matches. - Contains wildcard expressions
+            and there are only partial matches. If true, it returns an empty array when
+            there are no matches and the subset of results when there are partial matches.
+        :param decompress_definition: Specifies whether the included model definition
+            should be returned as a JSON map (true) or in a custom compressed format
+            (false).
+        :param exclude_generated: Indicates if certain fields should be removed from
+            the configuration on retrieval. This allows the configuration to be in an
+            acceptable format to be retrieved and then added to another cluster.
+        :param from_: Skips the specified number of models.
+        :param include: A comma delimited string of optional fields to include in the
+            response body.
+        :param size: Specifies the maximum number of models to obtain.
+        :param tags: A comma delimited string of tags. A trained model can have many
+            tags, or none. When supplied, only trained models that contain all the supplied
+            tags are returned.
+        """
+        if model_id not in SKIP_IN_PATH:
+            __path = f"/_ml/trained_models/{_quote(model_id)}"
+        else:
+            __path = "/_ml/trained_models"
+        __query: Dict[str, Any] = {}
+        if allow_no_match is not None:
+            __query["allow_no_match"] = allow_no_match
+        if decompress_definition is not None:
+            __query["decompress_definition"] = decompress_definition
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if exclude_generated is not None:
+            __query["exclude_generated"] = exclude_generated
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if from_ is not None:
+            __query["from"] = from_
+        if human is not None:
+            __query["human"] = human
+        if include is not None:
+            __query["include"] = include
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if size is not None:
+            __query["size"] = size
+        if tags is not None:
+            __query["tags"] = tags
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters(
+        parameter_aliases={"from": "from_"},
+    )
+    async def get_trained_models_stats(
+        self,
+        *,
+        model_id: Optional[Any] = None,
+        allow_no_match: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        from_: Optional[int] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        size: Optional[int] = None,
+    ) -> Any:
+        """
+        Retrieves usage information for trained inference models.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-trained-models-stats.html>`_
+
+        :param model_id: The unique identifier of the trained model or a model alias.
+        :param allow_no_match: Specifies what to do when the request: - Contains wildcard
+            expressions and there are no models that match. - Contains the _all string
+            or no identifiers and there are no matches. - Contains wildcard expressions
+            and there are only partial matches. If true, it returns an empty array when
+            there are no matches and the subset of results when there are partial matches.
+        :param from_: Skips the specified number of models.
+        :param size: Specifies the maximum number of models to obtain.
+        """
+        if model_id not in SKIP_IN_PATH:
+            __path = f"/_ml/trained_models/{_quote(model_id)}/_stats"
+        else:
+            __path = "/_ml/trained_models/_stats"
+        __query: Dict[str, Any] = {}
+        if allow_no_match is not None:
+            __query["allow_no_match"] = allow_no_match
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if from_ is not None:
+            __query["from"] = from_
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if size is not None:
+            __query["size"] = size
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def info(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Returns defaults and limits used by machine learning.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-ml-info.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-ml-info.html>`_
         """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "GET", "/_ml/info", params=params, headers=headers
-        )
+        __path = "/_ml/info"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("GET", __target, headers=__headers)
 
-    @query_params()
-    async def open_job(self, job_id, params=None, headers=None):
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def open_job(
+        self,
+        *,
+        job_id: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+    ) -> Any:
         """
         Opens one or more anomaly detection jobs.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-open-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-open-job.html>`_
 
-        :arg job_id: The ID of the job to open
+        :param job_id: Identifier for the anomaly detection job.
+        :param timeout: Controls the time to wait until a job has opened.
         """
-        client, params = _deprecated_options(self, params)
         if job_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'job_id'.")
-
-        return await client._perform_request(
-            "POST",
-            _make_path("_ml", "anomaly_detectors", job_id, "_open"),
-            params=params,
-            headers=headers,
+            raise ValueError("Empty value passed for parameter 'job_id'")
+        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_open"
+        __query: Dict[str, Any] = {}
+        __body: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __body["timeout"] = timeout
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
         )
 
-    @query_params()
-    async def post_calendar_events(self, calendar_id, body, params=None, headers=None):
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def post_calendar_events(
+        self,
+        *,
+        calendar_id: Any,
+        events: List[Any],
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Posts scheduled events in a calendar.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-post-calendar-event.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-post-calendar-event.html>`_
 
-        :arg calendar_id: The ID of the calendar to modify
-        :arg body: A list of events
+        :param calendar_id: A string that uniquely identifies a calendar.
+        :param events: A list of one of more scheduled events. The event’s start and
+            end times can be specified as integer milliseconds since the epoch or as
+            a string in ISO 8601 format.
         """
-        client, params = _deprecated_options(self, params)
-        for param in (calendar_id, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return await client._perform_request(
-            "POST",
-            _make_path("_ml", "calendars", calendar_id, "events"),
-            params=params,
-            headers=headers,
-            body=body,
+        if calendar_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'calendar_id'")
+        if events is None:
+            raise ValueError("Empty value passed for parameter 'events'")
+        __path = f"/_ml/calendars/{_quote(calendar_id)}/events"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if events is not None:
+            __body["events"] = events
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
         )
 
-    @query_params("reset_end", "reset_start")
-    async def post_data(self, job_id, body, params=None, headers=None):
+    @_rewrite_parameters(
+        body_name="data",
+    )
+    async def post_data(
+        self,
+        *,
+        job_id: Any,
+        data: List[Any],
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        reset_end: Optional[Any] = None,
+        reset_start: Optional[Any] = None,
+    ) -> Any:
         """
         Sends data to an anomaly detection job for analysis.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-post-data.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-post-data.html>`_
 
-        :arg job_id: The name of the job receiving the data
-        :arg body: The data to process
-        :arg reset_end: Optional parameter to specify the end of the
-            bucket resetting range
-        :arg reset_start: Optional parameter to specify the start of the
-            bucket resetting range
+        :param job_id: Identifier for the anomaly detection job. The job must have a
+            state of open to receive and process the data.
+        :param data:
+        :param reset_end: Specifies the end of the bucket resetting range.
+        :param reset_start: Specifies the start of the bucket resetting range.
         """
-        client, params = _deprecated_options(self, params)
-        for param in (job_id, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        headers["content-type"] = "application/x-ndjson"
-        return await client._perform_request(
-            "POST",
-            _make_path("_ml", "anomaly_detectors", job_id, "_data"),
-            params=params,
-            headers=headers,
-            body=body,
+        if job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'job_id'")
+        if data is None:
+            raise ValueError("Empty value passed for parameter 'data'")
+        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_data"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if reset_end is not None:
+            __query["reset_end"] = reset_end
+        if reset_start is not None:
+            __query["reset_start"] = reset_start
+        __body = data
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {
+            "accept": "application/json",
+            "content-type": "application/x-ndjson",
+        }
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
         )
 
-    @query_params()
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def preview_data_frame_analytics(
+        self,
+        *,
+        id: Optional[Any] = None,
+        config: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Previews that will be analyzed given a data frame analytics config.
+
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/preview-dfanalytics.html>`_
+
+        :param id: Identifier for the data frame analytics job.
+        :param config: A data frame analytics config as described in Create data frame
+            analytics jobs. Note that id and dest don’t need to be provided in the context
+            of this API.
+        """
+        if id not in SKIP_IN_PATH:
+            __path = f"/_ml/data_frame/analytics/{_quote(id)}/_preview"
+        else:
+            __path = "/_ml/data_frame/analytics/_preview"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if config is not None:
+            __body["config"] = config
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
+        )
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
     async def preview_datafeed(
-        self, body=None, datafeed_id=None, params=None, headers=None
-    ):
+        self,
+        *,
+        datafeed_id: Optional[Any] = None,
+        datafeed_config: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        job_config: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Previews a datafeed.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-preview-datafeed.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-preview-datafeed.html>`_
 
-        :arg body: The datafeed config and job config with which to
-            execute the preview
-        :arg datafeed_id: The ID of the datafeed to preview
+        :param datafeed_id: A numerical character string that uniquely identifies the
+            datafeed. This identifier can contain lowercase alphanumeric characters (a-z
+            and 0-9), hyphens, and underscores. It must start and end with alphanumeric
+            characters. NOTE: If you use this path parameter, you cannot provide datafeed
+            or anomaly detection job configuration details in the request body.
+        :param datafeed_config: The datafeed definition to preview.
+        :param job_config: The configuration details for the anomaly detection job that
+            is associated with the datafeed. If the `datafeed_config` object does not
+            include a `job_id` that references an existing anomaly detection job, you
+            must supply this `job_config` object. If you include both a `job_id` and
+            a `job_config`, the latter information is used. You cannot specify a `job_config`
+            object unless you also supply a `datafeed_config` object.
         """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "POST",
-            _make_path("_ml", "datafeeds", datafeed_id, "_preview"),
-            params=params,
-            headers=headers,
-            body=body,
+        if datafeed_id not in SKIP_IN_PATH:
+            __path = f"/_ml/datafeeds/{_quote(datafeed_id)}/_preview"
+        else:
+            __path = "/_ml/datafeeds/_preview"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if datafeed_config is not None:
+            __body["datafeed_config"] = datafeed_config
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if job_config is not None:
+            __body["job_config"] = job_config
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
         )
 
-    @query_params()
-    async def put_calendar(self, calendar_id, body=None, params=None, headers=None):
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def put_calendar(
+        self,
+        *,
+        calendar_id: Any,
+        description: Optional[str] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Instantiates a calendar.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-put-calendar.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-put-calendar.html>`_
 
-        :arg calendar_id: The ID of the calendar to create
-        :arg body: The calendar details
+        :param calendar_id: A string that uniquely identifies a calendar.
+        :param description: A description of the calendar.
         """
-        client, params = _deprecated_options(self, params)
         if calendar_id in SKIP_IN_PATH:
-            raise ValueError(
-                "Empty value passed for a required argument 'calendar_id'."
-            )
-
-        return await client._perform_request(
-            "PUT",
-            _make_path("_ml", "calendars", calendar_id),
-            params=params,
-            headers=headers,
-            body=body,
+            raise ValueError("Empty value passed for parameter 'calendar_id'")
+        __path = f"/_ml/calendars/{_quote(calendar_id)}"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if description is not None:
+            __body["description"] = description
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return await self._perform_request(
+            "PUT", __target, headers=__headers, body=__body
         )
 
-    @query_params()
-    async def put_calendar_job(self, calendar_id, job_id, params=None, headers=None):
+    @_rewrite_parameters()
+    async def put_calendar_job(
+        self,
+        *,
+        calendar_id: Any,
+        job_id: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Adds an anomaly detection job to a calendar.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-put-calendar-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-put-calendar-job.html>`_
 
-        :arg calendar_id: The ID of the calendar to modify
-        :arg job_id: The ID of the job to add to the calendar
+        :param calendar_id: A string that uniquely identifies a calendar.
+        :param job_id: An identifier for the anomaly detection jobs. It can be a job
+            identifier, a group name, or a comma-separated list of jobs or groups.
         """
-        client, params = _deprecated_options(self, params)
-        for param in (calendar_id, job_id):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
+        if calendar_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'calendar_id'")
+        if job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'job_id'")
+        __path = f"/_ml/calendars/{_quote(calendar_id)}/jobs/{_quote(job_id)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("PUT", __target, headers=__headers)
 
-        return await client._perform_request(
-            "PUT",
-            _make_path("_ml", "calendars", calendar_id, "jobs", job_id),
-            params=params,
-            headers=headers,
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def put_data_frame_analytics(
+        self,
+        *,
+        id: Any,
+        analysis: Any,
+        dest: Any,
+        source: Any,
+        allow_lazy_start: Optional[bool] = None,
+        analyzed_fields: Optional[Any] = None,
+        description: Optional[str] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        max_num_threads: Optional[int] = None,
+        model_memory_limit: Optional[str] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Instantiates a data frame analytics job.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/put-dfanalytics.html>`_
+
+        :param id: Identifier for the data frame analytics job. This identifier can contain
+            lowercase alphanumeric characters (a-z and 0-9), hyphens, and underscores.
+            It must start and end with alphanumeric characters.
+        :param analysis: The analysis configuration, which contains the information necessary
+            to perform one of the following types of analysis: classification, outlier
+            detection, or regression.
+        :param dest: The destination configuration.
+        :param source: The configuration of how to source the analysis data.
+        :param allow_lazy_start: Specifies whether this job can start when there is insufficient
+            machine learning node capacity for it to be immediately assigned to a node.
+            If set to false and a machine learning node with capacity to run the job
+            cannot be immediately found, the API returns an error. If set to true, the
+            API does not return an error; the job waits in the `starting` state until
+            sufficient machine learning node capacity is available. This behavior is
+            also affected by the cluster-wide `xpack.ml.max_lazy_ml_nodes` setting.
+        :param analyzed_fields: Specifies `includes` and/or `excludes` patterns to select
+            which fields will be included in the analysis. The patterns specified in
+            `excludes` are applied last, therefore `excludes` takes precedence. In other
+            words, if the same field is specified in both `includes` and `excludes`,
+            then the field will not be included in the analysis. If `analyzed_fields`
+            is not set, only the relevant fields will be included. For example, all the
+            numeric fields for outlier detection. The supported fields vary for each
+            type of analysis. Outlier detection requires numeric or `boolean` data to
+            analyze. The algorithms don’t support missing values therefore fields that
+            have data types other than numeric or boolean are ignored. Documents where
+            included fields contain missing values, null values, or an array are also
+            ignored. Therefore the `dest` index may contain documents that don’t have
+            an outlier score. Regression supports fields that are numeric, `boolean`,
+            `text`, `keyword`, and `ip` data types. It is also tolerant of missing values.
+            Fields that are supported are included in the analysis, other fields are
+            ignored. Documents where included fields contain an array with two or more
+            values are also ignored. Documents in the `dest` index that don’t contain
+            a results field are not included in the regression analysis. Classification
+            supports fields that are numeric, `boolean`, `text`, `keyword`, and `ip`
+            data types. It is also tolerant of missing values. Fields that are supported
+            are included in the analysis, other fields are ignored. Documents where included
+            fields contain an array with two or more values are also ignored. Documents
+            in the `dest` index that don’t contain a results field are not included in
+            the classification analysis. Classification analysis can be improved by mapping
+            ordinal variable values to a single number. For example, in case of age ranges,
+            you can model the values as `0-14 = 0`, `15-24 = 1`, `25-34 = 2`, and so
+            on.
+        :param description: A description of the job.
+        :param max_num_threads: The maximum number of threads to be used by the analysis.
+            Using more threads may decrease the time necessary to complete the analysis
+            at the cost of using more CPU. Note that the process may use additional threads
+            for operational functionality other than the analysis itself.
+        :param model_memory_limit: The approximate maximum amount of memory resources
+            that are permitted for analytical processing. If your `elasticsearch.yml`
+            file contains an `xpack.ml.max_model_memory_limit` setting, an error occurs
+            when you try to create data frame analytics jobs that have `model_memory_limit`
+            values greater than that setting.
+        """
+        if id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'id'")
+        if analysis is None:
+            raise ValueError("Empty value passed for parameter 'analysis'")
+        if dest is None:
+            raise ValueError("Empty value passed for parameter 'dest'")
+        if source is None:
+            raise ValueError("Empty value passed for parameter 'source'")
+        __path = f"/_ml/data_frame/analytics/{_quote(id)}"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if analysis is not None:
+            __body["analysis"] = analysis
+        if dest is not None:
+            __body["dest"] = dest
+        if source is not None:
+            __body["source"] = source
+        if allow_lazy_start is not None:
+            __body["allow_lazy_start"] = allow_lazy_start
+        if analyzed_fields is not None:
+            __body["analyzed_fields"] = analyzed_fields
+        if description is not None:
+            __body["description"] = description
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if max_num_threads is not None:
+            __body["max_num_threads"] = max_num_threads
+        if model_memory_limit is not None:
+            __body["model_memory_limit"] = model_memory_limit
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self._perform_request(
+            "PUT", __target, headers=__headers, body=__body
         )
 
-    @query_params(
-        "allow_no_indices", "expand_wildcards", "ignore_throttled", "ignore_unavailable"
+    @_rewrite_parameters(
+        body_fields=True,
     )
-    async def put_datafeed(self, datafeed_id, body, params=None, headers=None):
+    async def put_datafeed(
+        self,
+        *,
+        datafeed_id: Any,
+        aggregations: Optional[Dict[str, Any]] = None,
+        allow_no_indices: Optional[bool] = None,
+        chunking_config: Optional[Any] = None,
+        delayed_data_check_config: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        frequency: Optional[Any] = None,
+        human: Optional[bool] = None,
+        ignore_throttled: Optional[bool] = None,
+        ignore_unavailable: Optional[bool] = None,
+        indexes: Optional[List[str]] = None,
+        indices: Optional[List[str]] = None,
+        indices_options: Optional[Any] = None,
+        job_id: Optional[Any] = None,
+        max_empty_searches: Optional[int] = None,
+        pretty: Optional[bool] = None,
+        query: Optional[Any] = None,
+        query_delay: Optional[Any] = None,
+        runtime_mappings: Optional[Any] = None,
+        script_fields: Optional[Dict[str, Any]] = None,
+        scroll_size: Optional[int] = None,
+    ) -> Any:
         """
         Instantiates a datafeed.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-put-datafeed.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-put-datafeed.html>`_
 
-        :arg datafeed_id: The ID of the datafeed to create
-        :arg body: The datafeed config
-        :arg allow_no_indices: Ignore if the source indices expressions
-            resolves to no concrete indices (default: true)
-        :arg expand_wildcards: Whether source index expressions should
-            get expanded to open or closed indices (default: open)  Valid choices:
-            open, closed, hidden, none, all
-        :arg ignore_throttled: Ignore indices that are marked as
-            throttled (default: true)
-        :arg ignore_unavailable: Ignore unavailable indexes (default:
-            false)
+        :param datafeed_id: A numerical character string that uniquely identifies the
+            datafeed. This identifier can contain lowercase alphanumeric characters (a-z
+            and 0-9), hyphens, and underscores. It must start and end with alphanumeric
+            characters.
+        :param aggregations: If set, the datafeed performs aggregation searches. Support
+            for aggregations is limited and should be used only with low cardinality
+            data.
+        :param allow_no_indices: Ignore if the source indices expressions resolves to
+            no concrete indices (default: true)
+        :param chunking_config: Datafeeds might be required to search over long time
+            periods, for several months or years. This search is split into time chunks
+            in order to ensure the load on Elasticsearch is managed. Chunking configuration
+            controls how the size of these time chunks are calculated; it is an advanced
+            configuration option.
+        :param delayed_data_check_config: Specifies whether the datafeed checks for missing
+            data and the size of the window. The datafeed can optionally search over
+            indices that have already been read in an effort to determine whether any
+            data has subsequently been added to the index. If missing data is found,
+            it is a good indication that the `query_delay` is set too low and the data
+            is being indexed after the datafeed has passed that moment in time. This
+            check runs only on real-time datafeeds.
+        :param expand_wildcards: Whether source index expressions should get expanded
+            to open or closed indices (default: open)
+        :param frequency: The interval at which scheduled queries are made while the
+            datafeed runs in real time. The default value is either the bucket span for
+            short bucket spans, or, for longer bucket spans, a sensible fraction of the
+            bucket span. When `frequency` is shorter than the bucket span, interim results
+            for the last (partial) bucket are written then eventually overwritten by
+            the full bucket results. If the datafeed uses aggregations, this value must
+            be divisible by the interval of the date histogram aggregation.
+        :param ignore_throttled: Ignore indices that are marked as throttled (default:
+            true)
+        :param ignore_unavailable: Ignore unavailable indexes (default: false)
+        :param indexes: An array of index names. Wildcards are supported. If any of the
+            indices are in remote clusters, the machine learning nodes must have the
+            `remote_cluster_client` role.
+        :param indices: An array of index names. Wildcards are supported. If any of the
+            indices are in remote clusters, the machine learning nodes must have the
+            `remote_cluster_client` role.
+        :param indices_options: Specifies index expansion options that are used during
+            search
+        :param job_id: Identifier for the anomaly detection job.
+        :param max_empty_searches: If a real-time datafeed has never seen any data (including
+            during any initial training period), it automatically stops and closes the
+            associated job after this many real-time searches return no documents. In
+            other words, it stops after `frequency` times `max_empty_searches` of real-time
+            operation. If not set, a datafeed with no end time that sees no data remains
+            started until it is explicitly stopped. By default, it is not set.
+        :param query: The Elasticsearch query domain-specific language (DSL). This value
+            corresponds to the query object in an Elasticsearch search POST body. All
+            the options that are supported by Elasticsearch can be used, as this object
+            is passed verbatim to Elasticsearch.
+        :param query_delay: The number of seconds behind real time that data is queried.
+            For example, if data from 10:04 a.m. might not be searchable in Elasticsearch
+            until 10:06 a.m., set this property to 120 seconds. The default value is
+            randomly selected between `60s` and `120s`. This randomness improves the
+            query performance when there are multiple jobs running on the same node.
+        :param runtime_mappings: Specifies runtime fields for the datafeed search.
+        :param script_fields: Specifies scripts that evaluate custom expressions and
+            returns script fields to the datafeed. The detector configuration objects
+            in a job can contain functions that use these script fields.
+        :param scroll_size: The size parameter that is used in Elasticsearch searches
+            when the datafeed does not use aggregations. The maximum value is the value
+            of `index.max_result_window`, which is 10,000 by default.
         """
-        client, params = _deprecated_options(self, params)
-        for param in (datafeed_id, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return await client._perform_request(
-            "PUT",
-            _make_path("_ml", "datafeeds", datafeed_id),
-            params=params,
-            headers=headers,
-            body=body,
+        if datafeed_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'datafeed_id'")
+        __path = f"/_ml/datafeeds/{_quote(datafeed_id)}"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if aggregations is not None:
+            __body["aggregations"] = aggregations
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if chunking_config is not None:
+            __body["chunking_config"] = chunking_config
+        if delayed_data_check_config is not None:
+            __body["delayed_data_check_config"] = delayed_data_check_config
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if frequency is not None:
+            __body["frequency"] = frequency
+        if human is not None:
+            __query["human"] = human
+        if ignore_throttled is not None:
+            __query["ignore_throttled"] = ignore_throttled
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if indexes is not None:
+            __body["indexes"] = indexes
+        if indices is not None:
+            __body["indices"] = indices
+        if indices_options is not None:
+            __body["indices_options"] = indices_options
+        if job_id is not None:
+            __body["job_id"] = job_id
+        if max_empty_searches is not None:
+            __body["max_empty_searches"] = max_empty_searches
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if query is not None:
+            __body["query"] = query
+        if query_delay is not None:
+            __body["query_delay"] = query_delay
+        if runtime_mappings is not None:
+            __body["runtime_mappings"] = runtime_mappings
+        if script_fields is not None:
+            __body["script_fields"] = script_fields
+        if scroll_size is not None:
+            __body["scroll_size"] = scroll_size
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self._perform_request(
+            "PUT", __target, headers=__headers, body=__body
         )
 
-    @query_params()
-    async def put_filter(self, filter_id, body, params=None, headers=None):
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def put_filter(
+        self,
+        *,
+        filter_id: Any,
+        description: Optional[str] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        items: Optional[List[str]] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Instantiates a filter.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-put-filter.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-put-filter.html>`_
 
-        :arg filter_id: The ID of the filter to create
-        :arg body: The filter details
+        :param filter_id: A string that uniquely identifies a filter.
+        :param description: A description of the filter.
+        :param items: The items of the filter. A wildcard `*` can be used at the beginning
+            or the end of an item. Up to 10000 items are allowed in each filter.
         """
-        client, params = _deprecated_options(self, params)
-        for param in (filter_id, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return await client._perform_request(
-            "PUT",
-            _make_path("_ml", "filters", filter_id),
-            params=params,
-            headers=headers,
-            body=body,
+        if filter_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'filter_id'")
+        __path = f"/_ml/filters/{_quote(filter_id)}"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if description is not None:
+            __body["description"] = description
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if items is not None:
+            __body["items"] = items
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self._perform_request(
+            "PUT", __target, headers=__headers, body=__body
         )
 
-    @query_params(
-        "allow_no_indices", "expand_wildcards", "ignore_throttled", "ignore_unavailable"
+    @_rewrite_parameters(
+        body_fields=True,
     )
-    async def put_job(self, job_id, body, params=None, headers=None):
+    async def put_job(
+        self,
+        *,
+        job_id: Any,
+        analysis_config: Any,
+        data_description: Any,
+        allow_lazy_open: Optional[bool] = None,
+        analysis_limits: Optional[Any] = None,
+        background_persist_interval: Optional[Any] = None,
+        custom_settings: Optional[Any] = None,
+        daily_model_snapshot_retention_after_days: Optional[int] = None,
+        datafeed_config: Optional[Any] = None,
+        description: Optional[str] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        groups: Optional[List[str]] = None,
+        human: Optional[bool] = None,
+        model_plot_config: Optional[Any] = None,
+        model_snapshot_retention_days: Optional[int] = None,
+        pretty: Optional[bool] = None,
+        renormalization_window_days: Optional[int] = None,
+        results_index_name: Optional[Any] = None,
+        results_retention_days: Optional[int] = None,
+    ) -> Any:
         """
         Instantiates an anomaly detection job.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-put-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-put-job.html>`_
 
-        :arg job_id: The ID of the job to create
-        :arg body: The job
-        :arg allow_no_indices: Ignore if the source indices expressions
-            resolves to no concrete indices (default: true). Only set if
-            datafeed_config is provided.
-        :arg expand_wildcards: Whether source index expressions should
-            get expanded to open or closed indices (default: open). Only set if
-            datafeed_config is provided.  Valid choices: open, closed, hidden, none,
-            all
-        :arg ignore_throttled: Ignore indices that are marked as
-            throttled (default: true). Only set if datafeed_config is provided.
-        :arg ignore_unavailable: Ignore unavailable indexes (default:
-            false). Only set if datafeed_config is provided.
+        :param job_id: The identifier for the anomaly detection job. This identifier
+            can contain lowercase alphanumeric characters (a-z and 0-9), hyphens, and
+            underscores. It must start and end with alphanumeric characters.
+        :param analysis_config: Specifies how to analyze the data. After you create a
+            job, you cannot change the analysis configuration; all the properties are
+            informational.
+        :param data_description: Defines the format of the input data when you send data
+            to the job by using the post data API. Note that when configure a datafeed,
+            these properties are automatically set. When data is received via the post
+            data API, it is not stored in Elasticsearch. Only the results for anomaly
+            detection are retained.
+        :param allow_lazy_open: Advanced configuration option. Specifies whether this
+            job can open when there is insufficient machine learning node capacity for
+            it to be immediately assigned to a node. By default, if a machine learning
+            node with capacity to run the job cannot immediately be found, the open anomaly
+            detection jobs API returns an error. However, this is also subject to the
+            cluster-wide `xpack.ml.max_lazy_ml_nodes` setting. If this option is set
+            to true, the open anomaly detection jobs API does not return an error and
+            the job waits in the opening state until sufficient machine learning node
+            capacity is available.
+        :param analysis_limits: Limits can be applied for the resources required to hold
+            the mathematical models in memory. These limits are approximate and can be
+            set per job. They do not control the memory used by other processes, for
+            example the Elasticsearch Java processes.
+        :param background_persist_interval: Advanced configuration option. The time between
+            each periodic persistence of the model. The default value is a randomized
+            value between 3 to 4 hours, which avoids all jobs persisting at exactly the
+            same time. The smallest allowed value is 1 hour. For very large models (several
+            GB), persistence could take 10-20 minutes, so do not set the `background_persist_interval`
+            value too low.
+        :param custom_settings: Advanced configuration option. Contains custom meta data
+            about the job.
+        :param daily_model_snapshot_retention_after_days: Advanced configuration option,
+            which affects the automatic removal of old model snapshots for this job.
+            It specifies a period of time (in days) after which only the first snapshot
+            per day is retained. This period is relative to the timestamp of the most
+            recent snapshot for this job. Valid values range from 0 to `model_snapshot_retention_days`.
+        :param datafeed_config: Defines a datafeed for the anomaly detection job. If
+            Elasticsearch security features are enabled, your datafeed remembers which
+            roles the user who created it had at the time of creation and runs the query
+            using those same roles. If you provide secondary authorization headers, those
+            credentials are used instead.
+        :param description: A description of the job.
+        :param groups: A list of job groups. A job can belong to no groups or many.
+        :param model_plot_config: This advanced configuration option stores model information
+            along with the results. It provides a more detailed view into anomaly detection.
+            If you enable model plot it can add considerable overhead to the performance
+            of the system; it is not feasible for jobs with many entities. Model plot
+            provides a simplified and indicative view of the model and its bounds. It
+            does not display complex features such as multivariate correlations or multimodal
+            data. As such, anomalies may occasionally be reported which cannot be seen
+            in the model plot. Model plot config can be configured when the job is created
+            or updated later. It must be disabled if performance issues are experienced.
+        :param model_snapshot_retention_days: Advanced configuration option, which affects
+            the automatic removal of old model snapshots for this job. It specifies the
+            maximum period of time (in days) that snapshots are retained. This period
+            is relative to the timestamp of the most recent snapshot for this job. By
+            default, snapshots ten days older than the newest snapshot are deleted.
+        :param renormalization_window_days: Advanced configuration option. The period
+            over which adjustments to the score are applied, as new data is seen. The
+            default value is the longer of 30 days or 100 bucket spans.
+        :param results_index_name: A text string that affects the name of the machine
+            learning results index. By default, the job generates an index named `.ml-anomalies-shared`.
+        :param results_retention_days: Advanced configuration option. The period of time
+            (in days) that results are retained. Age is calculated relative to the timestamp
+            of the latest bucket result. If this property has a non-null value, once
+            per day at 00:30 (server time), results that are the specified number of
+            days older than the latest bucket result are deleted from Elasticsearch.
+            The default value is null, which means all results are retained. Annotations
+            generated by the system also count as results for retention purposes; they
+            are deleted after the same number of days as results. Annotations added by
+            users are retained forever.
         """
-        client, params = _deprecated_options(self, params)
-        for param in (job_id, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return await client._perform_request(
-            "PUT",
-            _make_path("_ml", "anomaly_detectors", job_id),
-            params=params,
-            headers=headers,
-            body=body,
+        if job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'job_id'")
+        if analysis_config is None:
+            raise ValueError("Empty value passed for parameter 'analysis_config'")
+        if data_description is None:
+            raise ValueError("Empty value passed for parameter 'data_description'")
+        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if analysis_config is not None:
+            __body["analysis_config"] = analysis_config
+        if data_description is not None:
+            __body["data_description"] = data_description
+        if allow_lazy_open is not None:
+            __body["allow_lazy_open"] = allow_lazy_open
+        if analysis_limits is not None:
+            __body["analysis_limits"] = analysis_limits
+        if background_persist_interval is not None:
+            __body["background_persist_interval"] = background_persist_interval
+        if custom_settings is not None:
+            __body["custom_settings"] = custom_settings
+        if daily_model_snapshot_retention_after_days is not None:
+            __body[
+                "daily_model_snapshot_retention_after_days"
+            ] = daily_model_snapshot_retention_after_days
+        if datafeed_config is not None:
+            __body["datafeed_config"] = datafeed_config
+        if description is not None:
+            __body["description"] = description
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if groups is not None:
+            __body["groups"] = groups
+        if human is not None:
+            __query["human"] = human
+        if model_plot_config is not None:
+            __body["model_plot_config"] = model_plot_config
+        if model_snapshot_retention_days is not None:
+            __body["model_snapshot_retention_days"] = model_snapshot_retention_days
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if renormalization_window_days is not None:
+            __body["renormalization_window_days"] = renormalization_window_days
+        if results_index_name is not None:
+            __body["results_index_name"] = results_index_name
+        if results_retention_days is not None:
+            __body["results_retention_days"] = results_retention_days
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self._perform_request(
+            "PUT", __target, headers=__headers, body=__body
         )
 
-    @query_params("enabled", "timeout")
-    async def set_upgrade_mode(self, params=None, headers=None):
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def put_trained_model(
+        self,
+        *,
+        model_id: Any,
+        inference_config: Any,
+        input: Any,
+        compressed_definition: Optional[str] = None,
+        definition: Optional[Any] = None,
+        description: Optional[str] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        metadata: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        tags: Optional[List[str]] = None,
+    ) -> Any:
+        """
+        Creates an inference trained model.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/put-trained-models.html>`_
+
+        :param model_id: The unique identifier of the trained model.
+        :param inference_config: The default configuration for inference. This can be
+            either a regression or classification configuration. It must match the underlying
+            definition.trained_model's target_type.
+        :param input: The input field names for the model definition.
+        :param compressed_definition: The compressed (GZipped and Base64 encoded) inference
+            definition of the model. If compressed_definition is specified, then definition
+            cannot be specified.
+        :param definition: The inference definition for the model. If definition is specified,
+            then compressed_definition cannot be specified.
+        :param description: A human-readable description of the inference trained model.
+        :param metadata: An object map that contains metadata about the model.
+        :param tags: An array of tags to organize the model.
+        """
+        if model_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'model_id'")
+        if inference_config is None:
+            raise ValueError("Empty value passed for parameter 'inference_config'")
+        if input is None:
+            raise ValueError("Empty value passed for parameter 'input'")
+        __path = f"/_ml/trained_models/{_quote(model_id)}"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if inference_config is not None:
+            __body["inference_config"] = inference_config
+        if input is not None:
+            __body["input"] = input
+        if compressed_definition is not None:
+            __body["compressed_definition"] = compressed_definition
+        if definition is not None:
+            __body["definition"] = definition
+        if description is not None:
+            __body["description"] = description
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if metadata is not None:
+            __body["metadata"] = metadata
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if tags is not None:
+            __body["tags"] = tags
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self._perform_request(
+            "PUT", __target, headers=__headers, body=__body
+        )
+
+    @_rewrite_parameters()
+    async def put_trained_model_alias(
+        self,
+        *,
+        model_id: Any,
+        model_alias: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        reassign: Optional[bool] = None,
+    ) -> Any:
+        """
+        Creates a new model alias (or reassigns an existing one) to refer to the trained
+        model
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/put-trained-models-aliases.html>`_
+
+        :param model_id: The identifier for the trained model that the alias refers to.
+        :param model_alias: The alias to create or update. This value cannot end in numbers.
+        :param reassign: Specifies whether the alias gets reassigned to the specified
+            trained model if it is already assigned to a different model. If the alias
+            is already assigned and this parameter is false, the API returns an error.
+        """
+        if model_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'model_id'")
+        if model_alias in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'model_alias'")
+        __path = f"/_ml/trained_models/{_quote(model_id)}/model_aliases/{_quote(model_alias)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if reassign is not None:
+            __query["reassign"] = reassign
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("PUT", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    async def reset_job(
+        self,
+        *,
+        job_id: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        wait_for_completion: Optional[bool] = None,
+    ) -> Any:
+        """
+        Resets an existing anomaly detection job.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-reset-job.html>`_
+
+        :param job_id: The ID of the job to reset.
+        :param wait_for_completion: Should this request wait until the operation has
+            completed before returning.
+        """
+        if job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'job_id'")
+        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_reset"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if wait_for_completion is not None:
+            __query["wait_for_completion"] = wait_for_completion
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("POST", __target, headers=__headers)
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def revert_model_snapshot(
+        self,
+        *,
+        job_id: Any,
+        snapshot_id: Any,
+        delete_intervening_results: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Reverts to a specific snapshot.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-revert-snapshot.html>`_
+
+        :param job_id: Identifier for the anomaly detection job.
+        :param snapshot_id: You can specify `empty` as the <snapshot_id>. Reverting to
+            the empty snapshot means the anomaly detection job starts learning a new
+            model from scratch when it is started.
+        :param delete_intervening_results: If true, deletes the results in the time period
+            between the latest results and the time of the reverted snapshot. It also
+            resets the model to accept records for this time period. If you choose not
+            to delete intervening results when reverting a snapshot, the job will not
+            accept input data that is older than the current time. If you want to resend
+            data, then delete the intervening results.
+        """
+        if job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'job_id'")
+        if snapshot_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'snapshot_id'")
+        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots/{_quote(snapshot_id)}/_revert"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if delete_intervening_results is not None:
+            __body["delete_intervening_results"] = delete_intervening_results
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
+        )
+
+    @_rewrite_parameters()
+    async def set_upgrade_mode(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+    ) -> Any:
         """
         Sets a cluster wide upgrade_mode setting that prepares machine learning indices
         for an upgrade.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-set-upgrade-mode.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-set-upgrade-mode.html>`_
 
-        :arg enabled: Whether to enable upgrade_mode ML setting or not.
-            Defaults to false.
-        :arg timeout: Controls the time to wait before action times out.
-            Defaults to 30 seconds
+        :param enabled: When `true`, it enables `upgrade_mode` which temporarily halts
+            all job and datafeed tasks and prohibits new job and datafeed tasks from
+            starting.
+        :param timeout: The time to wait for the request to be completed.
         """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "POST", "/_ml/set_upgrade_mode", params=params, headers=headers
-        )
+        __path = "/_ml/set_upgrade_mode"
+        __query: Dict[str, Any] = {}
+        if enabled is not None:
+            __query["enabled"] = enabled
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("POST", __target, headers=__headers)
 
-    @query_params("end", "start", "timeout")
-    async def start_datafeed(self, datafeed_id, body=None, params=None, headers=None):
+    @_rewrite_parameters()
+    async def start_data_frame_analytics(
+        self,
+        *,
+        id: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+    ) -> Any:
+        """
+        Starts a data frame analytics job.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/start-dfanalytics.html>`_
+
+        :param id: Identifier for the data frame analytics job. This identifier can contain
+            lowercase alphanumeric characters (a-z and 0-9), hyphens, and underscores.
+            It must start and end with alphanumeric characters.
+        :param timeout: Controls the amount of time to wait until the data frame analytics
+            job starts.
+        """
+        if id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'id'")
+        __path = f"/_ml/data_frame/analytics/{_quote(id)}/_start"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("POST", __target, headers=__headers)
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def start_datafeed(
+        self,
+        *,
+        datafeed_id: Any,
+        end: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        start: Optional[Any] = None,
+        timeout: Optional[Any] = None,
+    ) -> Any:
         """
         Starts one or more datafeeds.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-start-datafeed.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-start-datafeed.html>`_
 
-        :arg datafeed_id: The ID of the datafeed to start
-        :arg body: The start datafeed parameters
-        :arg end: The end time when the datafeed should stop. When not
-            set, the datafeed continues in real time
-        :arg start: The start time from where the datafeed should begin
-        :arg timeout: Controls the time to wait until a datafeed has
-            started. Default to 20 seconds
+        :param datafeed_id: A numerical character string that uniquely identifies the
+            datafeed. This identifier can contain lowercase alphanumeric characters (a-z
+            and 0-9), hyphens, and underscores. It must start and end with alphanumeric
+            characters.
+        :param end: Refer to the description for the `end` query parameter.
+        :param start: Refer to the description for the `start` query parameter.
+        :param timeout: Refer to the description for the `timeout` query parameter.
         """
-        client, params = _deprecated_options(self, params)
         if datafeed_id in SKIP_IN_PATH:
-            raise ValueError(
-                "Empty value passed for a required argument 'datafeed_id'."
-            )
-
-        return await client._perform_request(
-            "POST",
-            _make_path("_ml", "datafeeds", datafeed_id, "_start"),
-            params=params,
-            headers=headers,
-            body=body,
+            raise ValueError("Empty value passed for parameter 'datafeed_id'")
+        __path = f"/_ml/datafeeds/{_quote(datafeed_id)}/_start"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if end is not None:
+            __body["end"] = end
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if start is not None:
+            __body["start"] = start
+        if timeout is not None:
+            __body["timeout"] = timeout
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
         )
 
-    @query_params("allow_no_datafeeds", "allow_no_match", "force", "timeout")
-    async def stop_datafeed(self, datafeed_id, body=None, params=None, headers=None):
+    @_rewrite_parameters()
+    async def stop_data_frame_analytics(
+        self,
+        *,
+        id: Any,
+        allow_no_match: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        force: Optional[bool] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+    ) -> Any:
+        """
+        Stops one or more data frame analytics jobs.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/stop-dfanalytics.html>`_
+
+        :param id: Identifier for the data frame analytics job. This identifier can contain
+            lowercase alphanumeric characters (a-z and 0-9), hyphens, and underscores.
+            It must start and end with alphanumeric characters.
+        :param allow_no_match: Specifies what to do when the request: 1. Contains wildcard
+            expressions and there are no data frame analytics jobs that match. 2. Contains
+            the _all string or no identifiers and there are no matches. 3. Contains wildcard
+            expressions and there are only partial matches. The default value is true,
+            which returns an empty data_frame_analytics array when there are no matches
+            and the subset of results when there are partial matches. If this parameter
+            is false, the request returns a 404 status code when there are no matches
+            or only partial matches.
+        :param force: If true, the data frame analytics job is stopped forcefully.
+        :param timeout: Controls the amount of time to wait until the data frame analytics
+            job stops. Defaults to 20 seconds.
+        """
+        if id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'id'")
+        __path = f"/_ml/data_frame/analytics/{_quote(id)}/_stop"
+        __query: Dict[str, Any] = {}
+        if allow_no_match is not None:
+            __query["allow_no_match"] = allow_no_match
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if force is not None:
+            __query["force"] = force
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("POST", __target, headers=__headers)
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def stop_datafeed(
+        self,
+        *,
+        datafeed_id: Any,
+        allow_no_match: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        force: Optional[bool] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+    ) -> Any:
         """
         Stops one or more datafeeds.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-stop-datafeed.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-stop-datafeed.html>`_
 
-        :arg datafeed_id: The ID of the datafeed to stop
-        :arg body: The URL params optionally sent in the body
-        :arg allow_no_datafeeds: Whether to ignore if a wildcard
-            expression matches no datafeeds. (This includes `_all` string or when no
-            datafeeds have been specified)
-        :arg allow_no_match: Whether to ignore if a wildcard expression
-            matches no datafeeds. (This includes `_all` string or when no datafeeds
-            have been specified)
-        :arg force: True if the datafeed should be forcefully stopped.
-        :arg timeout: Controls the time to wait until a datafeed has
-            stopped. Default to 20 seconds
+        :param datafeed_id: Identifier for the datafeed. You can stop multiple datafeeds
+            in a single API request by using a comma-separated list of datafeeds or a
+            wildcard expression. You can close all datafeeds by using `_all` or by specifying
+            `*` as the identifier.
+        :param allow_no_match: Refer to the description for the `allow_no_match` query
+            parameter.
+        :param force: Refer to the description for the `force` query parameter.
+        :param timeout: Refer to the description for the `timeout` query parameter.
         """
-        client, params = _deprecated_options(self, params)
         if datafeed_id in SKIP_IN_PATH:
-            raise ValueError(
-                "Empty value passed for a required argument 'datafeed_id'."
-            )
-
-        return await client._perform_request(
-            "POST",
-            _make_path("_ml", "datafeeds", datafeed_id, "_stop"),
-            params=params,
-            headers=headers,
-            body=body,
+            raise ValueError("Empty value passed for parameter 'datafeed_id'")
+        __path = f"/_ml/datafeeds/{_quote(datafeed_id)}/_stop"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if allow_no_match is not None:
+            __body["allow_no_match"] = allow_no_match
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if force is not None:
+            __body["force"] = force
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __body["timeout"] = timeout
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
         )
 
-    @query_params(
-        "allow_no_indices", "expand_wildcards", "ignore_throttled", "ignore_unavailable"
+    @_rewrite_parameters(
+        body_fields=True,
     )
-    async def update_datafeed(self, datafeed_id, body, params=None, headers=None):
+    async def update_data_frame_analytics(
+        self,
+        *,
+        id: Any,
+        allow_lazy_start: Optional[bool] = None,
+        description: Optional[str] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        max_num_threads: Optional[int] = None,
+        model_memory_limit: Optional[str] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Updates certain properties of a data frame analytics job.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/update-dfanalytics.html>`_
+
+        :param id: Identifier for the data frame analytics job. This identifier can contain
+            lowercase alphanumeric characters (a-z and 0-9), hyphens, and underscores.
+            It must start and end with alphanumeric characters.
+        :param allow_lazy_start: Specifies whether this job can start when there is insufficient
+            machine learning node capacity for it to be immediately assigned to a node.
+        :param description: A description of the job.
+        :param max_num_threads: The maximum number of threads to be used by the analysis.
+            Using more threads may decrease the time necessary to complete the analysis
+            at the cost of using more CPU. Note that the process may use additional threads
+            for operational functionality other than the analysis itself.
+        :param model_memory_limit: The approximate maximum amount of memory resources
+            that are permitted for analytical processing. The default value for data
+            frame analytics jobs is 1gb. If your elasticsearch.yml file contains an `xpack.ml.max_model_memory_limit`
+            setting, an error occurs when you try to create data frame analytics jobs
+            that have model_memory_limit values greater than that setting.
+        """
+        if id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'id'")
+        __path = f"/_ml/data_frame/analytics/{_quote(id)}/_update"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if allow_lazy_start is not None:
+            __body["allow_lazy_start"] = allow_lazy_start
+        if description is not None:
+            __body["description"] = description
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if max_num_threads is not None:
+            __body["max_num_threads"] = max_num_threads
+        if model_memory_limit is not None:
+            __body["model_memory_limit"] = model_memory_limit
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
+        )
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def update_datafeed(
+        self,
+        *,
+        datafeed_id: Any,
+        aggregations: Optional[Dict[str, Any]] = None,
+        allow_no_indices: Optional[bool] = None,
+        chunking_config: Optional[Any] = None,
+        delayed_data_check_config: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        frequency: Optional[Any] = None,
+        human: Optional[bool] = None,
+        ignore_throttled: Optional[bool] = None,
+        ignore_unavailable: Optional[bool] = None,
+        indexes: Optional[List[str]] = None,
+        indices: Optional[List[str]] = None,
+        indices_options: Optional[Any] = None,
+        max_empty_searches: Optional[int] = None,
+        pretty: Optional[bool] = None,
+        query: Optional[Any] = None,
+        query_delay: Optional[Any] = None,
+        runtime_mappings: Optional[Any] = None,
+        script_fields: Optional[Dict[str, Any]] = None,
+        scroll_size: Optional[int] = None,
+    ) -> Any:
         """
         Updates certain properties of a datafeed.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-update-datafeed.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-update-datafeed.html>`_
 
-        :arg datafeed_id: The ID of the datafeed to update
-        :arg body: The datafeed update settings
-        :arg allow_no_indices: Ignore if the source indices expressions
-            resolves to no concrete indices (default: true)
-        :arg expand_wildcards: Whether source index expressions should
-            get expanded to open or closed indices (default: open)  Valid choices:
-            open, closed, hidden, none, all
-        :arg ignore_throttled: Ignore indices that are marked as
-            throttled (default: true)
-        :arg ignore_unavailable: Ignore unavailable indexes (default:
-            false)
+        :param datafeed_id: A numerical character string that uniquely identifies the
+            datafeed. This identifier can contain lowercase alphanumeric characters (a-z
+            and 0-9), hyphens, and underscores. It must start and end with alphanumeric
+            characters.
+        :param aggregations: If set, the datafeed performs aggregation searches. Support
+            for aggregations is limited and should be used only with low cardinality
+            data.
+        :param allow_no_indices: If `true`, wildcard indices expressions that resolve
+            into no concrete indices are ignored. This includes the `_all` string or
+            when no indices are specified.
+        :param chunking_config: Datafeeds might search over long time periods, for several
+            months or years. This search is split into time chunks in order to ensure
+            the load on Elasticsearch is managed. Chunking configuration controls how
+            the size of these time chunks are calculated; it is an advanced configuration
+            option.
+        :param delayed_data_check_config: Specifies whether the datafeed checks for missing
+            data and the size of the window. The datafeed can optionally search over
+            indices that have already been read in an effort to determine whether any
+            data has subsequently been added to the index. If missing data is found,
+            it is a good indication that the `query_delay` is set too low and the data
+            is being indexed after the datafeed has passed that moment in time. This
+            check runs only on real-time datafeeds.
+        :param expand_wildcards: Type of index that wildcard patterns can match. If the
+            request can target data streams, this argument determines whether wildcard
+            expressions match hidden data streams. Supports comma-separated values. Valid
+            values are: * `all`: Match any data stream or index, including hidden ones.
+            * `closed`: Match closed, non-hidden indices. Also matches any non-hidden
+            data stream. Data streams cannot be closed. * `hidden`: Match hidden data
+            streams and hidden indices. Must be combined with `open`, `closed`, or both.
+            * `none`: Wildcard patterns are not accepted. * `open`: Match open, non-hidden
+            indices. Also matches any non-hidden data stream.
+        :param frequency: The interval at which scheduled queries are made while the
+            datafeed runs in real time. The default value is either the bucket span for
+            short bucket spans, or, for longer bucket spans, a sensible fraction of the
+            bucket span. When `frequency` is shorter than the bucket span, interim results
+            for the last (partial) bucket are written then eventually overwritten by
+            the full bucket results. If the datafeed uses aggregations, this value must
+            be divisible by the interval of the date histogram aggregation.
+        :param ignore_throttled: If `true`, concrete, expanded or aliased indices are
+            ignored when frozen.
+        :param ignore_unavailable: If `true`, unavailable indices (missing or closed)
+            are ignored.
+        :param indexes: An array of index names. Wildcards are supported. If any of the
+            indices are in remote clusters, the machine learning nodes must have the
+            `remote_cluster_client` role.
+        :param indices: An array of index names. Wildcards are supported. If any of the
+            indices are in remote clusters, the machine learning nodes must have the
+            `remote_cluster_client` role.
+        :param indices_options: Specifies index expansion options that are used during
+            search.
+        :param max_empty_searches: If a real-time datafeed has never seen any data (including
+            during any initial training period), it automatically stops and closes the
+            associated job after this many real-time searches return no documents. In
+            other words, it stops after `frequency` times `max_empty_searches` of real-time
+            operation. If not set, a datafeed with no end time that sees no data remains
+            started until it is explicitly stopped. By default, it is not set.
+        :param query: The Elasticsearch query domain-specific language (DSL). This value
+            corresponds to the query object in an Elasticsearch search POST body. All
+            the options that are supported by Elasticsearch can be used, as this object
+            is passed verbatim to Elasticsearch. Note that if you change the query, the
+            analyzed data is also changed. Therefore, the time required to learn might
+            be long and the understandability of the results is unpredictable. If you
+            want to make significant changes to the source data, it is recommended that
+            you clone the job and datafeed and make the amendments in the clone. Let
+            both run in parallel and close one when you are satisfied with the results
+            of the job.
+        :param query_delay: The number of seconds behind real time that data is queried.
+            For example, if data from 10:04 a.m. might not be searchable in Elasticsearch
+            until 10:06 a.m., set this property to 120 seconds. The default value is
+            randomly selected between `60s` and `120s`. This randomness improves the
+            query performance when there are multiple jobs running on the same node.
+        :param runtime_mappings: Specifies runtime fields for the datafeed search.
+        :param script_fields: Specifies scripts that evaluate custom expressions and
+            returns script fields to the datafeed. The detector configuration objects
+            in a job can contain functions that use these script fields.
+        :param scroll_size: The size parameter that is used in Elasticsearch searches
+            when the datafeed does not use aggregations. The maximum value is the value
+            of `index.max_result_window`.
         """
-        client, params = _deprecated_options(self, params)
-        for param in (datafeed_id, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return await client._perform_request(
-            "POST",
-            _make_path("_ml", "datafeeds", datafeed_id, "_update"),
-            params=params,
-            headers=headers,
-            body=body,
+        if datafeed_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'datafeed_id'")
+        __path = f"/_ml/datafeeds/{_quote(datafeed_id)}/_update"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if aggregations is not None:
+            __body["aggregations"] = aggregations
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if chunking_config is not None:
+            __body["chunking_config"] = chunking_config
+        if delayed_data_check_config is not None:
+            __body["delayed_data_check_config"] = delayed_data_check_config
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if frequency is not None:
+            __body["frequency"] = frequency
+        if human is not None:
+            __query["human"] = human
+        if ignore_throttled is not None:
+            __query["ignore_throttled"] = ignore_throttled
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if indexes is not None:
+            __body["indexes"] = indexes
+        if indices is not None:
+            __body["indices"] = indices
+        if indices_options is not None:
+            __body["indices_options"] = indices_options
+        if max_empty_searches is not None:
+            __body["max_empty_searches"] = max_empty_searches
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if query is not None:
+            __body["query"] = query
+        if query_delay is not None:
+            __body["query_delay"] = query_delay
+        if runtime_mappings is not None:
+            __body["runtime_mappings"] = runtime_mappings
+        if script_fields is not None:
+            __body["script_fields"] = script_fields
+        if scroll_size is not None:
+            __body["scroll_size"] = scroll_size
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
         )
 
-    @query_params()
-    async def update_filter(self, filter_id, body, params=None, headers=None):
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def update_filter(
+        self,
+        *,
+        filter_id: Any,
+        add_items: Optional[List[str]] = None,
+        description: Optional[str] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        remove_items: Optional[List[str]] = None,
+    ) -> Any:
         """
         Updates the description of a filter, adds items, or removes items.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-update-filter.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-update-filter.html>`_
 
-        :arg filter_id: The ID of the filter to update
-        :arg body: The filter update
+        :param filter_id: A string that uniquely identifies a filter.
+        :param add_items: The items to add to the filter.
+        :param description: A description for the filter.
+        :param remove_items: The items to remove from the filter.
         """
-        client, params = _deprecated_options(self, params)
-        for param in (filter_id, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return await client._perform_request(
-            "POST",
-            _make_path("_ml", "filters", filter_id, "_update"),
-            params=params,
-            headers=headers,
-            body=body,
+        if filter_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'filter_id'")
+        __path = f"/_ml/filters/{_quote(filter_id)}/_update"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if add_items is not None:
+            __body["add_items"] = add_items
+        if description is not None:
+            __body["description"] = description
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if remove_items is not None:
+            __body["remove_items"] = remove_items
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
         )
 
-    @query_params()
-    async def update_job(self, job_id, body, params=None, headers=None):
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def update_job(
+        self,
+        *,
+        job_id: Any,
+        allow_lazy_open: Optional[bool] = None,
+        analysis_limits: Optional[Any] = None,
+        background_persist_interval: Optional[Any] = None,
+        categorization_filters: Optional[List[str]] = None,
+        custom_settings: Optional[Dict[str, Any]] = None,
+        daily_model_snapshot_retention_after_days: Optional[int] = None,
+        description: Optional[str] = None,
+        detectors: Optional[List[Any]] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        groups: Optional[List[str]] = None,
+        human: Optional[bool] = None,
+        model_plot_config: Optional[Any] = None,
+        model_snapshot_retention_days: Optional[int] = None,
+        per_partition_categorization: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        renormalization_window_days: Optional[int] = None,
+        results_retention_days: Optional[int] = None,
+    ) -> Any:
         """
         Updates certain properties of an anomaly detection job.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-update-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-update-job.html>`_
 
-        :arg job_id: The ID of the job to create
-        :arg body: The job update settings
+        :param job_id: Identifier for the job.
+        :param allow_lazy_open: Advanced configuration option. Specifies whether this
+            job can open when there is insufficient machine learning node capacity for
+            it to be immediately assigned to a node. If `false` and a machine learning
+            node with capacity to run the job cannot immediately be found, the open anomaly
+            detection jobs API returns an error. However, this is also subject to the
+            cluster-wide `xpack.ml.max_lazy_ml_nodes` setting. If this option is set
+            to `true`, the open anomaly detection jobs API does not return an error and
+            the job waits in the opening state until sufficient machine learning node
+            capacity is available.
+        :param analysis_limits:
+        :param background_persist_interval: Advanced configuration option. The time between
+            each periodic persistence of the model. The default value is a randomized
+            value between 3 to 4 hours, which avoids all jobs persisting at exactly the
+            same time. The smallest allowed value is 1 hour. For very large models (several
+            GB), persistence could take 10-20 minutes, so do not set the value too low.
+            If the job is open when you make the update, you must stop the datafeed,
+            close the job, then reopen the job and restart the datafeed for the changes
+            to take effect.
+        :param categorization_filters:
+        :param custom_settings: Advanced configuration option. Contains custom meta data
+            about the job. For example, it can contain custom URL information as shown
+            in Adding custom URLs to machine learning results.
+        :param daily_model_snapshot_retention_after_days: Advanced configuration option,
+            which affects the automatic removal of old model snapshots for this job.
+            It specifies a period of time (in days) after which only the first snapshot
+            per day is retained. This period is relative to the timestamp of the most
+            recent snapshot for this job. Valid values range from 0 to `model_snapshot_retention_days`.
+            For jobs created before version 7.8.0, the default value matches `model_snapshot_retention_days`.
+        :param description: A description of the job.
+        :param detectors: An array of detector update objects.
+        :param groups: A list of job groups. A job can belong to no groups or many.
+        :param model_plot_config:
+        :param model_snapshot_retention_days: Advanced configuration option, which affects
+            the automatic removal of old model snapshots for this job. It specifies the
+            maximum period of time (in days) that snapshots are retained. This period
+            is relative to the timestamp of the most recent snapshot for this job.
+        :param per_partition_categorization: Settings related to how categorization interacts
+            with partition fields.
+        :param renormalization_window_days: Advanced configuration option. The period
+            over which adjustments to the score are applied, as new data is seen.
+        :param results_retention_days: Advanced configuration option. The period of time
+            (in days) that results are retained. Age is calculated relative to the timestamp
+            of the latest bucket result. If this property has a non-null value, once
+            per day at 00:30 (server time), results that are the specified number of
+            days older than the latest bucket result are deleted from Elasticsearch.
+            The default value is null, which means all results are retained.
         """
-        client, params = _deprecated_options(self, params)
-        for param in (job_id, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return await client._perform_request(
-            "POST",
-            _make_path("_ml", "anomaly_detectors", job_id, "_update"),
-            params=params,
-            headers=headers,
-            body=body,
+        if job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'job_id'")
+        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_update"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if allow_lazy_open is not None:
+            __body["allow_lazy_open"] = allow_lazy_open
+        if analysis_limits is not None:
+            __body["analysis_limits"] = analysis_limits
+        if background_persist_interval is not None:
+            __body["background_persist_interval"] = background_persist_interval
+        if categorization_filters is not None:
+            __body["categorization_filters"] = categorization_filters
+        if custom_settings is not None:
+            __body["custom_settings"] = custom_settings
+        if daily_model_snapshot_retention_after_days is not None:
+            __body[
+                "daily_model_snapshot_retention_after_days"
+            ] = daily_model_snapshot_retention_after_days
+        if description is not None:
+            __body["description"] = description
+        if detectors is not None:
+            __body["detectors"] = detectors
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if groups is not None:
+            __body["groups"] = groups
+        if human is not None:
+            __query["human"] = human
+        if model_plot_config is not None:
+            __body["model_plot_config"] = model_plot_config
+        if model_snapshot_retention_days is not None:
+            __body["model_snapshot_retention_days"] = model_snapshot_retention_days
+        if per_partition_categorization is not None:
+            __body["per_partition_categorization"] = per_partition_categorization
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if renormalization_window_days is not None:
+            __body["renormalization_window_days"] = renormalization_window_days
+        if results_retention_days is not None:
+            __body["results_retention_days"] = results_retention_days
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
         )
 
-    @query_params()
-    async def validate(self, body, params=None, headers=None):
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def update_model_snapshot(
+        self,
+        *,
+        job_id: Any,
+        snapshot_id: Any,
+        description: Optional[str] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        retain: Optional[bool] = None,
+    ) -> Any:
+        """
+        Updates certain properties of a snapshot.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-update-snapshot.html>`_
+
+        :param job_id: Identifier for the anomaly detection job.
+        :param snapshot_id: Identifier for the model snapshot.
+        :param description: A description of the model snapshot.
+        :param retain: If `true`, this snapshot will not be deleted during automatic
+            cleanup of snapshots older than `model_snapshot_retention_days`. However,
+            this snapshot will be deleted when the job is deleted.
+        """
+        if job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'job_id'")
+        if snapshot_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'snapshot_id'")
+        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots/{_quote(snapshot_id)}/_update"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if description is not None:
+            __body["description"] = description
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if retain is not None:
+            __body["retain"] = retain
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
+        )
+
+    @_rewrite_parameters()
+    async def upgrade_job_snapshot(
+        self,
+        *,
+        job_id: Any,
+        snapshot_id: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+        wait_for_completion: Optional[bool] = None,
+    ) -> Any:
+        """
+        Upgrades a given job snapshot to the current major version.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-upgrade-job-model-snapshot.html>`_
+
+        :param job_id: Identifier for the anomaly detection job.
+        :param snapshot_id: A numerical character string that uniquely identifies the
+            model snapshot.
+        :param timeout: Controls the time to wait for the request to complete.
+        :param wait_for_completion: When true, the API won’t respond until the upgrade
+            is complete. Otherwise, it responds as soon as the upgrade task is assigned
+            to a node.
+        """
+        if job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'job_id'")
+        if snapshot_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'snapshot_id'")
+        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots/{_quote(snapshot_id)}/_upgrade"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if wait_for_completion is not None:
+            __query["wait_for_completion"] = wait_for_completion
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("POST", __target, headers=__headers)
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def validate(
+        self,
+        *,
+        analysis_config: Optional[Any] = None,
+        analysis_limits: Optional[Any] = None,
+        data_description: Optional[Any] = None,
+        description: Optional[str] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        job_id: Optional[Any] = None,
+        model_plot: Optional[Any] = None,
+        model_snapshot_retention_days: Optional[int] = None,
+        pretty: Optional[bool] = None,
+        results_index_name: Optional[Any] = None,
+    ) -> Any:
         """
         Validates an anomaly detection job.
 
         `<https://www.elastic.co/guide/en/machine-learning/current/ml-jobs.html>`_
 
-        :arg body: The job config
+        :param analysis_config:
+        :param analysis_limits:
+        :param data_description:
+        :param description:
+        :param job_id:
+        :param model_plot:
+        :param model_snapshot_retention_days:
+        :param results_index_name:
         """
-        client, params = _deprecated_options(self, params)
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
-
-        return await client._perform_request(
-            "POST",
-            "/_ml/anomaly_detectors/_validate",
-            params=params,
-            headers=headers,
-            body=body,
+        __path = "/_ml/anomaly_detectors/_validate"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if analysis_config is not None:
+            __body["analysis_config"] = analysis_config
+        if analysis_limits is not None:
+            __body["analysis_limits"] = analysis_limits
+        if data_description is not None:
+            __body["data_description"] = data_description
+        if description is not None:
+            __body["description"] = description
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if job_id is not None:
+            __body["job_id"] = job_id
+        if model_plot is not None:
+            __body["model_plot"] = model_plot
+        if model_snapshot_retention_days is not None:
+            __body["model_snapshot_retention_days"] = model_snapshot_retention_days
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if results_index_name is not None:
+            __body["results_index_name"] = results_index_name
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
         )
 
-    @query_params()
-    async def validate_detector(self, body, params=None, headers=None):
+    @_rewrite_parameters(
+        body_name="detector",
+    )
+    async def validate_detector(
+        self,
+        *,
+        detector: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Validates an anomaly detection detector.
 
         `<https://www.elastic.co/guide/en/machine-learning/current/ml-jobs.html>`_
 
-        :arg body: The detector
+        :param detector:
         """
-        client, params = _deprecated_options(self, params)
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
-
-        return await client._perform_request(
-            "POST",
-            "/_ml/anomaly_detectors/_validate/detector",
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params("force", "timeout")
-    async def delete_data_frame_analytics(self, id, params=None, headers=None):
-        """
-        Deletes an existing data frame analytics job.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-dfanalytics.html>`_
-
-        :arg id: The ID of the data frame analytics to delete
-        :arg force: True if the job should be forcefully deleted
-        :arg timeout: Controls the time to wait until a job is deleted.
-            Defaults to 1 minute
-        """
-        client, params = _deprecated_options(self, params)
-        if id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'id'.")
-
-        return await client._perform_request(
-            "DELETE",
-            _make_path("_ml", "data_frame", "analytics", id),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params()
-    async def evaluate_data_frame(self, body, params=None, headers=None):
-        """
-        Evaluates the data frame analytics for an annotated index.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/evaluate-dfanalytics.html>`_
-
-        :arg body: The evaluation definition
-        """
-        client, params = _deprecated_options(self, params)
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
-
-        return await client._perform_request(
-            "POST",
-            "/_ml/data_frame/_evaluate",
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params("allow_no_match", "exclude_generated", "from_", "size")
-    async def get_data_frame_analytics(self, id=None, params=None, headers=None):
-        """
-        Retrieves configuration information for data frame analytics jobs.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-dfanalytics.html>`_
-
-        :arg id: The ID of the data frame analytics to fetch
-        :arg allow_no_match: Whether to ignore if a wildcard expression
-            matches no data frame analytics. (This includes `_all` string or when no
-            data frame analytics have been specified)  Default: True
-        :arg exclude_generated: Omits fields that are illegal to set on
-            data frame analytics PUT
-        :arg from\\_: skips a number of analytics
-        :arg size: specifies a max number of analytics to get  Default:
-            100
-        """
-        client, params = _deprecated_options(self, params)
-        if params and "from_" in params:
-            params["from"] = params.pop("from_")
-
-        return await client._perform_request(
-            "GET",
-            _make_path("_ml", "data_frame", "analytics", id),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params("allow_no_match", "from_", "size", "verbose")
-    async def get_data_frame_analytics_stats(self, id=None, params=None, headers=None):
-        """
-        Retrieves usage information for data frame analytics jobs.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-dfanalytics-stats.html>`_
-
-        :arg id: The ID of the data frame analytics stats to fetch
-        :arg allow_no_match: Whether to ignore if a wildcard expression
-            matches no data frame analytics. (This includes `_all` string or when no
-            data frame analytics have been specified)  Default: True
-        :arg from\\_: skips a number of analytics
-        :arg size: specifies a max number of analytics to get  Default:
-            100
-        :arg verbose: whether the stats response should be verbose
-        """
-        client, params = _deprecated_options(self, params)
-        if params and "from_" in params:
-            params["from"] = params.pop("from_")
-
-        return await client._perform_request(
-            "GET",
-            _make_path("_ml", "data_frame", "analytics", id, "_stats"),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params()
-    async def put_data_frame_analytics(self, id, body, params=None, headers=None):
-        """
-        Instantiates a data frame analytics job.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-dfanalytics.html>`_
-
-        :arg id: The ID of the data frame analytics to create
-        :arg body: The data frame analytics configuration
-        """
-        client, params = _deprecated_options(self, params)
-        for param in (id, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return await client._perform_request(
-            "PUT",
-            _make_path("_ml", "data_frame", "analytics", id),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params("timeout")
-    async def start_data_frame_analytics(
-        self, id, body=None, params=None, headers=None
-    ):
-        """
-        Starts a data frame analytics job.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/start-dfanalytics.html>`_
-
-        :arg id: The ID of the data frame analytics to start
-        :arg body: The start data frame analytics parameters
-        :arg timeout: Controls the time to wait until the task has
-            started. Defaults to 20 seconds
-        """
-        client, params = _deprecated_options(self, params)
-        if id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'id'.")
-
-        return await client._perform_request(
-            "POST",
-            _make_path("_ml", "data_frame", "analytics", id, "_start"),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params("allow_no_match", "force", "timeout")
-    async def stop_data_frame_analytics(self, id, body=None, params=None, headers=None):
-        """
-        Stops one or more data frame analytics jobs.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/stop-dfanalytics.html>`_
-
-        :arg id: The ID of the data frame analytics to stop
-        :arg body: The stop data frame analytics parameters
-        :arg allow_no_match: Whether to ignore if a wildcard expression
-            matches no data frame analytics. (This includes `_all` string or when no
-            data frame analytics have been specified)
-        :arg force: True if the data frame analytics should be
-            forcefully stopped
-        :arg timeout: Controls the time to wait until the task has
-            stopped. Defaults to 20 seconds
-        """
-        client, params = _deprecated_options(self, params)
-        if id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'id'.")
-
-        return await client._perform_request(
-            "POST",
-            _make_path("_ml", "data_frame", "analytics", id, "_stop"),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params("timeout")
-    async def delete_trained_model(self, model_id, params=None, headers=None):
-        """
-        Deletes an existing trained inference model that is currently not referenced by
-        an ingest pipeline.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-trained-models.html>`_
-
-        :arg model_id: The ID of the trained model to delete
-        :arg timeout: Controls the amount of time to wait for the model
-            to be deleted.  Default: 30s
-        """
-        client, params = _deprecated_options(self, params)
-        if model_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'model_id'.")
-
-        return await client._perform_request(
-            "DELETE",
-            _make_path("_ml", "trained_models", model_id),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params(
-        "allow_no_match",
-        "decompress_definition",
-        "exclude_generated",
-        "from_",
-        "include",
-        "include_model_definition",
-        "size",
-        "tags",
-    )
-    async def get_trained_models(self, model_id=None, params=None, headers=None):
-        """
-        Retrieves configuration information for a trained inference model.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-trained-models.html>`_
-
-        :arg model_id: The ID of the trained models to fetch
-        :arg allow_no_match: Whether to ignore if a wildcard expression
-            matches no trained models. (This includes `_all` string or when no
-            trained models have been specified)  Default: True
-        :arg decompress_definition: Should the model definition be
-            decompressed into valid JSON or returned in a custom compressed format.
-            Defaults to true.  Default: True
-        :arg exclude_generated: Omits fields that are illegal to set on
-            model PUT
-        :arg from\\_: skips a number of trained models
-        :arg include: A comma-separate list of fields to optionally
-            include. Valid options are 'definition' and 'total_feature_importance'.
-            Default is none.
-        :arg include_model_definition: Should the full model definition
-            be included in the results. These definitions can be large. So be
-            cautious when including them. Defaults to false.
-        :arg size: specifies a max number of trained models to get
-            Default: 100
-        :arg tags: A comma-separated list of tags that the model must
-            have.
-        """
-        client, params = _deprecated_options(self, params)
-        if params and "from_" in params:
-            params["from"] = params.pop("from_")
-
-        return await client._perform_request(
-            "GET",
-            _make_path("_ml", "trained_models", model_id),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params("allow_no_match", "from_", "size")
-    async def get_trained_models_stats(self, model_id=None, params=None, headers=None):
-        """
-        Retrieves usage information for trained inference models.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-trained-models-stats.html>`_
-
-        :arg model_id: The ID of the trained models stats to fetch
-        :arg allow_no_match: Whether to ignore if a wildcard expression
-            matches no trained models. (This includes `_all` string or when no
-            trained models have been specified)  Default: True
-        :arg from\\_: skips a number of trained models
-        :arg size: specifies a max number of trained models to get
-            Default: 100
-        """
-        client, params = _deprecated_options(self, params)
-        if params and "from_" in params:
-            params["from"] = params.pop("from_")
-
-        return await client._perform_request(
-            "GET",
-            _make_path("_ml", "trained_models", model_id, "_stats"),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params("defer_definition_decompression")
-    async def put_trained_model(self, model_id, body, params=None, headers=None):
-        """
-        Creates an inference trained model.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-trained-models.html>`_
-
-        :arg model_id: The ID of the trained models to store
-        :arg body: The trained model configuration
-        :arg defer_definition_decompression: If set to `true` and a
-            `compressed_definition` is provided, the request defers definition
-            decompression and skips relevant validations.
-        """
-        client, params = _deprecated_options(self, params)
-        for param in (model_id, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return await client._perform_request(
-            "PUT",
-            _make_path("_ml", "trained_models", model_id),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params()
-    async def estimate_model_memory(self, body, params=None, headers=None):
-        """
-        Estimates the model memory
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-apis.html>`_
-
-        :arg body: The analysis config, plus cardinality estimates for
-            fields it references
-        """
-        client, params = _deprecated_options(self, params)
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
-
-        return await client._perform_request(
-            "POST",
-            "/_ml/anomaly_detectors/_estimate_model_memory",
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params()
-    async def explain_data_frame_analytics(
-        self, body=None, id=None, params=None, headers=None
-    ):
-        """
-        Explains a data frame analytics config.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/explain-dfanalytics.html>`_
-
-        :arg body: The data frame analytics config to explain
-        :arg id: The ID of the data frame analytics to explain
-        """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "POST",
-            _make_path("_ml", "data_frame", "analytics", id, "_explain"),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params("from_", "partition_field_value", "size")
-    async def get_categories(
-        self, job_id, body=None, category_id=None, params=None, headers=None
-    ):
-        """
-        Retrieves anomaly detection job results for one or more categories.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-category.html>`_
-
-        :arg job_id: The name of the job
-        :arg body: Category selection details if not provided in URI
-        :arg category_id: The identifier of the category definition of
-            interest
-        :arg from\\_: skips a number of categories
-        :arg partition_field_value: Specifies the partition to retrieve
-            categories for. This is optional, and should never be used for jobs
-            where per-partition categorization is disabled.
-        :arg size: specifies a max number of categories to get
-        """
-        client, params = _deprecated_options(self, params)
-        if params and "from_" in params:
-            params["from"] = params.pop("from_")
-
-        if job_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'job_id'.")
-
-        return await client._perform_request(
-            "POST",
-            _make_path(
-                "_ml", "anomaly_detectors", job_id, "results", "categories", category_id
-            ),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params("desc", "end", "from_", "size", "sort", "start")
-    async def get_model_snapshots(
-        self, job_id, body=None, snapshot_id=None, params=None, headers=None
-    ):
-        """
-        Retrieves information about model snapshots.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-snapshot.html>`_
-
-        :arg job_id: The ID of the job to fetch
-        :arg body: Model snapshot selection criteria
-        :arg snapshot_id: The ID of the snapshot to fetch
-        :arg desc: True if the results should be sorted in descending
-            order
-        :arg end: The filter 'end' query parameter
-        :arg from\\_: Skips a number of documents
-        :arg size: The default number of documents returned in queries
-            as a string.
-        :arg sort: Name of the field to sort on
-        :arg start: The filter 'start' query parameter
-        """
-        client, params = _deprecated_options(self, params)
-        if params and "from_" in params:
-            params["from"] = params.pop("from_")
-
-        if job_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'job_id'.")
-
-        return await client._perform_request(
-            "POST",
-            _make_path(
-                "_ml", "anomaly_detectors", job_id, "model_snapshots", snapshot_id
-            ),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params("delete_intervening_results")
-    async def revert_model_snapshot(
-        self, job_id, snapshot_id, body=None, params=None, headers=None
-    ):
-        """
-        Reverts to a specific snapshot.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-revert-snapshot.html>`_
-
-        :arg job_id: The ID of the job to fetch
-        :arg snapshot_id: The ID of the snapshot to revert to
-        :arg body: Reversion options
-        :arg delete_intervening_results: Should we reset the results
-            back to the time of the snapshot?
-        """
-        client, params = _deprecated_options(self, params)
-        for param in (job_id, snapshot_id):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return await client._perform_request(
-            "POST",
-            _make_path(
-                "_ml",
-                "anomaly_detectors",
-                job_id,
-                "model_snapshots",
-                snapshot_id,
-                "_revert",
-            ),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params()
-    async def update_model_snapshot(
-        self, job_id, snapshot_id, body, params=None, headers=None
-    ):
-        """
-        Updates certain properties of a snapshot.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-update-snapshot.html>`_
-
-        :arg job_id: The ID of the job to fetch
-        :arg snapshot_id: The ID of the snapshot to update
-        :arg body: The model snapshot properties to update
-        """
-        client, params = _deprecated_options(self, params)
-        for param in (job_id, snapshot_id, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return await client._perform_request(
-            "POST",
-            _make_path(
-                "_ml",
-                "anomaly_detectors",
-                job_id,
-                "model_snapshots",
-                snapshot_id,
-                "_update",
-            ),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params()
-    async def update_data_frame_analytics(self, id, body, params=None, headers=None):
-        """
-        Updates certain properties of a data frame analytics job.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/update-dfanalytics.html>`_
-
-        :arg id: The ID of the data frame analytics to update
-        :arg body: The data frame analytics settings to update
-        """
-        client, params = _deprecated_options(self, params)
-        for param in (id, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return await client._perform_request(
-            "POST",
-            _make_path("_ml", "data_frame", "analytics", id, "_update"),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params("timeout", "wait_for_completion")
-    async def upgrade_job_snapshot(
-        self, job_id, snapshot_id, params=None, headers=None
-    ):
-        """
-        Upgrades a given job snapshot to the current major version.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-upgrade-job-model-snapshot.html>`_
-
-        :arg job_id: The ID of the job
-        :arg snapshot_id: The ID of the snapshot
-        :arg timeout: How long should the API wait for the job to be
-            opened and the old snapshot to be loaded.
-        :arg wait_for_completion: Should the request wait until the task
-            is complete before responding to the caller. Default is false.
-        """
-        client, params = _deprecated_options(self, params)
-        for param in (job_id, snapshot_id):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return await client._perform_request(
-            "POST",
-            _make_path(
-                "_ml",
-                "anomaly_detectors",
-                job_id,
-                "model_snapshots",
-                snapshot_id,
-                "_upgrade",
-            ),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params()
-    async def delete_trained_model_alias(
-        self, model_id, model_alias, params=None, headers=None
-    ):
-        """
-        Deletes a model alias that refers to the trained model
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-trained-models-aliases.html>`_
-
-        :arg model_id: The trained model where the model alias is
-            assigned
-        :arg model_alias: The trained model alias to delete
-        """
-        client, params = _deprecated_options(self, params)
-        for param in (model_id, model_alias):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return await client._perform_request(
-            "DELETE",
-            _make_path("_ml", "trained_models", model_id, "model_aliases", model_alias),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params("reassign")
-    async def put_trained_model_alias(
-        self, model_id, model_alias, params=None, headers=None
-    ):
-        """
-        Creates a new model alias (or reassigns an existing one) to refer to the
-        trained model
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-trained-models-aliases.html>`_
-
-        :arg model_id: The trained model where the model alias should be
-            assigned
-        :arg model_alias: The trained model alias to update
-        :arg reassign: If the model_alias already exists and points to a
-            separate model_id, this parameter must be true. Defaults to false.
-        """
-        client, params = _deprecated_options(self, params)
-        for param in (model_id, model_alias):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return await client._perform_request(
-            "PUT",
-            _make_path("_ml", "trained_models", model_id, "model_aliases", model_alias),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params()
-    async def preview_data_frame_analytics(
-        self, body=None, id=None, params=None, headers=None
-    ):
-        """
-        Previews that will be analyzed given a data frame analytics config.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/preview-dfanalytics.html>`_
-
-        :arg body: The data frame analytics config to preview
-        :arg id: The ID of the data frame analytics to preview
-        """
-        client, params = _deprecated_options(self, params)
-        return await client._perform_request(
-            "POST",
-            _make_path("_ml", "data_frame", "analytics", id, "_preview"),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params("timeout")
-    async def infer_trained_model_deployment(
-        self, model_id, body, params=None, headers=None
-    ):
-        """
-        Evaluate a trained model.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/infer-trained-model-deployment.html>`_
-
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
-
-        :arg model_id: The unique identifier of the trained model.
-        :arg body: The docs to apply inference on
-        :arg timeout: Controls the amount of time to wait for inference
-            results.  Default: 10s
-        """
-        client, params = _deprecated_options(self, params)
-        for param in (model_id, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return await client._perform_request(
-            "POST",
-            _make_path("_ml", "trained_models", model_id, "deployment", "_infer"),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params("wait_for_completion")
-    async def reset_job(self, job_id, params=None, headers=None):
-        """
-        Resets an existing anomaly detection job.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-reset-job.html>`_
-
-        :arg job_id: The ID of the job to reset
-        :arg wait_for_completion: Should this request wait until the
-            operation has completed before returning  Default: True
-        """
-        client, params = _deprecated_options(self, params)
-        if job_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'job_id'.")
-
-        return await client._perform_request(
-            "POST",
-            _make_path("_ml", "anomaly_detectors", job_id, "_reset"),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params("timeout", "wait_for")
-    async def start_trained_model_deployment(self, model_id, params=None, headers=None):
-        """
-        Start a trained model deployment.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/start-trained-model-deployment.html>`_
-
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
-
-        :arg model_id: The unique identifier of the trained model.
-        :arg timeout: Controls the amount of time to wait for the model
-            to deploy.  Default: 20s
-        :arg wait_for: The allocation status for which to wait  Valid
-            choices: starting, started, fully_allocated  Default: started
-        """
-        client, params = _deprecated_options(self, params)
-        if model_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'model_id'.")
-
-        return await client._perform_request(
-            "POST",
-            _make_path("_ml", "trained_models", model_id, "deployment", "_start"),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params()
-    async def stop_trained_model_deployment(self, model_id, params=None, headers=None):
-        """
-        Stop a trained model deployment.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/stop-trained-model-deployment.html>`_
-
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
-
-        :arg model_id: The unique identifier of the trained model.
-        """
-        client, params = _deprecated_options(self, params)
-        if model_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'model_id'.")
-
-        return await client._perform_request(
-            "POST",
-            _make_path("_ml", "trained_models", model_id, "deployment", "_stop"),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params()
-    async def get_trained_model_deployment_stats(
-        self, model_id, params=None, headers=None
-    ):
-        """
-        Get information about trained model deployments.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-trained-model-deployment-stats.html>`_
-
-        :arg model_id: The ID of the trained model deployment stats to
-            fetch
-        """
-        client, params = _deprecated_options(self, params)
-        if model_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'model_id'.")
-
-        return await client._perform_request(
-            "GET",
-            _make_path("_ml", "trained_models", model_id, "deployment", "_stats"),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params()
-    async def put_trained_model_definition_part(
-        self, model_id, part, body, params=None, headers=None
-    ):
-        """
-        Creates part of a trained model definition
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-trained-model-definition-part.html>`_
-
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
-
-        :arg model_id: The ID of the trained model for this definition
-            part
-        :arg part: The part number
-        :arg body: The trained model definition part
-        """
-        client, params = _deprecated_options(self, params)
-        for param in (model_id, part, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return await client._perform_request(
-            "PUT",
-            _make_path("_ml", "trained_models", model_id, "definition", part),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params()
-    async def put_trained_model_vocabulary(
-        self, model_id, body, params=None, headers=None
-    ):
-        """
-        Creates a trained model vocabulary
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-trained-model-vocabulary.html>`_
-
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
-
-        :arg model_id: The ID of the trained model for this vocabulary
-        :arg body: The trained model vocabulary
-        """
-        client, params = _deprecated_options(self, params)
-        for param in (model_id, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return await client._perform_request(
-            "PUT",
-            _make_path("_ml", "trained_models", model_id, "vocabulary"),
-            params=params,
-            headers=headers,
-            body=body,
+        if detector is None:
+            raise ValueError("Empty value passed for parameter 'detector'")
+        __path = "/_ml/anomaly_detectors/_validate/detector"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __body = detector
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self._perform_request(
+            "POST", __target, headers=__headers, body=__body
         )

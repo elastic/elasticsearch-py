@@ -15,918 +15,1622 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+from typing import Any, Dict, List, Optional, Union
+
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _deprecated_options, _make_path, query_params
+from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
 
 class SecurityClient(NamespacedClient):
-    @query_params()
-    def authenticate(self, params=None, headers=None):
+    @_rewrite_parameters()
+    def authenticate(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
-        Enables authentication as a user and retrieve information about the
-        authenticated user.
+        Enables authentication as a user and retrieve information about the authenticated
+        user.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-authenticate.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-authenticate.html>`_
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", "/_security/_authenticate", params=params, headers=headers
-        )
+        __path = "/_security/_authenticate"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
 
-    @query_params("refresh")
-    def change_password(self, body, username=None, params=None, headers=None):
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    def change_password(
+        self,
+        *,
+        username: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        password: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        refresh: Optional[Any] = None,
+    ) -> Any:
         """
         Changes the passwords of users in the native realm and built-in users.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-change-password.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-change-password.html>`_
 
-        :arg body: the new password for the user
-        :arg username: The username of the user to change the password
-            for
-        :arg refresh: If `true` (the default) then refresh the affected
-            shards to make this operation visible to search, if `wait_for` then wait
-            for a refresh to make this operation visible to search, if `false` then
-            do nothing with refreshes.  Valid choices: true, false, wait_for
+        :param username: The username of the user to change the password for
+        :param password:
+        :param refresh: If `true` (the default) then refresh the affected shards to make
+            this operation visible to search, if `wait_for` then wait for a refresh to
+            make this operation visible to search, if `false` then do nothing with refreshes.
         """
-        client, params = _deprecated_options(self, params)
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
+        if username not in SKIP_IN_PATH:
+            __path = f"/_security/user/{_quote(username)}/_password"
+        else:
+            __path = "/_security/user/_password"
+        __query: Dict[str, Any] = {}
+        __body: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if password is not None:
+            __body["password"] = password
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if refresh is not None:
+            __query["refresh"] = refresh
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)
 
-        return client._perform_request(
-            "PUT",
-            _make_path("_security", "user", username, "_password"),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params("usernames")
-    def clear_cached_realms(self, realms, params=None, headers=None):
+    @_rewrite_parameters()
+    def clear_api_key_cache(
+        self,
+        *,
+        ids: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
-        Evicts users from the user cache. Can completely clear the cache or evict
-        specific users.
+        Clear a subset or all entries from the API key cache.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-clear-cache.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-clear-api-key-cache.html>`_
 
-        :arg realms: Comma-separated list of realms to clear
-        :arg usernames: Comma-separated list of usernames to clear from
-            the cache
+        :param ids: A comma-separated list of IDs of API keys to clear from the cache
         """
-        client, params = _deprecated_options(self, params)
+        if ids in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'ids'")
+        __path = f"/_security/api_key/{_quote(ids)}/_clear_cache"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("POST", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    def clear_cached_privileges(
+        self,
+        *,
+        application: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Evicts application privileges from the native application privileges cache.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-clear-privilege-cache.html>`_
+
+        :param application: A comma-separated list of application names
+        """
+        if application in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'application'")
+        __path = f"/_security/privilege/{_quote(application)}/_clear_cache"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("POST", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    def clear_cached_realms(
+        self,
+        *,
+        realms: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        usernames: Optional[List[str]] = None,
+    ) -> Any:
+        """
+        Evicts users from the user cache. Can completely clear the cache or evict specific
+        users.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-clear-cache.html>`_
+
+        :param realms: Comma-separated list of realms to clear
+        :param usernames: Comma-separated list of usernames to clear from the cache
+        """
         if realms in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'realms'.")
+            raise ValueError("Empty value passed for parameter 'realms'")
+        __path = f"/_security/realm/{_quote(realms)}/_clear_cache"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if usernames is not None:
+            __query["usernames"] = usernames
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("POST", __target, headers=__headers)
 
-        return client._perform_request(
-            "POST",
-            _make_path("_security", "realm", realms, "_clear_cache"),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params()
-    def clear_cached_roles(self, name, params=None, headers=None):
+    @_rewrite_parameters()
+    def clear_cached_roles(
+        self,
+        *,
+        name: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Evicts roles from the native role cache.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-clear-role-cache.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-clear-role-cache.html>`_
 
-        :arg name: Role name
+        :param name: Role name
         """
-        client, params = _deprecated_options(self, params)
         if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'name'.")
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_security/role/{_quote(name)}/_clear_cache"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("POST", __target, headers=__headers)
 
-        return client._perform_request(
-            "POST",
-            _make_path("_security", "role", name, "_clear_cache"),
-            params=params,
-            headers=headers,
-        )
+    @_rewrite_parameters()
+    def clear_cached_service_tokens(
+        self,
+        *,
+        namespace: Any,
+        service: Any,
+        name: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Evicts tokens from the service account token caches.
 
-    @query_params("refresh")
-    def create_api_key(self, body, params=None, headers=None):
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-clear-service-token-caches.html>`_
+
+        :param namespace: An identifier for the namespace
+        :param service: An identifier for the service name
+        :param name: A comma-separated list of service token names
+        """
+        if namespace in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'namespace'")
+        if service in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'service'")
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_security/service/{_quote(namespace)}/{_quote(service)}/credential/token/{_quote(name)}/_clear_cache"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("POST", __target, headers=__headers)
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    def create_api_key(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        expiration: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        metadata: Optional[Any] = None,
+        name: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        refresh: Optional[Any] = None,
+        role_descriptors: Optional[Dict[str, Any]] = None,
+    ) -> Any:
         """
         Creates an API key for access without requiring basic authentication.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-create-api-key.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-create-api-key.html>`_
 
-        :arg body: The api key request to create an API key
-        :arg refresh: If `true` (the default) then refresh the affected
-            shards to make this operation visible to search, if `wait_for` then wait
-            for a refresh to make this operation visible to search, if `false` then
-            do nothing with refreshes.  Valid choices: true, false, wait_for
+        :param expiration: Expiration time for the API key. By default, API keys never
+            expire.
+        :param metadata: Arbitrary metadata that you want to associate with the API key.
+            It supports nested data structure. Within the metadata object, keys beginning
+            with _ are reserved for system usage.
+        :param name: Specifies the name for this API key.
+        :param refresh: If `true` (the default) then refresh the affected shards to make
+            this operation visible to search, if `wait_for` then wait for a refresh to
+            make this operation visible to search, if `false` then do nothing with refreshes.
+        :param role_descriptors: An array of role descriptors for this API key. This
+            parameter is optional. When it is not specified or is an empty array, then
+            the API key will have a point in time snapshot of permissions of the authenticated
+            user. If you supply role descriptors then the resultant permissions would
+            be an intersection of API keys permissions and authenticated user’s permissions
+            thereby limiting the access scope for API keys. The structure of role descriptor
+            is the same as the request for create role API. For more details, see create
+            or update roles API.
         """
-        client, params = _deprecated_options(self, params)
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
+        __path = "/_security/api_key"
+        __query: Dict[str, Any] = {}
+        __body: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expiration is not None:
+            __body["expiration"] = expiration
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if metadata is not None:
+            __body["metadata"] = metadata
+        if name is not None:
+            __body["name"] = name
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if refresh is not None:
+            __query["refresh"] = refresh
+        if role_descriptors is not None:
+            __body["role_descriptors"] = role_descriptors
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)
 
-        return client._perform_request(
-            "PUT", "/_security/api_key", params=params, headers=headers, body=body
-        )
+    @_rewrite_parameters()
+    def create_service_token(
+        self,
+        *,
+        namespace: Any,
+        service: Any,
+        name: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Creates a service account token for access without requiring basic authentication.
 
-    @query_params("refresh")
-    def delete_privileges(self, application, name, params=None, headers=None):
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-create-service-token.html>`_
+
+        :param namespace: An identifier for the namespace
+        :param service: An identifier for the service name
+        :param name: An identifier for the token name
+        """
+        if namespace in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'namespace'")
+        if service in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'service'")
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        if (
+            namespace not in SKIP_IN_PATH
+            and service not in SKIP_IN_PATH
+            and name not in SKIP_IN_PATH
+        ):
+            __path = f"/_security/service/{_quote(namespace)}/{_quote(service)}/credential/token/{_quote(name)}"
+            __method = "PUT"
+        elif namespace not in SKIP_IN_PATH and service not in SKIP_IN_PATH:
+            __path = f"/_security/service/{_quote(namespace)}/{_quote(service)}/credential/token"
+            __method = "POST"
+        else:
+            raise ValueError("Couldn't find a path for the given parameters")
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request(__method, __target, headers=__headers)
+
+    @_rewrite_parameters()
+    def delete_privileges(
+        self,
+        *,
+        application: Any,
+        name: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        refresh: Optional[Any] = None,
+    ) -> Any:
         """
         Removes application privileges.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-delete-privilege.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-delete-privilege.html>`_
 
-        :arg application: Application name
-        :arg name: Privilege name
-        :arg refresh: If `true` (the default) then refresh the affected
-            shards to make this operation visible to search, if `wait_for` then wait
-            for a refresh to make this operation visible to search, if `false` then
-            do nothing with refreshes.  Valid choices: true, false, wait_for
+        :param application: Application name
+        :param name: Privilege name
+        :param refresh: If `true` (the default) then refresh the affected shards to make
+            this operation visible to search, if `wait_for` then wait for a refresh to
+            make this operation visible to search, if `false` then do nothing with refreshes.
         """
-        client, params = _deprecated_options(self, params)
-        for param in (application, name):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
+        if application in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'application'")
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_security/privilege/{_quote(application)}/{_quote(name)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if refresh is not None:
+            __query["refresh"] = refresh
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("DELETE", __target, headers=__headers)
 
-        return client._perform_request(
-            "DELETE",
-            _make_path("_security", "privilege", application, name),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params("refresh")
-    def delete_role(self, name, params=None, headers=None):
+    @_rewrite_parameters()
+    def delete_role(
+        self,
+        *,
+        name: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        refresh: Optional[Any] = None,
+    ) -> Any:
         """
         Removes roles in the native realm.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-delete-role.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-delete-role.html>`_
 
-        :arg name: Role name
-        :arg refresh: If `true` (the default) then refresh the affected
-            shards to make this operation visible to search, if `wait_for` then wait
-            for a refresh to make this operation visible to search, if `false` then
-            do nothing with refreshes.  Valid choices: true, false, wait_for
+        :param name: Role name
+        :param refresh: If `true` (the default) then refresh the affected shards to make
+            this operation visible to search, if `wait_for` then wait for a refresh to
+            make this operation visible to search, if `false` then do nothing with refreshes.
         """
-        client, params = _deprecated_options(self, params)
         if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'name'.")
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_security/role/{_quote(name)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if refresh is not None:
+            __query["refresh"] = refresh
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("DELETE", __target, headers=__headers)
 
-        return client._perform_request(
-            "DELETE",
-            _make_path("_security", "role", name),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params("refresh")
-    def delete_role_mapping(self, name, params=None, headers=None):
+    @_rewrite_parameters()
+    def delete_role_mapping(
+        self,
+        *,
+        name: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        refresh: Optional[Any] = None,
+    ) -> Any:
         """
         Removes role mappings.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-delete-role-mapping.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-delete-role-mapping.html>`_
 
-        :arg name: Role-mapping name
-        :arg refresh: If `true` (the default) then refresh the affected
-            shards to make this operation visible to search, if `wait_for` then wait
-            for a refresh to make this operation visible to search, if `false` then
-            do nothing with refreshes.  Valid choices: true, false, wait_for
+        :param name: Role-mapping name
+        :param refresh: If `true` (the default) then refresh the affected shards to make
+            this operation visible to search, if `wait_for` then wait for a refresh to
+            make this operation visible to search, if `false` then do nothing with refreshes.
         """
-        client, params = _deprecated_options(self, params)
         if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'name'.")
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_security/role_mapping/{_quote(name)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if refresh is not None:
+            __query["refresh"] = refresh
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("DELETE", __target, headers=__headers)
 
-        return client._perform_request(
-            "DELETE",
-            _make_path("_security", "role_mapping", name),
-            params=params,
-            headers=headers,
-        )
+    @_rewrite_parameters()
+    def delete_service_token(
+        self,
+        *,
+        namespace: Any,
+        service: Any,
+        name: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        refresh: Optional[Any] = None,
+    ) -> Any:
+        """
+        Deletes a service account token.
 
-    @query_params("refresh")
-    def delete_user(self, username, params=None, headers=None):
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-delete-service-token.html>`_
+
+        :param namespace: An identifier for the namespace
+        :param service: An identifier for the service name
+        :param name: An identifier for the token name
+        :param refresh: If `true` then refresh the affected shards to make this operation
+            visible to search, if `wait_for` (the default) then wait for a refresh to
+            make this operation visible to search, if `false` then do nothing with refreshes.
+        """
+        if namespace in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'namespace'")
+        if service in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'service'")
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_security/service/{_quote(namespace)}/{_quote(service)}/credential/token/{_quote(name)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if refresh is not None:
+            __query["refresh"] = refresh
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("DELETE", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    def delete_user(
+        self,
+        *,
+        username: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        refresh: Optional[Any] = None,
+    ) -> Any:
         """
         Deletes users from the native realm.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-delete-user.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-delete-user.html>`_
 
-        :arg username: username
-        :arg refresh: If `true` (the default) then refresh the affected
-            shards to make this operation visible to search, if `wait_for` then wait
-            for a refresh to make this operation visible to search, if `false` then
-            do nothing with refreshes.  Valid choices: true, false, wait_for
+        :param username: username
+        :param refresh: If `true` (the default) then refresh the affected shards to make
+            this operation visible to search, if `wait_for` then wait for a refresh to
+            make this operation visible to search, if `false` then do nothing with refreshes.
         """
-        client, params = _deprecated_options(self, params)
         if username in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'username'.")
+            raise ValueError("Empty value passed for parameter 'username'")
+        __path = f"/_security/user/{_quote(username)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if refresh is not None:
+            __query["refresh"] = refresh
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("DELETE", __target, headers=__headers)
 
-        return client._perform_request(
-            "DELETE",
-            _make_path("_security", "user", username),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params("refresh")
-    def disable_user(self, username, params=None, headers=None):
+    @_rewrite_parameters()
+    def disable_user(
+        self,
+        *,
+        username: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        refresh: Optional[Any] = None,
+    ) -> Any:
         """
         Disables users in the native realm.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-disable-user.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-disable-user.html>`_
 
-        :arg username: The username of the user to disable
-        :arg refresh: If `true` (the default) then refresh the affected
-            shards to make this operation visible to search, if `wait_for` then wait
-            for a refresh to make this operation visible to search, if `false` then
-            do nothing with refreshes.  Valid choices: true, false, wait_for
+        :param username: The username of the user to disable
+        :param refresh: If `true` (the default) then refresh the affected shards to make
+            this operation visible to search, if `wait_for` then wait for a refresh to
+            make this operation visible to search, if `false` then do nothing with refreshes.
         """
-        client, params = _deprecated_options(self, params)
         if username in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'username'.")
+            raise ValueError("Empty value passed for parameter 'username'")
+        __path = f"/_security/user/{_quote(username)}/_disable"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if refresh is not None:
+            __query["refresh"] = refresh
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("PUT", __target, headers=__headers)
 
-        return client._perform_request(
-            "PUT",
-            _make_path("_security", "user", username, "_disable"),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params("refresh")
-    def enable_user(self, username, params=None, headers=None):
+    @_rewrite_parameters()
+    def enable_user(
+        self,
+        *,
+        username: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        refresh: Optional[Any] = None,
+    ) -> Any:
         """
         Enables users in the native realm.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-enable-user.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-enable-user.html>`_
 
-        :arg username: The username of the user to enable
-        :arg refresh: If `true` (the default) then refresh the affected
-            shards to make this operation visible to search, if `wait_for` then wait
-            for a refresh to make this operation visible to search, if `false` then
-            do nothing with refreshes.  Valid choices: true, false, wait_for
+        :param username: The username of the user to enable
+        :param refresh: If `true` (the default) then refresh the affected shards to make
+            this operation visible to search, if `wait_for` then wait for a refresh to
+            make this operation visible to search, if `false` then do nothing with refreshes.
         """
-        client, params = _deprecated_options(self, params)
         if username in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'username'.")
+            raise ValueError("Empty value passed for parameter 'username'")
+        __path = f"/_security/user/{_quote(username)}/_enable"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if refresh is not None:
+            __query["refresh"] = refresh
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("PUT", __target, headers=__headers)
 
-        return client._perform_request(
-            "PUT",
-            _make_path("_security", "user", username, "_enable"),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params("id", "name", "owner", "realm_name", "username")
-    def get_api_key(self, params=None, headers=None):
+    @_rewrite_parameters()
+    def get_api_key(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        id: Optional[Any] = None,
+        name: Optional[Any] = None,
+        owner: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        realm_name: Optional[Any] = None,
+        username: Optional[Any] = None,
+    ) -> Any:
         """
         Retrieves information for one or more API keys.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-api-key.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-api-key.html>`_
 
-        :arg id: API key id of the API key to be retrieved
-        :arg name: API key name of the API key to be retrieved
-        :arg owner: flag to query API keys owned by the currently
-            authenticated user
-        :arg realm_name: realm name of the user who created this API key
-            to be retrieved
-        :arg username: user name of the user who created this API key to
-            be retrieved
+        :param id: API key id of the API key to be retrieved
+        :param name: API key name of the API key to be retrieved
+        :param owner: flag to query API keys owned by the currently authenticated user
+        :param realm_name: realm name of the user who created this API key to be retrieved
+        :param username: user name of the user who created this API key to be retrieved
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", "/_security/api_key", params=params, headers=headers
-        )
+        __path = "/_security/api_key"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if id is not None:
+            __query["id"] = id
+        if name is not None:
+            __query["name"] = name
+        if owner is not None:
+            __query["owner"] = owner
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if realm_name is not None:
+            __query["realm_name"] = realm_name
+        if username is not None:
+            __query["username"] = username
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
 
-    @query_params()
-    def get_privileges(self, application=None, name=None, params=None, headers=None):
+    @_rewrite_parameters()
+    def get_builtin_privileges(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Retrieves the list of cluster privileges and index privileges that are available
+        in this version of Elasticsearch.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-builtin-privileges.html>`_
+        """
+        __path = "/_security/privilege/_builtin"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    def get_privileges(
+        self,
+        *,
+        application: Optional[Any] = None,
+        name: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Retrieves application privileges.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-privileges.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-privileges.html>`_
 
-        :arg application: Application name
-        :arg name: Privilege name
+        :param application: Application name
+        :param name: Privilege name
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET",
-            _make_path("_security", "privilege", application, name),
-            params=params,
-            headers=headers,
-        )
+        if application not in SKIP_IN_PATH and name not in SKIP_IN_PATH:
+            __path = f"/_security/privilege/{_quote(application)}/{_quote(name)}"
+        elif application not in SKIP_IN_PATH:
+            __path = f"/_security/privilege/{_quote(application)}"
+        else:
+            __path = "/_security/privilege"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
 
-    @query_params()
-    def get_role(self, name=None, params=None, headers=None):
+    @_rewrite_parameters()
+    def get_role(
+        self,
+        *,
+        name: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Retrieves roles in the native realm.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-role.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-role.html>`_
 
-        :arg name: A comma-separated list of role names
+        :param name: A comma-separated list of role names
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", _make_path("_security", "role", name), params=params, headers=headers
-        )
+        if name not in SKIP_IN_PATH:
+            __path = f"/_security/role/{_quote(name)}"
+        else:
+            __path = "/_security/role"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
 
-    @query_params()
-    def get_role_mapping(self, name=None, params=None, headers=None):
+    @_rewrite_parameters()
+    def get_role_mapping(
+        self,
+        *,
+        name: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Retrieves role mappings.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-role-mapping.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-role-mapping.html>`_
 
-        :arg name: A comma-separated list of role-mapping names
+        :param name: A comma-separated list of role-mapping names
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET",
-            _make_path("_security", "role_mapping", name),
-            params=params,
-            headers=headers,
-        )
+        if name not in SKIP_IN_PATH:
+            __path = f"/_security/role_mapping/{_quote(name)}"
+        else:
+            __path = "/_security/role_mapping"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
 
-    @query_params()
-    def get_token(self, body, params=None, headers=None):
+    @_rewrite_parameters()
+    def get_service_accounts(
+        self,
+        *,
+        namespace: Optional[Any] = None,
+        service: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Retrieves information about service accounts.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-service-accounts.html>`_
+
+        :param namespace: An identifier for the namespace
+        :param service: An identifier for the service name
+        """
+        if namespace not in SKIP_IN_PATH and service not in SKIP_IN_PATH:
+            __path = f"/_security/service/{_quote(namespace)}/{_quote(service)}"
+        elif namespace not in SKIP_IN_PATH:
+            __path = f"/_security/service/{_quote(namespace)}"
+        else:
+            __path = "/_security/service"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    def get_service_credentials(
+        self,
+        *,
+        namespace: Any,
+        service: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
+        """
+        Retrieves information of all service credentials for a service account.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-service-credentials.html>`_
+
+        :param namespace: Name of the namespace.
+        :param service: Name of the service name.
+        """
+        if namespace in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'namespace'")
+        if service in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'service'")
+        __path = f"/_security/service/{_quote(namespace)}/{_quote(service)}/credential"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    def get_token(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        grant_type: Optional[Any] = None,
+        human: Optional[bool] = None,
+        kerberos_ticket: Optional[str] = None,
+        password: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        refresh_token: Optional[str] = None,
+        scope: Optional[str] = None,
+        username: Optional[Any] = None,
+    ) -> Any:
         """
         Creates a bearer token for access without requiring basic authentication.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-token.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-token.html>`_
 
-        :arg body: The token request to get
+        :param grant_type:
+        :param kerberos_ticket:
+        :param password:
+        :param refresh_token:
+        :param scope:
+        :param username:
         """
-        client, params = _deprecated_options(self, params)
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
+        __path = "/_security/oauth2/token"
+        __query: Dict[str, Any] = {}
+        __body: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if grant_type is not None:
+            __body["grant_type"] = grant_type
+        if human is not None:
+            __query["human"] = human
+        if kerberos_ticket is not None:
+            __body["kerberos_ticket"] = kerberos_ticket
+        if password is not None:
+            __body["password"] = password
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if refresh_token is not None:
+            __body["refresh_token"] = refresh_token
+        if scope is not None:
+            __body["scope"] = scope
+        if username is not None:
+            __body["username"] = username
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self._perform_request("POST", __target, headers=__headers, body=__body)
 
-        return client._perform_request(
-            "POST", "/_security/oauth2/token", params=params, headers=headers, body=body
-        )
-
-    @query_params()
-    def get_user(self, username=None, params=None, headers=None):
+    @_rewrite_parameters()
+    def get_user(
+        self,
+        *,
+        username: Optional[Union[Any, List[Any]]] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Retrieves information about users in the native realm and built-in users.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-user.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-user.html>`_
 
-        :arg username: A comma-separated list of usernames
+        :param username: An identifier for the user. You can specify multiple usernames
+            as a comma-separated list. If you omit this parameter, the API retrieves
+            information about all users.
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET",
-            _make_path("_security", "user", username),
-            params=params,
-            headers=headers,
-        )
+        if username not in SKIP_IN_PATH:
+            __path = f"/_security/user/{_quote(username)}"
+        else:
+            __path = "/_security/user"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
 
-    @query_params()
-    def get_user_privileges(self, params=None, headers=None):
+    @_rewrite_parameters()
+    def get_user_privileges(
+        self,
+        *,
+        application: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        priviledge: Optional[Any] = None,
+    ) -> Any:
         """
         Retrieves security privileges for the logged in user.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-user-privileges.html>`_
-        """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", "/_security/user/_privileges", params=params, headers=headers
-        )
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-user-privileges.html>`_
 
-    @query_params()
-    def has_privileges(self, body, user=None, params=None, headers=None):
+        :param application: The name of the application. Application privileges are always
+            associated with exactly one application. If you do not specify this parameter,
+            the API returns information about all privileges for all applications.
+        :param priviledge: The name of the privilege. If you do not specify this parameter,
+            the API returns information about all privileges for the requested application.
+        """
+        __path = "/_security/user/_privileges"
+        __query: Dict[str, Any] = {}
+        if application is not None:
+            __query["application"] = application
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if priviledge is not None:
+            __query["priviledge"] = priviledge
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters(
+        body_fields=True,
+        ignore_deprecated_options={"api_key"},
+    )
+    def grant_api_key(
+        self,
+        *,
+        api_key: Any,
+        grant_type: Any,
+        access_token: Optional[str] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        password: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        username: Optional[Any] = None,
+    ) -> Any:
+        """
+        Creates an API key on behalf of another user.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-grant-api-key.html>`_
+
+        :param api_key:
+        :param grant_type:
+        :param access_token:
+        :param password:
+        :param username:
+        """
+        if api_key is None:
+            raise ValueError("Empty value passed for parameter 'api_key'")
+        if grant_type is None:
+            raise ValueError("Empty value passed for parameter 'grant_type'")
+        __path = "/_security/api_key/grant"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if api_key is not None:
+            __body["api_key"] = api_key
+        if grant_type is not None:
+            __body["grant_type"] = grant_type
+        if access_token is not None:
+            __body["access_token"] = access_token
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if password is not None:
+            __body["password"] = password
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if username is not None:
+            __body["username"] = username
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self._perform_request("POST", __target, headers=__headers, body=__body)
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    def has_privileges(
+        self,
+        *,
+        user: Optional[Any] = None,
+        application: Optional[List[Any]] = None,
+        cluster: Optional[List[Any]] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        index: Optional[List[Any]] = None,
+        pretty: Optional[bool] = None,
+    ) -> Any:
         """
         Determines whether the specified user has a specified list of privileges.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-has-privileges.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-has-privileges.html>`_
 
-        :arg body: The privileges to test
-        :arg user: Username
+        :param user: Username
+        :param application:
+        :param cluster:
+        :param index:
         """
-        client, params = _deprecated_options(self, params)
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
+        if user not in SKIP_IN_PATH:
+            __path = f"/_security/user/{_quote(user)}/_has_privileges"
+        else:
+            __path = "/_security/user/_has_privileges"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if application is not None:
+            __body["application"] = application
+        if cluster is not None:
+            __body["cluster"] = cluster
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if index is not None:
+            __body["index"] = index
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self._perform_request("POST", __target, headers=__headers, body=__body)
 
-        return client._perform_request(
-            "POST",
-            _make_path("_security", "user", user, "_has_privileges"),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params()
-    def invalidate_api_key(self, body, params=None, headers=None):
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    def invalidate_api_key(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        id: Optional[Any] = None,
+        ids: Optional[List[Any]] = None,
+        name: Optional[Any] = None,
+        owner: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        realm_name: Optional[str] = None,
+        username: Optional[Any] = None,
+    ) -> Any:
         """
         Invalidates one or more API keys.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-invalidate-api-key.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-invalidate-api-key.html>`_
 
-        :arg body: The api key request to invalidate API key(s)
+        :param id:
+        :param ids:
+        :param name:
+        :param owner:
+        :param realm_name:
+        :param username:
         """
-        client, params = _deprecated_options(self, params)
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
+        __path = "/_security/api_key"
+        __query: Dict[str, Any] = {}
+        __body: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if id is not None:
+            __body["id"] = id
+        if ids is not None:
+            __body["ids"] = ids
+        if name is not None:
+            __body["name"] = name
+        if owner is not None:
+            __body["owner"] = owner
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if realm_name is not None:
+            __body["realm_name"] = realm_name
+        if username is not None:
+            __body["username"] = username
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self._perform_request("DELETE", __target, headers=__headers, body=__body)
 
-        return client._perform_request(
-            "DELETE", "/_security/api_key", params=params, headers=headers, body=body
-        )
-
-    @query_params()
-    def invalidate_token(self, body, params=None, headers=None):
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    def invalidate_token(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        realm_name: Optional[Any] = None,
+        refresh_token: Optional[str] = None,
+        token: Optional[str] = None,
+        username: Optional[Any] = None,
+    ) -> Any:
         """
         Invalidates one or more access tokens or refresh tokens.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-invalidate-token.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-invalidate-token.html>`_
 
-        :arg body: The token to invalidate
+        :param realm_name:
+        :param refresh_token:
+        :param token:
+        :param username:
         """
-        client, params = _deprecated_options(self, params)
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
+        __path = "/_security/oauth2/token"
+        __query: Dict[str, Any] = {}
+        __body: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if realm_name is not None:
+            __body["realm_name"] = realm_name
+        if refresh_token is not None:
+            __body["refresh_token"] = refresh_token
+        if token is not None:
+            __body["token"] = token
+        if username is not None:
+            __body["username"] = username
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self._perform_request("DELETE", __target, headers=__headers, body=__body)
 
-        return client._perform_request(
-            "DELETE",
-            "/_security/oauth2/token",
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params("refresh")
-    def put_privileges(self, body, params=None, headers=None):
+    @_rewrite_parameters(
+        body_name="privileges",
+    )
+    def put_privileges(
+        self,
+        *,
+        privileges: Dict[str, Dict[str, Any]],
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        refresh: Optional[Any] = None,
+    ) -> Any:
         """
         Adds or updates application privileges.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-put-privileges.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-put-privileges.html>`_
 
-        :arg body: The privilege(s) to add
-        :arg refresh: If `true` (the default) then refresh the affected
-            shards to make this operation visible to search, if `wait_for` then wait
-            for a refresh to make this operation visible to search, if `false` then
-            do nothing with refreshes.  Valid choices: true, false, wait_for
+        :param privileges:
+        :param refresh: If `true` (the default) then refresh the affected shards to make
+            this operation visible to search, if `wait_for` then wait for a refresh to
+            make this operation visible to search, if `false` then do nothing with refreshes.
         """
-        client, params = _deprecated_options(self, params)
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
+        if privileges is None:
+            raise ValueError("Empty value passed for parameter 'privileges'")
+        __path = "/_security/privilege"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if refresh is not None:
+            __query["refresh"] = refresh
+        __body = privileges
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)
 
-        return client._perform_request(
-            "PUT", "/_security/privilege/", params=params, headers=headers, body=body
-        )
-
-    @query_params("refresh")
-    def put_role(self, name, body, params=None, headers=None):
+    @_rewrite_parameters(
+        body_fields=True,
+        parameter_aliases={"global": "global_"},
+    )
+    def put_role(
+        self,
+        *,
+        name: Any,
+        applications: Optional[List[Any]] = None,
+        cluster: Optional[List[Any]] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        global_: Optional[Dict[str, Any]] = None,
+        human: Optional[bool] = None,
+        indices: Optional[List[Any]] = None,
+        metadata: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        refresh: Optional[Any] = None,
+        run_as: Optional[List[str]] = None,
+        transient_metadata: Optional[Any] = None,
+    ) -> Any:
         """
         Adds and updates roles in the native realm.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-put-role.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-put-role.html>`_
 
-        :arg name: Role name
-        :arg body: The role to add
-        :arg refresh: If `true` (the default) then refresh the affected
-            shards to make this operation visible to search, if `wait_for` then wait
-            for a refresh to make this operation visible to search, if `false` then
-            do nothing with refreshes.  Valid choices: true, false, wait_for
+        :param name: Role name
+        :param applications: A list of application privilege entries.
+        :param cluster: A list of cluster privileges. These privileges define the cluster-level
+            actions for users with this role.
+        :param global_: An object defining global privileges. A global privilege is a
+            form of cluster privilege that is request-aware. Support for global privileges
+            is currently limited to the management of application privileges.
+        :param indices: A list of indices permissions entries.
+        :param metadata: Optional metadata. Within the metadata object, keys that begin
+            with an underscore (`_`) are reserved for system use.
+        :param refresh: If `true` (the default) then refresh the affected shards to make
+            this operation visible to search, if `wait_for` then wait for a refresh to
+            make this operation visible to search, if `false` then do nothing with refreshes.
+        :param run_as: A list of users that the owners of this role can impersonate.
+        :param transient_metadata: Indicates roles that might be incompatible with the
+            current cluster license, specifically roles with document and field level
+            security. When the cluster license doesn’t allow certain features for a given
+            role, this parameter is updated dynamically to list the incompatible features.
+            If `enabled` is `false`, the role is ignored, but is still listed in the
+            response from the authenticate API.
         """
-        client, params = _deprecated_options(self, params)
-        for param in (name, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_security/role/{_quote(name)}"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if applications is not None:
+            __body["applications"] = applications
+        if cluster is not None:
+            __body["cluster"] = cluster
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if global_ is not None:
+            __body["global"] = global_
+        if human is not None:
+            __query["human"] = human
+        if indices is not None:
+            __body["indices"] = indices
+        if metadata is not None:
+            __body["metadata"] = metadata
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if refresh is not None:
+            __query["refresh"] = refresh
+        if run_as is not None:
+            __body["run_as"] = run_as
+        if transient_metadata is not None:
+            __body["transient_metadata"] = transient_metadata
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)
 
-        return client._perform_request(
-            "PUT",
-            _make_path("_security", "role", name),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params("refresh")
-    def put_role_mapping(self, name, body, params=None, headers=None):
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    def put_role_mapping(
+        self,
+        *,
+        name: Any,
+        enabled: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        metadata: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        refresh: Optional[Any] = None,
+        roles: Optional[List[str]] = None,
+        rules: Optional[Any] = None,
+        run_as: Optional[List[str]] = None,
+    ) -> Any:
         """
         Creates and updates role mappings.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-put-role-mapping.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-put-role-mapping.html>`_
 
-        :arg name: Role-mapping name
-        :arg body: The role mapping to add
-        :arg refresh: If `true` (the default) then refresh the affected
-            shards to make this operation visible to search, if `wait_for` then wait
-            for a refresh to make this operation visible to search, if `false` then
-            do nothing with refreshes.  Valid choices: true, false, wait_for
+        :param name: Role-mapping name
+        :param enabled:
+        :param metadata:
+        :param refresh: If `true` (the default) then refresh the affected shards to make
+            this operation visible to search, if `wait_for` then wait for a refresh to
+            make this operation visible to search, if `false` then do nothing with refreshes.
+        :param roles:
+        :param rules:
+        :param run_as:
         """
-        client, params = _deprecated_options(self, params)
-        for param in (name, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_security/role_mapping/{_quote(name)}"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if enabled is not None:
+            __body["enabled"] = enabled
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if metadata is not None:
+            __body["metadata"] = metadata
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if refresh is not None:
+            __query["refresh"] = refresh
+        if roles is not None:
+            __body["roles"] = roles
+        if rules is not None:
+            __body["rules"] = rules
+        if run_as is not None:
+            __body["run_as"] = run_as
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)
 
-        return client._perform_request(
-            "PUT",
-            _make_path("_security", "role_mapping", name),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params("refresh")
-    def put_user(self, username, body, params=None, headers=None):
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    def put_user(
+        self,
+        *,
+        username: Any,
+        email: Optional[Union[None, str]] = None,
+        enabled: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        full_name: Optional[Union[None, str]] = None,
+        human: Optional[bool] = None,
+        metadata: Optional[Any] = None,
+        password: Optional[Any] = None,
+        password_hash: Optional[str] = None,
+        pretty: Optional[bool] = None,
+        refresh: Optional[Any] = None,
+        roles: Optional[List[str]] = None,
+    ) -> Any:
         """
         Adds and updates users in the native realm. These users are commonly referred
         to as native users.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-put-user.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-put-user.html>`_
 
-        :arg username: The username of the User
-        :arg body: The user to add
-        :arg refresh: If `true` (the default) then refresh the affected
-            shards to make this operation visible to search, if `wait_for` then wait
-            for a refresh to make this operation visible to search, if `false` then
-            do nothing with refreshes.  Valid choices: true, false, wait_for
+        :param username: The username of the User
+        :param email:
+        :param enabled:
+        :param full_name:
+        :param metadata:
+        :param password:
+        :param password_hash:
+        :param refresh: If `true` (the default) then refresh the affected shards to make
+            this operation visible to search, if `wait_for` then wait for a refresh to
+            make this operation visible to search, if `false` then do nothing with refreshes.
+        :param roles:
         """
-        client, params = _deprecated_options(self, params)
-        for param in (username, body):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return client._perform_request(
-            "PUT",
-            _make_path("_security", "user", username),
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params()
-    def get_builtin_privileges(self, params=None, headers=None):
-        """
-        Retrieves the list of cluster privileges and index privileges that are
-        available in this version of Elasticsearch.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-builtin-privileges.html>`_
-        """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", "/_security/privilege/_builtin", params=params, headers=headers
-        )
-
-    @query_params()
-    def clear_cached_privileges(self, application, params=None, headers=None):
-        """
-        Evicts application privileges from the native application privileges cache.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-clear-privilege-cache.html>`_
-
-        :arg application: A comma-separated list of application names
-        """
-        client, params = _deprecated_options(self, params)
-        if application in SKIP_IN_PATH:
-            raise ValueError(
-                "Empty value passed for a required argument 'application'."
-            )
-
-        return client._perform_request(
-            "POST",
-            _make_path("_security", "privilege", application, "_clear_cache"),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params()
-    def clear_api_key_cache(self, ids, params=None, headers=None):
-        """
-        Clear a subset or all entries from the API key cache.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-clear-api-key-cache.html>`_
-
-        :arg ids: A comma-separated list of IDs of API keys to clear
-            from the cache
-        """
-        client, params = _deprecated_options(self, params)
-        if ids in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'ids'.")
-
-        return client._perform_request(
-            "POST",
-            _make_path("_security", "api_key", ids, "_clear_cache"),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params("refresh")
-    def grant_api_key(self, body, params=None, headers=None):
-        """
-        Creates an API key on behalf of another user.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-grant-api-key.html>`_
-
-        :arg body: The api key request to create an API key
-        :arg refresh: If `true` (the default) then refresh the affected
-            shards to make this operation visible to search, if `wait_for` then wait
-            for a refresh to make this operation visible to search, if `false` then
-            do nothing with refreshes.  Valid choices: true, false, wait_for
-        """
-        client, params = _deprecated_options(self, params)
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
-
-        return client._perform_request(
-            "POST",
-            "/_security/api_key/grant",
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params()
-    def clear_cached_service_tokens(
-        self, namespace, service, name, params=None, headers=None
-    ):
-        """
-        Evicts tokens from the service account token caches.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-clear-service-token-caches.html>`_
-
-        :arg namespace: An identifier for the namespace
-        :arg service: An identifier for the service name
-        :arg name: A comma-separated list of service token names
-        """
-        client, params = _deprecated_options(self, params)
-        for param in (namespace, service, name):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return client._perform_request(
-            "POST",
-            _make_path(
-                "_security",
-                "service",
-                namespace,
-                service,
-                "credential",
-                "token",
-                name,
-                "_clear_cache",
-            ),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params("refresh")
-    def create_service_token(
-        self, namespace, service, name=None, params=None, headers=None
-    ):
-        """
-        Creates a service account token for access without requiring basic
-        authentication.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-create-service-token.html>`_
-
-        :arg namespace: An identifier for the namespace
-        :arg service: An identifier for the service name
-        :arg name: An identifier for the token name
-        :arg refresh: If `true` then refresh the affected shards to make
-            this operation visible to search, if `wait_for` (the default) then wait
-            for a refresh to make this operation visible to search, if `false` then
-            do nothing with refreshes.  Valid choices: true, false, wait_for
-        """
-        client, params = _deprecated_options(self, params)
-        for param in (namespace, service):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return client._perform_request(
-            "PUT",
-            _make_path(
-                "_security", "service", namespace, service, "credential", "token", name
-            ),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params("refresh")
-    def delete_service_token(self, namespace, service, name, params=None, headers=None):
-        """
-        Deletes a service account token.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-delete-service-token.html>`_
-
-        :arg namespace: An identifier for the namespace
-        :arg service: An identifier for the service name
-        :arg name: An identifier for the token name
-        :arg refresh: If `true` then refresh the affected shards to make
-            this operation visible to search, if `wait_for` (the default) then wait
-            for a refresh to make this operation visible to search, if `false` then
-            do nothing with refreshes.  Valid choices: true, false, wait_for
-        """
-        client, params = _deprecated_options(self, params)
-        for param in (namespace, service, name):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return client._perform_request(
-            "DELETE",
-            _make_path(
-                "_security", "service", namespace, service, "credential", "token", name
-            ),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params()
-    def get_service_accounts(
-        self, namespace=None, service=None, params=None, headers=None
-    ):
-        """
-        Retrieves information about service accounts.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-service-accounts.html>`_
-
-        :arg namespace: An identifier for the namespace
-        :arg service: An identifier for the service name
-        """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET",
-            _make_path("_security", "service", namespace, service),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params()
-    def get_service_credentials(self, namespace, service, params=None, headers=None):
-        """
-        Retrieves information of all service credentials for a service account.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-service-credentials.html>`_
-
-        :arg namespace: An identifier for the namespace
-        :arg service: An identifier for the service name
-        """
-        client, params = _deprecated_options(self, params)
-        for param in (namespace, service):
-            if param in SKIP_IN_PATH:
-                raise ValueError("Empty value passed for a required argument.")
-
-        return client._perform_request(
-            "GET",
-            _make_path("_security", "service", namespace, service, "credential"),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params()
-    def enroll_node(self, params=None, headers=None):
-        """
-        Allows a new node to enroll to an existing cluster with security enabled.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-node-enrollment.html>`_
-        """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", "/_security/enroll/node", params=params, headers=headers
-        )
-
-    @query_params()
-    def saml_complete_logout(self, body, params=None, headers=None):
-        """
-        Verifies the logout response sent from the SAML IdP
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-complete-logout.html>`_
-
-        :arg body: The logout response to verify
-        """
-        client, params = _deprecated_options(self, params)
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
-
-        return client._perform_request(
-            "POST",
-            "/_security/saml/complete_logout",
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params()
-    def enroll_kibana(self, params=None, headers=None):
-        """
-        Allows a kibana instance to configure itself to communicate with a secured
-        elasticsearch cluster.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-kibana-enrollment.html>`_
-        """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", "/_security/enroll/kibana", params=params, headers=headers
-        )
-
-    @query_params()
-    def saml_authenticate(self, body, params=None, headers=None):
-        """
-        Exchanges a SAML Response message for an Elasticsearch access token and refresh
-        token pair
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-authenticate.html>`_
-
-        :arg body: The SAML response to authenticate
-        """
-        client, params = _deprecated_options(self, params)
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
-
-        return client._perform_request(
-            "POST",
-            "/_security/saml/authenticate",
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params()
-    def saml_invalidate(self, body, params=None, headers=None):
-        """
-        Consumes a SAML LogoutRequest
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-invalidate.html>`_
-
-        :arg body: The LogoutRequest message
-        """
-        client, params = _deprecated_options(self, params)
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
-
-        return client._perform_request(
-            "POST",
-            "/_security/saml/invalidate",
-            params=params,
-            headers=headers,
-            body=body,
-        )
-
-    @query_params()
-    def saml_logout(self, body, params=None, headers=None):
-        """
-        Invalidates an access token and a refresh token that were generated via the
-        SAML Authenticate API
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-logout.html>`_
-
-        :arg body: The tokens to invalidate
-        """
-        client, params = _deprecated_options(self, params)
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
-
-        return client._perform_request(
-            "POST", "/_security/saml/logout", params=params, headers=headers, body=body
-        )
-
-    @query_params()
-    def saml_prepare_authentication(self, body, params=None, headers=None):
-        """
-        Creates a SAML authentication request
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-prepare-authentication.html>`_
-
-        :arg body: The realm for which to create the authentication
-            request, identified by either its name or the ACS URL
-        """
-        client, params = _deprecated_options(self, params)
-        if body in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'body'.")
-
-        return client._perform_request(
-            "POST", "/_security/saml/prepare", params=params, headers=headers, body=body
-        )
-
-    @query_params()
-    def saml_service_provider_metadata(self, realm_name, params=None, headers=None):
-        """
-        Generates SAML metadata for the Elastic stack SAML 2.0 Service Provider
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-sp-metadata.html>`_
-
-        :arg realm_name: The name of the SAML realm to get the metadata
-            for
-        """
-        client, params = _deprecated_options(self, params)
-        if realm_name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for a required argument 'realm_name'.")
-
-        return client._perform_request(
-            "GET",
-            _make_path("_security", "saml", "metadata", realm_name),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params()
-    def query_api_keys(self, body=None, params=None, headers=None):
-        """
-        Retrieves information for API keys using a subset of query DSL
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-query-api-key.html>`_
-
-        :arg body: From, size, query, sort and search_after
-        """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "POST",
-            "/_security/_query/api_key",
-            params=params,
-            headers=headers,
-            body=body,
-        )
+        if username in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'username'")
+        __path = f"/_security/user/{_quote(username)}"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if email is not None:
+            __body["email"] = email
+        if enabled is not None:
+            __body["enabled"] = enabled
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if full_name is not None:
+            __body["full_name"] = full_name
+        if human is not None:
+            __query["human"] = human
+        if metadata is not None:
+            __body["metadata"] = metadata
+        if password is not None:
+            __body["password"] = password
+        if password_hash is not None:
+            __body["password_hash"] = password_hash
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if refresh is not None:
+            __query["refresh"] = refresh
+        if roles is not None:
+            __body["roles"] = roles
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)

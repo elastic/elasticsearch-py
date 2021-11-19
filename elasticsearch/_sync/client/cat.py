@@ -15,790 +15,1954 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+from typing import Any, Dict, List, Optional, Union
+
 from ._base import NamespacedClient
-from .utils import _deprecated_options, _make_path, query_params
+from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
 
 class CatClient(NamespacedClient):
-    @query_params("expand_wildcards", "format", "h", "help", "local", "s", "v")
-    def aliases(self, name=None, params=None, headers=None):
+    @_rewrite_parameters()
+    def aliases(
+        self,
+        *,
+        name: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        format: Optional[str] = None,
+        h: Optional[Any] = None,
+        help: Optional[bool] = None,
+        human: Optional[bool] = None,
+        local: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        s: Optional[List[str]] = None,
+        v: Optional[bool] = None,
+    ) -> Any:
         """
-        Shows information about currently configured aliases to indices including
-        filter and routing infos.
+        Shows information about currently configured aliases to indices including filter
+        and routing infos.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-alias.html>`_
 
-        :arg name: A comma-separated list of alias names to return
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: all
-        :arg format: a short version of the Accept header, e.g. json,
-            yaml
-        :arg h: Comma-separated list of column names to display
-        :arg help: Return help information
-        :arg local: Return local information, do not retrieve the state
-            from master node (default: false)
-        :arg s: Comma-separated list of column names or column aliases
-            to sort by
-        :arg v: Verbose mode. Display column headers
+        :param name: A comma-separated list of alias names to return
+        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :param format: Specifies the format to return the columnar data in, can be set
+            to `text`, `json`, `cbor`, `yaml`, or `smile`.
+        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param help: When set to `true` will output available columns. This option can't
+            be combined with any other query string option.
+        :param local: If `true`, the request computes the list of selected nodes from
+            the local cluster state. If `false` the list of selected nodes are computed
+            from the cluster state of the master node. In both cases the coordinating
+            node will send requests for further information to each selected node.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param s: List of columns that determine how the table should be sorted. Sorting
+            defaults to ascending and can be changed by setting `:asc` or `:desc` as
+            a suffix to the column name.
+        :param v: When set to `true` will enable verbose output.
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", _make_path("_cat", "aliases", name), params=params, headers=headers
-        )
+        if name not in SKIP_IN_PATH:
+            __path = f"/_cat/aliases/{_quote(name)}"
+        else:
+            __path = "/_cat/aliases"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if format is not None:
+            __query["format"] = format
+        if h is not None:
+            __query["h"] = h
+        if help is not None:
+            __query["help"] = help
+        if human is not None:
+            __query["human"] = human
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if s is not None:
+            __query["s"] = s
+        if v is not None:
+            __query["v"] = v
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "text/plain,application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
 
-    @query_params("bytes", "format", "h", "help", "local", "master_timeout", "s", "v")
-    def allocation(self, node_id=None, params=None, headers=None):
+    @_rewrite_parameters()
+    def allocation(
+        self,
+        *,
+        node_id: Optional[Any] = None,
+        bytes: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        format: Optional[str] = None,
+        h: Optional[Any] = None,
+        help: Optional[bool] = None,
+        human: Optional[bool] = None,
+        local: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        s: Optional[List[str]] = None,
+        v: Optional[bool] = None,
+    ) -> Any:
         """
         Provides a snapshot of how many shards are allocated to each data node and how
         much disk space they are using.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-allocation.html>`_
 
-        :arg node_id: A comma-separated list of node IDs or names to
-            limit the returned information
-        :arg bytes: The unit in which to display byte values  Valid
-            choices: b, k, kb, m, mb, g, gb, t, tb, p, pb
-        :arg format: a short version of the Accept header, e.g. json,
-            yaml
-        :arg h: Comma-separated list of column names to display
-        :arg help: Return help information
-        :arg local: Return local information, do not retrieve the state
-            from master node (default: false)
-        :arg master_timeout: Explicit operation timeout for connection
-            to master node
-        :arg s: Comma-separated list of column names or column aliases
-            to sort by
-        :arg v: Verbose mode. Display column headers
+        :param node_id: A comma-separated list of node IDs or names to limit the returned
+            information
+        :param bytes: The unit in which to display byte values
+        :param format: Specifies the format to return the columnar data in, can be set
+            to `text`, `json`, `cbor`, `yaml`, or `smile`.
+        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param help: When set to `true` will output available columns. This option can't
+            be combined with any other query string option.
+        :param local: If `true`, the request computes the list of selected nodes from
+            the local cluster state. If `false` the list of selected nodes are computed
+            from the cluster state of the master node. In both cases the coordinating
+            node will send requests for further information to each selected node.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param s: List of columns that determine how the table should be sorted. Sorting
+            defaults to ascending and can be changed by setting `:asc` or `:desc` as
+            a suffix to the column name.
+        :param v: When set to `true` will enable verbose output.
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET",
-            _make_path("_cat", "allocation", node_id),
-            params=params,
-            headers=headers,
-        )
+        if node_id not in SKIP_IN_PATH:
+            __path = f"/_cat/allocation/{_quote(node_id)}"
+        else:
+            __path = "/_cat/allocation"
+        __query: Dict[str, Any] = {}
+        if bytes is not None:
+            __query["bytes"] = bytes
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if format is not None:
+            __query["format"] = format
+        if h is not None:
+            __query["h"] = h
+        if help is not None:
+            __query["help"] = help
+        if human is not None:
+            __query["human"] = human
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if s is not None:
+            __query["s"] = s
+        if v is not None:
+            __query["v"] = v
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "text/plain,application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
 
-    @query_params("format", "h", "help", "s", "v")
-    def count(self, index=None, params=None, headers=None):
+    @_rewrite_parameters()
+    def count(
+        self,
+        *,
+        index: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        format: Optional[str] = None,
+        h: Optional[Any] = None,
+        help: Optional[bool] = None,
+        human: Optional[bool] = None,
+        local: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        s: Optional[List[str]] = None,
+        v: Optional[bool] = None,
+    ) -> Any:
         """
-        Provides quick access to the document count of the entire cluster, or
-        individual indices.
+        Provides quick access to the document count of the entire cluster, or individual
+        indices.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-count.html>`_
 
-        :arg index: A comma-separated list of index names to limit the
-            returned information
-        :arg format: a short version of the Accept header, e.g. json,
-            yaml
-        :arg h: Comma-separated list of column names to display
-        :arg help: Return help information
-        :arg s: Comma-separated list of column names or column aliases
-            to sort by
-        :arg v: Verbose mode. Display column headers
+        :param index: A comma-separated list of index names to limit the returned information
+        :param format: Specifies the format to return the columnar data in, can be set
+            to `text`, `json`, `cbor`, `yaml`, or `smile`.
+        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param help: When set to `true` will output available columns. This option can't
+            be combined with any other query string option.
+        :param local: If `true`, the request computes the list of selected nodes from
+            the local cluster state. If `false` the list of selected nodes are computed
+            from the cluster state of the master node. In both cases the coordinating
+            node will send requests for further information to each selected node.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param s: List of columns that determine how the table should be sorted. Sorting
+            defaults to ascending and can be changed by setting `:asc` or `:desc` as
+            a suffix to the column name.
+        :param v: When set to `true` will enable verbose output.
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", _make_path("_cat", "count", index), params=params, headers=headers
-        )
+        if index not in SKIP_IN_PATH:
+            __path = f"/_cat/count/{_quote(index)}"
+        else:
+            __path = "/_cat/count"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if format is not None:
+            __query["format"] = format
+        if h is not None:
+            __query["h"] = h
+        if help is not None:
+            __query["help"] = help
+        if human is not None:
+            __query["human"] = human
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if s is not None:
+            __query["s"] = s
+        if v is not None:
+            __query["v"] = v
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "text/plain,application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
 
-    @query_params("format", "h", "help", "s", "time", "ts", "v")
-    def health(self, params=None, headers=None):
-        """
-        Returns a concise representation of the cluster health.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-health.html>`_
-
-        :arg format: a short version of the Accept header, e.g. json,
-            yaml
-        :arg h: Comma-separated list of column names to display
-        :arg help: Return help information
-        :arg s: Comma-separated list of column names or column aliases
-            to sort by
-        :arg time: The unit in which to display time values  Valid
-            choices: d, h, m, s, ms, micros, nanos
-        :arg ts: Set to false to disable timestamping  Default: True
-        :arg v: Verbose mode. Display column headers
-        """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", "/_cat/health", params=params, headers=headers
-        )
-
-    @query_params("help", "s")
-    def help(self, params=None, headers=None):
-        """
-        Returns help for the Cat APIs.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat.html>`_
-
-        :arg help: Return help information
-        :arg s: Comma-separated list of column names or column aliases
-            to sort by
-        """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request("GET", "/_cat", params=params, headers=headers)
-
-    @query_params(
-        "bytes",
-        "expand_wildcards",
-        "format",
-        "h",
-        "health",
-        "help",
-        "include_unloaded_segments",
-        "master_timeout",
-        "pri",
-        "s",
-        "time",
-        "v",
-    )
-    def indices(self, index=None, params=None, headers=None):
-        """
-        Returns information about indices: number of primaries and replicas, document
-        counts, disk size, ...
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-indices.html>`_
-
-        :arg index: A comma-separated list of index names to limit the
-            returned information
-        :arg bytes: The unit in which to display byte values  Valid
-            choices: b, k, kb, m, mb, g, gb, t, tb, p, pb
-        :arg expand_wildcards: Whether to expand wildcard expression to
-            concrete indices that are open, closed or both.  Valid choices: open,
-            closed, hidden, none, all  Default: all
-        :arg format: a short version of the Accept header, e.g. json,
-            yaml
-        :arg h: Comma-separated list of column names to display
-        :arg health: A health status ("green", "yellow", or "red" to
-            filter only indices matching the specified health status  Valid choices:
-            green, yellow, red
-        :arg help: Return help information
-        :arg include_unloaded_segments: If set to true segment stats
-            will include stats for segments that are not currently loaded into
-            memory
-        :arg master_timeout: Explicit operation timeout for connection
-            to master node
-        :arg pri: Set to true to return stats only for primary shards
-        :arg s: Comma-separated list of column names or column aliases
-            to sort by
-        :arg time: The unit in which to display time values  Valid
-            choices: d, h, m, s, ms, micros, nanos
-        :arg v: Verbose mode. Display column headers
-        """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", _make_path("_cat", "indices", index), params=params, headers=headers
-        )
-
-    @query_params("format", "h", "help", "local", "master_timeout", "s", "v")
-    def master(self, params=None, headers=None):
-        """
-        Returns information about the master node.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-master.html>`_
-
-        :arg format: a short version of the Accept header, e.g. json,
-            yaml
-        :arg h: Comma-separated list of column names to display
-        :arg help: Return help information
-        :arg local: Return local information, do not retrieve the state
-            from master node (default: false)
-        :arg master_timeout: Explicit operation timeout for connection
-            to master node
-        :arg s: Comma-separated list of column names or column aliases
-            to sort by
-        :arg v: Verbose mode. Display column headers
-        """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", "/_cat/master", params=params, headers=headers
-        )
-
-    @query_params(
-        "bytes",
-        "format",
-        "full_id",
-        "h",
-        "help",
-        "include_unloaded_segments",
-        "master_timeout",
-        "s",
-        "time",
-        "v",
-    )
-    def nodes(self, params=None, headers=None):
-        """
-        Returns basic statistics about performance of cluster nodes.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-nodes.html>`_
-
-        :arg bytes: The unit in which to display byte values  Valid
-            choices: b, k, kb, m, mb, g, gb, t, tb, p, pb
-        :arg format: a short version of the Accept header, e.g. json,
-            yaml
-        :arg full_id: Return the full node ID instead of the shortened
-            version (default: false)
-        :arg h: Comma-separated list of column names to display
-        :arg help: Return help information
-        :arg include_unloaded_segments: If set to true segment stats
-            will include stats for segments that are not currently loaded into
-            memory
-        :arg master_timeout: Explicit operation timeout for connection
-            to master node
-        :arg s: Comma-separated list of column names or column aliases
-            to sort by
-        :arg time: The unit in which to display time values  Valid
-            choices: d, h, m, s, ms, micros, nanos
-        :arg v: Verbose mode. Display column headers
-        """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", "/_cat/nodes", params=params, headers=headers
-        )
-
-    @query_params(
-        "active_only", "bytes", "detailed", "format", "h", "help", "s", "time", "v"
-    )
-    def recovery(self, index=None, params=None, headers=None):
-        """
-        Returns information about index shard recoveries, both on-going completed.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-recovery.html>`_
-
-        :arg index: Comma-separated list or wildcard expression of index
-            names to limit the returned information
-        :arg active_only: If `true`, the response only includes ongoing
-            shard recoveries
-        :arg bytes: The unit in which to display byte values  Valid
-            choices: b, k, kb, m, mb, g, gb, t, tb, p, pb
-        :arg detailed: If `true`, the response includes detailed
-            information about shard recoveries
-        :arg format: a short version of the Accept header, e.g. json,
-            yaml
-        :arg h: Comma-separated list of column names to display
-        :arg help: Return help information
-        :arg s: Comma-separated list of column names or column aliases
-            to sort by
-        :arg time: The unit in which to display time values  Valid
-            choices: d, h, m, s, ms, micros, nanos
-        :arg v: Verbose mode. Display column headers
-        """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", _make_path("_cat", "recovery", index), params=params, headers=headers
-        )
-
-    @query_params("bytes", "format", "h", "help", "master_timeout", "s", "time", "v")
-    def shards(self, index=None, params=None, headers=None):
-        """
-        Provides a detailed view of shard allocation on nodes.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-shards.html>`_
-
-        :arg index: A comma-separated list of index names to limit the
-            returned information
-        :arg bytes: The unit in which to display byte values  Valid
-            choices: b, k, kb, m, mb, g, gb, t, tb, p, pb
-        :arg format: a short version of the Accept header, e.g. json,
-            yaml
-        :arg h: Comma-separated list of column names to display
-        :arg help: Return help information
-        :arg master_timeout: Explicit operation timeout for connection
-            to master node
-        :arg s: Comma-separated list of column names or column aliases
-            to sort by
-        :arg time: The unit in which to display time values  Valid
-            choices: d, h, m, s, ms, micros, nanos
-        :arg v: Verbose mode. Display column headers
-        """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", _make_path("_cat", "shards", index), params=params, headers=headers
-        )
-
-    @query_params("bytes", "format", "h", "help", "s", "v")
-    def segments(self, index=None, params=None, headers=None):
-        """
-        Provides low-level information about the segments in the shards of an index.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-segments.html>`_
-
-        :arg index: A comma-separated list of index names to limit the
-            returned information
-        :arg bytes: The unit in which to display byte values  Valid
-            choices: b, k, kb, m, mb, g, gb, t, tb, p, pb
-        :arg format: a short version of the Accept header, e.g. json,
-            yaml
-        :arg h: Comma-separated list of column names to display
-        :arg help: Return help information
-        :arg s: Comma-separated list of column names or column aliases
-            to sort by
-        :arg v: Verbose mode. Display column headers
-        """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", _make_path("_cat", "segments", index), params=params, headers=headers
-        )
-
-    @query_params("format", "h", "help", "local", "master_timeout", "s", "time", "v")
-    def pending_tasks(self, params=None, headers=None):
-        """
-        Returns a concise representation of the cluster pending tasks.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-pending-tasks.html>`_
-
-        :arg format: a short version of the Accept header, e.g. json,
-            yaml
-        :arg h: Comma-separated list of column names to display
-        :arg help: Return help information
-        :arg local: Return local information, do not retrieve the state
-            from master node (default: false)
-        :arg master_timeout: Explicit operation timeout for connection
-            to master node
-        :arg s: Comma-separated list of column names or column aliases
-            to sort by
-        :arg time: The unit in which to display time values  Valid
-            choices: d, h, m, s, ms, micros, nanos
-        :arg v: Verbose mode. Display column headers
-        """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", "/_cat/pending_tasks", params=params, headers=headers
-        )
-
-    @query_params("format", "h", "help", "local", "master_timeout", "s", "time", "v")
-    def thread_pool(self, thread_pool_patterns=None, params=None, headers=None):
-        """
-        Returns cluster-wide thread pool statistics per node. By default the active,
-        queue and rejected statistics are returned for all thread pools.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-thread-pool.html>`_
-
-        :arg thread_pool_patterns: A comma-separated list of regular-
-            expressions to filter the thread pools in the output
-        :arg format: a short version of the Accept header, e.g. json,
-            yaml
-        :arg h: Comma-separated list of column names to display
-        :arg help: Return help information
-        :arg local: Return local information, do not retrieve the state
-            from master node (default: false)
-        :arg master_timeout: Explicit operation timeout for connection
-            to master node
-        :arg s: Comma-separated list of column names or column aliases
-            to sort by
-        :arg time: The unit in which to display time values  Valid
-            choices: d, h, m, s, ms, micros, nanos
-        :arg v: Verbose mode. Display column headers
-        """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET",
-            _make_path("_cat", "thread_pool", thread_pool_patterns),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params("bytes", "format", "h", "help", "s", "v")
-    def fielddata(self, fields=None, params=None, headers=None):
+    @_rewrite_parameters()
+    def fielddata(
+        self,
+        *,
+        fields: Optional[Any] = None,
+        bytes: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        format: Optional[str] = None,
+        h: Optional[Any] = None,
+        help: Optional[bool] = None,
+        human: Optional[bool] = None,
+        local: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        s: Optional[List[str]] = None,
+        v: Optional[bool] = None,
+    ) -> Any:
         """
         Shows how much heap memory is currently being used by fielddata on every data
         node in the cluster.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-fielddata.html>`_
 
-        :arg fields: A comma-separated list of fields to return in the
-            output
-        :arg bytes: The unit in which to display byte values  Valid
-            choices: b, k, kb, m, mb, g, gb, t, tb, p, pb
-        :arg format: a short version of the Accept header, e.g. json,
-            yaml
-        :arg h: Comma-separated list of column names to display
-        :arg help: Return help information
-        :arg s: Comma-separated list of column names or column aliases
-            to sort by
-        :arg v: Verbose mode. Display column headers
+        :param fields: A comma-separated list of fields to return the fielddata size
+        :param bytes: The unit in which to display byte values
+        :param format: Specifies the format to return the columnar data in, can be set
+            to `text`, `json`, `cbor`, `yaml`, or `smile`.
+        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param help: When set to `true` will output available columns. This option can't
+            be combined with any other query string option.
+        :param local: If `true`, the request computes the list of selected nodes from
+            the local cluster state. If `false` the list of selected nodes are computed
+            from the cluster state of the master node. In both cases the coordinating
+            node will send requests for further information to each selected node.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param s: List of columns that determine how the table should be sorted. Sorting
+            defaults to ascending and can be changed by setting `:asc` or `:desc` as
+            a suffix to the column name.
+        :param v: When set to `true` will enable verbose output.
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET",
-            _make_path("_cat", "fielddata", fields),
-            params=params,
-            headers=headers,
-        )
+        if fields not in SKIP_IN_PATH:
+            __path = f"/_cat/fielddata/{_quote(fields)}"
+        else:
+            __path = "/_cat/fielddata"
+        __query: Dict[str, Any] = {}
+        if bytes is not None:
+            __query["bytes"] = bytes
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if format is not None:
+            __query["format"] = format
+        if h is not None:
+            __query["h"] = h
+        if help is not None:
+            __query["help"] = help
+        if human is not None:
+            __query["human"] = human
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if s is not None:
+            __query["s"] = s
+        if v is not None:
+            __query["v"] = v
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "text/plain,application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
 
-    @query_params(
-        "format", "h", "help", "include_bootstrap", "local", "master_timeout", "s", "v"
+    @_rewrite_parameters()
+    def health(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        format: Optional[str] = None,
+        h: Optional[Any] = None,
+        help: Optional[bool] = None,
+        human: Optional[bool] = None,
+        include_timestamp: Optional[bool] = None,
+        local: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        s: Optional[List[str]] = None,
+        ts: Optional[bool] = None,
+        v: Optional[bool] = None,
+    ) -> Any:
+        """
+        Returns a concise representation of the cluster health.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-health.html>`_
+
+        :param format: Specifies the format to return the columnar data in, can be set
+            to `text`, `json`, `cbor`, `yaml`, or `smile`.
+        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param help: When set to `true` will output available columns. This option can't
+            be combined with any other query string option.
+        :param include_timestamp:
+        :param local: If `true`, the request computes the list of selected nodes from
+            the local cluster state. If `false` the list of selected nodes are computed
+            from the cluster state of the master node. In both cases the coordinating
+            node will send requests for further information to each selected node.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param s: List of columns that determine how the table should be sorted. Sorting
+            defaults to ascending and can be changed by setting `:asc` or `:desc` as
+            a suffix to the column name.
+        :param ts: Set to false to disable timestamping
+        :param v: When set to `true` will enable verbose output.
+        """
+        __path = "/_cat/health"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if format is not None:
+            __query["format"] = format
+        if h is not None:
+            __query["h"] = h
+        if help is not None:
+            __query["help"] = help
+        if human is not None:
+            __query["human"] = human
+        if include_timestamp is not None:
+            __query["include_timestamp"] = include_timestamp
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if s is not None:
+            __query["s"] = s
+        if ts is not None:
+            __query["ts"] = ts
+        if v is not None:
+            __query["v"] = v
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "text/plain,application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    def help(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        format: Optional[str] = None,
+        h: Optional[Any] = None,
+        help: Optional[bool] = None,
+        human: Optional[bool] = None,
+        local: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        s: Optional[List[str]] = None,
+        v: Optional[bool] = None,
+    ) -> Any:
+        """
+        Returns help for the Cat APIs.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat.html>`_
+
+        :param format: Specifies the format to return the columnar data in, can be set
+            to `text`, `json`, `cbor`, `yaml`, or `smile`.
+        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param help: When set to `true` will output available columns. This option can't
+            be combined with any other query string option.
+        :param local: If `true`, the request computes the list of selected nodes from
+            the local cluster state. If `false` the list of selected nodes are computed
+            from the cluster state of the master node. In both cases the coordinating
+            node will send requests for further information to each selected node.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param s: List of columns that determine how the table should be sorted. Sorting
+            defaults to ascending and can be changed by setting `:asc` or `:desc` as
+            a suffix to the column name.
+        :param v: When set to `true` will enable verbose output.
+        """
+        __path = "/_cat"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if format is not None:
+            __query["format"] = format
+        if h is not None:
+            __query["h"] = h
+        if help is not None:
+            __query["help"] = help
+        if human is not None:
+            __query["human"] = human
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if s is not None:
+            __query["s"] = s
+        if v is not None:
+            __query["v"] = v
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "text/plain"}
+        return self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    def indices(
+        self,
+        *,
+        index: Optional[Any] = None,
+        bytes: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        format: Optional[str] = None,
+        h: Optional[Any] = None,
+        health: Optional[Any] = None,
+        help: Optional[bool] = None,
+        human: Optional[bool] = None,
+        include_unloaded_segments: Optional[bool] = None,
+        local: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        pri: Optional[bool] = None,
+        s: Optional[List[str]] = None,
+        v: Optional[bool] = None,
+    ) -> Any:
+        """
+        Returns information about indices: number of primaries and replicas, document
+        counts, disk size, ...
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-indices.html>`_
+
+        :param index: A comma-separated list of index names to limit the returned information
+        :param bytes: The unit in which to display byte values
+        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
+        :param format: Specifies the format to return the columnar data in, can be set
+            to `text`, `json`, `cbor`, `yaml`, or `smile`.
+        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param health: A health status ("green", "yellow", or "red" to filter only indices
+            matching the specified health status
+        :param help: When set to `true` will output available columns. This option can't
+            be combined with any other query string option.
+        :param include_unloaded_segments: If set to true segment stats will include stats
+            for segments that are not currently loaded into memory
+        :param local: If `true`, the request computes the list of selected nodes from
+            the local cluster state. If `false` the list of selected nodes are computed
+            from the cluster state of the master node. In both cases the coordinating
+            node will send requests for further information to each selected node.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param pri: Set to true to return stats only for primary shards
+        :param s: List of columns that determine how the table should be sorted. Sorting
+            defaults to ascending and can be changed by setting `:asc` or `:desc` as
+            a suffix to the column name.
+        :param v: When set to `true` will enable verbose output.
+        """
+        if index not in SKIP_IN_PATH:
+            __path = f"/_cat/indices/{_quote(index)}"
+        else:
+            __path = "/_cat/indices"
+        __query: Dict[str, Any] = {}
+        if bytes is not None:
+            __query["bytes"] = bytes
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if format is not None:
+            __query["format"] = format
+        if h is not None:
+            __query["h"] = h
+        if health is not None:
+            __query["health"] = health
+        if help is not None:
+            __query["help"] = help
+        if human is not None:
+            __query["human"] = human
+        if include_unloaded_segments is not None:
+            __query["include_unloaded_segments"] = include_unloaded_segments
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if pri is not None:
+            __query["pri"] = pri
+        if s is not None:
+            __query["s"] = s
+        if v is not None:
+            __query["v"] = v
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "text/plain,application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    def master(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        format: Optional[str] = None,
+        h: Optional[Any] = None,
+        help: Optional[bool] = None,
+        human: Optional[bool] = None,
+        local: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        s: Optional[List[str]] = None,
+        v: Optional[bool] = None,
+    ) -> Any:
+        """
+        Returns information about the master node.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-master.html>`_
+
+        :param format: Specifies the format to return the columnar data in, can be set
+            to `text`, `json`, `cbor`, `yaml`, or `smile`.
+        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param help: When set to `true` will output available columns. This option can't
+            be combined with any other query string option.
+        :param local: If `true`, the request computes the list of selected nodes from
+            the local cluster state. If `false` the list of selected nodes are computed
+            from the cluster state of the master node. In both cases the coordinating
+            node will send requests for further information to each selected node.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param s: List of columns that determine how the table should be sorted. Sorting
+            defaults to ascending and can be changed by setting `:asc` or `:desc` as
+            a suffix to the column name.
+        :param v: When set to `true` will enable verbose output.
+        """
+        __path = "/_cat/master"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if format is not None:
+            __query["format"] = format
+        if h is not None:
+            __query["h"] = h
+        if help is not None:
+            __query["help"] = help
+        if human is not None:
+            __query["human"] = human
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if s is not None:
+            __query["s"] = s
+        if v is not None:
+            __query["v"] = v
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "text/plain,application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    def ml_data_frame_analytics(
+        self,
+        *,
+        id: Optional[Any] = None,
+        allow_no_match: Optional[bool] = None,
+        bytes: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        format: Optional[str] = None,
+        h: Optional[Any] = None,
+        help: Optional[bool] = None,
+        human: Optional[bool] = None,
+        local: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        s: Optional[List[str]] = None,
+        v: Optional[bool] = None,
+    ) -> Any:
+        """
+        Gets configuration and usage information about data frame analytics jobs.
+
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cat-dfanalytics.html>`_
+
+        :param id: The ID of the data frame analytics to fetch
+        :param allow_no_match: Whether to ignore if a wildcard expression matches no
+            configs. (This includes `_all` string or when no configs have been specified)
+        :param bytes: The unit in which to display byte values
+        :param format: Specifies the format to return the columnar data in, can be set
+            to `text`, `json`, `cbor`, `yaml`, or `smile`.
+        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param help: When set to `true` will output available columns. This option can't
+            be combined with any other query string option.
+        :param local: If `true`, the request computes the list of selected nodes from
+            the local cluster state. If `false` the list of selected nodes are computed
+            from the cluster state of the master node. In both cases the coordinating
+            node will send requests for further information to each selected node.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param s: List of columns that determine how the table should be sorted. Sorting
+            defaults to ascending and can be changed by setting `:asc` or `:desc` as
+            a suffix to the column name.
+        :param v: When set to `true` will enable verbose output.
+        """
+        if id not in SKIP_IN_PATH:
+            __path = f"/_cat/ml/data_frame/analytics/{_quote(id)}"
+        else:
+            __path = "/_cat/ml/data_frame/analytics"
+        __query: Dict[str, Any] = {}
+        if allow_no_match is not None:
+            __query["allow_no_match"] = allow_no_match
+        if bytes is not None:
+            __query["bytes"] = bytes
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if format is not None:
+            __query["format"] = format
+        if h is not None:
+            __query["h"] = h
+        if help is not None:
+            __query["help"] = help
+        if human is not None:
+            __query["human"] = human
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if s is not None:
+            __query["s"] = s
+        if v is not None:
+            __query["v"] = v
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "text/plain,application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    def ml_datafeeds(
+        self,
+        *,
+        datafeed_id: Optional[Any] = None,
+        allow_no_match: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        format: Optional[str] = None,
+        h: Optional[Any] = None,
+        help: Optional[bool] = None,
+        human: Optional[bool] = None,
+        local: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        s: Optional[List[str]] = None,
+        time: Optional[Any] = None,
+        v: Optional[bool] = None,
+    ) -> Any:
+        """
+        Gets configuration and usage information about datafeeds.
+
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cat-datafeeds.html>`_
+
+        :param datafeed_id: A numerical character string that uniquely identifies the
+            datafeed. This identifier can contain lowercase alphanumeric characters (a-z
+            and 0-9), hyphens, and underscores. It must start and end with alphanumeric
+            characters.
+        :param allow_no_match: Specifies what to do when the request: * Contains wildcard
+            expressions and there are no datafeeds that match. * Contains the `_all`
+            string or no identifiers and there are no matches. * Contains wildcard expressions
+            and there are only partial matches. If `true`, the API returns an empty datafeeds
+            array when there are no matches and the subset of results when there are
+            partial matches. If `false`, the API returns a 404 status code when there
+            are no matches or only partial matches.
+        :param format: Specifies the format to return the columnar data in, can be set
+            to `text`, `json`, `cbor`, `yaml`, or `smile`.
+        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param help: When set to `true` will output available columns. This option can't
+            be combined with any other query string option.
+        :param local: If `true`, the request computes the list of selected nodes from
+            the local cluster state. If `false` the list of selected nodes are computed
+            from the cluster state of the master node. In both cases the coordinating
+            node will send requests for further information to each selected node.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param s: List of columns that determine how the table should be sorted. Sorting
+            defaults to ascending and can be changed by setting `:asc` or `:desc` as
+            a suffix to the column name.
+        :param time: The unit used to display time values.
+        :param v: When set to `true` will enable verbose output.
+        """
+        if datafeed_id not in SKIP_IN_PATH:
+            __path = f"/_cat/ml/datafeeds/{_quote(datafeed_id)}"
+        else:
+            __path = "/_cat/ml/datafeeds"
+        __query: Dict[str, Any] = {}
+        if allow_no_match is not None:
+            __query["allow_no_match"] = allow_no_match
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if format is not None:
+            __query["format"] = format
+        if h is not None:
+            __query["h"] = h
+        if help is not None:
+            __query["help"] = help
+        if human is not None:
+            __query["human"] = human
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if s is not None:
+            __query["s"] = s
+        if time is not None:
+            __query["time"] = time
+        if v is not None:
+            __query["v"] = v
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "text/plain,application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    def ml_jobs(
+        self,
+        *,
+        job_id: Optional[Any] = None,
+        allow_no_match: Optional[bool] = None,
+        bytes: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        format: Optional[str] = None,
+        h: Optional[Any] = None,
+        help: Optional[bool] = None,
+        human: Optional[bool] = None,
+        local: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        s: Optional[List[str]] = None,
+        time: Optional[Any] = None,
+        v: Optional[bool] = None,
+    ) -> Any:
+        """
+        Gets configuration and usage information about anomaly detection jobs.
+
+        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cat-anomaly-detectors.html>`_
+
+        :param job_id: Identifier for the anomaly detection job.
+        :param allow_no_match: Specifies what to do when the request: * Contains wildcard
+            expressions and there are no jobs that match. * Contains the `_all` string
+            or no identifiers and there are no matches. * Contains wildcard expressions
+            and there are only partial matches. If `true`, the API returns an empty jobs
+            array when there are no matches and the subset of results when there are
+            partial matches. If `false`, the API returns a 404 status code when there
+            are no matches or only partial matches.
+        :param bytes: The unit used to display byte values.
+        :param format: Specifies the format to return the columnar data in, can be set
+            to `text`, `json`, `cbor`, `yaml`, or `smile`.
+        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param help: When set to `true` will output available columns. This option can't
+            be combined with any other query string option.
+        :param local: If `true`, the request computes the list of selected nodes from
+            the local cluster state. If `false` the list of selected nodes are computed
+            from the cluster state of the master node. In both cases the coordinating
+            node will send requests for further information to each selected node.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param s: List of columns that determine how the table should be sorted. Sorting
+            defaults to ascending and can be changed by setting `:asc` or `:desc` as
+            a suffix to the column name.
+        :param time: The unit used to display time values.
+        :param v: When set to `true` will enable verbose output.
+        """
+        if job_id not in SKIP_IN_PATH:
+            __path = f"/_cat/ml/anomaly_detectors/{_quote(job_id)}"
+        else:
+            __path = "/_cat/ml/anomaly_detectors"
+        __query: Dict[str, Any] = {}
+        if allow_no_match is not None:
+            __query["allow_no_match"] = allow_no_match
+        if bytes is not None:
+            __query["bytes"] = bytes
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if format is not None:
+            __query["format"] = format
+        if h is not None:
+            __query["h"] = h
+        if help is not None:
+            __query["help"] = help
+        if human is not None:
+            __query["human"] = human
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if s is not None:
+            __query["s"] = s
+        if time is not None:
+            __query["time"] = time
+        if v is not None:
+            __query["v"] = v
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "text/plain,application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters(
+        parameter_aliases={"from": "from_"},
     )
-    def plugins(self, params=None, headers=None):
+    def ml_trained_models(
+        self,
+        *,
+        model_id: Optional[Any] = None,
+        allow_no_match: Optional[bool] = None,
+        bytes: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        format: Optional[str] = None,
+        from_: Optional[int] = None,
+        h: Optional[Any] = None,
+        help: Optional[bool] = None,
+        human: Optional[bool] = None,
+        local: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        s: Optional[List[str]] = None,
+        size: Optional[int] = None,
+        v: Optional[bool] = None,
+    ) -> Any:
         """
-        Returns information about installed plugins across nodes node.
+        Gets configuration and usage information about inference trained models.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-plugins.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-trained-model.html>`_
 
-        :arg format: a short version of the Accept header, e.g. json,
-            yaml
-        :arg h: Comma-separated list of column names to display
-        :arg help: Return help information
-        :arg include_bootstrap: Include bootstrap plugins in the
-            response
-        :arg local: Return local information, do not retrieve the state
-            from master node (default: false)
-        :arg master_timeout: Explicit operation timeout for connection
-            to master node
-        :arg s: Comma-separated list of column names or column aliases
-            to sort by
-        :arg v: Verbose mode. Display column headers
+        :param model_id: The ID of the trained models stats to fetch
+        :param allow_no_match: Whether to ignore if a wildcard expression matches no
+            trained models. (This includes `_all` string or when no trained models have
+            been specified)
+        :param bytes: The unit in which to display byte values
+        :param format: Specifies the format to return the columnar data in, can be set
+            to `text`, `json`, `cbor`, `yaml`, or `smile`.
+        :param from_: skips a number of trained models
+        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param help: When set to `true` will output available columns. This option can't
+            be combined with any other query string option.
+        :param local: If `true`, the request computes the list of selected nodes from
+            the local cluster state. If `false` the list of selected nodes are computed
+            from the cluster state of the master node. In both cases the coordinating
+            node will send requests for further information to each selected node.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param s: List of columns that determine how the table should be sorted. Sorting
+            defaults to ascending and can be changed by setting `:asc` or `:desc` as
+            a suffix to the column name.
+        :param size: specifies a max number of trained models to get
+        :param v: When set to `true` will enable verbose output.
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", "/_cat/plugins", params=params, headers=headers
-        )
+        if model_id not in SKIP_IN_PATH:
+            __path = f"/_cat/ml/trained_models/{_quote(model_id)}"
+        else:
+            __path = "/_cat/ml/trained_models"
+        __query: Dict[str, Any] = {}
+        if allow_no_match is not None:
+            __query["allow_no_match"] = allow_no_match
+        if bytes is not None:
+            __query["bytes"] = bytes
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if format is not None:
+            __query["format"] = format
+        if from_ is not None:
+            __query["from"] = from_
+        if h is not None:
+            __query["h"] = h
+        if help is not None:
+            __query["help"] = help
+        if human is not None:
+            __query["human"] = human
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if s is not None:
+            __query["s"] = s
+        if size is not None:
+            __query["size"] = size
+        if v is not None:
+            __query["v"] = v
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "text/plain,application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
 
-    @query_params("format", "h", "help", "local", "master_timeout", "s", "v")
-    def nodeattrs(self, params=None, headers=None):
+    @_rewrite_parameters()
+    def nodeattrs(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        format: Optional[str] = None,
+        h: Optional[Any] = None,
+        help: Optional[bool] = None,
+        human: Optional[bool] = None,
+        local: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        s: Optional[List[str]] = None,
+        v: Optional[bool] = None,
+    ) -> Any:
         """
         Returns information about custom node attributes.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-nodeattrs.html>`_
 
-        :arg format: a short version of the Accept header, e.g. json,
-            yaml
-        :arg h: Comma-separated list of column names to display
-        :arg help: Return help information
-        :arg local: Return local information, do not retrieve the state
-            from master node (default: false)
-        :arg master_timeout: Explicit operation timeout for connection
-            to master node
-        :arg s: Comma-separated list of column names or column aliases
-            to sort by
-        :arg v: Verbose mode. Display column headers
+        :param format: Specifies the format to return the columnar data in, can be set
+            to `text`, `json`, `cbor`, `yaml`, or `smile`.
+        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param help: When set to `true` will output available columns. This option can't
+            be combined with any other query string option.
+        :param local: If `true`, the request computes the list of selected nodes from
+            the local cluster state. If `false` the list of selected nodes are computed
+            from the cluster state of the master node. In both cases the coordinating
+            node will send requests for further information to each selected node.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param s: List of columns that determine how the table should be sorted. Sorting
+            defaults to ascending and can be changed by setting `:asc` or `:desc` as
+            a suffix to the column name.
+        :param v: When set to `true` will enable verbose output.
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", "/_cat/nodeattrs", params=params, headers=headers
-        )
+        __path = "/_cat/nodeattrs"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if format is not None:
+            __query["format"] = format
+        if h is not None:
+            __query["h"] = h
+        if help is not None:
+            __query["help"] = help
+        if human is not None:
+            __query["human"] = human
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if s is not None:
+            __query["s"] = s
+        if v is not None:
+            __query["v"] = v
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "text/plain,application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
 
-    @query_params("format", "h", "help", "local", "master_timeout", "s", "v")
-    def repositories(self, params=None, headers=None):
+    @_rewrite_parameters()
+    def nodes(
+        self,
+        *,
+        bytes: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        format: Optional[str] = None,
+        full_id: Optional[Union[bool, str]] = None,
+        h: Optional[Any] = None,
+        help: Optional[bool] = None,
+        human: Optional[bool] = None,
+        local: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        s: Optional[List[str]] = None,
+        v: Optional[bool] = None,
+    ) -> Any:
+        """
+        Returns basic statistics about performance of cluster nodes.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-nodes.html>`_
+
+        :param bytes: The unit in which to display byte values
+        :param format: Specifies the format to return the columnar data in, can be set
+            to `text`, `json`, `cbor`, `yaml`, or `smile`.
+        :param full_id: Return the full node ID instead of the shortened version (default:
+            false)
+        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param help: When set to `true` will output available columns. This option can't
+            be combined with any other query string option.
+        :param local: If `true`, the request computes the list of selected nodes from
+            the local cluster state. If `false` the list of selected nodes are computed
+            from the cluster state of the master node. In both cases the coordinating
+            node will send requests for further information to each selected node.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param s: List of columns that determine how the table should be sorted. Sorting
+            defaults to ascending and can be changed by setting `:asc` or `:desc` as
+            a suffix to the column name.
+        :param v: When set to `true` will enable verbose output.
+        """
+        __path = "/_cat/nodes"
+        __query: Dict[str, Any] = {}
+        if bytes is not None:
+            __query["bytes"] = bytes
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if format is not None:
+            __query["format"] = format
+        if full_id is not None:
+            __query["full_id"] = full_id
+        if h is not None:
+            __query["h"] = h
+        if help is not None:
+            __query["help"] = help
+        if human is not None:
+            __query["human"] = human
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if s is not None:
+            __query["s"] = s
+        if v is not None:
+            __query["v"] = v
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "text/plain,application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    def pending_tasks(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        format: Optional[str] = None,
+        h: Optional[Any] = None,
+        help: Optional[bool] = None,
+        human: Optional[bool] = None,
+        local: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        s: Optional[List[str]] = None,
+        v: Optional[bool] = None,
+    ) -> Any:
+        """
+        Returns a concise representation of the cluster pending tasks.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-pending-tasks.html>`_
+
+        :param format: Specifies the format to return the columnar data in, can be set
+            to `text`, `json`, `cbor`, `yaml`, or `smile`.
+        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param help: When set to `true` will output available columns. This option can't
+            be combined with any other query string option.
+        :param local: If `true`, the request computes the list of selected nodes from
+            the local cluster state. If `false` the list of selected nodes are computed
+            from the cluster state of the master node. In both cases the coordinating
+            node will send requests for further information to each selected node.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param s: List of columns that determine how the table should be sorted. Sorting
+            defaults to ascending and can be changed by setting `:asc` or `:desc` as
+            a suffix to the column name.
+        :param v: When set to `true` will enable verbose output.
+        """
+        __path = "/_cat/pending_tasks"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if format is not None:
+            __query["format"] = format
+        if h is not None:
+            __query["h"] = h
+        if help is not None:
+            __query["help"] = help
+        if human is not None:
+            __query["human"] = human
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if s is not None:
+            __query["s"] = s
+        if v is not None:
+            __query["v"] = v
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "text/plain,application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    def plugins(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        format: Optional[str] = None,
+        h: Optional[Any] = None,
+        help: Optional[bool] = None,
+        human: Optional[bool] = None,
+        local: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        s: Optional[List[str]] = None,
+        v: Optional[bool] = None,
+    ) -> Any:
+        """
+        Returns information about installed plugins across nodes node.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-plugins.html>`_
+
+        :param format: Specifies the format to return the columnar data in, can be set
+            to `text`, `json`, `cbor`, `yaml`, or `smile`.
+        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param help: When set to `true` will output available columns. This option can't
+            be combined with any other query string option.
+        :param local: If `true`, the request computes the list of selected nodes from
+            the local cluster state. If `false` the list of selected nodes are computed
+            from the cluster state of the master node. In both cases the coordinating
+            node will send requests for further information to each selected node.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param s: List of columns that determine how the table should be sorted. Sorting
+            defaults to ascending and can be changed by setting `:asc` or `:desc` as
+            a suffix to the column name.
+        :param v: When set to `true` will enable verbose output.
+        """
+        __path = "/_cat/plugins"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if format is not None:
+            __query["format"] = format
+        if h is not None:
+            __query["h"] = h
+        if help is not None:
+            __query["help"] = help
+        if human is not None:
+            __query["human"] = human
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if s is not None:
+            __query["s"] = s
+        if v is not None:
+            __query["v"] = v
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "text/plain,application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    def recovery(
+        self,
+        *,
+        index: Optional[Any] = None,
+        active_only: Optional[bool] = None,
+        bytes: Optional[Any] = None,
+        detailed: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        format: Optional[str] = None,
+        h: Optional[Any] = None,
+        help: Optional[bool] = None,
+        human: Optional[bool] = None,
+        local: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        s: Optional[List[str]] = None,
+        v: Optional[bool] = None,
+    ) -> Any:
+        """
+        Returns information about index shard recoveries, both on-going completed.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-recovery.html>`_
+
+        :param index: Comma-separated list or wildcard expression of index names to limit
+            the returned information
+        :param active_only: If `true`, the response only includes ongoing shard recoveries
+        :param bytes: The unit in which to display byte values
+        :param detailed: If `true`, the response includes detailed information about
+            shard recoveries
+        :param format: Specifies the format to return the columnar data in, can be set
+            to `text`, `json`, `cbor`, `yaml`, or `smile`.
+        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param help: When set to `true` will output available columns. This option can't
+            be combined with any other query string option.
+        :param local: If `true`, the request computes the list of selected nodes from
+            the local cluster state. If `false` the list of selected nodes are computed
+            from the cluster state of the master node. In both cases the coordinating
+            node will send requests for further information to each selected node.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param s: List of columns that determine how the table should be sorted. Sorting
+            defaults to ascending and can be changed by setting `:asc` or `:desc` as
+            a suffix to the column name.
+        :param v: When set to `true` will enable verbose output.
+        """
+        if index not in SKIP_IN_PATH:
+            __path = f"/_cat/recovery/{_quote(index)}"
+        else:
+            __path = "/_cat/recovery"
+        __query: Dict[str, Any] = {}
+        if active_only is not None:
+            __query["active_only"] = active_only
+        if bytes is not None:
+            __query["bytes"] = bytes
+        if detailed is not None:
+            __query["detailed"] = detailed
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if format is not None:
+            __query["format"] = format
+        if h is not None:
+            __query["h"] = h
+        if help is not None:
+            __query["help"] = help
+        if human is not None:
+            __query["human"] = human
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if s is not None:
+            __query["s"] = s
+        if v is not None:
+            __query["v"] = v
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "text/plain,application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    def repositories(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        format: Optional[str] = None,
+        h: Optional[Any] = None,
+        help: Optional[bool] = None,
+        human: Optional[bool] = None,
+        local: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        s: Optional[List[str]] = None,
+        v: Optional[bool] = None,
+    ) -> Any:
         """
         Returns information about snapshot repositories registered in the cluster.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-repositories.html>`_
 
-        :arg format: a short version of the Accept header, e.g. json,
-            yaml
-        :arg h: Comma-separated list of column names to display
-        :arg help: Return help information
-        :arg local: Return local information, do not retrieve the state
-            from master node
-        :arg master_timeout: Explicit operation timeout for connection
-            to master node
-        :arg s: Comma-separated list of column names or column aliases
-            to sort by
-        :arg v: Verbose mode. Display column headers
+        :param format: Specifies the format to return the columnar data in, can be set
+            to `text`, `json`, `cbor`, `yaml`, or `smile`.
+        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param help: When set to `true` will output available columns. This option can't
+            be combined with any other query string option.
+        :param local: If `true`, the request computes the list of selected nodes from
+            the local cluster state. If `false` the list of selected nodes are computed
+            from the cluster state of the master node. In both cases the coordinating
+            node will send requests for further information to each selected node.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param s: List of columns that determine how the table should be sorted. Sorting
+            defaults to ascending and can be changed by setting `:asc` or `:desc` as
+            a suffix to the column name.
+        :param v: When set to `true` will enable verbose output.
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", "/_cat/repositories", params=params, headers=headers
-        )
+        __path = "/_cat/repositories"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if format is not None:
+            __query["format"] = format
+        if h is not None:
+            __query["h"] = h
+        if help is not None:
+            __query["help"] = help
+        if human is not None:
+            __query["human"] = human
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if s is not None:
+            __query["s"] = s
+        if v is not None:
+            __query["v"] = v
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "text/plain,application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
 
-    @query_params(
-        "format", "h", "help", "ignore_unavailable", "master_timeout", "s", "time", "v"
-    )
-    def snapshots(self, repository=None, params=None, headers=None):
+    @_rewrite_parameters()
+    def segments(
+        self,
+        *,
+        index: Optional[Any] = None,
+        bytes: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        format: Optional[str] = None,
+        h: Optional[Any] = None,
+        help: Optional[bool] = None,
+        human: Optional[bool] = None,
+        local: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        s: Optional[List[str]] = None,
+        v: Optional[bool] = None,
+    ) -> Any:
+        """
+        Provides low-level information about the segments in the shards of an index.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-segments.html>`_
+
+        :param index: A comma-separated list of index names to limit the returned information
+        :param bytes: The unit in which to display byte values
+        :param format: Specifies the format to return the columnar data in, can be set
+            to `text`, `json`, `cbor`, `yaml`, or `smile`.
+        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param help: When set to `true` will output available columns. This option can't
+            be combined with any other query string option.
+        :param local: If `true`, the request computes the list of selected nodes from
+            the local cluster state. If `false` the list of selected nodes are computed
+            from the cluster state of the master node. In both cases the coordinating
+            node will send requests for further information to each selected node.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param s: List of columns that determine how the table should be sorted. Sorting
+            defaults to ascending and can be changed by setting `:asc` or `:desc` as
+            a suffix to the column name.
+        :param v: When set to `true` will enable verbose output.
+        """
+        if index not in SKIP_IN_PATH:
+            __path = f"/_cat/segments/{_quote(index)}"
+        else:
+            __path = "/_cat/segments"
+        __query: Dict[str, Any] = {}
+        if bytes is not None:
+            __query["bytes"] = bytes
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if format is not None:
+            __query["format"] = format
+        if h is not None:
+            __query["h"] = h
+        if help is not None:
+            __query["help"] = help
+        if human is not None:
+            __query["human"] = human
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if s is not None:
+            __query["s"] = s
+        if v is not None:
+            __query["v"] = v
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "text/plain,application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    def shards(
+        self,
+        *,
+        index: Optional[Any] = None,
+        bytes: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        format: Optional[str] = None,
+        h: Optional[Any] = None,
+        help: Optional[bool] = None,
+        human: Optional[bool] = None,
+        local: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        s: Optional[List[str]] = None,
+        v: Optional[bool] = None,
+    ) -> Any:
+        """
+        Provides a detailed view of shard allocation on nodes.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-shards.html>`_
+
+        :param index: A comma-separated list of index names to limit the returned information
+        :param bytes: The unit in which to display byte values
+        :param format: Specifies the format to return the columnar data in, can be set
+            to `text`, `json`, `cbor`, `yaml`, or `smile`.
+        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param help: When set to `true` will output available columns. This option can't
+            be combined with any other query string option.
+        :param local: If `true`, the request computes the list of selected nodes from
+            the local cluster state. If `false` the list of selected nodes are computed
+            from the cluster state of the master node. In both cases the coordinating
+            node will send requests for further information to each selected node.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param s: List of columns that determine how the table should be sorted. Sorting
+            defaults to ascending and can be changed by setting `:asc` or `:desc` as
+            a suffix to the column name.
+        :param v: When set to `true` will enable verbose output.
+        """
+        if index not in SKIP_IN_PATH:
+            __path = f"/_cat/shards/{_quote(index)}"
+        else:
+            __path = "/_cat/shards"
+        __query: Dict[str, Any] = {}
+        if bytes is not None:
+            __query["bytes"] = bytes
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if format is not None:
+            __query["format"] = format
+        if h is not None:
+            __query["h"] = h
+        if help is not None:
+            __query["help"] = help
+        if human is not None:
+            __query["human"] = human
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if s is not None:
+            __query["s"] = s
+        if v is not None:
+            __query["v"] = v
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "text/plain,application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
+
+    @_rewrite_parameters()
+    def snapshots(
+        self,
+        *,
+        repository: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        format: Optional[str] = None,
+        h: Optional[Any] = None,
+        help: Optional[bool] = None,
+        human: Optional[bool] = None,
+        ignore_unavailable: Optional[bool] = None,
+        local: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        s: Optional[List[str]] = None,
+        v: Optional[bool] = None,
+    ) -> Any:
         """
         Returns all snapshots in a specific repository.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-snapshots.html>`_
 
-        :arg repository: Name of repository from which to fetch the
-            snapshot information
-        :arg format: a short version of the Accept header, e.g. json,
-            yaml
-        :arg h: Comma-separated list of column names to display
-        :arg help: Return help information
-        :arg ignore_unavailable: Set to true to ignore unavailable
-            snapshots
-        :arg master_timeout: Explicit operation timeout for connection
-            to master node
-        :arg s: Comma-separated list of column names or column aliases
-            to sort by
-        :arg time: The unit in which to display time values  Valid
-            choices: d, h, m, s, ms, micros, nanos
-        :arg v: Verbose mode. Display column headers
+        :param repository: Name of repository from which to fetch the snapshot information
+        :param format: Specifies the format to return the columnar data in, can be set
+            to `text`, `json`, `cbor`, `yaml`, or `smile`.
+        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param help: When set to `true` will output available columns. This option can't
+            be combined with any other query string option.
+        :param ignore_unavailable: Set to true to ignore unavailable snapshots
+        :param local: If `true`, the request computes the list of selected nodes from
+            the local cluster state. If `false` the list of selected nodes are computed
+            from the cluster state of the master node. In both cases the coordinating
+            node will send requests for further information to each selected node.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param s: List of columns that determine how the table should be sorted. Sorting
+            defaults to ascending and can be changed by setting `:asc` or `:desc` as
+            a suffix to the column name.
+        :param v: When set to `true` will enable verbose output.
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET",
-            _make_path("_cat", "snapshots", repository),
-            params=params,
-            headers=headers,
-        )
+        if repository not in SKIP_IN_PATH:
+            __path = f"/_cat/snapshots/{_quote(repository)}"
+        else:
+            __path = "/_cat/snapshots"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if format is not None:
+            __query["format"] = format
+        if h is not None:
+            __query["h"] = h
+        if help is not None:
+            __query["help"] = help
+        if human is not None:
+            __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if s is not None:
+            __query["s"] = s
+        if v is not None:
+            __query["v"] = v
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "text/plain,application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
 
-    @query_params(
-        "actions",
-        "detailed",
-        "format",
-        "h",
-        "help",
-        "nodes",
-        "parent_task_id",
-        "s",
-        "time",
-        "v",
-    )
-    def tasks(self, params=None, headers=None):
+    @_rewrite_parameters()
+    def tasks(
+        self,
+        *,
+        actions: Optional[List[str]] = None,
+        detailed: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        format: Optional[str] = None,
+        h: Optional[Any] = None,
+        help: Optional[bool] = None,
+        human: Optional[bool] = None,
+        local: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        node_id: Optional[List[str]] = None,
+        parent_task: Optional[int] = None,
+        pretty: Optional[bool] = None,
+        s: Optional[List[str]] = None,
+        v: Optional[bool] = None,
+    ) -> Any:
         """
-        Returns information about the tasks currently executing on one or more nodes in
-        the cluster.
+        Returns information about the tasks currently executing on one or more nodes
+        in the cluster.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
 
-        .. warning::
-
-            This API is **experimental** so may include breaking changes
-            or be removed in a future version
-
-        :arg actions: A comma-separated list of actions that should be
-            returned. Leave empty to return all.
-        :arg detailed: Return detailed task information (default: false)
-        :arg format: a short version of the Accept header, e.g. json,
-            yaml
-        :arg h: Comma-separated list of column names to display
-        :arg help: Return help information
-        :arg nodes: A comma-separated list of node IDs or names to limit
-            the returned information; use `_local` to return information from the
-            node you're connecting to, leave empty to get information from all nodes
-        :arg parent_task_id: Return tasks with specified parent task id
-            (node_id:task_number). Set to -1 to return all.
-        :arg s: Comma-separated list of column names or column aliases
-            to sort by
-        :arg time: The unit in which to display time values  Valid
-            choices: d, h, m, s, ms, micros, nanos
-        :arg v: Verbose mode. Display column headers
+        :param actions: A comma-separated list of actions that should be returned. Leave
+            empty to return all.
+        :param detailed: Return detailed task information (default: false)
+        :param format: Specifies the format to return the columnar data in, can be set
+            to `text`, `json`, `cbor`, `yaml`, or `smile`.
+        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param help: When set to `true` will output available columns. This option can't
+            be combined with any other query string option.
+        :param local: If `true`, the request computes the list of selected nodes from
+            the local cluster state. If `false` the list of selected nodes are computed
+            from the cluster state of the master node. In both cases the coordinating
+            node will send requests for further information to each selected node.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param node_id:
+        :param parent_task:
+        :param s: List of columns that determine how the table should be sorted. Sorting
+            defaults to ascending and can be changed by setting `:asc` or `:desc` as
+            a suffix to the column name.
+        :param v: When set to `true` will enable verbose output.
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", "/_cat/tasks", params=params, headers=headers
-        )
+        __path = "/_cat/tasks"
+        __query: Dict[str, Any] = {}
+        if actions is not None:
+            __query["actions"] = actions
+        if detailed is not None:
+            __query["detailed"] = detailed
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if format is not None:
+            __query["format"] = format
+        if h is not None:
+            __query["h"] = h
+        if help is not None:
+            __query["help"] = help
+        if human is not None:
+            __query["human"] = human
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if node_id is not None:
+            __query["node_id"] = node_id
+        if parent_task is not None:
+            __query["parent_task"] = parent_task
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if s is not None:
+            __query["s"] = s
+        if v is not None:
+            __query["v"] = v
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "text/plain,application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
 
-    @query_params("format", "h", "help", "local", "master_timeout", "s", "v")
-    def templates(self, name=None, params=None, headers=None):
+    @_rewrite_parameters()
+    def templates(
+        self,
+        *,
+        name: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        format: Optional[str] = None,
+        h: Optional[Any] = None,
+        help: Optional[bool] = None,
+        human: Optional[bool] = None,
+        local: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        s: Optional[List[str]] = None,
+        v: Optional[bool] = None,
+    ) -> Any:
         """
         Returns information about existing templates.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-templates.html>`_
 
-        :arg name: A pattern that returned template names must match
-        :arg format: a short version of the Accept header, e.g. json,
-            yaml
-        :arg h: Comma-separated list of column names to display
-        :arg help: Return help information
-        :arg local: Return local information, do not retrieve the state
-            from master node (default: false)
-        :arg master_timeout: Explicit operation timeout for connection
-            to master node
-        :arg s: Comma-separated list of column names or column aliases
-            to sort by
-        :arg v: Verbose mode. Display column headers
+        :param name: A pattern that returned template names must match
+        :param format: Specifies the format to return the columnar data in, can be set
+            to `text`, `json`, `cbor`, `yaml`, or `smile`.
+        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param help: When set to `true` will output available columns. This option can't
+            be combined with any other query string option.
+        :param local: If `true`, the request computes the list of selected nodes from
+            the local cluster state. If `false` the list of selected nodes are computed
+            from the cluster state of the master node. In both cases the coordinating
+            node will send requests for further information to each selected node.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param s: List of columns that determine how the table should be sorted. Sorting
+            defaults to ascending and can be changed by setting `:asc` or `:desc` as
+            a suffix to the column name.
+        :param v: When set to `true` will enable verbose output.
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET", _make_path("_cat", "templates", name), params=params, headers=headers
-        )
+        if name not in SKIP_IN_PATH:
+            __path = f"/_cat/templates/{_quote(name)}"
+        else:
+            __path = "/_cat/templates"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if format is not None:
+            __query["format"] = format
+        if h is not None:
+            __query["h"] = h
+        if help is not None:
+            __query["help"] = help
+        if human is not None:
+            __query["human"] = human
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if s is not None:
+            __query["s"] = s
+        if v is not None:
+            __query["v"] = v
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "text/plain,application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
 
-    @query_params("allow_no_match", "bytes", "format", "h", "help", "s", "time", "v")
-    def ml_data_frame_analytics(self, id=None, params=None, headers=None):
+    @_rewrite_parameters()
+    def thread_pool(
+        self,
+        *,
+        thread_pool_patterns: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        format: Optional[str] = None,
+        h: Optional[Any] = None,
+        help: Optional[bool] = None,
+        human: Optional[bool] = None,
+        local: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        s: Optional[List[str]] = None,
+        size: Optional[Union[Any, bool]] = None,
+        v: Optional[bool] = None,
+    ) -> Any:
         """
-        Gets configuration and usage information about data frame analytics jobs.
+        Returns cluster-wide thread pool statistics per node. By default the active,
+        queue and rejected statistics are returned for all thread pools.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-dfanalytics.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-thread-pool.html>`_
 
-        :arg id: The ID of the data frame analytics to fetch
-        :arg allow_no_match: Whether to ignore if a wildcard expression
-            matches no configs. (This includes `_all` string or when no configs have
-            been specified)
-        :arg bytes: The unit in which to display byte values  Valid
-            choices: b, k, kb, m, mb, g, gb, t, tb, p, pb
-        :arg format: a short version of the Accept header, e.g. json,
-            yaml
-        :arg h: Comma-separated list of column names to display
-        :arg help: Return help information
-        :arg s: Comma-separated list of column names or column aliases
-            to sort by
-        :arg time: The unit in which to display time values  Valid
-            choices: d, h, m, s, ms, micros, nanos
-        :arg v: Verbose mode. Display column headers
+        :param thread_pool_patterns: A comma-separated list of regular-expressions to
+            filter the thread pools in the output
+        :param format: Specifies the format to return the columnar data in, can be set
+            to `text`, `json`, `cbor`, `yaml`, or `smile`.
+        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param help: When set to `true` will output available columns. This option can't
+            be combined with any other query string option.
+        :param local: If `true`, the request computes the list of selected nodes from
+            the local cluster state. If `false` the list of selected nodes are computed
+            from the cluster state of the master node. In both cases the coordinating
+            node will send requests for further information to each selected node.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param s: List of columns that determine how the table should be sorted. Sorting
+            defaults to ascending and can be changed by setting `:asc` or `:desc` as
+            a suffix to the column name.
+        :param size:
+        :param v: When set to `true` will enable verbose output.
         """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET",
-            _make_path("_cat", "ml", "data_frame", "analytics", id),
-            params=params,
-            headers=headers,
-        )
+        if thread_pool_patterns not in SKIP_IN_PATH:
+            __path = f"/_cat/thread_pool/{_quote(thread_pool_patterns)}"
+        else:
+            __path = "/_cat/thread_pool"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if format is not None:
+            __query["format"] = format
+        if h is not None:
+            __query["h"] = h
+        if help is not None:
+            __query["help"] = help
+        if human is not None:
+            __query["human"] = human
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if s is not None:
+            __query["s"] = s
+        if size is not None:
+            __query["size"] = size
+        if v is not None:
+            __query["v"] = v
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "text/plain,application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
 
-    @query_params(
-        "allow_no_datafeeds", "allow_no_match", "format", "h", "help", "s", "time", "v"
+    @_rewrite_parameters(
+        parameter_aliases={"from": "from_"},
     )
-    def ml_datafeeds(self, datafeed_id=None, params=None, headers=None):
-        """
-        Gets configuration and usage information about datafeeds.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-datafeeds.html>`_
-
-        :arg datafeed_id: The ID of the datafeeds stats to fetch
-        :arg allow_no_datafeeds: Whether to ignore if a wildcard
-            expression matches no datafeeds. (This includes `_all` string or when no
-            datafeeds have been specified)
-        :arg allow_no_match: Whether to ignore if a wildcard expression
-            matches no datafeeds. (This includes `_all` string or when no datafeeds
-            have been specified)
-        :arg format: a short version of the Accept header, e.g. json,
-            yaml
-        :arg h: Comma-separated list of column names to display
-        :arg help: Return help information
-        :arg s: Comma-separated list of column names or column aliases
-            to sort by
-        :arg time: The unit in which to display time values  Valid
-            choices: d, h, m, s, ms, micros, nanos
-        :arg v: Verbose mode. Display column headers
-        """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET",
-            _make_path("_cat", "ml", "datafeeds", datafeed_id),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params(
-        "allow_no_jobs",
-        "allow_no_match",
-        "bytes",
-        "format",
-        "h",
-        "help",
-        "s",
-        "time",
-        "v",
-    )
-    def ml_jobs(self, job_id=None, params=None, headers=None):
-        """
-        Gets configuration and usage information about anomaly detection jobs.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-anomaly-detectors.html>`_
-
-        :arg job_id: The ID of the jobs stats to fetch
-        :arg allow_no_jobs: Whether to ignore if a wildcard expression
-            matches no jobs. (This includes `_all` string or when no jobs have been
-            specified)
-        :arg allow_no_match: Whether to ignore if a wildcard expression
-            matches no jobs. (This includes `_all` string or when no jobs have been
-            specified)
-        :arg bytes: The unit in which to display byte values  Valid
-            choices: b, k, kb, m, mb, g, gb, t, tb, p, pb
-        :arg format: a short version of the Accept header, e.g. json,
-            yaml
-        :arg h: Comma-separated list of column names to display
-        :arg help: Return help information
-        :arg s: Comma-separated list of column names or column aliases
-            to sort by
-        :arg time: The unit in which to display time values  Valid
-            choices: d, h, m, s, ms, micros, nanos
-        :arg v: Verbose mode. Display column headers
-        """
-        client, params = _deprecated_options(self, params)
-        return client._perform_request(
-            "GET",
-            _make_path("_cat", "ml", "anomaly_detectors", job_id),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params(
-        "allow_no_match",
-        "bytes",
-        "format",
-        "from_",
-        "h",
-        "help",
-        "s",
-        "size",
-        "time",
-        "v",
-    )
-    def ml_trained_models(self, model_id=None, params=None, headers=None):
-        """
-        Gets configuration and usage information about inference trained models.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-trained-model.html>`_
-
-        :arg model_id: The ID of the trained models stats to fetch
-        :arg allow_no_match: Whether to ignore if a wildcard expression
-            matches no trained models. (This includes `_all` string or when no
-            trained models have been specified)  Default: True
-        :arg bytes: The unit in which to display byte values  Valid
-            choices: b, k, kb, m, mb, g, gb, t, tb, p, pb
-        :arg format: a short version of the Accept header, e.g. json,
-            yaml
-        :arg from\\_: skips a number of trained models
-        :arg h: Comma-separated list of column names to display
-        :arg help: Return help information
-        :arg s: Comma-separated list of column names or column aliases
-            to sort by
-        :arg size: specifies a max number of trained models to get
-            Default: 100
-        :arg time: The unit in which to display time values  Valid
-            choices: d, h, m, s, ms, micros, nanos
-        :arg v: Verbose mode. Display column headers
-        """
-        client, params = _deprecated_options(self, params)
-        if params and "from_" in params:
-            params["from"] = params.pop("from_")
-
-        return client._perform_request(
-            "GET",
-            _make_path("_cat", "ml", "trained_models", model_id),
-            params=params,
-            headers=headers,
-        )
-
-    @query_params(
-        "allow_no_match", "format", "from_", "h", "help", "s", "size", "time", "v"
-    )
-    def transforms(self, transform_id=None, params=None, headers=None):
+    def transforms(
+        self,
+        *,
+        transform_id: Optional[Any] = None,
+        allow_no_match: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        format: Optional[str] = None,
+        from_: Optional[int] = None,
+        h: Optional[Any] = None,
+        help: Optional[bool] = None,
+        human: Optional[bool] = None,
+        local: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        s: Optional[List[str]] = None,
+        size: Optional[int] = None,
+        v: Optional[bool] = None,
+    ) -> Any:
         """
         Gets configuration and usage information about transforms.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-transforms.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-transforms.html>`_
 
-        :arg transform_id: The id of the transform for which to get
-            stats. '_all' or '*' implies all transforms
-        :arg allow_no_match: Whether to ignore if a wildcard expression
-            matches no transforms. (This includes `_all` string or when no
-            transforms have been specified)
-        :arg format: a short version of the Accept header, e.g. json,
-            yaml
-        :arg from\\_: skips a number of transform configs, defaults to 0
-        :arg h: Comma-separated list of column names to display
-        :arg help: Return help information
-        :arg s: Comma-separated list of column names or column aliases
-            to sort by
-        :arg size: specifies a max number of transforms to get, defaults
-            to 100
-        :arg time: The unit in which to display time values  Valid
-            choices: d, h, m, s, ms, micros, nanos
-        :arg v: Verbose mode. Display column headers
+        :param transform_id: The id of the transform for which to get stats. '_all' or
+            '*' implies all transforms
+        :param allow_no_match: Whether to ignore if a wildcard expression matches no
+            transforms. (This includes `_all` string or when no transforms have been
+            specified)
+        :param format: Specifies the format to return the columnar data in, can be set
+            to `text`, `json`, `cbor`, `yaml`, or `smile`.
+        :param from_: skips a number of transform configs, defaults to 0
+        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param help: When set to `true` will output available columns. This option can't
+            be combined with any other query string option.
+        :param local: If `true`, the request computes the list of selected nodes from
+            the local cluster state. If `false` the list of selected nodes are computed
+            from the cluster state of the master node. In both cases the coordinating
+            node will send requests for further information to each selected node.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param s: List of columns that determine how the table should be sorted. Sorting
+            defaults to ascending and can be changed by setting `:asc` or `:desc` as
+            a suffix to the column name.
+        :param size: specifies a max number of transforms to get, defaults to 100
+        :param v: When set to `true` will enable verbose output.
         """
-        client, params = _deprecated_options(self, params)
-        if params and "from_" in params:
-            params["from"] = params.pop("from_")
-
-        return client._perform_request(
-            "GET",
-            _make_path("_cat", "transforms", transform_id),
-            params=params,
-            headers=headers,
-        )
+        if transform_id not in SKIP_IN_PATH:
+            __path = f"/_cat/transforms/{_quote(transform_id)}"
+        else:
+            __path = "/_cat/transforms"
+        __query: Dict[str, Any] = {}
+        if allow_no_match is not None:
+            __query["allow_no_match"] = allow_no_match
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if format is not None:
+            __query["format"] = format
+        if from_ is not None:
+            __query["from"] = from_
+        if h is not None:
+            __query["h"] = h
+        if help is not None:
+            __query["help"] = help
+        if human is not None:
+            __query["human"] = human
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if s is not None:
+            __query["s"] = s
+        if size is not None:
+            __query["size"] = size
+        if v is not None:
+            __query["v"] = v
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "text/plain,application/json"}
+        return self._perform_request("GET", __target, headers=__headers)
