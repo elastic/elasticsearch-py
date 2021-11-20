@@ -30,7 +30,7 @@ you don't have Elasticsearch running locally the integration tests will be skipp
 ## API Code Generation
 
 All the API methods (any method in `elasticsearch.client` classes decorated
-with `@query_params`) are actually auto-generated from the
+with `@_rewrite_parameters`) are actually auto-generated from the
 [rest-api-spec](https://github.com/elastic/elasticsearch/tree/master/rest-api-spec/src/main/resources/rest-api-spec/api)
 found in the `Elasticsearch` or the [Elasticsearch specification](https://github.com/elastic/elasticsearch-specification)
 repositories. Any changes to those methods should be done either by submitting a PR to one of these repositories
