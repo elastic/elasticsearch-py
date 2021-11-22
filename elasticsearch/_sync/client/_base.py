@@ -240,6 +240,7 @@ class BaseClient:
         self._max_retries: Union[DefaultType, int] = DEFAULT
         self._retry_on_timeout: Union[DefaultType, bool] = DEFAULT
         self._retry_on_status: Union[DefaultType, Collection[int]] = DEFAULT
+        self._verified_elasticsearch = False
 
     @property
     def transport(self) -> Transport:
@@ -297,20 +298,25 @@ class BaseClient:
                 message=message, meta=meta, body=resp_body
             )
 
-        # 'X-Elastic-Product: Elasticsearch' should be on every response.
-        if meta.headers.get("x-elastic-product", "") != "Elasticsearch":
-            raise UnsupportedProductError(
-                message=(
-                    "The client noticed that the server is not Elasticsearch "
-                    "and we do not support this unknown product"
-                ),
-                meta=meta,
-                body=resp_body,
-            )
+        # 'X-Elastic-Product: Elasticsearch' should be on every 2XX response.
+        if not self._verified_elasticsearch:
+            # If the header is set we mark the server as verified.
+            if meta.headers.get("x-elastic-product", "") == "Elasticsearch":
+                self._verified_elasticsearch = True
+            # Otherwise we only raise an error on 2XX responses.
+            elif meta.status >= 200 and meta.status < 300:
+                raise UnsupportedProductError(
+                    message=(
+                        "The client noticed that the server is not Elasticsearch "
+                        "and we do not support this unknown product"
+                    ),
+                    meta=meta,
+                    body=resp_body,
+                )
 
         # 'Warning' headers should be reraised as 'ElasticsearchWarning'
-        warning_header = (meta.headers.get("warning") or "").strip()
-        if warning_header:
+        if "warning" in meta.headers:
+            warning_header = (meta.headers.get("warning") or "").strip()
             warning_messages: Iterable[str] = _WARNING_RE.findall(warning_header) or (
                 warning_header,
             )
