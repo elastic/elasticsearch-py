@@ -17,6 +17,8 @@
 
 from typing import Any, Dict, List, Optional, Union
 
+from elastic_transport import ObjectApiResponse
+
 from ._base import NamespacedClient
 from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
@@ -31,7 +33,7 @@ class EnrichClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes an existing enrich policy and its enrich index.
 
@@ -56,7 +58,7 @@ class EnrichClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("DELETE", __target, headers=__headers)
+        return await self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def execute_policy(
@@ -68,7 +70,7 @@ class EnrichClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         wait_for_completion: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Creates the enrich index for an existing enrich policy.
 
@@ -97,7 +99,7 @@ class EnrichClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("PUT", __target, headers=__headers)
+        return await self._perform_request("PUT", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def get_policy(
@@ -108,7 +110,7 @@ class EnrichClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Gets information about an enrich policy.
 
@@ -134,7 +136,7 @@ class EnrichClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -149,7 +151,7 @@ class EnrichClient(NamespacedClient):
         human: Optional[bool] = None,
         match: Optional[Any] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Creates a new enrich policy.
 
@@ -181,9 +183,7 @@ class EnrichClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request(
-            "PUT", __target, headers=__headers, body=__body
-        )
+        return await self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def stats(
@@ -193,7 +193,7 @@ class EnrichClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Gets enrich coordinator statistics and information about enrich policies that
         are currently executing.
@@ -215,4 +215,4 @@ class EnrichClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]

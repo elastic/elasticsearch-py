@@ -23,49 +23,45 @@ from ._base import NamespacedClient
 from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
 
-class GraphClient(NamespacedClient):
-    @_rewrite_parameters(
-        body_fields=True,
-    )
-    def explore(
+class FleetClient(NamespacedClient):
+    @_rewrite_parameters()
+    async def global_checkpoints(
         self,
         *,
         index: Any,
-        connections: Optional[Any] = None,
-        controls: Optional[Any] = None,
+        checkpoints: Optional[List[Any]] = None,
         error_trace: Optional[bool] = None,
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-        query: Optional[Any] = None,
-        routing: Optional[Any] = None,
         timeout: Optional[Any] = None,
-        vertices: Optional[List[Any]] = None,
+        wait_for_advance: Optional[bool] = None,
+        wait_for_index: Optional[bool] = None,
     ) -> ObjectApiResponse[Any]:
         """
-        Explore extracted and summarized information about the documents and terms in
-        an index.
+        Returns the current global checkpoints for an index. This API is design for internal
+        use by the fleet server project.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/graph-explore-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-global-checkpoints.html>`_
 
-        :param index: A comma-separated list of index names to search; use `_all` or
-            empty string to perform the operation on all indices
-        :param connections:
-        :param controls:
-        :param query:
-        :param routing: Specific routing value
-        :param timeout: Explicit operation timeout
-        :param vertices:
+        :param index: A single index or index alias that resolves to a single index.
+        :param checkpoints: A comma separated list of previous global checkpoints. When
+            used in combination with `wait_for_advance`, the API will only return once
+            the global checkpoints advances past the checkpoints. Providing an empty
+            list will cause Elasticsearch to immediately return the current global checkpoints.
+        :param timeout: Period to wait for a global checkpoints to advance past `checkpoints`.
+        :param wait_for_advance: A boolean value which controls whether to wait (until
+            the timeout) for the global checkpoints to advance past the provided `checkpoints`.
+        :param wait_for_index: A boolean value which controls whether to wait (until
+            the timeout) for the target index to exist and all primary shards be active.
+            Can only be true when `wait_for_advance` is true.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        __path = f"/{_quote(index)}/_graph/explore"
-        __body: Dict[str, Any] = {}
+        __path = f"/{_quote(index)}/_fleet/global_checkpoints"
         __query: Dict[str, Any] = {}
-        if connections is not None:
-            __body["connections"] = connections
-        if controls is not None:
-            __body["controls"] = controls
+        if checkpoints is not None:
+            __query["checkpoints"] = checkpoints
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -74,21 +70,15 @@ class GraphClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if query is not None:
-            __body["query"] = query
-        if routing is not None:
-            __query["routing"] = routing
         if timeout is not None:
             __query["timeout"] = timeout
-        if vertices is not None:
-            __body["vertices"] = vertices
-        if not __body:
-            __body = None  # type: ignore[assignment]
+        if wait_for_advance is not None:
+            __query["wait_for_advance"] = wait_for_advance
+        if wait_for_index is not None:
+            __query["wait_for_index"] = wait_for_index
         if __query:
             __target = f"{__path}?{_quote_query(__query)}"
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]

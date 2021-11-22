@@ -17,6 +17,8 @@
 
 from typing import Any, Dict, List, Optional, Union
 
+from elastic_transport import ObjectApiResponse
+
 from ._base import NamespacedClient
 from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
@@ -39,7 +41,7 @@ class GraphClient(NamespacedClient):
         routing: Optional[Any] = None,
         timeout: Optional[Any] = None,
         vertices: Optional[List[Any]] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Explore extracted and summarized information about the documents and terms in
         an index.
@@ -89,6 +91,4 @@ class GraphClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self._perform_request(
-            "POST", __target, headers=__headers, body=__body
-        )
+        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]

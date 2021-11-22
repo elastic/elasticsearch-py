@@ -17,6 +17,8 @@
 
 from typing import Any, Dict, List, Optional, Union
 
+from elastic_transport import ObjectApiResponse
+
 from ._base import NamespacedClient
 from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
@@ -31,7 +33,7 @@ class IlmClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes the specified lifecycle policy definition. A currently used policy cannot
         be deleted.
@@ -57,7 +59,7 @@ class IlmClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("DELETE", __target, headers=__headers)
+        return await self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def explain_lifecycle(
@@ -70,7 +72,7 @@ class IlmClient(NamespacedClient):
         only_errors: Optional[bool] = None,
         only_managed: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves information about the index's current lifecycle state, such as the
         currently executing phase, action, and step.
@@ -104,7 +106,7 @@ class IlmClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def get_lifecycle(
@@ -115,7 +117,7 @@ class IlmClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns the specified policy definition. Includes the policy version and last
         modified date.
@@ -142,7 +144,7 @@ class IlmClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def get_status(
@@ -152,7 +154,7 @@ class IlmClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves the current index lifecycle management (ILM) status.
 
@@ -173,7 +175,7 @@ class IlmClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -188,7 +190,7 @@ class IlmClient(NamespacedClient):
         human: Optional[bool] = None,
         next_step: Optional[Any] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Manually moves an index into the specified step and executes that step.
 
@@ -224,9 +226,7 @@ class IlmClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self._perform_request(
-            "POST", __target, headers=__headers, body=__body
-        )
+        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -240,7 +240,7 @@ class IlmClient(NamespacedClient):
         human: Optional[bool] = None,
         policy: Optional[Any] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Creates a lifecycle policy
 
@@ -273,9 +273,7 @@ class IlmClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self._perform_request(
-            "PUT", __target, headers=__headers, body=__body
-        )
+        return await self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def remove_policy(
@@ -286,7 +284,7 @@ class IlmClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Removes the assigned lifecycle policy and stops managing the specified index
 
@@ -311,7 +309,7 @@ class IlmClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers)
+        return await self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def retry(
@@ -322,7 +320,7 @@ class IlmClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retries executing the policy for an index that is in the ERROR step.
 
@@ -348,7 +346,7 @@ class IlmClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers)
+        return await self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def start(
@@ -360,7 +358,7 @@ class IlmClient(NamespacedClient):
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Start the index lifecycle management (ILM) plugin.
 
@@ -388,7 +386,7 @@ class IlmClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers)
+        return await self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def stop(
@@ -400,7 +398,7 @@ class IlmClient(NamespacedClient):
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Halts all lifecycle management operations and stops the index lifecycle management
         (ILM) plugin
@@ -429,4 +427,4 @@ class IlmClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers)
+        return await self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]

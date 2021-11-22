@@ -17,6 +17,8 @@
 
 from typing import Any, Dict, List, Optional
 
+from elastic_transport import ObjectApiResponse
+
 from ._base import NamespacedClient
 from .utils import _quote_query, _rewrite_parameters
 
@@ -43,7 +45,7 @@ class TextStructureClient(NamespacedClient):
         timeout: Optional[Any] = None,
         timestamp_field: Optional[Any] = None,
         timestamp_format: Optional[str] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Finds the structure of a text file. The text file must contain data that is suitable
         to be ingested into Elasticsearch.
@@ -155,4 +157,4 @@ class TextStructureClient(NamespacedClient):
             "accept": "application/json",
             "content-type": "application/x-ndjson",
         }
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]

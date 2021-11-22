@@ -17,6 +17,8 @@
 
 from typing import Any, Dict, List, Optional, Union
 
+from elastic_transport import ObjectApiResponse
+
 from ._base import NamespacedClient
 from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
@@ -31,7 +33,7 @@ class ShutdownClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Removes a node from the shutdown list. Designed for indirect use by ECE/ESS and
         ECK. Direct use is not supported.
@@ -57,7 +59,7 @@ class ShutdownClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("DELETE", __target, headers=__headers)
+        return await self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def get_node(
@@ -68,7 +70,7 @@ class ShutdownClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieve status of a node or nodes that are currently marked as shutting down.
         Designed for indirect use by ECE/ESS and ECK. Direct use is not supported.
@@ -95,7 +97,7 @@ class ShutdownClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def put_node(
@@ -106,7 +108,7 @@ class ShutdownClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Adds a node to be shut down. Designed for indirect use by ECE/ESS and ECK. Direct
         use is not supported.
@@ -132,4 +134,4 @@ class ShutdownClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("PUT", __target, headers=__headers)
+        return await self._perform_request("PUT", __target, headers=__headers)  # type: ignore[no-any-return,return-value]

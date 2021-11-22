@@ -17,6 +17,8 @@
 
 from typing import Any, Dict, List, Optional, Union
 
+from elastic_transport import ObjectApiResponse
+
 from ._base import NamespacedClient
 from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
@@ -31,7 +33,7 @@ class AutoscalingClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes an autoscaling policy. Designed for indirect use by ECE/ESS and ECK.
         Direct use is not supported.
@@ -57,7 +59,7 @@ class AutoscalingClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("DELETE", __target, headers=__headers)
+        return self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def get_autoscaling_capacity(
@@ -67,7 +69,7 @@ class AutoscalingClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Gets the current autoscaling capacity based on the configured autoscaling policy.
         Designed for indirect use by ECE/ESS and ECK. Direct use is not supported.
@@ -89,7 +91,7 @@ class AutoscalingClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def get_autoscaling_policy(
@@ -100,7 +102,7 @@ class AutoscalingClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves an autoscaling policy. Designed for indirect use by ECE/ESS and ECK.
         Direct use is not supported.
@@ -126,7 +128,7 @@ class AutoscalingClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_name="policy",
@@ -140,7 +142,7 @@ class AutoscalingClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Creates a new autoscaling policy. Designed for indirect use by ECE/ESS and ECK.
         Direct use is not supported.
@@ -170,4 +172,4 @@ class AutoscalingClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("PUT", __target, headers=__headers, body=__body)
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]

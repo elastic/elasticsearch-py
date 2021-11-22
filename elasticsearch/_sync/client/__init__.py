@@ -33,10 +33,12 @@ from typing import (
 
 from elastic_transport import (
     BaseNode,
+    BinaryApiResponse,
     HeadApiResponse,
     NodeConfig,
     NodePool,
     NodeSelector,
+    ObjectApiResponse,
     Serializer,
     Transport,
 )
@@ -59,6 +61,7 @@ from .dangling_indices import DanglingIndicesClient
 from .enrich import EnrichClient
 from .eql import EqlClient
 from .features import FeaturesClient
+from .fleet import FleetClient
 from .graph import GraphClient
 from .ilm import IlmClient
 from .indices import IndicesClient
@@ -392,6 +395,7 @@ class Elasticsearch(BaseClient):
         self.autoscaling = AutoscalingClient(self)
         self.cat = CatClient(self)
         self.cluster = ClusterClient(self)
+        self.fleet = FleetClient(self)
         self.features = FeaturesClient(self)
         self.indices = IndicesClient(self)
         self.ingest = IngestClient(self)
@@ -508,12 +512,12 @@ class Elasticsearch(BaseClient):
         refresh: Optional[Any] = None,
         require_alias: Optional[bool] = None,
         routing: Optional[Any] = None,
-        source: Optional[Union[Any, bool]] = None,
+        source: Optional[Any] = None,
         source_excludes: Optional[Any] = None,
         source_includes: Optional[Any] = None,
         timeout: Optional[Any] = None,
         wait_for_active_shards: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Allows to perform multiple index/update/delete operations in a single request.
 
@@ -586,7 +590,7 @@ class Elasticsearch(BaseClient):
             "accept": "application/json",
             "content-type": "application/x-ndjson",
         }
-        return self._perform_request("PUT", __target, headers=__headers, body=__body)
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -599,7 +603,7 @@ class Elasticsearch(BaseClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         scroll_id: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Explicitly clears the search context for a scroll.
 
@@ -629,7 +633,7 @@ class Elasticsearch(BaseClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("DELETE", __target, headers=__headers, body=__body)
+        return self._perform_request("DELETE", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -642,7 +646,7 @@ class Elasticsearch(BaseClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Close a point in time
 
@@ -674,7 +678,7 @@ class Elasticsearch(BaseClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("DELETE", __target, headers=__headers, body=__body)
+        return self._perform_request("DELETE", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -702,7 +706,7 @@ class Elasticsearch(BaseClient):
         query: Optional[Any] = None,
         routing: Optional[Any] = None,
         terminate_after: Optional[int] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns number of documents matching a query.
 
@@ -790,7 +794,7 @@ class Elasticsearch(BaseClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_name="document",
@@ -813,7 +817,7 @@ class Elasticsearch(BaseClient):
         version: Optional[Any] = None,
         version_type: Optional[Any] = None,
         wait_for_active_shards: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Creates a new document in the index. Returns a 409 response when a document with
         a same ID already exists in the index.
@@ -883,7 +887,7 @@ class Elasticsearch(BaseClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("PUT", __target, headers=__headers, body=__body)
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def delete(
@@ -904,7 +908,7 @@ class Elasticsearch(BaseClient):
         version: Optional[Any] = None,
         version_type: Optional[Any] = None,
         wait_for_active_shards: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Removes a document from the index.
 
@@ -974,7 +978,7 @@ class Elasticsearch(BaseClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("DELETE", __target, headers=__headers)
+        return self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1019,7 +1023,7 @@ class Elasticsearch(BaseClient):
         slice: Optional[Any] = None,
         slices: Optional[int] = None,
         sort: Optional[List[str]] = None,
-        source: Optional[Union[Any, bool]] = None,
+        source: Optional[Any] = None,
         source_excludes: Optional[Any] = None,
         source_includes: Optional[Any] = None,
         stats: Optional[List[str]] = None,
@@ -1028,7 +1032,7 @@ class Elasticsearch(BaseClient):
         version: Optional[bool] = None,
         wait_for_active_shards: Optional[Any] = None,
         wait_for_completion: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes documents matching the provided query.
 
@@ -1184,7 +1188,7 @@ class Elasticsearch(BaseClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def delete_by_query_rethrottle(
@@ -1196,7 +1200,7 @@ class Elasticsearch(BaseClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         requests_per_second: Optional[int] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Changes the number of requests per second for a particular Delete By Query operation.
 
@@ -1225,7 +1229,7 @@ class Elasticsearch(BaseClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)
+        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def delete_script(
@@ -1238,7 +1242,7 @@ class Elasticsearch(BaseClient):
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes a script.
 
@@ -1269,7 +1273,7 @@ class Elasticsearch(BaseClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("DELETE", __target, headers=__headers)
+        return self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         parameter_aliases={
@@ -1291,13 +1295,13 @@ class Elasticsearch(BaseClient):
         realtime: Optional[bool] = None,
         refresh: Optional[bool] = None,
         routing: Optional[Any] = None,
-        source: Optional[Union[Any, bool]] = None,
+        source: Optional[Any] = None,
         source_excludes: Optional[Any] = None,
         source_includes: Optional[Any] = None,
         stored_fields: Optional[Any] = None,
         version: Optional[Any] = None,
         version_type: Optional[Any] = None,
-    ) -> Any:
+    ) -> HeadApiResponse:
         """
         Returns information about whether a document exists in an index.
 
@@ -1362,7 +1366,7 @@ class Elasticsearch(BaseClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("HEAD", __target, headers=__headers)
+        return self._perform_request("HEAD", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         parameter_aliases={
@@ -1385,12 +1389,12 @@ class Elasticsearch(BaseClient):
         realtime: Optional[bool] = None,
         refresh: Optional[bool] = None,
         routing: Optional[Any] = None,
-        source: Optional[Union[Any, bool]] = None,
+        source: Optional[Any] = None,
         source_excludes: Optional[Any] = None,
         source_includes: Optional[Any] = None,
         version: Optional[Any] = None,
         version_type: Optional[Any] = None,
-    ) -> Any:
+    ) -> HeadApiResponse:
         """
         Returns information about whether a document source exists in an index.
 
@@ -1462,7 +1466,7 @@ class Elasticsearch(BaseClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("HEAD", __target, headers=__headers)
+        return self._perform_request("HEAD", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1490,11 +1494,11 @@ class Elasticsearch(BaseClient):
         q: Optional[str] = None,
         query: Optional[Any] = None,
         routing: Optional[Any] = None,
-        source: Optional[Union[Any, bool]] = None,
+        source: Optional[Any] = None,
         source_excludes: Optional[Any] = None,
         source_includes: Optional[Any] = None,
         stored_fields: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns information about why a specific matches (or doesn't match) a query.
 
@@ -1574,7 +1578,7 @@ class Elasticsearch(BaseClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1594,7 +1598,7 @@ class Elasticsearch(BaseClient):
         index_filter: Optional[Any] = None,
         pretty: Optional[bool] = None,
         runtime_mappings: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns the information about the capabilities of fields among multiple indices.
 
@@ -1652,7 +1656,7 @@ class Elasticsearch(BaseClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         parameter_aliases={
@@ -1674,13 +1678,13 @@ class Elasticsearch(BaseClient):
         realtime: Optional[bool] = None,
         refresh: Optional[bool] = None,
         routing: Optional[Any] = None,
-        source: Optional[Union[Any, bool]] = None,
+        source: Optional[Any] = None,
         source_excludes: Optional[Any] = None,
         source_includes: Optional[Any] = None,
         stored_fields: Optional[Any] = None,
         version: Optional[Any] = None,
         version_type: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns a document.
 
@@ -1746,7 +1750,7 @@ class Elasticsearch(BaseClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def get_script(
@@ -1758,7 +1762,7 @@ class Elasticsearch(BaseClient):
         human: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns a script.
 
@@ -1786,7 +1790,7 @@ class Elasticsearch(BaseClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def get_script_context(
@@ -1796,7 +1800,7 @@ class Elasticsearch(BaseClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns all script contexts.
 
@@ -1817,7 +1821,7 @@ class Elasticsearch(BaseClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def get_script_languages(
@@ -1827,7 +1831,7 @@ class Elasticsearch(BaseClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns available script types, languages and contexts
 
@@ -1848,7 +1852,7 @@ class Elasticsearch(BaseClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         parameter_aliases={
@@ -1866,13 +1870,13 @@ class Elasticsearch(BaseClient):
         realtime: Optional[bool] = None,
         refresh: Optional[bool] = None,
         routing: Optional[Any] = None,
-        source: Optional[Union[Any, bool]] = None,
+        source: Optional[Any] = None,
         source_excludes: Optional[Any] = None,
         source_includes: Optional[Any] = None,
         stored_fields: Optional[Any] = None,
         version: Optional[Any] = None,
         version_type: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns the source of a document.
 
@@ -1929,7 +1933,7 @@ class Elasticsearch(BaseClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_name="document",
@@ -1955,7 +1959,7 @@ class Elasticsearch(BaseClient):
         version: Optional[Any] = None,
         version_type: Optional[Any] = None,
         wait_for_active_shards: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Creates or updates a document in an index.
 
@@ -2036,7 +2040,7 @@ class Elasticsearch(BaseClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request(__method, __target, headers=__headers, body=__body)
+        return self._perform_request(__method, __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def info(
@@ -2046,7 +2050,7 @@ class Elasticsearch(BaseClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns basic information about the cluster.
 
@@ -2067,7 +2071,7 @@ class Elasticsearch(BaseClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2078,16 +2082,16 @@ class Elasticsearch(BaseClient):
         *,
         index: Any,
         knn: Any,
-        docvalue_fields: Optional[Union[Any, List[Any]]] = None,
+        docvalue_fields: Optional[List[Any]] = None,
         error_trace: Optional[bool] = None,
         fields: Optional[Any] = None,
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         routing: Optional[Any] = None,
-        source: Optional[Union[Any, bool]] = None,
+        source: Optional[Any] = None,
         stored_fields: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Performs a kNN search.
 
@@ -2146,7 +2150,7 @@ class Elasticsearch(BaseClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2164,17 +2168,17 @@ class Elasticsearch(BaseClient):
         error_trace: Optional[bool] = None,
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
-        ids: Optional[List[Any]] = None,
+        ids: Optional[Any] = None,
         preference: Optional[str] = None,
         pretty: Optional[bool] = None,
         realtime: Optional[bool] = None,
         refresh: Optional[bool] = None,
         routing: Optional[Any] = None,
-        source: Optional[Union[Any, bool]] = None,
+        source: Optional[Any] = None,
         source_excludes: Optional[Any] = None,
         source_includes: Optional[Any] = None,
         stored_fields: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Allows to get multiple documents in one request.
 
@@ -2238,7 +2242,7 @@ class Elasticsearch(BaseClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_name="searches",
@@ -2263,7 +2267,7 @@ class Elasticsearch(BaseClient):
         rest_total_hits_as_int: Optional[bool] = None,
         search_type: Optional[Any] = None,
         typed_keys: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Allows to execute several search operations in one request.
 
@@ -2349,7 +2353,7 @@ class Elasticsearch(BaseClient):
             "accept": "application/json",
             "content-type": "application/x-ndjson",
         }
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_name="search_templates",
@@ -2368,7 +2372,7 @@ class Elasticsearch(BaseClient):
         rest_total_hits_as_int: Optional[bool] = None,
         search_type: Optional[Any] = None,
         typed_keys: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Allows to execute several search template operations in one request.
 
@@ -2420,7 +2424,7 @@ class Elasticsearch(BaseClient):
             "accept": "application/json",
             "content-type": "application/x-ndjson",
         }
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2446,7 +2450,7 @@ class Elasticsearch(BaseClient):
         term_statistics: Optional[bool] = None,
         version: Optional[Any] = None,
         version_type: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns multiple termvectors in one request.
 
@@ -2528,7 +2532,7 @@ class Elasticsearch(BaseClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def open_point_in_time(
@@ -2540,7 +2544,7 @@ class Elasticsearch(BaseClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Open a point in time that can be used in subsequent searches
 
@@ -2571,7 +2575,7 @@ class Elasticsearch(BaseClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)
+        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2580,36 +2584,40 @@ class Elasticsearch(BaseClient):
         self,
         *,
         id: Any,
+        script: Any,
         context: Optional[Any] = None,
         error_trace: Optional[bool] = None,
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        script: Optional[Any] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Creates or updates a script.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
 
         :param id: Script ID
+        :param script:
         :param context: Script context
         :param master_timeout: Specify timeout for connection to master
-        :param script:
         :param timeout: Explicit operation timeout
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
+        if script is None:
+            raise ValueError("Empty value passed for parameter 'script'")
         if id not in SKIP_IN_PATH and context not in SKIP_IN_PATH:
             __path = f"/_scripts/{_quote(id)}/{_quote(context)}"
         elif id not in SKIP_IN_PATH:
             __path = f"/_scripts/{_quote(id)}"
         else:
             raise ValueError("Couldn't find a path for the given parameters")
-        __query: Dict[str, Any] = {}
         __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if script is not None:
+            __body["script"] = script
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -2620,8 +2628,6 @@ class Elasticsearch(BaseClient):
             __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
-        if script is not None:
-            __body["script"] = script
         if timeout is not None:
             __query["timeout"] = timeout
         if __query:
@@ -2629,7 +2635,7 @@ class Elasticsearch(BaseClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("PUT", __target, headers=__headers, body=__body)
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2648,7 +2654,7 @@ class Elasticsearch(BaseClient):
         metric: Optional[Any] = None,
         pretty: Optional[bool] = None,
         search_type: Optional[str] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Allows to evaluate the quality of ranked search results over a set of typical
         search queries
@@ -2708,7 +2714,7 @@ class Elasticsearch(BaseClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2734,7 +2740,7 @@ class Elasticsearch(BaseClient):
         timeout: Optional[Any] = None,
         wait_for_active_shards: Optional[Any] = None,
         wait_for_completion: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Allows to copy documents from one index to another, optionally filtering the
         source documents by a query, changing the destination index settings, or fetching
@@ -2809,7 +2815,7 @@ class Elasticsearch(BaseClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def reindex_rethrottle(
@@ -2821,7 +2827,7 @@ class Elasticsearch(BaseClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         requests_per_second: Optional[int] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Changes the number of requests per second for a particular Reindex operation.
 
@@ -2850,7 +2856,7 @@ class Elasticsearch(BaseClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)
+        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2867,7 +2873,7 @@ class Elasticsearch(BaseClient):
         params: Optional[Dict[str, Any]] = None,
         pretty: Optional[bool] = None,
         source: Optional[str] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Allows to use the Mustache language to pre-render a search definition.
 
@@ -2907,7 +2913,7 @@ class Elasticsearch(BaseClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2922,7 +2928,7 @@ class Elasticsearch(BaseClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         script: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Allows an arbitrary script to be executed and a result to be returned
 
@@ -2958,7 +2964,7 @@ class Elasticsearch(BaseClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2973,7 +2979,7 @@ class Elasticsearch(BaseClient):
         pretty: Optional[bool] = None,
         rest_total_hits_as_int: Optional[bool] = None,
         scroll: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Allows to retrieve a large numbers of results from a single search request.
 
@@ -3013,7 +3019,7 @@ class Elasticsearch(BaseClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3039,7 +3045,7 @@ class Elasticsearch(BaseClient):
         collapse: Optional[Any] = None,
         default_operator: Optional[Any] = None,
         df: Optional[str] = None,
-        docvalue_fields: Optional[Union[Any, List[Any]]] = None,
+        docvalue_fields: Optional[List[Any]] = None,
         error_trace: Optional[bool] = None,
         expand_wildcards: Optional[Any] = None,
         explain: Optional[bool] = None,
@@ -3076,12 +3082,12 @@ class Elasticsearch(BaseClient):
         size: Optional[int] = None,
         slice: Optional[Any] = None,
         sort: Optional[Any] = None,
-        source: Optional[Union[Any, bool]] = None,
+        source: Optional[Any] = None,
         source_excludes: Optional[Any] = None,
         source_includes: Optional[Any] = None,
         stats: Optional[List[str]] = None,
         stored_fields: Optional[Any] = None,
-        suggest: Optional[Union[Any, Dict[str, Any]]] = None,
+        suggest: Optional[Any] = None,
         suggest_field: Optional[Any] = None,
         suggest_mode: Optional[Any] = None,
         suggest_size: Optional[int] = None,
@@ -3089,10 +3095,10 @@ class Elasticsearch(BaseClient):
         terminate_after: Optional[int] = None,
         timeout: Optional[str] = None,
         track_scores: Optional[bool] = None,
-        track_total_hits: Optional[Union[bool, int]] = None,
+        track_total_hits: Optional[Any] = None,
         typed_keys: Optional[bool] = None,
         version: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns results matching a query.
 
@@ -3363,7 +3369,7 @@ class Elasticsearch(BaseClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3390,7 +3396,7 @@ class Elasticsearch(BaseClient):
         runtime_mappings: Optional[Any] = None,
         size: Optional[int] = None,
         sort: Optional[Any] = None,
-    ) -> Any:
+    ) -> BinaryApiResponse:
         """
         Searches a vector tile for geospatial values. Returns results as a binary Mapbox
         vector tile.
@@ -3480,7 +3486,7 @@ class Elasticsearch(BaseClient):
         __headers = {"accept": "application/vnd.mapbox-vector-tile"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def search_shards(
@@ -3497,7 +3503,7 @@ class Elasticsearch(BaseClient):
         preference: Optional[str] = None,
         pretty: Optional[bool] = None,
         routing: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns information about the indices and shards that a search request would
         be executed against.
@@ -3549,7 +3555,7 @@ class Elasticsearch(BaseClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)
+        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3579,7 +3585,7 @@ class Elasticsearch(BaseClient):
         search_type: Optional[Any] = None,
         source: Optional[str] = None,
         typed_keys: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Allows to use the Mustache language to pre-render a search definition.
 
@@ -3668,7 +3674,7 @@ class Elasticsearch(BaseClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3688,7 +3694,7 @@ class Elasticsearch(BaseClient):
         size: Optional[int] = None,
         string: Optional[str] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         The terms enum API can be used to discover terms in the index that begin with
         the provided string. It is designed for low-latency look-ups used in auto-complete
@@ -3751,7 +3757,7 @@ class Elasticsearch(BaseClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3779,7 +3785,7 @@ class Elasticsearch(BaseClient):
         term_statistics: Optional[bool] = None,
         version: Optional[Any] = None,
         version_type: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns information and statistics about terms in the fields of a particular
         document.
@@ -3862,7 +3868,7 @@ class Elasticsearch(BaseClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3894,13 +3900,13 @@ class Elasticsearch(BaseClient):
         routing: Optional[Any] = None,
         script: Optional[Any] = None,
         scripted_upsert: Optional[bool] = None,
-        source: Optional[Union[Any, bool]] = None,
+        source: Optional[Any] = None,
         source_excludes: Optional[Any] = None,
         source_includes: Optional[Any] = None,
         timeout: Optional[Any] = None,
         upsert: Optional[Any] = None,
         wait_for_active_shards: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Updates a document with a script or partial document.
 
@@ -4008,7 +4014,7 @@ class Elasticsearch(BaseClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -4054,7 +4060,7 @@ class Elasticsearch(BaseClient):
         slice: Optional[Any] = None,
         slices: Optional[int] = None,
         sort: Optional[List[str]] = None,
-        source: Optional[Union[Any, bool]] = None,
+        source: Optional[Any] = None,
         source_excludes: Optional[Any] = None,
         source_includes: Optional[Any] = None,
         stats: Optional[List[str]] = None,
@@ -4064,7 +4070,7 @@ class Elasticsearch(BaseClient):
         version_type: Optional[bool] = None,
         wait_for_active_shards: Optional[Any] = None,
         wait_for_completion: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Performs an update on every document in the index without changing the source,
         for example to pick up a mapping change.
@@ -4233,7 +4239,7 @@ class Elasticsearch(BaseClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def update_by_query_rethrottle(
@@ -4245,7 +4251,7 @@ class Elasticsearch(BaseClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         requests_per_second: Optional[int] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Changes the number of requests per second for a particular Update By Query operation.
 
@@ -4274,4 +4280,4 @@ class Elasticsearch(BaseClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)
+        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
