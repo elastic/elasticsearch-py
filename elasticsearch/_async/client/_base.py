@@ -27,7 +27,6 @@ from typing import (
     Mapping,
     Optional,
     Tuple,
-    TypeVar,
     Union,
 )
 
@@ -43,7 +42,7 @@ from elastic_transport import (
     SniffOptions,
     TextApiResponse,
 )
-from elastic_transport.client_utils import DEFAULT, DefaultType, resolve_default
+from elastic_transport.client_utils import DEFAULT, DefaultType
 
 from ...compat import warn_stacklevel
 from ...exceptions import (
@@ -55,9 +54,6 @@ from ...exceptions import (
     UnsupportedProductError,
 )
 from .utils import _TYPE_ASYNC_SNIFF_CALLBACK, _base64_auth_header
-
-SelfType = TypeVar("SelfType", bound="BaseClient")
-SelfNamespacedType = TypeVar("SelfNamespacedType", bound="NamespacedClient")
 
 _WARNING_RE = re.compile(r"\"([^\"]*)\"")
 
@@ -75,8 +71,8 @@ def resolve_auth_headers(
     elif not isinstance(headers, HttpHeaders):
         headers = HttpHeaders(headers)
 
-    resolved_http_auth = resolve_default(http_auth, None)
-    resolved_basic_auth = resolve_default(basic_auth, None)
+    resolved_http_auth = http_auth if http_auth is not DEFAULT else None
+    resolved_basic_auth = basic_auth if basic_auth is not DEFAULT else None
     if resolved_http_auth is not None:
         if resolved_basic_auth is not None:
             raise ValueError(
@@ -101,8 +97,8 @@ def resolve_auth_headers(
             stacklevel=warn_stacklevel(),
         )
 
-    resolved_api_key = resolve_default(api_key, None)
-    resolved_bearer_auth = resolve_default(bearer_auth, None)
+    resolved_api_key = api_key if api_key is not DEFAULT else None
+    resolved_bearer_auth = bearer_auth if bearer_auth is not DEFAULT else None
     if resolved_api_key or resolved_basic_auth or resolved_bearer_auth:
         if (
             sum(
@@ -345,65 +341,6 @@ class BaseClient:
             response = ApiResponse(raw=resp_body, meta=meta)  # type: ignore[assignment]
 
         return response
-
-    def options(
-        self: SelfType,
-        *,
-        opaque_id: Union[DefaultType, str] = DEFAULT,
-        api_key: Union[DefaultType, str, Tuple[str, str]] = DEFAULT,
-        basic_auth: Union[DefaultType, str, Tuple[str, str]] = DEFAULT,
-        bearer_auth: Union[DefaultType, str] = DEFAULT,
-        headers: Union[DefaultType, Mapping[str, str]] = DEFAULT,
-        request_timeout: Union[DefaultType, Optional[float]] = DEFAULT,
-        ignore_status: Union[DefaultType, int, Collection[int]] = DEFAULT,
-        max_retries: Union[DefaultType, int] = DEFAULT,
-        retry_on_status: Union[DefaultType, int, Collection[int]] = DEFAULT,
-        retry_on_timeout: Union[DefaultType, bool] = DEFAULT,
-    ) -> SelfType:
-        client = type(self)(_transport=self.transport)
-
-        resolved_headers = resolve_default(headers, None)
-        resolved_headers = resolve_auth_headers(
-            headers=resolved_headers,
-            api_key=api_key,
-            basic_auth=basic_auth,
-            bearer_auth=bearer_auth,
-        )
-        resolved_opaque_id = resolve_default(opaque_id, None)
-        if resolved_opaque_id:
-            resolved_headers["x-opaque-id"] = resolved_opaque_id
-
-        if resolved_headers:
-            new_headers = self._headers.copy()
-            new_headers.update(resolved_headers)
-            client._headers = new_headers
-        else:
-            client._headers = self._headers.copy()
-
-        if request_timeout is not DEFAULT:
-            client._request_timeout = request_timeout
-
-        if ignore_status is not DEFAULT:
-            if isinstance(ignore_status, int):
-                ignore_status = (ignore_status,)
-            client._ignore_status = ignore_status
-
-        if max_retries is not DEFAULT:
-            if not isinstance(max_retries, int):
-                raise TypeError("'max_retries' must be of type 'int'")
-            client._max_retries = max_retries
-
-        if retry_on_status is not DEFAULT:
-            if isinstance(retry_on_status, int):
-                retry_on_status = (retry_on_status,)
-            client._retry_on_status = retry_on_status
-
-        if retry_on_timeout is not DEFAULT:
-            if not isinstance(retry_on_timeout, bool):
-                raise TypeError("'retry_on_timeout' must be of type 'bool'")
-            client._retry_on_timeout = retry_on_timeout
-
-        return client
 
 
 class NamespacedClient(BaseClient):
