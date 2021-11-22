@@ -27,6 +27,7 @@ from elastic_transport.client_utils import DEFAULT
 
 from elasticsearch import Elasticsearch
 from elasticsearch.exceptions import (
+    ApiError,
     ConnectionError,
     ElasticsearchWarning,
     TransportError,
@@ -594,6 +595,25 @@ def test_unsupported_product_error(headers):
             "request_timeout": DEFAULT,
         },
     )
+
+
+@pytest.mark.parametrize("status", [401, 403, 413, 500])
+def test_unsupported_product_error_not_raised_on_non_2xx(status):
+    client = Elasticsearch(
+        [
+            NodeConfig(
+                "http", "localhost", 9200, _extras={"headers": {}, "status": status}
+            )
+        ],
+        meta_header=False,
+        node_class=DummyNode,
+    )
+    try:
+        client.info()
+    except UnsupportedProductError:
+        assert False, "Raised UnsupportedProductError"
+    except ApiError as e:
+        assert e.meta.status == status
 
 
 @pytest.mark.parametrize("status", [404, 500])
