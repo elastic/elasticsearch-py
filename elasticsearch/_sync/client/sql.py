@@ -17,6 +17,8 @@
 
 from typing import Any, Dict, List, Optional, Union
 
+from elastic_transport import ObjectApiResponse
+
 from ._base import NamespacedClient
 from .utils import _quote_query, _rewrite_parameters
 
@@ -33,7 +35,7 @@ class SqlClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Clears the SQL cursor
 
@@ -61,7 +63,7 @@ class SqlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -84,7 +86,7 @@ class SqlClient(NamespacedClient):
         query: Optional[str] = None,
         request_timeout: Optional[Any] = None,
         time_zone: Optional[str] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Executes a SQL request
 
@@ -141,7 +143,7 @@ class SqlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -157,7 +159,7 @@ class SqlClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         time_zone: Optional[str] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Translates SQL into Elasticsearch queries
 
@@ -194,4 +196,4 @@ class SqlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]

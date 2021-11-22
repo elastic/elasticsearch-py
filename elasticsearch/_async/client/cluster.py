@@ -17,6 +17,8 @@
 
 from typing import Any, Dict, List, Optional, Union
 
+from elastic_transport import HeadApiResponse, ObjectApiResponse
+
 from ._base import NamespacedClient
 from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
@@ -38,7 +40,7 @@ class ClusterClient(NamespacedClient):
         pretty: Optional[bool] = None,
         primary: Optional[bool] = None,
         shard: Optional[int] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Provides explanations for shard allocations in the cluster.
 
@@ -88,9 +90,7 @@ class ClusterClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self._perform_request(
-            "POST", __target, headers=__headers, body=__body
-        )
+        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def delete_component_template(
@@ -103,7 +103,7 @@ class ClusterClient(NamespacedClient):
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes a component template
 
@@ -134,7 +134,7 @@ class ClusterClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("DELETE", __target, headers=__headers)
+        return await self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def delete_voting_config_exclusions(
@@ -145,7 +145,7 @@ class ClusterClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         wait_for_removal: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Clears cluster voting config exclusions.
 
@@ -175,7 +175,7 @@ class ClusterClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("DELETE", __target, headers=__headers)
+        return await self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def exists_component_template(
@@ -188,7 +188,7 @@ class ClusterClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> HeadApiResponse:
         """
         Returns information about whether a particular component template exist
 
@@ -224,7 +224,7 @@ class ClusterClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("HEAD", __target, headers=__headers)
+        return await self._perform_request("HEAD", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def get_component_template(
@@ -238,7 +238,7 @@ class ClusterClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns one or more component templates
 
@@ -274,7 +274,7 @@ class ClusterClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def get_settings(
@@ -288,7 +288,7 @@ class ClusterClient(NamespacedClient):
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns cluster settings.
 
@@ -322,7 +322,7 @@ class ClusterClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def health(
@@ -344,7 +344,7 @@ class ClusterClient(NamespacedClient):
         wait_for_no_relocating_shards: Optional[bool] = None,
         wait_for_nodes: Optional[str] = None,
         wait_for_status: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns basic information about the health of the cluster.
 
@@ -424,7 +424,7 @@ class ClusterClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def pending_tasks(
@@ -436,7 +436,7 @@ class ClusterClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns a list of any cluster-level changes (e.g. create index, update mapping,
         allocate or fail shard) which have not yet been executed.
@@ -466,7 +466,7 @@ class ClusterClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def post_voting_config_exclusions(
@@ -479,7 +479,7 @@ class ClusterClient(NamespacedClient):
         node_names: Optional[Any] = None,
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Updates the cluster voting config exclusions by node ids or node names.
 
@@ -516,7 +516,7 @@ class ClusterClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers)
+        return await self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -538,7 +538,7 @@ class ClusterClient(NamespacedClient):
         pretty: Optional[bool] = None,
         settings: Optional[Any] = None,
         version: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Creates or updates a component template
 
@@ -591,9 +591,7 @@ class ClusterClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request(
-            "PUT", __target, headers=__headers, body=__body
-        )
+        return await self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -610,7 +608,7 @@ class ClusterClient(NamespacedClient):
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
         transient: Optional[Dict[str, Any]] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Updates the cluster settings.
 
@@ -648,9 +646,7 @@ class ClusterClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request(
-            "PUT", __target, headers=__headers, body=__body
-        )
+        return await self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def remote_info(
@@ -660,7 +656,7 @@ class ClusterClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns the information about configured remote clusters.
 
@@ -681,7 +677,7 @@ class ClusterClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -700,7 +696,7 @@ class ClusterClient(NamespacedClient):
         pretty: Optional[bool] = None,
         retry_failed: Optional[bool] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Allows to manually change the allocation of individual shards in the cluster.
 
@@ -754,9 +750,7 @@ class ClusterClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self._perform_request(
-            "POST", __target, headers=__headers, body=__body
-        )
+        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def state(
@@ -776,7 +770,7 @@ class ClusterClient(NamespacedClient):
         pretty: Optional[bool] = None,
         wait_for_metadata_version: Optional[Any] = None,
         wait_for_timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns a comprehensive information about the state of the cluster.
 
@@ -839,7 +833,7 @@ class ClusterClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def stats(
@@ -852,7 +846,7 @@ class ClusterClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns high-level overview of cluster statistics.
 
@@ -888,4 +882,4 @@ class ClusterClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]

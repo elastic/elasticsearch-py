@@ -17,12 +17,16 @@
 
 from typing import Any, Dict, List, Optional, Union
 
+from elastic_transport import ObjectApiResponse
+
 from ._base import NamespacedClient
 from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
 
 class MlClient(NamespacedClient):
-    @_rewrite_parameters()
+    @_rewrite_parameters(
+        body_fields=True,
+    )
     def close_job(
         self,
         *,
@@ -34,7 +38,7 @@ class MlClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Closes one or more anomaly detection jobs. A job can be opened and closed multiple
         times throughout its lifecycle.
@@ -46,46 +50,40 @@ class MlClient(NamespacedClient):
             jobs in a single API request by using a group name, a comma-separated list
             of jobs, or a wildcard expression. You can close all jobs by using `_all`
             or by specifying `*` as the job identifier.
-        :param allow_no_match: Specifies what to do when the request: contains wildcard
-            expressions and there are no jobs that match; contains the `_all` string
-            or no identifiers and there are no matches; or contains wildcard expressions
-            and there are only partial matches. By default, it returns an empty jobs
-            array when there are no matches and the subset of results when there are
-            partial matches. If `false`, the request returns a 404 status code when there
-            are no matches or only partial matches.
-        :param force: Use to close a failed job, or to forcefully close a job which has
-            not responded to its initial close request; the request returns without performing
-            the associated actions such as flushing buffers and persisting the model
-            snapshots. If you want the job to be in a consistent state after the close
-            job API returns, do not set to `true`. This parameter should be used only
-            in situations where the job has already failed or where you are not interested
-            in results the job might have recently produced or might produce in the future.
-        :param timeout: Controls the time to wait until a job has closed.
+        :param allow_no_match: Refer to the description for the `allow_no_match` query
+            parameter.
+        :param force: Refer to the descriptiion for the `force` query parameter.
+        :param timeout: Refer to the description for the `timeout` query parameter.
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_close"
+        __body: Dict[str, Any] = {}
         __query: Dict[str, Any] = {}
         if allow_no_match is not None:
-            __query["allow_no_match"] = allow_no_match
+            __body["allow_no_match"] = allow_no_match
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if force is not None:
-            __query["force"] = force
+            __body["force"] = force
         if human is not None:
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
         if timeout is not None:
-            __query["timeout"] = timeout
+            __body["timeout"] = timeout
+        if not __body:
+            __body = None  # type: ignore[assignment]
         if __query:
             __target = f"{__path}?{_quote_query(__query)}"
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def delete_calendar(
@@ -96,7 +94,7 @@ class MlClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes a calendar.
 
@@ -121,7 +119,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("DELETE", __target, headers=__headers)
+        return self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def delete_calendar_event(
@@ -133,7 +131,7 @@ class MlClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes scheduled events from a calendar.
 
@@ -161,7 +159,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("DELETE", __target, headers=__headers)
+        return self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def delete_calendar_job(
@@ -173,7 +171,7 @@ class MlClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes anomaly detection jobs from a calendar.
 
@@ -202,7 +200,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("DELETE", __target, headers=__headers)
+        return self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def delete_data_frame_analytics(
@@ -215,7 +213,7 @@ class MlClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes an existing data frame analytics job.
 
@@ -247,7 +245,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("DELETE", __target, headers=__headers)
+        return self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def delete_datafeed(
@@ -259,7 +257,7 @@ class MlClient(NamespacedClient):
         force: Optional[bool] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes an existing datafeed.
 
@@ -291,7 +289,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("DELETE", __target, headers=__headers)
+        return self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -306,7 +304,7 @@ class MlClient(NamespacedClient):
         pretty: Optional[bool] = None,
         requests_per_second: Optional[float] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes expired and unused machine learning data.
 
@@ -346,7 +344,7 @@ class MlClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("DELETE", __target, headers=__headers, body=__body)
+        return self._perform_request("DELETE", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def delete_filter(
@@ -357,7 +355,7 @@ class MlClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes a filter.
 
@@ -382,7 +380,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("DELETE", __target, headers=__headers)
+        return self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def delete_forecast(
@@ -396,7 +394,7 @@ class MlClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes forecasts from a machine learning job.
 
@@ -440,7 +438,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("DELETE", __target, headers=__headers)
+        return self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def delete_job(
@@ -453,7 +451,7 @@ class MlClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         wait_for_completion: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes an existing anomaly detection job.
 
@@ -486,7 +484,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("DELETE", __target, headers=__headers)
+        return self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def delete_model_snapshot(
@@ -498,7 +496,7 @@ class MlClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes an existing model snapshot.
 
@@ -526,7 +524,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("DELETE", __target, headers=__headers)
+        return self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def delete_trained_model(
@@ -537,7 +535,7 @@ class MlClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes an existing trained inference model that is currently not referenced
         by an ingest pipeline.
@@ -563,7 +561,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("DELETE", __target, headers=__headers)
+        return self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def delete_trained_model_alias(
@@ -575,7 +573,7 @@ class MlClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes a model alias that refers to the trained model
 
@@ -603,7 +601,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("DELETE", __target, headers=__headers)
+        return self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -618,7 +616,7 @@ class MlClient(NamespacedClient):
         max_bucket_cardinality: Optional[Dict[Any, int]] = None,
         overall_cardinality: Optional[Dict[Any, int]] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Estimates the model memory
 
@@ -661,7 +659,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -676,7 +674,7 @@ class MlClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         query: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Evaluates the data frame analytics for an annotated index.
 
@@ -713,7 +711,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -721,9 +719,9 @@ class MlClient(NamespacedClient):
     def explain_data_frame_analytics(
         self,
         *,
-        analysis: Any,
         id: Optional[Any] = None,
         allow_lazy_start: Optional[bool] = None,
+        analysis: Optional[Any] = None,
         analyzed_fields: Optional[Any] = None,
         description: Optional[str] = None,
         dest: Optional[Any] = None,
@@ -734,20 +732,20 @@ class MlClient(NamespacedClient):
         model_memory_limit: Optional[str] = None,
         pretty: Optional[bool] = None,
         source: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Explains a data frame analytics config.
 
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/explain-dfanalytics.html>`_
 
-        :param analysis: The analysis configuration, which contains the information necessary
-            to perform one of the following types of analysis: classification, outlier
-            detection, or regression.
         :param id: Identifier for the data frame analytics job. This identifier can contain
             lowercase alphanumeric characters (a-z and 0-9), hyphens, and underscores.
             It must start and end with alphanumeric characters.
         :param allow_lazy_start: Specifies whether this job can start when there is insufficient
             machine learning node capacity for it to be immediately assigned to a node.
+        :param analysis: The analysis configuration, which contains the information necessary
+            to perform one of the following types of analysis: classification, outlier
+            detection, or regression.
         :param analyzed_fields: Specify includes and/or excludes patterns to select which
             fields will be included in the analysis. The patterns specified in excludes
             are applied last, therefore excludes takes precedence. In other words, if
@@ -769,18 +767,16 @@ class MlClient(NamespacedClient):
         :param source: The configuration of how to source the analysis data. It requires
             an index. Optionally, query and _source may be specified.
         """
-        if analysis is None:
-            raise ValueError("Empty value passed for parameter 'analysis'")
         if id not in SKIP_IN_PATH:
             __path = f"/_ml/data_frame/analytics/{_quote(id)}/_explain"
         else:
             __path = "/_ml/data_frame/analytics/_explain"
         __body: Dict[str, Any] = {}
         __query: Dict[str, Any] = {}
-        if analysis is not None:
-            __body["analysis"] = analysis
         if allow_lazy_start is not None:
             __body["allow_lazy_start"] = allow_lazy_start
+        if analysis is not None:
+            __body["analysis"] = analysis
         if analyzed_fields is not None:
             __body["analyzed_fields"] = analyzed_fields
         if description is not None:
@@ -810,7 +806,7 @@ class MlClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -828,7 +824,7 @@ class MlClient(NamespacedClient):
         pretty: Optional[bool] = None,
         skip_time: Optional[str] = None,
         start: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Forces any buffered data to be processed by the job.
 
@@ -873,7 +869,7 @@ class MlClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -889,7 +885,7 @@ class MlClient(NamespacedClient):
         human: Optional[bool] = None,
         max_model_memory: Optional[str] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Predicts the future behavior of a time series by using its historical behavior.
 
@@ -928,7 +924,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -953,7 +949,7 @@ class MlClient(NamespacedClient):
         size: Optional[int] = None,
         sort: Optional[Any] = None,
         start: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves anomaly detection job results for one or more buckets.
 
@@ -1022,7 +1018,7 @@ class MlClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
@@ -1040,7 +1036,7 @@ class MlClient(NamespacedClient):
         pretty: Optional[bool] = None,
         size: Optional[int] = None,
         start: Optional[str] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves information about the scheduled events in calendars.
 
@@ -1084,7 +1080,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1101,7 +1097,7 @@ class MlClient(NamespacedClient):
         page: Optional[Any] = None,
         pretty: Optional[bool] = None,
         size: Optional[int] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves configuration information for calendars.
 
@@ -1146,7 +1142,7 @@ class MlClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1165,7 +1161,7 @@ class MlClient(NamespacedClient):
         partition_field_value: Optional[str] = None,
         pretty: Optional[bool] = None,
         size: Optional[int] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves anomaly detection job results for one or more categories.
 
@@ -1216,7 +1212,7 @@ class MlClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
@@ -1233,7 +1229,7 @@ class MlClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         size: Optional[int] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves configuration information for data frame analytics jobs.
 
@@ -1282,7 +1278,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
@@ -1299,7 +1295,7 @@ class MlClient(NamespacedClient):
         pretty: Optional[bool] = None,
         size: Optional[int] = None,
         verbose: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves usage information for data frame analytics jobs.
 
@@ -1346,7 +1342,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def get_datafeed_stats(
@@ -1358,7 +1354,7 @@ class MlClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves usage information for datafeeds.
 
@@ -1395,7 +1391,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def get_datafeeds(
@@ -1408,7 +1404,7 @@ class MlClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves configuration information for datafeeds.
 
@@ -1450,7 +1446,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
@@ -1465,7 +1461,7 @@ class MlClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         size: Optional[int] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves filters.
 
@@ -1497,7 +1493,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1520,7 +1516,7 @@ class MlClient(NamespacedClient):
         size: Optional[int] = None,
         sort: Optional[Any] = None,
         start: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves anomaly detection job results for one or more influencers.
 
@@ -1582,7 +1578,7 @@ class MlClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def get_job_stats(
@@ -1594,7 +1590,7 @@ class MlClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves usage information for anomaly detection jobs.
 
@@ -1632,7 +1628,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def get_jobs(
@@ -1645,7 +1641,7 @@ class MlClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves configuration information for anomaly detection jobs.
 
@@ -1687,7 +1683,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1709,7 +1705,7 @@ class MlClient(NamespacedClient):
         size: Optional[int] = None,
         sort: Optional[Any] = None,
         start: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves information about model snapshots.
 
@@ -1770,9 +1766,11 @@ class MlClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
-    @_rewrite_parameters()
+    @_rewrite_parameters(
+        body_fields=True,
+    )
     def get_overall_buckets(
         self,
         *,
@@ -1788,7 +1786,7 @@ class MlClient(NamespacedClient):
         pretty: Optional[bool] = None,
         start: Optional[Any] = None,
         top_n: Optional[int] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves overall bucket results that summarize the bucket results of multiple
         anomaly detection jobs.
@@ -1799,58 +1797,54 @@ class MlClient(NamespacedClient):
             a group name, a comma-separated list of jobs or groups, or a wildcard expression.
             You can summarize the bucket results for all anomaly detection jobs by using
             `_all` or by specifying `*` as the `<job_id>`.
-        :param allow_no_match: Specifies what to do when the request: 1. Contains wildcard
-            expressions and there are no jobs that match. 2. Contains the `_all` string
-            or no identifiers and there are no matches. 3. Contains wildcard expressions
-            and there are only partial matches. If `true`, the request returns an empty
-            `jobs` array when there are no matches and the subset of results when there
-            are partial matches. If this parameter is `false`, the request returns a
-            `404` status code when there are no matches or only partial matches.
-        :param bucket_span: The span of the overall buckets. Must be greater or equal
-            to the largest bucket span of the specified anomaly detection jobs, which
-            is the default value. By default, an overall bucket has a span equal to the
-            largest bucket span of the specified anomaly detection jobs. To override
-            that behavior, use the optional `bucket_span` parameter.
-        :param end: Returns overall buckets with timestamps earlier than this time.
-        :param exclude_interim: If `true`, the output excludes interim results.
-        :param overall_score: Returns overall buckets with overall scores greater than
-            or equal to this value.
-        :param start: Returns overall buckets with timestamps after this time.
-        :param top_n: The number of top anomaly detection job bucket scores to be used
-            in the `overall_score` calculation.
+        :param allow_no_match: Refer to the description for the `allow_no_match` query
+            parameter.
+        :param bucket_span: Refer to the description for the `bucket_span` query parameter.
+        :param end: Refer to the description for the `end` query parameter.
+        :param exclude_interim: Refer to the description for the `exclude_interim` query
+            parameter.
+        :param overall_score: Refer to the description for the `overall_score` query
+            parameter.
+        :param start: Refer to the description for the `start` query parameter.
+        :param top_n: Refer to the description for the `top_n` query parameter.
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/results/overall_buckets"
+        __body: Dict[str, Any] = {}
         __query: Dict[str, Any] = {}
         if allow_no_match is not None:
-            __query["allow_no_match"] = allow_no_match
+            __body["allow_no_match"] = allow_no_match
         if bucket_span is not None:
-            __query["bucket_span"] = bucket_span
+            __body["bucket_span"] = bucket_span
         if end is not None:
-            __query["end"] = end
+            __body["end"] = end
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if exclude_interim is not None:
-            __query["exclude_interim"] = exclude_interim
+            __body["exclude_interim"] = exclude_interim
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
         if overall_score is not None:
-            __query["overall_score"] = overall_score
+            __body["overall_score"] = overall_score
         if pretty is not None:
             __query["pretty"] = pretty
         if start is not None:
-            __query["start"] = start
+            __body["start"] = start
         if top_n is not None:
-            __query["top_n"] = top_n
+            __body["top_n"] = top_n
+        if not __body:
+            __body = None  # type: ignore[assignment]
         if __query:
             __target = f"{__path}?{_quote_query(__query)}"
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1873,25 +1867,23 @@ class MlClient(NamespacedClient):
         size: Optional[int] = None,
         sort: Optional[Any] = None,
         start: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves anomaly records for an anomaly detection job.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-get-record.html>`_
 
         :param job_id: Identifier for the anomaly detection job.
-        :param desc: If true, the results are sorted in descending order.
-        :param end: Returns records with timestamps earlier than this time. The default
-            value means results are not limited to specific timestamps.
-        :param exclude_interim: If true, the output excludes interim results.
+        :param desc: Refer to the description for the `desc` query parameter.
+        :param end: Refer to the description for the `end` query parameter.
+        :param exclude_interim: Refer to the description for the `exclude_interim` query
+            parameter.
         :param from_: Skips the specified number of records.
         :param page:
-        :param record_score: Returns records with anomaly scores greater or equal than
-            this value.
+        :param record_score: Refer to the description for the `record_score` query parameter.
         :param size: Specifies the maximum number of records to obtain.
-        :param sort: Specifies the sort field for the requested records.
-        :param start: Returns records with timestamps earlier than this time. The default
-            value means results are not limited to specific timestamps.
+        :param sort: Refer to the description for the `sort` query parameter.
+        :param start: Refer to the description for the `start` query parameter.
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
@@ -1933,7 +1925,7 @@ class MlClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
@@ -1953,7 +1945,7 @@ class MlClient(NamespacedClient):
         pretty: Optional[bool] = None,
         size: Optional[int] = None,
         tags: Optional[str] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves configuration information for a trained inference model.
 
@@ -2011,7 +2003,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
@@ -2027,7 +2019,7 @@ class MlClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         size: Optional[int] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves usage information for trained inference models.
 
@@ -2066,7 +2058,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def info(
@@ -2076,7 +2068,7 @@ class MlClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns defaults and limits used by machine learning.
 
@@ -2097,7 +2089,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2111,14 +2103,14 @@ class MlClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Opens one or more anomaly detection jobs.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-open-job.html>`_
 
         :param job_id: Identifier for the anomaly detection job.
-        :param timeout: Controls the time to wait until a job has opened.
+        :param timeout: Refer to the description for the `timeout` query parameter.
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
@@ -2142,7 +2134,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2156,7 +2148,7 @@ class MlClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Posts scheduled events in a calendar.
 
@@ -2189,7 +2181,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_name="data",
@@ -2205,7 +2197,7 @@ class MlClient(NamespacedClient):
         pretty: Optional[bool] = None,
         reset_end: Optional[Any] = None,
         reset_start: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Sends data to an anomaly detection job for analysis.
 
@@ -2244,7 +2236,7 @@ class MlClient(NamespacedClient):
             "accept": "application/json",
             "content-type": "application/x-ndjson",
         }
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2258,7 +2250,7 @@ class MlClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Previews that will be analyzed given a data frame analytics config.
 
@@ -2294,7 +2286,7 @@ class MlClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2309,7 +2301,7 @@ class MlClient(NamespacedClient):
         human: Optional[bool] = None,
         job_config: Optional[Any] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Previews a datafeed.
 
@@ -2355,7 +2347,7 @@ class MlClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2368,8 +2360,9 @@ class MlClient(NamespacedClient):
         error_trace: Optional[bool] = None,
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
+        job_ids: Optional[List[Any]] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Instantiates a calendar.
 
@@ -2377,6 +2370,7 @@ class MlClient(NamespacedClient):
 
         :param calendar_id: A string that uniquely identifies a calendar.
         :param description: A description of the calendar.
+        :param job_ids: An array of anomaly detection job identifiers.
         """
         if calendar_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'calendar_id'")
@@ -2391,6 +2385,8 @@ class MlClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if job_ids is not None:
+            __body["job_ids"] = job_ids
         if pretty is not None:
             __query["pretty"] = pretty
         if not __body:
@@ -2402,7 +2398,7 @@ class MlClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("PUT", __target, headers=__headers, body=__body)
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def put_calendar_job(
@@ -2414,7 +2410,7 @@ class MlClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Adds an anomaly detection job to a calendar.
 
@@ -2443,7 +2439,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("PUT", __target, headers=__headers)
+        return self._perform_request("PUT", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2464,7 +2460,7 @@ class MlClient(NamespacedClient):
         max_num_threads: Optional[int] = None,
         model_memory_limit: Optional[str] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Instantiates a data frame analytics job.
 
@@ -2563,7 +2559,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("PUT", __target, headers=__headers, body=__body)
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2594,7 +2590,7 @@ class MlClient(NamespacedClient):
         runtime_mappings: Optional[Any] = None,
         script_fields: Optional[Dict[str, Any]] = None,
         scroll_size: Optional[int] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Instantiates a datafeed.
 
@@ -2607,8 +2603,9 @@ class MlClient(NamespacedClient):
         :param aggregations: If set, the datafeed performs aggregation searches. Support
             for aggregations is limited and should be used only with low cardinality
             data.
-        :param allow_no_indices: Ignore if the source indices expressions resolves to
-            no concrete indices (default: true)
+        :param allow_no_indices: If true, wildcard indices expressions that resolve into
+            no concrete indices are ignored. This includes the `_all` string or when
+            no indices are specified.
         :param chunking_config: Datafeeds might be required to search over long time
             periods, for several months or years. This search is split into time chunks
             in order to ensure the load on Elasticsearch is managed. Chunking configuration
@@ -2621,8 +2618,9 @@ class MlClient(NamespacedClient):
             it is a good indication that the `query_delay` is set too low and the data
             is being indexed after the datafeed has passed that moment in time. This
             check runs only on real-time datafeeds.
-        :param expand_wildcards: Whether source index expressions should get expanded
-            to open or closed indices (default: open)
+        :param expand_wildcards: Type of index that wildcard patterns can match. If the
+            request can target data streams, this argument determines whether wildcard
+            expressions match hidden data streams. Supports comma-separated values.
         :param frequency: The interval at which scheduled queries are made while the
             datafeed runs in real time. The default value is either the bucket span for
             short bucket spans, or, for longer bucket spans, a sensible fraction of the
@@ -2630,9 +2628,10 @@ class MlClient(NamespacedClient):
             for the last (partial) bucket are written then eventually overwritten by
             the full bucket results. If the datafeed uses aggregations, this value must
             be divisible by the interval of the date histogram aggregation.
-        :param ignore_throttled: Ignore indices that are marked as throttled (default:
-            true)
-        :param ignore_unavailable: Ignore unavailable indexes (default: false)
+        :param ignore_throttled: If true, concrete, expanded, or aliased indices are
+            ignored when frozen.
+        :param ignore_unavailable: If true, unavailable indices (missing or closed) are
+            ignored.
         :param indexes: An array of index names. Wildcards are supported. If any of the
             indices are in remote clusters, the machine learning nodes must have the
             `remote_cluster_client` role.
@@ -2719,7 +2718,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("PUT", __target, headers=__headers, body=__body)
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2734,7 +2733,7 @@ class MlClient(NamespacedClient):
         human: Optional[bool] = None,
         items: Optional[List[str]] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Instantiates a filter.
 
@@ -2767,7 +2766,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("PUT", __target, headers=__headers, body=__body)
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2795,7 +2794,7 @@ class MlClient(NamespacedClient):
         renormalization_window_days: Optional[int] = None,
         results_index_name: Optional[Any] = None,
         results_retention_days: Optional[int] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Instantiates an anomaly detection job.
 
@@ -2928,7 +2927,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("PUT", __target, headers=__headers, body=__body)
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2946,9 +2945,10 @@ class MlClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         metadata: Optional[Any] = None,
+        model_type: Optional[Any] = None,
         pretty: Optional[bool] = None,
         tags: Optional[List[str]] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Creates an inference trained model.
 
@@ -2966,6 +2966,7 @@ class MlClient(NamespacedClient):
             then compressed_definition cannot be specified.
         :param description: A human-readable description of the inference trained model.
         :param metadata: An object map that contains metadata about the model.
+        :param model_type: The model type.
         :param tags: An array of tags to organize the model.
         """
         if model_id in SKIP_IN_PATH:
@@ -2995,6 +2996,8 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if metadata is not None:
             __body["metadata"] = metadata
+        if model_type is not None:
+            __body["model_type"] = model_type
         if pretty is not None:
             __query["pretty"] = pretty
         if tags is not None:
@@ -3004,7 +3007,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("PUT", __target, headers=__headers, body=__body)
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def put_trained_model_alias(
@@ -3017,7 +3020,7 @@ class MlClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         reassign: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Creates a new model alias (or reassigns an existing one) to refer to the trained
         model
@@ -3051,7 +3054,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("PUT", __target, headers=__headers)
+        return self._perform_request("PUT", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def reset_job(
@@ -3063,7 +3066,7 @@ class MlClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         wait_for_completion: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Resets an existing anomaly detection job.
 
@@ -3092,7 +3095,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)
+        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3107,7 +3110,7 @@ class MlClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Reverts to a specific snapshot.
 
@@ -3117,12 +3120,8 @@ class MlClient(NamespacedClient):
         :param snapshot_id: You can specify `empty` as the <snapshot_id>. Reverting to
             the empty snapshot means the anomaly detection job starts learning a new
             model from scratch when it is started.
-        :param delete_intervening_results: If true, deletes the results in the time period
-            between the latest results and the time of the reverted snapshot. It also
-            resets the model to accept records for this time period. If you choose not
-            to delete intervening results when reverting a snapshot, the job will not
-            accept input data that is older than the current time. If you want to resend
-            data, then delete the intervening results.
+        :param delete_intervening_results: Refer to the description for the `delete_intervening_results`
+            query parameter.
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
@@ -3150,7 +3149,7 @@ class MlClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def set_upgrade_mode(
@@ -3162,7 +3161,7 @@ class MlClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Sets a cluster wide upgrade_mode setting that prepares machine learning indices
         for an upgrade.
@@ -3193,7 +3192,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)
+        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def start_data_frame_analytics(
@@ -3205,7 +3204,7 @@ class MlClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Starts a data frame analytics job.
 
@@ -3236,7 +3235,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)
+        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3252,7 +3251,7 @@ class MlClient(NamespacedClient):
         pretty: Optional[bool] = None,
         start: Optional[Any] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Starts one or more datafeeds.
 
@@ -3294,7 +3293,7 @@ class MlClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def stop_data_frame_analytics(
@@ -3308,7 +3307,7 @@ class MlClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Stops one or more data frame analytics jobs.
 
@@ -3352,7 +3351,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)
+        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3368,7 +3367,7 @@ class MlClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Stops one or more datafeeds.
 
@@ -3411,7 +3410,7 @@ class MlClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3428,7 +3427,7 @@ class MlClient(NamespacedClient):
         max_num_threads: Optional[int] = None,
         model_memory_limit: Optional[str] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Updates certain properties of a data frame analytics job.
 
@@ -3476,7 +3475,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3506,7 +3505,7 @@ class MlClient(NamespacedClient):
         runtime_mappings: Optional[Any] = None,
         script_fields: Optional[Dict[str, Any]] = None,
         scroll_size: Optional[int] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Updates certain properties of a datafeed.
 
@@ -3643,7 +3642,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3659,7 +3658,7 @@ class MlClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         remove_items: Optional[List[str]] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Updates the description of a filter, adds items, or removes items.
 
@@ -3694,7 +3693,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3721,7 +3720,7 @@ class MlClient(NamespacedClient):
         pretty: Optional[bool] = None,
         renormalization_window_days: Optional[int] = None,
         results_retention_days: Optional[int] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Updates certain properties of an anomaly detection job.
 
@@ -3823,7 +3822,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3839,7 +3838,7 @@ class MlClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         retain: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Updates certain properties of a snapshot.
 
@@ -3876,7 +3875,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def upgrade_job_snapshot(
@@ -3890,7 +3889,7 @@ class MlClient(NamespacedClient):
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
         wait_for_completion: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Upgrades a given job snapshot to the current major version.
 
@@ -3927,7 +3926,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)
+        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3947,7 +3946,7 @@ class MlClient(NamespacedClient):
         model_snapshot_retention_days: Optional[int] = None,
         pretty: Optional[bool] = None,
         results_index_name: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Validates an anomaly detection job.
 
@@ -3994,7 +3993,7 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_name="detector",
@@ -4007,7 +4006,7 @@ class MlClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Validates an anomaly detection detector.
 
@@ -4033,4 +4032,4 @@ class MlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]

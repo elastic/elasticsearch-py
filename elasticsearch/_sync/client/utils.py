@@ -335,10 +335,10 @@ def _rewrite_parameters(
                             )
 
                         warnings.warn(
-                            "The 'body' parameter is deprecated for the '%s' API and "
-                            "will be removed in a future version. Instead use the '%s' parameter. "
+                            f"The 'body' parameter is deprecated for the '{api.__name__!s}' API and "
+                            f"will be removed in a future version. Instead use the '{body_name}' parameter. "
                             "See https://github.com/elastic/elasticsearch-py/issues/1698 "
-                            "for more information" % (str(api.__name__), body_name),
+                            "for more information",
                             category=DeprecationWarning,
                             stacklevel=warn_stacklevel(),
                         )

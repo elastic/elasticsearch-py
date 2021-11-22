@@ -17,6 +17,8 @@
 
 from typing import Any, Dict, List, Optional, Union
 
+from elastic_transport import ObjectApiResponse
+
 from ._base import NamespacedClient
 from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
@@ -31,7 +33,7 @@ class AsyncSearchClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes an async search by ID. If the search is still running, the search request
         will be cancelled. Otherwise, the saved search results are deleted.
@@ -57,7 +59,7 @@ class AsyncSearchClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("DELETE", __target, headers=__headers)
+        return self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def get(
@@ -71,7 +73,7 @@ class AsyncSearchClient(NamespacedClient):
         pretty: Optional[bool] = None,
         typed_keys: Optional[bool] = None,
         wait_for_completion_timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves the results of a previously submitted async search request given its
         ID.
@@ -109,7 +111,7 @@ class AsyncSearchClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def status(
@@ -120,7 +122,7 @@ class AsyncSearchClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves the status of a previously submitted async search request given its
         ID.
@@ -146,7 +148,7 @@ class AsyncSearchClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -172,7 +174,7 @@ class AsyncSearchClient(NamespacedClient):
         collapse: Optional[Any] = None,
         default_operator: Optional[Any] = None,
         df: Optional[str] = None,
-        docvalue_fields: Optional[Union[Any, List[Any]]] = None,
+        docvalue_fields: Optional[List[Any]] = None,
         error_trace: Optional[bool] = None,
         expand_wildcards: Optional[Any] = None,
         explain: Optional[bool] = None,
@@ -211,12 +213,12 @@ class AsyncSearchClient(NamespacedClient):
         size: Optional[int] = None,
         slice: Optional[Any] = None,
         sort: Optional[Any] = None,
-        source: Optional[Union[Any, bool]] = None,
+        source: Optional[Any] = None,
         source_excludes: Optional[Any] = None,
         source_includes: Optional[Any] = None,
         stats: Optional[List[str]] = None,
         stored_fields: Optional[Any] = None,
-        suggest: Optional[Union[Any, Dict[str, Any]]] = None,
+        suggest: Optional[Any] = None,
         suggest_field: Optional[Any] = None,
         suggest_mode: Optional[Any] = None,
         suggest_size: Optional[int] = None,
@@ -224,11 +226,11 @@ class AsyncSearchClient(NamespacedClient):
         terminate_after: Optional[int] = None,
         timeout: Optional[str] = None,
         track_scores: Optional[bool] = None,
-        track_total_hits: Optional[Union[bool, int]] = None,
+        track_total_hits: Optional[Any] = None,
         typed_keys: Optional[bool] = None,
         version: Optional[bool] = None,
         wait_for_completion_timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Executes a search request asynchronously.
 
@@ -502,4 +504,4 @@ class AsyncSearchClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]

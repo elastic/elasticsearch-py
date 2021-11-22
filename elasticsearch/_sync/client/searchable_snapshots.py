@@ -17,6 +17,8 @@
 
 from typing import Any, Dict, List, Optional, Union
 
+from elastic_transport import ObjectApiResponse
+
 from ._base import NamespacedClient
 from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
@@ -34,7 +36,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         human: Optional[bool] = None,
         ignore_unavailable: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Clear the cache of searchable snapshots.
 
@@ -73,7 +75,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)
+        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -94,7 +96,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         renamed_index: Optional[Any] = None,
         storage: Optional[str] = None,
         wait_for_completion: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Mount a snapshot as a searchable index.
 
@@ -149,7 +151,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def stats(
@@ -161,7 +163,7 @@ class SearchableSnapshotsClient(NamespacedClient):
         human: Optional[bool] = None,
         level: Optional[Any] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieve shard-level statistics about searchable snapshots.
 
@@ -190,4 +192,4 @@ class SearchableSnapshotsClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]

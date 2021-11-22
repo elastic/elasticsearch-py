@@ -17,6 +17,8 @@
 
 from typing import Any, Dict, List, Optional, Union
 
+from elastic_transport import ObjectApiResponse, TextApiResponse
+
 from ._base import NamespacedClient
 from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
@@ -39,7 +41,7 @@ class CatClient(NamespacedClient):
         pretty: Optional[bool] = None,
         s: Optional[List[str]] = None,
         v: Optional[bool] = None,
-    ) -> Any:
+    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Shows information about currently configured aliases to indices including filter
         and routing infos.
@@ -98,7 +100,7 @@ class CatClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def allocation(
@@ -117,7 +119,7 @@ class CatClient(NamespacedClient):
         pretty: Optional[bool] = None,
         s: Optional[List[str]] = None,
         v: Optional[bool] = None,
-    ) -> Any:
+    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Provides a snapshot of how many shards are allocated to each data node and how
         much disk space they are using.
@@ -176,7 +178,7 @@ class CatClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def count(
@@ -194,7 +196,7 @@ class CatClient(NamespacedClient):
         pretty: Optional[bool] = None,
         s: Optional[List[str]] = None,
         v: Optional[bool] = None,
-    ) -> Any:
+    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Provides quick access to the document count of the entire cluster, or individual
         indices.
@@ -249,7 +251,7 @@ class CatClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def fielddata(
@@ -268,7 +270,7 @@ class CatClient(NamespacedClient):
         pretty: Optional[bool] = None,
         s: Optional[List[str]] = None,
         v: Optional[bool] = None,
-    ) -> Any:
+    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Shows how much heap memory is currently being used by fielddata on every data
         node in the cluster.
@@ -326,7 +328,7 @@ class CatClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def health(
@@ -338,14 +340,13 @@ class CatClient(NamespacedClient):
         h: Optional[Any] = None,
         help: Optional[bool] = None,
         human: Optional[bool] = None,
-        include_timestamp: Optional[bool] = None,
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
         s: Optional[List[str]] = None,
         ts: Optional[bool] = None,
         v: Optional[bool] = None,
-    ) -> Any:
+    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Returns a concise representation of the cluster health.
 
@@ -356,7 +357,6 @@ class CatClient(NamespacedClient):
         :param h: List of columns to appear in the response. Supports simple wildcards.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
-        :param include_timestamp:
         :param local: If `true`, the request computes the list of selected nodes from
             the local cluster state. If `false` the list of selected nodes are computed
             from the cluster state of the master node. In both cases the coordinating
@@ -382,8 +382,6 @@ class CatClient(NamespacedClient):
             __query["help"] = help
         if human is not None:
             __query["human"] = human
-        if include_timestamp is not None:
-            __query["include_timestamp"] = include_timestamp
         if local is not None:
             __query["local"] = local
         if master_timeout is not None:
@@ -401,7 +399,7 @@ class CatClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def help(
@@ -418,7 +416,7 @@ class CatClient(NamespacedClient):
         pretty: Optional[bool] = None,
         s: Optional[List[str]] = None,
         v: Optional[bool] = None,
-    ) -> Any:
+    ) -> TextApiResponse:
         """
         Returns help for the Cat APIs.
 
@@ -468,7 +466,7 @@ class CatClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "text/plain"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def indices(
@@ -491,7 +489,7 @@ class CatClient(NamespacedClient):
         pri: Optional[bool] = None,
         s: Optional[List[str]] = None,
         v: Optional[bool] = None,
-    ) -> Any:
+    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Returns information about indices: number of primaries and replicas, document
         counts, disk size, ...
@@ -564,7 +562,7 @@ class CatClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def master(
@@ -581,7 +579,7 @@ class CatClient(NamespacedClient):
         pretty: Optional[bool] = None,
         s: Optional[List[str]] = None,
         v: Optional[bool] = None,
-    ) -> Any:
+    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Returns information about the master node.
 
@@ -631,7 +629,7 @@ class CatClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def ml_data_frame_analytics(
@@ -651,7 +649,7 @@ class CatClient(NamespacedClient):
         pretty: Optional[bool] = None,
         s: Optional[List[str]] = None,
         v: Optional[bool] = None,
-    ) -> Any:
+    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Gets configuration and usage information about data frame analytics jobs.
 
@@ -712,7 +710,7 @@ class CatClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def ml_datafeeds(
@@ -732,7 +730,7 @@ class CatClient(NamespacedClient):
         s: Optional[List[str]] = None,
         time: Optional[Any] = None,
         v: Optional[bool] = None,
-    ) -> Any:
+    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Gets configuration and usage information about datafeeds.
 
@@ -801,7 +799,7 @@ class CatClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def ml_jobs(
@@ -822,7 +820,7 @@ class CatClient(NamespacedClient):
         s: Optional[List[str]] = None,
         time: Optional[Any] = None,
         v: Optional[bool] = None,
-    ) -> Any:
+    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Gets configuration and usage information about anomaly detection jobs.
 
@@ -891,7 +889,7 @@ class CatClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
@@ -915,7 +913,7 @@ class CatClient(NamespacedClient):
         s: Optional[List[str]] = None,
         size: Optional[int] = None,
         v: Optional[bool] = None,
-    ) -> Any:
+    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Gets configuration and usage information about inference trained models.
 
@@ -983,7 +981,7 @@ class CatClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def nodeattrs(
@@ -1000,7 +998,7 @@ class CatClient(NamespacedClient):
         pretty: Optional[bool] = None,
         s: Optional[List[str]] = None,
         v: Optional[bool] = None,
-    ) -> Any:
+    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Returns information about custom node attributes.
 
@@ -1050,7 +1048,7 @@ class CatClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def nodes(
@@ -1069,7 +1067,7 @@ class CatClient(NamespacedClient):
         pretty: Optional[bool] = None,
         s: Optional[List[str]] = None,
         v: Optional[bool] = None,
-    ) -> Any:
+    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Returns basic statistics about performance of cluster nodes.
 
@@ -1126,7 +1124,7 @@ class CatClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def pending_tasks(
@@ -1143,7 +1141,7 @@ class CatClient(NamespacedClient):
         pretty: Optional[bool] = None,
         s: Optional[List[str]] = None,
         v: Optional[bool] = None,
-    ) -> Any:
+    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Returns a concise representation of the cluster pending tasks.
 
@@ -1193,7 +1191,7 @@ class CatClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def plugins(
@@ -1210,7 +1208,7 @@ class CatClient(NamespacedClient):
         pretty: Optional[bool] = None,
         s: Optional[List[str]] = None,
         v: Optional[bool] = None,
-    ) -> Any:
+    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Returns information about installed plugins across nodes node.
 
@@ -1260,7 +1258,7 @@ class CatClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def recovery(
@@ -1281,7 +1279,7 @@ class CatClient(NamespacedClient):
         pretty: Optional[bool] = None,
         s: Optional[List[str]] = None,
         v: Optional[bool] = None,
-    ) -> Any:
+    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Returns information about index shard recoveries, both on-going completed.
 
@@ -1346,7 +1344,7 @@ class CatClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def repositories(
@@ -1363,7 +1361,7 @@ class CatClient(NamespacedClient):
         pretty: Optional[bool] = None,
         s: Optional[List[str]] = None,
         v: Optional[bool] = None,
-    ) -> Any:
+    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Returns information about snapshot repositories registered in the cluster.
 
@@ -1413,7 +1411,7 @@ class CatClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def segments(
@@ -1432,7 +1430,7 @@ class CatClient(NamespacedClient):
         pretty: Optional[bool] = None,
         s: Optional[List[str]] = None,
         v: Optional[bool] = None,
-    ) -> Any:
+    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Provides low-level information about the segments in the shards of an index.
 
@@ -1489,7 +1487,7 @@ class CatClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def shards(
@@ -1508,7 +1506,7 @@ class CatClient(NamespacedClient):
         pretty: Optional[bool] = None,
         s: Optional[List[str]] = None,
         v: Optional[bool] = None,
-    ) -> Any:
+    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Provides a detailed view of shard allocation on nodes.
 
@@ -1565,7 +1563,7 @@ class CatClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def snapshots(
@@ -1584,7 +1582,7 @@ class CatClient(NamespacedClient):
         pretty: Optional[bool] = None,
         s: Optional[List[str]] = None,
         v: Optional[bool] = None,
-    ) -> Any:
+    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Returns all snapshots in a specific repository.
 
@@ -1641,7 +1639,7 @@ class CatClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def tasks(
@@ -1662,7 +1660,7 @@ class CatClient(NamespacedClient):
         pretty: Optional[bool] = None,
         s: Optional[List[str]] = None,
         v: Optional[bool] = None,
-    ) -> Any:
+    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Returns information about the tasks currently executing on one or more nodes
         in the cluster.
@@ -1726,7 +1724,7 @@ class CatClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def templates(
@@ -1744,7 +1742,7 @@ class CatClient(NamespacedClient):
         pretty: Optional[bool] = None,
         s: Optional[List[str]] = None,
         v: Optional[bool] = None,
-    ) -> Any:
+    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Returns information about existing templates.
 
@@ -1798,7 +1796,7 @@ class CatClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def thread_pool(
@@ -1815,9 +1813,9 @@ class CatClient(NamespacedClient):
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
         s: Optional[List[str]] = None,
-        size: Optional[Union[Any, bool]] = None,
+        size: Optional[Any] = None,
         v: Optional[bool] = None,
-    ) -> Any:
+    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Returns cluster-wide thread pool statistics per node. By default the active,
         queue and rejected statistics are returned for all thread pools.
@@ -1876,7 +1874,7 @@ class CatClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
@@ -1899,7 +1897,7 @@ class CatClient(NamespacedClient):
         s: Optional[List[str]] = None,
         size: Optional[int] = None,
         v: Optional[bool] = None,
-    ) -> Any:
+    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Gets configuration and usage information about transforms.
 
@@ -1965,4 +1963,4 @@ class CatClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]

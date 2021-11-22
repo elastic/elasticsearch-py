@@ -17,6 +17,8 @@
 
 from typing import Any, Dict, List, Optional, Union
 
+from elastic_transport import ObjectApiResponse
+
 from ._base import NamespacedClient
 from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
@@ -30,7 +32,7 @@ class SecurityClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Enables authentication as a user and retrieve information about the authenticated
         user.
@@ -52,7 +54,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -65,16 +67,23 @@ class SecurityClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         password: Optional[Any] = None,
+        password_hash: Optional[str] = None,
         pretty: Optional[bool] = None,
         refresh: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Changes the passwords of users in the native realm and built-in users.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-change-password.html>`_
 
-        :param username: The username of the user to change the password for
-        :param password:
+        :param username: The user whose password you want to change. If you do not specify
+            this parameter, the password is changed for the current user.
+        :param password: The new password value. Passwords must be at least 6 characters
+            long.
+        :param password_hash: A hash of the new password value. This must be produced
+            using the same hashing algorithm as has been configured for password storage.
+            For more details, see the explanation of the `xpack.security.authc.password_hashing.algorithm`
+            setting.
         :param refresh: If `true` (the default) then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh to
             make this operation visible to search, if `false` then do nothing with refreshes.
@@ -93,6 +102,8 @@ class SecurityClient(NamespacedClient):
             __query["human"] = human
         if password is not None:
             __body["password"] = password
+        if password_hash is not None:
+            __body["password_hash"] = password_hash
         if pretty is not None:
             __query["pretty"] = pretty
         if refresh is not None:
@@ -102,9 +113,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request(
-            "PUT", __target, headers=__headers, body=__body
-        )
+        return await self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def clear_api_key_cache(
@@ -115,7 +124,7 @@ class SecurityClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Clear a subset or all entries from the API key cache.
 
@@ -140,7 +149,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers)
+        return await self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def clear_cached_privileges(
@@ -151,7 +160,7 @@ class SecurityClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Evicts application privileges from the native application privileges cache.
 
@@ -176,7 +185,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers)
+        return await self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def clear_cached_realms(
@@ -188,7 +197,7 @@ class SecurityClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         usernames: Optional[List[str]] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Evicts users from the user cache. Can completely clear the cache or evict specific
         users.
@@ -217,7 +226,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers)
+        return await self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def clear_cached_roles(
@@ -228,7 +237,7 @@ class SecurityClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Evicts roles from the native role cache.
 
@@ -253,7 +262,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers)
+        return await self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def clear_cached_service_tokens(
@@ -266,7 +275,7 @@ class SecurityClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Evicts tokens from the service account token caches.
 
@@ -297,7 +306,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers)
+        return await self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -314,7 +323,7 @@ class SecurityClient(NamespacedClient):
         pretty: Optional[bool] = None,
         refresh: Optional[Any] = None,
         role_descriptors: Optional[Dict[str, Any]] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Creates an API key for access without requiring basic authentication.
 
@@ -364,9 +373,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request(
-            "PUT", __target, headers=__headers, body=__body
-        )
+        return await self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def create_service_token(
@@ -379,7 +386,7 @@ class SecurityClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Creates a service account token for access without requiring basic authentication.
 
@@ -421,7 +428,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request(__method, __target, headers=__headers)
+        return await self._perform_request(__method, __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def delete_privileges(
@@ -434,7 +441,7 @@ class SecurityClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         refresh: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Removes application privileges.
 
@@ -467,7 +474,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("DELETE", __target, headers=__headers)
+        return await self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def delete_role(
@@ -479,7 +486,7 @@ class SecurityClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         refresh: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Removes roles in the native realm.
 
@@ -509,7 +516,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("DELETE", __target, headers=__headers)
+        return await self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def delete_role_mapping(
@@ -521,7 +528,7 @@ class SecurityClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         refresh: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Removes role mappings.
 
@@ -551,7 +558,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("DELETE", __target, headers=__headers)
+        return await self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def delete_service_token(
@@ -565,7 +572,7 @@ class SecurityClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         refresh: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes a service account token.
 
@@ -601,7 +608,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("DELETE", __target, headers=__headers)
+        return await self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def delete_user(
@@ -613,7 +620,7 @@ class SecurityClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         refresh: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes users from the native realm.
 
@@ -643,7 +650,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("DELETE", __target, headers=__headers)
+        return await self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def disable_user(
@@ -655,7 +662,7 @@ class SecurityClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         refresh: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Disables users in the native realm.
 
@@ -685,7 +692,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("PUT", __target, headers=__headers)
+        return await self._perform_request("PUT", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def enable_user(
@@ -697,7 +704,7 @@ class SecurityClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         refresh: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Enables users in the native realm.
 
@@ -727,7 +734,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("PUT", __target, headers=__headers)
+        return await self._perform_request("PUT", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def get_api_key(
@@ -742,7 +749,7 @@ class SecurityClient(NamespacedClient):
         pretty: Optional[bool] = None,
         realm_name: Optional[Any] = None,
         username: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves information for one or more API keys.
 
@@ -779,7 +786,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def get_builtin_privileges(
@@ -789,7 +796,7 @@ class SecurityClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves the list of cluster privileges and index privileges that are available
         in this version of Elasticsearch.
@@ -811,7 +818,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def get_privileges(
@@ -823,7 +830,7 @@ class SecurityClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves application privileges.
 
@@ -852,7 +859,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def get_role(
@@ -863,7 +870,7 @@ class SecurityClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves roles in the native realm.
 
@@ -889,7 +896,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def get_role_mapping(
@@ -900,7 +907,7 @@ class SecurityClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves role mappings.
 
@@ -926,7 +933,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def get_service_accounts(
@@ -938,7 +945,7 @@ class SecurityClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves information about service accounts.
 
@@ -967,7 +974,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def get_service_credentials(
@@ -979,7 +986,7 @@ class SecurityClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves information of all service credentials for a service account.
 
@@ -1007,7 +1014,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1025,7 +1032,7 @@ class SecurityClient(NamespacedClient):
         refresh_token: Optional[str] = None,
         scope: Optional[str] = None,
         username: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Creates a bearer token for access without requiring basic authentication.
 
@@ -1066,9 +1073,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request(
-            "POST", __target, headers=__headers, body=__body
-        )
+        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def get_user(
@@ -1079,7 +1084,7 @@ class SecurityClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves information about users in the native realm and built-in users.
 
@@ -1107,7 +1112,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def get_user_privileges(
@@ -1119,7 +1124,7 @@ class SecurityClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         priviledge: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves security privileges for the logged in user.
 
@@ -1150,7 +1155,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1168,7 +1173,7 @@ class SecurityClient(NamespacedClient):
         password: Optional[Any] = None,
         pretty: Optional[bool] = None,
         username: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Creates an API key on behalf of another user.
 
@@ -1210,9 +1215,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request(
-            "POST", __target, headers=__headers, body=__body
-        )
+        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1228,7 +1231,7 @@ class SecurityClient(NamespacedClient):
         human: Optional[bool] = None,
         index: Optional[List[Any]] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Determines whether the specified user has a specified list of privileges.
 
@@ -1264,9 +1267,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request(
-            "POST", __target, headers=__headers, body=__body
-        )
+        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1284,7 +1285,7 @@ class SecurityClient(NamespacedClient):
         pretty: Optional[bool] = None,
         realm_name: Optional[str] = None,
         username: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Invalidates one or more API keys.
 
@@ -1325,9 +1326,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request(
-            "DELETE", __target, headers=__headers, body=__body
-        )
+        return await self._perform_request("DELETE", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1343,7 +1342,7 @@ class SecurityClient(NamespacedClient):
         refresh_token: Optional[str] = None,
         token: Optional[str] = None,
         username: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Invalidates one or more access tokens or refresh tokens.
 
@@ -1378,9 +1377,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request(
-            "DELETE", __target, headers=__headers, body=__body
-        )
+        return await self._perform_request("DELETE", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_name="privileges",
@@ -1394,7 +1391,7 @@ class SecurityClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         refresh: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Adds or updates application privileges.
 
@@ -1425,9 +1422,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request(
-            "PUT", __target, headers=__headers, body=__body
-        )
+        return await self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1449,7 +1444,7 @@ class SecurityClient(NamespacedClient):
         refresh: Optional[Any] = None,
         run_as: Optional[List[str]] = None,
         transient_metadata: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Adds and updates roles in the native realm.
 
@@ -1510,9 +1505,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request(
-            "PUT", __target, headers=__headers, body=__body
-        )
+        return await self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1531,7 +1524,7 @@ class SecurityClient(NamespacedClient):
         roles: Optional[List[str]] = None,
         rules: Optional[Any] = None,
         run_as: Optional[List[str]] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Creates and updates role mappings.
 
@@ -1577,9 +1570,7 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request(
-            "PUT", __target, headers=__headers, body=__body
-        )
+        return await self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1600,7 +1591,7 @@ class SecurityClient(NamespacedClient):
         pretty: Optional[bool] = None,
         refresh: Optional[Any] = None,
         roles: Optional[List[str]] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Adds and updates users in the native realm. These users are commonly referred
         to as native users.
@@ -1653,6 +1644,4 @@ class SecurityClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request(
-            "PUT", __target, headers=__headers, body=__body
-        )
+        return await self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]

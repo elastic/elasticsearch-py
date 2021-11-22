@@ -17,6 +17,8 @@
 
 from typing import Any, Dict, List, Optional, Union
 
+from elastic_transport import ObjectApiResponse
+
 from ._base import NamespacedClient
 from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
@@ -32,7 +34,7 @@ class WatcherClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Acknowledges a watch, manually throttling the execution of the watch's actions.
 
@@ -63,7 +65,7 @@ class WatcherClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("PUT", __target, headers=__headers)
+        return self._perform_request("PUT", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def activate_watch(
@@ -74,7 +76,7 @@ class WatcherClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Activates a currently inactive watch.
 
@@ -99,7 +101,7 @@ class WatcherClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("PUT", __target, headers=__headers)
+        return self._perform_request("PUT", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def deactivate_watch(
@@ -110,7 +112,7 @@ class WatcherClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deactivates a currently active watch.
 
@@ -135,7 +137,7 @@ class WatcherClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("PUT", __target, headers=__headers)
+        return self._perform_request("PUT", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def delete_watch(
@@ -146,7 +148,7 @@ class WatcherClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Removes a watch from Watcher.
 
@@ -171,7 +173,7 @@ class WatcherClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("DELETE", __target, headers=__headers)
+        return self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -192,7 +194,7 @@ class WatcherClient(NamespacedClient):
         simulated_actions: Optional[Any] = None,
         trigger_data: Optional[Any] = None,
         watch: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Forces the execution of a stored watch.
 
@@ -247,7 +249,7 @@ class WatcherClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("PUT", __target, headers=__headers, body=__body)
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def get_watch(
@@ -258,7 +260,7 @@ class WatcherClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves a watch by its ID.
 
@@ -283,7 +285,7 @@ class WatcherClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -299,7 +301,7 @@ class WatcherClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         if_primary_term: Optional[int] = None,
-        if_sequence_number: Optional[int] = None,
+        if_seq_no: Optional[Any] = None,
         input: Optional[Any] = None,
         metadata: Optional[Any] = None,
         pretty: Optional[bool] = None,
@@ -307,7 +309,7 @@ class WatcherClient(NamespacedClient):
         transform: Optional[Any] = None,
         trigger: Optional[Any] = None,
         version: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Creates a new watch, or updates an existing one.
 
@@ -319,7 +321,8 @@ class WatcherClient(NamespacedClient):
         :param condition:
         :param if_primary_term: only update the watch if the last operation that has
             changed the watch has the specified primary term
-        :param if_sequence_number:
+        :param if_seq_no: only update the watch if the last operation that has changed
+            the watch has the specified sequence number
         :param input:
         :param metadata:
         :param throttle_period:
@@ -346,8 +349,8 @@ class WatcherClient(NamespacedClient):
             __query["human"] = human
         if if_primary_term is not None:
             __query["if_primary_term"] = if_primary_term
-        if if_sequence_number is not None:
-            __query["if_sequence_number"] = if_sequence_number
+        if if_seq_no is not None:
+            __query["if_seq_no"] = if_seq_no
         if input is not None:
             __body["input"] = input
         if metadata is not None:
@@ -371,7 +374,7 @@ class WatcherClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("PUT", __target, headers=__headers, body=__body)
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -389,7 +392,7 @@ class WatcherClient(NamespacedClient):
         search_after: Optional[Any] = None,
         size: Optional[int] = None,
         sort: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves stored watches.
 
@@ -432,7 +435,7 @@ class WatcherClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def start(
@@ -442,7 +445,7 @@ class WatcherClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Starts Watcher if it is not already running.
 
@@ -463,7 +466,7 @@ class WatcherClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)
+        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def stats(
@@ -475,7 +478,7 @@ class WatcherClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves the current Watcher metrics.
 
@@ -505,7 +508,7 @@ class WatcherClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def stop(
@@ -515,7 +518,7 @@ class WatcherClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Stops Watcher if it is running.
 
@@ -536,4 +539,4 @@ class WatcherClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)
+        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]

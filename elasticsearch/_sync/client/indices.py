@@ -17,6 +17,8 @@
 
 from typing import Any, Dict, List, Optional, Union
 
+from elastic_transport import HeadApiResponse, ObjectApiResponse
+
 from ._base import NamespacedClient
 from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
@@ -37,7 +39,7 @@ class IndicesClient(NamespacedClient):
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Adds a block to an index.
 
@@ -84,7 +86,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("PUT", __target, headers=__headers)
+        return self._perform_request("PUT", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -95,18 +97,18 @@ class IndicesClient(NamespacedClient):
         index: Optional[Any] = None,
         analyzer: Optional[str] = None,
         attributes: Optional[List[str]] = None,
-        char_filter: Optional[List[Union[Any, str]]] = None,
+        char_filter: Optional[List[Any]] = None,
         error_trace: Optional[bool] = None,
         explain: Optional[bool] = None,
         field: Optional[Any] = None,
-        filter: Optional[List[Union[Any, str]]] = None,
+        filter: Optional[List[Any]] = None,
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         normalizer: Optional[str] = None,
         pretty: Optional[bool] = None,
         text: Optional[Any] = None,
-        tokenizer: Optional[Union[Any, str]] = None,
-    ) -> Any:
+        tokenizer: Optional[Any] = None,
+    ) -> ObjectApiResponse[Any]:
         """
         Performs the analysis process on a text and return the tokens breakdown of the
         text.
@@ -165,7 +167,7 @@ class IndicesClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def clear_cache(
@@ -183,7 +185,7 @@ class IndicesClient(NamespacedClient):
         pretty: Optional[bool] = None,
         query: Optional[bool] = None,
         request: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Clears all or specific caches for one or more indices.
 
@@ -235,7 +237,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)
+        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -254,7 +256,7 @@ class IndicesClient(NamespacedClient):
         settings: Optional[Dict[str, Any]] = None,
         timeout: Optional[Any] = None,
         wait_for_active_shards: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Clones an index
 
@@ -303,7 +305,7 @@ class IndicesClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("PUT", __target, headers=__headers, body=__body)
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def close(
@@ -320,7 +322,7 @@ class IndicesClient(NamespacedClient):
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
         wait_for_active_shards: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Closes an index.
 
@@ -368,7 +370,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)
+        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -388,7 +390,7 @@ class IndicesClient(NamespacedClient):
         settings: Optional[Any] = None,
         timeout: Optional[Any] = None,
         wait_for_active_shards: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Creates an index with optional settings and mappings.
 
@@ -441,7 +443,7 @@ class IndicesClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("PUT", __target, headers=__headers, body=__body)
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def create_data_stream(
@@ -452,7 +454,7 @@ class IndicesClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Creates a data stream
 
@@ -477,7 +479,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("PUT", __target, headers=__headers)
+        return self._perform_request("PUT", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def data_streams_stats(
@@ -489,7 +491,7 @@ class IndicesClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Provides statistics on operations happening in a data stream.
 
@@ -519,7 +521,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def delete(
@@ -535,7 +537,7 @@ class IndicesClient(NamespacedClient):
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes an index.
 
@@ -578,7 +580,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("DELETE", __target, headers=__headers)
+        return self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def delete_alias(
@@ -592,7 +594,7 @@ class IndicesClient(NamespacedClient):
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes an alias.
 
@@ -628,7 +630,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("DELETE", __target, headers=__headers)
+        return self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def delete_data_stream(
@@ -640,7 +642,7 @@ class IndicesClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes a data stream.
 
@@ -670,7 +672,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("DELETE", __target, headers=__headers)
+        return self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def delete_index_template(
@@ -681,7 +683,7 @@ class IndicesClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes an index template.
 
@@ -706,7 +708,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("DELETE", __target, headers=__headers)
+        return self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def delete_template(
@@ -719,7 +721,7 @@ class IndicesClient(NamespacedClient):
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes an index template.
 
@@ -750,7 +752,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("DELETE", __target, headers=__headers)
+        return self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def disk_usage(
@@ -769,7 +771,7 @@ class IndicesClient(NamespacedClient):
         run_expensive_tasks: Optional[bool] = None,
         timeout: Optional[Any] = None,
         wait_for_active_shards: Optional[str] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Analyzes the disk usage of each field of an index or data stream
 
@@ -837,7 +839,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)
+        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def exists(
@@ -854,7 +856,7 @@ class IndicesClient(NamespacedClient):
         include_defaults: Optional[bool] = None,
         local: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> HeadApiResponse:
         """
         Returns information about whether a particular index exists.
 
@@ -901,7 +903,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("HEAD", __target, headers=__headers)
+        return self._perform_request("HEAD", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def exists_alias(
@@ -917,7 +919,7 @@ class IndicesClient(NamespacedClient):
         ignore_unavailable: Optional[bool] = None,
         local: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> HeadApiResponse:
         """
         Returns information about whether a particular alias exists.
 
@@ -965,7 +967,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("HEAD", __target, headers=__headers)
+        return self._perform_request("HEAD", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def exists_index_template(
@@ -977,7 +979,7 @@ class IndicesClient(NamespacedClient):
         human: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> HeadApiResponse:
         """
         Returns information about whether a particular index template exists.
 
@@ -1008,7 +1010,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("HEAD", __target, headers=__headers)
+        return self._perform_request("HEAD", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def exists_template(
@@ -1022,7 +1024,7 @@ class IndicesClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> HeadApiResponse:
         """
         Returns information about whether a particular index template exists.
 
@@ -1057,7 +1059,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("HEAD", __target, headers=__headers)
+        return self._perform_request("HEAD", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def exists_type(
@@ -1073,7 +1075,7 @@ class IndicesClient(NamespacedClient):
         ignore_unavailable: Optional[bool] = None,
         local: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> HeadApiResponse:
         """
         Returns information about whether a particular document type exists. (DEPRECATED)
 
@@ -1119,7 +1121,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("HEAD", __target, headers=__headers)
+        return self._perform_request("HEAD", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def flush(
@@ -1135,7 +1137,7 @@ class IndicesClient(NamespacedClient):
         ignore_unavailable: Optional[bool] = None,
         pretty: Optional[bool] = None,
         wait_if_ongoing: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Performs the flush operation on one or more indices.
 
@@ -1187,7 +1189,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)
+        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def forcemerge(
@@ -1204,7 +1206,7 @@ class IndicesClient(NamespacedClient):
         max_num_segments: Optional[int] = None,
         only_expunge_deletes: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Performs the force merge operation on one or more indices.
 
@@ -1256,7 +1258,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)
+        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def get(
@@ -1275,7 +1277,7 @@ class IndicesClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns information about one or more indices.
 
@@ -1335,7 +1337,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def get_alias(
@@ -1351,7 +1353,7 @@ class IndicesClient(NamespacedClient):
         ignore_unavailable: Optional[bool] = None,
         local: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns an alias.
 
@@ -1399,7 +1401,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def get_data_stream(
@@ -1411,7 +1413,7 @@ class IndicesClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns data streams.
 
@@ -1442,7 +1444,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def get_field_mapping(
@@ -1460,7 +1462,7 @@ class IndicesClient(NamespacedClient):
         include_type_name: Optional[bool] = None,
         local: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns mapping for one or more fields.
 
@@ -1515,7 +1517,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def get_index_template(
@@ -1530,7 +1532,7 @@ class IndicesClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns an index template.
 
@@ -1574,7 +1576,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def get_mapping(
@@ -1591,7 +1593,7 @@ class IndicesClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns mappings for one or more indices.
 
@@ -1640,7 +1642,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def get_settings(
@@ -1659,7 +1661,7 @@ class IndicesClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns settings for one or more indices.
 
@@ -1718,7 +1720,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def get_template(
@@ -1733,7 +1735,7 @@ class IndicesClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns an index template.
 
@@ -1772,7 +1774,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def migrate_to_data_stream(
@@ -1783,7 +1785,7 @@ class IndicesClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Migrates an alias to a data stream
 
@@ -1808,7 +1810,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)
+        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def open(
@@ -1825,7 +1827,7 @@ class IndicesClient(NamespacedClient):
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
         wait_for_active_shards: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Opens an index.
 
@@ -1873,7 +1875,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)
+        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def promote_data_stream(
@@ -1884,7 +1886,7 @@ class IndicesClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Promotes a data stream from a replicated data stream managed by CCR to a regular
         data stream
@@ -1910,7 +1912,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)
+        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1931,7 +1933,7 @@ class IndicesClient(NamespacedClient):
         routing: Optional[Any] = None,
         search_routing: Optional[Any] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Creates or updates an alias.
 
@@ -1986,7 +1988,7 @@ class IndicesClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("PUT", __target, headers=__headers, body=__body)
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2007,7 +2009,7 @@ class IndicesClient(NamespacedClient):
         priority: Optional[int] = None,
         template: Optional[Any] = None,
         version: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Creates or updates an index template.
 
@@ -2054,7 +2056,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("PUT", __target, headers=__headers, body=__body)
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2071,7 +2073,7 @@ class IndicesClient(NamespacedClient):
         index: Any,
         allow_no_indices: Optional[bool] = None,
         date_detection: Optional[bool] = None,
-        dynamic: Optional[Union[Any, bool]] = None,
+        dynamic: Optional[Any] = None,
         dynamic_date_formats: Optional[List[str]] = None,
         dynamic_templates: Optional[Union[Dict[str, Any], List[Dict[str, Any]]]] = None,
         error_trace: Optional[bool] = None,
@@ -2091,7 +2093,7 @@ class IndicesClient(NamespacedClient):
         source: Optional[Any] = None,
         timeout: Optional[Any] = None,
         write_index_only: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Updates the index mappings.
 
@@ -2183,7 +2185,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("PUT", __target, headers=__headers, body=__body)
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_name="settings",
@@ -2204,7 +2206,7 @@ class IndicesClient(NamespacedClient):
         preserve_existing: Optional[bool] = None,
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Updates the index settings.
 
@@ -2261,7 +2263,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("PUT", __target, headers=__headers, body=__body)
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2285,7 +2287,7 @@ class IndicesClient(NamespacedClient):
         settings: Optional[Dict[str, Any]] = None,
         timeout: Optional[Any] = None,
         version: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Creates or updates an index template.
 
@@ -2352,7 +2354,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("PUT", __target, headers=__headers, body=__body)
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def recovery(
@@ -2365,7 +2367,7 @@ class IndicesClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns information about ongoing index shard recoveries.
 
@@ -2398,7 +2400,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def refresh(
@@ -2412,7 +2414,7 @@ class IndicesClient(NamespacedClient):
         human: Optional[bool] = None,
         ignore_unavailable: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Performs the refresh operation in one or more indices.
 
@@ -2452,7 +2454,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)
+        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def reload_search_analyzers(
@@ -2466,7 +2468,7 @@ class IndicesClient(NamespacedClient):
         human: Optional[bool] = None,
         ignore_unavailable: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Reloads an index's search analyzers and their resources.
 
@@ -2504,7 +2506,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)
+        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def resolve_index(
@@ -2516,7 +2518,7 @@ class IndicesClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns information about any matching indices, aliases, and data streams
 
@@ -2545,7 +2547,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2562,13 +2564,13 @@ class IndicesClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         include_type_name: Optional[bool] = None,
-        mappings: Optional[Union[Any, Dict[str, Any]]] = None,
+        mappings: Optional[Any] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
         settings: Optional[Dict[str, Any]] = None,
         timeout: Optional[Any] = None,
         wait_for_active_shards: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Updates an alias to point to a new index when the existing index is considered
         to be too large or too old.
@@ -2634,7 +2636,7 @@ class IndicesClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def segments(
@@ -2649,7 +2651,7 @@ class IndicesClient(NamespacedClient):
         ignore_unavailable: Optional[bool] = None,
         pretty: Optional[bool] = None,
         verbose: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Provides low-level information about segments in a Lucene index.
 
@@ -2692,7 +2694,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def shard_stores(
@@ -2707,7 +2709,7 @@ class IndicesClient(NamespacedClient):
         ignore_unavailable: Optional[bool] = None,
         pretty: Optional[bool] = None,
         status: Optional[Union[Any, List[Any]]] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Provides store information for shard copies of indices.
 
@@ -2750,7 +2752,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2769,7 +2771,7 @@ class IndicesClient(NamespacedClient):
         settings: Optional[Dict[str, Any]] = None,
         timeout: Optional[Any] = None,
         wait_for_active_shards: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Allow to shrink an existing index into a new index with fewer primary shards.
 
@@ -2818,43 +2820,66 @@ class IndicesClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("PUT", __target, headers=__headers, body=__body)
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
+        parameter_aliases={"_meta": "meta"},
     )
     def simulate_index_template(
         self,
         *,
         name: Any,
+        allow_auto_create: Optional[bool] = None,
         composed_of: Optional[List[Any]] = None,
+        create: Optional[bool] = None,
+        data_stream: Optional[Any] = None,
         error_trace: Optional[bool] = None,
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
-        index_patterns: Optional[List[Any]] = None,
-        overlapping: Optional[List[Any]] = None,
+        index_patterns: Optional[Any] = None,
+        master_timeout: Optional[Any] = None,
+        meta: Optional[Any] = None,
         pretty: Optional[bool] = None,
+        priority: Optional[int] = None,
         template: Optional[Any] = None,
-    ) -> Any:
+        version: Optional[Any] = None,
+    ) -> ObjectApiResponse[Any]:
         """
         Simulate matching the given index name against the index templates in the system
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
 
         :param name: Index or template name to simulate
+        :param allow_auto_create:
         :param composed_of:
+        :param create: If `true`, the template passed in the body is only used if no
+            existing templates match the same index patterns. If `false`, the simulation
+            uses the template with the highest priority. Note that the template is not
+            permanently added or updated in either case; it is only used for the simulation.
+        :param data_stream:
         :param index_patterns:
-        :param overlapping: Any overlapping templates that would have matched, but have
-            lower priority
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param meta:
+        :param priority:
         :param template:
+        :param version:
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_index_template/_simulate_index/{_quote(name)}"
         __body: Dict[str, Any] = {}
         __query: Dict[str, Any] = {}
+        if allow_auto_create is not None:
+            __body["allow_auto_create"] = allow_auto_create
         if composed_of is not None:
             __body["composed_of"] = composed_of
+        if create is not None:
+            __query["create"] = create
+        if data_stream is not None:
+            __body["data_stream"] = data_stream
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -2863,12 +2888,18 @@ class IndicesClient(NamespacedClient):
             __query["human"] = human
         if index_patterns is not None:
             __body["index_patterns"] = index_patterns
-        if overlapping is not None:
-            __body["overlapping"] = overlapping
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if meta is not None:
+            __body["_meta"] = meta
         if pretty is not None:
             __query["pretty"] = pretty
+        if priority is not None:
+            __body["priority"] = priority
         if template is not None:
             __body["template"] = template
+        if version is not None:
+            __body["version"] = version
         if not __body:
             __body = None  # type: ignore[assignment]
         if __query:
@@ -2878,7 +2909,7 @@ class IndicesClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_name="template",
@@ -2894,7 +2925,7 @@ class IndicesClient(NamespacedClient):
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
         template: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Simulate resolving the given template name or body
 
@@ -2939,7 +2970,7 @@ class IndicesClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2958,7 +2989,7 @@ class IndicesClient(NamespacedClient):
         settings: Optional[Dict[str, Any]] = None,
         timeout: Optional[Any] = None,
         wait_for_active_shards: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Allows you to split an existing index into a new index with more primary shards.
 
@@ -3007,7 +3038,7 @@ class IndicesClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("PUT", __target, headers=__headers, body=__body)
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def stats(
@@ -3029,7 +3060,7 @@ class IndicesClient(NamespacedClient):
         level: Optional[Any] = None,
         pretty: Optional[bool] = None,
         types: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Provides statistics on operations happening in an index.
 
@@ -3101,7 +3132,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def unfreeze(
@@ -3118,7 +3149,7 @@ class IndicesClient(NamespacedClient):
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
         wait_for_active_shards: Optional[str] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Unfreezes an index. When a frozen index is unfrozen, the index goes through the
         normal recovery process and becomes writeable again.
@@ -3167,7 +3198,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)
+        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3182,7 +3213,7 @@ class IndicesClient(NamespacedClient):
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Updates index aliases.
 
@@ -3214,7 +3245,7 @@ class IndicesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3241,7 +3272,7 @@ class IndicesClient(NamespacedClient):
         q: Optional[str] = None,
         query: Optional[Any] = None,
         rewrite: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Allows a user to validate a potentially expensive query without executing it.
 
@@ -3326,4 +3357,4 @@ class IndicesClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
