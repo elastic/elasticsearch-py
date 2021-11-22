@@ -692,6 +692,25 @@ async def test_unsupported_product_error(headers):
     )
 
 
+@pytest.mark.parametrize("status", [401, 403, 413, 500])
+async def test_unsupported_product_error_not_raised_on_non_2xx(status):
+    client = AsyncElasticsearch(
+        [
+            NodeConfig(
+                "http", "localhost", 9200, _extras={"headers": {}, "status": status}
+            )
+        ],
+        meta_header=False,
+        node_class=DummyNode,
+    )
+    try:
+        await client.info()
+    except UnsupportedProductError:
+        assert False, "Raised UnsupportedProductError"
+    except ApiError as e:
+        assert e.meta.status == status
+
+
 @pytest.mark.parametrize("status", [404, 500])
 async def test_transport_error_raised_before_product_error(status):
     client = AsyncElasticsearch(
