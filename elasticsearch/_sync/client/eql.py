@@ -17,6 +17,8 @@
 
 from typing import Any, Dict, List, Optional, Union
 
+from elastic_transport import ObjectApiResponse
+
 from ._base import NamespacedClient
 from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
@@ -31,7 +33,7 @@ class EqlClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes an async EQL search by ID. If the search is still running, the search
         request will be cancelled. Otherwise, the saved search results are deleted.
@@ -57,7 +59,7 @@ class EqlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("DELETE", __target, headers=__headers)
+        return self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def get(
@@ -70,7 +72,7 @@ class EqlClient(NamespacedClient):
         keep_alive: Optional[Any] = None,
         pretty: Optional[bool] = None,
         wait_for_completion_timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns async results from previously executed Event Query Language (EQL) search
 
@@ -105,7 +107,7 @@ class EqlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def get_status(
@@ -116,7 +118,7 @@ class EqlClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns the status of a previously submitted async or stored Event Query Language
         (EQL) search
@@ -142,7 +144,7 @@ class EqlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -158,7 +160,7 @@ class EqlClient(NamespacedClient):
         event_category_field: Optional[Any] = None,
         expand_wildcards: Optional[Any] = None,
         fetch_size: Optional[int] = None,
-        fields: Optional[List[Any]] = None,
+        fields: Optional[Any] = None,
         filter: Optional[Union[Any, List[Any]]] = None,
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
@@ -167,11 +169,11 @@ class EqlClient(NamespacedClient):
         keep_on_completion: Optional[bool] = None,
         pretty: Optional[bool] = None,
         result_position: Optional[Any] = None,
-        size: Optional[Union[float, int]] = None,
+        size: Optional[int] = None,
         tiebreaker_field: Optional[Any] = None,
         timestamp_field: Optional[Any] = None,
         wait_for_completion_timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns results matching a query expressed in Event Query Language (EQL)
 
@@ -254,4 +256,4 @@ class EqlClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]

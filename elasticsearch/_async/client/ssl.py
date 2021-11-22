@@ -17,6 +17,8 @@
 
 from typing import Any, Dict, List, Optional, Union
 
+from elastic_transport import ObjectApiResponse
+
 from ._base import NamespacedClient
 from .utils import _quote_query, _rewrite_parameters
 
@@ -30,7 +32,7 @@ class SslClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves information about the X.509 certificates used to encrypt communications
         in the cluster.
@@ -52,4 +54,4 @@ class SslClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]

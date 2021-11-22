@@ -17,6 +17,8 @@
 
 from typing import Any, Dict, List, Optional, Union
 
+from elastic_transport import ObjectApiResponse
+
 from ._base import NamespacedClient
 from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
@@ -31,7 +33,7 @@ class RollupClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes an existing rollup job.
 
@@ -56,7 +58,7 @@ class RollupClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("DELETE", __target, headers=__headers)
+        return self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def get_jobs(
@@ -67,7 +69,7 @@ class RollupClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves the configuration, stats, and status of rollup jobs.
 
@@ -94,7 +96,7 @@ class RollupClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def get_rollup_caps(
@@ -105,7 +107,7 @@ class RollupClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns the capabilities of any rollup jobs that have been configured for a specific
         index or index pattern.
@@ -133,7 +135,7 @@ class RollupClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def get_rollup_index_caps(
@@ -144,7 +146,7 @@ class RollupClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns the rollup capabilities of all jobs inside of a rollup index (e.g. the
         index where rollup data is stored).
@@ -171,7 +173,7 @@ class RollupClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -190,7 +192,7 @@ class RollupClient(NamespacedClient):
         page_size: Optional[int] = None,
         pretty: Optional[bool] = None,
         rollup_index: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Creates a rollup job.
 
@@ -234,7 +236,7 @@ class RollupClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("PUT", __target, headers=__headers, body=__body)
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_name="config",
@@ -249,7 +251,7 @@ class RollupClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Rollup an index
 
@@ -281,7 +283,7 @@ class RollupClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -301,7 +303,7 @@ class RollupClient(NamespacedClient):
         rest_total_hits_as_int: Optional[bool] = None,
         size: Optional[int] = None,
         typed_keys: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Enables searching rolled-up data using the standard query DSL.
 
@@ -354,7 +356,7 @@ class RollupClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def start_job(
@@ -365,7 +367,7 @@ class RollupClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Starts an existing, stopped rollup job.
 
@@ -390,7 +392,7 @@ class RollupClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)
+        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def stop_job(
@@ -403,7 +405,7 @@ class RollupClient(NamespacedClient):
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
         wait_for_completion: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Stops an existing, started rollup job.
 
@@ -436,4 +438,4 @@ class RollupClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)
+        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]

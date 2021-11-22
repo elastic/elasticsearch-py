@@ -17,6 +17,8 @@
 
 from typing import Any, Dict, List, Optional, Union
 
+from elastic_transport import ObjectApiResponse
+
 from ._base import NamespacedClient
 from .utils import _quote_query, _rewrite_parameters
 
@@ -30,7 +32,7 @@ class LicenseClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes licensing information for the cluster
 
@@ -51,7 +53,7 @@ class LicenseClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("DELETE", __target, headers=__headers)
+        return await self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def get(
@@ -63,7 +65,7 @@ class LicenseClient(NamespacedClient):
         human: Optional[bool] = None,
         local: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves licensing information for the cluster
 
@@ -93,7 +95,7 @@ class LicenseClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def get_basic_status(
@@ -103,7 +105,7 @@ class LicenseClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves information about the status of the basic license.
 
@@ -124,7 +126,7 @@ class LicenseClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def get_trial_status(
@@ -134,7 +136,7 @@ class LicenseClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves information about the status of the trial license.
 
@@ -155,7 +157,7 @@ class LicenseClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -170,7 +172,7 @@ class LicenseClient(NamespacedClient):
         license: Optional[Any] = None,
         licenses: Optional[List[Any]] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Updates the license for the cluster.
 
@@ -207,9 +209,7 @@ class LicenseClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self._perform_request(
-            "PUT", __target, headers=__headers, body=__body
-        )
+        return await self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def post_start_basic(
@@ -220,7 +220,7 @@ class LicenseClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Starts an indefinite basic license.
 
@@ -246,7 +246,7 @@ class LicenseClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers)
+        return await self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def post_start_trial(
@@ -258,7 +258,7 @@ class LicenseClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         type_query_string: Optional[str] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         starts a limited time trial license.
 
@@ -287,4 +287,4 @@ class LicenseClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers)
+        return await self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]

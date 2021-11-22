@@ -17,6 +17,8 @@
 
 from typing import Any, Dict, List, Optional, Union
 
+from elastic_transport import ObjectApiResponse, TextApiResponse
+
 from ._base import NamespacedClient
 from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
@@ -32,29 +34,30 @@ class NodesClient(NamespacedClient):
         human: Optional[bool] = None,
         ignore_idle_threads: Optional[bool] = None,
         interval: Optional[Any] = None,
+        master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
         snapshots: Optional[int] = None,
-        thread_type: Optional[Any] = None,
         threads: Optional[int] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+        type: Optional[Any] = None,
+    ) -> TextApiResponse:
         """
         Returns information about hot threads on each node in the cluster.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-hot-threads.html>`_
 
-        :param node_id: A comma-separated list of node IDs or names to limit the returned
-            information; use `_local` to return information from the node you're connecting
-            to, leave empty to get information from all nodes
-        :param ignore_idle_threads: Don't show threads that are in known-idle places,
-            such as waiting on a socket select or pulling from an empty task queue (default:
-            true)
-        :param interval: The interval for the second sampling of threads
-        :param snapshots: Number of samples of thread stacktrace (default: 10)
-        :param thread_type:
-        :param threads: Specify the number of threads to provide information for (default:
-            3)
-        :param timeout: Explicit operation timeout
+        :param node_id: List of node IDs or names used to limit returned information.
+        :param ignore_idle_threads: If true, known idle threads (e.g. waiting in a socket
+            select, or to get a task from an empty queue) are filtered out.
+        :param interval: The interval to do the second sampling of threads.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param snapshots: Number of samples of thread stacktrace.
+        :param threads: Specifies the number of hot threads to provide information for.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
+        :param type: The type to sample.
         """
         if node_id not in SKIP_IN_PATH:
             __path = f"/_nodes/{_quote(node_id)}/hot_threads"
@@ -71,22 +74,24 @@ class NodesClient(NamespacedClient):
             __query["ignore_idle_threads"] = ignore_idle_threads
         if interval is not None:
             __query["interval"] = interval
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         if snapshots is not None:
             __query["snapshots"] = snapshots
-        if thread_type is not None:
-            __query["thread_type"] = thread_type
         if threads is not None:
             __query["threads"] = threads
         if timeout is not None:
             __query["timeout"] = timeout
+        if type is not None:
+            __query["type"] = type
         if __query:
             __target = f"{__path}?{_quote_query(__query)}"
         else:
             __target = __path
         __headers = {"accept": "text/plain"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def info(
@@ -101,7 +106,7 @@ class NodesClient(NamespacedClient):
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns information about nodes in the cluster.
 
@@ -146,7 +151,7 @@ class NodesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -161,7 +166,7 @@ class NodesClient(NamespacedClient):
         pretty: Optional[bool] = None,
         secure_settings_password: Optional[Any] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Reloads secure settings.
 
@@ -199,9 +204,7 @@ class NodesClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self._perform_request(
-            "POST", __target, headers=__headers, body=__body
-        )
+        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def stats(
@@ -224,7 +227,7 @@ class NodesClient(NamespacedClient):
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
         types: Optional[List[str]] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns statistical information about nodes in the cluster.
 
@@ -309,7 +312,7 @@ class NodesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def usage(
@@ -322,7 +325,7 @@ class NodesClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns low-level information about REST actions usage on nodes.
 
@@ -358,4 +361,4 @@ class NodesClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]

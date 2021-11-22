@@ -17,6 +17,8 @@
 
 from typing import Any, Dict, List, Optional, Union
 
+from elastic_transport import ObjectApiResponse
+
 from ._base import NamespacedClient
 from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
@@ -33,7 +35,7 @@ class SnapshotClient(NamespacedClient):
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Removes stale data from repository.
 
@@ -64,7 +66,7 @@ class SnapshotClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)
+        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -82,7 +84,7 @@ class SnapshotClient(NamespacedClient):
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Clones indices from one snapshot into another snapshot in the same repository.
 
@@ -125,7 +127,7 @@ class SnapshotClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("PUT", __target, headers=__headers, body=__body)
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -147,7 +149,7 @@ class SnapshotClient(NamespacedClient):
         partial: Optional[bool] = None,
         pretty: Optional[bool] = None,
         wait_for_completion: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Creates a snapshot in a repository.
 
@@ -224,7 +226,7 @@ class SnapshotClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("PUT", __target, headers=__headers, body=__body)
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -243,7 +245,7 @@ class SnapshotClient(NamespacedClient):
         repository: Optional[Any] = None,
         timeout: Optional[Any] = None,
         verify: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Creates a repository.
 
@@ -291,7 +293,7 @@ class SnapshotClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("PUT", __target, headers=__headers, body=__body)
+        return self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def delete(
@@ -304,7 +306,7 @@ class SnapshotClient(NamespacedClient):
         human: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes one or more snapshots.
 
@@ -335,7 +337,7 @@ class SnapshotClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("DELETE", __target, headers=__headers)
+        return self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def delete_repository(
@@ -348,7 +350,7 @@ class SnapshotClient(NamespacedClient):
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes a repository.
 
@@ -380,7 +382,7 @@ class SnapshotClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("DELETE", __target, headers=__headers)
+        return self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def get(
@@ -397,7 +399,7 @@ class SnapshotClient(NamespacedClient):
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
         verbose: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns information about a snapshot.
 
@@ -453,7 +455,7 @@ class SnapshotClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def get_repository(
@@ -466,7 +468,7 @@ class SnapshotClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns information about a repository.
 
@@ -499,7 +501,7 @@ class SnapshotClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -524,7 +526,7 @@ class SnapshotClient(NamespacedClient):
         rename_pattern: Optional[str] = None,
         rename_replacement: Optional[str] = None,
         wait_for_completion: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Restores a snapshot.
 
@@ -591,7 +593,7 @@ class SnapshotClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def status(
@@ -605,7 +607,7 @@ class SnapshotClient(NamespacedClient):
         ignore_unavailable: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Returns information about the status of a snapshot.
 
@@ -641,7 +643,7 @@ class SnapshotClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)
+        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def verify_repository(
@@ -654,7 +656,7 @@ class SnapshotClient(NamespacedClient):
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Verifies a repository.
 
@@ -685,4 +687,4 @@ class SnapshotClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)
+        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]

@@ -17,6 +17,8 @@
 
 from typing import Any, Dict, List, Optional, Union
 
+from elastic_transport import ObjectApiResponse
+
 from ._base import NamespacedClient
 from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
@@ -32,7 +34,7 @@ class TransformClient(NamespacedClient):
         force: Optional[bool] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes an existing transform.
 
@@ -62,7 +64,7 @@ class TransformClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("DELETE", __target, headers=__headers)
+        return await self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
@@ -79,7 +81,7 @@ class TransformClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         size: Optional[int] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves configuration information for transforms.
 
@@ -120,7 +122,7 @@ class TransformClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
@@ -136,7 +138,7 @@ class TransformClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         size: Optional[int] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves usage information for transforms.
 
@@ -173,7 +175,7 @@ class TransformClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -195,7 +197,7 @@ class TransformClient(NamespacedClient):
         settings: Optional[Any] = None,
         source: Optional[Any] = None,
         sync: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Previews a transform.
 
@@ -260,9 +262,7 @@ class TransformClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self._perform_request(
-            "POST", __target, headers=__headers, body=__body
-        )
+        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -285,7 +285,7 @@ class TransformClient(NamespacedClient):
         retention_policy: Optional[Any] = None,
         settings: Optional[Any] = None,
         sync: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Instantiates a transform.
 
@@ -356,9 +356,7 @@ class TransformClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request(
-            "PUT", __target, headers=__headers, body=__body
-        )
+        return await self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def start_transform(
@@ -370,7 +368,7 @@ class TransformClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Starts one or more transforms.
 
@@ -398,7 +396,7 @@ class TransformClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers)
+        return await self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def stop_transform(
@@ -414,7 +412,7 @@ class TransformClient(NamespacedClient):
         timeout: Optional[Any] = None,
         wait_for_checkpoint: Optional[bool] = None,
         wait_for_completion: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Stops one or more transforms.
 
@@ -459,7 +457,7 @@ class TransformClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers)
+        return await self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -480,7 +478,7 @@ class TransformClient(NamespacedClient):
         settings: Optional[Any] = None,
         source: Optional[Any] = None,
         sync: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Updates certain properties of a transform.
 
@@ -538,6 +536,4 @@ class TransformClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request(
-            "POST", __target, headers=__headers, body=__body
-        )
+        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]

@@ -17,6 +17,8 @@
 
 from typing import Any, Dict, List, Optional, Union
 
+from elastic_transport import ObjectApiResponse
+
 from ._base import NamespacedClient
 from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
 
@@ -31,7 +33,7 @@ class CcrClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Deletes auto-follow patterns.
 
@@ -56,7 +58,7 @@ class CcrClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("DELETE", __target, headers=__headers)
+        return await self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -82,7 +84,7 @@ class CcrClient(NamespacedClient):
         read_poll_timeout: Optional[Any] = None,
         remote_cluster: Optional[str] = None,
         wait_for_active_shards: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Creates a new follower index configured to follow the referenced leader index.
 
@@ -154,9 +156,7 @@ class CcrClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request(
-            "PUT", __target, headers=__headers, body=__body
-        )
+        return await self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def follow_info(
@@ -167,7 +167,7 @@ class CcrClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves information about all follower indices, including parameters and status
         for each follower index
@@ -194,7 +194,7 @@ class CcrClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def follow_stats(
@@ -205,7 +205,7 @@ class CcrClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Retrieves follower stats. return shard-level stats about the following tasks
         associated with each shard for the specified indices.
@@ -232,7 +232,7 @@ class CcrClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -249,7 +249,7 @@ class CcrClient(NamespacedClient):
         human: Optional[bool] = None,
         leader_remote_cluster: Optional[str] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Removes the follower retention leases from the leader.
 
@@ -288,9 +288,7 @@ class CcrClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request(
-            "POST", __target, headers=__headers, body=__body
-        )
+        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def get_auto_follow_pattern(
@@ -301,7 +299,7 @@ class CcrClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Gets configured auto-follow patterns. Returns the specified auto-follow pattern
         collection.
@@ -329,7 +327,7 @@ class CcrClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def pause_auto_follow_pattern(
@@ -340,7 +338,7 @@ class CcrClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Pauses an auto-follow pattern
 
@@ -366,7 +364,7 @@ class CcrClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers)
+        return await self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def pause_follow(
@@ -377,7 +375,7 @@ class CcrClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Pauses a follower index. The follower index will not fetch any additional operations
         from the leader index.
@@ -404,7 +402,7 @@ class CcrClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers)
+        return await self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -432,7 +430,7 @@ class CcrClient(NamespacedClient):
         pretty: Optional[bool] = None,
         read_poll_timeout: Optional[Any] = None,
         settings: Optional[Dict[str, Any]] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Creates a new named collection of auto-follow patterns against a specified remote
         cluster. Newly created indices on the remote cluster matching any of the specified
@@ -537,9 +535,7 @@ class CcrClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request(
-            "PUT", __target, headers=__headers, body=__body
-        )
+        return await self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def resume_auto_follow_pattern(
@@ -550,7 +546,7 @@ class CcrClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Resumes an auto-follow pattern that has been paused
 
@@ -576,7 +572,7 @@ class CcrClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers)
+        return await self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -599,7 +595,7 @@ class CcrClient(NamespacedClient):
         max_write_request_size: Optional[str] = None,
         pretty: Optional[bool] = None,
         read_poll_timeout: Optional[Any] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Resumes a follower index that has been paused
 
@@ -663,9 +659,7 @@ class CcrClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self._perform_request(
-            "POST", __target, headers=__headers, body=__body
-        )
+        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def stats(
@@ -675,7 +669,7 @@ class CcrClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Gets all stats related to cross-cluster replication.
 
@@ -696,7 +690,7 @@ class CcrClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)
+        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def unfollow(
@@ -707,7 +701,7 @@ class CcrClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> ObjectApiResponse[Any]:
         """
         Stops the following task associated with a follower index and removes index metadata
         and settings associated with cross-cluster replication.
@@ -734,4 +728,4 @@ class CcrClient(NamespacedClient):
         else:
             __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers)
+        return await self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
