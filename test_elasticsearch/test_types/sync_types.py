@@ -35,9 +35,9 @@ es.options(request_timeout=1.0, max_retries=0, api_key="api-key-example").search
     index="test-index"
 )
 
-es.indices.options(
+es.options(
     request_timeout=1.0, max_retries=0, api_key="api-key-example"
-).exists(index="test-index")
+).indices.exists(index="test-index")
 
 
 def sync_gen() -> Generator[Dict[Any, Any], None, None]:

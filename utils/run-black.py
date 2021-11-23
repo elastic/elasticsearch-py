@@ -31,9 +31,12 @@ def sleep_if_hot() -> None:
                         int,
                         re.findall(
                             r"\s\+([0-9]{2})\.[0-9]",
-                            subprocess.check_output("sensors", shell=True).decode(
-                                "utf-8"
-                            ),
+                            subprocess.check_call(
+                                "sensors",
+                                shell=True,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.STDOUT,
+                            ).decode("utf-8"),
                         ),
                     )
                 )
