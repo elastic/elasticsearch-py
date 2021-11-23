@@ -28,6 +28,7 @@ from typing import (
     Optional,
     Tuple,
     Type,
+    TypeVar,
     Union,
 )
 
@@ -96,6 +97,9 @@ from .watcher import WatcherClient
 from .xpack import XPackClient
 
 logger = logging.getLogger("elasticsearch")
+
+
+SelfType = TypeVar("SelfType", bound="AsyncElasticsearch")
 
 
 class AsyncElasticsearch(BaseClient):
@@ -448,6 +452,65 @@ class AsyncElasticsearch(BaseClient):
 
     async def __aexit__(self, *_: Any) -> None:
         await self.close()
+
+    def options(
+        self: SelfType,
+        *,
+        opaque_id: Union[DefaultType, str] = DEFAULT,
+        api_key: Union[DefaultType, str, Tuple[str, str]] = DEFAULT,
+        basic_auth: Union[DefaultType, str, Tuple[str, str]] = DEFAULT,
+        bearer_auth: Union[DefaultType, str] = DEFAULT,
+        headers: Union[DefaultType, Mapping[str, str]] = DEFAULT,
+        request_timeout: Union[DefaultType, Optional[float]] = DEFAULT,
+        ignore_status: Union[DefaultType, int, Collection[int]] = DEFAULT,
+        max_retries: Union[DefaultType, int] = DEFAULT,
+        retry_on_status: Union[DefaultType, int, Collection[int]] = DEFAULT,
+        retry_on_timeout: Union[DefaultType, bool] = DEFAULT,
+    ) -> SelfType:
+        client = type(self)(_transport=self.transport)
+
+        resolved_headers = headers if headers is not DEFAULT else None
+        resolved_headers = resolve_auth_headers(
+            headers=resolved_headers,
+            api_key=api_key,
+            basic_auth=basic_auth,
+            bearer_auth=bearer_auth,
+        )
+        resolved_opaque_id = opaque_id if opaque_id is not DEFAULT else None
+        if resolved_opaque_id:
+            resolved_headers["x-opaque-id"] = resolved_opaque_id
+
+        if resolved_headers:
+            new_headers = self._headers.copy()
+            new_headers.update(resolved_headers)
+            client._headers = new_headers
+        else:
+            client._headers = self._headers.copy()
+
+        if request_timeout is not DEFAULT:
+            client._request_timeout = request_timeout
+
+        if ignore_status is not DEFAULT:
+            if isinstance(ignore_status, int):
+                ignore_status = (ignore_status,)
+            client._ignore_status = ignore_status
+
+        if max_retries is not DEFAULT:
+            if not isinstance(max_retries, int):
+                raise TypeError("'max_retries' must be of type 'int'")
+            client._max_retries = max_retries
+
+        if retry_on_status is not DEFAULT:
+            if isinstance(retry_on_status, int):
+                retry_on_status = (retry_on_status,)
+            client._retry_on_status = retry_on_status
+
+        if retry_on_timeout is not DEFAULT:
+            if not isinstance(retry_on_timeout, bool):
+                raise TypeError("'retry_on_timeout' must be of type 'bool'")
+            client._retry_on_timeout = retry_on_timeout
+
+        return client
 
     async def close(self) -> None:
         """Closes the Transport and all internal connections"""

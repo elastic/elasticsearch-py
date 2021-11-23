@@ -42,9 +42,9 @@ async def main() -> None:
         request_timeout=1.0, max_retries=0, api_key="api-key-example"
     ).search(index="test-index")
 
-    await es.indices.options(
+    await es.options(
         request_timeout=1.0, max_retries=0, api_key="api-key-example"
-    ).exists(index="test-index")
+    ).indices.exists(index="test-index")
 
 
 async def async_gen() -> AsyncGenerator[Dict[Any, Any], None]:
