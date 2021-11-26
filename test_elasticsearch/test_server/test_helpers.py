@@ -15,6 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
+import json
 from datetime import datetime, timedelta
 
 import pytest
@@ -160,10 +161,51 @@ def test_bulk_rejected_documents_are_retried(sync_client):
         {"_index": "i", "_id": 45, "f": "v"},
         {"_index": "i", "_id": 42, "f": "v"},
     ]
+
     results = list(
         helpers.streaming_bulk(
             failing_client,
             docs,
+            index="i",
+            raise_on_exception=False,
+            raise_on_error=False,
+            chunk_size=1,
+            max_retries=1,
+            initial_backoff=0,
+        )
+    )
+    assert 3 == len(results)
+    print(results)
+    assert [True, True, True] == [r[0] for r in results]
+    sync_client.indices.refresh(index="i")
+    res = sync_client.search(index="i")
+    assert {"value": 3, "relation": "eq"} == res["hits"]["total"]
+    assert 4 == failing_client._called
+
+
+@pytest.mark.parametrize("use_bytes", [False, True])
+def test_bulk_rejected_documents_are_retried_when_bytes_or_string(
+    sync_client, use_bytes
+):
+    failing_client = FailingBulkClient(
+        sync_client,
+        fail_with=TransportError(
+            message="Rejected!",
+            body={},
+            meta=ApiResponseMeta(
+                status=429, headers={}, http_version="1.1", duration=0, node=None
+            ),
+        ),
+    )
+    docs = [json.dumps({"field": x}, separators=(",", ":")) for x in range(3)]
+    if use_bytes:
+        docs = [doc.encode() for doc in docs]
+
+    results = list(
+        helpers.streaming_bulk(
+            failing_client,
+            docs,
+            index="i",
             raise_on_exception=False,
             raise_on_error=False,
             chunk_size=1,
