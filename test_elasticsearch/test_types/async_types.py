@@ -78,15 +78,13 @@ async def async_streaming_bulk_types() -> None:
         pass
     async for _ in async_streaming_bulk(es, [{}]):
         pass
-    async for _ in async_streaming_bulk(es, ({},)):
-        pass
 
 
 async def async_bulk_types() -> None:
     _, _ = await async_bulk(es, async_gen())
     _, _ = await async_bulk(es, async_gen().__aiter__())
     _, _ = await async_bulk(es, [{}])
-    _, _ = await async_bulk(es, ({},))
+    _, _ = await async_bulk(es, ({"key": "value"},))
 
 
 async def async_reindex_types() -> None:

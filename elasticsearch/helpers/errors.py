@@ -15,13 +15,15 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any
+from typing import Any, Dict, List
 
 from ..exceptions import ElasticsearchException
 
 
 class BulkIndexError(ElasticsearchException):
-    pass
+    def __init__(self, message: Any, errors: List[Dict[str, Any]]):
+        super().__init__(message)
+        self.errors: List[Dict[str, Any]] = errors  # type: ignore[assignment]
 
 
 class ScanError(ElasticsearchException):
