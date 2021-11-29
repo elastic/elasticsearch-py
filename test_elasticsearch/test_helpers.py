@@ -23,7 +23,6 @@ import mock
 import pytest
 
 from elasticsearch import Elasticsearch, helpers
-from elasticsearch.helpers import actions
 from elasticsearch.serializer import JSONSerializer
 
 lock_side_effect = threading.Lock()
@@ -59,11 +58,10 @@ class TestParallelBulk:
 
         assert 50 == mock_process_bulk_chunk.call_count
 
-    @pytest.mark.skip
     @mock.patch(
         "elasticsearch.helpers.actions._process_bulk_chunk",
         # make sure we spend some time in the thread
-        side_effect=lambda *a: [
+        side_effect=lambda *_, **__: [
             (True, time.sleep(0.001) or threading.current_thread().ident)
         ],
     )
@@ -183,18 +181,8 @@ class TestChunkActions:
             chunk = b"".join(chunk_actions)
             assert len(chunk) <= max_byte_size
 
-    def test_add_helper_meta_to_kwargs(self):
-        assert actions._add_helper_meta_to_kwargs({}, "b") == {
-            "params": {"__elastic_client_meta": (("h", "b"),)}
-        }
-        assert actions._add_helper_meta_to_kwargs({"params": {}}, "b") == {
-            "params": {"__elastic_client_meta": (("h", "b"),)}
-        }
-        assert actions._add_helper_meta_to_kwargs(
-            {"params": {"key": "value"}}, "b"
-        ) == {"params": {"__elastic_client_meta": (("h", "b"),), "key": "value"}}
-
 
 class TestExpandActions:
-    def test_string_actions_are_marked_as_simple_inserts(self):
-        assert ('{"index":{}}', "whatever") == helpers.expand_action("whatever")
+    @pytest.mark.parametrize("action", ["whatever", b"whatever"])
+    def test_string_actions_are_marked_as_simple_inserts(self, action):
+        assert ({"index": {}}, b"whatever") == helpers.expand_action(action)
