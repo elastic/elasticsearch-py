@@ -40,10 +40,10 @@ class TransformClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-transform.html>`_
 
-        :param transform_id: The id of the transform to delete
-        :param force: When `true`, the transform is deleted regardless of its current
-            state. The default value is `false`, meaning that the transform must be `stopped`
-            before it can be deleted.
+        :param transform_id: Identifier for the transform.
+        :param force: If this value is false, the transform must be stopped before it
+            can be deleted. If true, the transform is deleted regardless of its current
+            state.
         """
         if transform_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'transform_id'")

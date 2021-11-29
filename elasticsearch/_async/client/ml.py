@@ -3056,6 +3056,119 @@ class MlClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         return await self._perform_request("PUT", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def put_trained_model_definition_part(
+        self,
+        *,
+        model_id: Any,
+        part: int,
+        definition: str,
+        total_definition_length: float,
+        total_parts: float,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> ObjectApiResponse[Any]:
+        """
+        Creates part of a trained model definition
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/put-trained-model-definition-part.html>`_
+
+        :param model_id: The unique identifier of the trained model.
+        :param part: The definition part number. When the definition is loaded for inference
+            the definition parts are streamed in the order of their part number. The
+            first part must be `0` and the final part must be `total_parts - 1`.
+        :param definition: The definition part for the model. Must be a base64 encoded
+            string.
+        :param total_definition_length: The total uncompressed definition length in bytes.
+            Not base64 encoded.
+        :param total_parts: The total number of parts that will be uploaded. Must be
+            greater than 0.
+        """
+        if model_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'model_id'")
+        if part in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'part'")
+        if definition is None:
+            raise ValueError("Empty value passed for parameter 'definition'")
+        if total_definition_length is None:
+            raise ValueError(
+                "Empty value passed for parameter 'total_definition_length'"
+            )
+        if total_parts is None:
+            raise ValueError("Empty value passed for parameter 'total_parts'")
+        __path = f"/_ml/trained_models/{_quote(model_id)}/definition/{_quote(part)}"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if definition is not None:
+            __body["definition"] = definition
+        if total_definition_length is not None:
+            __body["total_definition_length"] = total_definition_length
+        if total_parts is not None:
+            __body["total_parts"] = total_parts
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def put_trained_model_vocabulary(
+        self,
+        *,
+        model_id: Any,
+        vocabulary: List[str],
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> ObjectApiResponse[Any]:
+        """
+        Creates a trained model vocabulary
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/put-trained-model-vocabulary.html>`_
+
+        :param model_id: The unique identifier of the trained model.
+        :param vocabulary: The model vocabulary, which must not be empty.
+        """
+        if model_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'model_id'")
+        if vocabulary is None:
+            raise ValueError("Empty value passed for parameter 'vocabulary'")
+        __path = f"/_ml/trained_models/{_quote(model_id)}/vocabulary"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if vocabulary is not None:
+            __body["vocabulary"] = vocabulary
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+
     @_rewrite_parameters()
     async def reset_job(
         self,
