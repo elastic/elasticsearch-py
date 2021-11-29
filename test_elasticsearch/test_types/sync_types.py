@@ -71,15 +71,13 @@ def streaming_bulk_types() -> None:
         pass
     for _ in streaming_bulk(es, [{}]):
         pass
-    for _ in streaming_bulk(es, ({},)):
-        pass
 
 
 def bulk_types() -> None:
     _, _ = bulk(es, sync_gen())
     _, _ = bulk(es, sync_gen().__iter__())
     _, _ = bulk(es, [{}])
-    _, _ = bulk(es, ({},))
+    _, _ = bulk(es, ({"key": "value"},))
 
 
 def reindex_types() -> None:

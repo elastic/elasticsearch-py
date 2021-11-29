@@ -19,29 +19,51 @@ import logging
 import time
 from operator import methodcaller
 from queue import Queue
-from typing import Mapping
+from typing import (
+    Any,
+    Callable,
+    Collection,
+    Dict,
+    Iterable,
+    Iterator,
+    List,
+    Mapping,
+    MutableMapping,
+    Optional,
+    Tuple,
+    Union,
+)
 
-from ..compat import string_types, to_bytes
+from .. import Elasticsearch
+from ..compat import to_bytes
 from ..exceptions import NotFoundError, TransportError
+from ..serializer import Serializer
 from .errors import BulkIndexError, ScanError
 
 logger = logging.getLogger("elasticsearch.helpers")
 
+_TYPE_BULK_ACTION = Union[bytes, str, Dict[str, Any]]
+_TYPE_BULK_ACTION_HEADER = Dict[str, Any]
+_TYPE_BULK_ACTION_BODY = Union[None, bytes, Dict[str, Any]]
+_TYPE_BULK_ACTION_HEADER_AND_BODY = Tuple[
+    _TYPE_BULK_ACTION_HEADER, _TYPE_BULK_ACTION_BODY
+]
 
-def expand_action(data):
+
+def expand_action(data: _TYPE_BULK_ACTION) -> _TYPE_BULK_ACTION_HEADER_AND_BODY:
     """
     From one document or action definition passed in by the user extract the
     action/data lines needed for elasticsearch's
     :meth:`~elasticsearch.Elasticsearch.bulk` api.
     """
     # when given a string, assume user wants to index raw json
-    if isinstance(data, string_types):
-        return '{"index":{}}', data
+    if isinstance(data, (bytes, str)):
+        return {"index": {}}, to_bytes(data, "utf-8")
 
     # make sure we don't alter the action
     data = data.copy()
-    op_type = data.pop("_op_type", "index")
-    action = {op_type: {}}
+    op_type: str = data.pop("_op_type", "index")
+    action: Dict[str, Any] = {op_type: {}}
 
     # If '_source' is a dict use it for source
     # otherwise if op_type == 'update' then
@@ -97,26 +119,49 @@ def expand_action(data):
 
 
 class _ActionChunker:
-    def __init__(self, chunk_size, max_chunk_bytes, serializer):
+    def __init__(
+        self, chunk_size: int, max_chunk_bytes: int, serializer: Serializer
+    ) -> None:
         self.chunk_size = chunk_size
         self.max_chunk_bytes = max_chunk_bytes
         self.serializer = serializer
 
         self.size = 0
         self.action_count = 0
-        self.bulk_actions = []
-        self.bulk_data = []
+        self.bulk_actions: List[bytes] = []
+        self.bulk_data: List[
+            Union[
+                Tuple[_TYPE_BULK_ACTION_HEADER],
+                Tuple[_TYPE_BULK_ACTION_HEADER, _TYPE_BULK_ACTION_BODY],
+            ]
+        ] = []
 
-    def feed(self, action, data):
+    def feed(
+        self, action: _TYPE_BULK_ACTION_HEADER, data: _TYPE_BULK_ACTION_BODY
+    ) -> Optional[
+        Tuple[
+            List[
+                Union[
+                    Tuple[_TYPE_BULK_ACTION_HEADER],
+                    Tuple[_TYPE_BULK_ACTION_HEADER, _TYPE_BULK_ACTION_BODY],
+                ]
+            ],
+            List[bytes],
+        ]
+    ]:
         ret = None
-        raw_data, raw_action = data, action
-        action = to_bytes(self.serializer.dumps(action), "utf-8")
+        raw_action = action
+        raw_data = data
+        action_bytes = to_bytes(self.serializer.dumps(action), "utf-8")
         # +1 to account for the trailing new line character
-        cur_size = len(action) + 1
+        cur_size = len(action_bytes) + 1
 
+        data_bytes: Optional[bytes]
         if data is not None:
-            data = to_bytes(self.serializer.dumps(data), "utf-8")
-            cur_size += len(data) + 1
+            data_bytes = to_bytes(self.serializer.dumps(data), "utf-8")
+            cur_size += len(data_bytes) + 1
+        else:
+            data_bytes = None
 
         # full chunk, send it and start a new one
         if self.bulk_actions and (
@@ -124,12 +169,14 @@ class _ActionChunker:
             or self.action_count == self.chunk_size
         ):
             ret = (self.bulk_data, self.bulk_actions)
-            self.bulk_actions, self.bulk_data = [], []
-            self.size, self.action_count = 0, 0
+            self.bulk_actions = []
+            self.bulk_data = []
+            self.size = 0
+            self.action_count = 0
 
-        self.bulk_actions.append(action)
-        if data is not None:
-            self.bulk_actions.append(data)
+        self.bulk_actions.append(action_bytes)
+        if data_bytes is not None:
+            self.bulk_actions.append(data_bytes)
             self.bulk_data.append((raw_action, raw_data))
         else:
             self.bulk_data.append((raw_action,))
@@ -138,15 +185,43 @@ class _ActionChunker:
         self.action_count += 1
         return ret
 
-    def flush(self):
+    def flush(
+        self,
+    ) -> Optional[
+        Tuple[
+            List[
+                Union[
+                    Tuple[_TYPE_BULK_ACTION_HEADER],
+                    Tuple[_TYPE_BULK_ACTION_HEADER, _TYPE_BULK_ACTION_BODY],
+                ]
+            ],
+            List[bytes],
+        ]
+    ]:
         ret = None
         if self.bulk_actions:
             ret = (self.bulk_data, self.bulk_actions)
-            self.bulk_actions, self.bulk_data = [], []
+            self.bulk_actions = []
+            self.bulk_data = []
         return ret
 
 
-def _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer):
+def _chunk_actions(
+    actions: Iterable[_TYPE_BULK_ACTION_HEADER_AND_BODY],
+    chunk_size: int,
+    max_chunk_bytes: int,
+    serializer: Serializer,
+) -> Iterable[
+    Tuple[
+        List[
+            Union[
+                Tuple[_TYPE_BULK_ACTION_HEADER],
+                Tuple[_TYPE_BULK_ACTION_HEADER, _TYPE_BULK_ACTION_BODY],
+            ]
+        ],
+        List[bytes],
+    ]
+]:
     """
     Split actions into chunks by number or size, serialize them into strings in
     the process.
@@ -163,13 +238,23 @@ def _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer):
         yield ret
 
 
-def _process_bulk_chunk_success(resp, bulk_data, ignore_status, raise_on_error=True):
+def _process_bulk_chunk_success(
+    resp: Dict[str, Any],
+    bulk_data: List[
+        Union[
+            Tuple[_TYPE_BULK_ACTION_HEADER],
+            Tuple[_TYPE_BULK_ACTION_HEADER, _TYPE_BULK_ACTION_BODY],
+        ]
+    ],
+    ignore_status: Collection[int],
+    raise_on_error: bool = True,
+) -> Iterator[Tuple[bool, Dict[str, Any]]]:
     # if raise on error is set, we need to collect errors per chunk before raising them
     errors = []
 
     # go through request-response pairs and detect failures
     for data, (op_type, item) in zip(
-        bulk_data, map(methodcaller("popitem"), resp.raw["items"])
+        bulk_data, map(methodcaller("popitem"), resp["items"])
     ):
         status_code = item.get("status", 500)
 
@@ -177,7 +262,7 @@ def _process_bulk_chunk_success(resp, bulk_data, ignore_status, raise_on_error=T
         if not ok and raise_on_error and status_code not in ignore_status:
             # include original document source
             if len(data) > 1:
-                item["data"] = data[1]
+                item["data"] = data[1]  # type: ignore[misc]
             errors.append({op_type: item})
 
         if ok or not errors:
@@ -190,8 +275,17 @@ def _process_bulk_chunk_success(resp, bulk_data, ignore_status, raise_on_error=T
 
 
 def _process_bulk_chunk_error(
-    error, bulk_data, ignore_status, raise_on_exception=True, raise_on_error=True
-):
+    error: TransportError,
+    bulk_data: List[
+        Union[
+            Tuple[_TYPE_BULK_ACTION_HEADER],
+            Tuple[_TYPE_BULK_ACTION_HEADER, _TYPE_BULK_ACTION_BODY],
+        ]
+    ],
+    ignore_status: Collection[int],
+    raise_on_exception: bool = True,
+    raise_on_error: bool = True,
+) -> Iterable[Tuple[bool, Dict[str, Any]]]:
     # default behavior - just propagate exception
     if raise_on_exception and error.status_code not in ignore_status:
         raise error
@@ -204,8 +298,8 @@ def _process_bulk_chunk_error(
         # collect all the information about failed actions
         op_type, action = data[0].copy().popitem()
         info = {"error": err_message, "status": error.status_code, "exception": error}
-        if op_type != "delete":
-            info["data"] = data[1]
+        if op_type != "delete" and len(data) > 1:
+            info["data"] = data[1]  # type: ignore[misc]
         info.update(action)
         exc_errors.append({op_type: info})
 
@@ -220,19 +314,24 @@ def _process_bulk_chunk_error(
 
 
 def _process_bulk_chunk(
-    client,
-    bulk_actions,
-    bulk_data,
-    raise_on_exception=True,
-    raise_on_error=True,
-    ignore_status=(),
-    *args,
-    **kwargs,
-):
+    client: Elasticsearch,
+    bulk_actions: List[bytes],
+    bulk_data: List[
+        Union[
+            Tuple[_TYPE_BULK_ACTION_HEADER],
+            Tuple[_TYPE_BULK_ACTION_HEADER, _TYPE_BULK_ACTION_BODY],
+        ]
+    ],
+    raise_on_exception: bool = True,
+    raise_on_error: bool = True,
+    ignore_status: Union[int, Collection[int]] = (),
+    *args: Any,
+    **kwargs: Any,
+) -> Iterable[Tuple[bool, Dict[str, Any]]]:
     """
     Send a bulk request to elasticsearch and process the output.
     """
-    if not isinstance(ignore_status, (list, tuple)):
+    if isinstance(ignore_status, int):
         ignore_status = (ignore_status,)
 
     try:
@@ -248,7 +347,7 @@ def _process_bulk_chunk(
         )
     else:
         gen = _process_bulk_chunk_success(
-            resp=resp,
+            resp=resp.raw,
             bulk_data=bulk_data,
             ignore_status=ignore_status,
             raise_on_error=raise_on_error,
@@ -256,29 +355,24 @@ def _process_bulk_chunk(
     yield from gen
 
 
-def _add_helper_meta_to_kwargs(kwargs, helper_meta):
-    params = (kwargs or {}).pop("params", {})
-    params["__elastic_client_meta"] = (("h", helper_meta),)
-    kwargs["params"] = params
-    return kwargs
-
-
 def streaming_bulk(
-    client,
-    actions,
-    chunk_size=500,
-    max_chunk_bytes=100 * 1024 * 1024,
-    raise_on_error=True,
-    expand_action_callback=expand_action,
-    raise_on_exception=True,
-    max_retries=0,
-    initial_backoff=2,
-    max_backoff=600,
-    yield_ok=True,
-    ignore_status=(),
-    *args,
-    **kwargs,
-):
+    client: Elasticsearch,
+    actions: Iterable[_TYPE_BULK_ACTION],
+    chunk_size: int = 500,
+    max_chunk_bytes: int = 100 * 1024 * 1024,
+    raise_on_error: bool = True,
+    expand_action_callback: Callable[
+        [_TYPE_BULK_ACTION], _TYPE_BULK_ACTION_HEADER_AND_BODY
+    ] = expand_action,
+    raise_on_exception: bool = True,
+    max_retries: int = 0,
+    initial_backoff: float = 2,
+    max_backoff: float = 600,
+    yield_ok: bool = True,
+    ignore_status: Union[int, Collection[int]] = (),
+    *args: Any,
+    **kwargs: Any,
+) -> Iterable[Tuple[bool, Dict[str, Any]]]:
 
     """
     Streaming bulk consumes actions from the iterable passed in and yields
@@ -316,15 +410,27 @@ def streaming_bulk(
     client = client.options()
     client._client_meta = (("h", "bp"),)
 
-    actions = map(expand_action_callback, actions)
     serializer = client.transport.serializers.get_serializer("application/json")
 
+    bulk_data: List[
+        Union[
+            Tuple[_TYPE_BULK_ACTION_HEADER],
+            Tuple[_TYPE_BULK_ACTION_HEADER, _TYPE_BULK_ACTION_BODY],
+        ]
+    ]
+    bulk_actions: List[bytes]
     for bulk_data, bulk_actions in _chunk_actions(
-        actions, chunk_size, max_chunk_bytes, serializer
+        map(expand_action_callback, actions), chunk_size, max_chunk_bytes, serializer
     ):
 
         for attempt in range(max_retries + 1):
-            to_retry, to_retry_data = [], []
+            to_retry: List[bytes] = []
+            to_retry_data: List[
+                Union[
+                    Tuple[_TYPE_BULK_ACTION_HEADER],
+                    Tuple[_TYPE_BULK_ACTION_HEADER, _TYPE_BULK_ACTION_BODY],
+                ]
+            ] = []
             if attempt:
                 time.sleep(min(max_backoff, initial_backoff * 2 ** (attempt - 1)))
 
@@ -352,7 +458,7 @@ def streaming_bulk(
                             and info["status"] == 429
                             and (attempt + 1) <= max_retries
                         ):
-                            # _process_bulk_chunk expects strings so we need to
+                            # _process_bulk_chunk expects bytes so we need to
                             # re-serialize the data
                             to_retry.extend(map(serializer.dumps, data))
                             to_retry_data.append(data)
@@ -372,7 +478,14 @@ def streaming_bulk(
                 bulk_actions, bulk_data = to_retry, to_retry_data
 
 
-def bulk(client, actions, stats_only=False, ignore_status=(), *args, **kwargs):
+def bulk(
+    client: Elasticsearch,
+    actions: Iterable[_TYPE_BULK_ACTION],
+    stats_only: bool = False,
+    ignore_status: Union[int, Collection[int]] = (),
+    *args: Any,
+    **kwargs: Any,
+) -> Tuple[int, Union[int, List[Dict[str, Any]]]]:
     """
     Helper for the :meth:`~elasticsearch.Elasticsearch.bulk` api that provides
     a more human friendly interface - it consumes an iterator of actions and
@@ -409,7 +522,7 @@ def bulk(client, actions, stats_only=False, ignore_status=(), *args, **kwargs):
     # make streaming_bulk yield successful results so we can count them
     kwargs["yield_ok"] = True
     for ok, item in streaming_bulk(
-        client, actions, ignore_status=ignore_status, *args, **kwargs
+        client, actions, ignore_status=ignore_status, *args, **kwargs  # type: ignore[misc]
     ):
         # go through request-response pairs and detect failures
         if not ok:
@@ -423,17 +536,19 @@ def bulk(client, actions, stats_only=False, ignore_status=(), *args, **kwargs):
 
 
 def parallel_bulk(
-    client,
-    actions,
-    thread_count=4,
-    chunk_size=500,
-    max_chunk_bytes=100 * 1024 * 1024,
-    queue_size=4,
-    expand_action_callback=expand_action,
-    ignore_status=(),
-    *args,
-    **kwargs,
-):
+    client: Elasticsearch,
+    actions: Iterable[_TYPE_BULK_ACTION],
+    thread_count: int = 4,
+    chunk_size: int = 500,
+    max_chunk_bytes: int = 100 * 1024 * 1024,
+    queue_size: int = 4,
+    expand_action_callback: Callable[
+        [_TYPE_BULK_ACTION], _TYPE_BULK_ACTION_HEADER_AND_BODY
+    ] = expand_action,
+    ignore_status: Union[int, Collection[int]] = (),
+    *args: Any,
+    **kwargs: Any,
+) -> Iterable[Tuple[bool, Any]]:
     """
     Parallel version of the bulk helper run in multiple threads at once.
 
@@ -457,15 +572,24 @@ def parallel_bulk(
     # to avoid exceptions on restricted environments like App Engine
     from multiprocessing.pool import ThreadPool
 
-    actions = map(expand_action_callback, actions)
+    expanded_actions = map(expand_action_callback, actions)
     serializer = client.transport.serializers.get_serializer("application/json")
 
     class BlockingPool(ThreadPool):
-        def _setup_queues(self):
+        def _setup_queues(self) -> None:
             super()._setup_queues()  # type: ignore
             # The queue must be at least the size of the number of threads to
             # prevent hanging when inserting sentinel values during teardown.
-            self._inqueue = Queue(max(queue_size, thread_count))
+            self._inqueue: Queue[
+                Tuple[
+                    List[
+                        Union[
+                            Tuple[Dict[str, Any]], Tuple[Dict[str, Any], Dict[str, Any]]
+                        ]
+                    ],
+                    List[bytes],
+                ]
+            ] = Queue(max(queue_size, thread_count))
             self._quick_put = self._inqueue.put
 
     pool = BlockingPool(thread_count)
@@ -477,12 +601,12 @@ def parallel_bulk(
                     client,
                     bulk_chunk[1],
                     bulk_chunk[0],
-                    ignore_status=ignore_status,
+                    ignore_status=ignore_status,  # type: ignore[misc]
                     *args,
                     **kwargs,
                 )
             ),
-            _chunk_actions(actions, chunk_size, max_chunk_bytes, serializer),
+            _chunk_actions(expanded_actions, chunk_size, max_chunk_bytes, serializer),
         ):
             yield from result
 
@@ -492,17 +616,17 @@ def parallel_bulk(
 
 
 def scan(
-    client,
-    query=None,
-    scroll="5m",
-    raise_on_error=True,
-    preserve_order=False,
-    size=1000,
-    request_timeout=None,
-    clear_scroll=True,
-    scroll_kwargs=None,
-    **kwargs,
-):
+    client: Elasticsearch,
+    query: Optional[Any] = None,
+    scroll: str = "5m",
+    raise_on_error: bool = True,
+    preserve_order: bool = False,
+    size: int = 1000,
+    request_timeout: Optional[float] = None,
+    clear_scroll: bool = True,
+    scroll_kwargs: Optional[MutableMapping[str, Any]] = None,
+    **kwargs: Any,
+) -> Iterable[Dict[str, Any]]:
     """
     Simple abstraction on top of the
     :meth:`~elasticsearch.Elasticsearch.scroll` api - a simple iterator that
@@ -547,7 +671,7 @@ def scan(
         query = query.copy() if query else {}
         query["sort"] = "_doc"
 
-    def pop_transport_kwargs(kw):
+    def pop_transport_kwargs(kw: MutableMapping[str, Any]) -> Dict[str, Any]:
         # Grab options that should be propagated to every
         # API call within this helper instead of just 'search()'
         transport_kwargs = {}
@@ -578,7 +702,7 @@ def scan(
         search_kwargs = kwargs.copy()
         search_kwargs["scroll"] = scroll
         search_kwargs["size"] = size
-        resp = client.search(body=query, **search_kwargs)
+        resp = client.search(body=query, **search_kwargs)  # type: ignore[call-arg]
 
     scroll_id = resp.raw.get("_scroll_id")
     scroll_transport_kwargs = pop_transport_kwargs(scroll_kwargs)
@@ -592,9 +716,10 @@ def scan(
             yield from resp.raw["hits"]["hits"]
 
             # Default to 0 if the value isn't included in the response
-            shards_successful = resp.raw["_shards"].get("successful", 0)
-            shards_skipped = resp.raw["_shards"].get("skipped", 0)
-            shards_total = resp.raw["_shards"].get("total", 0)
+            shards_info: Dict[str, int] = resp.raw["_shards"]
+            shards_successful = shards_info.get("successful", 0)
+            shards_skipped = shards_info.get("skipped", 0)
+            shards_total = shards_info.get("total", 0)
 
             # check if we have any errors
             if (shards_successful + shards_skipped) < shards_total:
@@ -626,17 +751,17 @@ def scan(
 
 
 def reindex(
-    client,
-    source_index,
-    target_index,
-    query=None,
-    target_client=None,
-    chunk_size=500,
-    scroll="5m",
-    op_type=None,
-    scan_kwargs={},
-    bulk_kwargs={},
-):
+    client: Elasticsearch,
+    source_index: Union[str, Collection[str]],
+    target_index: str,
+    query: Optional[Any] = None,
+    target_client: Optional[Elasticsearch] = None,
+    chunk_size: int = 500,
+    scroll: str = "5m",
+    op_type: Optional[str] = None,
+    scan_kwargs: MutableMapping[str, Any] = {},
+    bulk_kwargs: MutableMapping[str, Any] = {},
+) -> Tuple[int, Union[int, List[Dict[str, Any]]]]:
 
     """
     Reindex all documents from one index that satisfy a given query
@@ -674,7 +799,9 @@ def reindex(
     target_client = client if target_client is None else target_client
     docs = scan(client, query=query, index=source_index, scroll=scroll, **scan_kwargs)
 
-    def _change_doc_index(hits, index, op_type):
+    def _change_doc_index(
+        hits: Iterable[Dict[str, Any]], index: str, op_type: Optional[str]
+    ) -> Iterable[Dict[str, Any]]:
         for h in hits:
             h["_index"] = index
             if op_type is not None:
