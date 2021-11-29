@@ -67,7 +67,7 @@ class TestRewriteParameters:
         assert w[0].category == DeprecationWarning
         assert (
             str(w[0].message)
-            == "The 'params' parameter is deprecated for the 'wrapped_func_default' API and will be removed in a future version. Instead use individual parameters."
+            == "The 'params' parameter is deprecated and will be removed in a future version. Instead use individual parameters."
         )
         assert w[1].category == DeprecationWarning
         assert (
@@ -94,7 +94,7 @@ class TestRewriteParameters:
         )
         assert w[1].category == DeprecationWarning
         assert str(w[1].message) == (
-            "The 'body' parameter is deprecated for the 'wrapped_func_body_name' API and will be removed in a "
+            "The 'body' parameter is deprecated and will be removed in a "
             "future version. Instead use the 'document' parameter. See https://github.com/elastic/elasticsearch-py/issues/1698 "
             "for more information"
         )
@@ -146,7 +146,7 @@ class TestRewriteParameters:
         )
         assert w[1].category == DeprecationWarning
         assert str(w[1].message) == (
-            "The 'body' parameter is deprecated for the 'wrapped_func_body_fields' API and will be removed in a future version. Instead use individual parameters."
+            "The 'body' parameter is deprecated and will be removed in a future version. Instead use individual parameters."
         )
 
         assert self.calls == [

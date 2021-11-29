@@ -275,9 +275,8 @@ def _rewrite_parameters(
                             "Instead of using 'params' use individual API parameters"
                         )
                     warnings.warn(
-                        f"The 'params' parameter is deprecated for the '{api.__name__!s}' API and "
-                        "will be removed in a future version. Instead use individual "
-                        "parameters.",
+                        "The 'params' parameter is deprecated and will be removed "
+                        "in a future version. Instead use individual parameters.",
                         category=DeprecationWarning,
                         stacklevel=warn_stacklevel(),
                     )
@@ -335,8 +334,8 @@ def _rewrite_parameters(
                             )
 
                         warnings.warn(
-                            f"The 'body' parameter is deprecated for the '{api.__name__!s}' API and "
-                            f"will be removed in a future version. Instead use the '{body_name}' parameter. "
+                            "The 'body' parameter is deprecated and will be removed "
+                            f"in a future version. Instead use the '{body_name}' parameter. "
                             "See https://github.com/elastic/elasticsearch-py/issues/1698 "
                             "for more information",
                             category=DeprecationWarning,
@@ -351,9 +350,8 @@ def _rewrite_parameters(
                                 "Instead of using 'body' use individual API parameters"
                             )
                         warnings.warn(
-                            f"The 'body' parameter is deprecated for the '{api.__name__!s}' API and "
-                            "will be removed in a future version. Instead use individual "
-                            "parameters.",
+                            "The 'body' parameter is deprecated and will be removed "
+                            "in a future version. Instead use individual parameters.",
                             category=DeprecationWarning,
                             stacklevel=warn_stacklevel(),
                         )
