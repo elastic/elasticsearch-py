@@ -29,13 +29,12 @@ you don't have Elasticsearch running locally the integration tests will be skipp
 
 ## API Code Generation
 
-All the API methods (any method in `elasticsearch.client` classes decorated
-with `@query_params`) are actually auto-generated from the
-[rest-api-spec](https://github.com/elastic/elasticsearch/tree/master/rest-api-spec/src/main/resources/rest-api-spec/api)
-found in the `Elasticsearch` or the [Elasticsearch specification](https://github.com/elastic/elasticsearch-specification)
-repositories. Any changes to those methods should be done either by submitting a PR to one of these repositories
-instead of directly to the Python client otherwise your change will be overwritten the
-next time the APIs are generated.
+All API methods for the `Elasticsearch` and `AsyncElasticsearch` client instances
+(like `search()`) are automatically generated from the
+[Elasticsearch specification](https://github.com/elastic/elasticsearch-specification)
+and [rest-api-spec](https://github.com/elastic/elasticsearch/tree/master/rest-api-spec/src/main/resources/rest-api-spec/api).
+Any changes to these methods should instead be submitted to the Elasticsearch specification project and will be imported the next time
+the clients API is generated. The generator itself is currently a private project.
 
 ## Contributing Code Changes
 
