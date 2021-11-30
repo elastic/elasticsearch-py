@@ -11,6 +11,7 @@ from 7.x to 8.0.
 ** <<migration-strict-client-config>>
 ** <<migration-keyword-only-args>>
 ** <<migration-options>>
+* <<migration-response-types>>
 
 [discrete]
 [[migration-compat-mode]]
@@ -51,19 +52,20 @@ You'll likely notice after upgrading the client to 8.0 your code is
 either raising errors or `DeprecationWarning` to signal where you need
 to change your code before using the 8.0 client.
 
+
 [discrete]
 [[migration-strict-client-config]]
 ==== Strict client configuration
 
 Previously the client would use `scheme="http"`, `host="localhost"`, and `port=9200` defaults
 when specifying which node(s) to connect to. Starting in 8.0 these defaults have been removed
-and instead require explicit configuration of scheme, host, and port.
+and instead require explicit configuration of scheme, host, and port or to be configured
+using `cloud_id` to avoid confusion about which Elasticsearch instance is being connected to.
 
-This choice was made because in Elasticsearch 8.0 HTTPS is enabled by default, so it's no
+This choice was made because starting 8.0.0 Elasticsearch enables HTTPS is by default, so it's no
 longer a good assumption that `http://localhost:9200` is a locally running cluster.
 
 See documentation on <<connecting, connecting to Elasticsearch>> and <<tls-and-ssl, configuring HTTPS>>.
-
 
 [discrete]
 [[migration-keyword-only-args]]
@@ -85,16 +87,15 @@ client.indices.get(index="*")
 client.indices.get("*")
 ------------------------------------
 
-
 [discrete]
 [[migration-options]]
-==== Start using .options()
+==== Start using .options() for transport parameters
 
 Previously some per-request options like `api_key` and `ignore` were allowed within
 client API methods. Starting in 8.0 this is deprecated for all APIs and for a small
 number of APIs may break in unexpected ways if not changed.
 
-The parameters `headers`, `params`, `api_key`, `http_auth`, `opaque_id`, `request_timeout`, and `ignore`
+The parameters `headers`, `api_key`, `http_auth`, `opaque_id`, `request_timeout`, and `ignore`
 are effected:
 
 [source,python]
@@ -170,4 +171,62 @@ resp = (
         }
     )
 )
+------------------------------------
+
+[discrete]
+[[migration-response-types]]
+==== Response types
+
+In 7.x and earlier the return type for API methods were the raw deserialized response body.
+This meant that there was no way to access HTTP status codes, headers, or other information
+from the transport layer.
+
+In 8.0.0 responses are no longer the raw deserialized response body and instead an object
+with three properties, `meta`, `raw`, and `body`. Transport layer metadata about the response
+like HTTP status, headers, version, and which node serviced the request are available here:
+
+[source,python]
+------------------------------------
+>>> resp = client.search(...)
+
+# Response is not longer a 'dict'
+>>> resp
+ObjectApiResponse({'took': 1, 'timed_out': False, ...})
+
+# But can still be used like one:
+>>> resp["hits"]["total"]
+{'value': 5500, 'relation': 'eq'}
+
+>>> resp.keys()
+dict_keys(['took', 'timed_out', '_shards', 'hits'])
+
+# HTTP status
+>>> resp.meta.status
+200
+
+# HTTP headers
+>>> resp.meta.headers['content-type']
+'application/json'
+
+# HTTP version
+>>> resp.meta.http_version
+'1.1'
+------------------------------------
+
+Because the response is no longer a dictionary, list, `str`, or `bytes` instance
+calling `isintance()` on the response object will return `False`. If you need
+direct access to the underlying deserialized response body you can use the `raw`
+property:
+
+[source,python]
+------------------------------------
+>>> resp.raw
+{'took': 1, 'timed_out': False, ...}
+
+# The response isn't a dict, but resp.raw is.
+>>> isinstance(resp, dict)
+False
+
+>>> isinstance(resp.raw, dict)
+True
 ------------------------------------

@@ -51,17 +51,17 @@ Example Usage
         'text': 'Elasticsearch: cool. bonsai cool.',
         'timestamp': datetime.now(),
     }
-    res = es.index(index="test-index", id=1, document=doc)
-    print(res['result'])
+    resp = es.index(index="test-index", id=1, document=doc)
+    print(resp['result'])
 
-    res = es.get(index="test-index", id=1)
-    print(res['_source'])
+    resp = es.get(index="test-index", id=1)
+    print(resp['_source'])
 
     es.indices.refresh(index="test-index")
 
-    res = es.search(index="test-index", body={"query": {"match_all": {}}})
-    print("Got %d Hits:" % res['hits']['total']['value'])
-    for hit in res['hits']['hits']:
+    resp = es.search(index="test-index", query={"match_all": {}})
+    print("Got %d Hits:" % resp['hits']['total']['value'])
+    for hit in resp['hits']['hits']:
         print("%(timestamp)s %(author)s: %(text)s" % hit["_source"])
 
 
@@ -75,23 +75,7 @@ Python. We have created some :ref:`helpers` to help with this issue as well as
 a more high level library (`elasticsearch-dsl`_) on top of this one to provide
 a more convenient way of working with Elasticsearch.
 
-.. _elasticsearch-dsl: https://elasticsearch-dsl.readthedocs.io/
-
-
-Logging
-~~~~~~~
-
-``elasticsearch-py`` uses the standard `logging library`_ from python to define
-two loggers: ``elasticsearch`` and ``elasticsearch.trace``. ``elasticsearch``
-is used by the client to log standard activity, depending on the log level.
-``elasticsearch.trace`` can be used to log requests to the server in the form
-of ``curl`` commands using pretty-printed json that can then be executed from
-command line. Because it is designed to be shared (for example to demonstrate
-an issue) it also just uses ``localhost:9200`` as the address instead of the
-actual address of the host. If the trace logger has not been configured
-already it is set to `propagate=False` so it needs to be activated separately.
-
-.. _logging library: http://docs.python.org/3/library/logging.html
+.. _elasticsearch-dsl: https://elasticsearch-dsl.readthedocs.io
 
 
 Elasticsearch-DSL
