@@ -2060,6 +2060,57 @@ class MlClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    def infer_trained_model_deployment(
+        self,
+        *,
+        model_id: Any,
+        docs: List[Dict[str, str]],
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+    ) -> ObjectApiResponse[Any]:
+        """
+        Evaluate a trained model.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/infer-trained-model-deployment.html>`_
+
+        :param model_id: The unique identifier of the trained model.
+        :param docs: An array of objects to pass to the model for inference. The objects
+            should contain a field matching your configured trained model input. Typically,
+            the field name is `text_field`. Currently, only a single value is allowed.
+        :param timeout: Controls the amount of time to wait for inference results.
+        """
+        if model_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'model_id'")
+        if docs is None:
+            raise ValueError("Empty value passed for parameter 'docs'")
+        __path = f"/_ml/trained_models/{_quote(model_id)}/deployment/_infer"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if docs is not None:
+            __body["docs"] = docs
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+
     @_rewrite_parameters()
     def info(
         self,
@@ -3409,6 +3460,70 @@ class MlClient(NamespacedClient):
         return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
+    def start_trained_model_deployment(
+        self,
+        *,
+        model_id: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        inference_threads: Optional[int] = None,
+        model_threads: Optional[int] = None,
+        pretty: Optional[bool] = None,
+        queue_capacity: Optional[int] = None,
+        timeout: Optional[Any] = None,
+        wait_for: Optional[Any] = None,
+    ) -> ObjectApiResponse[Any]:
+        """
+        Start a trained model deployment.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/start-trained-model-deployment.html>`_
+
+        :param model_id: The unique identifier of the trained model. Currently, only
+            PyTorch models are supported.
+        :param inference_threads: Specifies the number of threads that are used by the
+            inference process. If you increase this value, inference speed generally
+            increases. However, the actual number of threads is limited by the number
+            of available CPU cores.
+        :param model_threads: Specifies the number of threads that are used when sending
+            inference requests to the model. If you increase this value, throughput generally
+            increases.
+        :param queue_capacity: Specifies the number of inference requests that are allowed
+            in the queue. After the number of requests exceeds this value, new requests
+            are rejected with a 429 error.
+        :param timeout: Specifies the amount of time to wait for the model to deploy.
+        :param wait_for: Specifies the allocation status to wait for before returning.
+        """
+        if model_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'model_id'")
+        __path = f"/_ml/trained_models/{_quote(model_id)}/deployment/_start"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if inference_threads is not None:
+            __query["inference_threads"] = inference_threads
+        if model_threads is not None:
+            __query["model_threads"] = model_threads
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if queue_capacity is not None:
+            __query["queue_capacity"] = queue_capacity
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if wait_for is not None:
+            __query["wait_for"] = wait_for
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+
+    @_rewrite_parameters()
     def stop_data_frame_analytics(
         self,
         *,
@@ -3524,6 +3639,57 @@ class MlClient(NamespacedClient):
         if __body is not None:
             __headers["content-type"] = "application/json"
         return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+
+    @_rewrite_parameters()
+    def stop_trained_model_deployment(
+        self,
+        *,
+        model_id: Any,
+        allow_no_match: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        force: Optional[bool] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> ObjectApiResponse[Any]:
+        """
+        Stop a trained model deployment.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/stop-trained-model-deployment.html>`_
+
+        :param model_id: The unique identifier of the trained model.
+        :param allow_no_match: Specifies what to do when the request: contains wildcard
+            expressions and there are no deployments that match; contains the `_all`
+            string or no identifiers and there are no matches; or contains wildcard expressions
+            and there are only partial matches. By default, it returns an empty array
+            when there are no matches and the subset of results when there are partial
+            matches. If `false`, the request returns a 404 status code when there are
+            no matches or only partial matches.
+        :param force: Forcefully stops the deployment, even if it is used by ingest pipelines.
+            You can't use these pipelines until you restart the model deployment.
+        """
+        if model_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'model_id'")
+        __path = f"/_ml/trained_models/{_quote(model_id)}/deployment/_stop"
+        __query: Dict[str, Any] = {}
+        if allow_no_match is not None:
+            __query["allow_no_match"] = allow_no_match
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if force is not None:
+            __query["force"] = force
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
