@@ -40,10 +40,10 @@ class TransformClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-transform.html>`_
 
-        :param transform_id: The id of the transform to delete
-        :param force: When `true`, the transform is deleted regardless of its current
-            state. The default value is `false`, meaning that the transform must be `stopped`
-            before it can be deleted.
+        :param transform_id: Identifier for the transform.
+        :param force: If this value is false, the transform must be stopped before it
+            can be deleted. If true, the transform is deleted regardless of its current
+            state.
         """
         if transform_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'transform_id'")
@@ -266,6 +266,7 @@ class TransformClient(NamespacedClient):
 
     @_rewrite_parameters(
         body_fields=True,
+        parameter_aliases={"_meta": "meta"},
     )
     async def put_transform(
         self,
@@ -280,6 +281,7 @@ class TransformClient(NamespacedClient):
         frequency: Optional[Any] = None,
         human: Optional[bool] = None,
         latest: Optional[Any] = None,
+        meta: Optional[Dict[str, str]] = None,
         pivot: Optional[Any] = None,
         pretty: Optional[bool] = None,
         retention_policy: Optional[Any] = None,
@@ -293,19 +295,24 @@ class TransformClient(NamespacedClient):
 
         :param transform_id: Identifier for the transform. This identifier can contain
             lowercase alphanumeric characters (a-z and 0-9), hyphens, and underscores.
-            It must start and end with alphanumeric characters.
+            It has a 64 character limit and must start and end with alphanumeric characters.
         :param dest: The destination for the transform.
         :param source: The source of the data for the transform.
-        :param defer_validation: When true, deferrable validations are not run. This
-            behavior may be desired if the source index does not exist until after the
-            transform is created.
+        :param defer_validation: When the transform is created, a series of validations
+            occur to ensure its success. For example, there is a check for the existence
+            of the source indices and a check that the destination index is not part
+            of the source index pattern. You can use this parameter to skip the checks,
+            for example when the source index does not exist until after the transform
+            is created. The validations are always run when you start the transform,
+            however, with the exception of privilege checks.
         :param description: Free text description of the transform.
         :param frequency: The interval between checks for changes in the source indices
             when the transform is running continuously. Also determines the retry interval
             in the event of transient failures while the transform is searching or indexing.
-            The minimum value is 1s and the maximum is 1h.
+            The minimum value is `1s` and the maximum is `1h`.
         :param latest: The latest method transforms the data by finding the latest document
             for each unique key.
+        :param meta: Defines optional transform metadata.
         :param pivot: The pivot method transforms the data by aggregating and grouping
             it. These objects define the group by fields and the aggregation to reduce
             the data.
@@ -341,6 +348,8 @@ class TransformClient(NamespacedClient):
             __query["human"] = human
         if latest is not None:
             __body["latest"] = latest
+        if meta is not None:
+            __body["_meta"] = meta
         if pivot is not None:
             __body["pivot"] = pivot
         if pretty is not None:
@@ -374,8 +383,9 @@ class TransformClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/start-transform.html>`_
 
-        :param transform_id: The id of the transform to start
-        :param timeout: Controls the time to wait for the transform to start
+        :param transform_id: Identifier for the transform.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         if transform_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'transform_id'")
@@ -418,17 +428,27 @@ class TransformClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/stop-transform.html>`_
 
-        :param transform_id: The id of the transform to stop
-        :param allow_no_match: Whether to ignore if a wildcard expression matches no
-            transforms. (This includes `_all` string or when no transforms have been
-            specified)
-        :param force: Whether to force stop a failed transform or not. Default to false
-        :param timeout: Controls the time to wait until the transform has stopped. Default
-            to 30 seconds
-        :param wait_for_checkpoint: Whether to wait for the transform to reach a checkpoint
-            before stopping. Default to false
-        :param wait_for_completion: Whether to wait for the transform to fully stop before
-            returning or not. Default to false
+        :param transform_id: Identifier for the transform. To stop multiple transforms,
+            use a comma-separated list or a wildcard expression. To stop all transforms,
+            use `_all` or `*` as the identifier.
+        :param allow_no_match: Specifies what to do when the request: contains wildcard
+            expressions and there are no transforms that match; contains the `_all` string
+            or no identifiers and there are no matches; contains wildcard expressions
+            and there are only partial matches. If it is true, the API returns a successful
+            acknowledgement message when there are no matches. When there are only partial
+            matches, the API stops the appropriate transforms. If it is false, the request
+            returns a 404 status code when there are no matches or only partial matches.
+        :param force: If it is true, the API forcefully stops the transforms.
+        :param timeout: Period to wait for a response when `wait_for_completion` is `true`.
+            If no response is received before the timeout expires, the request returns
+            a timeout exception. However, the request continues processing and eventually
+            moves the transform to a STOPPED state.
+        :param wait_for_checkpoint: If it is true, the transform does not completely
+            stop until the current checkpoint is completed. If it is false, the transform
+            stops as soon as possible.
+        :param wait_for_completion: If it is true, the API blocks until the indexer state
+            completely stops. If it is false, the API returns immediately and the indexer
+            is stopped asynchronously in the background.
         """
         if transform_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'transform_id'")

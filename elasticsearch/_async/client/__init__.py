@@ -1045,12 +1045,7 @@ class AsyncElasticsearch(BaseClient):
 
     @_rewrite_parameters(
         body_fields=True,
-        parameter_aliases={
-            "_source": "source",
-            "_source_excludes": "source_excludes",
-            "_source_includes": "source_includes",
-            "from": "from_",
-        },
+        parameter_aliases={"from": "from_"},
     )
     async def delete_by_query(
         self,
@@ -1086,9 +1081,6 @@ class AsyncElasticsearch(BaseClient):
         slice: Optional[Any] = None,
         slices: Optional[int] = None,
         sort: Optional[List[str]] = None,
-        source: Optional[Any] = None,
-        source_excludes: Optional[Any] = None,
-        source_includes: Optional[Any] = None,
         stats: Optional[List[str]] = None,
         terminate_after: Optional[int] = None,
         timeout: Optional[Any] = None,
@@ -1143,12 +1135,6 @@ class AsyncElasticsearch(BaseClient):
         :param slices: The number of slices this task should be divided into. Defaults
             to 1, meaning the task isn't sliced into subtasks. Can be set to `auto`.
         :param sort: A comma-separated list of <field>:<direction> pairs
-        :param source: True or false to return the _source field or not, or a list of
-            fields to return
-        :param source_excludes: A list of fields to exclude from the returned _source
-            field
-        :param source_includes: A list of fields to extract and return from the _source
-            field
         :param stats: Specific 'tag' of the request for logging and statistical purposes
         :param terminate_after: The maximum number of documents to collect for each shard,
             upon reaching which the query execution will terminate early.
@@ -1228,12 +1214,6 @@ class AsyncElasticsearch(BaseClient):
             __query["slices"] = slices
         if sort is not None:
             __query["sort"] = sort
-        if source is not None:
-            __query["_source"] = source
-        if source_excludes is not None:
-            __query["_source_excludes"] = source_excludes
-        if source_includes is not None:
-            __query["_source_includes"] = source_includes
         if stats is not None:
             __query["stats"] = stats
         if terminate_after is not None:
@@ -4081,12 +4061,7 @@ class AsyncElasticsearch(BaseClient):
 
     @_rewrite_parameters(
         body_fields=True,
-        parameter_aliases={
-            "_source": "source",
-            "_source_excludes": "source_excludes",
-            "_source_includes": "source_includes",
-            "from": "from_",
-        },
+        parameter_aliases={"from": "from_"},
     )
     async def update_by_query(
         self,
@@ -4123,9 +4098,6 @@ class AsyncElasticsearch(BaseClient):
         slice: Optional[Any] = None,
         slices: Optional[int] = None,
         sort: Optional[List[str]] = None,
-        source: Optional[Any] = None,
-        source_excludes: Optional[Any] = None,
-        source_includes: Optional[Any] = None,
         stats: Optional[List[str]] = None,
         terminate_after: Optional[int] = None,
         timeout: Optional[Any] = None,
@@ -4184,12 +4156,6 @@ class AsyncElasticsearch(BaseClient):
         :param slices: The number of slices this task should be divided into. Defaults
             to 1, meaning the task isn't sliced into subtasks. Can be set to `auto`.
         :param sort: A comma-separated list of <field>:<direction> pairs
-        :param source: True or false to return the _source field or not, or a list of
-            fields to return
-        :param source_excludes: A list of fields to exclude from the returned _source
-            field
-        :param source_includes: A list of fields to extract and return from the _source
-            field
         :param stats: Specific 'tag' of the request for logging and statistical purposes
         :param terminate_after: The maximum number of documents to collect for each shard,
             upon reaching which the query execution will terminate early.
@@ -4273,12 +4239,6 @@ class AsyncElasticsearch(BaseClient):
             __query["slices"] = slices
         if sort is not None:
             __query["sort"] = sort
-        if source is not None:
-            __query["_source"] = source
-        if source_excludes is not None:
-            __query["_source_excludes"] = source_excludes
-        if source_includes is not None:
-            __query["_source_includes"] = source_includes
         if stats is not None:
             __query["stats"] = stats
         if terminate_after is not None:
