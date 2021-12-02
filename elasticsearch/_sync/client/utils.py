@@ -37,10 +37,17 @@ from typing import (
     Union,
 )
 
-from elastic_transport import AsyncTransport, NodeConfig, SniffOptions, Transport
+from elastic_transport import (
+    AsyncTransport,
+    HttpHeaders,
+    NodeConfig,
+    SniffOptions,
+    Transport,
+)
 from elastic_transport.client_utils import (
     DEFAULT,
     client_meta_version,
+    create_user_agent,
     parse_cloud_id,
     percent_encode,
     url_to_node_config,
@@ -57,6 +64,9 @@ SKIP_IN_PATH: Collection[Any] = (None, "", b"", [], ())
 
 # To be passed to 'client_meta_service' on the Transport
 CLIENT_META_SERVICE = ("es", client_meta_version(__versionstr__))
+
+# Default User-Agent used by the client
+USER_AGENT = create_user_agent("elasticsearch-py", __versionstr__)
 
 _TYPE_HOSTS = Union[str, List[Union[str, Mapping[str, Union[str, int]], NodeConfig]]]
 
@@ -92,6 +102,12 @@ def client_node_configs(
 
     # Remove all values which are 'DEFAULT' to avoid overwriting actual defaults.
     node_options = {k: v for k, v in kwargs.items() if v is not DEFAULT}
+
+    # Set the 'User-Agent' default header.
+    headers = HttpHeaders(node_options.pop("headers", ()))
+    headers.setdefault("user-agent", USER_AGENT)
+    node_options["headers"] = headers
+
     return [node_config.replace(**node_options) for node_config in node_configs]
 
 
