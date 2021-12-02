@@ -25,7 +25,7 @@ import pytest
 from elastic_transport import ApiResponseMeta, BaseNode, HttpHeaders, NodeConfig
 from elastic_transport.client_utils import DEFAULT
 
-from elasticsearch import Elasticsearch
+from elasticsearch import Elasticsearch, __versionstr__
 from elasticsearch.exceptions import (
     ApiError,
     ConnectionError,
@@ -203,6 +203,14 @@ class TestTransport:
         assert 2 == len(calls)
         assert calls[1][0] == ("GET", "/")
         assert calls[1][1]["headers"]["x-opaque-id"] == "request-2"
+
+    def test_custom_user_agent_on_initialization(self):
+        client = Elasticsearch(
+            "http://localhost:9200", headers={"user-agent": "custom/1.2.3"}
+        )
+        headers = [node.config for node in client.transport.node_pool.all()][0].headers
+        assert list(headers.keys()) == ["user-agent"]
+        assert headers["user-agent"].startswith(f"elasticsearch-py/{__versionstr__} (")
 
     def test_request_with_custom_user_agent_header(self):
         client = Elasticsearch(
