@@ -566,7 +566,6 @@ class AsyncElasticsearch(BaseClient):
         *,
         operations: List[Any],
         index: Optional[Any] = None,
-        type: Optional[Any] = None,
         error_trace: Optional[bool] = None,
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
@@ -588,7 +587,6 @@ class AsyncElasticsearch(BaseClient):
 
         :param operations:
         :param index: Default index for items which don't provide one
-        :param type: Default document type for items which don't provide one
         :param pipeline: The pipeline id to preprocess incoming documents with
         :param refresh: If `true` then refresh the affected shards to make this operation
             visible to search, if `wait_for` then wait for a refresh to make this operation
@@ -611,9 +609,7 @@ class AsyncElasticsearch(BaseClient):
         """
         if operations is None:
             raise ValueError("Empty value passed for parameter 'operations'")
-        if index not in SKIP_IN_PATH and type not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/{_quote(type)}/_bulk"
-        elif index not in SKIP_IN_PATH:
+        if index not in SKIP_IN_PATH:
             __path = f"/{_quote(index)}/_bulk"
         else:
             __path = "/_bulk"
@@ -868,7 +864,6 @@ class AsyncElasticsearch(BaseClient):
         index: Any,
         id: Any,
         document: Any,
-        type: Optional[Any] = None,
         error_trace: Optional[bool] = None,
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
@@ -890,7 +885,6 @@ class AsyncElasticsearch(BaseClient):
         :param index: The name of the index
         :param id: Document ID
         :param document:
-        :param type: The type of the document
         :param pipeline: The pipeline id to preprocess incoming documents with
         :param refresh: If `true` then refresh the affected shards to make this operation
             visible to search, if `wait_for` then wait for a refresh to make this operation
@@ -911,16 +905,7 @@ class AsyncElasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'id'")
         if document is None:
             raise ValueError("Empty value passed for parameter 'document'")
-        if (
-            index not in SKIP_IN_PATH
-            and type not in SKIP_IN_PATH
-            and id not in SKIP_IN_PATH
-        ):
-            __path = f"/{_quote(index)}/{_quote(type)}/{_quote(id)}/_create"
-        elif index not in SKIP_IN_PATH and id not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_create/{_quote(id)}"
-        else:
-            raise ValueError("Couldn't find a path for the given parameters")
+        __path = f"/{_quote(index)}/_create/{_quote(id)}"
         __query: Dict[str, Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -958,7 +943,6 @@ class AsyncElasticsearch(BaseClient):
         *,
         index: Any,
         id: Any,
-        type: Optional[Any] = None,
         error_trace: Optional[bool] = None,
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
@@ -979,7 +963,6 @@ class AsyncElasticsearch(BaseClient):
 
         :param index: The name of the index
         :param id: The document ID
-        :param type: The type of the document
         :param if_primary_term: only perform the delete operation if the last operation
             that has changed the document has the specified primary term
         :param if_seq_no: only perform the delete operation if the last operation that
@@ -1001,16 +984,7 @@ class AsyncElasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        if (
-            index not in SKIP_IN_PATH
-            and type not in SKIP_IN_PATH
-            and id not in SKIP_IN_PATH
-        ):
-            __path = f"/{_quote(index)}/{_quote(type)}/{_quote(id)}"
-        elif index not in SKIP_IN_PATH and id not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_doc/{_quote(id)}"
-        else:
-            raise ValueError("Couldn't find a path for the given parameters")
+        __path = f"/{_quote(index)}/_doc/{_quote(id)}"
         __query: Dict[str, Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -1077,7 +1051,6 @@ class AsyncElasticsearch(BaseClient):
         scroll_size: Optional[int] = None,
         search_timeout: Optional[Any] = None,
         search_type: Optional[Any] = None,
-        size: Optional[int] = None,
         slice: Optional[Any] = None,
         slices: Optional[int] = None,
         sort: Optional[List[str]] = None,
@@ -1130,7 +1103,6 @@ class AsyncElasticsearch(BaseClient):
         :param search_timeout: Explicit timeout for each search request. Defaults to
             no timeout.
         :param search_type: Search operation type
-        :param size:
         :param slice:
         :param slices: The number of slices this task should be divided into. Defaults
             to 1, meaning the task isn't sliced into subtasks. Can be set to `auto`.
@@ -1206,8 +1178,6 @@ class AsyncElasticsearch(BaseClient):
             __query["search_timeout"] = search_timeout
         if search_type is not None:
             __query["search_type"] = search_type
-        if size is not None:
-            __query["size"] = size
         if slice is not None:
             __body["slice"] = slice
         if slices is not None:
@@ -1423,7 +1393,6 @@ class AsyncElasticsearch(BaseClient):
         *,
         index: Any,
         id: Any,
-        type: Optional[Any] = None,
         error_trace: Optional[bool] = None,
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
@@ -1445,8 +1414,6 @@ class AsyncElasticsearch(BaseClient):
 
         :param index: The name of the index
         :param id: The document ID
-        :param type: The type of the document; deprecated and optional starting with
-            7.0
         :param preference: Specify the node or shard the operation should be performed
             on (default: random)
         :param realtime: Specify whether to perform the operation in realtime or search
@@ -1467,16 +1434,7 @@ class AsyncElasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        if (
-            index not in SKIP_IN_PATH
-            and type not in SKIP_IN_PATH
-            and id not in SKIP_IN_PATH
-        ):
-            __path = f"/{_quote(index)}/{_quote(type)}/{_quote(id)}/_source"
-        elif index not in SKIP_IN_PATH and id not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_source/{_quote(id)}"
-        else:
-            raise ValueError("Couldn't find a path for the given parameters")
+        __path = f"/{_quote(index)}/_source/{_quote(id)}"
         __query: Dict[str, Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -3926,7 +3884,6 @@ class AsyncElasticsearch(BaseClient):
         *,
         index: Any,
         id: Any,
-        type: Optional[Any] = None,
         detect_noop: Optional[bool] = None,
         doc: Optional[Any] = None,
         doc_as_upsert: Optional[bool] = None,
@@ -3957,7 +3914,6 @@ class AsyncElasticsearch(BaseClient):
 
         :param index: The name of the index
         :param id: Document ID
-        :param type: The type of the document
         :param detect_noop: Set to false to disable setting 'result' in the response
             to 'noop' if no change to the document occurred.
         :param doc: A partial update to an existing document.
@@ -3996,16 +3952,7 @@ class AsyncElasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        if (
-            index not in SKIP_IN_PATH
-            and type not in SKIP_IN_PATH
-            and id not in SKIP_IN_PATH
-        ):
-            __path = f"/{_quote(index)}/{_quote(type)}/{_quote(id)}/_update"
-        elif index not in SKIP_IN_PATH and id not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_update/{_quote(id)}"
-        else:
-            raise ValueError("Couldn't find a path for the given parameters")
+        __path = f"/{_quote(index)}/_update/{_quote(id)}"
         __body: Dict[str, Any] = {}
         __query: Dict[str, Any] = {}
         if detect_noop is not None:
@@ -4094,7 +4041,6 @@ class AsyncElasticsearch(BaseClient):
         scroll_size: Optional[int] = None,
         search_timeout: Optional[Any] = None,
         search_type: Optional[Any] = None,
-        size: Optional[int] = None,
         slice: Optional[Any] = None,
         slices: Optional[int] = None,
         sort: Optional[List[str]] = None,
@@ -4151,7 +4097,6 @@ class AsyncElasticsearch(BaseClient):
         :param search_timeout: Explicit timeout for each search request. Defaults to
             no timeout.
         :param search_type: Search operation type
-        :param size:
         :param slice:
         :param slices: The number of slices this task should be divided into. Defaults
             to 1, meaning the task isn't sliced into subtasks. Can be set to `auto`.
@@ -4231,8 +4176,6 @@ class AsyncElasticsearch(BaseClient):
             __query["search_timeout"] = search_timeout
         if search_type is not None:
             __query["search_type"] = search_type
-        if size is not None:
-            __query["size"] = size
         if slice is not None:
             __body["slice"] = slice
         if slices is not None:
