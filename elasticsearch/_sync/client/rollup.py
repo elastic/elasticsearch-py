@@ -292,7 +292,6 @@ class RollupClient(NamespacedClient):
         self,
         *,
         index: Any,
-        type: Optional[Any] = None,
         aggregations: Optional[Dict[str, Any]] = None,
         aggs: Optional[Dict[str, Any]] = None,
         error_trace: Optional[bool] = None,
@@ -311,7 +310,6 @@ class RollupClient(NamespacedClient):
 
         :param index: The indices or index-pattern(s) (containing rollup or regular data)
             that should be searched
-        :param type: The doc type inside the index
         :param aggregations:
         :param aggs:
         :param query:
@@ -323,12 +321,7 @@ class RollupClient(NamespacedClient):
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
-        if index not in SKIP_IN_PATH and type not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/{_quote(type)}/_rollup_search"
-        elif index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_rollup_search"
-        else:
-            raise ValueError("Couldn't find a path for the given parameters")
+        __path = f"/{_quote(index)}/_rollup_search"
         __body: Dict[str, Any] = {}
         __query: Dict[str, Any] = {}
         if aggregations is not None:

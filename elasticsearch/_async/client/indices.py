@@ -383,7 +383,6 @@ class IndicesClient(NamespacedClient):
         error_trace: Optional[bool] = None,
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
-        include_type_name: Optional[bool] = None,
         mappings: Optional[Any] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
@@ -398,7 +397,6 @@ class IndicesClient(NamespacedClient):
 
         :param index: The name of the index
         :param aliases:
-        :param include_type_name:
         :param mappings: Mapping for fields in the index. If specified, this mapping
             can include: - Field names - Field data types - Mapping parameters
         :param master_timeout: Specify timeout for connection to master
@@ -420,8 +418,6 @@ class IndicesClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if include_type_name is not None:
-            __query["include_type_name"] = include_type_name
         if mappings is not None:
             __body["mappings"] = mappings
         if master_timeout is not None:
@@ -1062,68 +1058,6 @@ class IndicesClient(NamespacedClient):
         return await self._perform_request("HEAD", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
-    async def exists_type(
-        self,
-        *,
-        index: Any,
-        type: Any,
-        allow_no_indices: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        local: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> HeadApiResponse:
-        """
-        Returns information about whether a particular document type exists. (DEPRECATED)
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-types-exists.html>`_
-
-        :param index: A comma-separated list of index names; use `_all` to check the
-            types across all indices
-        :param type: A comma-separated list of document types to check
-        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
-            into no concrete indices. (This includes `_all` string or when no indices
-            have been specified)
-        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
-            that are open, closed or both.
-        :param ignore_unavailable: Whether specified concrete indices should be ignored
-            when unavailable (missing or closed)
-        :param local: Return local information, do not retrieve the state from master
-            node (default: false)
-        """
-        if index in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'index'")
-        if type in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'type'")
-        __path = f"/{_quote(index)}/_mapping/{_quote(type)}"
-        __query: Dict[str, Any] = {}
-        if allow_no_indices is not None:
-            __query["allow_no_indices"] = allow_no_indices
-        if error_trace is not None:
-            __query["error_trace"] = error_trace
-        if expand_wildcards is not None:
-            __query["expand_wildcards"] = expand_wildcards
-        if filter_path is not None:
-            __query["filter_path"] = filter_path
-        if human is not None:
-            __query["human"] = human
-        if ignore_unavailable is not None:
-            __query["ignore_unavailable"] = ignore_unavailable
-        if local is not None:
-            __query["local"] = local
-        if pretty is not None:
-            __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
-        __headers = {"accept": "application/json"}
-        return await self._perform_request("HEAD", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
-
-    @_rewrite_parameters()
     async def flush(
         self,
         *,
@@ -1273,7 +1207,6 @@ class IndicesClient(NamespacedClient):
         human: Optional[bool] = None,
         ignore_unavailable: Optional[bool] = None,
         include_defaults: Optional[bool] = None,
-        include_type_name: Optional[bool] = None,
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
@@ -1295,8 +1228,6 @@ class IndicesClient(NamespacedClient):
         :param ignore_unavailable: If false, requests that target a missing index return
             an error.
         :param include_defaults: If true, return all default settings in the response.
-        :param include_type_name: If true, a mapping type is expected in the body of
-            mappings.
         :param local: If true, the request retrieves information from the local node
             only. Defaults to false, which means information is retrieved from the master
             node.
@@ -1324,8 +1255,6 @@ class IndicesClient(NamespacedClient):
             __query["ignore_unavailable"] = ignore_unavailable
         if include_defaults is not None:
             __query["include_defaults"] = include_defaults
-        if include_type_name is not None:
-            __query["include_type_name"] = include_type_name
         if local is not None:
             __query["local"] = local
         if master_timeout is not None:
@@ -1459,7 +1388,6 @@ class IndicesClient(NamespacedClient):
         human: Optional[bool] = None,
         ignore_unavailable: Optional[bool] = None,
         include_defaults: Optional[bool] = None,
-        include_type_name: Optional[bool] = None,
         local: Optional[bool] = None,
         pretty: Optional[bool] = None,
     ) -> ObjectApiResponse[Any]:
@@ -1479,7 +1407,6 @@ class IndicesClient(NamespacedClient):
             when unavailable (missing or closed)
         :param include_defaults: Whether the default mapping values should be returned
             as well
-        :param include_type_name:
         :param local: Return local information, do not retrieve the state from master
             node (default: false)
         """
@@ -1506,8 +1433,6 @@ class IndicesClient(NamespacedClient):
             __query["ignore_unavailable"] = ignore_unavailable
         if include_defaults is not None:
             __query["include_defaults"] = include_defaults
-        if include_type_name is not None:
-            __query["include_type_name"] = include_type_name
         if local is not None:
             __query["local"] = local
         if pretty is not None:
@@ -1528,7 +1453,6 @@ class IndicesClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         flat_settings: Optional[bool] = None,
         human: Optional[bool] = None,
-        include_type_name: Optional[bool] = None,
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
@@ -1541,8 +1465,6 @@ class IndicesClient(NamespacedClient):
         :param name: Comma-separated list of index template names used to limit the request.
             Wildcard (*) expressions are supported.
         :param flat_settings: If true, returns settings in flat format.
-        :param include_type_name: If true, a mapping type is expected in the body of
-            mappings.
         :param local: If true, the request retrieves information from the local node
             only. Defaults to false, which means information is retrieved from the master
             node.
@@ -1563,8 +1485,6 @@ class IndicesClient(NamespacedClient):
             __query["flat_settings"] = flat_settings
         if human is not None:
             __query["human"] = human
-        if include_type_name is not None:
-            __query["include_type_name"] = include_type_name
         if local is not None:
             __query["local"] = local
         if master_timeout is not None:
@@ -1589,7 +1509,6 @@ class IndicesClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         ignore_unavailable: Optional[bool] = None,
-        include_type_name: Optional[bool] = None,
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
@@ -1607,7 +1526,6 @@ class IndicesClient(NamespacedClient):
             that are open, closed or both.
         :param ignore_unavailable: Whether specified concrete indices should be ignored
             when unavailable (missing or closed)
-        :param include_type_name:
         :param local: Return local information, do not retrieve the state from master
             node (default: false)
         :param master_timeout: Specify timeout for connection to master
@@ -1629,8 +1547,6 @@ class IndicesClient(NamespacedClient):
             __query["human"] = human
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
-        if include_type_name is not None:
-            __query["include_type_name"] = include_type_name
         if local is not None:
             __query["local"] = local
         if master_timeout is not None:
@@ -1731,7 +1647,6 @@ class IndicesClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         flat_settings: Optional[bool] = None,
         human: Optional[bool] = None,
-        include_type_name: Optional[bool] = None,
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
@@ -1743,7 +1658,6 @@ class IndicesClient(NamespacedClient):
 
         :param name: The comma separated names of the index templates
         :param flat_settings: Return settings in flat format (default: false)
-        :param include_type_name:
         :param local: Return local information, do not retrieve the state from master
             node (default: false)
         :param master_timeout: Explicit operation timeout for connection to master node
@@ -1761,8 +1675,6 @@ class IndicesClient(NamespacedClient):
             __query["flat_settings"] = flat_settings
         if human is not None:
             __query["human"] = human
-        if include_type_name is not None:
-            __query["include_type_name"] = include_type_name
         if local is not None:
             __query["local"] = local
         if master_timeout is not None:
@@ -2082,7 +1994,6 @@ class IndicesClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         ignore_unavailable: Optional[bool] = None,
-        include_type_name: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         meta: Optional[Dict[str, Any]] = None,
         numeric_detection: Optional[bool] = None,
@@ -2115,7 +2026,6 @@ class IndicesClient(NamespacedClient):
         :param field_names: Control whether field names are enabled for the index.
         :param ignore_unavailable: Whether specified concrete indices should be ignored
             when unavailable (missing or closed)
-        :param include_type_name:
         :param master_timeout: Specify timeout for connection to master
         :param meta: A mapping type can have custom meta data associated with it. These
             are not used at all by Elasticsearch, but can be used to store application-specific
@@ -2158,8 +2068,6 @@ class IndicesClient(NamespacedClient):
             __query["human"] = human
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
-        if include_type_name is not None:
-            __query["include_type_name"] = include_type_name
         if master_timeout is not None:
             __query["master_timeout"] = master_timeout
         if meta is not None:
@@ -2278,7 +2186,6 @@ class IndicesClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         flat_settings: Optional[bool] = None,
         human: Optional[bool] = None,
-        include_type_name: Optional[bool] = None,
         index_patterns: Optional[Union[List[str], str]] = None,
         mappings: Optional[Any] = None,
         master_timeout: Optional[Any] = None,
@@ -2298,7 +2205,6 @@ class IndicesClient(NamespacedClient):
         :param create: If true, this request cannot replace or update existing index
             templates.
         :param flat_settings:
-        :param include_type_name:
         :param index_patterns: Array of wildcard expressions used to match the names
             of indices during creation.
         :param mappings: Mapping for fields in the index.
@@ -2331,8 +2237,6 @@ class IndicesClient(NamespacedClient):
             __query["flat_settings"] = flat_settings
         if human is not None:
             __query["human"] = human
-        if include_type_name is not None:
-            __query["include_type_name"] = include_type_name
         if index_patterns is not None:
             __body["index_patterns"] = index_patterns
         if mappings is not None:
@@ -2563,7 +2467,6 @@ class IndicesClient(NamespacedClient):
         error_trace: Optional[bool] = None,
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
-        include_type_name: Optional[bool] = None,
         mappings: Optional[Any] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
@@ -2583,7 +2486,6 @@ class IndicesClient(NamespacedClient):
         :param conditions:
         :param dry_run: If set to true the rollover action will only be validated but
             not actually performed even if a condition matches. The default is false
-        :param include_type_name:
         :param mappings:
         :param master_timeout: Specify timeout for connection to master
         :param settings:
@@ -2613,8 +2515,6 @@ class IndicesClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if include_type_name is not None:
-            __query["include_type_name"] = include_type_name
         if mappings is not None:
             __body["mappings"] = mappings
         if master_timeout is not None:
@@ -3059,7 +2959,6 @@ class IndicesClient(NamespacedClient):
         include_unloaded_segments: Optional[bool] = None,
         level: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        types: Optional[Any] = None,
     ) -> ObjectApiResponse[Any]:
         """
         Provides statistics on operations happening in an index.
@@ -3087,8 +2986,6 @@ class IndicesClient(NamespacedClient):
         :param include_unloaded_segments: If set to true segment stats will include stats
             for segments that are not currently loaded into memory
         :param level: Return stats aggregated at cluster, index or shard level
-        :param types: A comma-separated list of document types for the `indexing` index
-            metric
         """
         if index not in SKIP_IN_PATH and metric not in SKIP_IN_PATH:
             __path = f"/{_quote(index)}/_stats/{_quote(metric)}"
@@ -3125,8 +3022,6 @@ class IndicesClient(NamespacedClient):
             __query["level"] = level
         if pretty is not None:
             __query["pretty"] = pretty
-        if types is not None:
-            __query["types"] = types
         if __query:
             __target = f"{__path}?{_quote_query(__query)}"
         else:
@@ -3254,7 +3149,6 @@ class IndicesClient(NamespacedClient):
         self,
         *,
         index: Optional[Any] = None,
-        type: Optional[Any] = None,
         all_shards: Optional[bool] = None,
         allow_no_indices: Optional[bool] = None,
         analyze_wildcard: Optional[bool] = None,
@@ -3280,8 +3174,6 @@ class IndicesClient(NamespacedClient):
 
         :param index: A comma-separated list of index names to restrict the operation;
             use `_all` or empty string to perform the operation on all indices
-        :param type: A comma-separated list of document types to restrict the operation;
-            leave empty to perform the operation on all types
         :param all_shards: Execute validation on all shards instead of one random shard
             per index
         :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
@@ -3306,9 +3198,7 @@ class IndicesClient(NamespacedClient):
         :param rewrite: Provide a more detailed explanation showing the actual Lucene
             query that will be executed.
         """
-        if index not in SKIP_IN_PATH and type not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/{_quote(type)}/_validate/query"
-        elif index not in SKIP_IN_PATH:
+        if index not in SKIP_IN_PATH:
             __path = f"/{_quote(index)}/_validate/query"
         else:
             __path = "/_validate/query"

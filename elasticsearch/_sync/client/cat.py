@@ -1813,7 +1813,7 @@ class CatClient(NamespacedClient):
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
         s: Optional[List[str]] = None,
-        size: Optional[Any] = None,
+        time: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
@@ -1822,8 +1822,8 @@ class CatClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-thread-pool.html>`_
 
-        :param thread_pool_patterns: A comma-separated list of regular-expressions to
-            filter the thread pools in the output
+        :param thread_pool_patterns: List of thread pool names used to limit the request.
+            Accepts wildcard expressions.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
         :param h: List of columns to appear in the response. Supports simple wildcards.
@@ -1837,7 +1837,7 @@ class CatClient(NamespacedClient):
         :param s: List of columns that determine how the table should be sorted. Sorting
             defaults to ascending and can be changed by setting `:asc` or `:desc` as
             a suffix to the column name.
-        :param size:
+        :param time: Unit used to display time values.
         :param v: When set to `true` will enable verbose output.
         """
         if thread_pool_patterns not in SKIP_IN_PATH:
@@ -1865,8 +1865,8 @@ class CatClient(NamespacedClient):
             __query["pretty"] = pretty
         if s is not None:
             __query["s"] = s
-        if size is not None:
-            __query["size"] = size
+        if time is not None:
+            __query["time"] = time
         if v is not None:
             __query["v"] = v
         if __query:

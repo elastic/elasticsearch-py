@@ -34,6 +34,7 @@ class TransformClient(NamespacedClient):
         force: Optional[bool] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
     ) -> ObjectApiResponse[Any]:
         """
         Deletes an existing transform.
@@ -44,6 +45,8 @@ class TransformClient(NamespacedClient):
         :param force: If this value is false, the transform must be stopped before it
             can be deleted. If true, the transform is deleted regardless of its current
             state.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         if transform_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'transform_id'")
@@ -59,6 +62,8 @@ class TransformClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         if __query:
             __target = f"{__path}?{_quote_query(__query)}"
         else:
@@ -197,6 +202,7 @@ class TransformClient(NamespacedClient):
         settings: Optional[Any] = None,
         source: Optional[Any] = None,
         sync: Optional[Any] = None,
+        timeout: Optional[Any] = None,
     ) -> ObjectApiResponse[Any]:
         """
         Previews a transform.
@@ -220,6 +226,8 @@ class TransformClient(NamespacedClient):
         :param settings: Defines optional transform settings.
         :param source: The source of the data for the transform.
         :param sync: Defines the properties transforms require to run continuously.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         if transform_id not in SKIP_IN_PATH:
             __path = f"/_transform/{_quote(transform_id)}/_preview"
@@ -253,6 +261,8 @@ class TransformClient(NamespacedClient):
             __body["source"] = source
         if sync is not None:
             __body["sync"] = sync
+        if timeout is not None:
+            __query["timeout"] = timeout
         if not __body:
             __body = None  # type: ignore[assignment]
         if __query:
@@ -287,6 +297,7 @@ class TransformClient(NamespacedClient):
         retention_policy: Optional[Any] = None,
         settings: Optional[Any] = None,
         sync: Optional[Any] = None,
+        timeout: Optional[Any] = None,
     ) -> ObjectApiResponse[Any]:
         """
         Instantiates a transform.
@@ -320,6 +331,8 @@ class TransformClient(NamespacedClient):
             meets the defined criteria is deleted from the destination index.
         :param settings: Defines optional transform settings.
         :param sync: Defines the properties transforms require to run continuously.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         if transform_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'transform_id'")
@@ -360,6 +373,8 @@ class TransformClient(NamespacedClient):
             __body["settings"] = settings
         if sync is not None:
             __body["sync"] = sync
+        if timeout is not None:
+            __query["timeout"] = timeout
         if __query:
             __target = f"{__path}?{_quote_query(__query)}"
         else:
@@ -498,6 +513,7 @@ class TransformClient(NamespacedClient):
         settings: Optional[Any] = None,
         source: Optional[Any] = None,
         sync: Optional[Any] = None,
+        timeout: Optional[Any] = None,
     ) -> ObjectApiResponse[Any]:
         """
         Updates certain properties of a transform.
@@ -521,6 +537,8 @@ class TransformClient(NamespacedClient):
         :param settings: Defines optional transform settings.
         :param source: The source of the data for the transform.
         :param sync: Defines the properties transforms require to run continuously.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         if transform_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'transform_id'")
@@ -551,6 +569,8 @@ class TransformClient(NamespacedClient):
             __body["source"] = source
         if sync is not None:
             __body["sync"] = sync
+        if timeout is not None:
+            __query["timeout"] = timeout
         if __query:
             __target = f"{__path}?{_quote_query(__query)}"
         else:
