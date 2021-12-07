@@ -230,7 +230,7 @@ class BaseClient:
     def __init__(self, _transport: Transport) -> None:
         self._transport = _transport
         self._client_meta: Union[DefaultType, Tuple[Tuple[str, str], ...]] = DEFAULT
-        self._headers = HttpHeaders({"content-type": "application/json"})
+        self._headers = HttpHeaders()
         self._request_timeout: Union[DefaultType, Optional[float]] = DEFAULT
         self._ignore_status: Union[DefaultType, Collection[int]] = DEFAULT
         self._max_retries: Union[DefaultType, int] = DEFAULT

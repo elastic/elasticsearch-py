@@ -245,7 +245,6 @@ class TestTransport:
         assert 1 == len(calls)
         assert calls[0][1]["headers"] == {
             "accept": "application/json",
-            "content-type": "application/json",
         }
 
     async def test_body_surrogates_replaced_encoded_into_bytes(self):
@@ -421,7 +420,6 @@ class TestTransport:
                 "body": None,
                 "headers": {
                     "accept": "application/json",
-                    "content-type": "application/json",
                 },
                 "request_timeout": DEFAULT,
             },
@@ -685,7 +683,6 @@ async def test_unsupported_product_error(headers):
             "body": None,
             "headers": {
                 "accept": "application/json",
-                "content-type": "application/json",
             },
             "request_timeout": DEFAULT,
         },
