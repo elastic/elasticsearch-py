@@ -1,6 +1,7 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-7-16-0>>
 * <<rn-7-15-2>>
 * <<rn-7-15-1>>
 * <<rn-7-15-0>>
@@ -30,6 +31,65 @@
 * <<rn-7-0-2>>
 * <<rn-7-0-1>>
 * <<rn-7-0-0>>
+
+
+[discrete]
+[[rn-7-16-0]]
+=== 7.16.0 (2021-12-07)
+
+[discrete]
+==== Deprecated
+
+- Deprecated the `send_get_body_as` parameter. This parameter is no longer necessary
+  as APIs all use non-GET HTTP methods when using a body.
+- Removal of `body`, `params`, and other per-request parameters has been delayed beyond 8.0.0.
+  Changed deprecation warnings to mention "future version" instead of 8.0.0.
+
+[discrete]
+==== Fixed
+
+- Fixed an issue with `unicode` HTTP headers with the urllib3 HTTP client
+- Fixed an issue with the `scan` helper to always set the `sort` and `scroll` parameters
+
+[discrete]
+==== Search
+
+- Changed the `keep_alive` parameter of the `open_point_in_time` API to be required
+  to reflect its required status within Elasticsearch
+- Added the `track_total_hits` parameter to the `search_mvt` API
+
+[discrete]
+==== Fleet
+
+- Changed the `fleet.global_checkpoints` API from **experimental** to **stable**
+- Added the `fleet.search` **experimental** API
+- Added the `fleet.msearch` **experimental** API
+
+[discrete]
+==== Indices
+
+- Added the `indices.modify_data_stream` API
+
+[discrete]
+==== Ingest
+
+- Added the `if_version` parameter to the `ingest.put_pipeline` API
+
+[discrete]
+==== Migration
+
+- Added the `migration.get_feature_upgrade_status` API
+- Added the `migration.post_feature_upgrade` API
+
+[discrete]
+==== Machine Learning
+
+- Added the `defer_definition_decompression` parameter to the `ml.put_trained_model` API
+
+[discrete]
+==== Transforms
+
+- Added the `transform.upgrade_transforms` API
 
 
 [discrete]
