@@ -401,7 +401,6 @@
 [[rn-7-10-0]]
 === 7.10.0 (2020-11-11)
 
-
 * Added support for {es} 7.10 APIs.
 * Added basic type stubs for static type checking and IDE auto-complete of API 
   parameters (https://github.com/elastic/elasticsearch-py/pull/1297[#1297], 
@@ -508,7 +507,6 @@
 [[rn-7-6-0]]
 === 7.6.0 (2020-03-19)
 
-
 * Added support for ES 7.6 APIs.
 * Added support for 
   https://www.elastic.co/guide/en/elasticsearch/reference/current/tasks.html#_identifying_running_tasks[`X-Opaque-Id`] 
@@ -597,3 +595,6 @@
 * Using insecure SSL configuration (`verify_cert=False`) raises a warning, 
   this can be not showed with `ssl_show_warn=False`.
 * Add support for 7.x APIs in {es} both xpack and oss flavors.
+* Ordering of parameters may have changed for some APIs compared to 6.8.
+  Use keyword arguments instead of positional arguments to work-around this
+  change.
