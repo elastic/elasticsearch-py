@@ -19,6 +19,7 @@
 import gzip
 import io
 import json
+import re
 import ssl
 import warnings
 from platform import python_version
@@ -30,7 +31,7 @@ from multidict import CIMultiDict
 
 from elasticsearch import AIOHttpConnection, AsyncElasticsearch, __versionstr__
 from elasticsearch.compat import reraise_exceptions
-from elasticsearch.exceptions import ConnectionError
+from elasticsearch.exceptions import ConnectionError, TransportError
 
 pytestmark = pytest.mark.asyncio
 
@@ -41,7 +42,9 @@ def gzip_decompress(data):
 
 
 class TestAIOHttpConnection:
-    async def _get_mock_connection(self, connection_params={}, response_body=b"{}"):
+    async def _get_mock_connection(
+        self, connection_params={}, status_code=200, response_body=b"{}"
+    ):
         con = AIOHttpConnection(**connection_params)
         await con._create_aiohttp_session()
 
@@ -61,7 +64,7 @@ class TestAIOHttpConnection:
 
             dummy_response = DummyResponse()
             dummy_response.headers = CIMultiDict()
-            dummy_response.status = 200
+            dummy_response.status = status_code
             _dummy_request.call_args = (args, kwargs)
             return dummy_response
 
@@ -301,6 +304,70 @@ class TestAIOHttpConnection:
                     "When using `ssl_context`, all other SSL related kwargs are ignored"
                     == str(w[0].message)
                 )
+
+    @patch("elasticsearch.connection.base.tracer")
+    @patch("elasticsearch.connection.base.logger")
+    async def test_failed_request_logs_and_traces(self, logger, tracer):
+        con = await self._get_mock_connection(
+            response_body=b'{"answer": 42}', status_code=500
+        )
+        with pytest.raises(TransportError):
+            await con.perform_request(
+                "GET",
+                "/",
+                {"param": 42},
+                "{}".encode("utf-8"),
+            )
+
+        # trace request
+        assert 1 == tracer.info.call_count
+        # trace response
+        assert 1 == tracer.debug.call_count
+        # log url and duration
+        assert 1 == logger.warning.call_count
+        assert re.match(
+            r"^GET http://localhost:9200/\?param=42 \[status:500 request:0.[0-9]{3}s\]",
+            logger.warning.call_args[0][0] % logger.warning.call_args[0][1:],
+        )
+
+    @patch("elasticsearch.connection.base.tracer")
+    @patch("elasticsearch.connection.base.logger")
+    async def test_success_logs_and_traces(self, logger, tracer):
+        con = await self._get_mock_connection(
+            response_body=b"""{"answer": "that's it!"}"""
+        )
+        await con.perform_request(
+            "GET",
+            "/",
+            {"param": 42},
+            """{"question": "what's that?"}""".encode("utf-8"),
+        )
+
+        # trace request
+        assert 1 == tracer.info.call_count
+        assert (
+            """curl -H 'Content-Type: application/json' -XGET 'http://localhost:9200/?pretty&param=42' -d '{\n  "question": "what\\u0027s that?"\n}'"""
+            == tracer.info.call_args[0][0] % tracer.info.call_args[0][1:]
+        )
+        # trace response
+        assert 1 == tracer.debug.call_count
+
+        assert re.match(
+            r'#\[200\] \(0.[0-9]{3}s\)\n#{\n#  "answer": "that\\u0027s it!"\n#}',
+            tracer.debug.call_args[0][0] % tracer.debug.call_args[0][1:],
+        )
+
+        # log url and duration
+        assert 1 == logger.info.call_count
+        assert re.match(
+            r"GET http://localhost:9200/\?param=42 \[status:200 request:0.[0-9]{3}s\]",
+            logger.info.call_args[0][0] % logger.info.call_args[0][1:],
+        )
+        # log request body and response
+        assert 2 == logger.debug.call_count
+        req, resp = logger.debug.call_args_list
+        assert '> {"question": "what\'s that?"}' == req[0][0] % req[0][1:]
+        assert '< {"answer": "that\'s it!"}' == resp[0][0] % resp[0][1:]
 
     @patch("elasticsearch.connection.base.logger")
     async def test_uncompressed_body_logged(self, logger):

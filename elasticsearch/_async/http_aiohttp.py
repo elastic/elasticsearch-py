@@ -272,11 +272,12 @@ class AIOHttpConnection(AsyncConnection):
                 query_string=query_string,
                 encoded=True,
             )
+            url_path_qs = url.path_qs
         else:
-            url = self.url_prefix + url
-            if query_string:
-                url = "%s?%s" % (url, query_string)
-            url = self.host + url
+            url_path_qs = (
+                "%s?%s" % (url_path, query_string) if query_string else url_path
+            )
+            url = self.host + url_path_qs
 
         timeout = aiohttp.ClientTimeout(
             total=timeout if timeout is not None else self.timeout
@@ -324,7 +325,7 @@ class AIOHttpConnection(AsyncConnection):
             self.log_request_fail(
                 method,
                 str(url),
-                url_path,
+                url_path_qs,
                 orig_body,
                 self.loop.time() - start,
                 exception=e,
@@ -346,7 +347,7 @@ class AIOHttpConnection(AsyncConnection):
             self.log_request_fail(
                 method,
                 str(url),
-                url_path,
+                url_path_qs,
                 orig_body,
                 duration,
                 status_code=response.status,
@@ -355,7 +356,13 @@ class AIOHttpConnection(AsyncConnection):
             self._raise_error(response.status, raw_data)
 
         self.log_request_success(
-            method, str(url), url_path, orig_body, response.status, raw_data, duration
+            method,
+            str(url),
+            url_path_qs,
+            orig_body,
+            response.status,
+            raw_data,
+            duration,
         )
 
         return response.status, response_headers, raw_data
