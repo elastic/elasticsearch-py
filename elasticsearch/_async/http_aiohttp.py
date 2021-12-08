@@ -242,8 +242,10 @@ class AIOHttpConnection(AsyncConnection):
         url_path = self.url_prefix + url
         if params:
             query_string = urlencode(params)
+            url_target = "%s?%s" % (url_path, query_string)
         else:
             query_string = ""
+            url_target = url_path
 
         # There is a bug in aiohttp that disables the re-use
         # of the connection in the pool when method=HEAD.
@@ -324,7 +326,7 @@ class AIOHttpConnection(AsyncConnection):
             self.log_request_fail(
                 method,
                 str(url),
-                url_path,
+                url_target,
                 orig_body,
                 self.loop.time() - start,
                 exception=e,
@@ -346,7 +348,7 @@ class AIOHttpConnection(AsyncConnection):
             self.log_request_fail(
                 method,
                 str(url),
-                url_path,
+                url_target,
                 orig_body,
                 duration,
                 status_code=response.status,
@@ -355,7 +357,7 @@ class AIOHttpConnection(AsyncConnection):
             self._raise_error(response.status, raw_data)
 
         self.log_request_success(
-            method, str(url), url_path, orig_body, response.status, raw_data, duration
+            method, str(url), url_target, orig_body, response.status, raw_data, duration
         )
 
         return response.status, response_headers, raw_data
