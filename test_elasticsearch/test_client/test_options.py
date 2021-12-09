@@ -20,6 +20,7 @@ import pytest
 from elastic_transport.client_utils import DEFAULT
 
 from elasticsearch import AsyncElasticsearch, Elasticsearch
+from elasticsearch._sync.client.utils import USER_AGENT
 from test_elasticsearch.test_cases import (
     DummyAsyncTransport,
     DummyTransport,
@@ -139,7 +140,6 @@ class TestOptions(DummyTransportTestCase):
         assert call == {
             "headers": {
                 "accept": "application/json",
-                "content-type": "application/json",
             },
             "body": None,
         }
@@ -158,7 +158,6 @@ class TestOptions(DummyTransportTestCase):
         assert call == {
             "headers": {
                 "accept": "application/json",
-                "content-type": "application/json",
             },
             "body": None,
             "request_timeout": 1,
@@ -184,7 +183,6 @@ class TestOptions(DummyTransportTestCase):
         assert call == {
             "headers": {
                 "accept": "application/json",
-                "content-type": "application/json",
             },
             "body": None,
             "request_timeout": 1,
@@ -212,7 +210,6 @@ class TestOptions(DummyTransportTestCase):
         assert call == {
             "headers": {
                 "accept": "application/json",
-                "content-type": "application/json",
             },
             "body": None,
         }
@@ -231,7 +228,6 @@ class TestOptions(DummyTransportTestCase):
         assert call == {
             "headers": {
                 "accept": "application/json",
-                "content-type": "application/json",
             },
             "body": None,
             "request_timeout": 1,
@@ -257,11 +253,118 @@ class TestOptions(DummyTransportTestCase):
         assert call == {
             "headers": {
                 "accept": "application/json",
-                "content-type": "application/json",
             },
             "body": None,
             "request_timeout": 1,
             "max_retries": 2,
             "retry_on_status": (404,),
             "retry_on_timeout": False,
+        }
+
+    def test_default_node_configs(self):
+        client = Elasticsearch(
+            "http://localhost:9200",
+            transport_class=DummyTransport,
+            headers={"key": "val"},
+            basic_auth=("username", "password"),
+        )
+        assert client._headers == {
+            "key": "val",
+            "authorization": "Basic dXNlcm5hbWU6cGFzc3dvcmQ=",
+        }
+
+        assert len(client.transport.hosts) == 1
+        node_config = client.transport.hosts[0]
+        assert node_config.scheme == "http"
+        assert node_config.host == "localhost"
+        assert node_config.port == 9200
+        assert node_config.path_prefix == ""
+        assert node_config.headers == {"user-agent": USER_AGENT}
+
+    def test_http_headers_overrides(self):
+        client = Elasticsearch(
+            "http://localhost:9200",
+            transport_class=DummyTransport,
+            headers={"key": "val"},
+        )
+        calls = client.transport.calls
+
+        client.indices.get(index="1")
+        call = calls[("GET", "/1")][0]
+
+        assert call["headers"] == {
+            "key": "val",
+            "accept": "application/json",
+        }
+
+        client.options(headers={"key1": "val"}).indices.get(index="2")
+        call = calls[("GET", "/2")][0]
+
+        assert call["headers"] == {
+            "key": "val",
+            "key1": "val",
+            "accept": "application/json",
+        }
+
+        client.options(headers={"key": "val2"}).indices.get(index="3")
+        call = calls[("GET", "/3")][0]
+
+        assert call["headers"] == {
+            "key": "val2",
+            "accept": "application/json",
+        }
+
+        client = Elasticsearch(
+            "http://username:password@localhost:9200",
+            transport_class=DummyTransport,
+            headers={"key": "val"},
+        )
+        calls = client.transport.calls
+        node_config = client.transport.hosts[0]
+        assert node_config.headers == {
+            "authorization": "Basic dXNlcm5hbWU6cGFzc3dvcmQ=",
+            "user-agent": USER_AGENT,
+        }
+        assert client._headers == {"key": "val"}
+
+    def test_user_agent_override(self):
+        client = Elasticsearch(
+            "http://localhost:9200",
+            transport_class=DummyTransport,
+        )
+        calls = client.transport.calls
+
+        client.options(headers={"user-agent": "custom1"}).indices.get(index="1")
+        call = calls[("GET", "/1")][0]
+        assert call["headers"] == {
+            "user-agent": "custom1",
+            "accept": "application/json",
+        }
+
+        client.indices.get(index="2", headers={"user-agent": "custom2"})
+        call = calls[("GET", "/2")][0]
+        assert call["headers"] == {
+            "user-agent": "custom2",
+            "accept": "application/json",
+        }
+
+        client = Elasticsearch(
+            "http://localhost:9200",
+            transport_class=DummyTransport,
+            headers={"User-Agent": "custom3"},
+        )
+        calls = client.transport.calls
+
+        client.indices.get(index="1")
+        call = calls[("GET", "/1")][0]
+        assert call["headers"] == {
+            "user-agent": "custom3",
+            "accept": "application/json",
+        }
+
+        client.indices.get(index="2", headers={"user-agent": "custom4"})
+        call = calls[("GET", "/2")][0]
+        assert call["headers"] == {
+            "user-agent": "custom4",
+            "accept": "application/json",
         }
