@@ -259,7 +259,6 @@ class TestTransport:
         assert 1 == len(calls)
         assert calls[0][1]["headers"] == {
             "accept": "application/json",
-            "content-type": "application/json",
         }
 
     def test_meta_header_type_error(self):
@@ -430,7 +429,6 @@ class TestTransport:
                 "body": None,
                 "headers": {
                     "accept": "application/json",
-                    "content-type": "application/json",
                 },
                 "request_timeout": DEFAULT,
             },
@@ -598,7 +596,6 @@ def test_unsupported_product_error(headers):
             "body": None,
             "headers": {
                 "accept": "application/json",
-                "content-type": "application/json",
             },
             "request_timeout": DEFAULT,
         },

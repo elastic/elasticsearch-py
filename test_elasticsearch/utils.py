@@ -21,10 +21,9 @@ import time
 from pathlib import Path
 from typing import Optional, Tuple
 
-from elastic_transport import TransportError
-
 from elasticsearch import (
     AuthorizationException,
+    ConnectionError,
     Elasticsearch,
     NotFoundError,
     RequestError,
@@ -74,7 +73,7 @@ def es_url() -> str:
                 except ConnectionError:
                     time.sleep(0.1)
 
-        except TransportError as e:
+        except ConnectionError as e:
             if error is None:
                 error = str(e)
         else:
