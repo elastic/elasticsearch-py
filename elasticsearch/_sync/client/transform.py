@@ -92,14 +92,19 @@ class TransformClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-transform.html>`_
 
-        :param transform_id: The id or comma delimited list of id expressions of the
-            transforms to get, '_all' or '*' implies get all transforms
-        :param allow_no_match: Whether to ignore if a wildcard expression matches no
-            transforms. (This includes `_all` string or when no transforms have been
-            specified)
-        :param exclude_generated: Omits fields that are illegal to set on transform PUT
-        :param from_: skips a number of transform configs, defaults to 0
-        :param size: specifies a max number of transforms to get, defaults to 100
+        :param transform_id: Identifier for the transform. It can be a transform identifier
+            or a wildcard expression. You can get information for all transforms by using
+            `_all`, by specifying `*` as the `<transform_id>`, or by omitting the `<transform_id>`.
+        :param allow_no_match: Specifies what to do when the request: 1. Contains wildcard
+            expressions and there are no transforms that match. 2. Contains the _all
+            string or no identifiers and there are no matches. 3. Contains wildcard expressions
+            and there are only partial matches. If this parameter is false, the request
+            returns a 404 status code when there are no matches or only partial matches.
+        :param exclude_generated: Excludes fields that were automatically added when
+            creating the transform. This allows the configuration to be in an acceptable
+            format to be retrieved and then added to another cluster.
+        :param from_: Skips the specified number of transforms.
+        :param size: Specifies the maximum number of transforms to obtain.
         """
         if transform_id not in SKIP_IN_PATH:
             __path = f"/_transform/{_quote(transform_id)}"
@@ -149,13 +154,16 @@ class TransformClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-transform-stats.html>`_
 
-        :param transform_id: The id of the transform for which to get stats. '_all' or
-            '*' implies all transforms
-        :param allow_no_match: Whether to ignore if a wildcard expression matches no
-            transforms. (This includes `_all` string or when no transforms have been
-            specified)
-        :param from_: skips a number of transform stats, defaults to 0
-        :param size: specifies a max number of transform stats to get, defaults to 100
+        :param transform_id: Identifier for the transform. It can be a transform identifier
+            or a wildcard expression. You can get information for all transforms by using
+            `_all`, by specifying `*` as the `<transform_id>`, or by omitting the `<transform_id>`.
+        :param allow_no_match: Specifies what to do when the request: 1. Contains wildcard
+            expressions and there are no transforms that match. 2. Contains the _all
+            string or no identifiers and there are no matches. 3. Contains wildcard expressions
+            and there are only partial matches. If this parameter is false, the request
+            returns a 404 status code when there are no matches or only partial matches.
+        :param from_: Skips the specified number of transforms.
+        :param size: Specifies the maximum number of transforms to obtain.
         """
         if transform_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'transform_id'")
