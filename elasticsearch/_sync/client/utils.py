@@ -108,7 +108,21 @@ def client_node_configs(
     headers.setdefault("user-agent", USER_AGENT)
     node_options["headers"] = headers
 
-    return [node_config.replace(**node_options) for node_config in node_configs]
+    def apply_node_options(node_config: NodeConfig) -> NodeConfig:
+        """Needs special handling of headers since .replace() wipes out existing headers"""
+        nonlocal node_options
+        headers = node_config.headers.copy()  # type: ignore[attr-defined]
+
+        headers_to_add = node_options.pop("headers", ())
+        if headers_to_add:
+            headers.update(headers_to_add)
+
+        headers.setdefault("user-agent", USER_AGENT)
+        headers.freeze()
+        node_options["headers"] = headers
+        return node_config.replace(**node_options)
+
+    return [apply_node_options(node_config) for node_config in node_configs]
 
 
 def hosts_to_node_configs(hosts: _TYPE_HOSTS) -> List[NodeConfig]:
