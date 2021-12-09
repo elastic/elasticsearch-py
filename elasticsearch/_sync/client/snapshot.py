@@ -41,9 +41,9 @@ class SnapshotClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/clean-up-snapshot-repo-api.html>`_
 
-        :param name: A repository name
-        :param master_timeout: Explicit operation timeout for connection to master node
-        :param timeout: Explicit operation timeout
+        :param name: Snapshot repository to clean up.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param timeout: Period to wait for a response.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
