@@ -970,7 +970,7 @@ class MlClient(NamespacedClient):
         :param from_: Skips the specified number of buckets.
         :param page:
         :param size: Specifies the maximum number of buckets to obtain.
-        :param sort: Refer to the desription for the `sort` query parameter.
+        :param sort: Refer to the description for the `sort` query parameter.
         :param start: Refer to the description for the `start` query parameter.
         """
         if job_id in SKIP_IN_PATH:

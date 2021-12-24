@@ -6,7 +6,7 @@ for APM. It gets the default distributions of Elasticsearch,
 Kibana and APM Server up and running in Docker.
 
 The docker-compose file also includes a basic [FastAPI](https://fastapi.tiangolo.com/) application using
-[`AsyncElasticsearch` to execute requests asychronously](https://elasticsearch-py.readthedocs.io/en/master/async.html)
+[`AsyncElasticsearch` to execute requests asynchronously](https://elasticsearch-py.readthedocs.io/en/master/async.html)
 and a script to ping the web app with different endpoints.
 
 ## How to Run

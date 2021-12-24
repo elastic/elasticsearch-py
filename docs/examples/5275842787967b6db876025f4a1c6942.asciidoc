@@ -5,7 +5,7 @@
 resp = client.search(
     body={
         "suggest": {
-            "text": "tring out Elasticsearch",
+            "text": "trying out Elasticsearch",
             "my-suggest-1": {"term": {"field": "message"}},
             "my-suggest-2": {"term": {"field": "user"}},
         }

@@ -21,7 +21,7 @@ CHUNK_SIZE = 16384
 
 
 def download_dataset():
-    """Downloads the public dataset if not locally downlaoded
+    """Downloads the public dataset if not locally downloaded
     and returns the number of rows are in the .csv file.
     """
     if not exists(DATASET_PATH):

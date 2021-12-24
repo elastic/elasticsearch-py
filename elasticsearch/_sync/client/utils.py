@@ -243,7 +243,7 @@ def _escape(value: Any) -> str:
     or tuple, turn it into a comma-separated string first.
     """
 
-    # make sequences into comma-separated stings
+    # make sequences into comma-separated strings
     if isinstance(value, (list, tuple)):
         value = ",".join([_escape(item) for item in value])
 
