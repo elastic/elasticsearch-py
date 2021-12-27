@@ -32,7 +32,9 @@ class IlmClient(NamespacedClient):
         error_trace: Optional[bool] = None,
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
     ) -> ObjectApiResponse[Any]:
         """
         Deletes the specified lifecycle policy definition. A currently used policy cannot
@@ -40,7 +42,12 @@ class IlmClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-delete-lifecycle.html>`_
 
-        :param name: The name of the index lifecycle policy
+        :param name: Identifier for the policy.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -52,8 +59,12 @@ class IlmClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         if __query:
             __target = f"{__path}?{_quote_query(__query)}"
         else:
@@ -69,9 +80,11 @@ class IlmClient(NamespacedClient):
         error_trace: Optional[bool] = None,
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
         only_errors: Optional[bool] = None,
         only_managed: Optional[bool] = None,
         pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
     ) -> ObjectApiResponse[Any]:
         """
         Retrieves information about the index's current lifecycle state, such as the
@@ -79,11 +92,19 @@ class IlmClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-explain-lifecycle.html>`_
 
-        :param index: The name of the index to explain
-        :param only_errors: filters the indices included in the response to ones in an
-            ILM error state, implies only_managed
-        :param only_managed: filters the indices included in the response to ones managed
-            by ILM
+        :param index: Comma-separated list of data streams, indices, and aliases to target.
+            Supports wildcards (`*`). To target all data streams and indices, use `*`
+            or `_all`.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param only_errors: Filters the returned indices to only indices that are managed
+            by ILM.
+        :param only_managed: Filters the returned indices to only indices that are managed
+            by ILM and are in an error state, either due to an encountering an error
+            while executing the policy, or attempting to use a policy that does not exist.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -95,12 +116,16 @@ class IlmClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if only_errors is not None:
             __query["only_errors"] = only_errors
         if only_managed is not None:
             __query["only_managed"] = only_managed
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         if __query:
             __target = f"{__path}?{_quote_query(__query)}"
         else:
@@ -116,7 +141,9 @@ class IlmClient(NamespacedClient):
         error_trace: Optional[bool] = None,
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
     ) -> ObjectApiResponse[Any]:
         """
         Returns the specified policy definition. Includes the policy version and last
@@ -124,7 +151,12 @@ class IlmClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-get-lifecycle.html>`_
 
-        :param name: The name of the index lifecycle policy
+        :param name: Identifier for the policy.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         if name not in SKIP_IN_PATH:
             __path = f"/_ilm/policy/{_quote(name)}"
@@ -137,8 +169,12 @@ class IlmClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         if __query:
             __target = f"{__path}?{_quote_query(__query)}"
         else:
@@ -238,16 +274,23 @@ class IlmClient(NamespacedClient):
         error_trace: Optional[bool] = None,
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
         policy: Optional[Any] = None,
         pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
     ) -> ObjectApiResponse[Any]:
         """
         Creates a lifecycle policy
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-put-lifecycle.html>`_
 
-        :param name: The name of the index lifecycle policy
+        :param name: Identifier for the policy.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
         :param policy:
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -260,10 +303,14 @@ class IlmClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
         if policy is not None:
             __body["policy"] = policy
         if pretty is not None:
             __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
         if not __body:
             __body = None  # type: ignore[assignment]
         if __query:

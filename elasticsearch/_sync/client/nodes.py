@@ -37,6 +37,7 @@ class NodesClient(NamespacedClient):
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
         snapshots: Optional[int] = None,
+        sort: Optional[Any] = None,
         threads: Optional[int] = None,
         timeout: Optional[Any] = None,
         type: Optional[Any] = None,
@@ -54,6 +55,7 @@ class NodesClient(NamespacedClient):
             no response is received before the timeout expires, the request fails and
             returns an error.
         :param snapshots: Number of samples of thread stacktrace.
+        :param sort: The sort order for 'cpu' type (default: total)
         :param threads: Specifies the number of hot threads to provide information for.
         :param timeout: Period to wait for a response. If no response is received before
             the timeout expires, the request fails and returns an error.
@@ -80,6 +82,8 @@ class NodesClient(NamespacedClient):
             __query["pretty"] = pretty
         if snapshots is not None:
             __query["snapshots"] = snapshots
+        if sort is not None:
+            __query["sort"] = sort
         if threads is not None:
             __query["threads"] = threads
         if timeout is not None:

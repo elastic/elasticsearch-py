@@ -342,7 +342,7 @@ class ClusterClient(NamespacedClient):
         wait_for_events: Optional[Any] = None,
         wait_for_no_initializing_shards: Optional[bool] = None,
         wait_for_no_relocating_shards: Optional[bool] = None,
-        wait_for_nodes: Optional[str] = None,
+        wait_for_nodes: Optional[Union[int, str]] = None,
         wait_for_status: Optional[Any] = None,
     ) -> ObjectApiResponse[Any]:
         """

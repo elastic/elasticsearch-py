@@ -1140,6 +1140,7 @@ class IndicesClient(NamespacedClient):
         max_num_segments: Optional[int] = None,
         only_expunge_deletes: Optional[bool] = None,
         pretty: Optional[bool] = None,
+        wait_for_completion: Optional[bool] = None,
     ) -> ObjectApiResponse[Any]:
         """
         Performs the force merge operation on one or more indices.
@@ -1161,6 +1162,8 @@ class IndicesClient(NamespacedClient):
             (default: dynamic)
         :param only_expunge_deletes: Specify whether the operation should only expunge
             deleted documents
+        :param wait_for_completion: Should the request wait until the force merge is
+            completed.
         """
         if index not in SKIP_IN_PATH:
             __path = f"/{_quote(index)}/_forcemerge"
@@ -1187,6 +1190,8 @@ class IndicesClient(NamespacedClient):
             __query["only_expunge_deletes"] = only_expunge_deletes
         if pretty is not None:
             __query["pretty"] = pretty
+        if wait_for_completion is not None:
+            __query["wait_for_completion"] = wait_for_completion
         if __query:
             __target = f"{__path}?{_quote_query(__query)}"
         else:
@@ -1911,6 +1916,7 @@ class IndicesClient(NamespacedClient):
         *,
         name: Any,
         composed_of: Optional[List[Any]] = None,
+        create: Optional[bool] = None,
         data_stream: Optional[Any] = None,
         error_trace: Optional[bool] = None,
         filter_path: Optional[Union[List[str], str]] = None,
@@ -1929,6 +1935,8 @@ class IndicesClient(NamespacedClient):
 
         :param name: Index or template name
         :param composed_of:
+        :param create: Whether the index template should only be added if new or can
+            also replace an existing one
         :param data_stream:
         :param index_patterns:
         :param meta:
@@ -1943,6 +1951,8 @@ class IndicesClient(NamespacedClient):
         __query: Dict[str, Any] = {}
         if composed_of is not None:
             __body["composed_of"] = composed_of
+        if create is not None:
+            __query["create"] = create
         if data_stream is not None:
             __body["data_stream"] = data_stream
         if error_trace is not None:

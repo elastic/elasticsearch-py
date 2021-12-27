@@ -71,10 +71,12 @@ class LicenseClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-license.html>`_
 
-        :param accept_enterprise: Supported for backwards compatibility with 7.x. If
-            this param is used it must be set to true
-        :param local: Return local information, do not retrieve the state from master
-            node (default: false)
+        :param accept_enterprise: If `true`, this parameter returns enterprise for Enterprise
+            license types. If `false`, this parameter returns platinum for both platinum
+            and enterprise license types. This behavior is maintained for backwards compatibility.
+            This parameter is deprecated and will always be set to true in 8.x.
+        :param local: Specifies whether to retrieve local information. The default value
+            is `false`, which means the information is retrieved from the master node.
         """
         __path = "/_license"
         __query: Dict[str, Any] = {}
@@ -165,12 +167,12 @@ class LicenseClient(NamespacedClient):
     async def post(
         self,
         *,
+        licenses: List[Any],
         acknowledge: Optional[bool] = None,
         error_trace: Optional[bool] = None,
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         license: Optional[Any] = None,
-        licenses: Optional[List[Any]] = None,
         pretty: Optional[bool] = None,
     ) -> ObjectApiResponse[Any]:
         """
@@ -178,14 +180,18 @@ class LicenseClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/update-license.html>`_
 
-        :param acknowledge: whether the user has acknowledged acknowledge messages (default:
-            false)
+        :param licenses: A sequence of one or more JSON documents containing the license
+            information.
+        :param acknowledge: Specifies whether you acknowledge the license changes.
         :param license:
-        :param licenses:
         """
+        if licenses is None:
+            raise ValueError("Empty value passed for parameter 'licenses'")
         __path = "/_license"
-        __query: Dict[str, Any] = {}
         __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if licenses is not None:
+            __body["licenses"] = licenses
         if acknowledge is not None:
             __query["acknowledge"] = acknowledge
         if error_trace is not None:
@@ -196,8 +202,6 @@ class LicenseClient(NamespacedClient):
             __query["human"] = human
         if license is not None:
             __body["license"] = license
-        if licenses is not None:
-            __body["licenses"] = licenses
         if pretty is not None:
             __query["pretty"] = pretty
         if not __body:

@@ -3000,6 +3000,7 @@ class MlClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         metadata: Optional[Any] = None,
+        model_size_bytes: Optional[int] = None,
         model_type: Optional[Any] = None,
         pretty: Optional[bool] = None,
         tags: Optional[List[str]] = None,
@@ -3021,6 +3022,9 @@ class MlClient(NamespacedClient):
             then compressed_definition cannot be specified.
         :param description: A human-readable description of the inference trained model.
         :param metadata: An object map that contains metadata about the model.
+        :param model_size_bytes: The estimated memory usage in bytes to keep the trained
+            model in memory. This property is supported only if defer_definition_decompression
+            is true or the model definition is not supplied.
         :param model_type: The model type.
         :param tags: An array of tags to organize the model.
         """
@@ -3051,6 +3055,8 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if metadata is not None:
             __body["metadata"] = metadata
+        if model_size_bytes is not None:
+            __body["model_size_bytes"] = model_size_bytes
         if model_type is not None:
             __body["model_type"] = model_type
         if pretty is not None:

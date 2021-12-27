@@ -200,15 +200,25 @@ class WatcherClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-execute-watch.html>`_
 
-        :param id: Watch ID
-        :param action_modes:
-        :param alternative_input:
-        :param debug: indicates whether the watch should execute in debug mode
-        :param ignore_condition:
-        :param record_execution:
+        :param id: Identifier for the watch.
+        :param action_modes: Determines how to handle the watch actions as part of the
+            watch execution. See [Action execution modes](https://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-execute-watch.html#watcher-api-execute-watch-action-mode)
+            for more information.
+        :param alternative_input: When present, the watch uses this object as a payload
+            instead of executing its own input.
+        :param debug: Defines whether the watch runs in debug mode.
+        :param ignore_condition: When set to `true`, the watch execution uses the always
+            condition. This can also be specified as an HTTP parameter.
+        :param record_execution: When set to `true`, the watch record representing the
+            watch execution result is persisted to the `.watcher-history` index for the
+            current time. In addition, the status of the watch is updated, possibly throttling
+            subsequent executions. This can also be specified as an HTTP parameter.
         :param simulated_actions:
-        :param trigger_data:
-        :param watch:
+        :param trigger_data: This structure is parsed as the data of the trigger event
+            that will be used during the watch execution
+        :param watch: When present, this [watch](https://www.elastic.co/guide/en/elasticsearch/reference/current/how-watcher-works.html#watch-definition)
+            is used instead of the one specified in the request. This watch is not persisted
+            to the index and record_execution cannot be set.
         """
         if id not in SKIP_IN_PATH:
             __path = f"/_watcher/watch/{_quote(id)}/_execute"

@@ -217,7 +217,9 @@ class TransformClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/preview-transform.html>`_
 
-        :param transform_id: The id of the transform to preview.
+        :param transform_id: Identifier for the transform to preview. If you specify
+            this path parameter, you cannot provide transform configuration details in
+            the request body.
         :param description: Free text description of the transform.
         :param dest: The destination for the transform.
         :param frequency: The interval between checks for changes in the source indices
@@ -299,7 +301,7 @@ class TransformClient(NamespacedClient):
         frequency: Optional[Any] = None,
         human: Optional[bool] = None,
         latest: Optional[Any] = None,
-        meta: Optional[Dict[str, str]] = None,
+        meta: Optional[Any] = None,
         pivot: Optional[Any] = None,
         pretty: Optional[bool] = None,
         retention_policy: Optional[Any] = None,
@@ -389,6 +391,50 @@ class TransformClient(NamespacedClient):
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+
+    @_rewrite_parameters()
+    async def reset_transform(
+        self,
+        *,
+        transform_id: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        force: Optional[bool] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> ObjectApiResponse[Any]:
+        """
+        Resets an existing transform.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/reset-transform.html>`_
+
+        :param transform_id: Identifier for the transform. This identifier can contain
+            lowercase alphanumeric characters (a-z and 0-9), hyphens, and underscores.
+            It has a 64 character limit and must start and end with alphanumeric characters.
+        :param force: If this value is `true`, the transform is reset regardless of its
+            current state. If it's `false`, the transform must be stopped before it can
+            be reset.
+        """
+        if transform_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'transform_id'")
+        __path = f"/_transform/{_quote(transform_id)}/_reset"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if force is not None:
+            __query["force"] = force
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def start_transform(
@@ -504,6 +550,7 @@ class TransformClient(NamespacedClient):
 
     @_rewrite_parameters(
         body_fields=True,
+        parameter_aliases={"_meta": "meta"},
     )
     async def update_transform(
         self,
@@ -516,6 +563,7 @@ class TransformClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         frequency: Optional[Any] = None,
         human: Optional[bool] = None,
+        meta: Optional[Any] = None,
         pretty: Optional[bool] = None,
         retention_policy: Optional[Any] = None,
         settings: Optional[Any] = None,
@@ -528,9 +576,7 @@ class TransformClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/update-transform.html>`_
 
-        :param transform_id: Identifier for the transform. This identifier can contain
-            lowercase alphanumeric characters (a-z and 0-9), hyphens, and underscores.
-            It must start and end with alphanumeric characters.
+        :param transform_id: Identifier for the transform.
         :param defer_validation: When true, deferrable validations are not run. This
             behavior may be desired if the source index does not exist until after the
             transform is created.
@@ -540,6 +586,7 @@ class TransformClient(NamespacedClient):
             when the transform is running continuously. Also determines the retry interval
             in the event of transient failures while the transform is searching or indexing.
             The minimum value is 1s and the maximum is 1h.
+        :param meta: Defines optional transform metadata.
         :param retention_policy: Defines a retention policy for the transform. Data that
             meets the defined criteria is deleted from the destination index.
         :param settings: Defines optional transform settings.
@@ -567,6 +614,8 @@ class TransformClient(NamespacedClient):
             __body["frequency"] = frequency
         if human is not None:
             __query["human"] = human
+        if meta is not None:
+            __body["_meta"] = meta
         if pretty is not None:
             __query["pretty"] = pretty
         if retention_policy is not None:
@@ -585,3 +634,44 @@ class TransformClient(NamespacedClient):
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+
+    @_rewrite_parameters()
+    async def upgrade_transforms(
+        self,
+        *,
+        dry_run: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+    ) -> ObjectApiResponse[Any]:
+        """
+        Upgrades all transforms.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/upgrade-transforms.html>`_
+
+        :param dry_run: When true, the request checks for updates but does not run them.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
+        """
+        __path = "/_transform/_upgrade"
+        __query: Dict[str, Any] = {}
+        if dry_run is not None:
+            __query["dry_run"] = dry_run
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return await self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
