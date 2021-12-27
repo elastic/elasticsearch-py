@@ -72,17 +72,14 @@ def streaming_bulk_types() -> None:
         pass
     for _ in streaming_bulk(es, sync_gen().__iter__()):
         pass
-    for _ in streaming_bulk(es, [{}]):
-        pass
-    for _ in streaming_bulk(es, ({},)):
+    for _ in streaming_bulk(es, [{"key": "value"}]):
         pass
 
 
 def bulk_types() -> None:
     _, _ = bulk(es, sync_gen())
     _, _ = bulk(es, sync_gen().__iter__())
-    _, _ = bulk(es, [{}])
-    _, _ = bulk(es, ({},))
+    _, _ = bulk(es, [{"key": "value"}])
 
 
 def reindex_types() -> None:
@@ -144,9 +141,7 @@ async def async_streaming_bulk_types() -> None:
         pass
     async for _ in async_streaming_bulk(es2, async_gen().__aiter__()):
         pass
-    async for _ in async_streaming_bulk(es2, [{}]):
-        pass
-    async for _ in async_streaming_bulk(es2, ({},)):
+    async for _ in async_streaming_bulk(es2, [{"key": "value"}]):
         pass
 
 
@@ -154,7 +149,6 @@ async def async_bulk_types() -> None:
     _, _ = await async_bulk(es2, async_gen())
     _, _ = await async_bulk(es2, async_gen().__aiter__())
     _, _ = await async_bulk(es2, [{}])
-    _, _ = await async_bulk(es2, ({},))
 
 
 async def async_reindex_types() -> None:
