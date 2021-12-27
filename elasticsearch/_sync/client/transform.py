@@ -299,7 +299,7 @@ class TransformClient(NamespacedClient):
         frequency: Optional[Any] = None,
         human: Optional[bool] = None,
         latest: Optional[Any] = None,
-        meta: Optional[Dict[str, str]] = None,
+        meta: Optional[Any] = None,
         pivot: Optional[Any] = None,
         pretty: Optional[bool] = None,
         retention_policy: Optional[Any] = None,
@@ -504,6 +504,7 @@ class TransformClient(NamespacedClient):
 
     @_rewrite_parameters(
         body_fields=True,
+        parameter_aliases={"_meta": "meta"},
     )
     def update_transform(
         self,
@@ -516,6 +517,7 @@ class TransformClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         frequency: Optional[Any] = None,
         human: Optional[bool] = None,
+        meta: Optional[Any] = None,
         pretty: Optional[bool] = None,
         retention_policy: Optional[Any] = None,
         settings: Optional[Any] = None,
@@ -540,6 +542,7 @@ class TransformClient(NamespacedClient):
             when the transform is running continuously. Also determines the retry interval
             in the event of transient failures while the transform is searching or indexing.
             The minimum value is 1s and the maximum is 1h.
+        :param meta: Defines optional transform metadata.
         :param retention_policy: Defines a retention policy for the transform. Data that
             meets the defined criteria is deleted from the destination index.
         :param settings: Defines optional transform settings.
@@ -567,6 +570,8 @@ class TransformClient(NamespacedClient):
             __body["frequency"] = frequency
         if human is not None:
             __query["human"] = human
+        if meta is not None:
+            __body["_meta"] = meta
         if pretty is not None:
             __query["pretty"] = pretty
         if retention_policy is not None:
@@ -585,3 +590,44 @@ class TransformClient(NamespacedClient):
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+
+    @_rewrite_parameters()
+    def upgrade_transforms(
+        self,
+        *,
+        dry_run: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        timeout: Optional[Any] = None,
+    ) -> ObjectApiResponse[Any]:
+        """
+        Upgrades all transforms.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/upgrade-transforms.html>`_
+
+        :param dry_run: When true, the request checks for updates but does not run them.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
+        """
+        __path = "/_transform/_upgrade"
+        __query: Dict[str, Any] = {}
+        if dry_run is not None:
+            __query["dry_run"] = dry_run
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]

@@ -137,7 +137,8 @@ class TasksClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         group_by: Optional[Any] = None,
         human: Optional[bool] = None,
-        nodes: Optional[List[str]] = None,
+        master_timeout: Optional[Any] = None,
+        node_id: Optional[List[str]] = None,
         parent_task_id: Optional[Any] = None,
         pretty: Optional[bool] = None,
         timeout: Optional[Any] = None,
@@ -148,18 +149,22 @@ class TasksClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
 
-        :param actions: A comma-separated list of actions that should be returned. Leave
-            empty to return all.
-        :param detailed: Return detailed task information (default: false)
-        :param group_by: Group tasks by nodes or parent/child relationships
-        :param nodes: A comma-separated list of node IDs or names to limit the returned
-            information; use `_local` to return information from the node you're connecting
-            to, leave empty to get information from all nodes
-        :param parent_task_id: Return tasks with specified parent task id (node_id:task_number).
-            Set to -1 to return all.
-        :param timeout: Explicit operation timeout
-        :param wait_for_completion: Wait for the matching tasks to complete (default:
-            false)
+        :param actions: Comma-separated list or wildcard expression of actions used to
+            limit the request.
+        :param detailed: If `true`, the response includes detailed information about
+            shard recoveries.
+        :param group_by: Key used to group tasks in the response.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param node_id: Comma-separated list of node IDs or names used to limit returned
+            information.
+        :param parent_task_id: Parent task ID used to limit returned information. To
+            return all tasks, omit this parameter or use a value of `-1`.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
+        :param wait_for_completion: If `true`, the request blocks until the operation
+            is complete.
         """
         __path = "/_tasks"
         __query: Dict[str, Any] = {}
@@ -175,8 +180,10 @@ class TasksClient(NamespacedClient):
             __query["group_by"] = group_by
         if human is not None:
             __query["human"] = human
-        if nodes is not None:
-            __query["nodes"] = nodes
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if node_id is not None:
+            __query["node_id"] = node_id
         if parent_task_id is not None:
             __query["parent_task_id"] = parent_task_id
         if pretty is not None:

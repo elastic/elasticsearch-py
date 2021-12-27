@@ -876,7 +876,9 @@ class SecurityClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-role.html>`_
 
-        :param name: A comma-separated list of role names
+        :param name: The name of the role. You can specify multiple roles as a comma-separated
+            list. If you do not specify this parameter, the API returns information about
+            all roles.
         """
         if name not in SKIP_IN_PATH:
             __path = f"/_security/role/{_quote(name)}"
@@ -913,7 +915,11 @@ class SecurityClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-role-mapping.html>`_
 
-        :param name: A comma-separated list of role-mapping names
+        :param name: The distinct name that identifies the role mapping. The name is
+            used solely as an identifier to facilitate interaction via the API; it does
+            not affect the behavior of the mapping in any way. You can specify multiple
+            mapping names as a comma-separated list. If you do not specify this parameter,
+            the API returns information about all role mappings.
         """
         if name not in SKIP_IN_PATH:
             __path = f"/_security/role_mapping/{_quote(name)}"
@@ -951,8 +957,11 @@ class SecurityClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-service-accounts.html>`_
 
-        :param namespace: An identifier for the namespace
-        :param service: An identifier for the service name
+        :param namespace: Name of the namespace. Omit this parameter to retrieve information
+            about all service accounts. If you omit this parameter, you must also omit
+            the `service` parameter.
+        :param service: Name of the service name. Omit this parameter to retrieve information
+            about all service accounts that belong to the specified `namespace`.
         """
         if namespace not in SKIP_IN_PATH and service not in SKIP_IN_PATH:
             __path = f"/_security/service/{_quote(namespace)}/{_quote(service)}"
@@ -1124,6 +1133,7 @@ class SecurityClient(NamespacedClient):
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
         priviledge: Optional[Any] = None,
+        username: Optional[Union[Any, None]] = None,
     ) -> ObjectApiResponse[Any]:
         """
         Retrieves security privileges for the logged in user.
@@ -1135,6 +1145,7 @@ class SecurityClient(NamespacedClient):
             the API returns information about all privileges for all applications.
         :param priviledge: The name of the privilege. If you do not specify this parameter,
             the API returns information about all privileges for the requested application.
+        :param username:
         """
         __path = "/_security/user/_privileges"
         __query: Dict[str, Any] = {}
@@ -1150,6 +1161,8 @@ class SecurityClient(NamespacedClient):
             __query["pretty"] = pretty
         if priviledge is not None:
             __query["priviledge"] = priviledge
+        if username is not None:
+            __query["username"] = username
         if __query:
             __target = f"{__path}?{_quote_query(__query)}"
         else:
@@ -1223,7 +1236,7 @@ class SecurityClient(NamespacedClient):
     def has_privileges(
         self,
         *,
-        user: Optional[Any] = None,
+        user: Optional[Union[Any, None]] = None,
         application: Optional[List[Any]] = None,
         cluster: Optional[List[Any]] = None,
         error_trace: Optional[bool] = None,
@@ -1239,7 +1252,7 @@ class SecurityClient(NamespacedClient):
 
         :param user: Username
         :param application:
-        :param cluster:
+        :param cluster: A list of the cluster privileges that you want to check.
         :param index:
         """
         if user not in SKIP_IN_PATH:
@@ -1450,7 +1463,7 @@ class SecurityClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-put-role.html>`_
 
-        :param name: Role name
+        :param name: The name of the role.
         :param applications: A list of application privilege entries.
         :param cluster: A list of cluster privileges. These privileges define the cluster-level
             actions for users with this role.
@@ -1645,3 +1658,70 @@ class SecurityClient(NamespacedClient):
             __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+
+    @_rewrite_parameters(
+        body_fields=True,
+        parameter_aliases={"from": "from_"},
+    )
+    def query_api_keys(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        from_: Optional[int] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        query: Optional[Any] = None,
+        search_after: Optional[Any] = None,
+        size: Optional[int] = None,
+        sort: Optional[Any] = None,
+    ) -> ObjectApiResponse[Any]:
+        """
+        Retrieves information for API keys using a subset of query DSL
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-query-api-key.html>`_
+
+        :param from_: Starting document offset. By default, you cannot page through more
+            than 10,000 hits using the from and size parameters. To page through more
+            hits, use the search_after parameter.
+        :param query: A query to filter which API keys to return. The query supports
+            a subset of query types, including match_all, bool, term, terms, ids, prefix,
+            wildcard, and range. You can query all public information associated with
+            an API key
+        :param search_after:
+        :param size: The number of hits to return. By default, you cannot page through
+            more than 10,000 hits using the from and size parameters. To page through
+            more hits, use the search_after parameter.
+        :param sort:
+        """
+        __path = "/_security/_query/api_key"
+        __query: Dict[str, Any] = {}
+        __body: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if from_ is not None:
+            __body["from"] = from_
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if query is not None:
+            __body["query"] = query
+        if search_after is not None:
+            __body["search_after"] = search_after
+        if size is not None:
+            __body["size"] = size
+        if sort is not None:
+            __body["sort"] = sort
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        if __query:
+            __target = f"{__path}?{_quote_query(__query)}"
+        else:
+            __target = __path
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]

@@ -177,60 +177,109 @@ class RollupClient(NamespacedClient):
 
     @_rewrite_parameters(
         body_fields=True,
+        ignore_deprecated_options={"headers"},
     )
     def put_job(
         self,
         *,
         id: Any,
-        cron: Optional[str] = None,
+        cron: str,
+        groups: Any,
+        index_pattern: str,
+        page_size: int,
+        rollup_index: Any,
         error_trace: Optional[bool] = None,
         filter_path: Optional[Union[List[str], str]] = None,
-        groups: Optional[Any] = None,
+        headers: Optional[Any] = None,
         human: Optional[bool] = None,
-        index_pattern: Optional[str] = None,
         metrics: Optional[List[Any]] = None,
-        page_size: Optional[int] = None,
         pretty: Optional[bool] = None,
-        rollup_index: Optional[Any] = None,
+        timeout: Optional[Any] = None,
     ) -> ObjectApiResponse[Any]:
         """
         Creates a rollup job.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-put-job.html>`_
 
-        :param id: The ID of the job to create
-        :param cron:
-        :param groups:
-        :param index_pattern:
-        :param metrics:
-        :param page_size:
-        :param rollup_index:
+        :param id: Identifier for the rollup job. This can be any alphanumeric string
+            and uniquely identifies the data that is associated with the rollup job.
+            The ID is persistent; it is stored with the rolled up data. If you create
+            a job, let it run for a while, then delete the job, the data that the job
+            rolled up is still be associated with this job ID. You cannot create a new
+            job with the same ID since that could lead to problems with mismatched job
+            configurations.
+        :param cron: A cron string which defines the intervals when the rollup job should
+            be executed. When the interval triggers, the indexer attempts to rollup the
+            data in the index pattern. The cron pattern is unrelated to the time interval
+            of the data being rolled up. For example, you may wish to create hourly rollups
+            of your document but to only run the indexer on a daily basis at midnight,
+            as defined by the cron. The cron pattern is defined just like a Watcher cron
+            schedule.
+        :param groups: Defines the grouping fields and aggregations that are defined
+            for this rollup job. These fields will then be available later for aggregating
+            into buckets. These aggs and fields can be used in any combination. Think
+            of the groups configuration as defining a set of tools that can later be
+            used in aggregations to partition the data. Unlike raw data, we have to think
+            ahead to which fields and aggregations might be used. Rollups provide enough
+            flexibility that you simply need to determine which fields are needed, not
+            in what order they are needed.
+        :param index_pattern: The index or index pattern to roll up. Supports wildcard-style
+            patterns (`logstash-*`). The job attempts to rollup the entire index or index-pattern.
+        :param page_size: The number of bucket results that are processed on each iteration
+            of the rollup indexer. A larger value tends to execute faster, but requires
+            more memory during processing. This value has no effect on how the data is
+            rolled up; it is merely used for tweaking the speed or memory cost of the
+            indexer.
+        :param rollup_index: The index that contains the rollup results. The index can
+            be shared with other rollup jobs. The data is stored so that it doesn’t interfere
+            with unrelated jobs.
+        :param headers:
+        :param metrics: Defines the metrics to collect for each grouping tuple. By default,
+            only the doc_counts are collected for each group. To make rollup useful,
+            you will often add metrics like averages, mins, maxes, etc. Metrics are defined
+            on a per-field basis and for each field you configure which metric should
+            be collected.
+        :param timeout: Time to wait for the request to complete.
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
+        if cron is None:
+            raise ValueError("Empty value passed for parameter 'cron'")
+        if groups is None:
+            raise ValueError("Empty value passed for parameter 'groups'")
+        if index_pattern is None:
+            raise ValueError("Empty value passed for parameter 'index_pattern'")
+        if page_size is None:
+            raise ValueError("Empty value passed for parameter 'page_size'")
+        if rollup_index is None:
+            raise ValueError("Empty value passed for parameter 'rollup_index'")
         __path = f"/_rollup/job/{_quote(id)}"
         __body: Dict[str, Any] = {}
         __query: Dict[str, Any] = {}
         if cron is not None:
             __body["cron"] = cron
+        if groups is not None:
+            __body["groups"] = groups
+        if index_pattern is not None:
+            __body["index_pattern"] = index_pattern
+        if page_size is not None:
+            __body["page_size"] = page_size
+        if rollup_index is not None:
+            __body["rollup_index"] = rollup_index
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
-        if groups is not None:
-            __body["groups"] = groups
+        if headers is not None:
+            __body["headers"] = headers
         if human is not None:
             __query["human"] = human
-        if index_pattern is not None:
-            __body["index_pattern"] = index_pattern
         if metrics is not None:
             __body["metrics"] = metrics
-        if page_size is not None:
-            __body["page_size"] = page_size
         if pretty is not None:
             __query["pretty"] = pretty
-        if rollup_index is not None:
-            __body["rollup_index"] = rollup_index
+        if timeout is not None:
+            __body["timeout"] = timeout
         if __query:
             __target = f"{__path}?{_quote_query(__query)}"
         else:

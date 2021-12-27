@@ -1605,20 +1605,30 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-field-caps.html>`_
 
-        :param index: A comma-separated list of index names; use `_all` or empty string
-            to perform the operation on all indices
-        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
-            into no concrete indices. (This includes `_all` string or when no indices
-            have been specified)
-        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
-            that are open, closed or both.
-        :param fields: A comma-separated list of field names
-        :param ignore_unavailable: Whether specified concrete indices should be ignored
-            when unavailable (missing or closed)
-        :param include_unmapped: Indicates whether unmapped fields should be included
+        :param index: Comma-separated list of data streams, indices, and aliases used
+            to limit the request. Supports wildcards (*). To target all data streams
+            and indices, omit this parameter or use * or _all.
+        :param allow_no_indices: If false, the request returns an error if any wildcard
+            expression, [index alias](https://www.elastic.co/guide/en/elasticsearch/reference/current/aliases.html),
+            or `_all` value targets only missing or closed indices. This behavior applies
+            even if the request targets other open indices. For example, a request targeting
+            `foo*,bar*` returns an error if an index starts with foo but no index starts
+            with bar.
+        :param expand_wildcards: Type of index that wildcard patterns can match. If the
+            request can target data streams, this argument determines whether wildcard
+            expressions match hidden data streams. Supports comma-separated values, such
+            as `open,hidden`.
+        :param fields: Comma-separated list of fields to retrieve capabilities for. Wildcard
+            (`*`) expressions are supported.
+        :param ignore_unavailable: If `true`, missing or closed indices are not included
             in the response.
-        :param index_filter:
-        :param runtime_mappings:
+        :param include_unmapped: If true, unmapped fields are included in the response.
+        :param index_filter: Allows to filter indices if the provided query rewrites
+            to match_none on every shard.
+        :param runtime_mappings: Defines ad-hoc [runtime fields](https://www.elastic.co/guide/en/elasticsearch/reference/current/runtime-search-request.html)
+            in the request similar to the way it is done in [search requests](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-search.html#search-api-body-runtime).
+            These fields exist only as part of the query and take precedence over fields
+            defined with the same name in the index mappings.
         """
         if index not in SKIP_IN_PATH:
             __path = f"/{_quote(index)}/_field_caps"
@@ -2185,24 +2195,30 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-multi-get.html>`_
 
-        :param index: The name of the index
-        :param docs:
-        :param ids:
-        :param preference: Specify the node or shard the operation should be performed
-            on (default: random)
-        :param realtime: Specify whether to perform the operation in realtime or search
-            mode
-        :param refresh: Refresh the shard containing the document before performing the
-            operation
-        :param routing: Specific routing value
-        :param source: True or false to return the _source field or not, or a list of
-            fields to return
-        :param source_excludes: A list of fields to exclude from the returned _source
-            field
-        :param source_includes: A list of fields to extract and return from the _source
-            field
-        :param stored_fields: A comma-separated list of stored fields to return in the
-            response
+        :param index: Name of the index to retrieve documents from when `ids` are specified,
+            or when a document in the `docs` array does not specify an index.
+        :param docs: The documents you want to retrieve. Required if no index is specified
+            in the request URI.
+        :param ids: The IDs of the documents you want to retrieve. Allowed when the index
+            is specified in the request URI.
+        :param preference: Specifies the node or shard the operation should be performed
+            on. Random by default.
+        :param realtime: If `true`, the request is real-time as opposed to near-real-time.
+        :param refresh: If `true`, the request refreshes relevant shards before retrieving
+            documents.
+        :param routing: Custom value used to route operations to a specific shard.
+        :param source: True or false to return the `_source` field or not, or a list
+            of fields to return.
+        :param source_excludes: A comma-separated list of source fields to exclude from
+            the response. You can also use this parameter to exclude fields from the
+            subset specified in `_source_includes` query parameter.
+        :param source_includes: A comma-separated list of source fields to include in
+            the response. If this parameter is specified, only these source fields are
+            returned. You can exclude fields from this subset using the `_source_excludes`
+            query parameter. If the `_source` parameter is `false`, this parameter is
+            ignored.
+        :param stored_fields: If `true`, retrieves the document fields stored in the
+            index rather than the document `_source`.
         """
         if index not in SKIP_IN_PATH:
             __path = f"/{_quote(index)}/_mget"
@@ -3397,6 +3413,7 @@ class Elasticsearch(BaseClient):
         runtime_mappings: Optional[Any] = None,
         size: Optional[int] = None,
         sort: Optional[Any] = None,
+        track_total_hits: Optional[Any] = None,
     ) -> BinaryApiResponse:
         """
         Searches a vector tile for geospatial values. Returns results as a binary Mapbox
@@ -3436,6 +3453,10 @@ class Elasticsearch(BaseClient):
         :param sort: Sorts features in the hits layer. By default, the API calculates
             a bounding box for each feature. It sorts features based on this box’s diagonal
             length, from longest to shortest.
+        :param track_total_hits: Number of hits matching the query to count accurately.
+            If `true`, the exact number of hits is returned at the cost of some performance.
+            If `false`, the response does not include the total number of hits matching
+            the query.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -3478,6 +3499,8 @@ class Elasticsearch(BaseClient):
             __body["size"] = size
         if sort is not None:
             __body["sort"] = sort
+        if track_total_hits is not None:
+            __body["track_total_hits"] = track_total_hits
         if not __body:
             __body = None  # type: ignore[assignment]
         if __query:

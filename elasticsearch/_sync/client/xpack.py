@@ -33,6 +33,7 @@ class XPackClient(NamespacedClient):
     def info(
         self,
         *,
+        accept_enterprise: Optional[bool] = None,
         categories: Optional[List[str]] = None,
         error_trace: Optional[bool] = None,
         filter_path: Optional[Union[List[str], str]] = None,
@@ -44,11 +45,14 @@ class XPackClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/info-api.html>`_
 
+        :param accept_enterprise: If this param is used it must be set to true
         :param categories: Comma-separated list of info categories. Can be any of: build,
             license, features
         """
         __path = "/_xpack"
         __query: Dict[str, Any] = {}
+        if accept_enterprise is not None:
+            __query["accept_enterprise"] = accept_enterprise
         if categories is not None:
             __query["categories"] = categories
         if error_trace is not None:
