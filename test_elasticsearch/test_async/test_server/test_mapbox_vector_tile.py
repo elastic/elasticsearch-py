@@ -140,10 +140,10 @@ async def test_mapbox_vector_tile_response(elasticsearch_url, mvt_setup, ca_cert
     )
 
     assert resp.meta.status == 200
-    assert isinstance(resp.raw, bytes)
+    assert isinstance(resp.body, bytes)
 
     # Decode the binary as MVT
-    tile = mapbox_vector_tile.decode(resp.raw)
+    tile = mapbox_vector_tile.decode(resp.body)
 
     # Assert some general things about the structure, mostly we want
     # to know that we got back a valid MVT.

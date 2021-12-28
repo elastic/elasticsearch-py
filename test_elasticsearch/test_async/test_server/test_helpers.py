@@ -425,7 +425,7 @@ class MockScroll:
         self.calls.append((args, kwargs))
         if len(self.calls) == 1:
             return ObjectApiResponse(
-                raw={
+                body={
                     "_scroll_id": "dummy_id",
                     "_shards": {"successful": 4, "total": 5, "skipped": 0},
                     "hits": {"hits": [{"scroll_data": 42}]},
@@ -434,7 +434,7 @@ class MockScroll:
             )
         elif len(self.calls) == 2:
             return ObjectApiResponse(
-                raw={
+                body={
                     "_scroll_id": "dummy_id",
                     "_shards": {"successful": 4, "total": 5, "skipped": 0},
                     "hits": {"hits": []},
@@ -549,7 +549,7 @@ class TestScan(object):
                 "search",
                 MockResponse(
                     ObjectApiResponse(
-                        raw={
+                        body={
                             "_scroll_id": "dummy_id",
                             "_shards": {"successful": 4, "total": 5, "skipped": 0},
                             "hits": {"hits": [{"search_data": 1}]},
@@ -576,7 +576,7 @@ class TestScan(object):
                 "search",
                 MockResponse(
                     ObjectApiResponse(
-                        raw={
+                        body={
                             "_scroll_id": "dummy_id",
                             "_shards": {"successful": 4, "total": 5, "skipped": 0},
                             "hits": {"hits": [{"search_data": 1}]},
@@ -606,7 +606,7 @@ class TestScan(object):
         ), patch.object(async_client, "scroll") as scroll_mock, patch.object(
             async_client,
             "search",
-            MockResponse(ObjectApiResponse(raw={"no": "_scroll_id"}, meta=None)),
+            MockResponse(ObjectApiResponse(body={"no": "_scroll_id"}, meta=None)),
         ), patch.object(
             async_client, "clear_scroll"
         ) as clear_mock:
@@ -720,7 +720,7 @@ class TestScan(object):
             "search",
             return_value=MockResponse(
                 ObjectApiResponse(
-                    raw={
+                    body={
                         "_scroll_id": "scroll_id",
                         "_shards": {"successful": 5, "total": 5, "skipped": 0},
                         "hits": {"hits": [{"search_data": 1}]},
@@ -734,7 +734,7 @@ class TestScan(object):
                 "scroll",
                 return_value=MockResponse(
                     ObjectApiResponse(
-                        raw={
+                        body={
                             "_scroll_id": "scroll_id",
                             "_shards": {"successful": 5, "total": 5, "skipped": 0},
                             "hits": {"hits": []},
@@ -773,7 +773,7 @@ class TestScan(object):
             "search",
             return_value=MockResponse(
                 ObjectApiResponse(
-                    raw={
+                    body={
                         "_scroll_id": "scroll_id",
                         "_shards": {"successful": 5, "total": 5, "skipped": 0},
                         "hits": {"hits": [{"search_data": 1}]},
@@ -787,7 +787,7 @@ class TestScan(object):
                 "scroll",
                 return_value=MockResponse(
                     ObjectApiResponse(
-                        raw={
+                        body={
                             "_scroll_id": "scroll_id",
                             "_shards": {"successful": 5, "total": 5, "skipped": 0},
                             "hits": {"hits": []},
