@@ -248,7 +248,7 @@ class BaseClient:
         target: str,
         headers: Optional[Mapping[str, str]] = None,
         body: Optional[Any] = None,
-    ) -> ApiResponse[Any, Any]:
+    ) -> ApiResponse[Any]:
         if headers:
             request_headers = self._headers.copy()
             request_headers.update(headers)
@@ -327,18 +327,18 @@ class BaseClient:
         if method == "HEAD":
             response = HeadApiResponse(meta=meta)
         elif isinstance(resp_body, dict):
-            response = ObjectApiResponse(raw=resp_body, meta=meta)  # type: ignore[assignment]
+            response = ObjectApiResponse(body=resp_body, meta=meta)  # type: ignore[assignment]
         elif isinstance(resp_body, list):
-            response = ListApiResponse(raw=resp_body, meta=meta)  # type: ignore[assignment]
+            response = ListApiResponse(body=resp_body, meta=meta)  # type: ignore[assignment]
         elif isinstance(resp_body, str):
             response = TextApiResponse(  # type: ignore[assignment]
-                raw=resp_body,
+                body=resp_body,
                 meta=meta,
             )
         elif isinstance(resp_body, bytes):
-            response = BinaryApiResponse(raw=resp_body, meta=meta)  # type: ignore[assignment]
+            response = BinaryApiResponse(body=resp_body, meta=meta)  # type: ignore[assignment]
         else:
-            response = ApiResponse(raw=resp_body, meta=meta)  # type: ignore[assignment]
+            response = ApiResponse(body=resp_body, meta=meta)  # type: ignore[assignment]
 
         return response
 
