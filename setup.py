@@ -51,7 +51,7 @@ packages = [
     if package == package_name or package.startswith(package_name + ".")
 ]
 
-install_requires = ["elastic-transport>=8.0.0a1,<9"]
+install_requires = ["elastic-transport>=8.0.0a7,<9"]
 async_requires = ["aiohttp>=3,<4"]
 
 setup(

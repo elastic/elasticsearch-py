@@ -276,7 +276,7 @@ class YamlRunner:
         warnings.simplefilter("always", category=ElasticsearchWarning)
         with warnings.catch_warnings(record=True) as caught_warnings:
             try:
-                self.last_response = api(**args).raw
+                self.last_response = api(**args).body
             except Exception as e:
                 self._skip_intentional_type_errors(e)
                 if not catch:

@@ -119,7 +119,7 @@ async def _process_bulk_chunk(
         )
     else:
         gen = _process_bulk_chunk_success(
-            resp=resp.raw,
+            resp=resp.body,
             bulk_data=bulk_data,
             ignore_status=ignore_status,
             raise_on_error=raise_on_error,
@@ -442,7 +442,7 @@ async def async_scan(
         search_kwargs["size"] = size
         resp = await client.search(body=query, **search_kwargs)  # type: ignore[call-arg]
 
-    scroll_id: Optional[str] = resp.raw.get("_scroll_id")
+    scroll_id: Optional[str] = resp.get("_scroll_id")
     scroll_transport_kwargs = pop_transport_kwargs(scroll_kwargs)
     if scroll_transport_kwargs:
         scroll_client = client.options(**scroll_transport_kwargs)
@@ -450,12 +450,12 @@ async def async_scan(
         scroll_client = client
 
     try:
-        while scroll_id and resp.raw["hits"]["hits"]:
-            for hit in resp.raw["hits"]["hits"]:
+        while scroll_id and resp["hits"]["hits"]:
+            for hit in resp["hits"]["hits"]:
                 yield hit
 
             # Default to 0 if the value isn't included in the response
-            shards_info: Dict[str, int] = resp.raw["_shards"]
+            shards_info: Dict[str, int] = resp["_shards"]
             shards_successful = shards_info.get("successful", 0)
             shards_skipped = shards_info.get("skipped", 0)
             shards_total = shards_info.get("total", 0)
@@ -482,7 +482,7 @@ async def async_scan(
             resp = await scroll_client.scroll(
                 scroll_id=scroll_id, scroll=scroll, **scroll_kwargs
             )
-            scroll_id = resp.raw.get("_scroll_id")
+            scroll_id = resp.get("_scroll_id")
 
     finally:
         if scroll_id and clear_scroll:
