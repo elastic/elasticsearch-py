@@ -292,6 +292,13 @@ def _rewrite_parameters(
         def wrapped(*args: Any, **kwargs: Any) -> Any:
             nonlocal api, body_name, body_fields
 
+            # Let's give a nicer error message when users pass positional arguments.
+            if len(args) >= 2:
+                raise TypeError(
+                    "Positional arguments can't be used with Elasticsearch API methods. "
+                    "Instead only use keyword arguments."
+                )
+
             # We merge 'params' first as transport options can be specified using params.
             if "params" in kwargs and (
                 not ignore_deprecated_options

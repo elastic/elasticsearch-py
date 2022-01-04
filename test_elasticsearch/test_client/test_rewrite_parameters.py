@@ -19,6 +19,7 @@ import warnings
 
 import pytest
 
+from elasticsearch import AsyncElasticsearch, Elasticsearch
 from elasticsearch._sync.client.utils import _rewrite_parameters
 
 
@@ -212,3 +213,21 @@ class TestRewriteParameters:
 
         self.wrapped_func_aliases(source=["key3"])
         assert self.calls[-1] == ((), {"source": ["key3"]})
+
+    @pytest.mark.parametrize("client_cls", [Elasticsearch, AsyncElasticsearch])
+    def test_positional_argument_error(self, client_cls):
+        client = client_cls("https://localhost:9200")
+
+        with pytest.raises(TypeError) as e:
+            client.search("index")
+        assert str(e.value) == (
+            "Positional arguments can't be used with Elasticsearch API methods. "
+            "Instead only use keyword arguments."
+        )
+
+        with pytest.raises(TypeError) as e:
+            client.indices.exists("index")
+        assert str(e.value) == (
+            "Positional arguments can't be used with Elasticsearch API methods. "
+            "Instead only use keyword arguments."
+        )
