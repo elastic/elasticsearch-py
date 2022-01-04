@@ -48,7 +48,7 @@ class ApiError(_ApiError):
     @property
     def error(self) -> str:
         """A string error message."""
-        return self.message  # type: ignore
+        return self.message
 
     @property
     def info(self) -> Any:
@@ -86,7 +86,7 @@ class UnsupportedProductError(ApiError):
     """
 
     def __str__(self) -> str:
-        return self.message  # type: ignore
+        return self.message
 
 
 class NotFoundError(ApiError):
