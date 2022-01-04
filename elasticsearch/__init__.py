@@ -21,8 +21,19 @@ import logging
 import re
 import warnings
 
+from elastic_transport import __version__ as _elastic_transport_version
+
 from ._utils import fixup_module_metadata
 from ._version import __versionstr__
+
+# Ensure that a compatible version of elastic-transport is installed.
+_version_groups = tuple(int(x) for x in re.search(r"^(\d+)\.(\d+)\.(\d+)", _elastic_transport_version).groups())  # type: ignore
+if _version_groups < (8, 0, 0) or _version_groups > (9, 0, 0):
+    raise ImportError(
+        "An incompatible version of elastic-transport is installed. Must be between "
+        "v8.0.0 and v9.0.0. Install the correct version with the following command: "
+        "$ python -m pip install 'elastic-transport>=8, <9'"
+    )
 
 _version_groups = re.search(r"^(\d+)\.(\d+)\.(\d+)", __versionstr__).groups()  # type: ignore
 _major, _minor, _patch = (int(x) for x in _version_groups)
