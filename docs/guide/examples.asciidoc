@@ -68,8 +68,8 @@ The `search()` method returns results that are matching a query:
 [source,py]
 ----------------------------
 resp = es.search(index="test-index", query={"match_all": {}})
-print("Got %d Hits:" % res['hits']['total']['value'])
-for hit in res['hits']['hits']:
+print("Got %d Hits:" % resp['hits']['total']['value'])
+for hit in resp['hits']['hits']:
     print("%(timestamp)s %(author)s: %(text)s" % hit["_source"])
 ----------------------------
 
