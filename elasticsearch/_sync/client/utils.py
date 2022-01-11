@@ -267,7 +267,7 @@ def _quote(value: Any) -> str:
     return percent_encode(_escape(value), ",*")
 
 
-def _quote_query(query: Dict[str, Any]) -> str:
+def _quote_query(query: Mapping[str, Any]) -> str:
     return "&".join([f"{k}={_quote(v)}" for k, v in query.items()])
 
 

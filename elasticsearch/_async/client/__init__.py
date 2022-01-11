@@ -89,7 +89,6 @@ from .utils import (
     CLIENT_META_SERVICE,
     SKIP_IN_PATH,
     _quote,
-    _quote_query,
     _rewrite_parameters,
     client_node_configs,
 )
@@ -540,13 +539,11 @@ class AsyncElasticsearch(BaseClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         try:
-            resp = await self._perform_request("HEAD", __target, headers=__headers)
+            resp = await self.perform_request(
+                "HEAD", __path, params=__query, headers=__headers
+            )
             return resp
         except ApiError as e:
             return HeadApiResponse(meta=e.meta)
