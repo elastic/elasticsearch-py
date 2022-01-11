@@ -53,7 +53,7 @@ from ...exceptions import (
     SerializationError,
     UnsupportedProductError,
 )
-from .utils import _TYPE_SYNC_SNIFF_CALLBACK, _base64_auth_header
+from .utils import _TYPE_SYNC_SNIFF_CALLBACK, _base64_auth_header, _quote_query
 
 _WARNING_RE = re.compile(r"\"([^\"]*)\"")
 
@@ -242,10 +242,12 @@ class BaseClient:
     def transport(self) -> Transport:
         return self._transport
 
-    def _perform_request(
+    def perform_request(
         self,
         method: str,
-        target: str,
+        path: str,
+        *,
+        params: Optional[Mapping[str, Any]] = None,
         headers: Optional[Mapping[str, str]] = None,
         body: Optional[Any] = None,
     ) -> ApiResponse[Any]:
@@ -254,6 +256,11 @@ class BaseClient:
             request_headers.update(headers)
         else:
             request_headers = self._headers
+
+        if params:
+            target = f"{path}?{_quote_query(params)}"
+        else:
+            target = path
 
         meta, resp_body = self.transport.perform_request(
             method,
@@ -348,13 +355,17 @@ class NamespacedClient(BaseClient):
         self._client = client
         super().__init__(self._client.transport)
 
-    def _perform_request(
+    def perform_request(
         self,
         method: str,
-        target: str,
+        path: str,
+        *,
+        params: Optional[Mapping[str, Any]] = None,
         headers: Optional[Mapping[str, str]] = None,
         body: Optional[Any] = None,
     ) -> Any:
         # Use the internal clients .perform_request() implementation
         # so we take advantage of their transport options.
-        return self._client._perform_request(method, target, headers=headers, body=body)
+        return self._client.perform_request(
+            method, path, params=params, headers=headers, body=body
+        )

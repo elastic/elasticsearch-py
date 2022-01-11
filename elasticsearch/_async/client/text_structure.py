@@ -20,7 +20,7 @@ from typing import Any, Dict, List, Optional
 from elastic_transport import ObjectApiResponse
 
 from ._base import NamespacedClient
-from .utils import _quote_query, _rewrite_parameters
+from .utils import _rewrite_parameters
 
 
 class TextStructureClient(NamespacedClient):
@@ -149,12 +149,8 @@ class TextStructureClient(NamespacedClient):
         if timestamp_format is not None:
             __query["timestamp_format"] = timestamp_format
         __body = text_files
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {
             "accept": "application/json",
             "content-type": "application/x-ndjson",
         }
-        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
