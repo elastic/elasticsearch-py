@@ -20,7 +20,7 @@ from typing import Any, Dict, List, Optional, Union
 from elastic_transport import ObjectApiResponse
 
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
+from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class SlmClient(NamespacedClient):
@@ -53,12 +53,8 @@ class SlmClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def execute_lifecycle(
@@ -90,12 +86,8 @@ class SlmClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("PUT", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("PUT", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def execute_retention(
@@ -121,12 +113,8 @@ class SlmClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def get_lifecycle(
@@ -159,12 +147,8 @@ class SlmClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def get_stats(
@@ -191,12 +175,8 @@ class SlmClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def get_status(
@@ -222,12 +202,8 @@ class SlmClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -301,14 +277,10 @@ class SlmClient(NamespacedClient):
             __query["timeout"] = timeout
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def start(
@@ -334,12 +306,8 @@ class SlmClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def stop(
@@ -365,9 +333,5 @@ class SlmClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]

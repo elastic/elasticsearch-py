@@ -20,7 +20,7 @@ from typing import Any, Dict, List, Optional, Union
 from elastic_transport import ObjectApiResponse, TextApiResponse
 
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
+from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class CatClient(NamespacedClient):
@@ -95,12 +95,8 @@ class CatClient(NamespacedClient):
             __query["s"] = s
         if v is not None:
             __query["v"] = v
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def allocation(
@@ -173,12 +169,8 @@ class CatClient(NamespacedClient):
             __query["s"] = s
         if v is not None:
             __query["v"] = v
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def count(
@@ -246,12 +238,8 @@ class CatClient(NamespacedClient):
             __query["s"] = s
         if v is not None:
             __query["v"] = v
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def fielddata(
@@ -323,12 +311,8 @@ class CatClient(NamespacedClient):
             __query["s"] = s
         if v is not None:
             __query["v"] = v
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def health(
@@ -394,12 +378,8 @@ class CatClient(NamespacedClient):
             __query["ts"] = ts
         if v is not None:
             __query["v"] = v
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def help(
@@ -461,12 +441,8 @@ class CatClient(NamespacedClient):
             __query["s"] = s
         if v is not None:
             __query["v"] = v
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "text/plain"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def indices(
@@ -557,12 +533,8 @@ class CatClient(NamespacedClient):
             __query["s"] = s
         if v is not None:
             __query["v"] = v
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def master(
@@ -624,12 +596,8 @@ class CatClient(NamespacedClient):
             __query["s"] = s
         if v is not None:
             __query["v"] = v
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def ml_data_frame_analytics(
@@ -705,12 +673,8 @@ class CatClient(NamespacedClient):
             __query["s"] = s
         if v is not None:
             __query["v"] = v
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def ml_datafeeds(
@@ -794,12 +758,8 @@ class CatClient(NamespacedClient):
             __query["time"] = time
         if v is not None:
             __query["v"] = v
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def ml_jobs(
@@ -884,12 +844,8 @@ class CatClient(NamespacedClient):
             __query["time"] = time
         if v is not None:
             __query["v"] = v
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
@@ -976,12 +932,8 @@ class CatClient(NamespacedClient):
             __query["size"] = size
         if v is not None:
             __query["v"] = v
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def nodeattrs(
@@ -1043,12 +995,8 @@ class CatClient(NamespacedClient):
             __query["s"] = s
         if v is not None:
             __query["v"] = v
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def nodes(
@@ -1119,12 +1067,8 @@ class CatClient(NamespacedClient):
             __query["s"] = s
         if v is not None:
             __query["v"] = v
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def pending_tasks(
@@ -1186,12 +1130,8 @@ class CatClient(NamespacedClient):
             __query["s"] = s
         if v is not None:
             __query["v"] = v
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def plugins(
@@ -1253,12 +1193,8 @@ class CatClient(NamespacedClient):
             __query["s"] = s
         if v is not None:
             __query["v"] = v
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def recovery(
@@ -1339,12 +1275,8 @@ class CatClient(NamespacedClient):
             __query["s"] = s
         if v is not None:
             __query["v"] = v
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def repositories(
@@ -1406,12 +1338,8 @@ class CatClient(NamespacedClient):
             __query["s"] = s
         if v is not None:
             __query["v"] = v
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def segments(
@@ -1482,12 +1410,8 @@ class CatClient(NamespacedClient):
             __query["s"] = s
         if v is not None:
             __query["v"] = v
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def shards(
@@ -1558,12 +1482,8 @@ class CatClient(NamespacedClient):
             __query["s"] = s
         if v is not None:
             __query["v"] = v
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def snapshots(
@@ -1634,12 +1554,8 @@ class CatClient(NamespacedClient):
             __query["s"] = s
         if v is not None:
             __query["v"] = v
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def tasks(
@@ -1719,12 +1635,8 @@ class CatClient(NamespacedClient):
             __query["s"] = s
         if v is not None:
             __query["v"] = v
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def templates(
@@ -1791,12 +1703,8 @@ class CatClient(NamespacedClient):
             __query["s"] = s
         if v is not None:
             __query["v"] = v
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def thread_pool(
@@ -1869,12 +1777,8 @@ class CatClient(NamespacedClient):
             __query["time"] = time
         if v is not None:
             __query["v"] = v
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
@@ -1958,9 +1862,5 @@ class CatClient(NamespacedClient):
             __query["size"] = size
         if v is not None:
             __query["v"] = v
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "text/plain,application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]

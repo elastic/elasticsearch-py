@@ -20,7 +20,7 @@ from typing import Any, Dict, List, Optional, Union
 from elastic_transport import ObjectApiResponse
 
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
+from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class MlClient(NamespacedClient):
@@ -76,14 +76,10 @@ class MlClient(NamespacedClient):
             __body["timeout"] = timeout
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def delete_calendar(
@@ -114,12 +110,8 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def delete_calendar_event(
@@ -154,12 +146,8 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def delete_calendar_job(
@@ -195,12 +183,8 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def delete_data_frame_analytics(
@@ -240,12 +224,8 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         if timeout is not None:
             __query["timeout"] = timeout
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def delete_datafeed(
@@ -284,12 +264,8 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -337,14 +313,10 @@ class MlClient(NamespacedClient):
             __body["timeout"] = timeout
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self._perform_request("DELETE", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("DELETE", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def delete_filter(
@@ -375,12 +347,8 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def delete_forecast(
@@ -433,12 +401,8 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         if timeout is not None:
             __query["timeout"] = timeout
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def delete_job(
@@ -479,12 +443,8 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         if wait_for_completion is not None:
             __query["wait_for_completion"] = wait_for_completion
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def delete_model_snapshot(
@@ -519,12 +479,8 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def delete_trained_model(
@@ -533,6 +489,7 @@ class MlClient(NamespacedClient):
         model_id: Any,
         error_trace: Optional[bool] = None,
         filter_path: Optional[Union[List[str], str]] = None,
+        force: Optional[bool] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
     ) -> ObjectApiResponse[Any]:
@@ -543,6 +500,8 @@ class MlClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-trained-models.html>`_
 
         :param model_id: The unique identifier of the trained model.
+        :param force: Forcefully deletes a trained model that is referenced by ingest
+            pipelines or has a started deployment.
         """
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_id'")
@@ -552,16 +511,14 @@ class MlClient(NamespacedClient):
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
+        if force is not None:
+            __query["force"] = force
         if human is not None:
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def delete_trained_model_alias(
@@ -596,12 +553,8 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -654,12 +607,8 @@ class MlClient(NamespacedClient):
             __body["overall_cardinality"] = overall_cardinality
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -681,9 +630,9 @@ class MlClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/evaluate-dfanalytics.html>`_
 
         :param evaluation: Defines the type of evaluation you want to perform.
-        :param index: Defines the index in which the evaluation will be performed.
+        :param index: Defines the `index` in which the evaluation will be performed.
         :param query: A query clause that retrieves a subset of data from the source
-            index.
+            index. See [QueryDSL](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html).
         """
         if evaluation is None:
             raise ValueError("Empty value passed for parameter 'evaluation'")
@@ -706,12 +655,8 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         if query is not None:
             __body["query"] = query
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -799,14 +744,10 @@ class MlClient(NamespacedClient):
             __body["source"] = source
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -822,7 +763,7 @@ class MlClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-        skip_time: Optional[str] = None,
+        skip_time: Optional[Any] = None,
         start: Optional[Any] = None,
     ) -> ObjectApiResponse[Any]:
         """
@@ -862,14 +803,10 @@ class MlClient(NamespacedClient):
             __body["start"] = start
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -919,14 +856,10 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1013,14 +946,10 @@ class MlClient(NamespacedClient):
             __body["start"] = start
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
@@ -1077,12 +1006,8 @@ class MlClient(NamespacedClient):
             __query["size"] = size
         if start is not None:
             __query["start"] = start
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1137,14 +1062,10 @@ class MlClient(NamespacedClient):
             __query["size"] = size
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1207,14 +1128,10 @@ class MlClient(NamespacedClient):
             __query["size"] = size
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
@@ -1275,12 +1192,8 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         if size is not None:
             __query["size"] = size
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
@@ -1339,12 +1252,8 @@ class MlClient(NamespacedClient):
             __query["size"] = size
         if verbose is not None:
             __query["verbose"] = verbose
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def get_datafeed_stats(
@@ -1388,12 +1297,8 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def get_datafeeds(
@@ -1443,12 +1348,8 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
@@ -1490,12 +1391,8 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         if size is not None:
             __query["size"] = size
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1573,14 +1470,10 @@ class MlClient(NamespacedClient):
             __query["start"] = start
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def get_job_stats(
@@ -1625,12 +1518,8 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def get_jobs(
@@ -1680,12 +1569,8 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1761,14 +1646,10 @@ class MlClient(NamespacedClient):
             __body["start"] = start
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1839,14 +1720,10 @@ class MlClient(NamespacedClient):
             __body["top_n"] = top_n
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1920,14 +1797,10 @@ class MlClient(NamespacedClient):
             __body["start"] = start
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
@@ -2000,12 +1873,8 @@ class MlClient(NamespacedClient):
             __query["size"] = size
         if tags is not None:
             __query["tags"] = tags
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
@@ -2055,12 +1924,8 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         if size is not None:
             __query["size"] = size
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2106,12 +1971,8 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         if timeout is not None:
             __query["timeout"] = timeout
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def info(
@@ -2137,12 +1998,8 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2182,14 +2039,10 @@ class MlClient(NamespacedClient):
             __body["timeout"] = timeout
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2231,12 +2084,8 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_name="data",
@@ -2283,15 +2132,11 @@ class MlClient(NamespacedClient):
         if reset_start is not None:
             __query["reset_start"] = reset_start
         __body = data
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {
             "accept": "application/json",
             "content-type": "application/x-ndjson",
         }
-        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2334,14 +2179,10 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2395,14 +2236,10 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2446,14 +2283,10 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def put_calendar_job(
@@ -2489,15 +2322,12 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("PUT", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("PUT", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
+        ignore_deprecated_options={"headers"},
     )
     async def put_data_frame_analytics(
         self,
@@ -2511,10 +2341,12 @@ class MlClient(NamespacedClient):
         description: Optional[str] = None,
         error_trace: Optional[bool] = None,
         filter_path: Optional[Union[List[str], str]] = None,
+        headers: Optional[Any] = None,
         human: Optional[bool] = None,
         max_num_threads: Optional[int] = None,
         model_memory_limit: Optional[str] = None,
         pretty: Optional[bool] = None,
+        version: Optional[Any] = None,
     ) -> ObjectApiResponse[Any]:
         """
         Instantiates a data frame analytics job.
@@ -2564,6 +2396,7 @@ class MlClient(NamespacedClient):
             you can model the values as `0-14 = 0`, `15-24 = 1`, `25-34 = 2`, and so
             on.
         :param description: A description of the job.
+        :param headers:
         :param max_num_threads: The maximum number of threads to be used by the analysis.
             Using more threads may decrease the time necessary to complete the analysis
             at the cost of using more CPU. Note that the process may use additional threads
@@ -2573,6 +2406,7 @@ class MlClient(NamespacedClient):
             file contains an `xpack.ml.max_model_memory_limit` setting, an error occurs
             when you try to create data frame analytics jobs that have `model_memory_limit`
             values greater than that setting.
+        :param version:
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
@@ -2601,6 +2435,8 @@ class MlClient(NamespacedClient):
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
+        if headers is not None:
+            __body["headers"] = headers
         if human is not None:
             __query["human"] = human
         if max_num_threads is not None:
@@ -2609,15 +2445,14 @@ class MlClient(NamespacedClient):
             __body["model_memory_limit"] = model_memory_limit
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
+        if version is not None:
+            __body["version"] = version
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
+        ignore_deprecated_options={"headers"},
     )
     async def put_datafeed(
         self,
@@ -2631,11 +2466,12 @@ class MlClient(NamespacedClient):
         expand_wildcards: Optional[Any] = None,
         filter_path: Optional[Union[List[str], str]] = None,
         frequency: Optional[Any] = None,
+        headers: Optional[Any] = None,
         human: Optional[bool] = None,
         ignore_throttled: Optional[bool] = None,
         ignore_unavailable: Optional[bool] = None,
-        indexes: Optional[List[str]] = None,
-        indices: Optional[List[str]] = None,
+        indexes: Optional[Any] = None,
+        indices: Optional[Any] = None,
         indices_options: Optional[Any] = None,
         job_id: Optional[Any] = None,
         max_empty_searches: Optional[int] = None,
@@ -2683,6 +2519,7 @@ class MlClient(NamespacedClient):
             for the last (partial) bucket are written then eventually overwritten by
             the full bucket results. If the datafeed uses aggregations, this value must
             be divisible by the interval of the date histogram aggregation.
+        :param headers:
         :param ignore_throttled: If true, concrete, expanded, or aliased indices are
             ignored when frozen.
         :param ignore_unavailable: If true, unavailable indices (missing or closed) are
@@ -2740,6 +2577,8 @@ class MlClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if frequency is not None:
             __body["frequency"] = frequency
+        if headers is not None:
+            __body["headers"] = headers
         if human is not None:
             __query["human"] = human
         if ignore_throttled is not None:
@@ -2768,12 +2607,8 @@ class MlClient(NamespacedClient):
             __body["script_fields"] = script_fields
         if scroll_size is not None:
             __body["scroll_size"] = scroll_size
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2816,12 +2651,8 @@ class MlClient(NamespacedClient):
             __body["items"] = items
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2977,12 +2808,8 @@ class MlClient(NamespacedClient):
             __body["results_index_name"] = results_index_name
         if results_retention_days is not None:
             __body["results_retention_days"] = results_retention_days
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2994,6 +2821,7 @@ class MlClient(NamespacedClient):
         inference_config: Any,
         input: Any,
         compressed_definition: Optional[str] = None,
+        defer_definition_decompression: Optional[bool] = None,
         definition: Optional[Any] = None,
         description: Optional[str] = None,
         error_trace: Optional[bool] = None,
@@ -3018,6 +2846,9 @@ class MlClient(NamespacedClient):
         :param compressed_definition: The compressed (GZipped and Base64 encoded) inference
             definition of the model. If compressed_definition is specified, then definition
             cannot be specified.
+        :param defer_definition_decompression: If set to `true` and a `compressed_definition`
+            is provided, the request defers definition decompression and skips relevant
+            validations.
         :param definition: The inference definition for the model. If definition is specified,
             then compressed_definition cannot be specified.
         :param description: A human-readable description of the inference trained model.
@@ -3043,6 +2874,8 @@ class MlClient(NamespacedClient):
             __body["input"] = input
         if compressed_definition is not None:
             __body["compressed_definition"] = compressed_definition
+        if defer_definition_decompression is not None:
+            __query["defer_definition_decompression"] = defer_definition_decompression
         if definition is not None:
             __body["definition"] = definition
         if description is not None:
@@ -3063,12 +2896,8 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         if tags is not None:
             __body["tags"] = tags
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def put_trained_model_alias(
@@ -3110,12 +2939,8 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         if reassign is not None:
             __query["reassign"] = reassign
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("PUT", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("PUT", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3178,12 +3003,8 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3223,12 +3044,8 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def reset_job(
@@ -3264,12 +3081,8 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         if wait_for_completion is not None:
             __query["wait_for_completion"] = wait_for_completion
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3316,14 +3129,10 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def set_upgrade_mode(
@@ -3361,12 +3170,8 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         if timeout is not None:
             __query["timeout"] = timeout
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def start_data_frame_analytics(
@@ -3404,12 +3209,8 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         if timeout is not None:
             __query["timeout"] = timeout
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3460,14 +3261,10 @@ class MlClient(NamespacedClient):
             __body["timeout"] = timeout
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def start_trained_model_deployment(
@@ -3526,12 +3323,8 @@ class MlClient(NamespacedClient):
             __query["timeout"] = timeout
         if wait_for is not None:
             __query["wait_for"] = wait_for
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def stop_data_frame_analytics(
@@ -3584,12 +3377,8 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         if timeout is not None:
             __query["timeout"] = timeout
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3641,14 +3430,10 @@ class MlClient(NamespacedClient):
             __body["timeout"] = timeout
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def stop_trained_model_deployment(
@@ -3694,12 +3479,8 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3759,12 +3540,8 @@ class MlClient(NamespacedClient):
             __body["model_memory_limit"] = model_memory_limit
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3926,12 +3703,8 @@ class MlClient(NamespacedClient):
             __body["script_fields"] = script_fields
         if scroll_size is not None:
             __body["scroll_size"] = scroll_size
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3977,12 +3750,8 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         if remove_items is not None:
             __body["remove_items"] = remove_items
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -4106,12 +3875,8 @@ class MlClient(NamespacedClient):
             __body["renormalization_window_days"] = renormalization_window_days
         if results_retention_days is not None:
             __body["results_retention_days"] = results_retention_days
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -4159,12 +3924,8 @@ class MlClient(NamespacedClient):
             __query["pretty"] = pretty
         if retain is not None:
             __body["retain"] = retain
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     async def upgrade_job_snapshot(
@@ -4210,12 +3971,8 @@ class MlClient(NamespacedClient):
             __query["timeout"] = timeout
         if wait_for_completion is not None:
             __query["wait_for_completion"] = wait_for_completion
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -4232,6 +3989,7 @@ class MlClient(NamespacedClient):
         human: Optional[bool] = None,
         job_id: Optional[Any] = None,
         model_plot: Optional[Any] = None,
+        model_snapshot_id: Optional[Any] = None,
         model_snapshot_retention_days: Optional[int] = None,
         pretty: Optional[bool] = None,
         results_index_name: Optional[Any] = None,
@@ -4247,6 +4005,7 @@ class MlClient(NamespacedClient):
         :param description:
         :param job_id:
         :param model_plot:
+        :param model_snapshot_id:
         :param model_snapshot_retention_days:
         :param results_index_name:
         """
@@ -4271,18 +4030,16 @@ class MlClient(NamespacedClient):
             __body["job_id"] = job_id
         if model_plot is not None:
             __body["model_plot"] = model_plot
+        if model_snapshot_id is not None:
+            __body["model_snapshot_id"] = model_snapshot_id
         if model_snapshot_retention_days is not None:
             __body["model_snapshot_retention_days"] = model_snapshot_retention_days
         if pretty is not None:
             __query["pretty"] = pretty
         if results_index_name is not None:
             __body["results_index_name"] = results_index_name
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_name="detector",
@@ -4316,9 +4073,5 @@ class MlClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __body = detector
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]

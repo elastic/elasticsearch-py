@@ -20,7 +20,7 @@ from typing import Any, Dict, List, Optional, Union
 from elastic_transport import HeadApiResponse, ObjectApiResponse
 
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
+from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class ClusterClient(NamespacedClient):
@@ -83,14 +83,10 @@ class ClusterClient(NamespacedClient):
             __body["shard"] = shard
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def delete_component_template(
@@ -129,12 +125,8 @@ class ClusterClient(NamespacedClient):
             __query["pretty"] = pretty
         if timeout is not None:
             __query["timeout"] = timeout
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def delete_voting_config_exclusions(
@@ -170,12 +162,8 @@ class ClusterClient(NamespacedClient):
             __query["pretty"] = pretty
         if wait_for_removal is not None:
             __query["wait_for_removal"] = wait_for_removal
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def exists_component_template(
@@ -219,12 +207,8 @@ class ClusterClient(NamespacedClient):
             __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("HEAD", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("HEAD", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def get_component_template(
@@ -269,12 +253,8 @@ class ClusterClient(NamespacedClient):
             __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def get_settings(
@@ -317,12 +297,8 @@ class ClusterClient(NamespacedClient):
             __query["pretty"] = pretty
         if timeout is not None:
             __query["timeout"] = timeout
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def health(
@@ -419,12 +395,8 @@ class ClusterClient(NamespacedClient):
             __query["wait_for_nodes"] = wait_for_nodes
         if wait_for_status is not None:
             __query["wait_for_status"] = wait_for_status
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def pending_tasks(
@@ -461,12 +433,8 @@ class ClusterClient(NamespacedClient):
             __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def post_voting_config_exclusions(
@@ -511,12 +479,8 @@ class ClusterClient(NamespacedClient):
             __query["pretty"] = pretty
         if timeout is not None:
             __query["timeout"] = timeout
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -586,12 +550,8 @@ class ClusterClient(NamespacedClient):
             __body["settings"] = settings
         if version is not None:
             __body["version"] = version
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -641,12 +601,8 @@ class ClusterClient(NamespacedClient):
             __query["timeout"] = timeout
         if transient is not None:
             __body["transient"] = transient
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def remote_info(
@@ -672,12 +628,8 @@ class ClusterClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -743,14 +695,10 @@ class ClusterClient(NamespacedClient):
             __query["timeout"] = timeout
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def state(
@@ -828,12 +776,8 @@ class ClusterClient(NamespacedClient):
             __query["wait_for_metadata_version"] = wait_for_metadata_version
         if wait_for_timeout is not None:
             __query["wait_for_timeout"] = wait_for_timeout
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def stats(
@@ -877,9 +821,5 @@ class ClusterClient(NamespacedClient):
             __query["pretty"] = pretty
         if timeout is not None:
             __query["timeout"] = timeout
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]

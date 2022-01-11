@@ -641,15 +641,11 @@ class Elasticsearch(BaseClient):
         if wait_for_active_shards is not None:
             __query["wait_for_active_shards"] = wait_for_active_shards
         __body = operations
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {
             "accept": "application/json",
             "content-type": "application/x-ndjson",
         }
-        return self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -685,14 +681,10 @@ class Elasticsearch(BaseClient):
             __body["scroll_id"] = scroll_id
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("DELETE", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("DELETE", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -730,14 +722,10 @@ class Elasticsearch(BaseClient):
             __query["pretty"] = pretty
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("DELETE", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("DELETE", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -846,14 +834,10 @@ class Elasticsearch(BaseClient):
             __query["terminate_after"] = terminate_after
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_name="document",
@@ -930,12 +914,8 @@ class Elasticsearch(BaseClient):
         if wait_for_active_shards is not None:
             __query["wait_for_active_shards"] = wait_for_active_shards
         __body = document
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def delete(
@@ -1010,12 +990,8 @@ class Elasticsearch(BaseClient):
             __query["version_type"] = version_type
         if wait_for_active_shards is not None:
             __query["wait_for_active_shards"] = wait_for_active_shards
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1196,12 +1172,8 @@ class Elasticsearch(BaseClient):
             __query["wait_for_active_shards"] = wait_for_active_shards
         if wait_for_completion is not None:
             __query["wait_for_completion"] = wait_for_completion
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def delete_by_query_rethrottle(
@@ -1237,12 +1209,8 @@ class Elasticsearch(BaseClient):
             __query["pretty"] = pretty
         if requests_per_second is not None:
             __query["requests_per_second"] = requests_per_second
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def delete_script(
@@ -1281,12 +1249,8 @@ class Elasticsearch(BaseClient):
             __query["pretty"] = pretty
         if timeout is not None:
             __query["timeout"] = timeout
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("DELETE", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         parameter_aliases={
@@ -1374,12 +1338,8 @@ class Elasticsearch(BaseClient):
             __query["version"] = version
         if version_type is not None:
             __query["version_type"] = version_type
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("HEAD", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("HEAD", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         parameter_aliases={
@@ -1462,12 +1422,8 @@ class Elasticsearch(BaseClient):
             __query["version"] = version
         if version_type is not None:
             __query["version_type"] = version_type
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("HEAD", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("HEAD", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1572,14 +1528,10 @@ class Elasticsearch(BaseClient):
             __query["stored_fields"] = stored_fields
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1660,14 +1612,10 @@ class Elasticsearch(BaseClient):
             __body["runtime_mappings"] = runtime_mappings
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         parameter_aliases={
@@ -1756,12 +1704,8 @@ class Elasticsearch(BaseClient):
             __query["version"] = version
         if version_type is not None:
             __query["version_type"] = version_type
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def get_script(
@@ -1796,12 +1740,8 @@ class Elasticsearch(BaseClient):
             __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def get_script_context(
@@ -1827,12 +1767,8 @@ class Elasticsearch(BaseClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def get_script_languages(
@@ -1858,12 +1794,8 @@ class Elasticsearch(BaseClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         parameter_aliases={
@@ -1939,12 +1871,8 @@ class Elasticsearch(BaseClient):
             __query["version"] = version
         if version_type is not None:
             __query["version_type"] = version_type
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_name="document",
@@ -2046,12 +1974,8 @@ class Elasticsearch(BaseClient):
         if wait_for_active_shards is not None:
             __query["wait_for_active_shards"] = wait_for_active_shards
         __body = document
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request(__method, __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request(__method, __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def info(
@@ -2077,12 +2001,8 @@ class Elasticsearch(BaseClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2154,14 +2074,10 @@ class Elasticsearch(BaseClient):
             __body["stored_fields"] = stored_fields
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2254,12 +2170,8 @@ class Elasticsearch(BaseClient):
             __query["_source_includes"] = source_includes
         if stored_fields is not None:
             __query["stored_fields"] = stored_fields
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_name="searches",
@@ -2362,15 +2274,11 @@ class Elasticsearch(BaseClient):
         if typed_keys is not None:
             __query["typed_keys"] = typed_keys
         __body = searches
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {
             "accept": "application/json",
             "content-type": "application/x-ndjson",
         }
-        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_name="search_templates",
@@ -2433,15 +2341,11 @@ class Elasticsearch(BaseClient):
         if typed_keys is not None:
             __query["typed_keys"] = typed_keys
         __body = search_templates
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {
             "accept": "application/json",
             "content-type": "application/x-ndjson",
         }
-        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2542,14 +2446,10 @@ class Elasticsearch(BaseClient):
             __query["version_type"] = version_type
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def open_point_in_time(
@@ -2587,12 +2487,8 @@ class Elasticsearch(BaseClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2647,12 +2543,8 @@ class Elasticsearch(BaseClient):
             __query["pretty"] = pretty
         if timeout is not None:
             __query["timeout"] = timeout
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("PUT", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2726,12 +2618,8 @@ class Elasticsearch(BaseClient):
             __query["pretty"] = pretty
         if search_type is not None:
             __query["search_type"] = search_type
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2827,12 +2715,8 @@ class Elasticsearch(BaseClient):
             __query["wait_for_active_shards"] = wait_for_active_shards
         if wait_for_completion is not None:
             __query["wait_for_completion"] = wait_for_completion
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def reindex_rethrottle(
@@ -2868,12 +2752,8 @@ class Elasticsearch(BaseClient):
             __query["pretty"] = pretty
         if requests_per_second is not None:
             __query["requests_per_second"] = requests_per_second
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2923,14 +2803,10 @@ class Elasticsearch(BaseClient):
             __body["source"] = source
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2974,14 +2850,10 @@ class Elasticsearch(BaseClient):
             __body["script"] = script
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3029,14 +2901,10 @@ class Elasticsearch(BaseClient):
             __body["scroll"] = scroll
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3379,14 +3247,10 @@ class Elasticsearch(BaseClient):
             __body["version"] = version
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3413,6 +3277,7 @@ class Elasticsearch(BaseClient):
         runtime_mappings: Optional[Any] = None,
         size: Optional[int] = None,
         sort: Optional[Any] = None,
+        track_total_hits: Optional[Any] = None,
     ) -> BinaryApiResponse:
         """
         Searches a vector tile for geospatial values. Returns results as a binary Mapbox
@@ -3452,6 +3317,10 @@ class Elasticsearch(BaseClient):
         :param sort: Sorts features in the hits layer. By default, the API calculates
             a bounding box for each feature. It sorts features based on this box’s diagonal
             length, from longest to shortest.
+        :param track_total_hits: Number of hits matching the query to count accurately.
+            If `true`, the exact number of hits is returned at the cost of some performance.
+            If `false`, the response does not include the total number of hits matching
+            the query.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -3494,16 +3363,14 @@ class Elasticsearch(BaseClient):
             __body["size"] = size
         if sort is not None:
             __body["sort"] = sort
+        if track_total_hits is not None:
+            __body["track_total_hits"] = track_total_hits
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/vnd.mapbox-vector-tile"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def search_shards(
@@ -3567,12 +3434,8 @@ class Elasticsearch(BaseClient):
             __query["pretty"] = pretty
         if routing is not None:
             __query["routing"] = routing
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3686,12 +3549,8 @@ class Elasticsearch(BaseClient):
             __body["source"] = source
         if typed_keys is not None:
             __query["typed_keys"] = typed_keys
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3767,14 +3626,10 @@ class Elasticsearch(BaseClient):
             __body["timeout"] = timeout
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3878,14 +3733,10 @@ class Elasticsearch(BaseClient):
             __query["version_type"] = version_type
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -4015,12 +3866,8 @@ class Elasticsearch(BaseClient):
             __body["upsert"] = upsert
         if wait_for_active_shards is not None:
             __query["wait_for_active_shards"] = wait_for_active_shards
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters(
         body_fields=True,
@@ -4214,14 +4061,10 @@ class Elasticsearch(BaseClient):
             __query["wait_for_completion"] = wait_for_completion
         if not __body:
             __body = None  # type: ignore[assignment]
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self._perform_request("POST", __target, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
 
     @_rewrite_parameters()
     def update_by_query_rethrottle(
@@ -4257,9 +4100,5 @@ class Elasticsearch(BaseClient):
             __query["pretty"] = pretty
         if requests_per_second is not None:
             __query["requests_per_second"] = requests_per_second
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return self._perform_request("POST", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]

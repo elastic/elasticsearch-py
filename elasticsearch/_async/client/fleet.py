@@ -20,7 +20,7 @@ from typing import Any, Dict, List, Optional, Union
 from elastic_transport import ObjectApiResponse
 
 from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _quote, _quote_query, _rewrite_parameters
+from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class FleetClient(NamespacedClient):
@@ -76,9 +76,5 @@ class FleetClient(NamespacedClient):
             __query["wait_for_advance"] = wait_for_advance
         if wait_for_index is not None:
             __query["wait_for_index"] = wait_for_index
-        if __query:
-            __target = f"{__path}?{_quote_query(__query)}"
-        else:
-            __target = __path
         __headers = {"accept": "application/json"}
-        return await self._perform_request("GET", __target, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
