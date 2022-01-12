@@ -85,14 +85,15 @@ To update a document, you need to specify three pieces of information: `index`,
 ----------------------------
 from datetime import datetime
 from elasticsearch import Elasticsearch
-es = Elasticsearch('https://localhost:9200')
+
+client = Elasticsearch('https://localhost:9200')
 
 doc = {
     'author': 'author_name',
     'text': 'Interensting modified content...',
     'timestamp': datetime.now(),
 }
-resp = es.update(index="test-index", id=1, document=doc)
+resp = client.update(index="test-index", id=1, document=doc)
 print(resp['result'])
 ----------------------------
 
@@ -106,5 +107,5 @@ method:
 
 [source,py]
 ----------------------------
-es.delete(index="test-index", id=1)
+client.delete(index="test-index", id=1)
 ----------------------------

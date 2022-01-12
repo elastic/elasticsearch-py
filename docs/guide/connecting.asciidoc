@@ -52,7 +52,7 @@ a proxy is in use.
 from elasticsearch import Elasticsearch
 
 es = Elasticsearch(
-    cloud_id=”cluster-1:dXMa5Fx...”
+    cloud_id="cluster-1:dXMa5Fx..."
 )
 ----------------------------
 
@@ -106,7 +106,7 @@ from elasticsearch import Elasticsearch
 
 # Adds the HTTP header 'Authorization: Basic <base64 username:password>'
 es = Elasticsearch(
-    basic_auth=(“username”, “password”)
+    basic_auth=("username", "password")
 )
 ----------------------------
 
@@ -145,7 +145,7 @@ from elasticsearch import Elasticsearch
 
 # Adds the HTTP header 'Authorization: ApiKey <base64 api_key.id:api_key.api_key>'
 es = Elasticsearch(
-    api_key=(“api_key.id”, “api_key.api_key”)
+    api_key=("api_key.id", "api_key.api_key")
 )
 ----------------------------
 

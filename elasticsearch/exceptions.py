@@ -42,17 +42,17 @@ __all__ = [
 class ApiError(_ApiError):
     @property
     def status_code(self) -> int:
-        """Backwards-compatible shorthand for 'self.meta.status'"""
+        """Backwards-compatible way to access ``self.meta.status``"""
         return self.meta.status
 
     @property
     def error(self) -> str:
-        """A string error message."""
+        """Backwards-compatible way to access ``self.message``"""
         return self.message
 
     @property
     def info(self) -> Any:
-        """Backwards-compatible way to access '.body'"""
+        """Backwards-compatible way to access ``self.body``"""
         return self.body
 
     def __str__(self) -> str:
