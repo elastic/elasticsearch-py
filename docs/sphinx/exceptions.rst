@@ -5,11 +5,11 @@ Exceptions & Warnings
 
 .. py:module:: elasticsearch
 
-.. autoclass:: ElasticsearchException
-.. autoclass:: SerializationError
-.. autoclass:: ConnectionError
-.. autoclass:: ConnectionTimeout
-.. autoclass:: SSLError
+API Errors
+----------
+
+These errors are triggered from an HTTP response that isn't 2XX:
+
 .. autoclass:: ApiError
    :members:
 .. autoclass:: NotFoundError
@@ -18,6 +18,17 @@ Exceptions & Warnings
 .. autoclass:: AuthenticationException
 .. autoclass:: AuthorizationException
 .. autoclass:: UnsupportedProductError
+
+Transport and Connection Errors
+-------------------------------
+
+These errors are triggered by an error occurring before an HTTP response arrives:
+
+.. autoclass:: TransportError
+.. autoclass:: SerializationError
+.. autoclass:: ConnectionError
+.. autoclass:: ConnectionTimeout
+.. autoclass:: SSLError
 
 Warnings
 --------

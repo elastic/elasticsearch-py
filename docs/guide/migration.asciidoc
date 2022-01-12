@@ -12,6 +12,7 @@ from 7.x to 8.0.
 ** <<migration-keyword-only-args>>
 ** <<migration-options>>
 * <<migration-response-types>>
+* <<migration-error-types>>
 
 [discrete]
 [[migration-compat-mode]]
@@ -21,7 +22,7 @@ Upgrade your Elasticsearch client to 7.16:
 
 [source,bash]
 ------------------------------------
-$ python -m pip install 'elasticsearch>=7.16,<8'
+$ python -m pip install --upgrade 'elasticsearch>=7.16,<8'
 ------------------------------------
 
 If you have an existing application enable the compatibility mode
@@ -29,19 +30,19 @@ by setting `ELASTIC_CLIENT_APIVERSIONING=1` environment variable.
 This will instruct the Elasticsearch server to accept and respond
 with 7.x-compatibile requests and responses.
 
-After you've done this you can upgrade Elasticsearch to 8.0.
+After you've done this you can https://www.elastic.co/guide/en/elasticsearch/reference/current/setup-upgrade.html[upgrade the Elasticsearch server to 8.0.0].
 
 [discrete]
 [[migration-upgrade-client]]
 === Upgrading the client
 
 After you've deployed your application with the 7.16 client and
-using an 8.0 Elasticsearch server you can upgrade your client to
+using an 8.0.0 Elasticsearch server you can upgrade your client to
 be 8.0.
 
 [source,bash]
 ------------------------------------
-$ python -m pip install 'elasticsearch>=8,<9'
+$ python -m pip install --upgrade 'elasticsearch>=8,<9'
 ------------------------------------
 
 [discrete]
@@ -63,9 +64,36 @@ and instead require explicit configuration of scheme, host, and port or to be co
 using `cloud_id` to avoid confusion about which Elasticsearch instance is being connected to.
 
 This choice was made because starting 8.0.0 Elasticsearch enables HTTPS is by default, so it's no
-longer a good assumption that `http://localhost:9200` is a locally running cluster.
+longer a good assumption that `http://localhost:9200` is the locally running cluster.
 
 See documentation on <<connecting, connecting to Elasticsearch>> and <<tls-and-ssl, configuring HTTPS>>.
+
+For quick examples, using a configuration like one of the two below works best:
+
+[source,python]
+------------------------------------
+from elasticsearch import Elasticsearch
+
+# If you're connecting to an instance on Elastic Cloud:
+client = Elasticsearch(
+    cloud_id="cluster-1:dXMa5Fx...",
+
+    # Include your authentication like 'api_key'
+    # 'basic_auth', or 'bearer_auth' here.
+    basic_auth=("elastic", "<password>")
+)
+
+# If you're connecting to an instance hosted elsewhere:
+client = Elasticsearch(
+    # Notice that the scheme (https://) host (localhost),
+    # and port (9200) are explicit here:
+    "http://localhost:9200",
+
+    # Include your authentication like 'api_key'
+    # 'basic_auth', or 'bearer_auth' here:
+    api_key=("<name>", "<key>")
+)
+------------------------------------
 
 [discrete]
 [[migration-keyword-only-args]]
@@ -182,7 +210,7 @@ This meant that there was no way to access HTTP status codes, headers, or other 
 from the transport layer.
 
 In 8.0.0 responses are no longer the raw deserialized response body and instead an object
-with three properties, `meta`, `raw`, and `body`. Transport layer metadata about the response
+with two properties, `meta` and `body`. Transport layer metadata about the response
 like HTTP status, headers, version, and which node serviced the request are available here:
 
 [source,python]
@@ -215,18 +243,87 @@ dict_keys(['took', 'timed_out', '_shards', 'hits'])
 
 Because the response is no longer a dictionary, list, `str`, or `bytes` instance
 calling `isintance()` on the response object will return `False`. If you need
-direct access to the underlying deserialized response body you can use the `raw`
+direct access to the underlying deserialized response body you can use the `body`
 property:
 
 [source,python]
 ------------------------------------
->>> resp.raw
+>>> resp.body
 {'took': 1, 'timed_out': False, ...}
 
-# The response isn't a dict, but resp.raw is.
+# The response isn't a dict, but resp.body is.
 >>> isinstance(resp, dict)
 False
 
->>> isinstance(resp.raw, dict)
+>>> isinstance(resp.body, dict)
 True
+------------------------------------
+
+Requests that used the `HEAD` HTTP method can still be used within `if` conditions but won't work with `is`.
+
+[source,python]
+------------------------------------
+>>> resp = client.indices.exists(index=...)
+>>> resp.body
+True
+
+>>> resp is True
+False
+
+>>> resp.body is True
+True
+
+>>> isinstance(resp, bool)
+False
+
+>>> isinstance(resp.body, bool)
+True
+------------------------------------
+
+[discrete]
+[[migration-error-types]]
+==== Error types
+
+Previously `elasticsearch.TransportError` was the base class for all transport layer errors (like errors regarding connections or TLS) in addition to the base class for API layer errors (like "404 Not Found" when accessing an index). This was pretty confusing when you wanted to capture API errors to inspect them for a response body and not capture connectivity errors.
+
+Now in 8.0 `elasticsearch.TransportError` is a redefinition of `elastic_transport.TransportError` and will only be the base class for true transport layer errors. If you instead want to capture API layer errors you can use the new `elasticsearch.ApiError` base class.
+
+[source,python]
+------------------------------------
+from elasticsearch import TransportError, Elasticsearch
+
+try:
+    client.indices.get(index="index-that-does-not-exist")
+
+# In elasticsearch-python v7.x this would capture the resulting
+# 'NotFoundError' that would be raised above. But in 8.0.0 this
+# 'except TransportError' won't capture 'NotFoundError'.
+except TransportError as err:
+    print(f"TransportError: {err}")
+------------------------------------
+
+Another difference between 7.x and 8.0 errors is their properties. Previously there were `status_code`, `info`, and `error` properties that weren't super useful as they'd be a mix of different value types depending on what the error was and what layer it'd been raised from (transport versus API). Now that there's a cleaner split between transport and API layer errors.
+
+You can inspect the error and get response metadata via `.meta` and response via `body`` from an `ApiError` instance:
+
+[source,python]
+------------------------------------
+from elasticsearch import ApiError, Elasticsearch
+
+try:
+    client.indices.get(index="index-that-does-not-exist")
+except ApiError as err:
+
+    print(err.meta.status)
+    # 404
+    print(err.body)
+    # {
+    #   'error': {
+    #     'type': 'index_not_found_exception',
+    #     'reason': 'no such index',
+    #     'resource.type': 'index_or_alias',
+    #     ...
+    #   },
+    #   'status': 404
+    # }
 ------------------------------------
