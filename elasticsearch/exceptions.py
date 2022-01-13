@@ -22,7 +22,7 @@ from elastic_transport import ConnectionError as ConnectionError
 from elastic_transport import ConnectionTimeout as ConnectionTimeout
 from elastic_transport import SerializationError as SerializationError
 from elastic_transport import TlsError as SSLError
-from elastic_transport import TransportError as _TransportError
+from elastic_transport import TransportError as TransportError
 from elastic_transport import TransportWarning
 
 __all__ = [
@@ -116,14 +116,12 @@ class ElasticsearchWarning(TransportWarning):
 
 
 # Aliases for backwards compatibility
-ElasticsearchException = _TransportError
 ElasticsearchDeprecationWarning = ElasticsearchWarning
-TransportError = ApiError
 RequestError = BadRequestError
 
 
 HTTP_EXCEPTIONS: Dict[int, Type[ApiError]] = {
-    400: RequestError,
+    400: BadRequestError,
     401: AuthenticationException,
     403: AuthorizationException,
     404: NotFoundError,

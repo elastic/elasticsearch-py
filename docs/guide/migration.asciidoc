@@ -8,9 +8,9 @@ from 7.x to 8.0.
 * <<migration-compat-mode>>
 * <<migration-upgrade-client>>
 * <<migration-remove-deprecations>>
-** <<migration-strict-client-config>>
-** <<migration-keyword-only-args>>
-** <<migration-options>>
+* <<migration-strict-client-config>>
+* <<migration-keyword-only-args>>
+* <<migration-options>>
 * <<migration-response-types>>
 * <<migration-error-types>>
 
@@ -203,7 +203,7 @@ resp = (
 
 [discrete]
 [[migration-response-types]]
-==== Response types
+==== Changes to API responses
 
 In 7.x and earlier the return type for API methods were the raw deserialized response body.
 This meant that there was no way to access HTTP status codes, headers, or other information
@@ -282,9 +282,9 @@ True
 
 [discrete]
 [[migration-error-types]]
-==== Error types
+==== Changes to error classes
 
-Previously `elasticsearch.TransportError` was the base class for all transport layer errors (like errors regarding connections or TLS) in addition to the base class for API layer errors (like "404 Not Found" when accessing an index). This was pretty confusing when you wanted to capture API errors to inspect them for a response body and not capture connectivity errors.
+Previously `elasticsearch.TransportError` was the base class for both transport layer errors (like timeouts, connection errors) and API layer errors (like "404 Not Found" when accessing an index). This was pretty confusing when you wanted to capture API errors to inspect them for a response body and not capture errors from the transport layer.
 
 Now in 8.0 `elasticsearch.TransportError` is a redefinition of `elastic_transport.TransportError` and will only be the base class for true transport layer errors. If you instead want to capture API layer errors you can use the new `elasticsearch.ApiError` base class.
 
@@ -302,9 +302,33 @@ except TransportError as err:
     print(f"TransportError: {err}")
 ------------------------------------
 
-Another difference between 7.x and 8.0 errors is their properties. Previously there were `status_code`, `info`, and `error` properties that weren't super useful as they'd be a mix of different value types depending on what the error was and what layer it'd been raised from (transport versus API). Now that there's a cleaner split between transport and API layer errors.
+The `elasticsearch.ElasticsearchException` base class has been removed as well. If you'd like to capture all errors that can be raised from the library you can capture both `elasticsearch.ApiError` and `elasticsearch.TransportError`:
 
-You can inspect the error and get response metadata via `.meta` and response via `body`` from an `ApiError` instance:
+[source,python]
+------------------------------------
+from elasticsearch import TransportError, ApiError, Elasticsearch
+
+try:
+    client.search(...)
+# This is the 'except' clause you should use if you *actually* want to
+# capture both Transport errors and API errors in one clause:
+except (ApiError, TransportError) as err:
+    ...
+
+# However I recommend you instead split each error into their own 'except'
+# clause so you can have different behavior for TransportErrors. This
+# construction wasn't possible in 7.x and earlier.
+try:
+    client.search(...)
+except ApiError as err:
+    ... # API errors handled here
+except TransportError as err:
+    ... # Transport errors handled here
+------------------------------------
+
+`elasticsearch.helpers.errors.BulkIndexError` and `elasticsearch.helpers.errors.ScanError` now use `Exception` as a base class instead of `ElasticsearchException`.
+
+Another difference between 7.x and 8.0 errors is their properties. Previously there were `status_code`, `info`, and `error` properties that weren't super useful as they'd be a mix of different value types depending on what the error was and what layer it'd been raised from (transport versus API). You can inspect the error and get response metadata via `meta` and response via `body`` from an `ApiError` instance:
 
 [source,python]
 ------------------------------------
@@ -313,9 +337,10 @@ from elasticsearch import ApiError, Elasticsearch
 try:
     client.indices.get(index="index-that-does-not-exist")
 except ApiError as err:
-
     print(err.meta.status)
     # 404
+    print(err.meta.headers)
+    # {'content-length': '200', ...}
     print(err.body)
     # {
     #   'error': {

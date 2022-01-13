@@ -23,7 +23,7 @@ from dateutil import tz
 from elastic_transport import ApiResponseMeta, ObjectApiResponse
 from mock import call, patch
 
-from elasticsearch import TransportError, helpers
+from elasticsearch import ApiError, helpers
 from elasticsearch.helpers import ScanError
 
 
@@ -32,7 +32,7 @@ class FailingBulkClient(object):
         self,
         client,
         fail_at=(2,),
-        fail_with=TransportError(
+        fail_with=ApiError(
             message="Error!",
             body={},
             meta=ApiResponseMeta(
@@ -132,7 +132,7 @@ def test_bulk_transport_error_can_becaught(sync_client):
     assert [True, False, True] == [r[0] for r in results]
 
     exc = results[1][1]["index"].pop("exception")
-    assert isinstance(exc, TransportError)
+    assert isinstance(exc, ApiError)
     assert 599 == exc.status_code
     assert {
         "index": {
@@ -148,7 +148,7 @@ def test_bulk_transport_error_can_becaught(sync_client):
 def test_bulk_rejected_documents_are_retried(sync_client):
     failing_client = FailingBulkClient(
         sync_client,
-        fail_with=TransportError(
+        fail_with=ApiError(
             message="Rejected!",
             body={},
             meta=ApiResponseMeta(
@@ -189,7 +189,7 @@ def test_bulk_rejected_documents_are_retried_when_bytes_or_string(
 ):
     failing_client = FailingBulkClient(
         sync_client,
-        fail_with=TransportError(
+        fail_with=ApiError(
             message="Rejected!",
             body={},
             meta=ApiResponseMeta(
@@ -225,7 +225,7 @@ def test_bulk_rejected_documents_are_retried_at_most_max_retries_times(sync_clie
     failing_client = FailingBulkClient(
         sync_client,
         fail_at=(1, 2),
-        fail_with=TransportError(
+        fail_with=ApiError(
             message="Rejected!",
             body={},
             meta=ApiResponseMeta(
@@ -262,7 +262,7 @@ def test_bulk_transport_error_is_raised_with_max_retries(sync_client):
     failing_client = FailingBulkClient(
         sync_client,
         fail_at=(1, 2, 3, 4),
-        fail_with=TransportError(
+        fail_with=ApiError(
             message="Rejected!",
             body={},
             meta=ApiResponseMeta(
@@ -283,7 +283,7 @@ def test_bulk_transport_error_is_raised_with_max_retries(sync_client):
         )
         return results
 
-    with pytest.raises(TransportError):
+    with pytest.raises(ApiError):
         streaming_bulk()
     assert 4 == failing_client._called
 

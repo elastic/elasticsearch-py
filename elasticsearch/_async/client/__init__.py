@@ -45,7 +45,7 @@ from elastic_transport import (
 )
 from elastic_transport.client_utils import DEFAULT, DefaultType
 
-from ...exceptions import ApiError
+from ...exceptions import ApiError, TransportError
 from ...serializer import DEFAULT_SERIALIZERS
 from ._base import (
     BaseClient,
@@ -167,6 +167,7 @@ class AsyncElasticsearch(BaseClient):
         node_selector_class: Union[DefaultType, Type[NodeSelector]] = DEFAULT,
         dead_node_backoff_factor: Union[DefaultType, float] = DEFAULT,
         max_dead_node_backoff: Union[DefaultType, float] = DEFAULT,
+        serializer: Optional[Serializer] = None,
         serializers: Union[DefaultType, Mapping[str, Serializer]] = DEFAULT,
         default_mimetype: str = "application/json",
         max_retries: Union[DefaultType, int] = DEFAULT,
@@ -181,7 +182,6 @@ class AsyncElasticsearch(BaseClient):
             Callable[[Dict[str, Any], NodeConfig], Optional[NodeConfig]]
         ] = None,
         meta_header: Union[DefaultType, bool] = DEFAULT,
-        # Deprecated
         timeout: Union[DefaultType, None, float] = DEFAULT,
         randomize_hosts: Union[DefaultType, bool] = DEFAULT,
         host_info_callback: Optional[
@@ -212,6 +212,14 @@ class AsyncElasticsearch(BaseClient):
                 stacklevel=2,
             )
             request_timeout = timeout
+
+        if serializer is not None:
+            if serializers is not DEFAULT:
+                raise ValueError(
+                    "Can't specify both 'serializer' and 'serializers' parameters "
+                    "together. Instead only specify one of the other."
+                )
+            serializers = {default_mimetype: serializer}
 
         if randomize_hosts is not DEFAULT:
             if randomize_nodes_in_pool is not DEFAULT:
@@ -343,10 +351,12 @@ class AsyncElasticsearch(BaseClient):
                 transport_kwargs["max_dead_node_backoff"] = max_dead_node_backoff
             if meta_header is not DEFAULT:
                 transport_kwargs["meta_header"] = meta_header
-            if serializers is DEFAULT:
-                transport_kwargs["serializers"] = DEFAULT_SERIALIZERS
-            else:
-                transport_kwargs["serializers"] = serializers
+
+            transport_serializers = DEFAULT_SERIALIZERS
+            if serializers is not DEFAULT:
+                transport_serializers.update(serializers)
+            transport_kwargs["serializers"] = transport_serializers
+
             transport_kwargs["default_mimetype"] = default_mimetype
             if sniff_on_start is not DEFAULT:
                 transport_kwargs["sniff_on_start"] = sniff_on_start
@@ -523,9 +533,14 @@ class AsyncElasticsearch(BaseClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-    ) -> Any:
+    ) -> bool:
         """
-        Returns basic information about the cluster.
+        Returns True if a successful response returns from the info() API,
+        otherwise returns False. This API call can fail either at the transport
+        layer (due to connection errors or timeouts) or from a non-2XX HTTP response
+        (due to authentication or authorization issues).
+
+        If you want to discover why the request failed you should use the ``info()`` API.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html>`_
         """
@@ -541,12 +556,12 @@ class AsyncElasticsearch(BaseClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         try:
-            resp = await self.perform_request(
+            await self.perform_request(
                 "HEAD", __path, params=__query, headers=__headers
             )
-            return resp
-        except ApiError as e:
-            return HeadApiResponse(meta=e.meta)
+            return True
+        except (ApiError, TransportError):
+            return False
 
     # AUTO-GENERATED-API-DEFINITIONS #
 

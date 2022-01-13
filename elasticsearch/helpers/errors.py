@@ -17,16 +17,14 @@
 
 from typing import Any, Dict, List
 
-from ..exceptions import ElasticsearchException
 
-
-class BulkIndexError(ElasticsearchException):
+class BulkIndexError(Exception):
     def __init__(self, message: Any, errors: List[Dict[str, Any]]):
         super().__init__(message)
         self.errors: List[Dict[str, Any]] = errors  # type: ignore[assignment]
 
 
-class ScanError(ElasticsearchException):
+class ScanError(Exception):
     scroll_id: str
 
     def __init__(self, scroll_id: str, *args: Any, **kwargs: Any) -> None:
