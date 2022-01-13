@@ -65,7 +65,9 @@ class TransformClient(NamespacedClient):
         if timeout is not None:
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
-        return await self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "DELETE", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
@@ -124,7 +126,9 @@ class TransformClient(NamespacedClient):
         if size is not None:
             __query["size"] = size
         __headers = {"accept": "application/json"}
-        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
@@ -176,7 +180,9 @@ class TransformClient(NamespacedClient):
         if size is not None:
             __query["size"] = size
         __headers = {"accept": "application/json"}
-        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -266,7 +272,9 @@ class TransformClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -370,7 +378,9 @@ class TransformClient(NamespacedClient):
         if timeout is not None:
             __query["timeout"] = timeout
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters()
     async def reset_transform(
@@ -410,7 +420,9 @@ class TransformClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def start_transform(
@@ -447,7 +459,9 @@ class TransformClient(NamespacedClient):
         if timeout is not None:
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
-        return await self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def stop_transform(
@@ -514,7 +528,9 @@ class TransformClient(NamespacedClient):
         if wait_for_completion is not None:
             __query["wait_for_completion"] = wait_for_completion
         __headers = {"accept": "application/json"}
-        return await self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -597,7 +613,9 @@ class TransformClient(NamespacedClient):
         if timeout is not None:
             __query["timeout"] = timeout
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters()
     async def upgrade_transforms(
@@ -634,4 +652,6 @@ class TransformClient(NamespacedClient):
         if timeout is not None:
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
-        return await self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers
+        )

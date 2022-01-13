@@ -21,7 +21,7 @@ from typing import Any, Dict, List
 class BulkIndexError(Exception):
     def __init__(self, message: Any, errors: List[Dict[str, Any]]):
         super().__init__(message)
-        self.errors: List[Dict[str, Any]] = errors  # type: ignore[assignment]
+        self.errors: List[Dict[str, Any]] = errors
 
 
 class ScanError(Exception):

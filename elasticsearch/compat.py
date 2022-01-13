@@ -40,7 +40,7 @@ def warn_stacklevel() -> int:
     try:
         # Grab the root module from the current module '__name__'
         module_name = __name__.partition(".")[0]
-        module_path = Path(sys.modules[module_name].__file__)
+        module_path = Path(sys.modules[module_name].__file__)  # type: ignore[arg-type]
 
         # If the module is a folder we're looking at
         # subdirectories, otherwise we're looking for
