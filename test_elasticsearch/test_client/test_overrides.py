@@ -16,7 +16,9 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from test_elasticsearch.test_cases import DummyTransportTestCase
+import pytest
+
+from ..test_cases import DummyTransportTestCase
 
 
 class TestOverriddenUrlTargets(DummyTransportTestCase):
@@ -55,3 +57,17 @@ class TestOverriddenUrlTargets(DummyTransportTestCase):
 
         self.client.cluster.stats(node_id="test-node")
         self.assert_url_called("GET", "/_cluster/stats/nodes/test-node")
+
+    def test_index_uses_post_if_id_is_empty(self):
+        self.client.index(index="my-index", id="", document={})
+        self.assert_url_called("POST", "/my-index/_doc")
+
+    def test_index_uses_put_if_id_is_not_empty(self):
+        self.client.index(index="my-index", id=0, document={})
+        self.assert_url_called("PUT", "/my-index/_doc/0")
+
+    @pytest.mark.parametrize("param_name", ["from", "from_"])
+    def test_from_in_search(self, param_name):
+        self.client.search(index="i", **{param_name: 10})
+        calls = self.assert_url_called("POST", "/i/_search")
+        assert calls[0]["body"] == {"from": 10}
