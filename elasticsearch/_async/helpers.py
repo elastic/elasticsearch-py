@@ -33,7 +33,7 @@ from typing import (
     Union,
 )
 
-from ..exceptions import NotFoundError, TransportError
+from ..exceptions import ApiError, NotFoundError, TransportError
 from ..helpers.actions import (
     _TYPE_BULK_ACTION,
     _TYPE_BULK_ACTION_BODY,
@@ -109,7 +109,7 @@ async def _process_bulk_chunk(
     try:
         # send the actual request
         resp = await client.bulk(*args, operations=bulk_actions, **kwargs)
-    except TransportError as e:
+    except ApiError as e:
         gen = _process_bulk_chunk_error(
             error=e,
             bulk_data=bulk_data,
@@ -283,7 +283,7 @@ async def async_streaming_bulk(
                     elif yield_ok:
                         yield ok, info
 
-            except TransportError as e:
+            except ApiError as e:
                 # suppress 429 errors since we will retry them
                 if attempt == max_retries or e.status_code != 429:
                     raise

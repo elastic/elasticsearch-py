@@ -30,7 +30,6 @@ from elasticsearch.exceptions import (
     ApiError,
     ConnectionError,
     ElasticsearchWarning,
-    TransportError,
     UnsupportedProductError,
 )
 from elasticsearch.transport import get_host_info
@@ -622,7 +621,7 @@ def test_unsupported_product_error_not_raised_on_non_2xx(status):
 
 
 @pytest.mark.parametrize("status", [404, 500])
-def test_transport_error_raised_before_product_error(status):
+def test_api_error_raised_before_product_error(status):
     client = Elasticsearch(
         [
             NodeConfig(
@@ -639,8 +638,9 @@ def test_transport_error_raised_before_product_error(status):
         node_class=DummyNode,
     )
 
-    with pytest.raises(TransportError) as e:
+    with pytest.raises(ApiError) as e:
         client.info()
+    assert not isinstance(e.value, UnsupportedProductError)
     assert e.value.status_code == status
 
     calls = client.transport.node_pool.get().calls

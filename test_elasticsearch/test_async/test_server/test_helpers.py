@@ -22,7 +22,7 @@ import pytest
 from elastic_transport import ApiResponseMeta, ObjectApiResponse
 from mock import MagicMock, call, patch
 
-from elasticsearch import TransportError, helpers
+from elasticsearch import helpers
 from elasticsearch.exceptions import ApiError
 from elasticsearch.helpers import ScanError
 
@@ -42,7 +42,7 @@ class FailingBulkClient(object):
         self,
         client,
         fail_at=(2,),
-        fail_with=TransportError(
+        fail_with=ApiError(
             message="Error!",
             body={},
             meta=ApiResponseMeta(
@@ -176,7 +176,7 @@ class TestStreamingBulk(object):
         assert [True, False, True] == [r[0] for r in results]
 
         exc = results[1][1]["index"].pop("exception")
-        assert isinstance(exc, TransportError)
+        assert isinstance(exc, ApiError)
         assert 599 == exc.status_code
         assert {
             "index": {
@@ -288,7 +288,7 @@ class TestStreamingBulk(object):
             ]
             return results
 
-        with pytest.raises(TransportError):
+        with pytest.raises(ApiError):
             await streaming_bulk()
         assert 4 == failing_client._called
 

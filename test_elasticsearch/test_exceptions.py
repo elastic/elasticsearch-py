@@ -17,7 +17,7 @@
 
 from elastic_transport import ApiResponseMeta
 
-from elasticsearch.exceptions import TransportError
+from elasticsearch.exceptions import ApiError
 
 error_meta = ApiResponseMeta(
     status=500, http_version="1.1", headers={}, duration=0.0, node=None
@@ -26,7 +26,7 @@ error_meta = ApiResponseMeta(
 
 class TestTransformError:
     def test_transform_error_parse_with_error_reason(self):
-        e = TransportError(
+        e = ApiError(
             message="InternalServerError",
             meta=error_meta,
             body={
@@ -37,7 +37,7 @@ class TestTransformError:
         assert str(e) == "ApiError(500, 'InternalServerError', 'error reason')"
 
     def test_transform_error_parse_with_error_string(self):
-        e = TransportError(
+        e = ApiError(
             message="InternalServerError",
             meta=error_meta,
             body={"error": "something error message"},
