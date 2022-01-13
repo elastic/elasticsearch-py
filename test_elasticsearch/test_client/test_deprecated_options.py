@@ -19,7 +19,7 @@ import warnings
 
 import pytest
 
-from elasticsearch import Elasticsearch
+from elasticsearch import Elasticsearch, JsonSerializer
 
 
 def test_sniff_on_connection_fail():
@@ -107,3 +107,52 @@ def test_http_auth():
         str(e.value)
         == "Can't specify both 'http_auth' and 'basic_auth', instead only specify 'basic_auth'"
     )
+
+
+def test_serializer_and_serializers():
+    with pytest.raises(ValueError) as e:
+        Elasticsearch(
+            "http://localhost:9200",
+            serializer=JsonSerializer(),
+            serializers={"application/json": JsonSerializer()},
+        )
+    assert str(e.value) == (
+        "Can't specify both 'serializer' and 'serializers' parameters together. "
+        "Instead only specify one of the other."
+    )
+
+    class CustomSerializer(JsonSerializer):
+        pass
+
+    client = Elasticsearch("http://localhost:9200", serializer=CustomSerializer())
+    assert isinstance(
+        client.transport.serializers.get_serializer("application/json"),
+        CustomSerializer,
+    )
+    assert set(client.transport.serializers.serializers.keys()) == {
+        "application/vnd.mapbox-vector-tile",
+        "application/x-ndjson",
+        "application/json",
+        "text/*",
+        "application/vnd.elasticsearch+json",
+    }
+
+    client = Elasticsearch(
+        "http://localhost:9200",
+        serializers={
+            "application/json": CustomSerializer(),
+            "application/cbor": CustomSerializer(),
+        },
+    )
+    assert isinstance(
+        client.transport.serializers.get_serializer("application/json"),
+        CustomSerializer,
+    )
+    assert set(client.transport.serializers.serializers.keys()) == {
+        "application/vnd.mapbox-vector-tile",
+        "application/x-ndjson",
+        "application/json",
+        "text/*",
+        "application/vnd.elasticsearch+json",
+        "application/cbor",
+    }

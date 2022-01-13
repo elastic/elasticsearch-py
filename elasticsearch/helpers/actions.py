@@ -36,7 +36,7 @@ from typing import (
 
 from .. import Elasticsearch
 from ..compat import to_bytes
-from ..exceptions import NotFoundError, TransportError
+from ..exceptions import ApiError, NotFoundError, TransportError
 from ..serializer import Serializer
 from .errors import BulkIndexError, ScanError
 
@@ -271,11 +271,11 @@ def _process_bulk_chunk_success(
             yield ok, {op_type: item}
 
     if errors:
-        raise BulkIndexError("%i document(s) failed to index." % len(errors), errors)
+        raise BulkIndexError(f"{len(errors)} document(s) failed to index.", errors)
 
 
 def _process_bulk_chunk_error(
-    error: TransportError,
+    error: ApiError,
     bulk_data: List[
         Union[
             Tuple[_TYPE_BULK_ACTION_HEADER],
@@ -306,7 +306,7 @@ def _process_bulk_chunk_error(
     # emulate standard behavior for failed actions
     if raise_on_error and error.status_code not in ignore_status:
         raise BulkIndexError(
-            "%i document(s) failed to index." % len(exc_errors), exc_errors
+            f"{len(exc_errors)} document(s) failed to index.", exc_errors
         )
     else:
         for err in exc_errors:
@@ -337,7 +337,7 @@ def _process_bulk_chunk(
     try:
         # send the actual request
         resp = client.bulk(*args, operations=bulk_actions, **kwargs)
-    except TransportError as e:
+    except ApiError as e:
         gen = _process_bulk_chunk_error(
             error=e,
             bulk_data=bulk_data,
@@ -467,7 +467,7 @@ def streaming_bulk(
                     elif yield_ok:
                         yield ok, info
 
-            except TransportError as e:
+            except ApiError as e:
                 # suppress 429 errors since we will retry them
                 if attempt == max_retries or e.status_code != 429:
                     raise
