@@ -76,7 +76,9 @@ class TasksClient(NamespacedClient):
         if wait_for_completion is not None:
             __query["wait_for_completion"] = wait_for_completion
         __headers = {"accept": "application/json"}
-        return self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     def get(
@@ -117,7 +119,9 @@ class TasksClient(NamespacedClient):
         if wait_for_completion is not None:
             __query["wait_for_completion"] = wait_for_completion
         __headers = {"accept": "application/json"}
-        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     def list(
@@ -185,4 +189,6 @@ class TasksClient(NamespacedClient):
         if wait_for_completion is not None:
             __query["wait_for_completion"] = wait_for_completion
         __headers = {"accept": "application/json"}
-        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )

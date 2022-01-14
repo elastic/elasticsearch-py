@@ -86,7 +86,9 @@ class ClusterClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters()
     def delete_component_template(
@@ -126,7 +128,9 @@ class ClusterClient(NamespacedClient):
         if timeout is not None:
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
-        return self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request(  # type: ignore[return-value]
+            "DELETE", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     def delete_voting_config_exclusions(
@@ -163,7 +167,9 @@ class ClusterClient(NamespacedClient):
         if wait_for_removal is not None:
             __query["wait_for_removal"] = wait_for_removal
         __headers = {"accept": "application/json"}
-        return self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request(  # type: ignore[return-value]
+            "DELETE", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     def exists_component_template(
@@ -208,7 +214,9 @@ class ClusterClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return self.perform_request("HEAD", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request(  # type: ignore[return-value]
+            "HEAD", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     def get_component_template(
@@ -254,7 +262,9 @@ class ClusterClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     def get_settings(
@@ -298,7 +308,9 @@ class ClusterClient(NamespacedClient):
         if timeout is not None:
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
-        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     def health(
@@ -396,7 +408,9 @@ class ClusterClient(NamespacedClient):
         if wait_for_status is not None:
             __query["wait_for_status"] = wait_for_status
         __headers = {"accept": "application/json"}
-        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     def pending_tasks(
@@ -434,7 +448,9 @@ class ClusterClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     def post_voting_config_exclusions(
@@ -480,7 +496,9 @@ class ClusterClient(NamespacedClient):
         if timeout is not None:
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
-        return self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -551,7 +569,9 @@ class ClusterClient(NamespacedClient):
         if version is not None:
             __body["version"] = version
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -602,7 +622,9 @@ class ClusterClient(NamespacedClient):
         if transient is not None:
             __body["transient"] = transient
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters()
     def remote_info(
@@ -629,7 +651,9 @@ class ClusterClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -698,7 +722,9 @@ class ClusterClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters()
     def state(
@@ -777,7 +803,9 @@ class ClusterClient(NamespacedClient):
         if wait_for_timeout is not None:
             __query["wait_for_timeout"] = wait_for_timeout
         __headers = {"accept": "application/json"}
-        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     def stats(
@@ -822,4 +850,6 @@ class ClusterClient(NamespacedClient):
         if timeout is not None:
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
-        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )

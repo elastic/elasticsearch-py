@@ -78,4 +78,6 @@ class MonitoringClient(NamespacedClient):
             "accept": "application/json",
             "content-type": "application/x-ndjson",
         }
-        return await self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers, body=__body
+        )

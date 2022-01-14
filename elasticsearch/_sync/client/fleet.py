@@ -77,4 +77,6 @@ class FleetClient(NamespacedClient):
         if wait_for_index is not None:
             __query["wait_for_index"] = wait_for_index
         __headers = {"accept": "application/json"}
-        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
