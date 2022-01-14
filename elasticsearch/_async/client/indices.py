@@ -82,7 +82,9 @@ class IndicesClient(NamespacedClient):
         if timeout is not None:
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
-        return await self.perform_request("PUT", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -159,7 +161,9 @@ class IndicesClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters()
     async def clear_cache(
@@ -225,7 +229,9 @@ class IndicesClient(NamespacedClient):
         if request is not None:
             __query["request"] = request
         __headers = {"accept": "application/json"}
-        return await self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -289,7 +295,9 @@ class IndicesClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters()
     async def close(
@@ -350,7 +358,9 @@ class IndicesClient(NamespacedClient):
         if wait_for_active_shards is not None:
             __query["wait_for_active_shards"] = wait_for_active_shards
         __headers = {"accept": "application/json"}
-        return await self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -415,7 +425,9 @@ class IndicesClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters()
     async def create_data_stream(
@@ -447,7 +459,9 @@ class IndicesClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("PUT", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def data_streams_stats(
@@ -485,7 +499,9 @@ class IndicesClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def delete(
@@ -540,7 +556,9 @@ class IndicesClient(NamespacedClient):
         if timeout is not None:
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
-        return await self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "DELETE", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def delete_alias(
@@ -586,7 +604,9 @@ class IndicesClient(NamespacedClient):
         if timeout is not None:
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
-        return await self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "DELETE", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def delete_data_stream(
@@ -624,7 +644,9 @@ class IndicesClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "DELETE", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def delete_index_template(
@@ -656,7 +678,9 @@ class IndicesClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "DELETE", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def delete_template(
@@ -696,7 +720,9 @@ class IndicesClient(NamespacedClient):
         if timeout is not None:
             __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
-        return await self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "DELETE", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def disk_usage(
@@ -779,7 +805,9 @@ class IndicesClient(NamespacedClient):
         if wait_for_active_shards is not None:
             __query["wait_for_active_shards"] = wait_for_active_shards
         __headers = {"accept": "application/json"}
-        return await self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def exists(
@@ -839,7 +867,9 @@ class IndicesClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("HEAD", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "HEAD", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def exists_alias(
@@ -899,7 +929,9 @@ class IndicesClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("HEAD", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "HEAD", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def exists_index_template(
@@ -938,7 +970,9 @@ class IndicesClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("HEAD", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "HEAD", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def exists_template(
@@ -983,7 +1017,9 @@ class IndicesClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("HEAD", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "HEAD", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def flush(
@@ -1047,7 +1083,9 @@ class IndicesClient(NamespacedClient):
         if wait_if_ongoing is not None:
             __query["wait_if_ongoing"] = wait_if_ongoing
         __headers = {"accept": "application/json"}
-        return await self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def forcemerge(
@@ -1116,7 +1154,9 @@ class IndicesClient(NamespacedClient):
         if wait_for_completion is not None:
             __query["wait_for_completion"] = wait_for_completion
         __headers = {"accept": "application/json"}
-        return await self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def get(
@@ -1186,7 +1226,9 @@ class IndicesClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def get_alias(
@@ -1246,7 +1288,9 @@ class IndicesClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def get_data_stream(
@@ -1285,7 +1329,9 @@ class IndicesClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def get_field_mapping(
@@ -1350,7 +1396,9 @@ class IndicesClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def get_index_template(
@@ -1400,7 +1448,9 @@ class IndicesClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def get_mapping(
@@ -1458,7 +1508,9 @@ class IndicesClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def get_settings(
@@ -1532,7 +1584,9 @@ class IndicesClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def get_template(
@@ -1578,7 +1632,9 @@ class IndicesClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def migrate_to_data_stream(
@@ -1610,7 +1666,9 @@ class IndicesClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def open(
@@ -1671,7 +1729,9 @@ class IndicesClient(NamespacedClient):
         if wait_for_active_shards is not None:
             __query["wait_for_active_shards"] = wait_for_active_shards
         __headers = {"accept": "application/json"}
-        return await self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def promote_data_stream(
@@ -1704,7 +1764,9 @@ class IndicesClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1776,7 +1838,9 @@ class IndicesClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1845,7 +1909,9 @@ class IndicesClient(NamespacedClient):
         if version is not None:
             __body["version"] = version
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1966,7 +2032,9 @@ class IndicesClient(NamespacedClient):
         if write_index_only is not None:
             __query["write_index_only"] = write_index_only
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters(
         body_name="settings",
@@ -2040,7 +2108,9 @@ class IndicesClient(NamespacedClient):
             __query["timeout"] = timeout
         __body = settings
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2123,7 +2193,9 @@ class IndicesClient(NamespacedClient):
         if version is not None:
             __body["version"] = version
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters()
     async def recovery(
@@ -2165,7 +2237,9 @@ class IndicesClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def refresh(
@@ -2215,7 +2289,9 @@ class IndicesClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def reload_search_analyzers(
@@ -2263,7 +2339,9 @@ class IndicesClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def resolve_index(
@@ -2300,7 +2378,9 @@ class IndicesClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2381,7 +2461,9 @@ class IndicesClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters()
     async def segments(
@@ -2435,7 +2517,9 @@ class IndicesClient(NamespacedClient):
         if verbose is not None:
             __query["verbose"] = verbose
         __headers = {"accept": "application/json"}
-        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def shard_stores(
@@ -2489,7 +2573,9 @@ class IndicesClient(NamespacedClient):
         if status is not None:
             __query["status"] = status
         __headers = {"accept": "application/json"}
-        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2553,7 +2639,9 @@ class IndicesClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2638,7 +2726,9 @@ class IndicesClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters(
         body_name="template",
@@ -2695,7 +2785,9 @@ class IndicesClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2759,7 +2851,9 @@ class IndicesClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters()
     async def stats(
@@ -2844,7 +2938,9 @@ class IndicesClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def unfreeze(
@@ -2906,7 +3002,9 @@ class IndicesClient(NamespacedClient):
         if wait_for_active_shards is not None:
             __query["wait_for_active_shards"] = wait_for_active_shards
         __headers = {"accept": "application/json"}
-        return await self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -2949,7 +3047,9 @@ class IndicesClient(NamespacedClient):
         if timeout is not None:
             __query["timeout"] = timeout
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -3052,4 +3152,6 @@ class IndicesClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )

@@ -55,7 +55,9 @@ class AutoscalingClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request(  # type: ignore[return-value]
+            "DELETE", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     def get_autoscaling_capacity(
@@ -83,7 +85,9 @@ class AutoscalingClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     def get_autoscaling_policy(
@@ -116,7 +120,9 @@ class AutoscalingClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters(
         body_name="policy",
@@ -156,4 +162,6 @@ class AutoscalingClient(NamespacedClient):
             __query["pretty"] = pretty
         __body = policy
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers, body=__body
+        )

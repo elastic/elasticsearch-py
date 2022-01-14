@@ -54,7 +54,9 @@ class EnrichClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "DELETE", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def execute_policy(
@@ -91,7 +93,9 @@ class EnrichClient(NamespacedClient):
         if wait_for_completion is not None:
             __query["wait_for_completion"] = wait_for_completion
         __headers = {"accept": "application/json"}
-        return await self.perform_request("PUT", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def get_policy(
@@ -124,7 +128,9 @@ class EnrichClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -167,7 +173,9 @@ class EnrichClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters()
     async def stats(
@@ -195,4 +203,6 @@ class EnrichClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )

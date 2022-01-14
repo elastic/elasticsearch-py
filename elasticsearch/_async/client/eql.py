@@ -55,7 +55,9 @@ class EqlClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "DELETE", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def get(
@@ -99,7 +101,9 @@ class EqlClient(NamespacedClient):
         if wait_for_completion_timeout is not None:
             __query["wait_for_completion_timeout"] = wait_for_completion_timeout
         __headers = {"accept": "application/json"}
-        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def get_status(
@@ -132,7 +136,9 @@ class EqlClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -148,7 +154,7 @@ class EqlClient(NamespacedClient):
         event_category_field: Optional[Any] = None,
         expand_wildcards: Optional[Any] = None,
         fetch_size: Optional[int] = None,
-        fields: Optional[Any] = None,
+        fields: Optional[Union[Any, List[Any]]] = None,
         filter: Optional[Union[Any, List[Any]]] = None,
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
@@ -157,6 +163,7 @@ class EqlClient(NamespacedClient):
         keep_on_completion: Optional[bool] = None,
         pretty: Optional[bool] = None,
         result_position: Optional[Any] = None,
+        runtime_mappings: Optional[Any] = None,
         size: Optional[int] = None,
         tiebreaker_field: Optional[Any] = None,
         timestamp_field: Optional[Any] = None,
@@ -185,6 +192,7 @@ class EqlClient(NamespacedClient):
         :param keep_alive:
         :param keep_on_completion:
         :param result_position:
+        :param runtime_mappings:
         :param size: For basic queries, the maximum number of matching events to return.
             Defaults to 10
         :param tiebreaker_field: Field used to sort hits with the same timestamp in ascending
@@ -231,6 +239,8 @@ class EqlClient(NamespacedClient):
             __query["pretty"] = pretty
         if result_position is not None:
             __body["result_position"] = result_position
+        if runtime_mappings is not None:
+            __body["runtime_mappings"] = runtime_mappings
         if size is not None:
             __body["size"] = size
         if tiebreaker_field is not None:
@@ -240,4 +250,6 @@ class EqlClient(NamespacedClient):
         if wait_for_completion_timeout is not None:
             __body["wait_for_completion_timeout"] = wait_for_completion_timeout
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )

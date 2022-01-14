@@ -50,7 +50,9 @@ class SecurityClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -105,7 +107,9 @@ class SecurityClient(NamespacedClient):
         if refresh is not None:
             __query["refresh"] = refresh
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters()
     async def clear_api_key_cache(
@@ -137,7 +141,9 @@ class SecurityClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def clear_cached_privileges(
@@ -169,7 +175,9 @@ class SecurityClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def clear_cached_realms(
@@ -206,7 +214,9 @@ class SecurityClient(NamespacedClient):
         if usernames is not None:
             __query["usernames"] = usernames
         __headers = {"accept": "application/json"}
-        return await self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def clear_cached_roles(
@@ -238,7 +248,9 @@ class SecurityClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def clear_cached_service_tokens(
@@ -278,7 +290,9 @@ class SecurityClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -341,7 +355,9 @@ class SecurityClient(NamespacedClient):
         if role_descriptors is not None:
             __body["role_descriptors"] = role_descriptors
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters()
     async def create_service_token(
@@ -392,7 +408,9 @@ class SecurityClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request(__method, __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            __method, __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def delete_privileges(
@@ -434,7 +452,9 @@ class SecurityClient(NamespacedClient):
         if refresh is not None:
             __query["refresh"] = refresh
         __headers = {"accept": "application/json"}
-        return await self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "DELETE", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def delete_role(
@@ -472,7 +492,9 @@ class SecurityClient(NamespacedClient):
         if refresh is not None:
             __query["refresh"] = refresh
         __headers = {"accept": "application/json"}
-        return await self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "DELETE", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def delete_role_mapping(
@@ -510,7 +532,9 @@ class SecurityClient(NamespacedClient):
         if refresh is not None:
             __query["refresh"] = refresh
         __headers = {"accept": "application/json"}
-        return await self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "DELETE", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def delete_service_token(
@@ -556,7 +580,9 @@ class SecurityClient(NamespacedClient):
         if refresh is not None:
             __query["refresh"] = refresh
         __headers = {"accept": "application/json"}
-        return await self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "DELETE", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def delete_user(
@@ -594,7 +620,9 @@ class SecurityClient(NamespacedClient):
         if refresh is not None:
             __query["refresh"] = refresh
         __headers = {"accept": "application/json"}
-        return await self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "DELETE", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def disable_user(
@@ -632,7 +660,9 @@ class SecurityClient(NamespacedClient):
         if refresh is not None:
             __query["refresh"] = refresh
         __headers = {"accept": "application/json"}
-        return await self.perform_request("PUT", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def enable_user(
@@ -670,7 +700,9 @@ class SecurityClient(NamespacedClient):
         if refresh is not None:
             __query["refresh"] = refresh
         __headers = {"accept": "application/json"}
-        return await self.perform_request("PUT", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def get_api_key(
@@ -718,7 +750,9 @@ class SecurityClient(NamespacedClient):
         if username is not None:
             __query["username"] = username
         __headers = {"accept": "application/json"}
-        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def get_builtin_privileges(
@@ -746,7 +780,9 @@ class SecurityClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def get_privileges(
@@ -783,7 +819,9 @@ class SecurityClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def get_role(
@@ -818,7 +856,9 @@ class SecurityClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def get_role_mapping(
@@ -855,7 +895,9 @@ class SecurityClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def get_service_accounts(
@@ -895,7 +937,9 @@ class SecurityClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def get_service_credentials(
@@ -931,7 +975,9 @@ class SecurityClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -986,7 +1032,9 @@ class SecurityClient(NamespacedClient):
         if username is not None:
             __body["username"] = username
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters()
     async def get_user(
@@ -1021,7 +1069,9 @@ class SecurityClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def get_user_privileges(
@@ -1064,7 +1114,9 @@ class SecurityClient(NamespacedClient):
         if username is not None:
             __query["username"] = username
         __headers = {"accept": "application/json"}
-        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1120,7 +1172,9 @@ class SecurityClient(NamespacedClient):
         if username is not None:
             __body["username"] = username
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1168,7 +1222,9 @@ class SecurityClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1223,7 +1279,9 @@ class SecurityClient(NamespacedClient):
         if username is not None:
             __body["username"] = username
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self.perform_request("DELETE", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "DELETE", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1270,7 +1328,9 @@ class SecurityClient(NamespacedClient):
         if username is not None:
             __body["username"] = username
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self.perform_request("DELETE", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "DELETE", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters(
         body_name="privileges",
@@ -1311,7 +1371,9 @@ class SecurityClient(NamespacedClient):
             __query["refresh"] = refresh
         __body = privileges
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1390,7 +1452,9 @@ class SecurityClient(NamespacedClient):
         if transient_metadata is not None:
             __body["transient_metadata"] = transient_metadata
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1451,7 +1515,9 @@ class SecurityClient(NamespacedClient):
         if run_as is not None:
             __body["run_as"] = run_as
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1521,7 +1587,9 @@ class SecurityClient(NamespacedClient):
         if roles is not None:
             __body["roles"] = roles
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -1584,4 +1652,6 @@ class SecurityClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
-        return await self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )

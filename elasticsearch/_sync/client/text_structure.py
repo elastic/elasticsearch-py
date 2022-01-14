@@ -153,4 +153,6 @@ class TextStructureClient(NamespacedClient):
             "accept": "application/json",
             "content-type": "application/x-ndjson",
         }
-        return self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )

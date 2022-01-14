@@ -59,7 +59,9 @@ class SqlClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -135,7 +137,9 @@ class SqlClient(NamespacedClient):
         if time_zone is not None:
             __body["time_zone"] = time_zone
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -184,4 +188,6 @@ class SqlClient(NamespacedClient):
         if time_zone is not None:
             __body["time_zone"] = time_zone
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )

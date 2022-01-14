@@ -54,7 +54,9 @@ class LogstashClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("DELETE", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "DELETE", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters()
     async def get_pipeline(
@@ -86,7 +88,9 @@ class LogstashClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return await self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters(
         body_name="pipeline",
@@ -125,4 +129,6 @@ class LogstashClient(NamespacedClient):
             __query["pretty"] = pretty
         __body = pipeline
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self.perform_request("PUT", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers, body=__body
+        )

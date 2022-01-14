@@ -71,7 +71,9 @@ class SearchableSnapshotsClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return self.perform_request("POST", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers
+        )
 
     @_rewrite_parameters(
         body_fields=True,
@@ -143,7 +145,9 @@ class SearchableSnapshotsClient(NamespacedClient):
         if wait_for_completion is not None:
             __query["wait_for_completion"] = wait_for_completion
         __headers = {"accept": "application/json", "content-type": "application/json"}
-        return self.perform_request("POST", __path, params=__query, headers=__headers, body=__body)  # type: ignore[no-any-return,return-value]
+        return self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )
 
     @_rewrite_parameters()
     def stats(
@@ -180,4 +184,6 @@ class SearchableSnapshotsClient(NamespacedClient):
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
-        return self.perform_request("GET", __path, params=__query, headers=__headers)  # type: ignore[no-any-return,return-value]
+        return self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
