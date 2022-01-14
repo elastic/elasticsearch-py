@@ -467,9 +467,11 @@ class YamlRunner:
         for step in path.split("."):
             if not step:
                 continue
+            # We check body again to handle E.g. '$body.$backing_index.data_stream'
+            if step.startswith("$body"):
+                continue
             step = step.replace("\1", ".")
             step = self._resolve(step)
-
             if (
                 isinstance(step, string_types)
                 and step.isdigit()
