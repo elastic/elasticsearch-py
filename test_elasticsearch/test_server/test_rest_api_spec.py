@@ -231,7 +231,9 @@ class YamlRunner:
             headers.pop("Authorization")
 
         method, args = list(action.items())[0]
-        args["headers"] = headers
+
+        if headers:
+            args["headers"] = headers
 
         # locate api endpoint
         for m in method.split("."):
