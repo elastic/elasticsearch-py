@@ -265,22 +265,28 @@ def wipe_xpack_templates(client):
 
 def wipe_ilm_policies(client):
     for policy in client.ilm.get_lifecycle():
-        if policy not in {
-            "ilm-history-ilm-policy",
-            "slm-history-ilm-policy",
-            "watch-history-ilm-policy",
-            "ml-size-based-ilm-policy",
-            "logs",
-            "metrics",
-            "synthetics",
-            "7-days-default",
-            "30-days-default",
-            "90-days-default",
-            "180-days-default",
-            "365-days-default",
-            ".fleet-actions-results-ilm-policy",
-            ".deprecation-indexing-ilm-policy",
-        }:
+        if (
+            policy
+            not in {
+                "ilm-history-ilm-policy",
+                "slm-history-ilm-policy",
+                "watch-history-ilm-policy",
+                "watch-history-ilm-policy-16",
+                "ml-size-based-ilm-policy",
+                "logs",
+                "metrics",
+                "synthetics",
+                "7-days-default",
+                "30-days-default",
+                "90-days-default",
+                "180-days-default",
+                "365-days-default",
+                ".fleet-actions-results-ilm-policy",
+                ".deprecation-indexing-ilm-policy",
+                ".monitoring-8-ilm-policy",
+            }
+            and "-history-ilm-polcy" not in policy
+        ):
             client.ilm.delete_lifecycle(name=policy)
 
 
