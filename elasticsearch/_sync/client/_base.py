@@ -44,6 +44,7 @@ from elastic_transport import (
 )
 from elastic_transport.client_utils import DEFAULT, DefaultType
 
+from ..._version import __versionstr__
 from ...compat import warn_stacklevel
 from ...exceptions import (
     HTTP_EXCEPTIONS,
@@ -56,6 +57,11 @@ from ...exceptions import (
 from .utils import _TYPE_SYNC_SNIFF_CALLBACK, _base64_auth_header, _quote_query
 
 _WARNING_RE = re.compile(r"\"([^\"]*)\"")
+_COMPAT_MIMETYPE_TEMPLATE = "application/vnd.elasticsearch+%s; compatible-with=" + str(
+    __versionstr__.partition(".")[0]
+)
+_COMPAT_MIMETYPE_RE = re.compile(r"application/(json|x-ndjson|vnd\.mapbox-vector-tile)")
+_COMPAT_MIMETYPE_SUB = _COMPAT_MIMETYPE_TEMPLATE % (r"\g<1>",)
 
 
 def resolve_auth_headers(
@@ -166,7 +172,9 @@ def create_sniff_callback(
                 meta, node_infos = transport.perform_request(
                     "GET",
                     "/_nodes/_all/http",
-                    headers={"accept": "application/json"},
+                    headers={
+                        "accept": "application/vnd.elasticsearch+json; compatible-with=8"
+                    },
                     request_timeout=(
                         sniff_options.sniff_timeout
                         if not sniff_options.is_initial_sniff
@@ -256,6 +264,19 @@ class BaseClient:
             request_headers.update(headers)
         else:
             request_headers = self._headers
+
+        def mimetype_header_to_compat(header: str) -> None:
+            # Converts all parts of a Accept/Content-Type headers
+            # from application/X -> application/vnd.elasticsearch+X
+            nonlocal request_headers
+            mimetype = request_headers.get(header, None)
+            if mimetype:
+                request_headers[header] = _COMPAT_MIMETYPE_RE.sub(
+                    _COMPAT_MIMETYPE_SUB, mimetype
+                )
+
+        mimetype_header_to_compat("Accept")
+        mimetype_header_to_compat("Content-Type")
 
         if params:
             target = f"{path}?{_quote_query(params)}"

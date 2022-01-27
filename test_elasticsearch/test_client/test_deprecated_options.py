@@ -135,6 +135,7 @@ def test_serializer_and_serializers():
         "application/json",
         "text/*",
         "application/vnd.elasticsearch+json",
+        "application/vnd.elasticsearch+x-ndjson",
     }
 
     client = Elasticsearch(
@@ -154,5 +155,6 @@ def test_serializer_and_serializers():
         "application/json",
         "text/*",
         "application/vnd.elasticsearch+json",
+        "application/vnd.elasticsearch+x-ndjson",
         "application/cbor",
     }

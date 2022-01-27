@@ -243,7 +243,7 @@ class TestTransport:
         calls = client.transport.node_pool.get().calls
         assert 1 == len(calls)
         assert calls[0][1]["headers"] == {
-            "accept": "application/json",
+            "accept": "application/vnd.elasticsearch+json; compatible-with=8",
         }
 
     async def test_body_surrogates_replaced_encoded_into_bytes(self):
@@ -391,7 +391,9 @@ class TestTransport:
             ("GET", "/_nodes/_all/http"),
             {
                 "body": None,
-                "headers": {"accept": "application/json"},
+                "headers": {
+                    "accept": "application/vnd.elasticsearch+json; compatible-with=8"
+                },
                 "request_timeout": None,  # <-- Should be None instead of 12
             },
         )
@@ -418,7 +420,7 @@ class TestTransport:
             {
                 "body": None,
                 "headers": {
-                    "accept": "application/json",
+                    "accept": "application/vnd.elasticsearch+json; compatible-with=8",
                 },
                 "request_timeout": DEFAULT,
             },
@@ -427,7 +429,9 @@ class TestTransport:
             ("GET", "/_nodes/_all/http"),
             {
                 "body": None,
-                "headers": {"accept": "application/json"},
+                "headers": {
+                    "accept": "application/vnd.elasticsearch+json; compatible-with=8"
+                },
                 "request_timeout": 12,
             },
         )
@@ -681,7 +685,7 @@ async def test_unsupported_product_error(headers):
         {
             "body": None,
             "headers": {
-                "accept": "application/json",
+                "accept": "application/vnd.elasticsearch+json; compatible-with=8",
             },
             "request_timeout": DEFAULT,
         },
