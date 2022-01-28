@@ -207,6 +207,12 @@ class TestDeserializer:
                 '{"some":"data"}', content_type
             )
 
+        for content_type in (
+            "application/vnd.elasticsearch+x-ndjson;compatible-with=7",
+            "application/vnd.elasticsearch+x-ndjson; compatible-with=7",
+            "application/vnd.elasticsearch+x-ndjson;compatible-with=8",
+            "application/vnd.elasticsearch+x-ndjson; compatible-with=8",
+        ):
             assert b'{"some":"data"}\n{"some":"data"}\n' == self.serializers.dumps(
                 ['{"some":"data"}', {"some": "data"}], content_type
             )
