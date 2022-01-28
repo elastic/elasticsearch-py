@@ -139,7 +139,7 @@ class TestOptions(DummyTransportTestCase):
         assert call.pop("client_meta") is DEFAULT
         assert call == {
             "headers": {
-                "accept": "application/json",
+                "accept": "application/vnd.elasticsearch+json; compatible-with=8",
             },
             "body": None,
         }
@@ -157,7 +157,7 @@ class TestOptions(DummyTransportTestCase):
         assert call.pop("client_meta") is DEFAULT
         assert call == {
             "headers": {
-                "accept": "application/json",
+                "accept": "application/vnd.elasticsearch+json; compatible-with=8",
             },
             "body": None,
             "request_timeout": 1,
@@ -182,7 +182,7 @@ class TestOptions(DummyTransportTestCase):
         assert call.pop("client_meta") is DEFAULT
         assert call == {
             "headers": {
-                "accept": "application/json",
+                "accept": "application/vnd.elasticsearch+json; compatible-with=8",
             },
             "body": None,
             "request_timeout": 1,
@@ -209,7 +209,7 @@ class TestOptions(DummyTransportTestCase):
         assert call.pop("client_meta") is DEFAULT
         assert call == {
             "headers": {
-                "accept": "application/json",
+                "accept": "application/vnd.elasticsearch+json; compatible-with=8",
             },
             "body": None,
         }
@@ -227,7 +227,7 @@ class TestOptions(DummyTransportTestCase):
         assert call.pop("client_meta") is DEFAULT
         assert call == {
             "headers": {
-                "accept": "application/json",
+                "accept": "application/vnd.elasticsearch+json; compatible-with=8",
             },
             "body": None,
             "request_timeout": 1,
@@ -252,7 +252,7 @@ class TestOptions(DummyTransportTestCase):
         assert call.pop("client_meta") is DEFAULT
         assert call == {
             "headers": {
-                "accept": "application/json",
+                "accept": "application/vnd.elasticsearch+json; compatible-with=8",
             },
             "body": None,
             "request_timeout": 1,
@@ -294,7 +294,7 @@ class TestOptions(DummyTransportTestCase):
 
         assert call["headers"] == {
             "key": "val",
-            "accept": "application/json",
+            "accept": "application/vnd.elasticsearch+json; compatible-with=8",
         }
 
         client.options(headers={"key1": "val"}).indices.get(index="2")
@@ -303,7 +303,7 @@ class TestOptions(DummyTransportTestCase):
         assert call["headers"] == {
             "key": "val",
             "key1": "val",
-            "accept": "application/json",
+            "accept": "application/vnd.elasticsearch+json; compatible-with=8",
         }
 
         client.options(headers={"key": "val2"}).indices.get(index="3")
@@ -311,7 +311,7 @@ class TestOptions(DummyTransportTestCase):
 
         assert call["headers"] == {
             "key": "val2",
-            "accept": "application/json",
+            "accept": "application/vnd.elasticsearch+json; compatible-with=8",
         }
 
         client = Elasticsearch(
@@ -338,14 +338,14 @@ class TestOptions(DummyTransportTestCase):
         call = calls[("GET", "/1")][0]
         assert call["headers"] == {
             "user-agent": "custom1",
-            "accept": "application/json",
+            "accept": "application/vnd.elasticsearch+json; compatible-with=8",
         }
 
         client.indices.get(index="2", headers={"user-agent": "custom2"})
         call = calls[("GET", "/2")][0]
         assert call["headers"] == {
             "user-agent": "custom2",
-            "accept": "application/json",
+            "accept": "application/vnd.elasticsearch+json; compatible-with=8",
         }
 
         client = Elasticsearch(
@@ -359,12 +359,12 @@ class TestOptions(DummyTransportTestCase):
         call = calls[("GET", "/1")][0]
         assert call["headers"] == {
             "user-agent": "custom3",
-            "accept": "application/json",
+            "accept": "application/vnd.elasticsearch+json; compatible-with=8",
         }
 
         client.indices.get(index="2", headers={"user-agent": "custom4"})
         call = calls[("GET", "/2")][0]
         assert call["headers"] == {
             "user-agent": "custom4",
-            "accept": "application/json",
+            "accept": "application/vnd.elasticsearch+json; compatible-with=8",
         }

@@ -25,7 +25,6 @@ from elastic_transport import NdjsonSerializer as _NdjsonSerializer
 from elastic_transport import Serializer as Serializer
 from elastic_transport import TextSerializer as TextSerializer
 
-from .compat import to_bytes
 from .exceptions import SerializationError
 
 INTEGER_TYPES = ()
@@ -37,7 +36,8 @@ __all__ = [
     "JsonSerializer",
     "TextSerializer",
     "NdjsonSerializer",
-    "CompatibilityModeSerializer",
+    "CompatibilityModeJsonSerializer",
+    "CompatibilityModeNdjsonSerializer",
     "MapboxVectorTileSerializer",
 ]
 
@@ -80,27 +80,12 @@ class NdjsonSerializer(JsonSerializer, _NdjsonSerializer):
         return JsonSerializer.default(self, data)
 
 
-class CompatibilityModeSerializer(JsonSerializer):
+class CompatibilityModeJsonSerializer(JsonSerializer):
     mimetype: ClassVar[str] = "application/vnd.elasticsearch+json"
 
-    def dumps(self, data: Any) -> bytes:
-        if isinstance(data, str):
-            data = data.encode("utf-8", "surrogatepass")
-        if isinstance(data, bytes):
-            return data
-        if isinstance(data, (tuple, list)):
-            return NdjsonSerializer.dumps(self, data)  # type: ignore
-        return JsonSerializer.dumps(self, data)
 
-    def loads(self, data: bytes) -> Any:
-        if isinstance(data, str):
-            data = to_bytes(data, "utf-8")
-        if isinstance(data, bytes) and data.endswith(b"\n"):
-            return NdjsonSerializer.loads(self, data)  # type: ignore
-        try:  # Try as JSON first but if that fails then try NDJSON.
-            return JsonSerializer.loads(self, data)
-        except SerializationError:
-            return NdjsonSerializer.loads(self, data)  # type: ignore
+class CompatibilityModeNdjsonSerializer(NdjsonSerializer):
+    mimetype: ClassVar[str] = "application/vnd.elasticsearch+x-ndjson"
 
 
 class MapboxVectorTileSerializer(Serializer):
@@ -119,7 +104,8 @@ DEFAULT_SERIALIZERS: Dict[str, Serializer] = {
     JsonSerializer.mimetype: JsonSerializer(),
     MapboxVectorTileSerializer.mimetype: MapboxVectorTileSerializer(),
     NdjsonSerializer.mimetype: NdjsonSerializer(),
-    CompatibilityModeSerializer.mimetype: CompatibilityModeSerializer(),
+    CompatibilityModeJsonSerializer.mimetype: CompatibilityModeJsonSerializer(),
+    CompatibilityModeNdjsonSerializer.mimetype: CompatibilityModeNdjsonSerializer(),
 }
 
 # Alias for backwards compatibility
