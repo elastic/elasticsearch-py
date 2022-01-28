@@ -352,9 +352,22 @@ class Elasticsearch(BaseClient):
             if meta_header is not DEFAULT:
                 transport_kwargs["meta_header"] = meta_header
 
-            transport_serializers = DEFAULT_SERIALIZERS
+            transport_serializers = DEFAULT_SERIALIZERS.copy()
             if serializers is not DEFAULT:
                 transport_serializers.update(serializers)
+
+                # Override compatibility serializers from their non-compat mimetypes too.
+                # So we use the same serializer for requests and responses.
+                for mime_subtype in ("json", "x-ndjson"):
+                    if f"application/{mime_subtype}" in serializers:
+                        compat_mimetype = (
+                            f"application/vnd.elasticsearch+{mime_subtype}"
+                        )
+                        if compat_mimetype not in serializers:
+                            transport_serializers[compat_mimetype] = serializers[
+                                f"application/{mime_subtype}"
+                            ]
+
             transport_kwargs["serializers"] = transport_serializers
 
             transport_kwargs["default_mimetype"] = default_mimetype
