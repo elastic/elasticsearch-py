@@ -20,7 +20,7 @@ from typing import Any, Dict, List, Optional, Union
 from elastic_transport import ObjectApiResponse
 
 from ._base import NamespacedClient
-from .utils import _rewrite_parameters
+from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class SqlClient(NamespacedClient):
