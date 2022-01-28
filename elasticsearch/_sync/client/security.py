@@ -705,6 +705,65 @@ class SecurityClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    def enroll_kibana(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> ObjectApiResponse[Any]:
+        """
+        Allows a kibana instance to configure itself to communicate with a secured elasticsearch
+        cluster.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-kibana-enrollment.html>`_
+        """
+        __path = "/_security/enroll/kibana"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
+
+    @_rewrite_parameters()
+    def enroll_node(
+        self,
+        *,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> ObjectApiResponse[Any]:
+        """
+        Allows a new node to enroll to an existing cluster with security enabled.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-node-enrollment.html>`_
+        """
+        __path = "/_security/enroll/node"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
+
+    @_rewrite_parameters()
     def get_api_key(
         self,
         *,
@@ -1654,4 +1713,307 @@ class SecurityClient(NamespacedClient):
             __headers["content-type"] = "application/json"
         return self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers, body=__body
+        )
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    def saml_authenticate(
+        self,
+        *,
+        content: str,
+        ids: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        realm: Optional[str] = None,
+    ) -> ObjectApiResponse[Any]:
+        """
+        Exchanges a SAML Response message for an Elasticsearch access token and refresh
+        token pair
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-saml-authenticate.html>`_
+
+        :param content: The SAML response as it was sent by the user’s browser, usually
+            a Base64 encoded XML document.
+        :param ids: A json array with all the valid SAML Request Ids that the caller
+            of the API has for the current user.
+        :param realm: The name of the realm that should authenticate the SAML response.
+            Useful in cases where many SAML realms are defined.
+        """
+        if content is None:
+            raise ValueError("Empty value passed for parameter 'content'")
+        if ids is None:
+            raise ValueError("Empty value passed for parameter 'ids'")
+        __path = "/_security/saml/authenticate"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if content is not None:
+            __body["content"] = content
+        if ids is not None:
+            __body["ids"] = ids
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if realm is not None:
+            __body["realm"] = realm
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    def saml_complete_logout(
+        self,
+        *,
+        ids: Any,
+        realm: str,
+        content: Optional[str] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        query_string: Optional[str] = None,
+    ) -> ObjectApiResponse[Any]:
+        """
+        Verifies the logout response sent from the SAML IdP
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-saml-complete-logout.html>`_
+
+        :param ids: A json array with all the valid SAML Request Ids that the caller
+            of the API has for the current user.
+        :param realm: The name of the SAML realm in Elasticsearch for which the configuration
+            is used to verify the logout response.
+        :param content: If the SAML IdP sends the logout response with the HTTP-Post
+            binding, this field must be set to the value of the SAMLResponse form parameter
+            from the logout response.
+        :param query_string: If the SAML IdP sends the logout response with the HTTP-Redirect
+            binding, this field must be set to the query string of the redirect URI.
+        """
+        if ids is None:
+            raise ValueError("Empty value passed for parameter 'ids'")
+        if realm is None:
+            raise ValueError("Empty value passed for parameter 'realm'")
+        __path = "/_security/saml/complete_logout"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if ids is not None:
+            __body["ids"] = ids
+        if realm is not None:
+            __body["realm"] = realm
+        if content is not None:
+            __body["content"] = content
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if query_string is not None:
+            __body["query_string"] = query_string
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    def saml_invalidate(
+        self,
+        *,
+        query_string: str,
+        acs: Optional[str] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        realm: Optional[str] = None,
+    ) -> ObjectApiResponse[Any]:
+        """
+        Consumes a SAML LogoutRequest
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-saml-invalidate.html>`_
+
+        :param query_string: The query part of the URL that the user was redirected to
+            by the SAML IdP to initiate the Single Logout. This query should include
+            a single parameter named SAMLRequest that contains a SAML logout request
+            that is deflated and Base64 encoded. If the SAML IdP has signed the logout
+            request, the URL should include two extra parameters named SigAlg and Signature
+            that contain the algorithm used for the signature and the signature value
+            itself. In order for Elasticsearch to be able to verify the IdP’s signature,
+            the value of the query_string field must be an exact match to the string
+            provided by the browser. The client application must not attempt to parse
+            or process the string in any way.
+        :param acs: The Assertion Consumer Service URL that matches the one of the SAML
+            realm in Elasticsearch that should be used. You must specify either this
+            parameter or the realm parameter.
+        :param realm: The name of the SAML realm in Elasticsearch the configuration.
+            You must specify either this parameter or the acs parameter.
+        """
+        if query_string is None:
+            raise ValueError("Empty value passed for parameter 'query_string'")
+        __path = "/_security/saml/invalidate"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if query_string is not None:
+            __body["query_string"] = query_string
+        if acs is not None:
+            __body["acs"] = acs
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if realm is not None:
+            __body["realm"] = realm
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    def saml_logout(
+        self,
+        *,
+        token: str,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        refresh_token: Optional[str] = None,
+    ) -> ObjectApiResponse[Any]:
+        """
+        Invalidates an access token and a refresh token that were generated via the SAML
+        Authenticate API
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-saml-logout.html>`_
+
+        :param token: The access token that was returned as a response to calling the
+            SAML authenticate API. Alternatively, the most recent token that was received
+            after refreshing the original one by using a refresh_token.
+        :param refresh_token: The refresh token that was returned as a response to calling
+            the SAML authenticate API. Alternatively, the most recent refresh token that
+            was received after refreshing the original access token.
+        """
+        if token is None:
+            raise ValueError("Empty value passed for parameter 'token'")
+        __path = "/_security/saml/logout"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if token is not None:
+            __body["token"] = token
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if refresh_token is not None:
+            __body["refresh_token"] = refresh_token
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    def saml_prepare_authentication(
+        self,
+        *,
+        acs: Optional[str] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+        realm: Optional[str] = None,
+        relay_state: Optional[str] = None,
+    ) -> ObjectApiResponse[Any]:
+        """
+        Creates a SAML authentication request
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-saml-prepare-authentication.html>`_
+
+        :param acs: The Assertion Consumer Service URL that matches the one of the SAML
+            realms in Elasticsearch. The realm is used to generate the authentication
+            request. You must specify either this parameter or the realm parameter.
+        :param realm: The name of the SAML realm in Elasticsearch for which the configuration
+            is used to generate the authentication request. You must specify either this
+            parameter or the acs parameter.
+        :param relay_state: A string that will be included in the redirect URL that this
+            API returns as the RelayState query parameter. If the Authentication Request
+            is signed, this value is used as part of the signature computation.
+        """
+        __path = "/_security/saml/prepare"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if acs is not None:
+            __body["acs"] = acs
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if realm is not None:
+            __body["realm"] = realm
+        if relay_state is not None:
+            __body["relay_state"] = relay_state
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )
+
+    @_rewrite_parameters()
+    def saml_service_provider_metadata(
+        self,
+        *,
+        realm_name: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> ObjectApiResponse[Any]:
+        """
+        Generates SAML metadata for the Elastic stack SAML 2.0 Service Provider
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-saml-sp-metadata.html>`_
+
+        :param realm_name: The name of the SAML realm in Elasticsearch.
+        """
+        if realm_name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'realm_name'")
+        __path = f"/_security/saml/metadata/{_quote(realm_name)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
         )

@@ -606,7 +606,7 @@ class Elasticsearch(BaseClient):
         """
         Allows to perform multiple index/update/delete operations in a single request.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-bulk.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/docs-bulk.html>`_
 
         :param operations:
         :param index: Default index for items which don't provide one
@@ -687,7 +687,7 @@ class Elasticsearch(BaseClient):
         """
         Explicitly clears the search context for a scroll.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/clear-scroll-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/clear-scroll-api.html>`_
 
         :param scroll_id:
         """
@@ -728,7 +728,7 @@ class Elasticsearch(BaseClient):
         """
         Close a point in time
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/point-in-time-api.html>`_
 
         :param id:
         """
@@ -2538,7 +2538,7 @@ class Elasticsearch(BaseClient):
         """
         Open a point in time that can be used in subsequent searches
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/point-in-time-api.html>`_
 
         :param index: A comma-separated list of index names to open point in time; use
             `_all` or empty string to perform the operation on all indices

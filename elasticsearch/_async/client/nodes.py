@@ -45,7 +45,7 @@ class NodesClient(NamespacedClient):
         """
         Returns information about hot threads on each node in the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-hot-threads.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/cluster-nodes-hot-threads.html>`_
 
         :param node_id: List of node IDs or names used to limit returned information.
         :param ignore_idle_threads: If true, known idle threads (e.g. waiting in a socket
@@ -112,7 +112,7 @@ class NodesClient(NamespacedClient):
         """
         Returns information about nodes in the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-info.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/cluster-nodes-info.html>`_
 
         :param node_id: Comma-separated list of node IDs or names used to limit returned
             information.
@@ -229,7 +229,7 @@ class NodesClient(NamespacedClient):
         """
         Returns statistical information about nodes in the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/cluster-nodes-stats.html>`_
 
         :param node_id: Comma-separated list of node IDs or names used to limit returned
             information.
@@ -325,7 +325,7 @@ class NodesClient(NamespacedClient):
         """
         Returns low-level information about REST actions usage on nodes.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-nodes-usage.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/cluster-nodes-usage.html>`_
 
         :param node_id: A comma-separated list of node IDs or names to limit the returned
             information; use `_local` to return information from the node you're connecting

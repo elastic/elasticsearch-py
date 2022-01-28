@@ -208,6 +208,58 @@ class IlmClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=True,
     )
+    async def migrate_to_data_tiers(
+        self,
+        *,
+        dry_run: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        legacy_template_to_delete: Optional[str] = None,
+        node_attribute: Optional[str] = None,
+        pretty: Optional[bool] = None,
+    ) -> ObjectApiResponse[Any]:
+        """
+        Migrates the indices and ILM policies away from custom node attribute allocation
+        routing to data tiers routing
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ilm-migrate-to-data-tiers.html>`_
+
+        :param dry_run: If true, simulates the migration from node attributes based allocation
+            filters to data tiers, but does not perform the migration. This provides
+            a way to retrieve the indices and ILM policies that need to be migrated.
+        :param legacy_template_to_delete:
+        :param node_attribute:
+        """
+        __path = "/_ilm/migrate_to_data_tiers"
+        __query: Dict[str, Any] = {}
+        __body: Dict[str, Any] = {}
+        if dry_run is not None:
+            __query["dry_run"] = dry_run
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if legacy_template_to_delete is not None:
+            __body["legacy_template_to_delete"] = legacy_template_to_delete
+        if node_attribute is not None:
+            __body["node_attribute"] = node_attribute
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
     async def move_to_step(
         self,
         *,

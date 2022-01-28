@@ -80,3 +80,455 @@ class FleetClient(NamespacedClient):
         return await self.perform_request(  # type: ignore[return-value]
             "GET", __path, params=__query, headers=__headers
         )
+
+    @_rewrite_parameters(
+        body_name="searches",
+    )
+    async def msearch(
+        self,
+        *,
+        index: Any,
+        searches: List[Any],
+        allow_no_indices: Optional[bool] = None,
+        allow_partial_search_results: Optional[bool] = None,
+        ccs_minimize_roundtrips: Optional[bool] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        ignore_throttled: Optional[bool] = None,
+        ignore_unavailable: Optional[bool] = None,
+        max_concurrent_searches: Optional[int] = None,
+        max_concurrent_shard_requests: Optional[int] = None,
+        pre_filter_shard_size: Optional[int] = None,
+        pretty: Optional[bool] = None,
+        rest_total_hits_as_int: Optional[bool] = None,
+        search_type: Optional[Any] = None,
+        typed_keys: Optional[bool] = None,
+        wait_for_checkpoints: Optional[List[Any]] = None,
+    ) -> ObjectApiResponse[Any]:
+        """
+        Multi Search API where the search will only be executed after specified checkpoints
+        are available due to a refresh. This API is designed for internal use by the
+        fleet server project.
+
+        :param index: A single target to search. If the target is an index alias, it
+            must resolve to a single index.
+        :param searches:
+        :param allow_no_indices: If false, the request returns an error if any wildcard
+            expression, index alias, or _all value targets only missing or closed indices.
+            This behavior applies even if the request targets other open indices. For
+            example, a request targeting foo*,bar* returns an error if an index starts
+            with foo but no index starts with bar.
+        :param allow_partial_search_results: If true, returns partial results if there
+            are shard request timeouts or [shard failures](https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-replication.html#shard-failures).
+            If false, returns an error with no partial results. Defaults to the configured
+            cluster setting `search.default_allow_partial_results` which is true by default.
+        :param ccs_minimize_roundtrips: If true, network roundtrips between the coordinating
+            node and remote clusters are minimized for cross-cluster search requests.
+        :param expand_wildcards: Type of index that wildcard expressions can match. If
+            the request can target data streams, this argument determines whether wildcard
+            expressions match hidden data streams.
+        :param ignore_throttled: If true, concrete, expanded or aliased indices are ignored
+            when frozen.
+        :param ignore_unavailable: If true, missing or closed indices are not included
+            in the response.
+        :param max_concurrent_searches: Maximum number of concurrent searches the multi
+            search API can execute.
+        :param max_concurrent_shard_requests: Maximum number of concurrent shard requests
+            that each sub-search request executes per node.
+        :param pre_filter_shard_size: Defines a threshold that enforces a pre-filter
+            roundtrip to prefilter search shards based on query rewriting if the number
+            of shards the search request expands to exceeds the threshold. This filter
+            roundtrip can limit the number of shards significantly if for instance a
+            shard can not match any documents based on its rewrite method i.e., if date
+            filters are mandatory to match but the shard bounds and the query are disjoint.
+        :param rest_total_hits_as_int: If true, hits.total are returned as an integer
+            in the response. Defaults to false, which returns an object.
+        :param search_type: Indicates whether global term and document frequencies should
+            be used when scoring returned documents.
+        :param typed_keys: Specifies whether aggregation and suggester names should be
+            prefixed by their respective types in the response.
+        :param wait_for_checkpoints: A comma separated list of checkpoints. When configured,
+            the search API will only be executed on a shard after the relevant checkpoint
+            has become visible for search. Defaults to an empty list which will cause
+            Elasticsearch to immediately execute the search.
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'index'")
+        if searches is None:
+            raise ValueError("Empty value passed for parameter 'searches'")
+        if index not in SKIP_IN_PATH:
+            __path = f"/{_quote(index)}/_fleet/_fleet_msearch"
+        else:
+            __path = "/_fleet/_fleet_msearch"
+        __query: Dict[str, Any] = {}
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if allow_partial_search_results is not None:
+            __query["allow_partial_search_results"] = allow_partial_search_results
+        if ccs_minimize_roundtrips is not None:
+            __query["ccs_minimize_roundtrips"] = ccs_minimize_roundtrips
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if ignore_throttled is not None:
+            __query["ignore_throttled"] = ignore_throttled
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if max_concurrent_searches is not None:
+            __query["max_concurrent_searches"] = max_concurrent_searches
+        if max_concurrent_shard_requests is not None:
+            __query["max_concurrent_shard_requests"] = max_concurrent_shard_requests
+        if pre_filter_shard_size is not None:
+            __query["pre_filter_shard_size"] = pre_filter_shard_size
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if rest_total_hits_as_int is not None:
+            __query["rest_total_hits_as_int"] = rest_total_hits_as_int
+        if search_type is not None:
+            __query["search_type"] = search_type
+        if typed_keys is not None:
+            __query["typed_keys"] = typed_keys
+        if wait_for_checkpoints is not None:
+            __query["wait_for_checkpoints"] = wait_for_checkpoints
+        __body = searches
+        __headers = {
+            "accept": "application/json",
+            "content-type": "application/x-ndjson",
+        }
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )
+
+    @_rewrite_parameters(
+        body_fields=True,
+        parameter_aliases={
+            "_source": "source",
+            "_source_excludes": "source_excludes",
+            "_source_includes": "source_includes",
+            "from": "from_",
+        },
+    )
+    async def search(
+        self,
+        *,
+        index: Any,
+        aggregations: Optional[Dict[str, Any]] = None,
+        aggs: Optional[Dict[str, Any]] = None,
+        allow_no_indices: Optional[bool] = None,
+        allow_partial_search_results: Optional[bool] = None,
+        analyze_wildcard: Optional[bool] = None,
+        analyzer: Optional[str] = None,
+        batched_reduce_size: Optional[int] = None,
+        ccs_minimize_roundtrips: Optional[bool] = None,
+        collapse: Optional[Any] = None,
+        default_operator: Optional[Any] = None,
+        df: Optional[str] = None,
+        docvalue_fields: Optional[List[Any]] = None,
+        error_trace: Optional[bool] = None,
+        expand_wildcards: Optional[Any] = None,
+        explain: Optional[bool] = None,
+        fields: Optional[List[Any]] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        from_: Optional[int] = None,
+        highlight: Optional[Any] = None,
+        human: Optional[bool] = None,
+        ignore_throttled: Optional[bool] = None,
+        ignore_unavailable: Optional[bool] = None,
+        indices_boost: Optional[List[Dict[Any, float]]] = None,
+        lenient: Optional[bool] = None,
+        max_concurrent_shard_requests: Optional[int] = None,
+        min_compatible_shard_node: Optional[Any] = None,
+        min_score: Optional[float] = None,
+        pit: Optional[Any] = None,
+        post_filter: Optional[Any] = None,
+        pre_filter_shard_size: Optional[int] = None,
+        preference: Optional[str] = None,
+        pretty: Optional[bool] = None,
+        profile: Optional[bool] = None,
+        q: Optional[str] = None,
+        query: Optional[Any] = None,
+        request_cache: Optional[bool] = None,
+        rescore: Optional[Union[Any, List[Any]]] = None,
+        rest_total_hits_as_int: Optional[bool] = None,
+        routing: Optional[Any] = None,
+        runtime_mappings: Optional[Any] = None,
+        script_fields: Optional[Dict[str, Any]] = None,
+        scroll: Optional[Any] = None,
+        search_after: Optional[Any] = None,
+        search_type: Optional[Any] = None,
+        seq_no_primary_term: Optional[bool] = None,
+        size: Optional[int] = None,
+        slice: Optional[Any] = None,
+        sort: Optional[Any] = None,
+        source: Optional[Any] = None,
+        source_excludes: Optional[Any] = None,
+        source_includes: Optional[Any] = None,
+        stats: Optional[List[str]] = None,
+        stored_fields: Optional[Any] = None,
+        suggest: Optional[Any] = None,
+        suggest_field: Optional[Any] = None,
+        suggest_mode: Optional[Any] = None,
+        suggest_size: Optional[int] = None,
+        suggest_text: Optional[str] = None,
+        terminate_after: Optional[int] = None,
+        timeout: Optional[str] = None,
+        track_scores: Optional[bool] = None,
+        track_total_hits: Optional[Any] = None,
+        typed_keys: Optional[bool] = None,
+        version: Optional[bool] = None,
+        wait_for_checkpoints: Optional[List[Any]] = None,
+    ) -> ObjectApiResponse[Any]:
+        """
+        Search API where the search will only be executed after specified checkpoints
+        are available due to a refresh. This API is designed for internal use by the
+        fleet server project.
+
+        :param index: A single target to search. If the target is an index alias, it
+            must resolve to a single index.
+        :param aggregations:
+        :param aggs:
+        :param allow_no_indices:
+        :param allow_partial_search_results: If true, returns partial results if there
+            are shard request timeouts or [shard failures](https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-replication.html#shard-failures).
+            If false, returns an error with no partial results. Defaults to the configured
+            cluster setting `search.default_allow_partial_results` which is true by default.
+        :param analyze_wildcard:
+        :param analyzer:
+        :param batched_reduce_size:
+        :param ccs_minimize_roundtrips:
+        :param collapse:
+        :param default_operator:
+        :param df:
+        :param docvalue_fields: Array of wildcard (*) patterns. The request returns doc
+            values for field names matching these patterns in the hits.fields property
+            of the response.
+        :param expand_wildcards:
+        :param explain: If true, returns detailed information about score computation
+            as part of a hit.
+        :param fields: Array of wildcard (*) patterns. The request returns values for
+            field names matching these patterns in the hits.fields property of the response.
+        :param from_: Starting document offset. By default, you cannot page through more
+            than 10,000 hits using the from and size parameters. To page through more
+            hits, use the search_after parameter.
+        :param highlight:
+        :param ignore_throttled:
+        :param ignore_unavailable:
+        :param indices_boost: Boosts the _score of documents from specified indices.
+        :param lenient:
+        :param max_concurrent_shard_requests:
+        :param min_compatible_shard_node:
+        :param min_score: Minimum _score for matching documents. Documents with a lower
+            _score are not included in the search results.
+        :param pit: Limits the search to a point in time (PIT). If you provide a PIT,
+            you cannot specify an <index> in the request path.
+        :param post_filter:
+        :param pre_filter_shard_size:
+        :param preference:
+        :param profile:
+        :param q:
+        :param query: Defines the search definition using the Query DSL.
+        :param request_cache:
+        :param rescore:
+        :param rest_total_hits_as_int:
+        :param routing:
+        :param runtime_mappings: Defines one or more runtime fields in the search request.
+            These fields take precedence over mapped fields with the same name.
+        :param script_fields: Retrieve a script evaluation (based on different fields)
+            for each hit.
+        :param scroll:
+        :param search_after:
+        :param search_type:
+        :param seq_no_primary_term: If true, returns sequence number and primary term
+            of the last modification of each hit. See Optimistic concurrency control.
+        :param size: The number of hits to return. By default, you cannot page through
+            more than 10,000 hits using the from and size parameters. To page through
+            more hits, use the search_after parameter.
+        :param slice:
+        :param sort:
+        :param source: Indicates which source fields are returned for matching documents.
+            These fields are returned in the hits._source property of the search response.
+        :param source_excludes:
+        :param source_includes:
+        :param stats: Stats groups to associate with the search. Each group maintains
+            a statistics aggregation for its associated searches. You can retrieve these
+            stats using the indices stats API.
+        :param stored_fields: List of stored fields to return as part of a hit. If no
+            fields are specified, no stored fields are included in the response. If this
+            field is specified, the _source parameter defaults to false. You can pass
+            _source: true to return both source fields and stored fields in the search
+            response.
+        :param suggest:
+        :param suggest_field: Specifies which field to use for suggestions.
+        :param suggest_mode:
+        :param suggest_size:
+        :param suggest_text: The source text for which the suggestions should be returned.
+        :param terminate_after: Maximum number of documents to collect for each shard.
+            If a query reaches this limit, Elasticsearch terminates the query early.
+            Elasticsearch collects documents before sorting. Defaults to 0, which does
+            not terminate query execution early.
+        :param timeout: Specifies the period of time to wait for a response from each
+            shard. If no response is received before the timeout expires, the request
+            fails and returns an error. Defaults to no timeout.
+        :param track_scores: If true, calculate and return document scores, even if the
+            scores are not used for sorting.
+        :param track_total_hits: Number of hits matching the query to count accurately.
+            If true, the exact number of hits is returned at the cost of some performance.
+            If false, the response does not include the total number of hits matching
+            the query. Defaults to 10,000 hits.
+        :param typed_keys:
+        :param version: If true, returns document version as part of a hit.
+        :param wait_for_checkpoints: A comma separated list of checkpoints. When configured,
+            the search API will only be executed on a shard after the relevant checkpoint
+            has become visible for search. Defaults to an empty list which will cause
+            Elasticsearch to immediately execute the search.
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'index'")
+        __path = f"/{_quote(index)}/_fleet/_fleet_search"
+        __body: Dict[str, Any] = {}
+        __query: Dict[str, Any] = {}
+        if aggregations is not None:
+            __body["aggregations"] = aggregations
+        if aggs is not None:
+            __body["aggs"] = aggs
+        if allow_no_indices is not None:
+            __query["allow_no_indices"] = allow_no_indices
+        if allow_partial_search_results is not None:
+            __query["allow_partial_search_results"] = allow_partial_search_results
+        if analyze_wildcard is not None:
+            __query["analyze_wildcard"] = analyze_wildcard
+        if analyzer is not None:
+            __query["analyzer"] = analyzer
+        if batched_reduce_size is not None:
+            __query["batched_reduce_size"] = batched_reduce_size
+        if ccs_minimize_roundtrips is not None:
+            __query["ccs_minimize_roundtrips"] = ccs_minimize_roundtrips
+        if collapse is not None:
+            __body["collapse"] = collapse
+        if default_operator is not None:
+            __query["default_operator"] = default_operator
+        if df is not None:
+            __query["df"] = df
+        if docvalue_fields is not None:
+            __body["docvalue_fields"] = docvalue_fields
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
+        if explain is not None:
+            __body["explain"] = explain
+        if fields is not None:
+            __body["fields"] = fields
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if from_ is not None:
+            __body["from"] = from_
+        if highlight is not None:
+            __body["highlight"] = highlight
+        if human is not None:
+            __query["human"] = human
+        if ignore_throttled is not None:
+            __query["ignore_throttled"] = ignore_throttled
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
+        if indices_boost is not None:
+            __body["indices_boost"] = indices_boost
+        if lenient is not None:
+            __query["lenient"] = lenient
+        if max_concurrent_shard_requests is not None:
+            __query["max_concurrent_shard_requests"] = max_concurrent_shard_requests
+        if min_compatible_shard_node is not None:
+            __query["min_compatible_shard_node"] = min_compatible_shard_node
+        if min_score is not None:
+            __body["min_score"] = min_score
+        if pit is not None:
+            __body["pit"] = pit
+        if post_filter is not None:
+            __body["post_filter"] = post_filter
+        if pre_filter_shard_size is not None:
+            __query["pre_filter_shard_size"] = pre_filter_shard_size
+        if preference is not None:
+            __query["preference"] = preference
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if profile is not None:
+            __body["profile"] = profile
+        if q is not None:
+            __query["q"] = q
+        if query is not None:
+            __body["query"] = query
+        if request_cache is not None:
+            __query["request_cache"] = request_cache
+        if rescore is not None:
+            __body["rescore"] = rescore
+        if rest_total_hits_as_int is not None:
+            __query["rest_total_hits_as_int"] = rest_total_hits_as_int
+        if routing is not None:
+            __query["routing"] = routing
+        if runtime_mappings is not None:
+            __body["runtime_mappings"] = runtime_mappings
+        if script_fields is not None:
+            __body["script_fields"] = script_fields
+        if scroll is not None:
+            __query["scroll"] = scroll
+        if search_after is not None:
+            __body["search_after"] = search_after
+        if search_type is not None:
+            __query["search_type"] = search_type
+        if seq_no_primary_term is not None:
+            __body["seq_no_primary_term"] = seq_no_primary_term
+        if size is not None:
+            __body["size"] = size
+        if slice is not None:
+            __body["slice"] = slice
+        if sort is not None:
+            __body["sort"] = sort
+        if source is not None:
+            __body["_source"] = source
+        if source_excludes is not None:
+            __query["_source_excludes"] = source_excludes
+        if source_includes is not None:
+            __query["_source_includes"] = source_includes
+        if stats is not None:
+            __body["stats"] = stats
+        if stored_fields is not None:
+            __body["stored_fields"] = stored_fields
+        if suggest is not None:
+            __body["suggest"] = suggest
+        if suggest_field is not None:
+            __query["suggest_field"] = suggest_field
+        if suggest_mode is not None:
+            __query["suggest_mode"] = suggest_mode
+        if suggest_size is not None:
+            __query["suggest_size"] = suggest_size
+        if suggest_text is not None:
+            __query["suggest_text"] = suggest_text
+        if terminate_after is not None:
+            __body["terminate_after"] = terminate_after
+        if timeout is not None:
+            __body["timeout"] = timeout
+        if track_scores is not None:
+            __body["track_scores"] = track_scores
+        if track_total_hits is not None:
+            __body["track_total_hits"] = track_total_hits
+        if typed_keys is not None:
+            __query["typed_keys"] = typed_keys
+        if version is not None:
+            __body["version"] = version
+        if wait_for_checkpoints is not None:
+            __query["wait_for_checkpoints"] = wait_for_checkpoints
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )

@@ -25,6 +25,47 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 class SearchableSnapshotsClient(NamespacedClient):
     @_rewrite_parameters()
+    def cache_stats(
+        self,
+        *,
+        node_id: Optional[Any] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        master_timeout: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+    ) -> ObjectApiResponse[Any]:
+        """
+        Retrieve node-level cache statistics about searchable snapshots.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/searchable-snapshots-apis.html>`_
+
+        :param node_id: A comma-separated list of node IDs or names to limit the returned
+            information; use `_local` to return information from the node you're connecting
+            to, leave empty to get information from all nodes
+        :param master_timeout:
+        """
+        if node_id not in SKIP_IN_PATH:
+            __path = f"/_searchable_snapshots/{_quote(node_id)}/cache/stats"
+        else:
+            __path = "/_searchable_snapshots/cache/stats"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
+
+    @_rewrite_parameters()
     def clear_cache(
         self,
         *,

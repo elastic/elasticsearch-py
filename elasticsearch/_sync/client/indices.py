@@ -1938,7 +1938,7 @@ class IndicesClient(NamespacedClient):
         human: Optional[bool] = None,
         ignore_unavailable: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
-        meta: Optional[Dict[str, Any]] = None,
+        meta: Optional[Any] = None,
         numeric_detection: Optional[bool] = None,
         pretty: Optional[bool] = None,
         properties: Optional[Dict[Any, Any]] = None,

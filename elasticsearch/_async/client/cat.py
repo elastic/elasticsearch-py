@@ -39,14 +39,14 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Shows information about currently configured aliases to indices including filter
         and routing infos.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-alias.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/cat-alias.html>`_
 
         :param name: A comma-separated list of alias names to return
         :param expand_wildcards: Whether to expand wildcard expression to concrete indices
@@ -115,14 +115,14 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Provides a snapshot of how many shards are allocated to each data node and how
         much disk space they are using.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-allocation.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/cat-allocation.html>`_
 
         :param node_id: A comma-separated list of node IDs or names to limit the returned
             information
@@ -190,14 +190,14 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Provides quick access to the document count of the entire cluster, or individual
         indices.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-count.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/cat-count.html>`_
 
         :param index: A comma-separated list of index names to limit the returned information
         :param format: Specifies the format to return the columnar data in, can be set
@@ -262,14 +262,14 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Shows how much heap memory is currently being used by fielddata on every data
         node in the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-fielddata.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/cat-fielddata.html>`_
 
         :param fields: A comma-separated list of fields to return the fielddata size
         :param bytes: The unit in which to display byte values
@@ -335,14 +335,14 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         ts: Optional[bool] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Returns a concise representation of the cluster health.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-health.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/cat-health.html>`_
 
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
@@ -404,13 +404,13 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> TextApiResponse:
         """
         Returns help for the Cat APIs.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/cat.html>`_
 
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
@@ -475,14 +475,14 @@ class CatClient(NamespacedClient):
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
         pri: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Returns information about indices: number of primaries and replicas, document
         counts, disk size, ...
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-indices.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/cat-indices.html>`_
 
         :param index: A comma-separated list of index names to limit the returned information
         :param bytes: The unit in which to display byte values
@@ -563,13 +563,13 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Returns information about the master node.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-master.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/cat-master.html>`_
 
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
@@ -631,13 +631,14 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
+        time: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Gets configuration and usage information about data frame analytics jobs.
 
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cat-dfanalytics.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/cat-dfanalytics.html>`_
 
         :param id: The ID of the data frame analytics to fetch
         :param allow_no_match: Whether to ignore if a wildcard expression matches no
@@ -645,7 +646,7 @@ class CatClient(NamespacedClient):
         :param bytes: The unit in which to display byte values
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
-        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param h: Comma-separated list of column names to display.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
         :param local: If `true`, the request computes the list of selected nodes from
@@ -653,9 +654,9 @@ class CatClient(NamespacedClient):
             from the cluster state of the master node. In both cases the coordinating
             node will send requests for further information to each selected node.
         :param master_timeout: Period to wait for a connection to the master node.
-        :param s: List of columns that determine how the table should be sorted. Sorting
-            defaults to ascending and can be changed by setting `:asc` or `:desc` as
-            a suffix to the column name.
+        :param s: Comma-separated list of column names or column aliases used to sort
+            the response.
+        :param time: Unit used to display time values.
         :param v: When set to `true` will enable verbose output.
         """
         if id not in SKIP_IN_PATH:
@@ -687,6 +688,8 @@ class CatClient(NamespacedClient):
             __query["pretty"] = pretty
         if s is not None:
             __query["s"] = s
+        if time is not None:
+            __query["time"] = time
         if v is not None:
             __query["v"] = v
         __headers = {"accept": "text/plain,application/json"}
@@ -709,19 +712,17 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         time: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Gets configuration and usage information about datafeeds.
 
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cat-datafeeds.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/cat-datafeeds.html>`_
 
         :param datafeed_id: A numerical character string that uniquely identifies the
-            datafeed. This identifier can contain lowercase alphanumeric characters (a-z
-            and 0-9), hyphens, and underscores. It must start and end with alphanumeric
-            characters.
+            datafeed.
         :param allow_no_match: Specifies what to do when the request: * Contains wildcard
             expressions and there are no datafeeds that match. * Contains the `_all`
             string or no identifiers and there are no matches. * Contains wildcard expressions
@@ -731,7 +732,7 @@ class CatClient(NamespacedClient):
             are no matches or only partial matches.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
-        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param h: Comma-separated list of column names to display.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
         :param local: If `true`, the request computes the list of selected nodes from
@@ -739,9 +740,8 @@ class CatClient(NamespacedClient):
             from the cluster state of the master node. In both cases the coordinating
             node will send requests for further information to each selected node.
         :param master_timeout: Period to wait for a connection to the master node.
-        :param s: List of columns that determine how the table should be sorted. Sorting
-            defaults to ascending and can be changed by setting `:asc` or `:desc` as
-            a suffix to the column name.
+        :param s: Comma-separated list of column names or column aliases used to sort
+            the response.
         :param time: The unit used to display time values.
         :param v: When set to `true` will enable verbose output.
         """
@@ -797,14 +797,14 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         time: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Gets configuration and usage information about anomaly detection jobs.
 
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cat-anomaly-detectors.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/cat-anomaly-detectors.html>`_
 
         :param job_id: Identifier for the anomaly detection job.
         :param allow_no_match: Specifies what to do when the request: * Contains wildcard
@@ -817,7 +817,7 @@ class CatClient(NamespacedClient):
         :param bytes: The unit used to display byte values.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
-        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param h: Comma-separated list of column names to display.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
         :param local: If `true`, the request computes the list of selected nodes from
@@ -825,9 +825,8 @@ class CatClient(NamespacedClient):
             from the cluster state of the master node. In both cases the coordinating
             node will send requests for further information to each selected node.
         :param master_timeout: Period to wait for a connection to the master node.
-        :param s: List of columns that determine how the table should be sorted. Sorting
-            defaults to ascending and can be changed by setting `:asc` or `:desc` as
-            a suffix to the column name.
+        :param s: Comma-separated list of column names or column aliases used to sort
+            the response.
         :param time: The unit used to display time values.
         :param v: When set to `true` will enable verbose output.
         """
@@ -888,14 +887,14 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         size: Optional[int] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Gets configuration and usage information about inference trained models.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-trained-model.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/cat-trained-model.html>`_
 
         :param model_id: The ID of the trained models stats to fetch
         :param allow_no_match: Whether to ignore if a wildcard expression matches no
@@ -972,13 +971,13 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Returns information about custom node attributes.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-nodeattrs.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/cat-nodeattrs.html>`_
 
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
@@ -1039,13 +1038,13 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Returns basic statistics about performance of cluster nodes.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-nodes.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/cat-nodes.html>`_
 
         :param bytes: The unit in which to display byte values
         :param format: Specifies the format to return the columnar data in, can be set
@@ -1111,13 +1110,13 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Returns a concise representation of the cluster pending tasks.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-pending-tasks.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/cat-pending-tasks.html>`_
 
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
@@ -1176,13 +1175,13 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Returns information about installed plugins across nodes node.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-plugins.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/cat-plugins.html>`_
 
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
@@ -1245,13 +1244,13 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Returns information about index shard recoveries, both on-going completed.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-recovery.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/cat-recovery.html>`_
 
         :param index: Comma-separated list or wildcard expression of index names to limit
             the returned information
@@ -1325,13 +1324,13 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Returns information about snapshot repositories registered in the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-repositories.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/cat-repositories.html>`_
 
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
@@ -1392,13 +1391,13 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Provides low-level information about the segments in the shards of an index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-segments.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/cat-segments.html>`_
 
         :param index: A comma-separated list of index names to limit the returned information
         :param bytes: The unit in which to display byte values
@@ -1466,13 +1465,13 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Provides a detailed view of shard allocation on nodes.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-shards.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/cat-shards.html>`_
 
         :param index: A comma-separated list of index names to limit the returned information
         :param bytes: The unit in which to display byte values
@@ -1540,13 +1539,13 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Returns all snapshots in a specific repository.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/cat-snapshots.html>`_
 
         :param repository: Name of repository from which to fetch the snapshot information
         :param format: Specifies the format to return the columnar data in, can be set
@@ -1616,14 +1615,14 @@ class CatClient(NamespacedClient):
         node_id: Optional[List[str]] = None,
         parent_task: Optional[int] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Returns information about the tasks currently executing on one or more nodes
         in the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/tasks.html>`_
 
         :param actions: A comma-separated list of actions that should be returned. Leave
             empty to return all.
@@ -1696,13 +1695,13 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Returns information about existing templates.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/cat-templates.html>`_
 
         :param name: A pattern that returned template names must match
         :param format: Specifies the format to return the columnar data in, can be set
@@ -1766,7 +1765,7 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         time: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
@@ -1774,7 +1773,7 @@ class CatClient(NamespacedClient):
         Returns cluster-wide thread pool statistics per node. By default the active,
         queue and rejected statistics are returned for all thread pools.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-thread-pool.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/cat-thread-pool.html>`_
 
         :param thread_pool_patterns: List of thread pool names used to limit the request.
             Accepts wildcard expressions.
@@ -1846,14 +1845,15 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         size: Optional[int] = None,
+        time: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Gets configuration and usage information about transforms.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-transforms.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/cat-transforms.html>`_
 
         :param transform_id: The id of the transform for which to get stats. '_all' or
             '*' implies all transforms
@@ -1863,7 +1863,7 @@ class CatClient(NamespacedClient):
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
         :param from_: skips a number of transform configs, defaults to 0
-        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param h: Comma-separated list of column names to display.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
         :param local: If `true`, the request computes the list of selected nodes from
@@ -1871,10 +1871,10 @@ class CatClient(NamespacedClient):
             from the cluster state of the master node. In both cases the coordinating
             node will send requests for further information to each selected node.
         :param master_timeout: Period to wait for a connection to the master node.
-        :param s: List of columns that determine how the table should be sorted. Sorting
-            defaults to ascending and can be changed by setting `:asc` or `:desc` as
-            a suffix to the column name.
+        :param s: Comma-separated list of column names or column aliases used to sort
+            the response.
         :param size: specifies a max number of transforms to get, defaults to 100
+        :param time: Unit used to display time values.
         :param v: When set to `true` will enable verbose output.
         """
         if transform_id not in SKIP_IN_PATH:
@@ -1908,6 +1908,8 @@ class CatClient(NamespacedClient):
             __query["s"] = s
         if size is not None:
             __query["size"] = size
+        if time is not None:
+            __query["time"] = time
         if v is not None:
             __query["v"] = v
         __headers = {"accept": "text/plain,application/json"}

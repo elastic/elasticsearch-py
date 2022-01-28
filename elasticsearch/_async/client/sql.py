@@ -20,7 +20,7 @@ from typing import Any, Dict, List, Optional, Union
 from elastic_transport import ObjectApiResponse
 
 from ._base import NamespacedClient
-from .utils import _rewrite_parameters
+from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class SqlClient(NamespacedClient):
@@ -61,6 +61,132 @@ class SqlClient(NamespacedClient):
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers, body=__body
+        )
+
+    @_rewrite_parameters()
+    async def delete_async(
+        self,
+        *,
+        id: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> ObjectApiResponse[Any]:
+        """
+        Deletes an async SQL search or a stored synchronous SQL search. If the search
+        is still running, the API cancels it.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-async-sql-search-api.html>`_
+
+        :param id: The async search ID
+        """
+        if id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'id'")
+        __path = f"/_sql/async/delete/{_quote(id)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "DELETE", __path, params=__query, headers=__headers
+        )
+
+    @_rewrite_parameters()
+    async def get_async(
+        self,
+        *,
+        id: Any,
+        delimiter: Optional[str] = None,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        format: Optional[str] = None,
+        human: Optional[bool] = None,
+        keep_alive: Optional[Any] = None,
+        pretty: Optional[bool] = None,
+        wait_for_completion_timeout: Optional[Any] = None,
+    ) -> ObjectApiResponse[Any]:
+        """
+        Returns the current status and available results for an async SQL search or stored
+        synchronous SQL search
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-async-sql-search-api.html>`_
+
+        :param id: The async search ID
+        :param delimiter: Separator for CSV results. The API only supports this parameter
+            for CSV responses.
+        :param format: Format for the response. You must specify a format using this
+            parameter or the Accept HTTP header. If you specify both, the API uses this
+            parameter.
+        :param keep_alive: Retention period for the search and its results. Defaults
+            to the `keep_alive` period for the original SQL search.
+        :param wait_for_completion_timeout: Period to wait for complete results. Defaults
+            to no timeout, meaning the request waits for complete search results.
+        """
+        if id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'id'")
+        __path = f"/_sql/async/{_quote(id)}"
+        __query: Dict[str, Any] = {}
+        if delimiter is not None:
+            __query["delimiter"] = delimiter
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if format is not None:
+            __query["format"] = format
+        if human is not None:
+            __query["human"] = human
+        if keep_alive is not None:
+            __query["keep_alive"] = keep_alive
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if wait_for_completion_timeout is not None:
+            __query["wait_for_completion_timeout"] = wait_for_completion_timeout
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
+
+    @_rewrite_parameters()
+    async def get_async_status(
+        self,
+        *,
+        id: Any,
+        error_trace: Optional[bool] = None,
+        filter_path: Optional[Union[List[str], str]] = None,
+        human: Optional[bool] = None,
+        pretty: Optional[bool] = None,
+    ) -> ObjectApiResponse[Any]:
+        """
+        Returns the current status of an async SQL search or a stored synchronous SQL
+        search
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-async-sql-search-status-api.html>`_
+
+        :param id: The async search ID
+        """
+        if id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'id'")
+        __path = f"/_sql/async/status/{_quote(id)}"
+        __query: Dict[str, Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
         )
 
     @_rewrite_parameters(

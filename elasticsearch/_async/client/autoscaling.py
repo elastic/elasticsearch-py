@@ -38,7 +38,7 @@ class AutoscalingClient(NamespacedClient):
         Deletes an autoscaling policy. Designed for indirect use by ECE/ESS and ECK.
         Direct use is not supported.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/autoscaling-delete-autoscaling-policy.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/autoscaling-delete-autoscaling-policy.html>`_
 
         :param name: the name of the autoscaling policy
         """
@@ -72,7 +72,7 @@ class AutoscalingClient(NamespacedClient):
         Gets the current autoscaling capacity based on the configured autoscaling policy.
         Designed for indirect use by ECE/ESS and ECK. Direct use is not supported.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/autoscaling-get-autoscaling-capacity.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/autoscaling-get-autoscaling-capacity.html>`_
         """
         __path = "/_autoscaling/capacity"
         __query: Dict[str, Any] = {}
@@ -103,7 +103,7 @@ class AutoscalingClient(NamespacedClient):
         Retrieves an autoscaling policy. Designed for indirect use by ECE/ESS and ECK.
         Direct use is not supported.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/autoscaling-get-autoscaling-policy.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/autoscaling-get-autoscaling-capacity.html>`_
 
         :param name: the name of the autoscaling policy
         """
@@ -141,7 +141,7 @@ class AutoscalingClient(NamespacedClient):
         Creates a new autoscaling policy. Designed for indirect use by ECE/ESS and ECK.
         Direct use is not supported.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/autoscaling-put-autoscaling-policy.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/autoscaling-put-autoscaling-policy.html>`_
 
         :param name: the name of the autoscaling policy
         :param policy:

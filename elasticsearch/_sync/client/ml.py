@@ -43,7 +43,7 @@ class MlClient(NamespacedClient):
         Closes one or more anomaly detection jobs. A job can be opened and closed multiple
         times throughout its lifecycle.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-close-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/ml-close-job.html>`_
 
         :param job_id: Identifier for the anomaly detection job. It can be a job identifier,
             a group name, or a wildcard expression. You can close multiple anomaly detection
@@ -96,7 +96,7 @@ class MlClient(NamespacedClient):
         """
         Deletes a calendar.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-calendar.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/ml-delete-calendar.html>`_
 
         :param calendar_id: A string that uniquely identifies a calendar.
         """
@@ -131,7 +131,7 @@ class MlClient(NamespacedClient):
         """
         Deletes scheduled events from a calendar.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-calendar-event.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/ml-delete-calendar-event.html>`_
 
         :param calendar_id: The ID of the calendar to modify
         :param event_id: The ID of the event to remove from the calendar
@@ -169,7 +169,7 @@ class MlClient(NamespacedClient):
         """
         Deletes anomaly detection jobs from a calendar.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-calendar-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/ml-delete-calendar-job.html>`_
 
         :param calendar_id: A string that uniquely identifies a calendar.
         :param job_id: An identifier for the anomaly detection jobs. It can be a job
@@ -209,7 +209,7 @@ class MlClient(NamespacedClient):
         """
         Deletes an existing data frame analytics job.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-dfanalytics.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/delete-dfanalytics.html>`_
 
         :param id: Identifier for the data frame analytics job.
         :param force: If `true`, it deletes a job that is not stopped; this method is
@@ -251,7 +251,7 @@ class MlClient(NamespacedClient):
         """
         Deletes an existing datafeed.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/ml-delete-datafeed.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/ml-delete-datafeed.html>`_
 
         :param datafeed_id: A numerical character string that uniquely identifies the
             datafeed. This identifier can contain lowercase alphanumeric characters (a-z
@@ -660,7 +660,7 @@ class MlClient(NamespacedClient):
         :param evaluation: Defines the type of evaluation you want to perform.
         :param index: Defines the `index` in which the evaluation will be performed.
         :param query: A query clause that retrieves a subset of data from the source
-            index. See [QueryDSL](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html).
+            index.
         """
         if evaluation is None:
             raise ValueError("Empty value passed for parameter 'evaluation'")
@@ -730,15 +730,14 @@ class MlClient(NamespacedClient):
         :param dest: The destination configuration, consisting of index and optionally
             results_field (ml by default).
         :param max_num_threads: The maximum number of threads to be used by the analysis.
-            The default value is 1. Using more threads may decrease the time necessary
-            to complete the analysis at the cost of using more CPU. Note that the process
-            may use additional threads for operational functionality other than the analysis
-            itself.
+            Using more threads may decrease the time necessary to complete the analysis
+            at the cost of using more CPU. Note that the process may use additional threads
+            for operational functionality other than the analysis itself.
         :param model_memory_limit: The approximate maximum amount of memory resources
-            that are permitted for analytical processing. The default value for data
-            frame analytics jobs is 1gb. If your elasticsearch.yml file contains an xpack.ml.max_model_memory_limit
-            setting, an error occurs when you try to create data frame analytics jobs
-            that have model_memory_limit values greater than that setting.
+            that are permitted for analytical processing. If your `elasticsearch.yml`
+            file contains an `xpack.ml.max_model_memory_limit` setting, an error occurs
+            when you try to create data frame analytics jobs that have `model_memory_limit`
+            values greater than that setting.
         :param source: The configuration of how to source the analysis data. It requires
             an index. Optionally, query and _source may be specified.
         """
@@ -2237,9 +2236,9 @@ class MlClient(NamespacedClient):
         `<http://www.elastic.co/guide/en/elasticsearch/reference/current/preview-dfanalytics.html>`_
 
         :param id: Identifier for the data frame analytics job.
-        :param config: A data frame analytics config as described in Create data frame
-            analytics jobs. Note that id and dest don’t need to be provided in the context
-            of this API.
+        :param config: A data frame analytics config as described in create data frame
+            analytics jobs. Note that `id` and `dest` don’t need to be provided in the
+            context of this API.
         """
         if id not in SKIP_IN_PATH:
             __path = f"/_ml/data_frame/analytics/{_quote(id)}/_preview"
@@ -2439,7 +2438,7 @@ class MlClient(NamespacedClient):
         """
         Instantiates a data frame analytics job.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/put-dfanalytics.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/put-dfanalytics.html>`_
 
         :param id: Identifier for the data frame analytics job. This identifier can contain
             lowercase alphanumeric characters (a-z and 0-9), hyphens, and underscores.
@@ -2451,9 +2450,9 @@ class MlClient(NamespacedClient):
         :param source: The configuration of how to source the analysis data.
         :param allow_lazy_start: Specifies whether this job can start when there is insufficient
             machine learning node capacity for it to be immediately assigned to a node.
-            If set to false and a machine learning node with capacity to run the job
-            cannot be immediately found, the API returns an error. If set to true, the
-            API does not return an error; the job waits in the `starting` state until
+            If set to `false` and a machine learning node with capacity to run the job
+            cannot be immediately found, the API returns an error. If set to `true`,
+            the API does not return an error; the job waits in the `starting` state until
             sufficient machine learning node capacity is available. This behavior is
             also affected by the cluster-wide `xpack.ml.max_lazy_ml_nodes` setting.
         :param analyzed_fields: Specifies `includes` and/or `excludes` patterns to select
@@ -3636,10 +3635,10 @@ class MlClient(NamespacedClient):
             at the cost of using more CPU. Note that the process may use additional threads
             for operational functionality other than the analysis itself.
         :param model_memory_limit: The approximate maximum amount of memory resources
-            that are permitted for analytical processing. The default value for data
-            frame analytics jobs is 1gb. If your elasticsearch.yml file contains an `xpack.ml.max_model_memory_limit`
-            setting, an error occurs when you try to create data frame analytics jobs
-            that have model_memory_limit values greater than that setting.
+            that are permitted for analytical processing. If your `elasticsearch.yml`
+            file contains an `xpack.ml.max_model_memory_limit` setting, an error occurs
+            when you try to create data frame analytics jobs that have `model_memory_limit`
+            values greater than that setting.
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
