@@ -154,7 +154,7 @@ class EqlClient(NamespacedClient):
         event_category_field: Optional[Any] = None,
         expand_wildcards: Optional[Any] = None,
         fetch_size: Optional[int] = None,
-        fields: Optional[Any] = None,
+        fields: Optional[Union[Any, List[Any]]] = None,
         filter: Optional[Union[Any, List[Any]]] = None,
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
@@ -163,6 +163,7 @@ class EqlClient(NamespacedClient):
         keep_on_completion: Optional[bool] = None,
         pretty: Optional[bool] = None,
         result_position: Optional[Any] = None,
+        runtime_mappings: Optional[Any] = None,
         size: Optional[int] = None,
         tiebreaker_field: Optional[Any] = None,
         timestamp_field: Optional[Any] = None,
@@ -191,6 +192,7 @@ class EqlClient(NamespacedClient):
         :param keep_alive:
         :param keep_on_completion:
         :param result_position:
+        :param runtime_mappings:
         :param size: For basic queries, the maximum number of matching events to return.
             Defaults to 10
         :param tiebreaker_field: Field used to sort hits with the same timestamp in ascending
@@ -237,6 +239,8 @@ class EqlClient(NamespacedClient):
             __query["pretty"] = pretty
         if result_position is not None:
             __body["result_position"] = result_position
+        if runtime_mappings is not None:
+            __body["runtime_mappings"] = runtime_mappings
         if size is not None:
             __body["size"] = size
         if tiebreaker_field is not None:

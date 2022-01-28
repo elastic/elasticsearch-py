@@ -687,7 +687,7 @@ class Elasticsearch(BaseClient):
         """
         Explicitly clears the search context for a scroll.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/clear-scroll-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/clear-scroll-api.html>`_
 
         :param scroll_id:
         """

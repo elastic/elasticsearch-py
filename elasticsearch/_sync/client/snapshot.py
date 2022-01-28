@@ -378,14 +378,21 @@ class SnapshotClient(NamespacedClient):
         *,
         repository: Any,
         snapshot: Any,
+        after: Optional[str] = None,
         error_trace: Optional[bool] = None,
         filter_path: Optional[Union[List[str], str]] = None,
+        from_sort_value: Optional[str] = None,
         human: Optional[bool] = None,
         ignore_unavailable: Optional[bool] = None,
         include_repository: Optional[bool] = None,
         index_details: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
+        offset: Optional[int] = None,
+        order: Optional[Any] = None,
         pretty: Optional[bool] = None,
+        size: Optional[int] = None,
+        slm_policy_filter: Optional[Any] = None,
+        sort: Optional[Any] = None,
         verbose: Optional[bool] = None,
     ) -> ObjectApiResponse[Any]:
         """
@@ -399,6 +406,12 @@ class SnapshotClient(NamespacedClient):
             wildcards (*). - To get information about all snapshots in a registered repository,
             use a wildcard (*) or _all. - To get information about any snapshots that
             are currently running, use _current.
+        :param after: Offset identifier to start pagination from as returned by the next
+            field in the response body.
+        :param from_sort_value: Value of the current sort column at which to start retrieval.
+            Can either be a string snapshot- or repository name when sorting by snapshot
+            or repository name, a millisecond time value or a number when sorting by
+            index- or shard count.
         :param ignore_unavailable: If false, the request returns an error for any snapshots
             that are unavailable.
         :param include_repository: Whether to include the repository name in the snapshot
@@ -410,6 +423,20 @@ class SnapshotClient(NamespacedClient):
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
+        :param offset: Numeric offset to start pagination from based on the snapshots
+            matching this request. Using a non-zero value for this parameter is mutually
+            exclusive with using the after parameter. Defaults to 0.
+        :param order: Sort order. Valid values are asc for ascending and desc for descending
+            order. Defaults to asc, meaning ascending order.
+        :param size: Maximum number of snapshots to return. Defaults to 0 which means
+            return all that match the request without limit.
+        :param slm_policy_filter: Filter snapshots by a comma-separated list of SLM policy
+            names that snapshots belong to. Also accepts wildcards (*) and combinations
+            of wildcards followed by exclude patterns starting with -. To include snapshots
+            not created by an SLM policy you can use the special pattern _none that will
+            match all snapshots without an SLM policy.
+        :param sort: Allows setting a sort order for the result. Defaults to start_time,
+            i.e. sorting by snapshot start time stamp.
         :param verbose: If true, returns additional information about each snapshot such
             as the version of Elasticsearch which took the snapshot, the start and end
             times of the snapshot, and the number of shards snapshotted.
@@ -420,10 +447,14 @@ class SnapshotClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'snapshot'")
         __path = f"/_snapshot/{_quote(repository)}/{_quote(snapshot)}"
         __query: Dict[str, Any] = {}
+        if after is not None:
+            __query["after"] = after
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
+        if from_sort_value is not None:
+            __query["from_sort_value"] = from_sort_value
         if human is not None:
             __query["human"] = human
         if ignore_unavailable is not None:
@@ -434,8 +465,18 @@ class SnapshotClient(NamespacedClient):
             __query["index_details"] = index_details
         if master_timeout is not None:
             __query["master_timeout"] = master_timeout
+        if offset is not None:
+            __query["offset"] = offset
+        if order is not None:
+            __query["order"] = order
         if pretty is not None:
             __query["pretty"] = pretty
+        if size is not None:
+            __query["size"] = size
+        if slm_policy_filter is not None:
+            __query["slm_policy_filter"] = slm_policy_filter
+        if sort is not None:
+            __query["sort"] = sort
         if verbose is not None:
             __query["verbose"] = verbose
         __headers = {"accept": "application/json"}

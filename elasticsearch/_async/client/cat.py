@@ -39,7 +39,7 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
@@ -115,7 +115,7 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
@@ -190,7 +190,7 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
@@ -262,7 +262,7 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
@@ -335,7 +335,7 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         ts: Optional[bool] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
@@ -404,7 +404,7 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> TextApiResponse:
         """
@@ -475,7 +475,7 @@ class CatClient(NamespacedClient):
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
         pri: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
@@ -563,7 +563,7 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
@@ -631,13 +631,14 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
+        time: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Gets configuration and usage information about data frame analytics jobs.
 
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cat-dfanalytics.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-dfanalytics.html>`_
 
         :param id: The ID of the data frame analytics to fetch
         :param allow_no_match: Whether to ignore if a wildcard expression matches no
@@ -645,7 +646,7 @@ class CatClient(NamespacedClient):
         :param bytes: The unit in which to display byte values
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
-        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param h: Comma-separated list of column names to display.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
         :param local: If `true`, the request computes the list of selected nodes from
@@ -653,9 +654,9 @@ class CatClient(NamespacedClient):
             from the cluster state of the master node. In both cases the coordinating
             node will send requests for further information to each selected node.
         :param master_timeout: Period to wait for a connection to the master node.
-        :param s: List of columns that determine how the table should be sorted. Sorting
-            defaults to ascending and can be changed by setting `:asc` or `:desc` as
-            a suffix to the column name.
+        :param s: Comma-separated list of column names or column aliases used to sort
+            the response.
+        :param time: Unit used to display time values.
         :param v: When set to `true` will enable verbose output.
         """
         if id not in SKIP_IN_PATH:
@@ -687,6 +688,8 @@ class CatClient(NamespacedClient):
             __query["pretty"] = pretty
         if s is not None:
             __query["s"] = s
+        if time is not None:
+            __query["time"] = time
         if v is not None:
             __query["v"] = v
         __headers = {"accept": "text/plain,application/json"}
@@ -709,19 +712,17 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         time: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Gets configuration and usage information about datafeeds.
 
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cat-datafeeds.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-datafeeds.html>`_
 
         :param datafeed_id: A numerical character string that uniquely identifies the
-            datafeed. This identifier can contain lowercase alphanumeric characters (a-z
-            and 0-9), hyphens, and underscores. It must start and end with alphanumeric
-            characters.
+            datafeed.
         :param allow_no_match: Specifies what to do when the request: * Contains wildcard
             expressions and there are no datafeeds that match. * Contains the `_all`
             string or no identifiers and there are no matches. * Contains wildcard expressions
@@ -731,7 +732,7 @@ class CatClient(NamespacedClient):
             are no matches or only partial matches.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
-        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param h: Comma-separated list of column names to display.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
         :param local: If `true`, the request computes the list of selected nodes from
@@ -739,9 +740,8 @@ class CatClient(NamespacedClient):
             from the cluster state of the master node. In both cases the coordinating
             node will send requests for further information to each selected node.
         :param master_timeout: Period to wait for a connection to the master node.
-        :param s: List of columns that determine how the table should be sorted. Sorting
-            defaults to ascending and can be changed by setting `:asc` or `:desc` as
-            a suffix to the column name.
+        :param s: Comma-separated list of column names or column aliases used to sort
+            the response.
         :param time: The unit used to display time values.
         :param v: When set to `true` will enable verbose output.
         """
@@ -797,14 +797,14 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         time: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Gets configuration and usage information about anomaly detection jobs.
 
-        `<http://www.elastic.co/guide/en/elasticsearch/reference/current/cat-anomaly-detectors.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-anomaly-detectors.html>`_
 
         :param job_id: Identifier for the anomaly detection job.
         :param allow_no_match: Specifies what to do when the request: * Contains wildcard
@@ -817,7 +817,7 @@ class CatClient(NamespacedClient):
         :param bytes: The unit used to display byte values.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
-        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param h: Comma-separated list of column names to display.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
         :param local: If `true`, the request computes the list of selected nodes from
@@ -825,9 +825,8 @@ class CatClient(NamespacedClient):
             from the cluster state of the master node. In both cases the coordinating
             node will send requests for further information to each selected node.
         :param master_timeout: Period to wait for a connection to the master node.
-        :param s: List of columns that determine how the table should be sorted. Sorting
-            defaults to ascending and can be changed by setting `:asc` or `:desc` as
-            a suffix to the column name.
+        :param s: Comma-separated list of column names or column aliases used to sort
+            the response.
         :param time: The unit used to display time values.
         :param v: When set to `true` will enable verbose output.
         """
@@ -888,14 +887,14 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         size: Optional[int] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Gets configuration and usage information about inference trained models.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-trained-model.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-trained-model.html>`_
 
         :param model_id: The ID of the trained models stats to fetch
         :param allow_no_match: Whether to ignore if a wildcard expression matches no
@@ -972,7 +971,7 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
@@ -1039,7 +1038,7 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
@@ -1111,7 +1110,7 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
@@ -1176,7 +1175,7 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
@@ -1245,7 +1244,7 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
@@ -1325,7 +1324,7 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
@@ -1392,7 +1391,7 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
@@ -1466,7 +1465,7 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
@@ -1540,7 +1539,7 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
@@ -1616,7 +1615,7 @@ class CatClient(NamespacedClient):
         node_id: Optional[List[str]] = None,
         parent_task: Optional[int] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
@@ -1696,7 +1695,7 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
@@ -1766,7 +1765,7 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         time: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
@@ -1846,14 +1845,15 @@ class CatClient(NamespacedClient):
         local: Optional[bool] = None,
         master_timeout: Optional[Any] = None,
         pretty: Optional[bool] = None,
-        s: Optional[List[str]] = None,
+        s: Optional[Any] = None,
         size: Optional[int] = None,
+        time: Optional[Any] = None,
         v: Optional[bool] = None,
     ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
         """
         Gets configuration and usage information about transforms.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/cat-transforms.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-transforms.html>`_
 
         :param transform_id: The id of the transform for which to get stats. '_all' or
             '*' implies all transforms
@@ -1863,7 +1863,7 @@ class CatClient(NamespacedClient):
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
         :param from_: skips a number of transform configs, defaults to 0
-        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param h: Comma-separated list of column names to display.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
         :param local: If `true`, the request computes the list of selected nodes from
@@ -1871,10 +1871,10 @@ class CatClient(NamespacedClient):
             from the cluster state of the master node. In both cases the coordinating
             node will send requests for further information to each selected node.
         :param master_timeout: Period to wait for a connection to the master node.
-        :param s: List of columns that determine how the table should be sorted. Sorting
-            defaults to ascending and can be changed by setting `:asc` or `:desc` as
-            a suffix to the column name.
+        :param s: Comma-separated list of column names or column aliases used to sort
+            the response.
         :param size: specifies a max number of transforms to get, defaults to 100
+        :param time: Unit used to display time values.
         :param v: When set to `true` will enable verbose output.
         """
         if transform_id not in SKIP_IN_PATH:
@@ -1908,6 +1908,8 @@ class CatClient(NamespacedClient):
             __query["s"] = s
         if size is not None:
             __query["size"] = size
+        if time is not None:
+            __query["time"] = time
         if v is not None:
             __query["v"] = v
         __headers = {"accept": "text/plain,application/json"}
