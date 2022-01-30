@@ -1141,7 +1141,7 @@ class SecurityClient(NamespacedClient):
         filter_path: Optional[Union[List[str], str]] = None,
         human: Optional[bool] = None,
         pretty: Optional[bool] = None,
-        priviledge: Optional[Any] = None,
+        privilege: Optional[Any] = None,
         username: Optional[Union[Any, None]] = None,
     ) -> ObjectApiResponse[Any]:
         """
@@ -1152,7 +1152,7 @@ class SecurityClient(NamespacedClient):
         :param application: The name of the application. Application privileges are always
             associated with exactly one application. If you do not specify this parameter,
             the API returns information about all privileges for all applications.
-        :param priviledge: The name of the privilege. If you do not specify this parameter,
+        :param privilege: The name of the privilege. If you do not specify this parameter,
             the API returns information about all privileges for the requested application.
         :param username:
         """
@@ -1168,8 +1168,8 @@ class SecurityClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if priviledge is not None:
-            __query["priviledge"] = priviledge
+        if privilege is not None:
+            __query["privilege"] = privilege
         if username is not None:
             __query["username"] = username
         __headers = {"accept": "application/json"}
