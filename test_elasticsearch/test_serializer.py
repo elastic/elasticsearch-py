@@ -94,7 +94,7 @@ def test_serializes_numpy_floats():
         np.float32,
         np.float64,
     ):
-        assert re.search(br'^{"d":1\.2[\d]*}$', ser.dumps({"d": np_type(1.2)}))
+        assert re.search(rb'^{"d":1\.2[\d]*}$', ser.dumps({"d": np_type(1.2)}))
 
 
 @requires_numpy_and_pandas
