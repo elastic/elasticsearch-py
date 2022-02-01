@@ -27,6 +27,7 @@ import re
 import sys
 import warnings
 import zipfile
+from typing import Tuple, Union
 
 import pytest
 import urllib3
@@ -637,8 +638,14 @@ try:
 except Exception as e:
     warnings.warn(f"Could not load REST API tests: {str(e)}")
 
+
+def _pytest_param_sort_key(param: pytest.param) -> Tuple[Union[str, int], ...]:
+    # Sorts pytest parameters by their ID in a human-friendly way.
+    return tuple(int(x) if x.isdigit() else x for x in re.split(r"([0-9]+)", param.id))
+
+
 # Sort the tests by ID so they're grouped together nicely.
-YAML_TEST_SPECS = sorted(YAML_TEST_SPECS, key=lambda param: param.id)
+YAML_TEST_SPECS = sorted(YAML_TEST_SPECS, key=_pytest_param_sort_key)
 
 
 if not RUN_ASYNC_REST_API_TESTS:
