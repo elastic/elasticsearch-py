@@ -1964,6 +1964,7 @@ class MlClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-trained-models-stats.html>`_
 
         :param model_id: The unique identifier of the trained model or a model alias.
+            It can be a comma-separated list or a wildcard expression.
         :param allow_no_match: Specifies what to do when the request: - Contains wildcard
             expressions and there are no models that match. - Contains the _all string
             or no identifiers and there are no matches. - Contains wildcard expressions
