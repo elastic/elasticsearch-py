@@ -337,11 +337,21 @@ def wait_for_pending_tasks(client, filter, timeout=30):
 def wait_for_pending_datafeeds_and_jobs(client, timeout=30):
     end_time = time.time() + timeout
     while time.time() < end_time:
-        if client.ml.get_datafeeds(datafeed_id="*", allow_no_match=True)["count"] == 0:
+        resp = client.ml.get_datafeeds(datafeed_id="*", allow_no_match=True)
+        if resp["count"] == 0:
             break
+        for datafeed in resp["datafeeds"]:
+            client.options(ignore_status=404).ml.delete_datafeed(
+                datafeed_id=datafeed["datafeed_id"]
+            )
+
     while time.time() < end_time:
-        if client.ml.get_jobs(job_id="*", allow_no_match=True)["count"] == 0:
+        resp = client.ml.get_jobs(job_id="*", allow_no_match=True)
+        if resp["count"] == 0:
             break
+        for job in resp["jobs"]:
+            client.options(ignore_status=404).ml.close_job(job_id=job["job_id"])
+            client.options(ignore_status=404).ml.delete_job(job_id=job["job_id"])
 
 
 def wait_for_cluster_state_updates_to_finish(client, timeout=30):
