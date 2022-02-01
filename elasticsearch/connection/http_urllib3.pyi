@@ -18,7 +18,7 @@
 import ssl
 from typing import Any, Mapping, Optional, Union
 
-import urllib3  # type: ignore
+import urllib3
 
 from .base import Connection
 
