@@ -30,7 +30,7 @@ class MonitoringClient(NamespacedClient):
         """
         Used by the monitoring features to send monitoring data.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/monitor-elasticsearch-cluster.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/monitor-elasticsearch-cluster.html>`_
 
         :arg body: The operation definition and data (action-data
             pairs), separated by newlines

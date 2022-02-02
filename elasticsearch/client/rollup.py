@@ -26,7 +26,7 @@ class RollupClient(NamespacedClient):
         """
         Deletes an existing rollup job.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/rollup-delete-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/rollup-delete-job.html>`_
 
         .. warning::
 
@@ -49,7 +49,7 @@ class RollupClient(NamespacedClient):
         """
         Retrieves the configuration, stats, and status of rollup jobs.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/rollup-get-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/rollup-get-job.html>`_
 
         .. warning::
 
@@ -71,7 +71,7 @@ class RollupClient(NamespacedClient):
         Returns the capabilities of any rollup jobs that have been configured for a
         specific index or index pattern.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/rollup-get-rollup-caps.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/rollup-get-rollup-caps.html>`_
 
         .. warning::
 
@@ -93,7 +93,7 @@ class RollupClient(NamespacedClient):
         Returns the rollup capabilities of all jobs inside of a rollup index (e.g. the
         index where rollup data is stored).
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/rollup-get-rollup-index-caps.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/rollup-get-rollup-index-caps.html>`_
 
         .. warning::
 
@@ -118,7 +118,7 @@ class RollupClient(NamespacedClient):
         """
         Creates a rollup job.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/rollup-put-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/rollup-put-job.html>`_
 
         .. warning::
 
@@ -150,7 +150,7 @@ class RollupClient(NamespacedClient):
         """
         Enables searching rolled-up data using the standard query DSL.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/rollup-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/rollup-search.html>`_
 
         .. warning::
 
@@ -185,7 +185,7 @@ class RollupClient(NamespacedClient):
         """
         Starts an existing, stopped rollup job.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/rollup-start-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/rollup-start-job.html>`_
 
         .. warning::
 
@@ -213,7 +213,7 @@ class RollupClient(NamespacedClient):
         """
         Stops an existing, started rollup job.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/rollup-stop-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/rollup-stop-job.html>`_
 
         .. warning::
 
@@ -245,7 +245,7 @@ class RollupClient(NamespacedClient):
         """
         Rollup an index
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/xpack-rollup.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/xpack-rollup.html>`_
 
         .. warning::
 

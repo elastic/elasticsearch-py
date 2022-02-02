@@ -30,7 +30,7 @@ class NodesClient(NamespacedClient):
         """
         Reloads secure settings.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/secure-settings.html#reloadable-secure-settings>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/secure-settings.html#reloadable-secure-settings>`_
 
         :arg body: An object containing the password for the
             elasticsearch keystore
@@ -56,7 +56,7 @@ class NodesClient(NamespacedClient):
         """
         Returns information about nodes in the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/cluster-nodes-info.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/cluster-nodes-info.html>`_
 
         :arg node_id: A comma-separated list of node IDs or names to
             limit the returned information; use `_local` to return information from
@@ -93,7 +93,7 @@ class NodesClient(NamespacedClient):
         """
         Returns statistical information about nodes in the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/cluster-nodes-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/cluster-nodes-stats.html>`_
 
         :arg node_id: A comma-separated list of node IDs or names to
             limit the returned information; use `_local` to return information from
@@ -148,7 +148,7 @@ class NodesClient(NamespacedClient):
         """
         Returns information about hot threads on each node in the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/cluster-nodes-hot-threads.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/cluster-nodes-hot-threads.html>`_
 
         :arg node_id: A comma-separated list of node IDs or names to
             limit the returned information; use `_local` to return information from
@@ -183,7 +183,7 @@ class NodesClient(NamespacedClient):
         """
         Returns low-level information about REST actions usage on nodes.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/cluster-nodes-usage.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/cluster-nodes-usage.html>`_
 
         :arg node_id: A comma-separated list of node IDs or names to
             limit the returned information; use `_local` to return information from
@@ -209,7 +209,7 @@ class NodesClient(NamespacedClient):
         """
         Removes the archived repositories metering information present in the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/clear-repositories-metering-archive-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/clear-repositories-metering-archive-api.html>`_
 
         .. warning::
 
@@ -241,7 +241,7 @@ class NodesClient(NamespacedClient):
         """
         Returns cluster repositories metering information.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/get-repositories-metering-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/get-repositories-metering-api.html>`_
 
         .. warning::
 

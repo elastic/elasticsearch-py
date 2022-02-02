@@ -274,7 +274,7 @@ class Elasticsearch(object):
         """
         Returns whether the cluster is running.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/index.html>`_
         """
         try:
             return self.transport.perform_request(
@@ -290,7 +290,7 @@ class Elasticsearch(object):
         """
         Returns basic information about the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/index.html>`_
         """
         return self.transport.perform_request(
             "GET", "/", params=params, headers=headers
@@ -313,7 +313,7 @@ class Elasticsearch(object):
         Creates a new document in the index.  Returns a 409 response when a document
         with a same ID already exists in the index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/docs-index_.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/docs-index_.html>`_
 
         :arg index: The name of the index
         :arg id: Document ID
@@ -369,7 +369,7 @@ class Elasticsearch(object):
         """
         Creates or updates a document in an index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/docs-index_.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/docs-index_.html>`_
 
         :arg index: The name of the index
         :arg document: The document
@@ -435,7 +435,7 @@ class Elasticsearch(object):
         """
         Allows to perform multiple index/update/delete operations in a single request.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/docs-bulk.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/docs-bulk.html>`_
 
         :arg body: The operation definition and data (action-data
             pairs), separated by newlines
@@ -486,7 +486,7 @@ class Elasticsearch(object):
         """
         Explicitly clears the search context for a scroll.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/clear-scroll-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/clear-scroll-api.html>`_
 
         :arg body: A comma-separated list of scroll IDs to clear if none
             was specified via the scroll_id parameter
@@ -525,7 +525,7 @@ class Elasticsearch(object):
         """
         Returns number of documents matching a query.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/search-count.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/search-count.html>`_
 
         :arg body: A query to restrict the results specified with the
             Query DSL (optional)
@@ -584,7 +584,7 @@ class Elasticsearch(object):
         """
         Removes a document from the index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/docs-delete.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/docs-delete.html>`_
 
         :arg index: The name of the index
         :arg id: The document ID
@@ -622,9 +622,6 @@ class Elasticsearch(object):
         )
 
     @query_params(
-        "_source",
-        "_source_excludes",
-        "_source_includes",
         "allow_no_indices",
         "analyze_wildcard",
         "analyzer",
@@ -662,19 +659,13 @@ class Elasticsearch(object):
         """
         Deletes documents matching the provided query.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/docs-delete-by-query.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/docs-delete-by-query.html>`_
 
         :arg index: A comma-separated list of index names to search; use
             `_all` or empty string to perform the operation on all indices
         :arg body: The search definition using the Query DSL
         :arg doc_type: A comma-separated list of document types to
             search; leave empty to perform the operation on all types
-        :arg _source: True or false to return the _source field or not,
-            or a list of fields to return
-        :arg _source_excludes: A list of fields to exclude from the
-            returned _source field
-        :arg _source_includes: A list of fields to extract and return
-            from the _source field
         :arg allow_no_indices: Whether to ignore if a wildcard indices
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
@@ -761,7 +752,7 @@ class Elasticsearch(object):
         Changes the number of requests per second for a particular Delete By Query
         operation.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/docs-delete-by-query.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/docs-delete-by-query.html>`_
 
         :arg task_id: The task id to rethrottle
         :arg requests_per_second: The throttle to set on this request in
@@ -786,7 +777,7 @@ class Elasticsearch(object):
         """
         Deletes a script.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/modules-scripting.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/modules-scripting.html>`_
 
         :arg id: Script ID
         :arg master_timeout: Specify timeout for connection to master
@@ -816,7 +807,7 @@ class Elasticsearch(object):
         """
         Returns information about whether a document exists in an index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/docs-get.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/docs-get.html>`_
 
         :arg index: The name of the index
         :arg id: The document ID
@@ -868,7 +859,7 @@ class Elasticsearch(object):
         """
         Returns information about whether a document source exists in an index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/docs-get.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/docs-get.html>`_
 
         :arg index: The name of the index
         :arg id: The document ID
@@ -924,7 +915,7 @@ class Elasticsearch(object):
         """
         Returns information about why a specific matches (or doesn't match) a query.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/search-explain.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/search-explain.html>`_
 
         :arg index: The name of the index
         :arg id: The document ID
@@ -979,7 +970,7 @@ class Elasticsearch(object):
         Returns the information about the capabilities of fields among multiple
         indices.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/search-field-caps.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/search-field-caps.html>`_
 
         :arg body: An index filter specified with the Query DSL
         :arg index: A comma-separated list of index names; use `_all` or
@@ -1021,7 +1012,7 @@ class Elasticsearch(object):
         """
         Returns a document.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/docs-get.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/docs-get.html>`_
 
         :arg index: Name of the index that contains the document.
         :arg id: Unique identifier of the document.
@@ -1068,7 +1059,7 @@ class Elasticsearch(object):
         """
         Returns a script.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/modules-scripting.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/modules-scripting.html>`_
 
         :arg id: Script ID
         :arg master_timeout: Specify timeout for connection to master
@@ -1096,7 +1087,7 @@ class Elasticsearch(object):
         """
         Returns the source of a document.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/docs-get.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/docs-get.html>`_
 
         :arg index: The name of the index
         :arg id: The document ID
@@ -1148,7 +1139,7 @@ class Elasticsearch(object):
         """
         Allows to get multiple documents in one request.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/docs-multi-get.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/docs-multi-get.html>`_
 
         :arg body: Document identifiers; can be either `docs`
             (containing full document information) or `ids` (when index and type is
@@ -1197,7 +1188,7 @@ class Elasticsearch(object):
         """
         Allows to execute several search operations in one request.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/search-multi-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/search-multi-search.html>`_
 
         :arg body: The request definitions (metadata-search request
             definition pairs), separated by newlines
@@ -1255,7 +1246,7 @@ class Elasticsearch(object):
         """
         Allows to execute several search template operations in one request.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/search-multi-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/search-multi-search.html>`_
 
         :arg body: The request definitions (metadata-search request
             definition pairs), separated by newlines
@@ -1309,7 +1300,7 @@ class Elasticsearch(object):
         """
         Returns multiple termvectors in one request.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/docs-multi-termvectors.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/docs-multi-termvectors.html>`_
 
         :arg body: Define ids, documents, parameters or a list of
             parameters per document here. You must at least provide a list of
@@ -1367,7 +1358,7 @@ class Elasticsearch(object):
         """
         Creates or updates a script.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/modules-scripting.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/modules-scripting.html>`_
 
         :arg id: Script ID
         :arg body: The document
@@ -1400,7 +1391,7 @@ class Elasticsearch(object):
         Allows to evaluate the quality of ranked search results over a set of typical
         search queries
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/search-rank-eval.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/search-rank-eval.html>`_
 
         :arg body: The ranking evaluation search definition, including
             search requests, document ratings and ranking metric definition.
@@ -1446,7 +1437,7 @@ class Elasticsearch(object):
         source documents by a query, changing the destination index settings, or
         fetching the documents from a remote cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/docs-reindex.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/docs-reindex.html>`_
 
         :arg body: The search definition using the Query DSL and the
             prototype for the index request.
@@ -1485,7 +1476,7 @@ class Elasticsearch(object):
         """
         Changes the number of requests per second for a particular Reindex operation.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/docs-reindex.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/docs-reindex.html>`_
 
         :arg task_id: The task id to rethrottle
         :arg requests_per_second: The throttle to set on this request in
@@ -1509,7 +1500,7 @@ class Elasticsearch(object):
         """
         Allows to use the Mustache language to pre-render a search definition.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/render-search-template-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/render-search-template-api.html>`_
 
         :arg body: The search definition template and its params
         :arg id: The id of the stored search template
@@ -1559,7 +1550,7 @@ class Elasticsearch(object):
         """
         Allows to retrieve a large numbers of results from a single search request.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/search-request-body.html#request-body-search-scroll>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/search-request-body.html#request-body-search-scroll>`_
 
         :arg body: The scroll ID if not passed by URL or query
             parameter.
@@ -1664,7 +1655,7 @@ class Elasticsearch(object):
         """
         Returns results matching a query.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/search-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/search-search.html>`_
 
         :arg body: The search definition using the Query DSL
         :arg index: A comma-separated list of index names to search; use
@@ -1744,7 +1735,7 @@ class Elasticsearch(object):
         :arg post_filter:
         :arg pre_filter_shard_size: A threshold that enforces a pre-
             filter roundtrip to prefilter search shards based on query rewriting if
-            the number of shards the search request expands to exceeds the
+            the number of shards the search request expands to exceeds the
             threshold. This filter roundtrip can limit the number of shards
             significantly if for instance a shard can not match any documents based
             on its rewrite method ie. if date filters are mandatory to match but the
@@ -1849,7 +1840,7 @@ class Elasticsearch(object):
         Returns information about the indices and shards that a search request would be
         executed against.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/search-shards.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/search-shards.html>`_
 
         :arg index: A comma-separated list of index names to search; use
             `_all` or empty string to perform the operation on all indices
@@ -1894,7 +1885,7 @@ class Elasticsearch(object):
         """
         Allows to use the Mustache language to pre-render a search definition.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/search-template.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/search-template.html>`_
 
         :arg body: The search definition template and its params
         :arg index: A comma-separated list of index names to search; use
@@ -1962,7 +1953,7 @@ class Elasticsearch(object):
         Returns information and statistics about terms in the fields of a particular
         document.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/docs-termvectors.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/docs-termvectors.html>`_
 
         :arg index: The index in which the document resides.
         :arg body: Define parameters and or supply a document to get
@@ -2033,7 +2024,7 @@ class Elasticsearch(object):
         """
         Updates a document with a script or partial document.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/docs-update.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/docs-update.html>`_
 
         :arg index: The name of the index
         :arg id: Document ID
@@ -2103,9 +2094,6 @@ class Elasticsearch(object):
         )
 
     @query_params(
-        "_source",
-        "_source_excludes",
-        "_source_includes",
         "allow_no_indices",
         "analyze_wildcard",
         "analyzer",
@@ -2148,19 +2136,13 @@ class Elasticsearch(object):
         Performs an update on every document in the index without changing the source,
         for example to pick up a mapping change.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/docs-update-by-query.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/docs-update-by-query.html>`_
 
         :arg index: A comma-separated list of index names to search; use
             `_all` or empty string to perform the operation on all indices
         :arg body: The search definition using the Query DSL
         :arg doc_type: A comma-separated list of document types to
             search; leave empty to perform the operation on all types
-        :arg _source: True or false to return the _source field or not,
-            or a list of fields to return
-        :arg _source_excludes: A list of fields to exclude from the
-            returned _source field
-        :arg _source_includes: A list of fields to extract and return
-            from the _source field
         :arg allow_no_indices: Whether to ignore if a wildcard indices
             expression resolves into no concrete indices. (This includes `_all`
             string or when no indices have been specified)
@@ -2250,7 +2232,7 @@ class Elasticsearch(object):
         Changes the number of requests per second for a particular Update By Query
         operation.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/docs-update-by-query.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/docs-update-by-query.html>`_
 
         :arg task_id: The task id to rethrottle
         :arg requests_per_second: The throttle to set on this request in
@@ -2286,7 +2268,7 @@ class Elasticsearch(object):
         """
         Returns available script types, languages and contexts
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/modules-scripting.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/modules-scripting.html>`_
         """
         return self.transport.perform_request(
             "GET", "/_script_language", params=params, headers=headers
@@ -2300,7 +2282,7 @@ class Elasticsearch(object):
         """
         Close a point in time
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/point-in-time-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/point-in-time-api.html>`_
 
         :arg body: a point-in-time id to close
         """
@@ -2320,7 +2302,7 @@ class Elasticsearch(object):
         """
         Open a point in time that can be used in subsequent searches
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/point-in-time-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/point-in-time-api.html>`_
 
         :arg index: A comma-separated list of index names to open point
             in time; use `_all` or empty string to perform the operation on all
@@ -2352,7 +2334,7 @@ class Elasticsearch(object):
         the provided string. It is designed for low-latency look-ups used in auto-
         complete scenarios.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/search-terms-enum.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/search-terms-enum.html>`_
 
         :arg index: A comma-separated list of index names to search; use
             `_all` or empty string to perform the operation on all indices
@@ -2398,7 +2380,7 @@ class Elasticsearch(object):
         Searches a vector tile for geospatial values. Returns results as a binary
         Mapbox vector tile.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/search-vector-tile-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/search-vector-tile-api.html>`_
 
         .. warning::
 

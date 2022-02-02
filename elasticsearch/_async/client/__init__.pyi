@@ -159,12 +159,12 @@ class AsyncElasticsearch(object):
         document: Any,
         doc_type: Optional[str] = ...,
         pipeline: Optional[str] = ...,
-        refresh: Optional[Union[Union[Literal["wait_for"], str], bool]] = ...,
+        refresh: Optional[Union[Literal["false", "true", "wait_for"], bool, str]] = ...,
         routing: Optional[str] = ...,
         timeout: Optional[Union[int, str]] = ...,
         version: Optional[int] = ...,
         version_type: Optional[
-            Union[Literal["internal", "external", "external_gte", "force"], str]
+            Union[Literal["external", "external_gte", "force", "internal"], str]
         ] = ...,
         wait_for_active_shards: Optional[Union[Union[Literal["all"], str], int]] = ...,
         pretty: Optional[bool] = ...,
@@ -189,15 +189,15 @@ class AsyncElasticsearch(object):
         id: Optional[str] = ...,
         if_primary_term: Optional[int] = ...,
         if_seq_no: Optional[int] = ...,
-        op_type: Optional[Union[Literal["index", "create"], str]] = ...,
+        op_type: Optional[Union[Literal["create", "index"], str]] = ...,
         pipeline: Optional[str] = ...,
-        refresh: Optional[Union[Union[Literal["wait_for"], str], bool]] = ...,
+        refresh: Optional[Union[Literal["false", "true", "wait_for"], bool, str]] = ...,
         require_alias: Optional[bool] = ...,
         routing: Optional[str] = ...,
         timeout: Optional[Union[int, str]] = ...,
         version: Optional[int] = ...,
         version_type: Optional[
-            Union[Literal["internal", "external", "external_gte", "force"], str]
+            Union[Literal["external", "external_gte", "force", "internal"], str]
         ] = ...,
         wait_for_active_shards: Optional[Union[Union[Literal["all"], str], int]] = ...,
         pretty: Optional[bool] = ...,
@@ -300,12 +300,12 @@ class AsyncElasticsearch(object):
         doc_type: Optional[str] = ...,
         if_primary_term: Optional[int] = ...,
         if_seq_no: Optional[int] = ...,
-        refresh: Optional[Union[Union[Literal["wait_for"], str], bool]] = ...,
+        refresh: Optional[Union[Literal["false", "true", "wait_for"], bool, str]] = ...,
         routing: Optional[str] = ...,
         timeout: Optional[Union[int, str]] = ...,
         version: Optional[int] = ...,
         version_type: Optional[
-            Union[Literal["internal", "external", "external_gte", "force"], str]
+            Union[Literal["external", "external_gte", "force", "internal"], str]
         ] = ...,
         wait_for_active_shards: Optional[Union[Union[Literal["all"], str], int]] = ...,
         pretty: Optional[bool] = ...,
@@ -327,9 +327,6 @@ class AsyncElasticsearch(object):
         index: Any,
         body: Mapping[str, Any],
         doc_type: Optional[Any] = ...,
-        _source: Optional[Any] = ...,
-        _source_excludes: Optional[Any] = ...,
-        _source_includes: Optional[Any] = ...,
         allow_no_indices: Optional[bool] = ...,
         analyze_wildcard: Optional[bool] = ...,
         analyzer: Optional[Any] = ...,
@@ -426,7 +423,7 @@ class AsyncElasticsearch(object):
         stored_fields: Optional[Union[List[str], str]] = ...,
         version: Optional[int] = ...,
         version_type: Optional[
-            Union[Literal["internal", "external", "external_gte", "force"], str]
+            Union[Literal["external", "external_gte", "force", "internal"], str]
         ] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -540,7 +537,7 @@ class AsyncElasticsearch(object):
         stored_fields: Optional[Union[List[str], str]] = ...,
         version: Optional[int] = ...,
         version_type: Optional[
-            Union[Literal["internal", "external", "external_gte", "force"], str]
+            Union[Literal["external", "external_gte", "force", "internal"], str]
         ] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,
@@ -868,18 +865,17 @@ class AsyncElasticsearch(object):
         batched_reduce_size: Optional[int] = ...,
         ccs_minimize_roundtrips: Optional[bool] = ...,
         collapse: Optional[Mapping[str, Any]] = ...,
-        default_operator: Optional[Union[Literal["AND", "OR"], str]] = ...,
+        default_operator: Optional[Union[Literal["and", "or"], str]] = ...,
         df: Optional[str] = ...,
         docvalue_fields: Optional[Union[List[str], str]] = ...,
         expand_wildcards: Optional[
             Union[
-                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
-                Union[Literal["all", "open", "closed", "hidden", "none"], str],
-                str,
+                List[Union[Literal["all", "closed", "hidden", "none", "open"], str]],
+                Union[Literal["all", "closed", "hidden", "none", "open"], str],
             ]
         ] = ...,
         explain: Optional[bool] = ...,
-        fields: Optional[List[Union[Mapping[str, Any], str]]] = ...,
+        fields: Optional[List[Mapping[str, Any]]] = ...,
         from_: Optional[int] = ...,
         highlight: Optional[Mapping[str, Any]] = ...,
         ignore_throttled: Optional[bool] = ...,
@@ -905,7 +901,7 @@ class AsyncElasticsearch(object):
         scroll: Optional[Union[int, str]] = ...,
         search_after: Optional[List[Union[None, float, int, str]]] = ...,
         search_type: Optional[
-            Union[Literal["query_then_fetch", "dfs_query_then_fetch"], str]
+            Union[Literal["dfs_query_then_fetch", "query_then_fetch"], str]
         ] = ...,
         seq_no_primary_term: Optional[bool] = ...,
         size: Optional[int] = ...,
@@ -913,12 +909,10 @@ class AsyncElasticsearch(object):
         sort: Optional[Union[List[str], str]] = ...,
         stats: Optional[List[str]] = ...,
         stored_fields: Optional[Union[List[str], str]] = ...,
-        suggest: Optional[
-            Union[Mapping[str, Any], Mapping[str, Mapping[str, Any]]]
-        ] = ...,
+        suggest: Optional[Mapping[str, Any]] = ...,
         suggest_field: Optional[str] = ...,
         suggest_mode: Optional[
-            Union[Literal["missing", "popular", "always"], str]
+            Union[Literal["always", "missing", "popular"], str]
         ] = ...,
         suggest_size: Optional[int] = ...,
         suggest_text: Optional[str] = ...,
@@ -1043,11 +1037,11 @@ class AsyncElasticsearch(object):
         if_primary_term: Optional[int] = ...,
         if_seq_no: Optional[int] = ...,
         lang: Optional[str] = ...,
-        refresh: Optional[Union[Union[Literal["wait_for"], str], bool]] = ...,
+        refresh: Optional[Union[Literal["false", "true", "wait_for"], bool, str]] = ...,
         require_alias: Optional[bool] = ...,
         retry_on_conflict: Optional[int] = ...,
         routing: Optional[str] = ...,
-        script: Optional[Union[Mapping[str, Any], str]] = ...,
+        script: Optional[Mapping[str, Any]] = ...,
         scripted_upsert: Optional[bool] = ...,
         timeout: Optional[Union[int, str]] = ...,
         upsert: Optional[Any] = ...,
@@ -1071,9 +1065,6 @@ class AsyncElasticsearch(object):
         index: Any,
         body: Optional[Mapping[str, Any]] = ...,
         doc_type: Optional[Any] = ...,
-        _source: Optional[Any] = ...,
-        _source_excludes: Optional[Any] = ...,
-        _source_includes: Optional[Any] = ...,
         allow_no_indices: Optional[bool] = ...,
         analyze_wildcard: Optional[bool] = ...,
         analyzer: Optional[Any] = ...,
@@ -1240,23 +1231,12 @@ class AsyncElasticsearch(object):
         extent: Optional[int] = ...,
         fields: Optional[Union[List[str], str]] = ...,
         grid_precision: Optional[int] = ...,
-        grid_type: Optional[Union[Literal["grid", "point", "centroid"], str]] = ...,
+        grid_type: Optional[Union[Literal["centroid", "grid", "point"], str]] = ...,
         query: Optional[Mapping[str, Any]] = ...,
         runtime_mappings: Optional[Mapping[str, Mapping[str, Any]]] = ...,
         size: Optional[int] = ...,
         sort: Optional[
-            Union[
-                List[
-                    Union[
-                        Mapping[str, Any],
-                        Union[Literal["asc", "desc", "_doc"], str],
-                        str,
-                    ]
-                ],
-                Union[
-                    Mapping[str, Any], Union[Literal["asc", "desc", "_doc"], str], str
-                ],
-            ]
+            Union[List[Union[Mapping[str, Any], str]], Union[Mapping[str, Any], str]]
         ] = ...,
         pretty: Optional[bool] = ...,
         human: Optional[bool] = ...,

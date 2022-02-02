@@ -57,9 +57,8 @@ class IndicesClient(NamespacedClient):
         allow_no_indices: Optional[bool] = ...,
         expand_wildcards: Optional[
             Union[
-                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
-                Union[Literal["all", "open", "closed", "hidden", "none"], str],
-                str,
+                List[Union[Literal["all", "closed", "hidden", "none", "open"], str]],
+                Union[Literal["all", "closed", "hidden", "none", "open"], str],
             ]
         ] = ...,
         ignore_unavailable: Optional[bool] = ...,
@@ -83,9 +82,8 @@ class IndicesClient(NamespacedClient):
         allow_no_indices: Optional[bool] = ...,
         expand_wildcards: Optional[
             Union[
-                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
-                Union[Literal["all", "open", "closed", "hidden", "none"], str],
-                str,
+                List[Union[Literal["all", "closed", "hidden", "none", "open"], str]],
+                Union[Literal["all", "closed", "hidden", "none", "open"], str],
             ]
         ] = ...,
         force: Optional[bool] = ...,
@@ -111,9 +109,7 @@ class IndicesClient(NamespacedClient):
         body: Optional[Mapping[str, Any]] = ...,
         aliases: Optional[Mapping[str, Mapping[str, Any]]] = ...,
         include_type_name: Optional[bool] = ...,
-        mappings: Optional[
-            Union[Mapping[str, Any], Mapping[str, Mapping[str, Any]]]
-        ] = ...,
+        mappings: Optional[Mapping[str, Any]] = ...,
         master_timeout: Optional[Union[int, str]] = ...,
         settings: Optional[Mapping[str, Any]] = ...,
         timeout: Optional[Union[int, str]] = ...,
@@ -160,9 +156,8 @@ class IndicesClient(NamespacedClient):
         allow_no_indices: Optional[bool] = ...,
         expand_wildcards: Optional[
             Union[
-                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
-                Union[Literal["all", "open", "closed", "hidden", "none"], str],
-                str,
+                List[Union[Literal["all", "closed", "hidden", "none", "open"], str]],
+                Union[Literal["all", "closed", "hidden", "none", "open"], str],
             ]
         ] = ...,
         flat_settings: Optional[bool] = ...,
@@ -191,9 +186,8 @@ class IndicesClient(NamespacedClient):
         allow_no_indices: Optional[bool] = ...,
         expand_wildcards: Optional[
             Union[
-                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
-                Union[Literal["all", "open", "closed", "hidden", "none"], str],
-                str,
+                List[Union[Literal["all", "closed", "hidden", "none", "open"], str]],
+                Union[Literal["all", "closed", "hidden", "none", "open"], str],
             ]
         ] = ...,
         ignore_unavailable: Optional[bool] = ...,
@@ -220,9 +214,8 @@ class IndicesClient(NamespacedClient):
         allow_no_indices: Optional[bool] = ...,
         expand_wildcards: Optional[
             Union[
-                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
-                Union[Literal["all", "open", "closed", "hidden", "none"], str],
-                str,
+                List[Union[Literal["all", "closed", "hidden", "none", "open"], str]],
+                Union[Literal["all", "closed", "hidden", "none", "open"], str],
             ]
         ] = ...,
         ignore_unavailable: Optional[bool] = ...,
@@ -249,9 +242,8 @@ class IndicesClient(NamespacedClient):
         allow_no_indices: Optional[bool] = ...,
         expand_wildcards: Optional[
             Union[
-                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
-                Union[Literal["all", "open", "closed", "hidden", "none"], str],
-                str,
+                List[Union[Literal["all", "closed", "hidden", "none", "open"], str]],
+                Union[Literal["all", "closed", "hidden", "none", "open"], str],
             ]
         ] = ...,
         ignore_unavailable: Optional[bool] = ...,
@@ -277,9 +269,8 @@ class IndicesClient(NamespacedClient):
         allow_no_indices: Optional[bool] = ...,
         expand_wildcards: Optional[
             Union[
-                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
-                Union[Literal["all", "open", "closed", "hidden", "none"], str],
-                str,
+                List[Union[Literal["all", "closed", "hidden", "none", "open"], str]],
+                Union[Literal["all", "closed", "hidden", "none", "open"], str],
             ]
         ] = ...,
         flat_settings: Optional[bool] = ...,
@@ -355,9 +346,8 @@ class IndicesClient(NamespacedClient):
         allow_no_indices: Optional[bool] = ...,
         expand_wildcards: Optional[
             Union[
-                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
-                Union[Literal["all", "open", "closed", "hidden", "none"], str],
-                str,
+                List[Union[Literal["all", "closed", "hidden", "none", "open"], str]],
+                Union[Literal["all", "closed", "hidden", "none", "open"], str],
             ]
         ] = ...,
         ignore_unavailable: Optional[bool] = ...,
@@ -386,9 +376,8 @@ class IndicesClient(NamespacedClient):
         allow_no_indices: Optional[bool] = ...,
         expand_wildcards: Optional[
             Union[
-                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
-                Union[Literal["all", "open", "closed", "hidden", "none"], str],
-                str,
+                List[Union[Literal["all", "closed", "hidden", "none", "open"], str]],
+                Union[Literal["all", "closed", "hidden", "none", "open"], str],
             ]
         ] = ...,
         ignore_unavailable: Optional[bool] = ...,
@@ -437,9 +426,8 @@ class IndicesClient(NamespacedClient):
         allow_no_indices: Optional[bool] = ...,
         expand_wildcards: Optional[
             Union[
-                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
-                Union[Literal["all", "open", "closed", "hidden", "none"], str],
-                str,
+                List[Union[Literal["all", "closed", "hidden", "none", "open"], str]],
+                Union[Literal["all", "closed", "hidden", "none", "open"], str],
             ]
         ] = ...,
         ignore_unavailable: Optional[bool] = ...,
@@ -465,9 +453,8 @@ class IndicesClient(NamespacedClient):
         allow_no_indices: Optional[bool] = ...,
         expand_wildcards: Optional[
             Union[
-                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
-                Union[Literal["all", "open", "closed", "hidden", "none"], str],
-                str,
+                List[Union[Literal["all", "closed", "hidden", "none", "open"], str]],
+                Union[Literal["all", "closed", "hidden", "none", "open"], str],
             ]
         ] = ...,
         ignore_unavailable: Optional[bool] = ...,
@@ -614,9 +601,8 @@ class IndicesClient(NamespacedClient):
         allow_no_indices: Optional[bool] = ...,
         expand_wildcards: Optional[
             Union[
-                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
-                Union[Literal["all", "open", "closed", "hidden", "none"], str],
-                str,
+                List[Union[Literal["all", "closed", "hidden", "none", "open"], str]],
+                Union[Literal["all", "closed", "hidden", "none", "open"], str],
             ]
         ] = ...,
         flat_settings: Optional[bool] = ...,
@@ -670,9 +656,8 @@ class IndicesClient(NamespacedClient):
         completion_fields: Optional[Union[List[str], str]] = ...,
         expand_wildcards: Optional[
             Union[
-                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
-                Union[Literal["all", "open", "closed", "hidden", "none"], str],
-                str,
+                List[Union[Literal["all", "closed", "hidden", "none", "open"], str]],
+                Union[Literal["all", "closed", "hidden", "none", "open"], str],
             ]
         ] = ...,
         fielddata_fields: Optional[Union[List[str], str]] = ...,
@@ -703,9 +688,8 @@ class IndicesClient(NamespacedClient):
         allow_no_indices: Optional[bool] = ...,
         expand_wildcards: Optional[
             Union[
-                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
-                Union[Literal["all", "open", "closed", "hidden", "none"], str],
-                str,
+                List[Union[Literal["all", "closed", "hidden", "none", "open"], str]],
+                Union[Literal["all", "closed", "hidden", "none", "open"], str],
             ]
         ] = ...,
         ignore_unavailable: Optional[bool] = ...,
@@ -866,16 +850,15 @@ class IndicesClient(NamespacedClient):
         allow_no_indices: Optional[bool] = ...,
         expand_wildcards: Optional[
             Union[
-                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
-                Union[Literal["all", "open", "closed", "hidden", "none"], str],
-                str,
+                List[Union[Literal["all", "closed", "hidden", "none", "open"], str]],
+                Union[Literal["all", "closed", "hidden", "none", "open"], str],
             ]
         ] = ...,
         ignore_unavailable: Optional[bool] = ...,
         status: Optional[
             Union[
-                List[Union[Literal["green", "yellow", "red", "all"], str]],
-                Union[Literal["green", "yellow", "red", "all"], str],
+                List[Union[Literal["all", "green", "red", "yellow"], str]],
+                Union[Literal["all", "green", "red", "yellow"], str],
             ]
         ] = ...,
         pretty: Optional[bool] = ...,
@@ -1073,9 +1056,8 @@ class IndicesClient(NamespacedClient):
         name: Union[List[str], str],
         expand_wildcards: Optional[
             Union[
-                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
-                Union[Literal["all", "open", "closed", "hidden", "none"], str],
-                str,
+                List[Union[Literal["all", "closed", "hidden", "none", "open"], str]],
+                Union[Literal["all", "closed", "hidden", "none", "open"], str],
             ]
         ] = ...,
         pretty: Optional[bool] = ...,
@@ -1198,9 +1180,8 @@ class IndicesClient(NamespacedClient):
         name: Optional[Union[List[str], str]] = ...,
         expand_wildcards: Optional[
             Union[
-                List[Union[Literal["all", "open", "closed", "hidden", "none"], str]],
-                Union[Literal["all", "open", "closed", "hidden", "none"], str],
-                str,
+                List[Union[Literal["all", "closed", "hidden", "none", "open"], str]],
+                Union[Literal["all", "closed", "hidden", "none", "open"], str],
             ]
         ] = ...,
         pretty: Optional[bool] = ...,

@@ -32,7 +32,7 @@ class FleetClient(NamespacedClient):
         Returns the current global checkpoints for an index. This API is design for
         internal use by the fleet server project.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/get-global-checkpoints.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/get-global-checkpoints.html>`_
 
         :arg index: The name of the index.
         :arg checkpoints: Comma separated list of checkpoints

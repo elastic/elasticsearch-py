@@ -21,18 +21,21 @@ from .utils import SKIP_IN_PATH, NamespacedClient, _make_path, query_params
 class TransformClient(NamespacedClient):
     @query_params(
         "force",
+        "timeout",
         response_mimetypes=["application/json"],
     )
     async def delete_transform(self, transform_id, params=None, headers=None):
         """
         Deletes an existing transform.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/delete-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/delete-transform.html>`_
 
         :arg transform_id: The id of the transform to delete
         :arg force: When `true`, the transform is deleted regardless of
             its current state. The default value is `false`, meaning that the
             transform must be `stopped` before it can be deleted.
+        :arg timeout: Controls the time to wait for the transform
+            deletion
         """
         if transform_id in SKIP_IN_PATH:
             raise ValueError(
@@ -57,7 +60,7 @@ class TransformClient(NamespacedClient):
         """
         Retrieves configuration information for transforms.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/get-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/get-transform.html>`_
 
         :arg transform_id: The id or comma delimited list of id
             expressions of the transforms to get, '_all' or '*' implies get all
@@ -91,7 +94,7 @@ class TransformClient(NamespacedClient):
         """
         Retrieves usage information for transforms.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/get-transform-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/get-transform-stats.html>`_
 
         :arg transform_id: The id of the transform for which to get
             stats. '_all' or '*' implies all transforms
@@ -118,6 +121,7 @@ class TransformClient(NamespacedClient):
         )
 
     @query_params(
+        "timeout",
         request_mimetypes=["application/json"],
         response_mimetypes=["application/json"],
     )
@@ -127,10 +131,11 @@ class TransformClient(NamespacedClient):
         """
         Previews a transform.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/preview-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/preview-transform.html>`_
 
         :arg body: The definition for the transform to preview
         :arg transform_id: The id of the transform to preview.
+        :arg timeout: Controls the time to wait for the preview
         """
         return await self.transport.perform_request(
             "POST",
@@ -142,6 +147,7 @@ class TransformClient(NamespacedClient):
 
     @query_params(
         "defer_validation",
+        "timeout",
         request_mimetypes=["application/json"],
         response_mimetypes=["application/json"],
     )
@@ -149,12 +155,14 @@ class TransformClient(NamespacedClient):
         """
         Instantiates a transform.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/put-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/put-transform.html>`_
 
         :arg transform_id: The id of the new transform.
         :arg body: The transform definition
         :arg defer_validation: If validations should be deferred until
             transform starts, defaults to false.
+        :arg timeout: Controls the time to wait for the transform to
+            start
         """
         for param in (transform_id, body):
             if param in SKIP_IN_PATH:
@@ -176,7 +184,7 @@ class TransformClient(NamespacedClient):
         """
         Starts one or more transforms.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/start-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/start-transform.html>`_
 
         :arg transform_id: The id of the transform to start
         :arg timeout: Controls the time to wait for the transform to
@@ -206,7 +214,7 @@ class TransformClient(NamespacedClient):
         """
         Stops one or more transforms.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/stop-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/stop-transform.html>`_
 
         :arg transform_id: The id of the transform to stop
         :arg allow_no_match: Whether to ignore if a wildcard expression
@@ -235,6 +243,7 @@ class TransformClient(NamespacedClient):
 
     @query_params(
         "defer_validation",
+        "timeout",
         request_mimetypes=["application/json"],
         response_mimetypes=["application/json"],
     )
@@ -242,12 +251,13 @@ class TransformClient(NamespacedClient):
         """
         Updates certain properties of a transform.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/update-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/update-transform.html>`_
 
         :arg transform_id: The id of the transform.
         :arg body: The update transform definition
         :arg defer_validation: If validations should be deferred until
             transform starts, defaults to false.
+        :arg timeout: Controls the time to wait for the update
         """
         for param in (transform_id, body):
             if param in SKIP_IN_PATH:
@@ -263,6 +273,7 @@ class TransformClient(NamespacedClient):
 
     @query_params(
         "dry_run",
+        "timeout",
         request_mimetypes=["application/json"],
         response_mimetypes=["application/json"],
     )
@@ -270,10 +281,11 @@ class TransformClient(NamespacedClient):
         """
         Upgrades all transforms.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.16/upgrade-transforms.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/7.17/upgrade-transforms.html>`_
 
         :arg dry_run: Whether to only check for updates but don't
             execute
+        :arg timeout: Controls the time to wait for the upgrade
         """
         return await self.transport.perform_request(
             "POST", "/_transform/_upgrade", params=params, headers=headers
