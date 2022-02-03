@@ -809,6 +809,48 @@ class TestScan(object):
                 params={"__elastic_client_meta": (("h", "s"),)},
             )
 
+    @pytest.mark.parametrize(
+        "scan_kwargs",
+        [
+            {"from": 1},
+            {"from_": 1},
+            {"query": {"from": 1}},
+            {"query": {"from_": 1}},
+            {"query": {"query": {"match_all": {}}}, "from": 1},
+            {"query": {"query": {"match_all": {}}}, "from_": 1},
+        ],
+    )
+    async def test_scan_from_keyword_is_aliased(self, async_client, scan_kwargs):
+        with patch.object(async_client, "search") as search_mock, patch.object(
+            async_client, "scroll"
+        ) as scroll_mock, patch.object(
+            async_client, "clear_scroll"
+        ) as clear_scroll_mock:
+            search_mock.return_value = MockResponse(
+                {
+                    "_scroll_id": "scroll_id",
+                    "_shards": {"successful": 5, "total": 5, "skipped": 0},
+                    "hits": {"hits": [{"field": "value"}]},
+                }
+            )
+            scroll_mock.return_value = MockResponse(
+                {
+                    "_scroll_id": "scroll_id",
+                    "_shards": {"successful": 5, "total": 5, "skipped": 0},
+                    "hits": {"hits": []},
+                }
+            )
+            clear_scroll_mock.return_value = MockResponse({"acknowledged": True})
+
+            [
+                x
+                async for x in helpers.async_scan(
+                    async_client, index="test_index", **scan_kwargs
+                )
+            ]
+            assert search_mock.call_args[1]["from_"] == 1
+            assert "from" not in search_mock.call_args[1]
+
 
 @pytest.fixture(scope="function")
 async def reindex_setup(async_client):

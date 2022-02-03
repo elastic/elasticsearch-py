@@ -357,8 +357,16 @@ async def async_scan(
 
     # initial search
     search_kwargs = kwargs.copy()
+
+    # Setting query={"from": ...} would make 'from' be used
+    # as a keyword argument instead of 'from_'. We handle that here.
+    if "from" in search_kwargs:
+        search_kwargs["from_"] = search_kwargs.pop("from")
     if query:
         search_kwargs.update(query)
+    if "from" in search_kwargs:
+        search_kwargs["from_"] = search_kwargs.pop("from")
+
     search_kwargs["scroll"] = scroll
     search_kwargs["size"] = size
     search_kwargs["request_timeout"] = request_timeout
