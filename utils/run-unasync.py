@@ -45,10 +45,14 @@ def main():
         Path(__file__).absolute().parent.parent / "elasticsearch/_async"
     ):
         for filename in filenames:
-            if filename.rpartition(".")[-1] in (
-                "py",
-                "pyi",
-            ) and not filename.startswith("utils.py"):
+            if (
+                filename.rpartition(".")[-1]
+                in (
+                    "py",
+                    "pyi",
+                )
+                and not filename.startswith("utils.py")
+            ):
                 filepaths.append(os.path.join(root, filename))
 
     unasync.unasync_files(filepaths, rules)

@@ -96,14 +96,17 @@ class TestChunkActions:
         assert helpers.expand_action(
             {"_op_type": "create", "_id": "id", "_index": "index", "key": "val"}
         ) == ({"create": {"_id": "id", "_index": "index"}}, {"key": "val"})
-        assert helpers.expand_action(
-            {
-                "_op_type": "create",
-                "_id": "id",
-                "_index": "index",
-                "_source": {"key": "val"},
-            }
-        ) == ({"create": {"_id": "id", "_index": "index"}}, {"key": "val"})
+        assert (
+            helpers.expand_action(
+                {
+                    "_op_type": "create",
+                    "_id": "id",
+                    "_index": "index",
+                    "_source": {"key": "val"},
+                }
+            )
+            == ({"create": {"_id": "id", "_index": "index"}}, {"key": "val"})
+        )
 
     def test_expand_action_options(self):
         for option in (
