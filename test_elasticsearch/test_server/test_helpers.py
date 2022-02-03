@@ -799,6 +799,35 @@ def test_shards_no_skipped_field(sync_client):
         assert data == [{"search_data": 1}, {"scroll_data": 42}]
 
 
+@pytest.mark.parametrize(
+    "scan_kwargs",
+    [
+        {"from": 1},
+        {"from_": 1},
+        {"query": {"from": 1}},
+        {"query": {"from_": 1}},
+        {"query": {"query": {"match_all": {}}}, "from": 1},
+        {"query": {"query": {"match_all": {}}}, "from_": 1},
+    ],
+)
+def test_scan_from_keyword_is_aliased(sync_client, scan_kwargs):
+    with patch.object(sync_client, "options", return_value=sync_client), patch.object(
+        sync_client,
+        "search",
+        return_value=ObjectApiResponse(
+            raw={
+                "_scroll_id": "dummy_id",
+                "_shards": {"successful": 5, "total": 5},
+                "hits": {"hits": []},
+            },
+            meta=None,
+        ),
+    ) as search_mock, patch.object(sync_client, "clear_scroll"):
+        list(helpers.scan(sync_client, index="test_index", **scan_kwargs))
+        assert search_mock.call_args[1]["from_"] == 1
+        assert "from" not in search_mock.call_args[1]
+
+
 @pytest.fixture(scope="function")
 def reindex_setup(sync_client):
     bulk = []
