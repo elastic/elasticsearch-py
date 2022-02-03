@@ -1,4 +1,4 @@
-elastic-transport>=8.0.0a7, <9
+elastic-transport>=8.0.0b1, <9
 requests>=2, <3
 aiohttp
 pytest
