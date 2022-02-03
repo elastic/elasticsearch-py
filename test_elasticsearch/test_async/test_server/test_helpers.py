@@ -831,6 +831,44 @@ class TestScan(object):
                     ]
 
 
+@pytest.mark.parametrize(
+    "scan_kwargs",
+    [
+        {"from": 1},
+        {"from_": 1},
+        {"query": {"from": 1}},
+        {"query": {"from_": 1}},
+        {"query": {"query": {"match_all": {}}}, "from": 1},
+        {"query": {"query": {"match_all": {}}}, "from_": 1},
+    ],
+)
+async def test_scan_from_keyword_is_aliased(async_client, scan_kwargs):
+    with patch.object(async_client, "options", return_value=async_client), patch.object(
+        async_client,
+        "search",
+        return_value=MockResponse(
+            ObjectApiResponse(
+                body={
+                    "_scroll_id": "dummy_id",
+                    "_shards": {"successful": 5, "total": 5},
+                    "hits": {"hits": []},
+                },
+                meta=None,
+            )
+        ),
+    ) as search_mock, patch.object(
+        async_client, "clear_scroll", return_value=MockResponse(None)
+    ):
+        [
+            x
+            async for x in helpers.async_scan(
+                async_client, index="test_index", **scan_kwargs
+            )
+        ]
+        assert search_mock.call_args[1]["from_"] == 1
+        assert "from" not in search_mock.call_args[1]
+
+
 @pytest.fixture(scope="function")
 async def reindex_setup(async_client):
     bulk = []
