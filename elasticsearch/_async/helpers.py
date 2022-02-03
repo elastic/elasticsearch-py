@@ -428,8 +428,16 @@ async def async_scan(
     )
     client._client_meta = (("h", "s"),)
 
+    # Setting query={"from": ...} would make 'from' be used
+    # as a keyword argument instead of 'from_'. We handle that here.
+    def normalize_from_keyword(kw: MutableMapping[str, Any]) -> None:
+        if "from" in kw:
+            kw["from_"] = kw.pop("from")
+
+    normalize_from_keyword(kwargs)
     try:
         search_kwargs = query.copy() if query else {}
+        normalize_from_keyword(search_kwargs)
         search_kwargs.update(kwargs)
         search_kwargs["scroll"] = scroll
         search_kwargs["size"] = size
