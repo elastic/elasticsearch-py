@@ -23,6 +23,7 @@ from typing import Any, Dict, Optional, Union
 
 import pytest
 from elastic_transport import ApiResponseMeta, BaseNode, HttpHeaders, NodeConfig
+from elastic_transport._node import NodeApiResponse
 from elastic_transport.client_utils import DEFAULT
 
 from elasticsearch import Elasticsearch, __versionstr__
@@ -51,7 +52,7 @@ class DummyNode(BaseNode):
         self.calls.append((args, kwargs))
         if self.resp_error:
             raise self.resp_error
-        return (
+        return NodeApiResponse(
             ApiResponseMeta(
                 status=self.resp_status,
                 headers=HttpHeaders(self.resp_headers),
