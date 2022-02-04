@@ -172,7 +172,7 @@ class AsyncSearchClient(NamespacedClient):
         batched_reduce_size: t.Optional[int] = None,
         ccs_minimize_roundtrips: t.Optional[bool] = None,
         collapse: t.Optional[t.Mapping[str, t.Any]] = None,
-        default_operator: t.Optional[t.Union[str, t.Literal["and", "or"]]] = None,
+        default_operator: t.Optional[t.Union["t.Literal['and', 'or']", str]] = None,
         df: t.Optional[str] = None,
         docvalue_fields: t.Optional[
             t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
@@ -180,16 +180,16 @@ class AsyncSearchClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -257,7 +257,7 @@ class AsyncSearchClient(NamespacedClient):
             ]
         ] = None,
         search_type: t.Optional[
-            t.Union[str, t.Literal["dfs_query_then_fetch", "query_then_fetch"]]
+            t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
         ] = None,
         seq_no_primary_term: t.Optional[bool] = None,
         size: t.Optional[int] = None,
@@ -285,7 +285,7 @@ class AsyncSearchClient(NamespacedClient):
         suggest: t.Optional[t.Mapping[str, t.Any]] = None,
         suggest_field: t.Optional[str] = None,
         suggest_mode: t.Optional[
-            t.Union[str, t.Literal["always", "missing", "popular"]]
+            t.Union["t.Literal['always', 'missing', 'popular']", str]
         ] = None,
         suggest_size: t.Optional[int] = None,
         suggest_text: t.Optional[str] = None,

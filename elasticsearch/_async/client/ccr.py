@@ -86,7 +86,7 @@ class CcrClient(NamespacedClient):
         read_poll_timeout: t.Optional[t.Union[int, str]] = None,
         remote_cluster: t.Optional[str] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union[str, t.Literal["all"]]]
+            t.Union[int, t.Union["t.Literal['all']", str]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """

@@ -42,12 +42,12 @@ class NodesClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         snapshots: t.Optional[int] = None,
         sort: t.Optional[
-            t.Union[str, t.Literal["block", "cpu", "gpu", "mem", "wait"]]
+            t.Union["t.Literal['block', 'cpu', 'gpu', 'mem', 'wait']", str]
         ] = None,
         threads: t.Optional[int] = None,
         timeout: t.Optional[t.Union[int, str]] = None,
         type: t.Optional[
-            t.Union[str, t.Literal["block", "cpu", "gpu", "mem", "wait"]]
+            t.Union["t.Literal['block', 'cpu', 'gpu', 'mem', 'wait']", str]
         ] = None,
     ) -> TextApiResponse:
         """
@@ -253,7 +253,7 @@ class NodesClient(NamespacedClient):
         include_segment_file_sizes: t.Optional[bool] = None,
         include_unloaded_segments: t.Optional[bool] = None,
         level: t.Optional[
-            t.Union[str, t.Literal["cluster", "indices", "shards"]]
+            t.Union["t.Literal['cluster', 'indices', 'shards']", str]
         ] = None,
         master_timeout: t.Optional[t.Union[int, str]] = None,
         pretty: t.Optional[bool] = None,

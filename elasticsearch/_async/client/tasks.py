@@ -142,7 +142,7 @@ class TasksClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         group_by: t.Optional[
-            t.Union[str, t.Literal["nodes", "none", "parents"]]
+            t.Union["t.Literal['nodes', 'none', 'parents']", str]
         ] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[t.Union[int, str]] = None,

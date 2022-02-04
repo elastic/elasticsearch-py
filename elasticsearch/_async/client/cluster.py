@@ -332,16 +332,16 @@ class ClusterClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -353,26 +353,26 @@ class ClusterClient(NamespacedClient):
         ] = None,
         human: t.Optional[bool] = None,
         level: t.Optional[
-            t.Union[str, t.Literal["cluster", "indices", "shards"]]
+            t.Union["t.Literal['cluster', 'indices', 'shards']", str]
         ] = None,
         local: t.Optional[bool] = None,
         master_timeout: t.Optional[t.Union[int, str]] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union[int, str]] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union[str, t.Literal["all"]]]
+            t.Union[int, t.Union["t.Literal['all']", str]]
         ] = None,
         wait_for_events: t.Optional[
             t.Union[
+                "t.Literal['high', 'immediate', 'languid', 'low', 'normal', 'urgent']",
                 str,
-                t.Literal["high", "immediate", "languid", "low", "normal", "urgent"],
             ]
         ] = None,
         wait_for_no_initializing_shards: t.Optional[bool] = None,
         wait_for_no_relocating_shards: t.Optional[bool] = None,
         wait_for_nodes: t.Optional[t.Union[int, str]] = None,
         wait_for_status: t.Optional[
-            t.Union[str, t.Literal["green", "red", "yellow"]]
+            t.Union["t.Literal['green', 'red', 'yellow']", str]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -800,16 +800,16 @@ class ClusterClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],

@@ -587,7 +587,7 @@ class Elasticsearch(BaseClient):
         pipeline: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
         ] = None,
         require_alias: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
@@ -602,7 +602,7 @@ class Elasticsearch(BaseClient):
         ] = None,
         timeout: t.Optional[t.Union[int, str]] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union[str, t.Literal["all"]]]
+            t.Union[int, t.Union["t.Literal['all']", str]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -774,21 +774,21 @@ class Elasticsearch(BaseClient):
         allow_no_indices: t.Optional[bool] = None,
         analyze_wildcard: t.Optional[bool] = None,
         analyzer: t.Optional[str] = None,
-        default_operator: t.Optional[t.Union[str, t.Literal["and", "or"]]] = None,
+        default_operator: t.Optional[t.Union["t.Literal['and', 'or']", str]] = None,
         df: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -914,16 +914,16 @@ class Elasticsearch(BaseClient):
         pipeline: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
         ] = None,
         routing: t.Optional[str] = None,
         timeout: t.Optional[t.Union[int, str]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
+            t.Union["t.Literal['external', 'external_gte', 'force', 'internal']", str]
         ] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union[str, t.Literal["all"]]]
+            t.Union[int, t.Union["t.Literal['all']", str]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -1000,16 +1000,16 @@ class Elasticsearch(BaseClient):
         if_seq_no: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
         ] = None,
         routing: t.Optional[str] = None,
         timeout: t.Optional[t.Union[int, str]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
+            t.Union["t.Literal['external', 'external_gte', 'force', 'internal']", str]
         ] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union[str, t.Literal["all"]]]
+            t.Union[int, t.Union["t.Literal['all']", str]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -1082,22 +1082,22 @@ class Elasticsearch(BaseClient):
         allow_no_indices: t.Optional[bool] = None,
         analyze_wildcard: t.Optional[bool] = None,
         analyzer: t.Optional[str] = None,
-        conflicts: t.Optional[t.Union[str, t.Literal["abort", "proceed"]]] = None,
-        default_operator: t.Optional[t.Union[str, t.Literal["and", "or"]]] = None,
+        conflicts: t.Optional[t.Union["t.Literal['abort', 'proceed']", str]] = None,
+        default_operator: t.Optional[t.Union["t.Literal['and', 'or']", str]] = None,
         df: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -1124,7 +1124,7 @@ class Elasticsearch(BaseClient):
         scroll_size: t.Optional[int] = None,
         search_timeout: t.Optional[t.Union[int, str]] = None,
         search_type: t.Optional[
-            t.Union[str, t.Literal["dfs_query_then_fetch", "query_then_fetch"]]
+            t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
         ] = None,
         slice: t.Optional[t.Mapping[str, t.Any]] = None,
         slices: t.Optional[int] = None,
@@ -1134,7 +1134,7 @@ class Elasticsearch(BaseClient):
         timeout: t.Optional[t.Union[int, str]] = None,
         version: t.Optional[bool] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union[str, t.Literal["all"]]]
+            t.Union[int, t.Union["t.Literal['all']", str]]
         ] = None,
         wait_for_completion: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -1399,7 +1399,7 @@ class Elasticsearch(BaseClient):
         ] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
+            t.Union["t.Literal['external', 'external_gte', 'force', 'internal']", str]
         ] = None,
     ) -> HeadApiResponse:
         """
@@ -1499,7 +1499,7 @@ class Elasticsearch(BaseClient):
         ] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
+            t.Union["t.Literal['external', 'external_gte', 'force', 'internal']", str]
         ] = None,
     ) -> HeadApiResponse:
         """
@@ -1577,7 +1577,7 @@ class Elasticsearch(BaseClient):
         id: str,
         analyze_wildcard: t.Optional[bool] = None,
         analyzer: t.Optional[str] = None,
-        default_operator: t.Optional[t.Union[str, t.Literal["and", "or"]]] = None,
+        default_operator: t.Optional[t.Union["t.Literal['and', 'or']", str]] = None,
         df: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
@@ -1693,16 +1693,16 @@ class Elasticsearch(BaseClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -1836,7 +1836,7 @@ class Elasticsearch(BaseClient):
         ] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
+            t.Union["t.Literal['external', 'external_gte', 'force', 'internal']", str]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -2036,7 +2036,7 @@ class Elasticsearch(BaseClient):
         ] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
+            t.Union["t.Literal['external', 'external_gte', 'force', 'internal']", str]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -2111,21 +2111,21 @@ class Elasticsearch(BaseClient):
         human: t.Optional[bool] = None,
         if_primary_term: t.Optional[int] = None,
         if_seq_no: t.Optional[int] = None,
-        op_type: t.Optional[t.Union[str, t.Literal["create", "index"]]] = None,
+        op_type: t.Optional[t.Union["t.Literal['create', 'index']", str]] = None,
         pipeline: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
         ] = None,
         require_alias: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
         timeout: t.Optional[t.Union[int, str]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
+            t.Union["t.Literal['external', 'external_gte', 'force', 'internal']", str]
         ] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union[str, t.Literal["all"]]]
+            t.Union[int, t.Union["t.Literal['all']", str]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -2447,16 +2447,16 @@ class Elasticsearch(BaseClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -2475,7 +2475,7 @@ class Elasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
         search_type: t.Optional[
-            t.Union[str, t.Literal["dfs_query_then_fetch", "query_then_fetch"]]
+            t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
         ] = None,
         typed_keys: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -2584,7 +2584,7 @@ class Elasticsearch(BaseClient):
         pretty: t.Optional[bool] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
         search_type: t.Optional[
-            t.Union[str, t.Literal["dfs_query_then_fetch", "query_then_fetch"]]
+            t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
         ] = None,
         typed_keys: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -2669,7 +2669,7 @@ class Elasticsearch(BaseClient):
         term_statistics: t.Optional[bool] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
+            t.Union["t.Literal['external', 'external_gte', 'force', 'internal']", str]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -2870,16 +2870,16 @@ class Elasticsearch(BaseClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -2960,7 +2960,7 @@ class Elasticsearch(BaseClient):
     def reindex(
         self,
         *,
-        conflicts: t.Optional[t.Union[str, t.Literal["abort", "proceed"]]] = None,
+        conflicts: t.Optional[t.Union["t.Literal['abort', 'proceed']", str]] = None,
         dest: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
@@ -2979,7 +2979,7 @@ class Elasticsearch(BaseClient):
         source: t.Optional[t.Mapping[str, t.Any]] = None,
         timeout: t.Optional[t.Union[int, str]] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union[str, t.Literal["all"]]]
+            t.Union[int, t.Union["t.Literal['all']", str]]
         ] = None,
         wait_for_completion: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -3283,7 +3283,7 @@ class Elasticsearch(BaseClient):
         batched_reduce_size: t.Optional[int] = None,
         ccs_minimize_roundtrips: t.Optional[bool] = None,
         collapse: t.Optional[t.Mapping[str, t.Any]] = None,
-        default_operator: t.Optional[t.Union[str, t.Literal["and", "or"]]] = None,
+        default_operator: t.Optional[t.Union["t.Literal['and', 'or']", str]] = None,
         df: t.Optional[str] = None,
         docvalue_fields: t.Optional[
             t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
@@ -3291,16 +3291,16 @@ class Elasticsearch(BaseClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -3366,7 +3366,7 @@ class Elasticsearch(BaseClient):
             ]
         ] = None,
         search_type: t.Optional[
-            t.Union[str, t.Literal["dfs_query_then_fetch", "query_then_fetch"]]
+            t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
         ] = None,
         seq_no_primary_term: t.Optional[bool] = None,
         size: t.Optional[int] = None,
@@ -3394,7 +3394,7 @@ class Elasticsearch(BaseClient):
         suggest: t.Optional[t.Mapping[str, t.Any]] = None,
         suggest_field: t.Optional[str] = None,
         suggest_mode: t.Optional[
-            t.Union[str, t.Literal["always", "missing", "popular"]]
+            t.Union["t.Literal['always', 'missing', 'popular']", str]
         ] = None,
         suggest_size: t.Optional[int] = None,
         suggest_text: t.Optional[str] = None,
@@ -3698,7 +3698,7 @@ class Elasticsearch(BaseClient):
         ] = None,
         grid_precision: t.Optional[int] = None,
         grid_type: t.Optional[
-            t.Union[str, t.Literal["centroid", "grid", "point"]]
+            t.Union["t.Literal['centroid', 'grid', 'point']", str]
         ] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -3831,16 +3831,16 @@ class Elasticsearch(BaseClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -3921,16 +3921,16 @@ class Elasticsearch(BaseClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -3953,7 +3953,7 @@ class Elasticsearch(BaseClient):
         routing: t.Optional[str] = None,
         scroll: t.Optional[t.Union[int, str]] = None,
         search_type: t.Optional[
-            t.Union[str, t.Literal["dfs_query_then_fetch", "query_then_fetch"]]
+            t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
         ] = None,
         source: t.Optional[str] = None,
         typed_keys: t.Optional[bool] = None,
@@ -4159,7 +4159,7 @@ class Elasticsearch(BaseClient):
         term_statistics: t.Optional[bool] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
-            t.Union[str, t.Literal["external", "external_gte", "force", "internal"]]
+            t.Union["t.Literal['external', 'external_gte', 'force', 'internal']", str]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -4270,7 +4270,7 @@ class Elasticsearch(BaseClient):
         lang: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
         ] = None,
         require_alias: t.Optional[bool] = None,
         retry_on_conflict: t.Optional[int] = None,
@@ -4287,7 +4287,7 @@ class Elasticsearch(BaseClient):
         timeout: t.Optional[t.Union[int, str]] = None,
         upsert: t.Optional[t.Mapping[str, t.Any]] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union[str, t.Literal["all"]]]
+            t.Union[int, t.Union["t.Literal['all']", str]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -4398,22 +4398,22 @@ class Elasticsearch(BaseClient):
         allow_no_indices: t.Optional[bool] = None,
         analyze_wildcard: t.Optional[bool] = None,
         analyzer: t.Optional[str] = None,
-        conflicts: t.Optional[t.Union[str, t.Literal["abort", "proceed"]]] = None,
-        default_operator: t.Optional[t.Union[str, t.Literal["and", "or"]]] = None,
+        conflicts: t.Optional[t.Union["t.Literal['abort', 'proceed']", str]] = None,
+        default_operator: t.Optional[t.Union["t.Literal['and', 'or']", str]] = None,
         df: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -4441,7 +4441,7 @@ class Elasticsearch(BaseClient):
         scroll_size: t.Optional[int] = None,
         search_timeout: t.Optional[t.Union[int, str]] = None,
         search_type: t.Optional[
-            t.Union[str, t.Literal["dfs_query_then_fetch", "query_then_fetch"]]
+            t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
         ] = None,
         slice: t.Optional[t.Mapping[str, t.Any]] = None,
         slices: t.Optional[int] = None,
@@ -4452,7 +4452,7 @@ class Elasticsearch(BaseClient):
         version: t.Optional[bool] = None,
         version_type: t.Optional[bool] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union[str, t.Literal["all"]]]
+            t.Union[int, t.Union["t.Literal['all']", str]]
         ] = None,
         wait_for_completion: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:

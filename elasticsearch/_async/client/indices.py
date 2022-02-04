@@ -29,21 +29,21 @@ class IndicesClient(NamespacedClient):
         self,
         *,
         index: str,
-        block: t.Union[str, t.Literal["metadata", "read", "read_only", "write"]],
+        block: t.Union["t.Literal['metadata', 'read', 'read_only', 'write']", str],
         allow_no_indices: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -205,16 +205,16 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -304,7 +304,7 @@ class IndicesClient(NamespacedClient):
         settings: t.Optional[t.Mapping[str, t.Any]] = None,
         timeout: t.Optional[t.Union[int, str]] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union[str, t.Literal["all"]]]
+            t.Union[int, t.Union["t.Literal['all']", str]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -364,16 +364,16 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -389,7 +389,7 @@ class IndicesClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union[int, str]] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union[str, t.Literal["all"]]]
+            t.Union[int, t.Union["t.Literal['all']", str]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -458,7 +458,7 @@ class IndicesClient(NamespacedClient):
         settings: t.Optional[t.Mapping[str, t.Any]] = None,
         timeout: t.Optional[t.Union[int, str]] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union[str, t.Literal["all"]]]
+            t.Union[int, t.Union["t.Literal['all']", str]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -554,16 +554,16 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -614,16 +614,16 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -739,16 +739,16 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -879,16 +879,16 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -902,12 +902,12 @@ class IndicesClient(NamespacedClient):
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         master_timeout: t.Optional[
-            t.Union[str, t.Literal["d", "h", "m", "micros", "ms", "nanos", "s"]]
+            t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
         ] = None,
         pretty: t.Optional[bool] = None,
         run_expensive_tasks: t.Optional[bool] = None,
         timeout: t.Optional[
-            t.Union[str, t.Literal["d", "h", "m", "micros", "ms", "nanos", "s"]]
+            t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
         ] = None,
         wait_for_active_shards: t.Optional[str] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -987,16 +987,16 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -1069,16 +1069,16 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -1241,16 +1241,16 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -1326,16 +1326,16 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -1417,16 +1417,16 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -1509,16 +1509,16 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -1588,16 +1588,16 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -1650,16 +1650,16 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -1789,16 +1789,16 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -1869,16 +1869,16 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -2049,16 +2049,16 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -2074,7 +2074,7 @@ class IndicesClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union[int, str]] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union[str, t.Literal["all"]]]
+            t.Union[int, t.Union["t.Literal['all']", str]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -2328,7 +2328,7 @@ class IndicesClient(NamespacedClient):
         allow_no_indices: t.Optional[bool] = None,
         date_detection: t.Optional[bool] = None,
         dynamic: t.Optional[
-            t.Union[str, t.Literal["false", "runtime", "strict", "true"]]
+            t.Union["t.Literal['false', 'runtime', 'strict', 'true']", str]
         ] = None,
         dynamic_date_formats: t.Optional[
             t.Union[t.List[str], t.Tuple[str, ...]]
@@ -2345,16 +2345,16 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -2489,16 +2489,16 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -2716,16 +2716,16 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -2787,16 +2787,16 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -2855,16 +2855,16 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -2927,7 +2927,7 @@ class IndicesClient(NamespacedClient):
         settings: t.Optional[t.Mapping[str, t.Any]] = None,
         timeout: t.Optional[t.Union[int, str]] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union[str, t.Literal["all"]]]
+            t.Union[int, t.Union["t.Literal['all']", str]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -3001,16 +3001,16 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -3076,16 +3076,16 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -3100,11 +3100,11 @@ class IndicesClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         status: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "green", "red", "yellow"]],
+                t.Union["t.Literal['all', 'green', 'red', 'yellow']", str],
                 t.Union[
-                    t.List[t.Union[str, t.Literal["all", "green", "red", "yellow"]]],
+                    t.List[t.Union["t.Literal['all', 'green', 'red', 'yellow']", str]],
                     t.Tuple[
-                        t.Union[str, t.Literal["all", "green", "red", "yellow"]], ...
+                        t.Union["t.Literal['all', 'green', 'red', 'yellow']", str], ...
                     ],
                 ],
             ]
@@ -3171,7 +3171,7 @@ class IndicesClient(NamespacedClient):
         settings: t.Optional[t.Mapping[str, t.Any]] = None,
         timeout: t.Optional[t.Union[int, str]] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union[str, t.Literal["all"]]]
+            t.Union[int, t.Union["t.Literal['all']", str]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -3393,7 +3393,7 @@ class IndicesClient(NamespacedClient):
         settings: t.Optional[t.Mapping[str, t.Any]] = None,
         timeout: t.Optional[t.Union[int, str]] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union[str, t.Literal["all"]]]
+            t.Union[int, t.Union["t.Literal['all']", str]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -3458,16 +3458,16 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -3491,7 +3491,7 @@ class IndicesClient(NamespacedClient):
         include_segment_file_sizes: t.Optional[bool] = None,
         include_unloaded_segments: t.Optional[bool] = None,
         level: t.Optional[
-            t.Union[str, t.Literal["cluster", "indices", "shards"]]
+            t.Union["t.Literal['cluster', 'indices', 'shards']", str]
         ] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -3574,16 +3574,16 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -3708,21 +3708,21 @@ class IndicesClient(NamespacedClient):
         allow_no_indices: t.Optional[bool] = None,
         analyze_wildcard: t.Optional[bool] = None,
         analyzer: t.Optional[str] = None,
-        default_operator: t.Optional[t.Union[str, t.Literal["and", "or"]]] = None,
+        default_operator: t.Optional[t.Union["t.Literal['and', 'or']", str]] = None,
         df: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],

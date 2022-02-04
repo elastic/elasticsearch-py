@@ -1957,13 +1957,8 @@ class MlClient(NamespacedClient):
         human: t.Optional[bool] = None,
         include: t.Optional[
             t.Union[
+                "t.Literal['definition', 'feature_importance_baseline', 'hyperparameters', 'total_feature_importance']",
                 str,
-                t.Literal[
-                    "definition",
-                    "feature_importance_baseline",
-                    "hyperparameters",
-                    "total_feature_importance",
-                ],
             ]
         ] = None,
         pretty: t.Optional[bool] = None,
@@ -2665,16 +2660,16 @@ class MlClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -3078,7 +3073,7 @@ class MlClient(NamespacedClient):
         metadata: t.Optional[t.Any] = None,
         model_size_bytes: t.Optional[int] = None,
         model_type: t.Optional[
-            t.Union[str, t.Literal["lang_ident", "pytorch", "tree_ensemble"]]
+            t.Union["t.Literal['lang_ident', 'pytorch', 'tree_ensemble']", str]
         ] = None,
         pretty: t.Optional[bool] = None,
         tags: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
@@ -3566,7 +3561,7 @@ class MlClient(NamespacedClient):
         queue_capacity: t.Optional[int] = None,
         timeout: t.Optional[t.Union[int, str]] = None,
         wait_for: t.Optional[
-            t.Union[str, t.Literal["fully_allocated", "started", "starting"]]
+            t.Union["t.Literal['fully_allocated', 'started', 'starting']", str]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -3863,16 +3858,16 @@ class MlClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],

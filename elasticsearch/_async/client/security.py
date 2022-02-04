@@ -72,7 +72,7 @@ class SecurityClient(NamespacedClient):
         password_hash: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -326,7 +326,7 @@ class SecurityClient(NamespacedClient):
         name: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
         ] = None,
         role_descriptors: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -447,7 +447,7 @@ class SecurityClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -494,7 +494,7 @@ class SecurityClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -538,7 +538,7 @@ class SecurityClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -584,7 +584,7 @@ class SecurityClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -634,7 +634,7 @@ class SecurityClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -678,7 +678,7 @@ class SecurityClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -722,7 +722,7 @@ class SecurityClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -1118,10 +1118,8 @@ class SecurityClient(NamespacedClient):
         ] = None,
         grant_type: t.Optional[
             t.Union[
+                "t.Literal['_kerberos', 'client_credentials', 'password', 'refresh_token']",
                 str,
-                t.Literal[
-                    "_kerberos", "client_credentials", "password", "refresh_token"
-                ],
             ]
         ] = None,
         human: t.Optional[bool] = None,
@@ -1268,7 +1266,7 @@ class SecurityClient(NamespacedClient):
         self,
         *,
         api_key: t.Mapping[str, t.Any],
-        grant_type: t.Union[str, t.Literal["access_token", "password"]],
+        grant_type: t.Union["t.Literal['access_token', 'password']", str],
         access_token: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
@@ -1334,86 +1332,14 @@ class SecurityClient(NamespacedClient):
             t.Union[
                 t.List[
                     t.Union[
+                        "t.Literal['all', 'cancel_task', 'create_snapshot', 'grant_api_key', 'manage', 'manage_api_key', 'manage_ccr', 'manage_ilm', 'manage_index_templates', 'manage_ingest_pipelines', 'manage_logstash_pipelines', 'manage_ml', 'manage_oidc', 'manage_own_api_key', 'manage_pipeline', 'manage_rollup', 'manage_saml', 'manage_security', 'manage_service_account', 'manage_slm', 'manage_token', 'manage_transform', 'manage_watcher', 'monitor', 'monitor_ml', 'monitor_rollup', 'monitor_snapshot', 'monitor_text_structure', 'monitor_transform', 'monitor_watcher', 'read_ccr', 'read_ilm', 'read_pipeline', 'read_slm', 'transport_client']",
                         str,
-                        t.Literal[
-                            "all",
-                            "cancel_task",
-                            "create_snapshot",
-                            "grant_api_key",
-                            "manage",
-                            "manage_api_key",
-                            "manage_ccr",
-                            "manage_ilm",
-                            "manage_index_templates",
-                            "manage_ingest_pipelines",
-                            "manage_logstash_pipelines",
-                            "manage_ml",
-                            "manage_oidc",
-                            "manage_own_api_key",
-                            "manage_pipeline",
-                            "manage_rollup",
-                            "manage_saml",
-                            "manage_security",
-                            "manage_service_account",
-                            "manage_slm",
-                            "manage_token",
-                            "manage_transform",
-                            "manage_watcher",
-                            "monitor",
-                            "monitor_ml",
-                            "monitor_rollup",
-                            "monitor_snapshot",
-                            "monitor_text_structure",
-                            "monitor_transform",
-                            "monitor_watcher",
-                            "read_ccr",
-                            "read_ilm",
-                            "read_pipeline",
-                            "read_slm",
-                            "transport_client",
-                        ],
                     ]
                 ],
                 t.Tuple[
                     t.Union[
+                        "t.Literal['all', 'cancel_task', 'create_snapshot', 'grant_api_key', 'manage', 'manage_api_key', 'manage_ccr', 'manage_ilm', 'manage_index_templates', 'manage_ingest_pipelines', 'manage_logstash_pipelines', 'manage_ml', 'manage_oidc', 'manage_own_api_key', 'manage_pipeline', 'manage_rollup', 'manage_saml', 'manage_security', 'manage_service_account', 'manage_slm', 'manage_token', 'manage_transform', 'manage_watcher', 'monitor', 'monitor_ml', 'monitor_rollup', 'monitor_snapshot', 'monitor_text_structure', 'monitor_transform', 'monitor_watcher', 'read_ccr', 'read_ilm', 'read_pipeline', 'read_slm', 'transport_client']",
                         str,
-                        t.Literal[
-                            "all",
-                            "cancel_task",
-                            "create_snapshot",
-                            "grant_api_key",
-                            "manage",
-                            "manage_api_key",
-                            "manage_ccr",
-                            "manage_ilm",
-                            "manage_index_templates",
-                            "manage_ingest_pipelines",
-                            "manage_logstash_pipelines",
-                            "manage_ml",
-                            "manage_oidc",
-                            "manage_own_api_key",
-                            "manage_pipeline",
-                            "manage_rollup",
-                            "manage_saml",
-                            "manage_security",
-                            "manage_service_account",
-                            "manage_slm",
-                            "manage_token",
-                            "manage_transform",
-                            "manage_watcher",
-                            "monitor",
-                            "monitor_ml",
-                            "monitor_rollup",
-                            "monitor_snapshot",
-                            "monitor_text_structure",
-                            "monitor_transform",
-                            "monitor_watcher",
-                            "read_ccr",
-                            "read_ilm",
-                            "read_pipeline",
-                            "read_slm",
-                            "transport_client",
-                        ],
                     ],
                     ...,
                 ],
@@ -1588,7 +1514,7 @@ class SecurityClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -1636,86 +1562,14 @@ class SecurityClient(NamespacedClient):
             t.Union[
                 t.List[
                     t.Union[
+                        "t.Literal['all', 'cancel_task', 'create_snapshot', 'grant_api_key', 'manage', 'manage_api_key', 'manage_ccr', 'manage_ilm', 'manage_index_templates', 'manage_ingest_pipelines', 'manage_logstash_pipelines', 'manage_ml', 'manage_oidc', 'manage_own_api_key', 'manage_pipeline', 'manage_rollup', 'manage_saml', 'manage_security', 'manage_service_account', 'manage_slm', 'manage_token', 'manage_transform', 'manage_watcher', 'monitor', 'monitor_ml', 'monitor_rollup', 'monitor_snapshot', 'monitor_text_structure', 'monitor_transform', 'monitor_watcher', 'read_ccr', 'read_ilm', 'read_pipeline', 'read_slm', 'transport_client']",
                         str,
-                        t.Literal[
-                            "all",
-                            "cancel_task",
-                            "create_snapshot",
-                            "grant_api_key",
-                            "manage",
-                            "manage_api_key",
-                            "manage_ccr",
-                            "manage_ilm",
-                            "manage_index_templates",
-                            "manage_ingest_pipelines",
-                            "manage_logstash_pipelines",
-                            "manage_ml",
-                            "manage_oidc",
-                            "manage_own_api_key",
-                            "manage_pipeline",
-                            "manage_rollup",
-                            "manage_saml",
-                            "manage_security",
-                            "manage_service_account",
-                            "manage_slm",
-                            "manage_token",
-                            "manage_transform",
-                            "manage_watcher",
-                            "monitor",
-                            "monitor_ml",
-                            "monitor_rollup",
-                            "monitor_snapshot",
-                            "monitor_text_structure",
-                            "monitor_transform",
-                            "monitor_watcher",
-                            "read_ccr",
-                            "read_ilm",
-                            "read_pipeline",
-                            "read_slm",
-                            "transport_client",
-                        ],
                     ]
                 ],
                 t.Tuple[
                     t.Union[
+                        "t.Literal['all', 'cancel_task', 'create_snapshot', 'grant_api_key', 'manage', 'manage_api_key', 'manage_ccr', 'manage_ilm', 'manage_index_templates', 'manage_ingest_pipelines', 'manage_logstash_pipelines', 'manage_ml', 'manage_oidc', 'manage_own_api_key', 'manage_pipeline', 'manage_rollup', 'manage_saml', 'manage_security', 'manage_service_account', 'manage_slm', 'manage_token', 'manage_transform', 'manage_watcher', 'monitor', 'monitor_ml', 'monitor_rollup', 'monitor_snapshot', 'monitor_text_structure', 'monitor_transform', 'monitor_watcher', 'read_ccr', 'read_ilm', 'read_pipeline', 'read_slm', 'transport_client']",
                         str,
-                        t.Literal[
-                            "all",
-                            "cancel_task",
-                            "create_snapshot",
-                            "grant_api_key",
-                            "manage",
-                            "manage_api_key",
-                            "manage_ccr",
-                            "manage_ilm",
-                            "manage_index_templates",
-                            "manage_ingest_pipelines",
-                            "manage_logstash_pipelines",
-                            "manage_ml",
-                            "manage_oidc",
-                            "manage_own_api_key",
-                            "manage_pipeline",
-                            "manage_rollup",
-                            "manage_saml",
-                            "manage_security",
-                            "manage_service_account",
-                            "manage_slm",
-                            "manage_token",
-                            "manage_transform",
-                            "manage_watcher",
-                            "monitor",
-                            "monitor_ml",
-                            "monitor_rollup",
-                            "monitor_snapshot",
-                            "monitor_text_structure",
-                            "monitor_transform",
-                            "monitor_watcher",
-                            "read_ccr",
-                            "read_ilm",
-                            "read_pipeline",
-                            "read_slm",
-                            "transport_client",
-                        ],
                     ],
                     ...,
                 ],
@@ -1733,7 +1587,7 @@ class SecurityClient(NamespacedClient):
         metadata: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
         ] = None,
         run_as: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
         transient_metadata: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -1814,7 +1668,7 @@ class SecurityClient(NamespacedClient):
         metadata: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
         ] = None,
         roles: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
         rules: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -1885,7 +1739,7 @@ class SecurityClient(NamespacedClient):
         password_hash: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
-            t.Union[bool, str, t.Literal["false", "true", "wait_for"]]
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
         ] = None,
         roles: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
     ) -> ObjectApiResponse[t.Any]:

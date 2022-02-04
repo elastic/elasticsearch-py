@@ -404,22 +404,14 @@ class SnapshotClient(NamespacedClient):
         index_details: t.Optional[bool] = None,
         master_timeout: t.Optional[t.Union[int, str]] = None,
         offset: t.Optional[int] = None,
-        order: t.Optional[t.Union[str, t.Literal["asc", "desc"]]] = None,
+        order: t.Optional[t.Union["t.Literal['asc', 'desc']", str]] = None,
         pretty: t.Optional[bool] = None,
         size: t.Optional[int] = None,
         slm_policy_filter: t.Optional[str] = None,
         sort: t.Optional[
             t.Union[
+                "t.Literal['duration', 'failed_shard_count', 'index_count', 'name', 'repository', 'shard_count', 'start_time']",
                 str,
-                t.Literal[
-                    "duration",
-                    "failed_shard_count",
-                    "index_count",
-                    "name",
-                    "repository",
-                    "shard_count",
-                    "start_time",
-                ],
             ]
         ] = None,
         verbose: t.Optional[bool] = None,

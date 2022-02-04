@@ -160,16 +160,16 @@ class EqlClient(NamespacedClient):
         event_category_field: t.Optional[str] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
                 t.Union[
                     t.List[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ]
                     ],
                     t.Tuple[
                         t.Union[
-                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
                         ],
                         ...,
                     ],
@@ -201,7 +201,7 @@ class EqlClient(NamespacedClient):
         keep_alive: t.Optional[t.Union[int, str]] = None,
         keep_on_completion: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        result_position: t.Optional[t.Union[str, t.Literal["head", "tail"]]] = None,
+        result_position: t.Optional[t.Union["t.Literal['head', 'tail']", str]] = None,
         runtime_mappings: t.Optional[
             t.Mapping[
                 str,
