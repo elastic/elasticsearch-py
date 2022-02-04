@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Dict, List, Optional, Union
+import typing as t
 
 from elastic_transport import HeadApiResponse, ObjectApiResponse
 
@@ -28,18 +28,37 @@ class IndicesClient(NamespacedClient):
     def add_block(
         self,
         *,
-        index: Any,
-        block: Any,
-        allow_no_indices: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: str,
+        block: t.Union["t.Literal['metadata', 'read', 'read_only', 'write']", str],
+        allow_no_indices: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Adds a block to an index.
 
@@ -62,7 +81,7 @@ class IndicesClient(NamespacedClient):
         if block in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'block'")
         __path = f"/{_quote(index)}/_block/{_quote(block)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if error_trace is not None:
@@ -92,21 +111,33 @@ class IndicesClient(NamespacedClient):
     def analyze(
         self,
         *,
-        index: Optional[Any] = None,
-        analyzer: Optional[str] = None,
-        attributes: Optional[List[str]] = None,
-        char_filter: Optional[List[Any]] = None,
-        error_trace: Optional[bool] = None,
-        explain: Optional[bool] = None,
-        field: Optional[Any] = None,
-        filter: Optional[List[Any]] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        normalizer: Optional[str] = None,
-        pretty: Optional[bool] = None,
-        text: Optional[Any] = None,
-        tokenizer: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: t.Optional[str] = None,
+        analyzer: t.Optional[str] = None,
+        attributes: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        char_filter: t.Optional[
+            t.Union[
+                t.List[t.Union[str, t.Mapping[str, t.Any]]],
+                t.Tuple[t.Union[str, t.Mapping[str, t.Any]], ...],
+            ]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        explain: t.Optional[bool] = None,
+        field: t.Optional[str] = None,
+        filter: t.Optional[
+            t.Union[
+                t.List[t.Union[str, t.Mapping[str, t.Any]]],
+                t.Tuple[t.Union[str, t.Mapping[str, t.Any]], ...],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        normalizer: t.Optional[str] = None,
+        pretty: t.Optional[bool] = None,
+        text: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        tokenizer: t.Optional[t.Union[str, t.Mapping[str, t.Any]]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Performs the analysis process on a text and return the tokens breakdown of the
         text.
@@ -128,8 +159,8 @@ class IndicesClient(NamespacedClient):
             __path = f"/{_quote(index)}/_analyze"
         else:
             __path = "/_analyze"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if analyzer is not None:
             __body["analyzer"] = analyzer
         if attributes is not None:
@@ -169,19 +200,40 @@ class IndicesClient(NamespacedClient):
     def clear_cache(
         self,
         *,
-        index: Optional[Any] = None,
-        allow_no_indices: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        fielddata: Optional[bool] = None,
-        fields: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        query: Optional[bool] = None,
-        request: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        allow_no_indices: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        fielddata: t.Optional[bool] = None,
+        fields: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        query: t.Optional[bool] = None,
+        request: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Clears all or specific caches for one or more indices.
 
@@ -205,7 +257,7 @@ class IndicesClient(NamespacedClient):
             __path = f"/{_quote(index)}/_cache/clear"
         else:
             __path = "/_cache/clear"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if error_trace is not None:
@@ -239,18 +291,22 @@ class IndicesClient(NamespacedClient):
     def clone(
         self,
         *,
-        index: Any,
-        target: Any,
-        aliases: Optional[Dict[Any, Any]] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        settings: Optional[Dict[str, Any]] = None,
-        timeout: Optional[Any] = None,
-        wait_for_active_shards: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: str,
+        target: str,
+        aliases: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+        wait_for_active_shards: t.Optional[
+            t.Union[int, t.Union["t.Literal['all']", str]]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Clones an index
 
@@ -270,8 +326,8 @@ class IndicesClient(NamespacedClient):
         if target in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'target'")
         __path = f"/{_quote(index)}/_clone/{_quote(target)}"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if aliases is not None:
             __body["aliases"] = aliases
         if error_trace is not None:
@@ -303,18 +359,39 @@ class IndicesClient(NamespacedClient):
     def close(
         self,
         *,
-        index: Any,
-        allow_no_indices: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-        wait_for_active_shards: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        allow_no_indices: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+        wait_for_active_shards: t.Optional[
+            t.Union[int, t.Union["t.Literal['all']", str]]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Closes an index.
 
@@ -336,7 +413,7 @@ class IndicesClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
         __path = f"/{_quote(index)}/_close"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if error_trace is not None:
@@ -368,18 +445,22 @@ class IndicesClient(NamespacedClient):
     def create(
         self,
         *,
-        index: Any,
-        aliases: Optional[Dict[Any, Any]] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        mappings: Optional[Any] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        settings: Optional[Any] = None,
-        timeout: Optional[Any] = None,
-        wait_for_active_shards: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: str,
+        aliases: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        mappings: t.Optional[t.Mapping[str, t.Any]] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+        wait_for_active_shards: t.Optional[
+            t.Union[int, t.Union["t.Literal['all']", str]]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Creates an index with optional settings and mappings.
 
@@ -398,8 +479,8 @@ class IndicesClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
         __path = f"/{_quote(index)}"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if aliases is not None:
             __body["aliases"] = aliases
         if error_trace is not None:
@@ -433,12 +514,14 @@ class IndicesClient(NamespacedClient):
     def create_data_stream(
         self,
         *,
-        name: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Creates a data stream
 
@@ -449,7 +532,7 @@ class IndicesClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_data_stream/{_quote(name)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -467,13 +550,32 @@ class IndicesClient(NamespacedClient):
     def data_streams_stats(
         self,
         *,
-        name: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Provides statistics on operations happening in a data stream.
 
@@ -487,7 +589,7 @@ class IndicesClient(NamespacedClient):
             __path = f"/_data_stream/{_quote(name)}/_stats"
         else:
             __path = "/_data_stream/_stats"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if expand_wildcards is not None:
@@ -507,17 +609,36 @@ class IndicesClient(NamespacedClient):
     def delete(
         self,
         *,
-        index: Any,
-        allow_no_indices: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        allow_no_indices: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes an index.
 
@@ -536,7 +657,7 @@ class IndicesClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
         __path = f"/{_quote(index)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if error_trace is not None:
@@ -564,15 +685,17 @@ class IndicesClient(NamespacedClient):
     def delete_alias(
         self,
         *,
-        index: Any,
-        name: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        name: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes an alias.
 
@@ -590,7 +713,7 @@ class IndicesClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/{_quote(index)}/_alias/{_quote(name)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -612,13 +735,32 @@ class IndicesClient(NamespacedClient):
     def delete_data_stream(
         self,
         *,
-        name: Any,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes a data stream.
 
@@ -632,7 +774,7 @@ class IndicesClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_data_stream/{_quote(name)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if expand_wildcards is not None:
@@ -652,12 +794,14 @@ class IndicesClient(NamespacedClient):
     def delete_index_template(
         self,
         *,
-        name: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes an index template.
 
@@ -668,7 +812,7 @@ class IndicesClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_index_template/{_quote(name)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -686,14 +830,16 @@ class IndicesClient(NamespacedClient):
     def delete_template(
         self,
         *,
-        name: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes an index template.
 
@@ -706,7 +852,7 @@ class IndicesClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_template/{_quote(name)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -728,20 +874,43 @@ class IndicesClient(NamespacedClient):
     def disk_usage(
         self,
         *,
-        index: Any,
-        allow_no_indices: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        flush: Optional[bool] = None,
-        human: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        run_expensive_tasks: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-        wait_for_active_shards: Optional[str] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: str,
+        allow_no_indices: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        flush: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
+        ] = None,
+        pretty: t.Optional[bool] = None,
+        run_expensive_tasks: t.Optional[bool] = None,
+        timeout: t.Optional[
+            t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
+        ] = None,
+        wait_for_active_shards: t.Optional[str] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Analyzes the disk usage of each field of an index or data stream
 
@@ -779,7 +948,7 @@ class IndicesClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
         __path = f"/{_quote(index)}/_disk_usage"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if error_trace is not None:
@@ -813,17 +982,36 @@ class IndicesClient(NamespacedClient):
     def exists(
         self,
         *,
-        index: Any,
-        allow_no_indices: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        flat_settings: Optional[bool] = None,
-        human: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        include_defaults: Optional[bool] = None,
-        local: Optional[bool] = None,
-        pretty: Optional[bool] = None,
+        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        allow_no_indices: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        flat_settings: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        include_defaults: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
     ) -> HeadApiResponse:
         """
         Returns information about whether a particular index exists.
@@ -845,7 +1033,7 @@ class IndicesClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
         __path = f"/{_quote(index)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if error_trace is not None:
@@ -875,16 +1063,35 @@ class IndicesClient(NamespacedClient):
     def exists_alias(
         self,
         *,
-        name: Any,
-        index: Optional[Any] = None,
-        allow_no_indices: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        local: Optional[bool] = None,
-        pretty: Optional[bool] = None,
+        name: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        allow_no_indices: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
     ) -> HeadApiResponse:
         """
         Returns information about whether a particular alias exists.
@@ -911,7 +1118,7 @@ class IndicesClient(NamespacedClient):
             __path = f"/_alias/{_quote(name)}"
         else:
             raise ValueError("Couldn't find a path for the given parameters")
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if error_trace is not None:
@@ -937,12 +1144,14 @@ class IndicesClient(NamespacedClient):
     def exists_index_template(
         self,
         *,
-        name: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
+        name: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
     ) -> HeadApiResponse:
         """
         Returns information about whether a particular index template exists.
@@ -958,7 +1167,7 @@ class IndicesClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_index_template/{_quote(name)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -978,14 +1187,16 @@ class IndicesClient(NamespacedClient):
     def exists_template(
         self,
         *,
-        name: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        flat_settings: Optional[bool] = None,
-        human: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
+        name: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        flat_settings: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
     ) -> HeadApiResponse:
         """
         Returns information about whether a particular index template exists.
@@ -1001,7 +1212,7 @@ class IndicesClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_template/{_quote(name)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1025,17 +1236,36 @@ class IndicesClient(NamespacedClient):
     def flush(
         self,
         *,
-        index: Optional[Any] = None,
-        allow_no_indices: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        force: Optional[bool] = None,
-        human: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        wait_if_ongoing: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        allow_no_indices: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        force: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        wait_if_ongoing: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Performs the flush operation on one or more indices.
 
@@ -1063,7 +1293,7 @@ class IndicesClient(NamespacedClient):
             __path = f"/{_quote(index)}/_flush"
         else:
             __path = "/_flush"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if error_trace is not None:
@@ -1091,19 +1321,38 @@ class IndicesClient(NamespacedClient):
     def forcemerge(
         self,
         *,
-        index: Optional[Any] = None,
-        allow_no_indices: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        flush: Optional[bool] = None,
-        human: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        max_num_segments: Optional[int] = None,
-        only_expunge_deletes: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        wait_for_completion: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        allow_no_indices: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        flush: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        max_num_segments: t.Optional[int] = None,
+        only_expunge_deletes: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        wait_for_completion: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Performs the force merge operation on one or more indices.
 
@@ -1131,7 +1380,7 @@ class IndicesClient(NamespacedClient):
             __path = f"/{_quote(index)}/_forcemerge"
         else:
             __path = "/_forcemerge"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if error_trace is not None:
@@ -1163,19 +1412,38 @@ class IndicesClient(NamespacedClient):
     def get(
         self,
         *,
-        index: Any,
-        allow_no_indices: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        flat_settings: Optional[bool] = None,
-        human: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        include_defaults: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        allow_no_indices: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        flat_settings: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        include_defaults: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns information about one or more indices.
 
@@ -1203,7 +1471,7 @@ class IndicesClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
         __path = f"/{_quote(index)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if error_trace is not None:
@@ -1235,17 +1503,36 @@ class IndicesClient(NamespacedClient):
     def get_alias(
         self,
         *,
-        index: Optional[Any] = None,
-        name: Optional[Any] = None,
-        allow_no_indices: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        local: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        name: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        allow_no_indices: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns an alias.
 
@@ -1271,7 +1558,7 @@ class IndicesClient(NamespacedClient):
             __path = f"/_alias/{_quote(name)}"
         else:
             __path = "/_alias"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if error_trace is not None:
@@ -1297,13 +1584,32 @@ class IndicesClient(NamespacedClient):
     def get_data_stream(
         self,
         *,
-        name: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns data streams.
 
@@ -1318,7 +1624,7 @@ class IndicesClient(NamespacedClient):
             __path = f"/_data_stream/{_quote(name)}"
         else:
             __path = "/_data_stream"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if expand_wildcards is not None:
@@ -1338,18 +1644,37 @@ class IndicesClient(NamespacedClient):
     def get_field_mapping(
         self,
         *,
-        fields: Any,
-        index: Optional[Any] = None,
-        allow_no_indices: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        include_defaults: Optional[bool] = None,
-        local: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        fields: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        allow_no_indices: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        include_defaults: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns mapping for one or more fields.
 
@@ -1377,7 +1702,7 @@ class IndicesClient(NamespacedClient):
             __path = f"/_mapping/field/{_quote(fields)}"
         else:
             raise ValueError("Couldn't find a path for the given parameters")
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if error_trace is not None:
@@ -1405,15 +1730,17 @@ class IndicesClient(NamespacedClient):
     def get_index_template(
         self,
         *,
-        name: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        flat_settings: Optional[bool] = None,
-        human: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        flat_settings: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns an index template.
 
@@ -1433,7 +1760,7 @@ class IndicesClient(NamespacedClient):
             __path = f"/_index_template/{_quote(name)}"
         else:
             __path = "/_index_template"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1457,17 +1784,36 @@ class IndicesClient(NamespacedClient):
     def get_mapping(
         self,
         *,
-        index: Optional[Any] = None,
-        allow_no_indices: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        allow_no_indices: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns mappings for one or more indices.
 
@@ -1489,7 +1835,7 @@ class IndicesClient(NamespacedClient):
             __path = f"/{_quote(index)}/_mapping"
         else:
             __path = "/_mapping"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if error_trace is not None:
@@ -1517,20 +1863,39 @@ class IndicesClient(NamespacedClient):
     def get_settings(
         self,
         *,
-        index: Optional[Any] = None,
-        name: Optional[Any] = None,
-        allow_no_indices: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        flat_settings: Optional[bool] = None,
-        human: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        include_defaults: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        name: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        allow_no_indices: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        flat_settings: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        include_defaults: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns settings for one or more indices.
 
@@ -1561,7 +1926,7 @@ class IndicesClient(NamespacedClient):
             __path = f"/_settings/{_quote(name)}"
         else:
             __path = "/_settings"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if error_trace is not None:
@@ -1593,15 +1958,17 @@ class IndicesClient(NamespacedClient):
     def get_template(
         self,
         *,
-        name: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        flat_settings: Optional[bool] = None,
-        human: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        flat_settings: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns an index template.
 
@@ -1617,7 +1984,7 @@ class IndicesClient(NamespacedClient):
             __path = f"/_template/{_quote(name)}"
         else:
             __path = "/_template"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1641,12 +2008,14 @@ class IndicesClient(NamespacedClient):
     def migrate_to_data_stream(
         self,
         *,
-        name: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Migrates an alias to a data stream
 
@@ -1657,7 +2026,7 @@ class IndicesClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_data_stream/_migrate/{_quote(name)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1675,18 +2044,39 @@ class IndicesClient(NamespacedClient):
     def open(
         self,
         *,
-        index: Any,
-        allow_no_indices: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-        wait_for_active_shards: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        allow_no_indices: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+        wait_for_active_shards: t.Optional[
+            t.Union[int, t.Union["t.Literal['all']", str]]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Opens an index.
 
@@ -1708,7 +2098,7 @@ class IndicesClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
         __path = f"/{_quote(index)}/_open"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if error_trace is not None:
@@ -1738,12 +2128,14 @@ class IndicesClient(NamespacedClient):
     def promote_data_stream(
         self,
         *,
-        name: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Promotes a data stream from a replicated data stream managed by CCR to a regular
         data stream
@@ -1755,7 +2147,7 @@ class IndicesClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_data_stream/_promote/{_quote(name)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1775,20 +2167,22 @@ class IndicesClient(NamespacedClient):
     def put_alias(
         self,
         *,
-        index: Any,
-        name: Any,
-        error_trace: Optional[bool] = None,
-        filter: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        index_routing: Optional[Any] = None,
-        is_write_index: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        routing: Optional[Any] = None,
-        search_routing: Optional[Any] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        name: str,
+        error_trace: t.Optional[bool] = None,
+        filter: t.Optional[t.Mapping[str, t.Any]] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        index_routing: t.Optional[str] = None,
+        is_write_index: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        routing: t.Optional[str] = None,
+        search_routing: t.Optional[str] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Creates or updates an alias.
 
@@ -1810,8 +2204,8 @@ class IndicesClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/{_quote(index)}/_alias/{_quote(name)}"
-        __query: Dict[str, Any] = {}
-        __body: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter is not None:
@@ -1850,20 +2244,24 @@ class IndicesClient(NamespacedClient):
     def put_index_template(
         self,
         *,
-        name: Any,
-        composed_of: Optional[List[Any]] = None,
-        create: Optional[bool] = None,
-        data_stream: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        index_patterns: Optional[Any] = None,
-        meta: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        priority: Optional[int] = None,
-        template: Optional[Any] = None,
-        version: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: str,
+        composed_of: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        create: t.Optional[bool] = None,
+        data_stream: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        index_patterns: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        meta: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+        priority: t.Optional[int] = None,
+        template: t.Optional[t.Mapping[str, t.Any]] = None,
+        version: t.Optional[int] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Creates or updates an index template.
 
@@ -1883,8 +2281,8 @@ class IndicesClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_index_template/{_quote(name)}"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if composed_of is not None:
             __body["composed_of"] = composed_of
         if create is not None:
@@ -1926,29 +2324,71 @@ class IndicesClient(NamespacedClient):
     def put_mapping(
         self,
         *,
-        index: Any,
-        allow_no_indices: Optional[bool] = None,
-        date_detection: Optional[bool] = None,
-        dynamic: Optional[Any] = None,
-        dynamic_date_formats: Optional[List[str]] = None,
-        dynamic_templates: Optional[Union[Dict[str, Any], List[Dict[str, Any]]]] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        field_names: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        meta: Optional[Any] = None,
-        numeric_detection: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        properties: Optional[Dict[Any, Any]] = None,
-        routing: Optional[Any] = None,
-        runtime: Optional[Any] = None,
-        source: Optional[Any] = None,
-        timeout: Optional[Any] = None,
-        write_index_only: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        allow_no_indices: t.Optional[bool] = None,
+        date_detection: t.Optional[bool] = None,
+        dynamic: t.Optional[
+            t.Union["t.Literal['false', 'runtime', 'strict', 'true']", str]
+        ] = None,
+        dynamic_date_formats: t.Optional[
+            t.Union[t.List[str], t.Tuple[str, ...]]
+        ] = None,
+        dynamic_templates: t.Optional[
+            t.Union[
+                t.Mapping[str, t.Mapping[str, t.Any]],
+                t.Union[
+                    t.List[t.Mapping[str, t.Mapping[str, t.Any]]],
+                    t.Tuple[t.Mapping[str, t.Mapping[str, t.Any]], ...],
+                ],
+            ]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        field_names: t.Optional[t.Mapping[str, t.Any]] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        meta: t.Optional[t.Mapping[str, t.Any]] = None,
+        numeric_detection: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        properties: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
+        routing: t.Optional[t.Mapping[str, t.Any]] = None,
+        runtime: t.Optional[
+            t.Mapping[
+                str,
+                t.Union[
+                    t.Mapping[str, t.Any],
+                    t.Union[
+                        t.List[t.Mapping[str, t.Any]],
+                        t.Tuple[t.Mapping[str, t.Any], ...],
+                    ],
+                ],
+            ]
+        ] = None,
+        source: t.Optional[t.Mapping[str, t.Any]] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+        write_index_only: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Updates the index mappings.
 
@@ -1988,8 +2428,8 @@ class IndicesClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
         __path = f"/{_quote(index)}/_mapping"
-        __query: Dict[str, Any] = {}
-        __body: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if date_detection is not None:
@@ -2043,20 +2483,39 @@ class IndicesClient(NamespacedClient):
     def put_settings(
         self,
         *,
-        settings: Any,
-        index: Optional[Any] = None,
-        allow_no_indices: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        flat_settings: Optional[bool] = None,
-        human: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        preserve_existing: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        settings: t.Mapping[str, t.Any],
+        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        allow_no_indices: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        flat_settings: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        preserve_existing: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Updates the index settings.
 
@@ -2084,7 +2543,7 @@ class IndicesClient(NamespacedClient):
             __path = f"/{_quote(index)}/_settings"
         else:
             __path = "/_settings"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if error_trace is not None:
@@ -2119,22 +2578,26 @@ class IndicesClient(NamespacedClient):
     def put_template(
         self,
         *,
-        name: Any,
-        aliases: Optional[Dict[Any, Any]] = None,
-        create: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        flat_settings: Optional[bool] = None,
-        human: Optional[bool] = None,
-        index_patterns: Optional[Union[List[str], str]] = None,
-        mappings: Optional[Any] = None,
-        master_timeout: Optional[Any] = None,
-        order: Optional[int] = None,
-        pretty: Optional[bool] = None,
-        settings: Optional[Dict[str, Any]] = None,
-        timeout: Optional[Any] = None,
-        version: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: str,
+        aliases: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
+        create: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        flat_settings: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        index_patterns: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        mappings: t.Optional[t.Mapping[str, t.Any]] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        order: t.Optional[int] = None,
+        pretty: t.Optional[bool] = None,
+        settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+        version: t.Optional[int] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Creates or updates an index template.
 
@@ -2163,8 +2626,8 @@ class IndicesClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_template/{_quote(name)}"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if aliases is not None:
             __body["aliases"] = aliases
         if create is not None:
@@ -2202,14 +2665,16 @@ class IndicesClient(NamespacedClient):
     def recovery(
         self,
         *,
-        index: Optional[Any] = None,
-        active_only: Optional[bool] = None,
-        detailed: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        active_only: t.Optional[bool] = None,
+        detailed: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns information about ongoing index shard recoveries.
 
@@ -2224,7 +2689,7 @@ class IndicesClient(NamespacedClient):
             __path = f"/{_quote(index)}/_recovery"
         else:
             __path = "/_recovery"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if active_only is not None:
             __query["active_only"] = active_only
         if detailed is not None:
@@ -2246,15 +2711,34 @@ class IndicesClient(NamespacedClient):
     def refresh(
         self,
         *,
-        index: Optional[Any] = None,
-        allow_no_indices: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        allow_no_indices: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Performs the refresh operation in one or more indices.
 
@@ -2274,7 +2758,7 @@ class IndicesClient(NamespacedClient):
             __path = f"/{_quote(index)}/_refresh"
         else:
             __path = "/_refresh"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if error_trace is not None:
@@ -2298,15 +2782,34 @@ class IndicesClient(NamespacedClient):
     def reload_search_analyzers(
         self,
         *,
-        index: Any,
-        allow_no_indices: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        allow_no_indices: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Reloads an index's search analyzers and their resources.
 
@@ -2324,7 +2827,7 @@ class IndicesClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
         __path = f"/{_quote(index)}/_reload_search_analyzers"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if error_trace is not None:
@@ -2348,13 +2851,32 @@ class IndicesClient(NamespacedClient):
     def resolve_index(
         self,
         *,
-        name: Any,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns information about any matching indices, aliases, and data streams
 
@@ -2367,7 +2889,7 @@ class IndicesClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_resolve/index/{_quote(name)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if expand_wildcards is not None:
@@ -2389,21 +2911,25 @@ class IndicesClient(NamespacedClient):
     def rollover(
         self,
         *,
-        alias: Any,
-        new_index: Optional[Any] = None,
-        aliases: Optional[Dict[Any, Any]] = None,
-        conditions: Optional[Any] = None,
-        dry_run: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        mappings: Optional[Any] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        settings: Optional[Dict[str, Any]] = None,
-        timeout: Optional[Any] = None,
-        wait_for_active_shards: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        alias: str,
+        new_index: t.Optional[str] = None,
+        aliases: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
+        conditions: t.Optional[t.Mapping[str, t.Any]] = None,
+        dry_run: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        mappings: t.Optional[t.Mapping[str, t.Any]] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+        wait_for_active_shards: t.Optional[
+            t.Union[int, t.Union["t.Literal['all']", str]]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Updates an alias to point to a new index when the existing index is considered
         to be too large or too old.
@@ -2431,8 +2957,8 @@ class IndicesClient(NamespacedClient):
             __path = f"/{_quote(alias)}/_rollover"
         else:
             raise ValueError("Couldn't find a path for the given parameters")
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if aliases is not None:
             __body["aliases"] = aliases
         if conditions is not None:
@@ -2470,16 +2996,35 @@ class IndicesClient(NamespacedClient):
     def segments(
         self,
         *,
-        index: Optional[Any] = None,
-        allow_no_indices: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        verbose: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        allow_no_indices: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        verbose: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Provides low-level information about segments in a Lucene index.
 
@@ -2500,7 +3045,7 @@ class IndicesClient(NamespacedClient):
             __path = f"/{_quote(index)}/_segments"
         else:
             __path = "/_segments"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if error_trace is not None:
@@ -2526,16 +3071,45 @@ class IndicesClient(NamespacedClient):
     def shard_stores(
         self,
         *,
-        index: Optional[Any] = None,
-        allow_no_indices: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        status: Optional[Union[Any, List[Any]]] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        allow_no_indices: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        status: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'green', 'red', 'yellow']", str],
+                t.Union[
+                    t.List[t.Union["t.Literal['all', 'green', 'red', 'yellow']", str]],
+                    t.Tuple[
+                        t.Union["t.Literal['all', 'green', 'red', 'yellow']", str], ...
+                    ],
+                ],
+            ]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Provides store information for shard copies of indices.
 
@@ -2556,7 +3130,7 @@ class IndicesClient(NamespacedClient):
             __path = f"/{_quote(index)}/_shard_stores"
         else:
             __path = "/_shard_stores"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if error_trace is not None:
@@ -2584,18 +3158,22 @@ class IndicesClient(NamespacedClient):
     def shrink(
         self,
         *,
-        index: Any,
-        target: Any,
-        aliases: Optional[Dict[Any, Any]] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        settings: Optional[Dict[str, Any]] = None,
-        timeout: Optional[Any] = None,
-        wait_for_active_shards: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: str,
+        target: str,
+        aliases: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+        wait_for_active_shards: t.Optional[
+            t.Union[int, t.Union["t.Literal['all']", str]]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Allow to shrink an existing index into a new index with fewer primary shards.
 
@@ -2615,8 +3193,8 @@ class IndicesClient(NamespacedClient):
         if target in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'target'")
         __path = f"/{_quote(index)}/_shrink/{_quote(target)}"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if aliases is not None:
             __body["aliases"] = aliases
         if error_trace is not None:
@@ -2651,22 +3229,26 @@ class IndicesClient(NamespacedClient):
     def simulate_index_template(
         self,
         *,
-        name: Any,
-        allow_auto_create: Optional[bool] = None,
-        composed_of: Optional[List[Any]] = None,
-        create: Optional[bool] = None,
-        data_stream: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        index_patterns: Optional[Any] = None,
-        master_timeout: Optional[Any] = None,
-        meta: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        priority: Optional[int] = None,
-        template: Optional[Any] = None,
-        version: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: str,
+        allow_auto_create: t.Optional[bool] = None,
+        composed_of: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        create: t.Optional[bool] = None,
+        data_stream: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        index_patterns: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        meta: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+        priority: t.Optional[int] = None,
+        template: t.Optional[t.Mapping[str, t.Any]] = None,
+        version: t.Optional[int] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Simulate matching the given index name against the index templates in the system
 
@@ -2692,8 +3274,8 @@ class IndicesClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_index_template/_simulate_index/{_quote(name)}"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_auto_create is not None:
             __body["allow_auto_create"] = allow_auto_create
         if composed_of is not None:
@@ -2737,15 +3319,17 @@ class IndicesClient(NamespacedClient):
     def simulate_template(
         self,
         *,
-        name: Optional[Any] = None,
-        create: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        template: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: t.Optional[str] = None,
+        create: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        template: t.Optional[t.Mapping[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Simulate resolving the given template name or body
 
@@ -2767,7 +3351,7 @@ class IndicesClient(NamespacedClient):
             __path = f"/_index_template/_simulate/{_quote(name)}"
         else:
             __path = "/_index_template/_simulate"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if create is not None:
             __query["create"] = create
         if error_trace is not None:
@@ -2796,18 +3380,22 @@ class IndicesClient(NamespacedClient):
     def split(
         self,
         *,
-        index: Any,
-        target: Any,
-        aliases: Optional[Dict[Any, Any]] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        settings: Optional[Dict[str, Any]] = None,
-        timeout: Optional[Any] = None,
-        wait_for_active_shards: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: str,
+        target: str,
+        aliases: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+        wait_for_active_shards: t.Optional[
+            t.Union[int, t.Union["t.Literal['all']", str]]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Allows you to split an existing index into a new index with more primary shards.
 
@@ -2827,8 +3415,8 @@ class IndicesClient(NamespacedClient):
         if target in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'target'")
         __path = f"/{_quote(index)}/_split/{_quote(target)}"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if aliases is not None:
             __body["aliases"] = aliases
         if error_trace is not None:
@@ -2860,22 +3448,53 @@ class IndicesClient(NamespacedClient):
     def stats(
         self,
         *,
-        index: Optional[Any] = None,
-        metric: Optional[Any] = None,
-        completion_fields: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        fielddata_fields: Optional[Any] = None,
-        fields: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        forbid_closed_indices: Optional[bool] = None,
-        groups: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        include_segment_file_sizes: Optional[bool] = None,
-        include_unloaded_segments: Optional[bool] = None,
-        level: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        metric: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        completion_fields: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        fielddata_fields: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        fields: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        forbid_closed_indices: t.Optional[bool] = None,
+        groups: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        include_segment_file_sizes: t.Optional[bool] = None,
+        include_unloaded_segments: t.Optional[bool] = None,
+        level: t.Optional[
+            t.Union["t.Literal['cluster', 'indices', 'shards']", str]
+        ] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Provides statistics on operations happening in an index.
 
@@ -2914,7 +3533,7 @@ class IndicesClient(NamespacedClient):
             __path = f"/_stats/{_quote(metric)}"
         else:
             __path = "/_stats"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if completion_fields is not None:
             __query["completion_fields"] = completion_fields
         if error_trace is not None:
@@ -2950,18 +3569,37 @@ class IndicesClient(NamespacedClient):
     def unfreeze(
         self,
         *,
-        index: Any,
-        allow_no_indices: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-        wait_for_active_shards: Optional[str] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: str,
+        allow_no_indices: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+        wait_for_active_shards: t.Optional[str] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Unfreezes an index. When a frozen index is unfrozen, the index goes through the
         normal recovery process and becomes writeable again.
@@ -2984,7 +3622,7 @@ class IndicesClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
         __path = f"/{_quote(index)}/_unfreeze"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if error_trace is not None:
@@ -3016,14 +3654,18 @@ class IndicesClient(NamespacedClient):
     def update_aliases(
         self,
         *,
-        actions: Optional[List[Any]] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        actions: t.Optional[
+            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Updates index aliases.
 
@@ -3034,8 +3676,8 @@ class IndicesClient(NamespacedClient):
         :param timeout: Request timeout
         """
         __path = "/_aliases"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if actions is not None:
             __body["actions"] = actions
         if error_trace is not None:
@@ -3061,25 +3703,44 @@ class IndicesClient(NamespacedClient):
     def validate_query(
         self,
         *,
-        index: Optional[Any] = None,
-        all_shards: Optional[bool] = None,
-        allow_no_indices: Optional[bool] = None,
-        analyze_wildcard: Optional[bool] = None,
-        analyzer: Optional[str] = None,
-        default_operator: Optional[Any] = None,
-        df: Optional[str] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        explain: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        lenient: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        q: Optional[str] = None,
-        query: Optional[Any] = None,
-        rewrite: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        all_shards: t.Optional[bool] = None,
+        allow_no_indices: t.Optional[bool] = None,
+        analyze_wildcard: t.Optional[bool] = None,
+        analyzer: t.Optional[str] = None,
+        default_operator: t.Optional[t.Union["t.Literal['and', 'or']", str]] = None,
+        df: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        explain: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        lenient: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        q: t.Optional[str] = None,
+        query: t.Optional[t.Mapping[str, t.Any]] = None,
+        rewrite: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Allows a user to validate a potentially expensive query without executing it.
 
@@ -3115,8 +3776,8 @@ class IndicesClient(NamespacedClient):
             __path = f"/{_quote(index)}/_validate/query"
         else:
             __path = "/_validate/query"
-        __query: Dict[str, Any] = {}
-        __body: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = {}
         if all_shards is not None:
             __query["all_shards"] = all_shards
         if allow_no_indices is not None:

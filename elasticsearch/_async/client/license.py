@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Dict, List, Optional, Union
+import typing as t
 
 from elastic_transport import ObjectApiResponse
 
@@ -28,18 +28,20 @@ class LicenseClient(NamespacedClient):
     async def delete(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes licensing information for the cluster
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-license.html>`_
         """
         __path = "/_license"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -57,13 +59,15 @@ class LicenseClient(NamespacedClient):
     async def get(
         self,
         *,
-        accept_enterprise: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        local: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        accept_enterprise: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves licensing information for the cluster
 
@@ -77,7 +81,7 @@ class LicenseClient(NamespacedClient):
             is `false`, which means the information is retrieved from the master node.
         """
         __path = "/_license"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if accept_enterprise is not None:
             __query["accept_enterprise"] = accept_enterprise
         if error_trace is not None:
@@ -99,18 +103,20 @@ class LicenseClient(NamespacedClient):
     async def get_basic_status(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves information about the status of the basic license.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-basic-status.html>`_
         """
         __path = "/_license/basic_status"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -128,18 +134,20 @@ class LicenseClient(NamespacedClient):
     async def get_trial_status(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves information about the status of the trial license.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-trial-status.html>`_
         """
         __path = "/_license/trial_status"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -159,14 +167,18 @@ class LicenseClient(NamespacedClient):
     async def post(
         self,
         *,
-        licenses: List[Any],
-        acknowledge: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        license: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        licenses: t.Union[
+            t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]
+        ],
+        acknowledge: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        license: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Updates the license for the cluster.
 
@@ -180,8 +192,8 @@ class LicenseClient(NamespacedClient):
         if licenses is None:
             raise ValueError("Empty value passed for parameter 'licenses'")
         __path = "/_license"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if licenses is not None:
             __body["licenses"] = licenses
         if acknowledge is not None:
@@ -209,12 +221,14 @@ class LicenseClient(NamespacedClient):
     async def post_start_basic(
         self,
         *,
-        acknowledge: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        acknowledge: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Starts an indefinite basic license.
 
@@ -224,7 +238,7 @@ class LicenseClient(NamespacedClient):
             false)
         """
         __path = "/_license/start_basic"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if acknowledge is not None:
             __query["acknowledge"] = acknowledge
         if error_trace is not None:
@@ -244,13 +258,15 @@ class LicenseClient(NamespacedClient):
     async def post_start_trial(
         self,
         *,
-        acknowledge: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        type_query_string: Optional[str] = None,
-    ) -> ObjectApiResponse[Any]:
+        acknowledge: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        type_query_string: t.Optional[str] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         starts a limited time trial license.
 
@@ -261,7 +277,7 @@ class LicenseClient(NamespacedClient):
         :param type_query_string:
         """
         __path = "/_license/start_trial"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if acknowledge is not None:
             __query["acknowledge"] = acknowledge
         if error_trace is not None:

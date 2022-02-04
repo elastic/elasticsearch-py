@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Dict, List, Optional, Union
+import typing as t
 
 from elastic_transport import ObjectApiResponse
 
@@ -28,14 +28,16 @@ class IngestClient(NamespacedClient):
     async def delete_pipeline(
         self,
         *,
-        id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes a pipeline.
 
@@ -48,7 +50,7 @@ class IngestClient(NamespacedClient):
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
         __path = f"/_ingest/pipeline/{_quote(id)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -70,18 +72,20 @@ class IngestClient(NamespacedClient):
     async def geo_ip_stats(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns statistical information about geoip databases
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/geoip-stats-api.html>`_
         """
         __path = "/_ingest/geoip/stats"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -99,14 +103,16 @@ class IngestClient(NamespacedClient):
     async def get_pipeline(
         self,
         *,
-        id: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        summary: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        id: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        summary: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns a pipeline.
 
@@ -120,7 +126,7 @@ class IngestClient(NamespacedClient):
             __path = f"/_ingest/pipeline/{_quote(id)}"
         else:
             __path = "/_ingest/pipeline"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -142,18 +148,20 @@ class IngestClient(NamespacedClient):
     async def processor_grok(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns a list of the built-in patterns.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/grok-processor.html#grok-processor-rest-get>`_
         """
         __path = "/_ingest/processor/grok"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -174,19 +182,25 @@ class IngestClient(NamespacedClient):
     async def put_pipeline(
         self,
         *,
-        id: Any,
-        description: Optional[str] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        meta: Optional[Any] = None,
-        on_failure: Optional[List[Any]] = None,
-        pretty: Optional[bool] = None,
-        processors: Optional[List[Any]] = None,
-        timeout: Optional[Any] = None,
-        version: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        id: str,
+        description: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        meta: t.Optional[t.Mapping[str, t.Any]] = None,
+        on_failure: t.Optional[
+            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
+        ] = None,
+        pretty: t.Optional[bool] = None,
+        processors: t.Optional[
+            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
+        ] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+        version: t.Optional[int] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Creates or updates a pipeline.
 
@@ -216,8 +230,8 @@ class IngestClient(NamespacedClient):
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
         __path = f"/_ingest/pipeline/{_quote(id)}"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if description is not None:
             __body["description"] = description
         if error_trace is not None:
@@ -251,15 +265,19 @@ class IngestClient(NamespacedClient):
     async def simulate(
         self,
         *,
-        id: Optional[Any] = None,
-        docs: Optional[List[Any]] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pipeline: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        verbose: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        id: t.Optional[str] = None,
+        docs: t.Optional[
+            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pipeline: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+        verbose: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Allows to simulate a pipeline with example documents.
 
@@ -275,8 +293,8 @@ class IngestClient(NamespacedClient):
             __path = f"/_ingest/pipeline/{_quote(id)}/_simulate"
         else:
             __path = "/_ingest/pipeline/_simulate"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if docs is not None:
             __body["docs"] = docs
         if error_trace is not None:

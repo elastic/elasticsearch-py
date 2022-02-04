@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Dict, List, Optional, Union
+import typing as t
 
 from elastic_transport import ObjectApiResponse
 
@@ -24,7 +24,7 @@ from .utils import _rewrite_parameters
 
 
 class XPackClient(NamespacedClient):
-    def __getattr__(self, attr_name: str) -> Any:
+    def __getattr__(self, attr_name: str) -> t.Any:
         return getattr(self.client, attr_name)
 
     # AUTO-GENERATED-API-DEFINITIONS #
@@ -33,13 +33,15 @@ class XPackClient(NamespacedClient):
     def info(
         self,
         *,
-        accept_enterprise: Optional[bool] = None,
-        categories: Optional[List[str]] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        accept_enterprise: t.Optional[bool] = None,
+        categories: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves information about the installed X-Pack features.
 
@@ -50,7 +52,7 @@ class XPackClient(NamespacedClient):
             license, features
         """
         __path = "/_xpack"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if accept_enterprise is not None:
             __query["accept_enterprise"] = accept_enterprise
         if categories is not None:
@@ -72,12 +74,14 @@ class XPackClient(NamespacedClient):
     def usage(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves usage information about the installed X-Pack features.
 
@@ -86,7 +90,7 @@ class XPackClient(NamespacedClient):
         :param master_timeout: Specify timeout for watch write operation
         """
         __path = "/_xpack/usage"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:

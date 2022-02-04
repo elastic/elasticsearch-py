@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Dict, List, Optional, Union
+import typing as t
 
 from elastic_transport import ObjectApiResponse
 
@@ -31,11 +31,13 @@ class SqlClient(NamespacedClient):
         self,
         *,
         cursor: str,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Clears the SQL cursor
 
@@ -46,8 +48,8 @@ class SqlClient(NamespacedClient):
         if cursor is None:
             raise ValueError("Empty value passed for parameter 'cursor'")
         __path = "/_sql/close"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if cursor is not None:
             __body["cursor"] = cursor
         if error_trace is not None:
@@ -67,12 +69,14 @@ class SqlClient(NamespacedClient):
     async def delete_async(
         self,
         *,
-        id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes an async SQL search or a stored synchronous SQL search. If the search
         is still running, the API cancels it.
@@ -84,7 +88,7 @@ class SqlClient(NamespacedClient):
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
         __path = f"/_sql/async/delete/{_quote(id)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -102,16 +106,18 @@ class SqlClient(NamespacedClient):
     async def get_async(
         self,
         *,
-        id: Any,
-        delimiter: Optional[str] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        format: Optional[str] = None,
-        human: Optional[bool] = None,
-        keep_alive: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        wait_for_completion_timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        id: str,
+        delimiter: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        format: t.Optional[str] = None,
+        human: t.Optional[bool] = None,
+        keep_alive: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        wait_for_completion_timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns the current status and available results for an async SQL search or stored
         synchronous SQL search
@@ -132,7 +138,7 @@ class SqlClient(NamespacedClient):
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
         __path = f"/_sql/async/{_quote(id)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if delimiter is not None:
             __query["delimiter"] = delimiter
         if error_trace is not None:
@@ -158,12 +164,14 @@ class SqlClient(NamespacedClient):
     async def get_async_status(
         self,
         *,
-        id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns the current status of an async SQL search or a stored synchronous SQL
         search
@@ -175,7 +183,7 @@ class SqlClient(NamespacedClient):
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
         __path = f"/_sql/async/status/{_quote(id)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -196,21 +204,23 @@ class SqlClient(NamespacedClient):
     async def query(
         self,
         *,
-        columnar: Optional[bool] = None,
-        cursor: Optional[str] = None,
-        error_trace: Optional[bool] = None,
-        fetch_size: Optional[int] = None,
-        field_multi_value_leniency: Optional[bool] = None,
-        filter: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        format: Optional[str] = None,
-        human: Optional[bool] = None,
-        page_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        query: Optional[str] = None,
-        request_timeout: Optional[Any] = None,
-        time_zone: Optional[str] = None,
-    ) -> ObjectApiResponse[Any]:
+        columnar: t.Optional[bool] = None,
+        cursor: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        fetch_size: t.Optional[int] = None,
+        field_multi_value_leniency: t.Optional[bool] = None,
+        filter: t.Optional[t.Mapping[str, t.Any]] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        format: t.Optional[str] = None,
+        human: t.Optional[bool] = None,
+        page_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        query: t.Optional[str] = None,
+        request_timeout: t.Optional[t.Union[int, str]] = None,
+        time_zone: t.Optional[str] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Executes a SQL request
 
@@ -232,8 +242,8 @@ class SqlClient(NamespacedClient):
             More information available here.
         """
         __path = "/_sql"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if columnar is not None:
             __body["columnar"] = columnar
         if cursor is not None:
@@ -274,14 +284,16 @@ class SqlClient(NamespacedClient):
         self,
         *,
         query: str,
-        error_trace: Optional[bool] = None,
-        fetch_size: Optional[int] = None,
-        filter: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        time_zone: Optional[str] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        fetch_size: t.Optional[int] = None,
+        filter: t.Optional[t.Mapping[str, t.Any]] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        time_zone: t.Optional[str] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Translates SQL into Elasticsearch queries
 
@@ -295,8 +307,8 @@ class SqlClient(NamespacedClient):
         if query is None:
             raise ValueError("Empty value passed for parameter 'query'")
         __path = "/_sql/translate"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if query is not None:
             __body["query"] = query
         if error_trace is not None:

@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Dict, List, Optional, Union
+import typing as t
 
 from elastic_transport import ObjectApiResponse
 
@@ -28,14 +28,16 @@ class TransformClient(NamespacedClient):
     def delete_transform(
         self,
         *,
-        transform_id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        force: Optional[bool] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        transform_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        force: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes an existing transform.
 
@@ -51,7 +53,7 @@ class TransformClient(NamespacedClient):
         if transform_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'transform_id'")
         __path = f"/_transform/{_quote(transform_id)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -75,16 +77,18 @@ class TransformClient(NamespacedClient):
     def get_transform(
         self,
         *,
-        transform_id: Optional[Any] = None,
-        allow_no_match: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        exclude_generated: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        from_: Optional[int] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        size: Optional[int] = None,
-    ) -> ObjectApiResponse[Any]:
+        transform_id: t.Optional[str] = None,
+        allow_no_match: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        exclude_generated: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        from_: t.Optional[int] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        size: t.Optional[int] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves configuration information for transforms.
 
@@ -108,7 +112,7 @@ class TransformClient(NamespacedClient):
             __path = f"/_transform/{_quote(transform_id)}"
         else:
             __path = "/_transform"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
             __query["allow_no_match"] = allow_no_match
         if error_trace is not None:
@@ -136,15 +140,17 @@ class TransformClient(NamespacedClient):
     def get_transform_stats(
         self,
         *,
-        transform_id: Any,
-        allow_no_match: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        from_: Optional[int] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        size: Optional[int] = None,
-    ) -> ObjectApiResponse[Any]:
+        transform_id: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        allow_no_match: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        from_: t.Optional[int] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        size: t.Optional[int] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves usage information for transforms.
 
@@ -164,7 +170,7 @@ class TransformClient(NamespacedClient):
         if transform_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'transform_id'")
         __path = f"/_transform/{_quote(transform_id)}/_stats"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
             __query["allow_no_match"] = allow_no_match
         if error_trace is not None:
@@ -190,22 +196,24 @@ class TransformClient(NamespacedClient):
     def preview_transform(
         self,
         *,
-        transform_id: Optional[Any] = None,
-        description: Optional[str] = None,
-        dest: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        frequency: Optional[Any] = None,
-        human: Optional[bool] = None,
-        latest: Optional[Any] = None,
-        pivot: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        retention_policy: Optional[Any] = None,
-        settings: Optional[Any] = None,
-        source: Optional[Any] = None,
-        sync: Optional[Any] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        transform_id: t.Optional[str] = None,
+        description: t.Optional[str] = None,
+        dest: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        frequency: t.Optional[t.Union[int, str]] = None,
+        human: t.Optional[bool] = None,
+        latest: t.Optional[t.Mapping[str, t.Any]] = None,
+        pivot: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+        retention_policy: t.Optional[t.Mapping[str, t.Any]] = None,
+        settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        source: t.Optional[t.Mapping[str, t.Any]] = None,
+        sync: t.Optional[t.Mapping[str, t.Any]] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Previews a transform.
 
@@ -237,8 +245,8 @@ class TransformClient(NamespacedClient):
             __path = f"/_transform/{_quote(transform_id)}/_preview"
         else:
             __path = "/_transform/_preview"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if description is not None:
             __body["description"] = description
         if dest is not None:
@@ -283,24 +291,26 @@ class TransformClient(NamespacedClient):
     def put_transform(
         self,
         *,
-        transform_id: Any,
-        dest: Any,
-        source: Any,
-        defer_validation: Optional[bool] = None,
-        description: Optional[str] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        frequency: Optional[Any] = None,
-        human: Optional[bool] = None,
-        latest: Optional[Any] = None,
-        meta: Optional[Any] = None,
-        pivot: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        retention_policy: Optional[Any] = None,
-        settings: Optional[Any] = None,
-        sync: Optional[Any] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        transform_id: str,
+        dest: t.Mapping[str, t.Any],
+        source: t.Mapping[str, t.Any],
+        defer_validation: t.Optional[bool] = None,
+        description: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        frequency: t.Optional[t.Union[int, str]] = None,
+        human: t.Optional[bool] = None,
+        latest: t.Optional[t.Mapping[str, t.Any]] = None,
+        meta: t.Optional[t.Mapping[str, t.Any]] = None,
+        pivot: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+        retention_policy: t.Optional[t.Mapping[str, t.Any]] = None,
+        settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        sync: t.Optional[t.Mapping[str, t.Any]] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Instantiates a transform.
 
@@ -343,8 +353,8 @@ class TransformClient(NamespacedClient):
         if source is None:
             raise ValueError("Empty value passed for parameter 'source'")
         __path = f"/_transform/{_quote(transform_id)}"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if dest is not None:
             __body["dest"] = dest
         if source is not None:
@@ -386,13 +396,15 @@ class TransformClient(NamespacedClient):
     def reset_transform(
         self,
         *,
-        transform_id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        force: Optional[bool] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        transform_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        force: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Resets an existing transform.
 
@@ -408,7 +420,7 @@ class TransformClient(NamespacedClient):
         if transform_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'transform_id'")
         __path = f"/_transform/{_quote(transform_id)}/_reset"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -428,13 +440,15 @@ class TransformClient(NamespacedClient):
     def start_transform(
         self,
         *,
-        transform_id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        transform_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Starts one or more transforms.
 
@@ -447,7 +461,7 @@ class TransformClient(NamespacedClient):
         if transform_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'transform_id'")
         __path = f"/_transform/{_quote(transform_id)}/_start"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -467,17 +481,19 @@ class TransformClient(NamespacedClient):
     def stop_transform(
         self,
         *,
-        transform_id: Any,
-        allow_no_match: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        force: Optional[bool] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-        wait_for_checkpoint: Optional[bool] = None,
-        wait_for_completion: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        transform_id: str,
+        allow_no_match: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        force: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+        wait_for_checkpoint: t.Optional[bool] = None,
+        wait_for_completion: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Stops one or more transforms.
 
@@ -508,7 +524,7 @@ class TransformClient(NamespacedClient):
         if transform_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'transform_id'")
         __path = f"/_transform/{_quote(transform_id)}/_stop"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
             __query["allow_no_match"] = allow_no_match
         if error_trace is not None:
@@ -539,22 +555,24 @@ class TransformClient(NamespacedClient):
     def update_transform(
         self,
         *,
-        transform_id: Any,
-        defer_validation: Optional[bool] = None,
-        description: Optional[str] = None,
-        dest: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        frequency: Optional[Any] = None,
-        human: Optional[bool] = None,
-        meta: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        retention_policy: Optional[Any] = None,
-        settings: Optional[Any] = None,
-        source: Optional[Any] = None,
-        sync: Optional[Any] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        transform_id: str,
+        defer_validation: t.Optional[bool] = None,
+        description: t.Optional[str] = None,
+        dest: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        frequency: t.Optional[t.Union[int, str]] = None,
+        human: t.Optional[bool] = None,
+        meta: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+        retention_policy: t.Optional[t.Mapping[str, t.Any]] = None,
+        settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        source: t.Optional[t.Mapping[str, t.Any]] = None,
+        sync: t.Optional[t.Mapping[str, t.Any]] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Updates certain properties of a transform.
 
@@ -582,8 +600,8 @@ class TransformClient(NamespacedClient):
         if transform_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'transform_id'")
         __path = f"/_transform/{_quote(transform_id)}/_update"
-        __query: Dict[str, Any] = {}
-        __body: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = {}
         if defer_validation is not None:
             __query["defer_validation"] = defer_validation
         if description is not None:
@@ -621,13 +639,15 @@ class TransformClient(NamespacedClient):
     def upgrade_transforms(
         self,
         *,
-        dry_run: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        dry_run: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Upgrades all transforms.
 
@@ -638,7 +658,7 @@ class TransformClient(NamespacedClient):
             the timeout expires, the request fails and returns an error.
         """
         __path = "/_transform/_upgrade"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if dry_run is not None:
             __query["dry_run"] = dry_run
         if error_trace is not None:

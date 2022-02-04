@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Dict, List, Optional, Union
+import typing as t
 
 from elastic_transport import ObjectApiResponse
 
@@ -28,11 +28,13 @@ class SecurityClient(NamespacedClient):
     def authenticate(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Enables authentication as a user and retrieve information about the authenticated
         user.
@@ -40,7 +42,7 @@ class SecurityClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-authenticate.html>`_
         """
         __path = "/_security/_authenticate"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -60,15 +62,19 @@ class SecurityClient(NamespacedClient):
     def change_password(
         self,
         *,
-        username: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        password: Optional[Any] = None,
-        password_hash: Optional[str] = None,
-        pretty: Optional[bool] = None,
-        refresh: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        username: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        password: t.Optional[str] = None,
+        password_hash: t.Optional[str] = None,
+        pretty: t.Optional[bool] = None,
+        refresh: t.Optional[
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Changes the passwords of users in the native realm and built-in users.
 
@@ -90,8 +96,8 @@ class SecurityClient(NamespacedClient):
             __path = f"/_security/user/{_quote(username)}/_password"
         else:
             __path = "/_security/user/_password"
-        __query: Dict[str, Any] = {}
-        __body: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -115,12 +121,14 @@ class SecurityClient(NamespacedClient):
     def clear_api_key_cache(
         self,
         *,
-        ids: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        ids: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Clear a subset or all entries from the API key cache.
 
@@ -131,7 +139,7 @@ class SecurityClient(NamespacedClient):
         if ids in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'ids'")
         __path = f"/_security/api_key/{_quote(ids)}/_clear_cache"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -149,12 +157,14 @@ class SecurityClient(NamespacedClient):
     def clear_cached_privileges(
         self,
         *,
-        application: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        application: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Evicts application privileges from the native application privileges cache.
 
@@ -165,7 +175,7 @@ class SecurityClient(NamespacedClient):
         if application in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'application'")
         __path = f"/_security/privilege/{_quote(application)}/_clear_cache"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -183,13 +193,15 @@ class SecurityClient(NamespacedClient):
     def clear_cached_realms(
         self,
         *,
-        realms: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        usernames: Optional[List[str]] = None,
-    ) -> ObjectApiResponse[Any]:
+        realms: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        usernames: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Evicts users from the user cache. Can completely clear the cache or evict specific
         users.
@@ -202,7 +214,7 @@ class SecurityClient(NamespacedClient):
         if realms in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'realms'")
         __path = f"/_security/realm/{_quote(realms)}/_clear_cache"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -222,12 +234,14 @@ class SecurityClient(NamespacedClient):
     def clear_cached_roles(
         self,
         *,
-        name: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Evicts roles from the native role cache.
 
@@ -238,7 +252,7 @@ class SecurityClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_security/role/{_quote(name)}/_clear_cache"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -256,14 +270,16 @@ class SecurityClient(NamespacedClient):
     def clear_cached_service_tokens(
         self,
         *,
-        namespace: Any,
-        service: Any,
-        name: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        namespace: str,
+        service: str,
+        name: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Evicts tokens from the service account token caches.
 
@@ -280,7 +296,7 @@ class SecurityClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_security/service/{_quote(namespace)}/{_quote(service)}/credential/token/{_quote(name)}/_clear_cache"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -300,16 +316,20 @@ class SecurityClient(NamespacedClient):
     def create_api_key(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        expiration: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        metadata: Optional[Any] = None,
-        name: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        refresh: Optional[Any] = None,
-        role_descriptors: Optional[Dict[str, Any]] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        expiration: t.Optional[t.Union[int, str]] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        metadata: t.Optional[t.Mapping[str, t.Any]] = None,
+        name: t.Optional[str] = None,
+        pretty: t.Optional[bool] = None,
+        refresh: t.Optional[
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+        ] = None,
+        role_descriptors: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Creates an API key for access without requiring basic authentication.
 
@@ -334,8 +354,8 @@ class SecurityClient(NamespacedClient):
             or update roles API.
         """
         __path = "/_security/api_key"
-        __query: Dict[str, Any] = {}
-        __body: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if expiration is not None:
@@ -363,14 +383,16 @@ class SecurityClient(NamespacedClient):
     def create_service_token(
         self,
         *,
-        namespace: Any,
-        service: Any,
-        name: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        namespace: str,
+        service: str,
+        name: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Creates a service account token for access without requiring basic authentication.
 
@@ -398,7 +420,7 @@ class SecurityClient(NamespacedClient):
             __method = "POST"
         else:
             raise ValueError("Couldn't find a path for the given parameters")
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -416,14 +438,18 @@ class SecurityClient(NamespacedClient):
     def delete_privileges(
         self,
         *,
-        application: Any,
-        name: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        refresh: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        application: str,
+        name: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        refresh: t.Optional[
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Removes application privileges.
 
@@ -440,7 +466,7 @@ class SecurityClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_security/privilege/{_quote(application)}/{_quote(name)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -460,13 +486,17 @@ class SecurityClient(NamespacedClient):
     def delete_role(
         self,
         *,
-        name: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        refresh: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        refresh: t.Optional[
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Removes roles in the native realm.
 
@@ -480,7 +510,7 @@ class SecurityClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_security/role/{_quote(name)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -500,13 +530,17 @@ class SecurityClient(NamespacedClient):
     def delete_role_mapping(
         self,
         *,
-        name: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        refresh: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        refresh: t.Optional[
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Removes role mappings.
 
@@ -520,7 +554,7 @@ class SecurityClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_security/role_mapping/{_quote(name)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -540,15 +574,19 @@ class SecurityClient(NamespacedClient):
     def delete_service_token(
         self,
         *,
-        namespace: Any,
-        service: Any,
-        name: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        refresh: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        namespace: str,
+        service: str,
+        name: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        refresh: t.Optional[
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes a service account token.
 
@@ -568,7 +606,7 @@ class SecurityClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_security/service/{_quote(namespace)}/{_quote(service)}/credential/token/{_quote(name)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -588,13 +626,17 @@ class SecurityClient(NamespacedClient):
     def delete_user(
         self,
         *,
-        username: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        refresh: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        username: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        refresh: t.Optional[
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes users from the native realm.
 
@@ -608,7 +650,7 @@ class SecurityClient(NamespacedClient):
         if username in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'username'")
         __path = f"/_security/user/{_quote(username)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -628,13 +670,17 @@ class SecurityClient(NamespacedClient):
     def disable_user(
         self,
         *,
-        username: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        refresh: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        username: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        refresh: t.Optional[
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Disables users in the native realm.
 
@@ -648,7 +694,7 @@ class SecurityClient(NamespacedClient):
         if username in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'username'")
         __path = f"/_security/user/{_quote(username)}/_disable"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -668,13 +714,17 @@ class SecurityClient(NamespacedClient):
     def enable_user(
         self,
         *,
-        username: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        refresh: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        username: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        refresh: t.Optional[
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Enables users in the native realm.
 
@@ -688,7 +738,7 @@ class SecurityClient(NamespacedClient):
         if username in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'username'")
         __path = f"/_security/user/{_quote(username)}/_enable"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -708,11 +758,13 @@ class SecurityClient(NamespacedClient):
     def enroll_kibana(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Allows a kibana instance to configure itself to communicate with a secured elasticsearch
         cluster.
@@ -720,7 +772,7 @@ class SecurityClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-kibana-enrollment.html>`_
         """
         __path = "/_security/enroll/kibana"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -738,18 +790,20 @@ class SecurityClient(NamespacedClient):
     def enroll_node(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Allows a new node to enroll to an existing cluster with security enabled.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-node-enrollment.html>`_
         """
         __path = "/_security/enroll/node"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -767,16 +821,18 @@ class SecurityClient(NamespacedClient):
     def get_api_key(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        id: Optional[Any] = None,
-        name: Optional[Any] = None,
-        owner: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        realm_name: Optional[Any] = None,
-        username: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        id: t.Optional[str] = None,
+        name: t.Optional[str] = None,
+        owner: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        realm_name: t.Optional[str] = None,
+        username: t.Optional[str] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves information for one or more API keys.
 
@@ -789,7 +845,7 @@ class SecurityClient(NamespacedClient):
         :param username: user name of the user who created this API key to be retrieved
         """
         __path = "/_security/api_key"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -817,11 +873,13 @@ class SecurityClient(NamespacedClient):
     def get_builtin_privileges(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves the list of cluster privileges and index privileges that are available
         in this version of Elasticsearch.
@@ -829,7 +887,7 @@ class SecurityClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-get-builtin-privileges.html>`_
         """
         __path = "/_security/privilege/_builtin"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -847,13 +905,15 @@ class SecurityClient(NamespacedClient):
     def get_privileges(
         self,
         *,
-        application: Optional[Any] = None,
-        name: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        application: t.Optional[str] = None,
+        name: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves application privileges.
 
@@ -868,7 +928,7 @@ class SecurityClient(NamespacedClient):
             __path = f"/_security/privilege/{_quote(application)}"
         else:
             __path = "/_security/privilege"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -886,12 +946,14 @@ class SecurityClient(NamespacedClient):
     def get_role(
         self,
         *,
-        name: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves roles in the native realm.
 
@@ -905,7 +967,7 @@ class SecurityClient(NamespacedClient):
             __path = f"/_security/role/{_quote(name)}"
         else:
             __path = "/_security/role"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -923,12 +985,14 @@ class SecurityClient(NamespacedClient):
     def get_role_mapping(
         self,
         *,
-        name: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves role mappings.
 
@@ -944,7 +1008,7 @@ class SecurityClient(NamespacedClient):
             __path = f"/_security/role_mapping/{_quote(name)}"
         else:
             __path = "/_security/role_mapping"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -962,13 +1026,15 @@ class SecurityClient(NamespacedClient):
     def get_service_accounts(
         self,
         *,
-        namespace: Optional[Any] = None,
-        service: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        namespace: t.Optional[str] = None,
+        service: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves information about service accounts.
 
@@ -986,7 +1052,7 @@ class SecurityClient(NamespacedClient):
             __path = f"/_security/service/{_quote(namespace)}"
         else:
             __path = "/_security/service"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1004,13 +1070,15 @@ class SecurityClient(NamespacedClient):
     def get_service_credentials(
         self,
         *,
-        namespace: Any,
-        service: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        namespace: str,
+        service: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves information of all service credentials for a service account.
 
@@ -1024,7 +1092,7 @@ class SecurityClient(NamespacedClient):
         if service in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'service'")
         __path = f"/_security/service/{_quote(namespace)}/{_quote(service)}/credential"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1044,17 +1112,24 @@ class SecurityClient(NamespacedClient):
     def get_token(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        grant_type: Optional[Any] = None,
-        human: Optional[bool] = None,
-        kerberos_ticket: Optional[str] = None,
-        password: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        refresh_token: Optional[str] = None,
-        scope: Optional[str] = None,
-        username: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        grant_type: t.Optional[
+            t.Union[
+                "t.Literal['_kerberos', 'client_credentials', 'password', 'refresh_token']",
+                str,
+            ]
+        ] = None,
+        human: t.Optional[bool] = None,
+        kerberos_ticket: t.Optional[str] = None,
+        password: t.Optional[str] = None,
+        pretty: t.Optional[bool] = None,
+        refresh_token: t.Optional[str] = None,
+        scope: t.Optional[str] = None,
+        username: t.Optional[str] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Creates a bearer token for access without requiring basic authentication.
 
@@ -1068,8 +1143,8 @@ class SecurityClient(NamespacedClient):
         :param username:
         """
         __path = "/_security/oauth2/token"
-        __query: Dict[str, Any] = {}
-        __body: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1099,12 +1174,16 @@ class SecurityClient(NamespacedClient):
     def get_user(
         self,
         *,
-        username: Optional[Union[Any, List[Any]]] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        username: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves information about users in the native realm and built-in users.
 
@@ -1118,7 +1197,7 @@ class SecurityClient(NamespacedClient):
             __path = f"/_security/user/{_quote(username)}"
         else:
             __path = "/_security/user"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1136,14 +1215,16 @@ class SecurityClient(NamespacedClient):
     def get_user_privileges(
         self,
         *,
-        application: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        priviledge: Optional[Any] = None,
-        username: Optional[Union[Any, None]] = None,
-    ) -> ObjectApiResponse[Any]:
+        application: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        priviledge: t.Optional[str] = None,
+        username: t.Optional[t.Union[None, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves security privileges for the logged in user.
 
@@ -1157,7 +1238,7 @@ class SecurityClient(NamespacedClient):
         :param username:
         """
         __path = "/_security/user/_privileges"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if application is not None:
             __query["application"] = application
         if error_trace is not None:
@@ -1184,16 +1265,18 @@ class SecurityClient(NamespacedClient):
     def grant_api_key(
         self,
         *,
-        api_key: Any,
-        grant_type: Any,
-        access_token: Optional[str] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        password: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        username: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        api_key: t.Mapping[str, t.Any],
+        grant_type: t.Union["t.Literal['access_token', 'password']", str],
+        access_token: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        password: t.Optional[str] = None,
+        pretty: t.Optional[bool] = None,
+        username: t.Optional[str] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Creates an API key on behalf of another user.
 
@@ -1210,8 +1293,8 @@ class SecurityClient(NamespacedClient):
         if grant_type is None:
             raise ValueError("Empty value passed for parameter 'grant_type'")
         __path = "/_security/api_key/grant"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if api_key is not None:
             __body["api_key"] = api_key
         if grant_type is not None:
@@ -1241,15 +1324,37 @@ class SecurityClient(NamespacedClient):
     def has_privileges(
         self,
         *,
-        user: Optional[Union[Any, None]] = None,
-        application: Optional[List[Any]] = None,
-        cluster: Optional[List[Any]] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        index: Optional[List[Any]] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        user: t.Optional[t.Union[None, str]] = None,
+        application: t.Optional[
+            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
+        ] = None,
+        cluster: t.Optional[
+            t.Union[
+                t.List[
+                    t.Union[
+                        "t.Literal['all', 'cancel_task', 'create_snapshot', 'grant_api_key', 'manage', 'manage_api_key', 'manage_ccr', 'manage_ilm', 'manage_index_templates', 'manage_ingest_pipelines', 'manage_logstash_pipelines', 'manage_ml', 'manage_oidc', 'manage_own_api_key', 'manage_pipeline', 'manage_rollup', 'manage_saml', 'manage_security', 'manage_service_account', 'manage_slm', 'manage_token', 'manage_transform', 'manage_watcher', 'monitor', 'monitor_ml', 'monitor_rollup', 'monitor_snapshot', 'monitor_text_structure', 'monitor_transform', 'monitor_watcher', 'read_ccr', 'read_ilm', 'read_pipeline', 'read_slm', 'transport_client']",
+                        str,
+                    ]
+                ],
+                t.Tuple[
+                    t.Union[
+                        "t.Literal['all', 'cancel_task', 'create_snapshot', 'grant_api_key', 'manage', 'manage_api_key', 'manage_ccr', 'manage_ilm', 'manage_index_templates', 'manage_ingest_pipelines', 'manage_logstash_pipelines', 'manage_ml', 'manage_oidc', 'manage_own_api_key', 'manage_pipeline', 'manage_rollup', 'manage_saml', 'manage_security', 'manage_service_account', 'manage_slm', 'manage_token', 'manage_transform', 'manage_watcher', 'monitor', 'monitor_ml', 'monitor_rollup', 'monitor_snapshot', 'monitor_text_structure', 'monitor_transform', 'monitor_watcher', 'read_ccr', 'read_ilm', 'read_pipeline', 'read_slm', 'transport_client']",
+                        str,
+                    ],
+                    ...,
+                ],
+            ]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        index: t.Optional[
+            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
+        ] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Determines whether the specified user has a specified list of privileges.
 
@@ -1264,8 +1369,8 @@ class SecurityClient(NamespacedClient):
             __path = f"/_security/user/{_quote(user)}/_has_privileges"
         else:
             __path = "/_security/user/_has_privileges"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if application is not None:
             __body["application"] = application
         if cluster is not None:
@@ -1291,17 +1396,19 @@ class SecurityClient(NamespacedClient):
     def invalidate_api_key(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        id: Optional[Any] = None,
-        ids: Optional[List[Any]] = None,
-        name: Optional[Any] = None,
-        owner: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        realm_name: Optional[str] = None,
-        username: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        id: t.Optional[str] = None,
+        ids: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        name: t.Optional[str] = None,
+        owner: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        realm_name: t.Optional[str] = None,
+        username: t.Optional[str] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Invalidates one or more API keys.
 
@@ -1315,8 +1422,8 @@ class SecurityClient(NamespacedClient):
         :param username:
         """
         __path = "/_security/api_key"
-        __query: Dict[str, Any] = {}
-        __body: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1348,15 +1455,17 @@ class SecurityClient(NamespacedClient):
     def invalidate_token(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        realm_name: Optional[Any] = None,
-        refresh_token: Optional[str] = None,
-        token: Optional[str] = None,
-        username: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        realm_name: t.Optional[str] = None,
+        refresh_token: t.Optional[str] = None,
+        token: t.Optional[str] = None,
+        username: t.Optional[str] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Invalidates one or more access tokens or refresh tokens.
 
@@ -1368,8 +1477,8 @@ class SecurityClient(NamespacedClient):
         :param username:
         """
         __path = "/_security/oauth2/token"
-        __query: Dict[str, Any] = {}
-        __body: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1397,13 +1506,17 @@ class SecurityClient(NamespacedClient):
     def put_privileges(
         self,
         *,
-        privileges: Dict[str, Dict[str, Any]],
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        refresh: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        privileges: t.Mapping[str, t.Mapping[str, t.Mapping[str, t.Any]]],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        refresh: t.Optional[
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Adds or updates application privileges.
 
@@ -1417,7 +1530,7 @@ class SecurityClient(NamespacedClient):
         if privileges is None:
             raise ValueError("Empty value passed for parameter 'privileges'")
         __path = "/_security/privilege"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1441,20 +1554,44 @@ class SecurityClient(NamespacedClient):
     def put_role(
         self,
         *,
-        name: Any,
-        applications: Optional[List[Any]] = None,
-        cluster: Optional[List[Any]] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        global_: Optional[Dict[str, Any]] = None,
-        human: Optional[bool] = None,
-        indices: Optional[List[Any]] = None,
-        metadata: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        refresh: Optional[Any] = None,
-        run_as: Optional[List[str]] = None,
-        transient_metadata: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: str,
+        applications: t.Optional[
+            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
+        ] = None,
+        cluster: t.Optional[
+            t.Union[
+                t.List[
+                    t.Union[
+                        "t.Literal['all', 'cancel_task', 'create_snapshot', 'grant_api_key', 'manage', 'manage_api_key', 'manage_ccr', 'manage_ilm', 'manage_index_templates', 'manage_ingest_pipelines', 'manage_logstash_pipelines', 'manage_ml', 'manage_oidc', 'manage_own_api_key', 'manage_pipeline', 'manage_rollup', 'manage_saml', 'manage_security', 'manage_service_account', 'manage_slm', 'manage_token', 'manage_transform', 'manage_watcher', 'monitor', 'monitor_ml', 'monitor_rollup', 'monitor_snapshot', 'monitor_text_structure', 'monitor_transform', 'monitor_watcher', 'read_ccr', 'read_ilm', 'read_pipeline', 'read_slm', 'transport_client']",
+                        str,
+                    ]
+                ],
+                t.Tuple[
+                    t.Union[
+                        "t.Literal['all', 'cancel_task', 'create_snapshot', 'grant_api_key', 'manage', 'manage_api_key', 'manage_ccr', 'manage_ilm', 'manage_index_templates', 'manage_ingest_pipelines', 'manage_logstash_pipelines', 'manage_ml', 'manage_oidc', 'manage_own_api_key', 'manage_pipeline', 'manage_rollup', 'manage_saml', 'manage_security', 'manage_service_account', 'manage_slm', 'manage_token', 'manage_transform', 'manage_watcher', 'monitor', 'monitor_ml', 'monitor_rollup', 'monitor_snapshot', 'monitor_text_structure', 'monitor_transform', 'monitor_watcher', 'read_ccr', 'read_ilm', 'read_pipeline', 'read_slm', 'transport_client']",
+                        str,
+                    ],
+                    ...,
+                ],
+            ]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        global_: t.Optional[t.Mapping[str, t.Any]] = None,
+        human: t.Optional[bool] = None,
+        indices: t.Optional[
+            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
+        ] = None,
+        metadata: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+        refresh: t.Optional[
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+        ] = None,
+        run_as: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        transient_metadata: t.Optional[t.Mapping[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Adds and updates roles in the native realm.
 
@@ -1484,8 +1621,8 @@ class SecurityClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_security/role/{_quote(name)}"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if applications is not None:
             __body["applications"] = applications
         if cluster is not None:
@@ -1521,18 +1658,22 @@ class SecurityClient(NamespacedClient):
     def put_role_mapping(
         self,
         *,
-        name: Any,
-        enabled: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        metadata: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        refresh: Optional[Any] = None,
-        roles: Optional[List[str]] = None,
-        rules: Optional[Any] = None,
-        run_as: Optional[List[str]] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: str,
+        enabled: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        metadata: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+        refresh: t.Optional[
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+        ] = None,
+        roles: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        rules: t.Optional[t.Mapping[str, t.Any]] = None,
+        run_as: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Creates and updates role mappings.
 
@@ -1551,8 +1692,8 @@ class SecurityClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_security/role_mapping/{_quote(name)}"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if enabled is not None:
             __body["enabled"] = enabled
         if error_trace is not None:
@@ -1584,20 +1725,24 @@ class SecurityClient(NamespacedClient):
     def put_user(
         self,
         *,
-        username: Any,
-        email: Optional[Union[None, str]] = None,
-        enabled: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        full_name: Optional[Union[None, str]] = None,
-        human: Optional[bool] = None,
-        metadata: Optional[Any] = None,
-        password: Optional[Any] = None,
-        password_hash: Optional[str] = None,
-        pretty: Optional[bool] = None,
-        refresh: Optional[Any] = None,
-        roles: Optional[List[str]] = None,
-    ) -> ObjectApiResponse[Any]:
+        username: str,
+        email: t.Optional[t.Union[None, str]] = None,
+        enabled: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        full_name: t.Optional[t.Union[None, str]] = None,
+        human: t.Optional[bool] = None,
+        metadata: t.Optional[t.Mapping[str, t.Any]] = None,
+        password: t.Optional[str] = None,
+        password_hash: t.Optional[str] = None,
+        pretty: t.Optional[bool] = None,
+        refresh: t.Optional[
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+        ] = None,
+        roles: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Adds and updates users in the native realm. These users are commonly referred
         to as native users.
@@ -1619,8 +1764,8 @@ class SecurityClient(NamespacedClient):
         if username in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'username'")
         __path = f"/_security/user/{_quote(username)}"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if email is not None:
             __body["email"] = email
         if enabled is not None:
@@ -1657,16 +1802,31 @@ class SecurityClient(NamespacedClient):
     def query_api_keys(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        from_: Optional[int] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        query: Optional[Any] = None,
-        search_after: Optional[Any] = None,
-        size: Optional[int] = None,
-        sort: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        from_: t.Optional[int] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        query: t.Optional[t.Mapping[str, t.Any]] = None,
+        search_after: t.Optional[
+            t.Union[
+                t.List[t.Union[None, float, int, str]],
+                t.Tuple[t.Union[None, float, int, str], ...],
+            ]
+        ] = None,
+        size: t.Optional[int] = None,
+        sort: t.Optional[
+            t.Union[
+                t.Union[str, t.Mapping[str, t.Any]],
+                t.Union[
+                    t.List[t.Union[str, t.Mapping[str, t.Any]]],
+                    t.Tuple[t.Union[str, t.Mapping[str, t.Any]], ...],
+                ],
+            ]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves information for API keys using a subset of query DSL
 
@@ -1686,8 +1846,8 @@ class SecurityClient(NamespacedClient):
         :param sort:
         """
         __path = "/_security/_query/api_key"
-        __query: Dict[str, Any] = {}
-        __body: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1722,13 +1882,15 @@ class SecurityClient(NamespacedClient):
         self,
         *,
         content: str,
-        ids: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        realm: Optional[str] = None,
-    ) -> ObjectApiResponse[Any]:
+        ids: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        realm: t.Optional[str] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Exchanges a SAML Response message for an Elasticsearch access token and refresh
         token pair
@@ -1747,8 +1909,8 @@ class SecurityClient(NamespacedClient):
         if ids is None:
             raise ValueError("Empty value passed for parameter 'ids'")
         __path = "/_security/saml/authenticate"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if content is not None:
             __body["content"] = content
         if ids is not None:
@@ -1774,15 +1936,17 @@ class SecurityClient(NamespacedClient):
     def saml_complete_logout(
         self,
         *,
-        ids: Any,
+        ids: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
         realm: str,
-        content: Optional[str] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        query_string: Optional[str] = None,
-    ) -> ObjectApiResponse[Any]:
+        content: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        query_string: t.Optional[str] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Verifies the logout response sent from the SAML IdP
 
@@ -1803,8 +1967,8 @@ class SecurityClient(NamespacedClient):
         if realm is None:
             raise ValueError("Empty value passed for parameter 'realm'")
         __path = "/_security/saml/complete_logout"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if ids is not None:
             __body["ids"] = ids
         if realm is not None:
@@ -1833,13 +1997,15 @@ class SecurityClient(NamespacedClient):
         self,
         *,
         query_string: str,
-        acs: Optional[str] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        realm: Optional[str] = None,
-    ) -> ObjectApiResponse[Any]:
+        acs: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        realm: t.Optional[str] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Consumes a SAML LogoutRequest
 
@@ -1864,8 +2030,8 @@ class SecurityClient(NamespacedClient):
         if query_string is None:
             raise ValueError("Empty value passed for parameter 'query_string'")
         __path = "/_security/saml/invalidate"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if query_string is not None:
             __body["query_string"] = query_string
         if acs is not None:
@@ -1892,12 +2058,14 @@ class SecurityClient(NamespacedClient):
         self,
         *,
         token: str,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        refresh_token: Optional[str] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        refresh_token: t.Optional[str] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Invalidates an access token and a refresh token that were generated via the SAML
         Authenticate API
@@ -1914,8 +2082,8 @@ class SecurityClient(NamespacedClient):
         if token is None:
             raise ValueError("Empty value passed for parameter 'token'")
         __path = "/_security/saml/logout"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if token is not None:
             __body["token"] = token
         if error_trace is not None:
@@ -1939,14 +2107,16 @@ class SecurityClient(NamespacedClient):
     def saml_prepare_authentication(
         self,
         *,
-        acs: Optional[str] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        realm: Optional[str] = None,
-        relay_state: Optional[str] = None,
-    ) -> ObjectApiResponse[Any]:
+        acs: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        realm: t.Optional[str] = None,
+        relay_state: t.Optional[str] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Creates a SAML authentication request
 
@@ -1963,8 +2133,8 @@ class SecurityClient(NamespacedClient):
             is signed, this value is used as part of the signature computation.
         """
         __path = "/_security/saml/prepare"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if acs is not None:
             __body["acs"] = acs
         if error_trace is not None:
@@ -1988,12 +2158,14 @@ class SecurityClient(NamespacedClient):
     def saml_service_provider_metadata(
         self,
         *,
-        realm_name: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        realm_name: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Generates SAML metadata for the Elastic stack SAML 2.0 Service Provider
 
@@ -2004,7 +2176,7 @@ class SecurityClient(NamespacedClient):
         if realm_name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'realm_name'")
         __path = f"/_security/saml/metadata/{_quote(realm_name)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
