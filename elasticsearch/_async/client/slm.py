@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Dict, List, Optional, Union
+import typing as t
 
 from elastic_transport import ObjectApiResponse
 
@@ -28,12 +28,14 @@ class SlmClient(NamespacedClient):
     async def delete_lifecycle(
         self,
         *,
-        policy_id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        policy_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes an existing snapshot lifecycle policy.
 
@@ -44,7 +46,7 @@ class SlmClient(NamespacedClient):
         if policy_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'policy_id'")
         __path = f"/_slm/policy/{_quote(policy_id)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -62,12 +64,14 @@ class SlmClient(NamespacedClient):
     async def execute_lifecycle(
         self,
         *,
-        policy_id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        policy_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Immediately creates a snapshot according to the lifecycle policy, without waiting
         for the scheduled time.
@@ -79,7 +83,7 @@ class SlmClient(NamespacedClient):
         if policy_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'policy_id'")
         __path = f"/_slm/policy/{_quote(policy_id)}/_execute"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -97,18 +101,20 @@ class SlmClient(NamespacedClient):
     async def execute_retention(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes any snapshots that are expired according to the policy's retention rules.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-api-execute-retention.html>`_
         """
         __path = "/_slm/_execute_retention"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -126,12 +132,16 @@ class SlmClient(NamespacedClient):
     async def get_lifecycle(
         self,
         *,
-        policy_id: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        policy_id: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves one or more snapshot lifecycle policy definitions and information about
         the latest snapshot attempts.
@@ -144,7 +154,7 @@ class SlmClient(NamespacedClient):
             __path = f"/_slm/policy/{_quote(policy_id)}"
         else:
             __path = "/_slm/policy"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -162,11 +172,13 @@ class SlmClient(NamespacedClient):
     async def get_stats(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns global and policy-level statistics about actions taken by snapshot lifecycle
         management.
@@ -174,7 +186,7 @@ class SlmClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/slm-api-get-stats.html>`_
         """
         __path = "/_slm/stats"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -192,18 +204,20 @@ class SlmClient(NamespacedClient):
     async def get_status(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves the status of snapshot lifecycle management (SLM).
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-api-get-status.html>`_
         """
         __path = "/_slm/status"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -223,19 +237,21 @@ class SlmClient(NamespacedClient):
     async def put_lifecycle(
         self,
         *,
-        policy_id: Any,
-        config: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        name: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        repository: Optional[str] = None,
-        retention: Optional[Any] = None,
-        schedule: Optional[Any] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        policy_id: str,
+        config: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        name: t.Optional[str] = None,
+        pretty: t.Optional[bool] = None,
+        repository: t.Optional[str] = None,
+        retention: t.Optional[t.Mapping[str, t.Any]] = None,
+        schedule: t.Optional[str] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Creates or updates a snapshot lifecycle policy.
 
@@ -263,8 +279,8 @@ class SlmClient(NamespacedClient):
         if policy_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'policy_id'")
         __path = f"/_slm/policy/{_quote(policy_id)}"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if config is not None:
             __body["config"] = config
         if error_trace is not None:
@@ -300,18 +316,20 @@ class SlmClient(NamespacedClient):
     async def start(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Turns on snapshot lifecycle management (SLM).
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-api-start.html>`_
         """
         __path = "/_slm/start"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -329,18 +347,20 @@ class SlmClient(NamespacedClient):
     async def stop(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Turns off snapshot lifecycle management (SLM).
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/slm-api-stop.html>`_
         """
         __path = "/_slm/stop"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:

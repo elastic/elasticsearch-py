@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Dict, List, Optional, Union
+import typing as t
 
 from elastic_transport import ObjectApiResponse, TextApiResponse
 
@@ -28,20 +28,39 @@ class CatClient(NamespacedClient):
     async def aliases(
         self,
         *,
-        name: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        format: Optional[str] = None,
-        h: Optional[Any] = None,
-        help: Optional[bool] = None,
-        human: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        s: Optional[Any] = None,
-        v: Optional[bool] = None,
-    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
+        name: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        format: t.Optional[str] = None,
+        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        help: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        v: t.Optional[bool] = None,
+    ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
         Shows information about currently configured aliases to indices including filter
         and routing infos.
@@ -70,7 +89,7 @@ class CatClient(NamespacedClient):
             __path = f"/_cat/aliases/{_quote(name)}"
         else:
             __path = "/_cat/aliases"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if expand_wildcards is not None:
@@ -104,20 +123,26 @@ class CatClient(NamespacedClient):
     async def allocation(
         self,
         *,
-        node_id: Optional[Any] = None,
-        bytes: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        format: Optional[str] = None,
-        h: Optional[Any] = None,
-        help: Optional[bool] = None,
-        human: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        s: Optional[Any] = None,
-        v: Optional[bool] = None,
-    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
+        node_id: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        bytes: t.Optional[
+            t.Union[str, t.Literal["b", "gb", "kb", "mb", "pb", "tb"]]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        format: t.Optional[str] = None,
+        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        help: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        v: t.Optional[bool] = None,
+    ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
         Provides a snapshot of how many shards are allocated to each data node and how
         much disk space they are using.
@@ -146,7 +171,7 @@ class CatClient(NamespacedClient):
             __path = f"/_cat/allocation/{_quote(node_id)}"
         else:
             __path = "/_cat/allocation"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if bytes is not None:
             __query["bytes"] = bytes
         if error_trace is not None:
@@ -180,19 +205,21 @@ class CatClient(NamespacedClient):
     async def count(
         self,
         *,
-        index: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        format: Optional[str] = None,
-        h: Optional[Any] = None,
-        help: Optional[bool] = None,
-        human: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        s: Optional[Any] = None,
-        v: Optional[bool] = None,
-    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
+        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        format: t.Optional[str] = None,
+        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        help: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        v: t.Optional[bool] = None,
+    ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
         Provides quick access to the document count of the entire cluster, or individual
         indices.
@@ -219,7 +246,7 @@ class CatClient(NamespacedClient):
             __path = f"/_cat/count/{_quote(index)}"
         else:
             __path = "/_cat/count"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -251,20 +278,26 @@ class CatClient(NamespacedClient):
     async def fielddata(
         self,
         *,
-        fields: Optional[Any] = None,
-        bytes: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        format: Optional[str] = None,
-        h: Optional[Any] = None,
-        help: Optional[bool] = None,
-        human: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        s: Optional[Any] = None,
-        v: Optional[bool] = None,
-    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
+        fields: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        bytes: t.Optional[
+            t.Union[str, t.Literal["b", "gb", "kb", "mb", "pb", "tb"]]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        format: t.Optional[str] = None,
+        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        help: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        v: t.Optional[bool] = None,
+    ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
         Shows how much heap memory is currently being used by fielddata on every data
         node in the cluster.
@@ -292,7 +325,7 @@ class CatClient(NamespacedClient):
             __path = f"/_cat/fielddata/{_quote(fields)}"
         else:
             __path = "/_cat/fielddata"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if bytes is not None:
             __query["bytes"] = bytes
         if error_trace is not None:
@@ -326,19 +359,21 @@ class CatClient(NamespacedClient):
     async def health(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        format: Optional[str] = None,
-        h: Optional[Any] = None,
-        help: Optional[bool] = None,
-        human: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        s: Optional[Any] = None,
-        ts: Optional[bool] = None,
-        v: Optional[bool] = None,
-    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        format: t.Optional[str] = None,
+        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        help: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        ts: t.Optional[bool] = None,
+        v: t.Optional[bool] = None,
+    ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
         Returns a concise representation of the cluster health.
 
@@ -361,7 +396,7 @@ class CatClient(NamespacedClient):
         :param v: When set to `true` will enable verbose output.
         """
         __path = "/_cat/health"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -395,17 +430,19 @@ class CatClient(NamespacedClient):
     async def help(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        format: Optional[str] = None,
-        h: Optional[Any] = None,
-        help: Optional[bool] = None,
-        human: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        s: Optional[Any] = None,
-        v: Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        format: t.Optional[str] = None,
+        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        help: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        v: t.Optional[bool] = None,
     ) -> TextApiResponse:
         """
         Returns help for the Cat APIs.
@@ -428,7 +465,7 @@ class CatClient(NamespacedClient):
         :param v: When set to `true` will enable verbose output.
         """
         __path = "/_cat"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -460,24 +497,45 @@ class CatClient(NamespacedClient):
     async def indices(
         self,
         *,
-        index: Optional[Any] = None,
-        bytes: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        format: Optional[str] = None,
-        h: Optional[Any] = None,
-        health: Optional[Any] = None,
-        help: Optional[bool] = None,
-        human: Optional[bool] = None,
-        include_unloaded_segments: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        pri: Optional[bool] = None,
-        s: Optional[Any] = None,
-        v: Optional[bool] = None,
-    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
+        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        bytes: t.Optional[
+            t.Union[str, t.Literal["b", "gb", "kb", "mb", "pb", "tb"]]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        format: t.Optional[str] = None,
+        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        health: t.Optional[t.Union[str, t.Literal["green", "red", "yellow"]]] = None,
+        help: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        include_unloaded_segments: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        pri: t.Optional[bool] = None,
+        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        v: t.Optional[bool] = None,
+    ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
         Returns information about indices: number of primaries and replicas, document
         counts, disk size, ...
@@ -512,7 +570,7 @@ class CatClient(NamespacedClient):
             __path = f"/_cat/indices/{_quote(index)}"
         else:
             __path = "/_cat/indices"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if bytes is not None:
             __query["bytes"] = bytes
         if error_trace is not None:
@@ -554,18 +612,20 @@ class CatClient(NamespacedClient):
     async def master(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        format: Optional[str] = None,
-        h: Optional[Any] = None,
-        help: Optional[bool] = None,
-        human: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        s: Optional[Any] = None,
-        v: Optional[bool] = None,
-    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        format: t.Optional[str] = None,
+        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        help: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        v: t.Optional[bool] = None,
+    ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
         Returns information about the master node.
 
@@ -587,7 +647,7 @@ class CatClient(NamespacedClient):
         :param v: When set to `true` will enable verbose output.
         """
         __path = "/_cat/master"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -619,22 +679,172 @@ class CatClient(NamespacedClient):
     async def ml_data_frame_analytics(
         self,
         *,
-        id: Optional[Any] = None,
-        allow_no_match: Optional[bool] = None,
-        bytes: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        format: Optional[str] = None,
-        h: Optional[Any] = None,
-        help: Optional[bool] = None,
-        human: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        s: Optional[Any] = None,
-        time: Optional[Any] = None,
-        v: Optional[bool] = None,
-    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
+        id: t.Optional[str] = None,
+        allow_no_match: t.Optional[bool] = None,
+        bytes: t.Optional[
+            t.Union[str, t.Literal["b", "gb", "kb", "mb", "pb", "tb"]]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        format: t.Optional[str] = None,
+        h: t.Optional[
+            t.Union[
+                t.Union[
+                    str,
+                    t.Literal[
+                        "assignment_explanation",
+                        "create_time",
+                        "description",
+                        "dest_index",
+                        "failure_reason",
+                        "id",
+                        "model_memory_limit",
+                        "node.address",
+                        "node.ephemeral_id",
+                        "node.id",
+                        "node.name",
+                        "progress",
+                        "source_index",
+                        "state",
+                        "type",
+                        "version",
+                    ],
+                ],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            str,
+                            t.Literal[
+                                "assignment_explanation",
+                                "create_time",
+                                "description",
+                                "dest_index",
+                                "failure_reason",
+                                "id",
+                                "model_memory_limit",
+                                "node.address",
+                                "node.ephemeral_id",
+                                "node.id",
+                                "node.name",
+                                "progress",
+                                "source_index",
+                                "state",
+                                "type",
+                                "version",
+                            ],
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            str,
+                            t.Literal[
+                                "assignment_explanation",
+                                "create_time",
+                                "description",
+                                "dest_index",
+                                "failure_reason",
+                                "id",
+                                "model_memory_limit",
+                                "node.address",
+                                "node.ephemeral_id",
+                                "node.id",
+                                "node.name",
+                                "progress",
+                                "source_index",
+                                "state",
+                                "type",
+                                "version",
+                            ],
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        help: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        s: t.Optional[
+            t.Union[
+                t.Union[
+                    str,
+                    t.Literal[
+                        "assignment_explanation",
+                        "create_time",
+                        "description",
+                        "dest_index",
+                        "failure_reason",
+                        "id",
+                        "model_memory_limit",
+                        "node.address",
+                        "node.ephemeral_id",
+                        "node.id",
+                        "node.name",
+                        "progress",
+                        "source_index",
+                        "state",
+                        "type",
+                        "version",
+                    ],
+                ],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            str,
+                            t.Literal[
+                                "assignment_explanation",
+                                "create_time",
+                                "description",
+                                "dest_index",
+                                "failure_reason",
+                                "id",
+                                "model_memory_limit",
+                                "node.address",
+                                "node.ephemeral_id",
+                                "node.id",
+                                "node.name",
+                                "progress",
+                                "source_index",
+                                "state",
+                                "type",
+                                "version",
+                            ],
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            str,
+                            t.Literal[
+                                "assignment_explanation",
+                                "create_time",
+                                "description",
+                                "dest_index",
+                                "failure_reason",
+                                "id",
+                                "model_memory_limit",
+                                "node.address",
+                                "node.ephemeral_id",
+                                "node.id",
+                                "node.name",
+                                "progress",
+                                "source_index",
+                                "state",
+                                "type",
+                                "version",
+                            ],
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        time: t.Optional[t.Union[int, str]] = None,
+        v: t.Optional[bool] = None,
+    ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
         Gets configuration and usage information about data frame analytics jobs.
 
@@ -663,7 +873,7 @@ class CatClient(NamespacedClient):
             __path = f"/_cat/ml/data_frame/analytics/{_quote(id)}"
         else:
             __path = "/_cat/ml/data_frame/analytics"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
             __query["allow_no_match"] = allow_no_match
         if bytes is not None:
@@ -701,21 +911,147 @@ class CatClient(NamespacedClient):
     async def ml_datafeeds(
         self,
         *,
-        datafeed_id: Optional[Any] = None,
-        allow_no_match: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        format: Optional[str] = None,
-        h: Optional[Any] = None,
-        help: Optional[bool] = None,
-        human: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        s: Optional[Any] = None,
-        time: Optional[Any] = None,
-        v: Optional[bool] = None,
-    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
+        datafeed_id: t.Optional[str] = None,
+        allow_no_match: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        format: t.Optional[str] = None,
+        h: t.Optional[
+            t.Union[
+                t.Union[
+                    str,
+                    t.Literal[
+                        "ae",
+                        "bc",
+                        "id",
+                        "na",
+                        "ne",
+                        "ni",
+                        "nn",
+                        "s",
+                        "sba",
+                        "sc",
+                        "seah",
+                        "st",
+                    ],
+                ],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            str,
+                            t.Literal[
+                                "ae",
+                                "bc",
+                                "id",
+                                "na",
+                                "ne",
+                                "ni",
+                                "nn",
+                                "s",
+                                "sba",
+                                "sc",
+                                "seah",
+                                "st",
+                            ],
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            str,
+                            t.Literal[
+                                "ae",
+                                "bc",
+                                "id",
+                                "na",
+                                "ne",
+                                "ni",
+                                "nn",
+                                "s",
+                                "sba",
+                                "sc",
+                                "seah",
+                                "st",
+                            ],
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        help: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        s: t.Optional[
+            t.Union[
+                t.Union[
+                    str,
+                    t.Literal[
+                        "ae",
+                        "bc",
+                        "id",
+                        "na",
+                        "ne",
+                        "ni",
+                        "nn",
+                        "s",
+                        "sba",
+                        "sc",
+                        "seah",
+                        "st",
+                    ],
+                ],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            str,
+                            t.Literal[
+                                "ae",
+                                "bc",
+                                "id",
+                                "na",
+                                "ne",
+                                "ni",
+                                "nn",
+                                "s",
+                                "sba",
+                                "sc",
+                                "seah",
+                                "st",
+                            ],
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            str,
+                            t.Literal[
+                                "ae",
+                                "bc",
+                                "id",
+                                "na",
+                                "ne",
+                                "ni",
+                                "nn",
+                                "s",
+                                "sba",
+                                "sc",
+                                "seah",
+                                "st",
+                            ],
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        time: t.Optional[
+            t.Union[str, t.Literal["d", "h", "m", "micros", "ms", "nanos", "s"]]
+        ] = None,
+        v: t.Optional[bool] = None,
+    ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
         Gets configuration and usage information about datafeeds.
 
@@ -749,7 +1085,7 @@ class CatClient(NamespacedClient):
             __path = f"/_cat/ml/datafeeds/{_quote(datafeed_id)}"
         else:
             __path = "/_cat/ml/datafeeds"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
             __query["allow_no_match"] = allow_no_match
         if error_trace is not None:
@@ -785,22 +1121,438 @@ class CatClient(NamespacedClient):
     async def ml_jobs(
         self,
         *,
-        job_id: Optional[Any] = None,
-        allow_no_match: Optional[bool] = None,
-        bytes: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        format: Optional[str] = None,
-        h: Optional[Any] = None,
-        help: Optional[bool] = None,
-        human: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        s: Optional[Any] = None,
-        time: Optional[Any] = None,
-        v: Optional[bool] = None,
-    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
+        job_id: t.Optional[str] = None,
+        allow_no_match: t.Optional[bool] = None,
+        bytes: t.Optional[
+            t.Union[str, t.Literal["b", "gb", "kb", "mb", "pb", "tb"]]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        format: t.Optional[str] = None,
+        h: t.Optional[
+            t.Union[
+                t.Union[
+                    str,
+                    t.Literal[
+                        "assignment_explanation",
+                        "buckets.count",
+                        "buckets.time.exp_avg",
+                        "buckets.time.exp_avg_hour",
+                        "buckets.time.max",
+                        "buckets.time.min",
+                        "buckets.time.total",
+                        "data.buckets",
+                        "data.earliest_record",
+                        "data.empty_buckets",
+                        "data.input_bytes",
+                        "data.input_fields",
+                        "data.input_records",
+                        "data.invalid_dates",
+                        "data.last",
+                        "data.last_empty_bucket",
+                        "data.last_sparse_bucket",
+                        "data.latest_record",
+                        "data.missing_fields",
+                        "data.out_of_order_timestamps",
+                        "data.processed_fields",
+                        "data.processed_records",
+                        "data.sparse_buckets",
+                        "forecasts.memory.avg",
+                        "forecasts.memory.max",
+                        "forecasts.memory.min",
+                        "forecasts.memory.total",
+                        "forecasts.records.avg",
+                        "forecasts.records.max",
+                        "forecasts.records.min",
+                        "forecasts.records.total",
+                        "forecasts.time.avg",
+                        "forecasts.time.max",
+                        "forecasts.time.min",
+                        "forecasts.time.total",
+                        "forecasts.total",
+                        "id",
+                        "model.bucket_allocation_failures",
+                        "model.by_fields",
+                        "model.bytes",
+                        "model.bytes_exceeded",
+                        "model.categorization_status",
+                        "model.categorized_doc_count",
+                        "model.dead_category_count",
+                        "model.failed_category_count",
+                        "model.frequent_category_count",
+                        "model.log_time",
+                        "model.memory_limit",
+                        "model.memory_status",
+                        "model.over_fields",
+                        "model.partition_fields",
+                        "model.rare_category_count",
+                        "model.timestamp",
+                        "model.total_category_count",
+                        "node.address",
+                        "node.ephemeral_id",
+                        "node.id",
+                        "node.name",
+                        "opened_time",
+                        "state",
+                    ],
+                ],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            str,
+                            t.Literal[
+                                "assignment_explanation",
+                                "buckets.count",
+                                "buckets.time.exp_avg",
+                                "buckets.time.exp_avg_hour",
+                                "buckets.time.max",
+                                "buckets.time.min",
+                                "buckets.time.total",
+                                "data.buckets",
+                                "data.earliest_record",
+                                "data.empty_buckets",
+                                "data.input_bytes",
+                                "data.input_fields",
+                                "data.input_records",
+                                "data.invalid_dates",
+                                "data.last",
+                                "data.last_empty_bucket",
+                                "data.last_sparse_bucket",
+                                "data.latest_record",
+                                "data.missing_fields",
+                                "data.out_of_order_timestamps",
+                                "data.processed_fields",
+                                "data.processed_records",
+                                "data.sparse_buckets",
+                                "forecasts.memory.avg",
+                                "forecasts.memory.max",
+                                "forecasts.memory.min",
+                                "forecasts.memory.total",
+                                "forecasts.records.avg",
+                                "forecasts.records.max",
+                                "forecasts.records.min",
+                                "forecasts.records.total",
+                                "forecasts.time.avg",
+                                "forecasts.time.max",
+                                "forecasts.time.min",
+                                "forecasts.time.total",
+                                "forecasts.total",
+                                "id",
+                                "model.bucket_allocation_failures",
+                                "model.by_fields",
+                                "model.bytes",
+                                "model.bytes_exceeded",
+                                "model.categorization_status",
+                                "model.categorized_doc_count",
+                                "model.dead_category_count",
+                                "model.failed_category_count",
+                                "model.frequent_category_count",
+                                "model.log_time",
+                                "model.memory_limit",
+                                "model.memory_status",
+                                "model.over_fields",
+                                "model.partition_fields",
+                                "model.rare_category_count",
+                                "model.timestamp",
+                                "model.total_category_count",
+                                "node.address",
+                                "node.ephemeral_id",
+                                "node.id",
+                                "node.name",
+                                "opened_time",
+                                "state",
+                            ],
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            str,
+                            t.Literal[
+                                "assignment_explanation",
+                                "buckets.count",
+                                "buckets.time.exp_avg",
+                                "buckets.time.exp_avg_hour",
+                                "buckets.time.max",
+                                "buckets.time.min",
+                                "buckets.time.total",
+                                "data.buckets",
+                                "data.earliest_record",
+                                "data.empty_buckets",
+                                "data.input_bytes",
+                                "data.input_fields",
+                                "data.input_records",
+                                "data.invalid_dates",
+                                "data.last",
+                                "data.last_empty_bucket",
+                                "data.last_sparse_bucket",
+                                "data.latest_record",
+                                "data.missing_fields",
+                                "data.out_of_order_timestamps",
+                                "data.processed_fields",
+                                "data.processed_records",
+                                "data.sparse_buckets",
+                                "forecasts.memory.avg",
+                                "forecasts.memory.max",
+                                "forecasts.memory.min",
+                                "forecasts.memory.total",
+                                "forecasts.records.avg",
+                                "forecasts.records.max",
+                                "forecasts.records.min",
+                                "forecasts.records.total",
+                                "forecasts.time.avg",
+                                "forecasts.time.max",
+                                "forecasts.time.min",
+                                "forecasts.time.total",
+                                "forecasts.total",
+                                "id",
+                                "model.bucket_allocation_failures",
+                                "model.by_fields",
+                                "model.bytes",
+                                "model.bytes_exceeded",
+                                "model.categorization_status",
+                                "model.categorized_doc_count",
+                                "model.dead_category_count",
+                                "model.failed_category_count",
+                                "model.frequent_category_count",
+                                "model.log_time",
+                                "model.memory_limit",
+                                "model.memory_status",
+                                "model.over_fields",
+                                "model.partition_fields",
+                                "model.rare_category_count",
+                                "model.timestamp",
+                                "model.total_category_count",
+                                "node.address",
+                                "node.ephemeral_id",
+                                "node.id",
+                                "node.name",
+                                "opened_time",
+                                "state",
+                            ],
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        help: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        s: t.Optional[
+            t.Union[
+                t.Union[
+                    str,
+                    t.Literal[
+                        "assignment_explanation",
+                        "buckets.count",
+                        "buckets.time.exp_avg",
+                        "buckets.time.exp_avg_hour",
+                        "buckets.time.max",
+                        "buckets.time.min",
+                        "buckets.time.total",
+                        "data.buckets",
+                        "data.earliest_record",
+                        "data.empty_buckets",
+                        "data.input_bytes",
+                        "data.input_fields",
+                        "data.input_records",
+                        "data.invalid_dates",
+                        "data.last",
+                        "data.last_empty_bucket",
+                        "data.last_sparse_bucket",
+                        "data.latest_record",
+                        "data.missing_fields",
+                        "data.out_of_order_timestamps",
+                        "data.processed_fields",
+                        "data.processed_records",
+                        "data.sparse_buckets",
+                        "forecasts.memory.avg",
+                        "forecasts.memory.max",
+                        "forecasts.memory.min",
+                        "forecasts.memory.total",
+                        "forecasts.records.avg",
+                        "forecasts.records.max",
+                        "forecasts.records.min",
+                        "forecasts.records.total",
+                        "forecasts.time.avg",
+                        "forecasts.time.max",
+                        "forecasts.time.min",
+                        "forecasts.time.total",
+                        "forecasts.total",
+                        "id",
+                        "model.bucket_allocation_failures",
+                        "model.by_fields",
+                        "model.bytes",
+                        "model.bytes_exceeded",
+                        "model.categorization_status",
+                        "model.categorized_doc_count",
+                        "model.dead_category_count",
+                        "model.failed_category_count",
+                        "model.frequent_category_count",
+                        "model.log_time",
+                        "model.memory_limit",
+                        "model.memory_status",
+                        "model.over_fields",
+                        "model.partition_fields",
+                        "model.rare_category_count",
+                        "model.timestamp",
+                        "model.total_category_count",
+                        "node.address",
+                        "node.ephemeral_id",
+                        "node.id",
+                        "node.name",
+                        "opened_time",
+                        "state",
+                    ],
+                ],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            str,
+                            t.Literal[
+                                "assignment_explanation",
+                                "buckets.count",
+                                "buckets.time.exp_avg",
+                                "buckets.time.exp_avg_hour",
+                                "buckets.time.max",
+                                "buckets.time.min",
+                                "buckets.time.total",
+                                "data.buckets",
+                                "data.earliest_record",
+                                "data.empty_buckets",
+                                "data.input_bytes",
+                                "data.input_fields",
+                                "data.input_records",
+                                "data.invalid_dates",
+                                "data.last",
+                                "data.last_empty_bucket",
+                                "data.last_sparse_bucket",
+                                "data.latest_record",
+                                "data.missing_fields",
+                                "data.out_of_order_timestamps",
+                                "data.processed_fields",
+                                "data.processed_records",
+                                "data.sparse_buckets",
+                                "forecasts.memory.avg",
+                                "forecasts.memory.max",
+                                "forecasts.memory.min",
+                                "forecasts.memory.total",
+                                "forecasts.records.avg",
+                                "forecasts.records.max",
+                                "forecasts.records.min",
+                                "forecasts.records.total",
+                                "forecasts.time.avg",
+                                "forecasts.time.max",
+                                "forecasts.time.min",
+                                "forecasts.time.total",
+                                "forecasts.total",
+                                "id",
+                                "model.bucket_allocation_failures",
+                                "model.by_fields",
+                                "model.bytes",
+                                "model.bytes_exceeded",
+                                "model.categorization_status",
+                                "model.categorized_doc_count",
+                                "model.dead_category_count",
+                                "model.failed_category_count",
+                                "model.frequent_category_count",
+                                "model.log_time",
+                                "model.memory_limit",
+                                "model.memory_status",
+                                "model.over_fields",
+                                "model.partition_fields",
+                                "model.rare_category_count",
+                                "model.timestamp",
+                                "model.total_category_count",
+                                "node.address",
+                                "node.ephemeral_id",
+                                "node.id",
+                                "node.name",
+                                "opened_time",
+                                "state",
+                            ],
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            str,
+                            t.Literal[
+                                "assignment_explanation",
+                                "buckets.count",
+                                "buckets.time.exp_avg",
+                                "buckets.time.exp_avg_hour",
+                                "buckets.time.max",
+                                "buckets.time.min",
+                                "buckets.time.total",
+                                "data.buckets",
+                                "data.earliest_record",
+                                "data.empty_buckets",
+                                "data.input_bytes",
+                                "data.input_fields",
+                                "data.input_records",
+                                "data.invalid_dates",
+                                "data.last",
+                                "data.last_empty_bucket",
+                                "data.last_sparse_bucket",
+                                "data.latest_record",
+                                "data.missing_fields",
+                                "data.out_of_order_timestamps",
+                                "data.processed_fields",
+                                "data.processed_records",
+                                "data.sparse_buckets",
+                                "forecasts.memory.avg",
+                                "forecasts.memory.max",
+                                "forecasts.memory.min",
+                                "forecasts.memory.total",
+                                "forecasts.records.avg",
+                                "forecasts.records.max",
+                                "forecasts.records.min",
+                                "forecasts.records.total",
+                                "forecasts.time.avg",
+                                "forecasts.time.max",
+                                "forecasts.time.min",
+                                "forecasts.time.total",
+                                "forecasts.total",
+                                "id",
+                                "model.bucket_allocation_failures",
+                                "model.by_fields",
+                                "model.bytes",
+                                "model.bytes_exceeded",
+                                "model.categorization_status",
+                                "model.categorized_doc_count",
+                                "model.dead_category_count",
+                                "model.failed_category_count",
+                                "model.frequent_category_count",
+                                "model.log_time",
+                                "model.memory_limit",
+                                "model.memory_status",
+                                "model.over_fields",
+                                "model.partition_fields",
+                                "model.rare_category_count",
+                                "model.timestamp",
+                                "model.total_category_count",
+                                "node.address",
+                                "node.ephemeral_id",
+                                "node.id",
+                                "node.name",
+                                "opened_time",
+                                "state",
+                            ],
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        time: t.Optional[
+            t.Union[str, t.Literal["d", "h", "m", "micros", "ms", "nanos", "s"]]
+        ] = None,
+        v: t.Optional[bool] = None,
+    ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
         Gets configuration and usage information about anomaly detection jobs.
 
@@ -834,7 +1586,7 @@ class CatClient(NamespacedClient):
             __path = f"/_cat/ml/anomaly_detectors/{_quote(job_id)}"
         else:
             __path = "/_cat/ml/anomaly_detectors"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
             __query["allow_no_match"] = allow_no_match
         if bytes is not None:
@@ -874,23 +1626,27 @@ class CatClient(NamespacedClient):
     async def ml_trained_models(
         self,
         *,
-        model_id: Optional[Any] = None,
-        allow_no_match: Optional[bool] = None,
-        bytes: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        format: Optional[str] = None,
-        from_: Optional[int] = None,
-        h: Optional[Any] = None,
-        help: Optional[bool] = None,
-        human: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        s: Optional[Any] = None,
-        size: Optional[int] = None,
-        v: Optional[bool] = None,
-    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
+        model_id: t.Optional[str] = None,
+        allow_no_match: t.Optional[bool] = None,
+        bytes: t.Optional[
+            t.Union[str, t.Literal["b", "gb", "kb", "mb", "pb", "tb"]]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        format: t.Optional[str] = None,
+        from_: t.Optional[int] = None,
+        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        help: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        size: t.Optional[int] = None,
+        v: t.Optional[bool] = None,
+    ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
         Gets configuration and usage information about inference trained models.
 
@@ -922,7 +1678,7 @@ class CatClient(NamespacedClient):
             __path = f"/_cat/ml/trained_models/{_quote(model_id)}"
         else:
             __path = "/_cat/ml/trained_models"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
             __query["allow_no_match"] = allow_no_match
         if bytes is not None:
@@ -962,18 +1718,20 @@ class CatClient(NamespacedClient):
     async def nodeattrs(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        format: Optional[str] = None,
-        h: Optional[Any] = None,
-        help: Optional[bool] = None,
-        human: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        s: Optional[Any] = None,
-        v: Optional[bool] = None,
-    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        format: t.Optional[str] = None,
+        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        help: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        v: t.Optional[bool] = None,
+    ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
         Returns information about custom node attributes.
 
@@ -995,7 +1753,7 @@ class CatClient(NamespacedClient):
         :param v: When set to `true` will enable verbose output.
         """
         __path = "/_cat/nodeattrs"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1027,20 +1785,24 @@ class CatClient(NamespacedClient):
     async def nodes(
         self,
         *,
-        bytes: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        format: Optional[str] = None,
-        full_id: Optional[Union[bool, str]] = None,
-        h: Optional[Any] = None,
-        help: Optional[bool] = None,
-        human: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        s: Optional[Any] = None,
-        v: Optional[bool] = None,
-    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
+        bytes: t.Optional[
+            t.Union[str, t.Literal["b", "gb", "kb", "mb", "pb", "tb"]]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        format: t.Optional[str] = None,
+        full_id: t.Optional[t.Union[bool, str]] = None,
+        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        help: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        v: t.Optional[bool] = None,
+    ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
         Returns basic statistics about performance of cluster nodes.
 
@@ -1065,7 +1827,7 @@ class CatClient(NamespacedClient):
         :param v: When set to `true` will enable verbose output.
         """
         __path = "/_cat/nodes"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if bytes is not None:
             __query["bytes"] = bytes
         if error_trace is not None:
@@ -1101,18 +1863,20 @@ class CatClient(NamespacedClient):
     async def pending_tasks(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        format: Optional[str] = None,
-        h: Optional[Any] = None,
-        help: Optional[bool] = None,
-        human: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        s: Optional[Any] = None,
-        v: Optional[bool] = None,
-    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        format: t.Optional[str] = None,
+        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        help: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        v: t.Optional[bool] = None,
+    ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
         Returns a concise representation of the cluster pending tasks.
 
@@ -1134,7 +1898,7 @@ class CatClient(NamespacedClient):
         :param v: When set to `true` will enable verbose output.
         """
         __path = "/_cat/pending_tasks"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1166,18 +1930,20 @@ class CatClient(NamespacedClient):
     async def plugins(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        format: Optional[str] = None,
-        h: Optional[Any] = None,
-        help: Optional[bool] = None,
-        human: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        s: Optional[Any] = None,
-        v: Optional[bool] = None,
-    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        format: t.Optional[str] = None,
+        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        help: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        v: t.Optional[bool] = None,
+    ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
         Returns information about installed plugins across nodes node.
 
@@ -1199,7 +1965,7 @@ class CatClient(NamespacedClient):
         :param v: When set to `true` will enable verbose output.
         """
         __path = "/_cat/plugins"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1231,22 +1997,26 @@ class CatClient(NamespacedClient):
     async def recovery(
         self,
         *,
-        index: Optional[Any] = None,
-        active_only: Optional[bool] = None,
-        bytes: Optional[Any] = None,
-        detailed: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        format: Optional[str] = None,
-        h: Optional[Any] = None,
-        help: Optional[bool] = None,
-        human: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        s: Optional[Any] = None,
-        v: Optional[bool] = None,
-    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
+        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        active_only: t.Optional[bool] = None,
+        bytes: t.Optional[
+            t.Union[str, t.Literal["b", "gb", "kb", "mb", "pb", "tb"]]
+        ] = None,
+        detailed: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        format: t.Optional[str] = None,
+        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        help: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        v: t.Optional[bool] = None,
+    ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
         Returns information about index shard recoveries, both on-going completed.
 
@@ -1277,7 +2047,7 @@ class CatClient(NamespacedClient):
             __path = f"/_cat/recovery/{_quote(index)}"
         else:
             __path = "/_cat/recovery"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if active_only is not None:
             __query["active_only"] = active_only
         if bytes is not None:
@@ -1315,18 +2085,20 @@ class CatClient(NamespacedClient):
     async def repositories(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        format: Optional[str] = None,
-        h: Optional[Any] = None,
-        help: Optional[bool] = None,
-        human: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        s: Optional[Any] = None,
-        v: Optional[bool] = None,
-    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        format: t.Optional[str] = None,
+        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        help: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        v: t.Optional[bool] = None,
+    ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
         Returns information about snapshot repositories registered in the cluster.
 
@@ -1348,7 +2120,7 @@ class CatClient(NamespacedClient):
         :param v: When set to `true` will enable verbose output.
         """
         __path = "/_cat/repositories"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1380,20 +2152,24 @@ class CatClient(NamespacedClient):
     async def segments(
         self,
         *,
-        index: Optional[Any] = None,
-        bytes: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        format: Optional[str] = None,
-        h: Optional[Any] = None,
-        help: Optional[bool] = None,
-        human: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        s: Optional[Any] = None,
-        v: Optional[bool] = None,
-    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
+        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        bytes: t.Optional[
+            t.Union[str, t.Literal["b", "gb", "kb", "mb", "pb", "tb"]]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        format: t.Optional[str] = None,
+        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        help: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        v: t.Optional[bool] = None,
+    ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
         Provides low-level information about the segments in the shards of an index.
 
@@ -1420,7 +2196,7 @@ class CatClient(NamespacedClient):
             __path = f"/_cat/segments/{_quote(index)}"
         else:
             __path = "/_cat/segments"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if bytes is not None:
             __query["bytes"] = bytes
         if error_trace is not None:
@@ -1454,20 +2230,24 @@ class CatClient(NamespacedClient):
     async def shards(
         self,
         *,
-        index: Optional[Any] = None,
-        bytes: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        format: Optional[str] = None,
-        h: Optional[Any] = None,
-        help: Optional[bool] = None,
-        human: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        s: Optional[Any] = None,
-        v: Optional[bool] = None,
-    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
+        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        bytes: t.Optional[
+            t.Union[str, t.Literal["b", "gb", "kb", "mb", "pb", "tb"]]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        format: t.Optional[str] = None,
+        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        help: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        v: t.Optional[bool] = None,
+    ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
         Provides a detailed view of shard allocation on nodes.
 
@@ -1494,7 +2274,7 @@ class CatClient(NamespacedClient):
             __path = f"/_cat/shards/{_quote(index)}"
         else:
             __path = "/_cat/shards"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if bytes is not None:
             __query["bytes"] = bytes
         if error_trace is not None:
@@ -1528,20 +2308,24 @@ class CatClient(NamespacedClient):
     async def snapshots(
         self,
         *,
-        repository: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        format: Optional[str] = None,
-        h: Optional[Any] = None,
-        help: Optional[bool] = None,
-        human: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        s: Optional[Any] = None,
-        v: Optional[bool] = None,
-    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
+        repository: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        format: t.Optional[str] = None,
+        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        help: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        v: t.Optional[bool] = None,
+    ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
         Returns all snapshots in a specific repository.
 
@@ -1568,7 +2352,7 @@ class CatClient(NamespacedClient):
             __path = f"/_cat/snapshots/{_quote(repository)}"
         else:
             __path = "/_cat/snapshots"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1602,22 +2386,24 @@ class CatClient(NamespacedClient):
     async def tasks(
         self,
         *,
-        actions: Optional[List[str]] = None,
-        detailed: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        format: Optional[str] = None,
-        h: Optional[Any] = None,
-        help: Optional[bool] = None,
-        human: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        node_id: Optional[List[str]] = None,
-        parent_task: Optional[int] = None,
-        pretty: Optional[bool] = None,
-        s: Optional[Any] = None,
-        v: Optional[bool] = None,
-    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
+        actions: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        detailed: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        format: t.Optional[str] = None,
+        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        help: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        node_id: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        parent_task: t.Optional[int] = None,
+        pretty: t.Optional[bool] = None,
+        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        v: t.Optional[bool] = None,
+    ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
         Returns information about the tasks currently executing on one or more nodes
         in the cluster.
@@ -1645,7 +2431,7 @@ class CatClient(NamespacedClient):
         :param v: When set to `true` will enable verbose output.
         """
         __path = "/_cat/tasks"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if actions is not None:
             __query["actions"] = actions
         if detailed is not None:
@@ -1685,19 +2471,21 @@ class CatClient(NamespacedClient):
     async def templates(
         self,
         *,
-        name: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        format: Optional[str] = None,
-        h: Optional[Any] = None,
-        help: Optional[bool] = None,
-        human: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        s: Optional[Any] = None,
-        v: Optional[bool] = None,
-    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
+        name: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        format: t.Optional[str] = None,
+        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        help: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        v: t.Optional[bool] = None,
+    ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
         Returns information about existing templates.
 
@@ -1723,7 +2511,7 @@ class CatClient(NamespacedClient):
             __path = f"/_cat/templates/{_quote(name)}"
         else:
             __path = "/_cat/templates"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1755,20 +2543,24 @@ class CatClient(NamespacedClient):
     async def thread_pool(
         self,
         *,
-        thread_pool_patterns: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        format: Optional[str] = None,
-        h: Optional[Any] = None,
-        help: Optional[bool] = None,
-        human: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        s: Optional[Any] = None,
-        time: Optional[Any] = None,
-        v: Optional[bool] = None,
-    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
+        thread_pool_patterns: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        format: t.Optional[str] = None,
+        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        help: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        time: t.Optional[t.Union[int, str]] = None,
+        v: t.Optional[bool] = None,
+    ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
         Returns cluster-wide thread pool statistics per node. By default the active,
         queue and rejected statistics are returned for all thread pools.
@@ -1797,7 +2589,7 @@ class CatClient(NamespacedClient):
             __path = f"/_cat/thread_pool/{_quote(thread_pool_patterns)}"
         else:
             __path = "/_cat/thread_pool"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1833,23 +2625,273 @@ class CatClient(NamespacedClient):
     async def transforms(
         self,
         *,
-        transform_id: Optional[Any] = None,
-        allow_no_match: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        format: Optional[str] = None,
-        from_: Optional[int] = None,
-        h: Optional[Any] = None,
-        help: Optional[bool] = None,
-        human: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        s: Optional[Any] = None,
-        size: Optional[int] = None,
-        time: Optional[Any] = None,
-        v: Optional[bool] = None,
-    ) -> Union[ObjectApiResponse[Any], TextApiResponse]:
+        transform_id: t.Optional[str] = None,
+        allow_no_match: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        format: t.Optional[str] = None,
+        from_: t.Optional[int] = None,
+        h: t.Optional[
+            t.Union[
+                t.Union[
+                    str,
+                    t.Literal[
+                        "changes_last_detection_time",
+                        "checkpoint",
+                        "checkpoint_duration_time_exp_avg",
+                        "checkpoint_progress",
+                        "create_time",
+                        "delete_time",
+                        "description",
+                        "dest_index",
+                        "docs_per_second",
+                        "documents_deleted",
+                        "documents_indexed",
+                        "documents_processed",
+                        "frequency",
+                        "id",
+                        "index_failure",
+                        "index_time",
+                        "index_total",
+                        "indexed_documents_exp_avg",
+                        "last_search_time",
+                        "max_page_search_size",
+                        "pages_processed",
+                        "pipeline",
+                        "processed_documents_exp_avg",
+                        "processing_time",
+                        "reason",
+                        "search_failure",
+                        "search_time",
+                        "search_total",
+                        "source_index",
+                        "state",
+                        "transform_type",
+                        "trigger_count",
+                        "version",
+                    ],
+                ],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            str,
+                            t.Literal[
+                                "changes_last_detection_time",
+                                "checkpoint",
+                                "checkpoint_duration_time_exp_avg",
+                                "checkpoint_progress",
+                                "create_time",
+                                "delete_time",
+                                "description",
+                                "dest_index",
+                                "docs_per_second",
+                                "documents_deleted",
+                                "documents_indexed",
+                                "documents_processed",
+                                "frequency",
+                                "id",
+                                "index_failure",
+                                "index_time",
+                                "index_total",
+                                "indexed_documents_exp_avg",
+                                "last_search_time",
+                                "max_page_search_size",
+                                "pages_processed",
+                                "pipeline",
+                                "processed_documents_exp_avg",
+                                "processing_time",
+                                "reason",
+                                "search_failure",
+                                "search_time",
+                                "search_total",
+                                "source_index",
+                                "state",
+                                "transform_type",
+                                "trigger_count",
+                                "version",
+                            ],
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            str,
+                            t.Literal[
+                                "changes_last_detection_time",
+                                "checkpoint",
+                                "checkpoint_duration_time_exp_avg",
+                                "checkpoint_progress",
+                                "create_time",
+                                "delete_time",
+                                "description",
+                                "dest_index",
+                                "docs_per_second",
+                                "documents_deleted",
+                                "documents_indexed",
+                                "documents_processed",
+                                "frequency",
+                                "id",
+                                "index_failure",
+                                "index_time",
+                                "index_total",
+                                "indexed_documents_exp_avg",
+                                "last_search_time",
+                                "max_page_search_size",
+                                "pages_processed",
+                                "pipeline",
+                                "processed_documents_exp_avg",
+                                "processing_time",
+                                "reason",
+                                "search_failure",
+                                "search_time",
+                                "search_total",
+                                "source_index",
+                                "state",
+                                "transform_type",
+                                "trigger_count",
+                                "version",
+                            ],
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        help: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        s: t.Optional[
+            t.Union[
+                t.Union[
+                    str,
+                    t.Literal[
+                        "changes_last_detection_time",
+                        "checkpoint",
+                        "checkpoint_duration_time_exp_avg",
+                        "checkpoint_progress",
+                        "create_time",
+                        "delete_time",
+                        "description",
+                        "dest_index",
+                        "docs_per_second",
+                        "documents_deleted",
+                        "documents_indexed",
+                        "documents_processed",
+                        "frequency",
+                        "id",
+                        "index_failure",
+                        "index_time",
+                        "index_total",
+                        "indexed_documents_exp_avg",
+                        "last_search_time",
+                        "max_page_search_size",
+                        "pages_processed",
+                        "pipeline",
+                        "processed_documents_exp_avg",
+                        "processing_time",
+                        "reason",
+                        "search_failure",
+                        "search_time",
+                        "search_total",
+                        "source_index",
+                        "state",
+                        "transform_type",
+                        "trigger_count",
+                        "version",
+                    ],
+                ],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            str,
+                            t.Literal[
+                                "changes_last_detection_time",
+                                "checkpoint",
+                                "checkpoint_duration_time_exp_avg",
+                                "checkpoint_progress",
+                                "create_time",
+                                "delete_time",
+                                "description",
+                                "dest_index",
+                                "docs_per_second",
+                                "documents_deleted",
+                                "documents_indexed",
+                                "documents_processed",
+                                "frequency",
+                                "id",
+                                "index_failure",
+                                "index_time",
+                                "index_total",
+                                "indexed_documents_exp_avg",
+                                "last_search_time",
+                                "max_page_search_size",
+                                "pages_processed",
+                                "pipeline",
+                                "processed_documents_exp_avg",
+                                "processing_time",
+                                "reason",
+                                "search_failure",
+                                "search_time",
+                                "search_total",
+                                "source_index",
+                                "state",
+                                "transform_type",
+                                "trigger_count",
+                                "version",
+                            ],
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            str,
+                            t.Literal[
+                                "changes_last_detection_time",
+                                "checkpoint",
+                                "checkpoint_duration_time_exp_avg",
+                                "checkpoint_progress",
+                                "create_time",
+                                "delete_time",
+                                "description",
+                                "dest_index",
+                                "docs_per_second",
+                                "documents_deleted",
+                                "documents_indexed",
+                                "documents_processed",
+                                "frequency",
+                                "id",
+                                "index_failure",
+                                "index_time",
+                                "index_total",
+                                "indexed_documents_exp_avg",
+                                "last_search_time",
+                                "max_page_search_size",
+                                "pages_processed",
+                                "pipeline",
+                                "processed_documents_exp_avg",
+                                "processing_time",
+                                "reason",
+                                "search_failure",
+                                "search_time",
+                                "search_total",
+                                "source_index",
+                                "state",
+                                "transform_type",
+                                "trigger_count",
+                                "version",
+                            ],
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        size: t.Optional[int] = None,
+        time: t.Optional[t.Union[int, str]] = None,
+        v: t.Optional[bool] = None,
+    ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
         Gets configuration and usage information about transforms.
 
@@ -1881,7 +2923,7 @@ class CatClient(NamespacedClient):
             __path = f"/_cat/transforms/{_quote(transform_id)}"
         else:
             __path = "/_cat/transforms"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
             __query["allow_no_match"] = allow_no_match
         if error_trace is not None:

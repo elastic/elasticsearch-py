@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Dict, List, Optional, Union
+import typing as t
 
 from elastic_transport import ObjectApiResponse, TextApiResponse
 
@@ -28,19 +28,27 @@ class NodesClient(NamespacedClient):
     def hot_threads(
         self,
         *,
-        node_id: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        ignore_idle_threads: Optional[bool] = None,
-        interval: Optional[Any] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        snapshots: Optional[int] = None,
-        sort: Optional[Any] = None,
-        threads: Optional[int] = None,
-        timeout: Optional[Any] = None,
-        type: Optional[Any] = None,
+        node_id: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        ignore_idle_threads: t.Optional[bool] = None,
+        interval: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        snapshots: t.Optional[int] = None,
+        sort: t.Optional[
+            t.Union[str, t.Literal["block", "cpu", "gpu", "mem", "wait"]]
+        ] = None,
+        threads: t.Optional[int] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+        type: t.Optional[
+            t.Union[str, t.Literal["block", "cpu", "gpu", "mem", "wait"]]
+        ] = None,
     ) -> TextApiResponse:
         """
         Returns information about hot threads on each node in the cluster.
@@ -65,7 +73,7 @@ class NodesClient(NamespacedClient):
             __path = f"/_nodes/{_quote(node_id)}/hot_threads"
         else:
             __path = "/_nodes/hot_threads"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -99,16 +107,22 @@ class NodesClient(NamespacedClient):
     def info(
         self,
         *,
-        node_id: Optional[Any] = None,
-        metric: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        flat_settings: Optional[bool] = None,
-        human: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        node_id: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        metric: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        flat_settings: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns information about nodes in the cluster.
 
@@ -133,7 +147,7 @@ class NodesClient(NamespacedClient):
             __path = f"/_nodes/{_quote(metric)}"
         else:
             __path = "/_nodes"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -159,14 +173,18 @@ class NodesClient(NamespacedClient):
     def reload_secure_settings(
         self,
         *,
-        node_id: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        secure_settings_password: Optional[Any] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        node_id: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        secure_settings_password: t.Optional[str] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Reloads secure settings.
 
@@ -181,8 +199,8 @@ class NodesClient(NamespacedClient):
             __path = f"/_nodes/{_quote(node_id)}/reload_secure_settings"
         else:
             __path = "/_nodes/reload_secure_settings"
-        __query: Dict[str, Any] = {}
-        __body: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -208,24 +226,40 @@ class NodesClient(NamespacedClient):
     def stats(
         self,
         *,
-        node_id: Optional[Any] = None,
-        metric: Optional[Any] = None,
-        index_metric: Optional[Any] = None,
-        completion_fields: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        fielddata_fields: Optional[Any] = None,
-        fields: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        groups: Optional[bool] = None,
-        human: Optional[bool] = None,
-        include_segment_file_sizes: Optional[bool] = None,
-        include_unloaded_segments: Optional[bool] = None,
-        level: Optional[Any] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-        types: Optional[List[str]] = None,
-    ) -> ObjectApiResponse[Any]:
+        node_id: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        metric: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        index_metric: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        completion_fields: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        fielddata_fields: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        fields: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        groups: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        include_segment_file_sizes: t.Optional[bool] = None,
+        include_unloaded_segments: t.Optional[bool] = None,
+        level: t.Optional[
+            t.Union[str, t.Literal["cluster", "indices", "shards"]]
+        ] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+        types: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns statistical information about nodes in the cluster.
 
@@ -276,7 +310,7 @@ class NodesClient(NamespacedClient):
             __path = f"/_nodes/stats/{_quote(metric)}"
         else:
             __path = "/_nodes/stats"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if completion_fields is not None:
             __query["completion_fields"] = completion_fields
         if error_trace is not None:
@@ -314,14 +348,20 @@ class NodesClient(NamespacedClient):
     def usage(
         self,
         *,
-        node_id: Optional[Any] = None,
-        metric: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        node_id: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        metric: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns low-level information about REST actions usage on nodes.
 
@@ -341,7 +381,7 @@ class NodesClient(NamespacedClient):
             __path = f"/_nodes/usage/{_quote(metric)}"
         else:
             __path = "/_nodes/usage"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:

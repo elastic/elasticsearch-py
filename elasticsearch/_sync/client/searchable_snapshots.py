@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Dict, List, Optional, Union
+import typing as t
 
 from elastic_transport import ObjectApiResponse
 
@@ -28,13 +28,17 @@ class SearchableSnapshotsClient(NamespacedClient):
     def cache_stats(
         self,
         *,
-        node_id: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        node_id: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieve node-level cache statistics about searchable snapshots.
 
@@ -49,7 +53,7 @@ class SearchableSnapshotsClient(NamespacedClient):
             __path = f"/_searchable_snapshots/{_quote(node_id)}/cache/stats"
         else:
             __path = "/_searchable_snapshots/cache/stats"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -69,15 +73,34 @@ class SearchableSnapshotsClient(NamespacedClient):
     def clear_cache(
         self,
         *,
-        index: Optional[Any] = None,
-        allow_no_indices: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        allow_no_indices: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Clear the cache of searchable snapshots.
 
@@ -96,7 +119,7 @@ class SearchableSnapshotsClient(NamespacedClient):
             __path = f"/{_quote(index)}/_searchable_snapshots/cache/clear"
         else:
             __path = "/_searchable_snapshots/cache/clear"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if error_trace is not None:
@@ -122,20 +145,24 @@ class SearchableSnapshotsClient(NamespacedClient):
     def mount(
         self,
         *,
-        repository: Any,
-        snapshot: Any,
-        index: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        ignore_index_settings: Optional[List[str]] = None,
-        index_settings: Optional[Dict[str, Any]] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        renamed_index: Optional[Any] = None,
-        storage: Optional[str] = None,
-        wait_for_completion: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        repository: str,
+        snapshot: str,
+        index: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        ignore_index_settings: t.Optional[
+            t.Union[t.List[str], t.Tuple[str, ...]]
+        ] = None,
+        index_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        renamed_index: t.Optional[str] = None,
+        storage: t.Optional[str] = None,
+        wait_for_completion: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Mount a snapshot as a searchable index.
 
@@ -161,8 +188,8 @@ class SearchableSnapshotsClient(NamespacedClient):
         if index is None:
             raise ValueError("Empty value passed for parameter 'index'")
         __path = f"/_snapshot/{_quote(repository)}/{_quote(snapshot)}/_mount"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if index is not None:
             __body["index"] = index
         if error_trace is not None:
@@ -194,13 +221,17 @@ class SearchableSnapshotsClient(NamespacedClient):
     def stats(
         self,
         *,
-        index: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        level: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        level: t.Optional[
+            t.Union[str, t.Literal["cluster", "indices", "shards"]]
+        ] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieve shard-level statistics about searchable snapshots.
 
@@ -213,7 +244,7 @@ class SearchableSnapshotsClient(NamespacedClient):
             __path = f"/{_quote(index)}/_searchable_snapshots/stats"
         else:
             __path = "/_searchable_snapshots/stats"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:

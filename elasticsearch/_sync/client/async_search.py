@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Dict, List, Optional, Union
+import typing as t
 
 from elastic_transport import ObjectApiResponse
 
@@ -28,12 +28,14 @@ class AsyncSearchClient(NamespacedClient):
     def delete(
         self,
         *,
-        id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes an async search by ID. If the search is still running, the search request
         will be cancelled. Otherwise, the saved search results are deleted.
@@ -45,7 +47,7 @@ class AsyncSearchClient(NamespacedClient):
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
         __path = f"/_async_search/{_quote(id)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -63,15 +65,17 @@ class AsyncSearchClient(NamespacedClient):
     def get(
         self,
         *,
-        id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        keep_alive: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        typed_keys: Optional[bool] = None,
-        wait_for_completion_timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        keep_alive: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        typed_keys: t.Optional[bool] = None,
+        wait_for_completion_timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves the results of a previously submitted async search request given its
         ID.
@@ -89,7 +93,7 @@ class AsyncSearchClient(NamespacedClient):
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
         __path = f"/_async_search/{_quote(id)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -113,12 +117,14 @@ class AsyncSearchClient(NamespacedClient):
     def status(
         self,
         *,
-        id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves the status of a previously submitted async search request given its
         ID.
@@ -130,7 +136,7 @@ class AsyncSearchClient(NamespacedClient):
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
         __path = f"/_async_search/status/{_quote(id)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -156,75 +162,141 @@ class AsyncSearchClient(NamespacedClient):
     def submit(
         self,
         *,
-        index: Optional[Any] = None,
-        aggregations: Optional[Dict[str, Any]] = None,
-        aggs: Optional[Dict[str, Any]] = None,
-        allow_no_indices: Optional[bool] = None,
-        allow_partial_search_results: Optional[bool] = None,
-        analyze_wildcard: Optional[bool] = None,
-        analyzer: Optional[str] = None,
-        batched_reduce_size: Optional[int] = None,
-        ccs_minimize_roundtrips: Optional[bool] = None,
-        collapse: Optional[Any] = None,
-        default_operator: Optional[Any] = None,
-        df: Optional[str] = None,
-        docvalue_fields: Optional[List[Any]] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        explain: Optional[bool] = None,
-        fields: Optional[List[Any]] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        from_: Optional[int] = None,
-        highlight: Optional[Any] = None,
-        human: Optional[bool] = None,
-        ignore_throttled: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        indices_boost: Optional[List[Dict[Any, float]]] = None,
-        keep_alive: Optional[Any] = None,
-        keep_on_completion: Optional[bool] = None,
-        lenient: Optional[bool] = None,
-        max_concurrent_shard_requests: Optional[int] = None,
-        min_compatible_shard_node: Optional[Any] = None,
-        min_score: Optional[float] = None,
-        pit: Optional[Any] = None,
-        post_filter: Optional[Any] = None,
-        pre_filter_shard_size: Optional[int] = None,
-        preference: Optional[str] = None,
-        pretty: Optional[bool] = None,
-        profile: Optional[bool] = None,
-        q: Optional[str] = None,
-        query: Optional[Any] = None,
-        request_cache: Optional[bool] = None,
-        rescore: Optional[Union[Any, List[Any]]] = None,
-        rest_total_hits_as_int: Optional[bool] = None,
-        routing: Optional[Any] = None,
-        runtime_mappings: Optional[Any] = None,
-        script_fields: Optional[Dict[str, Any]] = None,
-        scroll: Optional[Any] = None,
-        search_after: Optional[Any] = None,
-        search_type: Optional[Any] = None,
-        seq_no_primary_term: Optional[bool] = None,
-        size: Optional[int] = None,
-        slice: Optional[Any] = None,
-        sort: Optional[Any] = None,
-        source: Optional[Any] = None,
-        source_excludes: Optional[Any] = None,
-        source_includes: Optional[Any] = None,
-        stats: Optional[List[str]] = None,
-        stored_fields: Optional[Any] = None,
-        suggest: Optional[Any] = None,
-        suggest_field: Optional[Any] = None,
-        suggest_mode: Optional[Any] = None,
-        suggest_size: Optional[int] = None,
-        suggest_text: Optional[str] = None,
-        terminate_after: Optional[int] = None,
-        timeout: Optional[str] = None,
-        track_scores: Optional[bool] = None,
-        track_total_hits: Optional[Any] = None,
-        typed_keys: Optional[bool] = None,
-        version: Optional[bool] = None,
-        wait_for_completion_timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        aggregations: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
+        aggs: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
+        allow_no_indices: t.Optional[bool] = None,
+        allow_partial_search_results: t.Optional[bool] = None,
+        analyze_wildcard: t.Optional[bool] = None,
+        analyzer: t.Optional[str] = None,
+        batched_reduce_size: t.Optional[int] = None,
+        ccs_minimize_roundtrips: t.Optional[bool] = None,
+        collapse: t.Optional[t.Mapping[str, t.Any]] = None,
+        default_operator: t.Optional[t.Union[str, t.Literal["and", "or"]]] = None,
+        df: t.Optional[str] = None,
+        docvalue_fields: t.Optional[
+            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union[str, t.Literal["all", "closed", "hidden", "none", "open"]],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            str, t.Literal["all", "closed", "hidden", "none", "open"]
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        explain: t.Optional[bool] = None,
+        fields: t.Optional[
+            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        from_: t.Optional[int] = None,
+        highlight: t.Optional[t.Mapping[str, t.Any]] = None,
+        human: t.Optional[bool] = None,
+        ignore_throttled: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        indices_boost: t.Optional[
+            t.Union[t.List[t.Mapping[str, float]], t.Tuple[t.Mapping[str, float], ...]]
+        ] = None,
+        keep_alive: t.Optional[t.Union[int, str]] = None,
+        keep_on_completion: t.Optional[bool] = None,
+        lenient: t.Optional[bool] = None,
+        max_concurrent_shard_requests: t.Optional[int] = None,
+        min_compatible_shard_node: t.Optional[str] = None,
+        min_score: t.Optional[float] = None,
+        pit: t.Optional[t.Mapping[str, t.Any]] = None,
+        post_filter: t.Optional[t.Mapping[str, t.Any]] = None,
+        pre_filter_shard_size: t.Optional[int] = None,
+        preference: t.Optional[str] = None,
+        pretty: t.Optional[bool] = None,
+        profile: t.Optional[bool] = None,
+        q: t.Optional[str] = None,
+        query: t.Optional[t.Mapping[str, t.Any]] = None,
+        request_cache: t.Optional[bool] = None,
+        rescore: t.Optional[
+            t.Union[
+                t.Mapping[str, t.Any],
+                t.Union[
+                    t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]
+                ],
+            ]
+        ] = None,
+        rest_total_hits_as_int: t.Optional[bool] = None,
+        routing: t.Optional[str] = None,
+        runtime_mappings: t.Optional[
+            t.Mapping[
+                str,
+                t.Union[
+                    t.Mapping[str, t.Any],
+                    t.Union[
+                        t.List[t.Mapping[str, t.Any]],
+                        t.Tuple[t.Mapping[str, t.Any], ...],
+                    ],
+                ],
+            ]
+        ] = None,
+        script_fields: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
+        scroll: t.Optional[t.Union[int, str]] = None,
+        search_after: t.Optional[
+            t.Union[
+                t.List[t.Union[None, float, int, str]],
+                t.Tuple[t.Union[None, float, int, str], ...],
+            ]
+        ] = None,
+        search_type: t.Optional[
+            t.Union[str, t.Literal["dfs_query_then_fetch", "query_then_fetch"]]
+        ] = None,
+        seq_no_primary_term: t.Optional[bool] = None,
+        size: t.Optional[int] = None,
+        slice: t.Optional[t.Mapping[str, t.Any]] = None,
+        sort: t.Optional[
+            t.Union[
+                t.Union[str, t.Mapping[str, t.Any]],
+                t.Union[
+                    t.List[t.Union[str, t.Mapping[str, t.Any]]],
+                    t.Tuple[t.Union[str, t.Mapping[str, t.Any]], ...],
+                ],
+            ]
+        ] = None,
+        source: t.Optional[t.Union[bool, t.Mapping[str, t.Any]]] = None,
+        source_excludes: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        source_includes: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        stats: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        stored_fields: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        suggest: t.Optional[t.Mapping[str, t.Any]] = None,
+        suggest_field: t.Optional[str] = None,
+        suggest_mode: t.Optional[
+            t.Union[str, t.Literal["always", "missing", "popular"]]
+        ] = None,
+        suggest_size: t.Optional[int] = None,
+        suggest_text: t.Optional[str] = None,
+        terminate_after: t.Optional[int] = None,
+        timeout: t.Optional[str] = None,
+        track_scores: t.Optional[bool] = None,
+        track_total_hits: t.Optional[t.Union[bool, int]] = None,
+        typed_keys: t.Optional[bool] = None,
+        version: t.Optional[bool] = None,
+        wait_for_completion_timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Executes a search request asynchronously.
 
@@ -353,8 +425,8 @@ class AsyncSearchClient(NamespacedClient):
             __path = f"/{_quote(index)}/_async_search"
         else:
             __path = "/_async_search"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if aggregations is not None:
             __body["aggregations"] = aggregations
         if aggs is not None:
