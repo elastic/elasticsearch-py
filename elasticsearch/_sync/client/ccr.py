@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Dict, List, Optional, Union
+import typing as t
 
 from elastic_transport import ObjectApiResponse
 
@@ -28,12 +28,14 @@ class CcrClient(NamespacedClient):
     def delete_auto_follow_pattern(
         self,
         *,
-        name: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes auto-follow patterns.
 
@@ -44,7 +46,7 @@ class CcrClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_ccr/auto_follow/{_quote(name)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -64,25 +66,29 @@ class CcrClient(NamespacedClient):
     def follow(
         self,
         *,
-        index: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        leader_index: Optional[Any] = None,
-        max_outstanding_read_requests: Optional[int] = None,
-        max_outstanding_write_requests: Optional[int] = None,
-        max_read_request_operation_count: Optional[int] = None,
-        max_read_request_size: Optional[str] = None,
-        max_retry_delay: Optional[Any] = None,
-        max_write_buffer_count: Optional[int] = None,
-        max_write_buffer_size: Optional[str] = None,
-        max_write_request_operation_count: Optional[int] = None,
-        max_write_request_size: Optional[str] = None,
-        pretty: Optional[bool] = None,
-        read_poll_timeout: Optional[Any] = None,
-        remote_cluster: Optional[str] = None,
-        wait_for_active_shards: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        leader_index: t.Optional[str] = None,
+        max_outstanding_read_requests: t.Optional[int] = None,
+        max_outstanding_write_requests: t.Optional[int] = None,
+        max_read_request_operation_count: t.Optional[int] = None,
+        max_read_request_size: t.Optional[str] = None,
+        max_retry_delay: t.Optional[t.Union[int, str]] = None,
+        max_write_buffer_count: t.Optional[int] = None,
+        max_write_buffer_size: t.Optional[str] = None,
+        max_write_request_operation_count: t.Optional[int] = None,
+        max_write_request_size: t.Optional[str] = None,
+        pretty: t.Optional[bool] = None,
+        read_poll_timeout: t.Optional[t.Union[int, str]] = None,
+        remote_cluster: t.Optional[str] = None,
+        wait_for_active_shards: t.Optional[
+            t.Union[int, t.Union["t.Literal['all']", str]]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Creates a new follower index configured to follow the referenced leader index.
 
@@ -109,8 +115,8 @@ class CcrClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
         __path = f"/{_quote(index)}/_ccr/follow"
-        __query: Dict[str, Any] = {}
-        __body: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -158,12 +164,14 @@ class CcrClient(NamespacedClient):
     def follow_info(
         self,
         *,
-        index: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves information about all follower indices, including parameters and status
         for each follower index
@@ -176,7 +184,7 @@ class CcrClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
         __path = f"/{_quote(index)}/_ccr/info"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -194,12 +202,14 @@ class CcrClient(NamespacedClient):
     def follow_stats(
         self,
         *,
-        index: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves follower stats. return shard-level stats about the following tasks
         associated with each shard for the specified indices.
@@ -212,7 +222,7 @@ class CcrClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
         __path = f"/{_quote(index)}/_ccr/stats"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -232,16 +242,18 @@ class CcrClient(NamespacedClient):
     def forget_follower(
         self,
         *,
-        index: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        follower_cluster: Optional[str] = None,
-        follower_index: Optional[Any] = None,
-        follower_index_uuid: Optional[Any] = None,
-        human: Optional[bool] = None,
-        leader_remote_cluster: Optional[str] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        follower_cluster: t.Optional[str] = None,
+        follower_index: t.Optional[str] = None,
+        follower_index_uuid: t.Optional[str] = None,
+        human: t.Optional[bool] = None,
+        leader_remote_cluster: t.Optional[str] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Removes the follower retention leases from the leader.
 
@@ -257,8 +269,8 @@ class CcrClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
         __path = f"/{_quote(index)}/_ccr/forget_follower"
-        __query: Dict[str, Any] = {}
-        __body: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -284,12 +296,14 @@ class CcrClient(NamespacedClient):
     def get_auto_follow_pattern(
         self,
         *,
-        name: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Gets configured auto-follow patterns. Returns the specified auto-follow pattern
         collection.
@@ -303,7 +317,7 @@ class CcrClient(NamespacedClient):
             __path = f"/_ccr/auto_follow/{_quote(name)}"
         else:
             __path = "/_ccr/auto_follow"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -321,12 +335,14 @@ class CcrClient(NamespacedClient):
     def pause_auto_follow_pattern(
         self,
         *,
-        name: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Pauses an auto-follow pattern
 
@@ -338,7 +354,7 @@ class CcrClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_ccr/auto_follow/{_quote(name)}/pause"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -356,12 +372,14 @@ class CcrClient(NamespacedClient):
     def pause_follow(
         self,
         *,
-        index: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Pauses a follower index. The follower index will not fetch any additional operations
         from the leader index.
@@ -374,7 +392,7 @@ class CcrClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
         __path = f"/{_quote(index)}/_ccr/pause_follow"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -394,27 +412,33 @@ class CcrClient(NamespacedClient):
     def put_auto_follow_pattern(
         self,
         *,
-        name: Any,
+        name: str,
         remote_cluster: str,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        follow_index_pattern: Optional[Any] = None,
-        human: Optional[bool] = None,
-        leader_index_exclusion_patterns: Optional[Any] = None,
-        leader_index_patterns: Optional[Any] = None,
-        max_outstanding_read_requests: Optional[int] = None,
-        max_outstanding_write_requests: Optional[int] = None,
-        max_read_request_operation_count: Optional[int] = None,
-        max_read_request_size: Optional[Any] = None,
-        max_retry_delay: Optional[Any] = None,
-        max_write_buffer_count: Optional[int] = None,
-        max_write_buffer_size: Optional[Any] = None,
-        max_write_request_operation_count: Optional[int] = None,
-        max_write_request_size: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        read_poll_timeout: Optional[Any] = None,
-        settings: Optional[Dict[str, Any]] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        follow_index_pattern: t.Optional[str] = None,
+        human: t.Optional[bool] = None,
+        leader_index_exclusion_patterns: t.Optional[
+            t.Union[t.List[str], t.Tuple[str, ...]]
+        ] = None,
+        leader_index_patterns: t.Optional[
+            t.Union[t.List[str], t.Tuple[str, ...]]
+        ] = None,
+        max_outstanding_read_requests: t.Optional[int] = None,
+        max_outstanding_write_requests: t.Optional[int] = None,
+        max_read_request_operation_count: t.Optional[int] = None,
+        max_read_request_size: t.Optional[t.Union[int, str]] = None,
+        max_retry_delay: t.Optional[t.Union[int, str]] = None,
+        max_write_buffer_count: t.Optional[int] = None,
+        max_write_buffer_size: t.Optional[t.Union[int, str]] = None,
+        max_write_request_operation_count: t.Optional[int] = None,
+        max_write_request_size: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        read_poll_timeout: t.Optional[t.Union[int, str]] = None,
+        settings: t.Optional[t.Mapping[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Creates a new named collection of auto-follow patterns against a specified remote
         cluster. Newly created indices on the remote cluster matching any of the specified
@@ -470,8 +494,8 @@ class CcrClient(NamespacedClient):
         if remote_cluster is None:
             raise ValueError("Empty value passed for parameter 'remote_cluster'")
         __path = f"/_ccr/auto_follow/{_quote(name)}"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if remote_cluster is not None:
             __body["remote_cluster"] = remote_cluster
         if error_trace is not None:
@@ -523,12 +547,14 @@ class CcrClient(NamespacedClient):
     def resume_auto_follow_pattern(
         self,
         *,
-        name: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Resumes an auto-follow pattern that has been paused
 
@@ -540,7 +566,7 @@ class CcrClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_ccr/auto_follow/{_quote(name)}/resume"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -560,22 +586,24 @@ class CcrClient(NamespacedClient):
     def resume_follow(
         self,
         *,
-        index: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        max_outstanding_read_requests: Optional[int] = None,
-        max_outstanding_write_requests: Optional[int] = None,
-        max_read_request_operation_count: Optional[int] = None,
-        max_read_request_size: Optional[str] = None,
-        max_retry_delay: Optional[Any] = None,
-        max_write_buffer_count: Optional[int] = None,
-        max_write_buffer_size: Optional[str] = None,
-        max_write_request_operation_count: Optional[int] = None,
-        max_write_request_size: Optional[str] = None,
-        pretty: Optional[bool] = None,
-        read_poll_timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        max_outstanding_read_requests: t.Optional[int] = None,
+        max_outstanding_write_requests: t.Optional[int] = None,
+        max_read_request_operation_count: t.Optional[int] = None,
+        max_read_request_size: t.Optional[str] = None,
+        max_retry_delay: t.Optional[t.Union[int, str]] = None,
+        max_write_buffer_count: t.Optional[int] = None,
+        max_write_buffer_size: t.Optional[str] = None,
+        max_write_request_operation_count: t.Optional[int] = None,
+        max_write_request_size: t.Optional[str] = None,
+        pretty: t.Optional[bool] = None,
+        read_poll_timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Resumes a follower index that has been paused
 
@@ -596,8 +624,8 @@ class CcrClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
         __path = f"/{_quote(index)}/_ccr/resume_follow"
-        __query: Dict[str, Any] = {}
-        __body: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -643,18 +671,20 @@ class CcrClient(NamespacedClient):
     def stats(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Gets all stats related to cross-cluster replication.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/ccr-get-stats.html>`_
         """
         __path = "/_ccr/stats"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -672,12 +702,14 @@ class CcrClient(NamespacedClient):
     def unfollow(
         self,
         *,
-        index: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Stops the following task associated with a follower index and removes index metadata
         and settings associated with cross-cluster replication.
@@ -690,7 +722,7 @@ class CcrClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
         __path = f"/{_quote(index)}/_ccr/unfollow"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:

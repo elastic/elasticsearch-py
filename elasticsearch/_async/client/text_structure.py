@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Dict, List, Optional
+import typing as t
 
 from elastic_transport import ObjectApiResponse
 
@@ -30,22 +30,22 @@ class TextStructureClient(NamespacedClient):
     async def find_structure(
         self,
         *,
-        text_files: List[Any],
-        charset: Optional[str] = None,
-        column_names: Optional[str] = None,
-        delimiter: Optional[str] = None,
-        explain: Optional[bool] = None,
-        format: Optional[str] = None,
-        grok_pattern: Optional[str] = None,
-        has_header_row: Optional[bool] = None,
-        line_merge_size_limit: Optional[int] = None,
-        lines_to_sample: Optional[int] = None,
-        quote: Optional[str] = None,
-        should_trim_fields: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-        timestamp_field: Optional[Any] = None,
-        timestamp_format: Optional[str] = None,
-    ) -> ObjectApiResponse[Any]:
+        text_files: t.Union[t.List[t.Any], t.Tuple[t.Any, ...]],
+        charset: t.Optional[str] = None,
+        column_names: t.Optional[str] = None,
+        delimiter: t.Optional[str] = None,
+        explain: t.Optional[bool] = None,
+        format: t.Optional[str] = None,
+        grok_pattern: t.Optional[str] = None,
+        has_header_row: t.Optional[bool] = None,
+        line_merge_size_limit: t.Optional[int] = None,
+        lines_to_sample: t.Optional[int] = None,
+        quote: t.Optional[str] = None,
+        should_trim_fields: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+        timestamp_field: t.Optional[str] = None,
+        timestamp_format: t.Optional[str] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Finds the structure of a text file. The text file must contain data that is suitable
         to be ingested into Elasticsearch.
@@ -119,7 +119,7 @@ class TextStructureClient(NamespacedClient):
         if text_files is None:
             raise ValueError("Empty value passed for parameter 'text_files'")
         __path = "/_text_structure/find_structure"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if charset is not None:
             __query["charset"] = charset
         if column_names is not None:

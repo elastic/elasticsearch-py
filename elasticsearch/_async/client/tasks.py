@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Dict, List, Optional, Union
+import typing as t
 
 from elastic_transport import ObjectApiResponse
 
@@ -28,16 +28,20 @@ class TasksClient(NamespacedClient):
     async def cancel(
         self,
         *,
-        task_id: Optional[Any] = None,
-        actions: Optional[Union[List[str], str]] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        nodes: Optional[List[str]] = None,
-        parent_task_id: Optional[str] = None,
-        pretty: Optional[bool] = None,
-        wait_for_completion: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        task_id: t.Optional[t.Union[int, str]] = None,
+        actions: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        nodes: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        parent_task_id: t.Optional[str] = None,
+        pretty: t.Optional[bool] = None,
+        wait_for_completion: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Cancels a task, if it can be cancelled through an API.
 
@@ -58,7 +62,7 @@ class TasksClient(NamespacedClient):
             __path = f"/_tasks/{_quote(task_id)}/_cancel"
         else:
             __path = "/_tasks/_cancel"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if actions is not None:
             __query["actions"] = actions
         if error_trace is not None:
@@ -84,14 +88,16 @@ class TasksClient(NamespacedClient):
     async def get(
         self,
         *,
-        task_id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-        wait_for_completion: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        task_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+        wait_for_completion: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns information about a task.
 
@@ -105,7 +111,7 @@ class TasksClient(NamespacedClient):
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")
         __path = f"/_tasks/{_quote(task_id)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -127,19 +133,25 @@ class TasksClient(NamespacedClient):
     async def list(
         self,
         *,
-        actions: Optional[Union[List[str], str]] = None,
-        detailed: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        group_by: Optional[Any] = None,
-        human: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        node_id: Optional[List[str]] = None,
-        parent_task_id: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-        wait_for_completion: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        actions: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        detailed: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        group_by: t.Optional[
+            t.Union["t.Literal['nodes', 'none', 'parents']", str]
+        ] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        node_id: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        parent_task_id: t.Optional[str] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+        wait_for_completion: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns a list of tasks.
 
@@ -163,7 +175,7 @@ class TasksClient(NamespacedClient):
             is complete.
         """
         __path = "/_tasks"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if actions is not None:
             __query["actions"] = actions
         if detailed is not None:

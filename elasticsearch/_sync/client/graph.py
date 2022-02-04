@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Dict, List, Optional, Union
+import typing as t
 
 from elastic_transport import ObjectApiResponse
 
@@ -30,18 +30,22 @@ class GraphClient(NamespacedClient):
     def explore(
         self,
         *,
-        index: Any,
-        connections: Optional[Any] = None,
-        controls: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        query: Optional[Any] = None,
-        routing: Optional[Any] = None,
-        timeout: Optional[Any] = None,
-        vertices: Optional[List[Any]] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        connections: t.Optional[t.Mapping[str, t.Any]] = None,
+        controls: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        query: t.Optional[t.Mapping[str, t.Any]] = None,
+        routing: t.Optional[str] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+        vertices: t.Optional[
+            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Explore extracted and summarized information about the documents and terms in
         an index.
@@ -60,8 +64,8 @@ class GraphClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
         __path = f"/{_quote(index)}/_graph/explore"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if connections is not None:
             __body["connections"] = connections
         if controls is not None:
