@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Dict, List, Optional, Union
+import typing as t
 
 from elastic_transport import ObjectApiResponse
 
@@ -28,15 +28,17 @@ class DanglingIndicesClient(NamespacedClient):
     def delete_dangling_index(
         self,
         *,
-        index_uuid: Any,
+        index_uuid: str,
         accept_data_loss: bool,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes the specified dangling index
 
@@ -53,7 +55,7 @@ class DanglingIndicesClient(NamespacedClient):
         if accept_data_loss is None:
             raise ValueError("Empty value passed for parameter 'accept_data_loss'")
         __path = f"/_dangling/{_quote(index_uuid)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if accept_data_loss is not None:
             __query["accept_data_loss"] = accept_data_loss
         if error_trace is not None:
@@ -77,15 +79,17 @@ class DanglingIndicesClient(NamespacedClient):
     def import_dangling_index(
         self,
         *,
-        index_uuid: Any,
+        index_uuid: str,
         accept_data_loss: bool,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Imports the specified dangling index
 
@@ -102,7 +106,7 @@ class DanglingIndicesClient(NamespacedClient):
         if accept_data_loss is None:
             raise ValueError("Empty value passed for parameter 'accept_data_loss'")
         __path = f"/_dangling/{_quote(index_uuid)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if accept_data_loss is not None:
             __query["accept_data_loss"] = accept_data_loss
         if error_trace is not None:
@@ -126,18 +130,20 @@ class DanglingIndicesClient(NamespacedClient):
     def list_dangling_indices(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns all dangling indices.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-gateway-dangling-indices.html>`_
         """
         __path = "/_dangling"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:

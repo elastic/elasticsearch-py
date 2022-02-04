@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Dict, List, Optional, Union
+import typing as t
 
 from elastic_transport import ObjectApiResponse
 
@@ -28,12 +28,14 @@ class RollupClient(NamespacedClient):
     async def delete_job(
         self,
         *,
-        id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes an existing rollup job.
 
@@ -44,7 +46,7 @@ class RollupClient(NamespacedClient):
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
         __path = f"/_rollup/job/{_quote(id)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -62,12 +64,14 @@ class RollupClient(NamespacedClient):
     async def get_jobs(
         self,
         *,
-        id: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        id: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves the configuration, stats, and status of rollup jobs.
 
@@ -80,7 +84,7 @@ class RollupClient(NamespacedClient):
             __path = f"/_rollup/job/{_quote(id)}"
         else:
             __path = "/_rollup/job"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -98,12 +102,14 @@ class RollupClient(NamespacedClient):
     async def get_rollup_caps(
         self,
         *,
-        id: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        id: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns the capabilities of any rollup jobs that have been configured for a specific
         index or index pattern.
@@ -117,7 +123,7 @@ class RollupClient(NamespacedClient):
             __path = f"/_rollup/data/{_quote(id)}"
         else:
             __path = "/_rollup/data"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -135,12 +141,14 @@ class RollupClient(NamespacedClient):
     async def get_rollup_index_caps(
         self,
         *,
-        index: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns the rollup capabilities of all jobs inside of a rollup index (e.g. the
         index where rollup data is stored).
@@ -153,7 +161,7 @@ class RollupClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
         __path = f"/{_quote(index)}/_rollup/data"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -174,20 +182,26 @@ class RollupClient(NamespacedClient):
     async def put_job(
         self,
         *,
-        id: Any,
+        id: str,
         cron: str,
-        groups: Any,
+        groups: t.Mapping[str, t.Any],
         index_pattern: str,
         page_size: int,
-        rollup_index: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        headers: Optional[Any] = None,
-        human: Optional[bool] = None,
-        metrics: Optional[List[Any]] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        rollup_index: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        headers: t.Optional[
+            t.Mapping[str, t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        metrics: t.Optional[
+            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
+        ] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Creates a rollup job.
 
@@ -246,8 +260,8 @@ class RollupClient(NamespacedClient):
         if rollup_index is None:
             raise ValueError("Empty value passed for parameter 'rollup_index'")
         __path = f"/_rollup/job/{_quote(id)}"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if cron is not None:
             __body["cron"] = cron
         if groups is not None:
@@ -283,14 +297,16 @@ class RollupClient(NamespacedClient):
     async def rollup(
         self,
         *,
-        index: Any,
-        rollup_index: Any,
-        config: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: str,
+        rollup_index: str,
+        config: t.Any,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Rollup an index
 
@@ -307,7 +323,7 @@ class RollupClient(NamespacedClient):
         if config is None:
             raise ValueError("Empty value passed for parameter 'config'")
         __path = f"/{_quote(index)}/_rollup/{_quote(rollup_index)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -328,18 +344,20 @@ class RollupClient(NamespacedClient):
     async def rollup_search(
         self,
         *,
-        index: Any,
-        aggregations: Optional[Dict[str, Any]] = None,
-        aggs: Optional[Dict[str, Any]] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        query: Optional[Any] = None,
-        rest_total_hits_as_int: Optional[bool] = None,
-        size: Optional[int] = None,
-        typed_keys: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        aggregations: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
+        aggs: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        query: t.Optional[t.Mapping[str, t.Any]] = None,
+        rest_total_hits_as_int: t.Optional[bool] = None,
+        size: t.Optional[int] = None,
+        typed_keys: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Enables searching rolled-up data using the standard query DSL.
 
@@ -359,8 +377,8 @@ class RollupClient(NamespacedClient):
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
         __path = f"/{_quote(index)}/_rollup_search"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if aggregations is not None:
             __body["aggregations"] = aggregations
         if aggs is not None:
@@ -390,12 +408,14 @@ class RollupClient(NamespacedClient):
     async def start_job(
         self,
         *,
-        id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Starts an existing, stopped rollup job.
 
@@ -406,7 +426,7 @@ class RollupClient(NamespacedClient):
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
         __path = f"/_rollup/job/{_quote(id)}/_start"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -424,14 +444,16 @@ class RollupClient(NamespacedClient):
     async def stop_job(
         self,
         *,
-        id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-        wait_for_completion: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+        wait_for_completion: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Stops an existing, started rollup job.
 
@@ -446,7 +468,7 @@ class RollupClient(NamespacedClient):
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
         __path = f"/_rollup/job/{_quote(id)}/_stop"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
