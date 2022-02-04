@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Dict, List, Optional, Union
+import typing as t
 
 from elastic_transport import ObjectApiResponse
 
@@ -28,11 +28,13 @@ class FeaturesClient(NamespacedClient):
     async def get_features(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Gets a list of features which can be included in snapshots using the feature_states
         field when creating a snapshot
@@ -40,7 +42,7 @@ class FeaturesClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-features-api.html>`_
         """
         __path = "/_features"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -58,18 +60,20 @@ class FeaturesClient(NamespacedClient):
     async def reset_features(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Resets the internal state of features, usually by deleting system indices
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
         """
         __path = "/_features/_reset"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:

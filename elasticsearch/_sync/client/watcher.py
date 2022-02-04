@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Dict, List, Optional, Union
+import typing as t
 
 from elastic_transport import ObjectApiResponse
 
@@ -28,13 +28,17 @@ class WatcherClient(NamespacedClient):
     def ack_watch(
         self,
         *,
-        watch_id: Any,
-        action_id: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        watch_id: str,
+        action_id: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Acknowledges a watch, manually throttling the execution of the watch's actions.
 
@@ -51,7 +55,7 @@ class WatcherClient(NamespacedClient):
             __path = f"/_watcher/watch/{_quote(watch_id)}/_ack"
         else:
             raise ValueError("Couldn't find a path for the given parameters")
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -69,12 +73,14 @@ class WatcherClient(NamespacedClient):
     def activate_watch(
         self,
         *,
-        watch_id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        watch_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Activates a currently inactive watch.
 
@@ -85,7 +91,7 @@ class WatcherClient(NamespacedClient):
         if watch_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'watch_id'")
         __path = f"/_watcher/watch/{_quote(watch_id)}/_activate"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -103,12 +109,14 @@ class WatcherClient(NamespacedClient):
     def deactivate_watch(
         self,
         *,
-        watch_id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        watch_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deactivates a currently active watch.
 
@@ -119,7 +127,7 @@ class WatcherClient(NamespacedClient):
         if watch_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'watch_id'")
         __path = f"/_watcher/watch/{_quote(watch_id)}/_deactivate"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -137,12 +145,14 @@ class WatcherClient(NamespacedClient):
     def delete_watch(
         self,
         *,
-        id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Removes a watch from Watcher.
 
@@ -153,7 +163,7 @@ class WatcherClient(NamespacedClient):
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
         __path = f"/_watcher/watch/{_quote(id)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -173,20 +183,30 @@ class WatcherClient(NamespacedClient):
     def execute_watch(
         self,
         *,
-        id: Optional[Any] = None,
-        action_modes: Optional[Dict[str, Any]] = None,
-        alternative_input: Optional[Dict[str, Any]] = None,
-        debug: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        ignore_condition: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        record_execution: Optional[bool] = None,
-        simulated_actions: Optional[Any] = None,
-        trigger_data: Optional[Any] = None,
-        watch: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        id: t.Optional[str] = None,
+        action_modes: t.Optional[
+            t.Mapping[
+                str,
+                t.Union[
+                    "t.Literal['execute', 'force_execute', 'force_simulate', 'simulate', 'skip']",
+                    str,
+                ],
+            ]
+        ] = None,
+        alternative_input: t.Optional[t.Mapping[str, t.Any]] = None,
+        debug: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        ignore_condition: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        record_execution: t.Optional[bool] = None,
+        simulated_actions: t.Optional[t.Mapping[str, t.Any]] = None,
+        trigger_data: t.Optional[t.Mapping[str, t.Any]] = None,
+        watch: t.Optional[t.Mapping[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Forces the execution of a stored watch.
 
@@ -216,8 +236,8 @@ class WatcherClient(NamespacedClient):
             __path = f"/_watcher/watch/{_quote(id)}/_execute"
         else:
             __path = "/_watcher/watch/_execute"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if action_modes is not None:
             __body["action_modes"] = action_modes
         if alternative_input is not None:
@@ -255,12 +275,14 @@ class WatcherClient(NamespacedClient):
     def get_watch(
         self,
         *,
-        id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves a watch by its ID.
 
@@ -271,7 +293,7 @@ class WatcherClient(NamespacedClient):
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
         __path = f"/_watcher/watch/{_quote(id)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -291,23 +313,25 @@ class WatcherClient(NamespacedClient):
     def put_watch(
         self,
         *,
-        id: Any,
-        actions: Optional[Dict[str, Any]] = None,
-        active: Optional[bool] = None,
-        condition: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        if_primary_term: Optional[int] = None,
-        if_seq_no: Optional[Any] = None,
-        input: Optional[Any] = None,
-        metadata: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        throttle_period: Optional[str] = None,
-        transform: Optional[Any] = None,
-        trigger: Optional[Any] = None,
-        version: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        id: str,
+        actions: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
+        active: t.Optional[bool] = None,
+        condition: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        if_primary_term: t.Optional[int] = None,
+        if_seq_no: t.Optional[int] = None,
+        input: t.Optional[t.Mapping[str, t.Any]] = None,
+        metadata: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+        throttle_period: t.Optional[str] = None,
+        transform: t.Optional[t.Mapping[str, t.Any]] = None,
+        trigger: t.Optional[t.Mapping[str, t.Any]] = None,
+        version: t.Optional[int] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Creates a new watch, or updates an existing one.
 
@@ -331,8 +355,8 @@ class WatcherClient(NamespacedClient):
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
         __path = f"/_watcher/watch/{_quote(id)}"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if actions is not None:
             __body["actions"] = actions
         if active is not None:
@@ -379,16 +403,31 @@ class WatcherClient(NamespacedClient):
     def query_watches(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        from_: Optional[int] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        query: Optional[Any] = None,
-        search_after: Optional[Any] = None,
-        size: Optional[int] = None,
-        sort: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        from_: t.Optional[int] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        query: t.Optional[t.Mapping[str, t.Any]] = None,
+        search_after: t.Optional[
+            t.Union[
+                t.List[t.Union[None, float, int, str]],
+                t.Tuple[t.Union[None, float, int, str], ...],
+            ]
+        ] = None,
+        size: t.Optional[int] = None,
+        sort: t.Optional[
+            t.Union[
+                t.Union[str, t.Mapping[str, t.Any]],
+                t.Union[
+                    t.List[t.Union[str, t.Mapping[str, t.Any]]],
+                    t.Tuple[t.Union[str, t.Mapping[str, t.Any]], ...],
+                ],
+            ]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves stored watches.
 
@@ -402,8 +441,8 @@ class WatcherClient(NamespacedClient):
         :param sort: Optional sort definition.
         """
         __path = "/_watcher/_query/watches"
-        __query: Dict[str, Any] = {}
-        __body: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -435,18 +474,20 @@ class WatcherClient(NamespacedClient):
     def start(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Starts Watcher if it is not already running.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-start.html>`_
         """
         __path = "/_watcher/_start"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -464,13 +505,37 @@ class WatcherClient(NamespacedClient):
     def stats(
         self,
         *,
-        metric: Optional[Union[Any, List[Any]]] = None,
-        emit_stacktraces: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        metric: t.Optional[
+            t.Union[
+                t.Union[
+                    "t.Literal['_all', 'current_watches', 'pending_watches', 'queued_watches']",
+                    str,
+                ],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['_all', 'current_watches', 'pending_watches', 'queued_watches']",
+                            str,
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['_all', 'current_watches', 'pending_watches', 'queued_watches']",
+                            str,
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        emit_stacktraces: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves the current Watcher metrics.
 
@@ -484,7 +549,7 @@ class WatcherClient(NamespacedClient):
             __path = f"/_watcher/stats/{_quote(metric)}"
         else:
             __path = "/_watcher/stats"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if emit_stacktraces is not None:
             __query["emit_stacktraces"] = emit_stacktraces
         if error_trace is not None:
@@ -504,18 +569,20 @@ class WatcherClient(NamespacedClient):
     def stop(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Stops Watcher if it is running.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/watcher-api-stop.html>`_
         """
         __path = "/_watcher/_stop"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:

@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Dict, List, Optional, Union
+import typing as t
 
 from elastic_transport import ObjectApiResponse
 
@@ -28,12 +28,14 @@ class ShutdownClient(NamespacedClient):
     def delete_node(
         self,
         *,
-        node_id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        node_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Removes a node from the shutdown list. Designed for indirect use by ECE/ESS and
         ECK. Direct use is not supported.
@@ -45,7 +47,7 @@ class ShutdownClient(NamespacedClient):
         if node_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'node_id'")
         __path = f"/_nodes/{_quote(node_id)}/shutdown"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -63,12 +65,16 @@ class ShutdownClient(NamespacedClient):
     def get_node(
         self,
         *,
-        node_id: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        node_id: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieve status of a node or nodes that are currently marked as shutting down.
         Designed for indirect use by ECE/ESS and ECK. Direct use is not supported.
@@ -81,7 +87,7 @@ class ShutdownClient(NamespacedClient):
             __path = f"/_nodes/{_quote(node_id)}/shutdown"
         else:
             __path = "/_nodes/shutdown"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -99,12 +105,14 @@ class ShutdownClient(NamespacedClient):
     def put_node(
         self,
         *,
-        node_id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        node_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Adds a node to be shut down. Designed for indirect use by ECE/ESS and ECK. Direct
         use is not supported.
@@ -116,7 +124,7 @@ class ShutdownClient(NamespacedClient):
         if node_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'node_id'")
         __path = f"/_nodes/{_quote(node_id)}/shutdown"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:

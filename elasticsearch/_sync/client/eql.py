@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Dict, List, Optional, Union
+import typing as t
 
 from elastic_transport import ObjectApiResponse
 
@@ -28,12 +28,14 @@ class EqlClient(NamespacedClient):
     def delete(
         self,
         *,
-        id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes an async EQL search by ID. If the search is still running, the search
         request will be cancelled. Otherwise, the saved search results are deleted.
@@ -45,7 +47,7 @@ class EqlClient(NamespacedClient):
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
         __path = f"/_eql/search/{_quote(id)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -63,14 +65,16 @@ class EqlClient(NamespacedClient):
     def get(
         self,
         *,
-        id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        keep_alive: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        wait_for_completion_timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        keep_alive: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        wait_for_completion_timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns async results from previously executed Event Query Language (EQL) search
 
@@ -87,7 +91,7 @@ class EqlClient(NamespacedClient):
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
         __path = f"/_eql/search/{_quote(id)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -109,12 +113,14 @@ class EqlClient(NamespacedClient):
     def get_status(
         self,
         *,
-        id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns the status of a previously submitted async or stored Event Query Language
         (EQL) search
@@ -126,7 +132,7 @@ class EqlClient(NamespacedClient):
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
         __path = f"/_eql/search/status/{_quote(id)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -146,29 +152,73 @@ class EqlClient(NamespacedClient):
     def search(
         self,
         *,
-        index: Any,
+        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
         query: str,
-        allow_no_indices: Optional[bool] = None,
-        case_sensitive: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        event_category_field: Optional[Any] = None,
-        expand_wildcards: Optional[Any] = None,
-        fetch_size: Optional[int] = None,
-        fields: Optional[Union[Any, List[Any]]] = None,
-        filter: Optional[Union[Any, List[Any]]] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        keep_alive: Optional[Any] = None,
-        keep_on_completion: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        result_position: Optional[Any] = None,
-        runtime_mappings: Optional[Any] = None,
-        size: Optional[int] = None,
-        tiebreaker_field: Optional[Any] = None,
-        timestamp_field: Optional[Any] = None,
-        wait_for_completion_timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        allow_no_indices: t.Optional[bool] = None,
+        case_sensitive: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        event_category_field: t.Optional[str] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        fetch_size: t.Optional[int] = None,
+        fields: t.Optional[
+            t.Union[
+                t.Mapping[str, t.Any],
+                t.Union[
+                    t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]
+                ],
+            ]
+        ] = None,
+        filter: t.Optional[
+            t.Union[
+                t.Mapping[str, t.Any],
+                t.Union[
+                    t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        keep_alive: t.Optional[t.Union[int, str]] = None,
+        keep_on_completion: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        result_position: t.Optional[t.Union["t.Literal['head', 'tail']", str]] = None,
+        runtime_mappings: t.Optional[
+            t.Mapping[
+                str,
+                t.Union[
+                    t.Mapping[str, t.Any],
+                    t.Union[
+                        t.List[t.Mapping[str, t.Any]],
+                        t.Tuple[t.Mapping[str, t.Any], ...],
+                    ],
+                ],
+            ]
+        ] = None,
+        size: t.Optional[int] = None,
+        tiebreaker_field: t.Optional[str] = None,
+        timestamp_field: t.Optional[str] = None,
+        wait_for_completion_timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns results matching a query expressed in Event Query Language (EQL)
 
@@ -205,8 +255,8 @@ class EqlClient(NamespacedClient):
         if query is None:
             raise ValueError("Empty value passed for parameter 'query'")
         __path = f"/{_quote(index)}/_eql/search"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if query is not None:
             __body["query"] = query
         if allow_no_indices is not None:

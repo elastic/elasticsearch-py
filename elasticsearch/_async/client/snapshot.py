@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Dict, List, Optional, Union
+import typing as t
 
 from elastic_transport import ObjectApiResponse
 
@@ -28,14 +28,16 @@ class SnapshotClient(NamespacedClient):
     async def cleanup_repository(
         self,
         *,
-        name: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Removes stale data from repository.
 
@@ -48,7 +50,7 @@ class SnapshotClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_snapshot/{_quote(name)}/_cleanup"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -72,17 +74,19 @@ class SnapshotClient(NamespacedClient):
     async def clone(
         self,
         *,
-        repository: Any,
-        snapshot: Any,
-        target_snapshot: Any,
+        repository: str,
+        snapshot: str,
+        target_snapshot: str,
         indices: str,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Clones indices from one snapshot into another snapshot in the same repository.
 
@@ -104,8 +108,8 @@ class SnapshotClient(NamespacedClient):
         if indices is None:
             raise ValueError("Empty value passed for parameter 'indices'")
         __path = f"/_snapshot/{_quote(repository)}/{_quote(snapshot)}/_clone/{_quote(target_snapshot)}"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if indices is not None:
             __body["indices"] = indices
         if error_trace is not None:
@@ -131,21 +135,25 @@ class SnapshotClient(NamespacedClient):
     async def create(
         self,
         *,
-        repository: Any,
-        snapshot: Any,
-        error_trace: Optional[bool] = None,
-        feature_states: Optional[List[str]] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        include_global_state: Optional[bool] = None,
-        indices: Optional[Any] = None,
-        master_timeout: Optional[Any] = None,
-        metadata: Optional[Any] = None,
-        partial: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        wait_for_completion: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        repository: str,
+        snapshot: str,
+        error_trace: t.Optional[bool] = None,
+        feature_states: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        include_global_state: t.Optional[bool] = None,
+        indices: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        metadata: t.Optional[t.Mapping[str, t.Any]] = None,
+        partial: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        wait_for_completion: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Creates a snapshot in a repository.
 
@@ -187,8 +195,8 @@ class SnapshotClient(NamespacedClient):
         if snapshot in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot'")
         __path = f"/_snapshot/{_quote(repository)}/{_quote(snapshot)}"
-        __query: Dict[str, Any] = {}
-        __body: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if feature_states is not None:
@@ -228,18 +236,20 @@ class SnapshotClient(NamespacedClient):
     async def create_repository(
         self,
         *,
-        name: Any,
-        settings: Any,
+        name: str,
+        settings: t.Mapping[str, t.Any],
         type: str,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        repository: Optional[Any] = None,
-        timeout: Optional[Any] = None,
-        verify: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        repository: t.Optional[t.Mapping[str, t.Any]] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+        verify: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Creates a repository.
 
@@ -260,8 +270,8 @@ class SnapshotClient(NamespacedClient):
         if type is None:
             raise ValueError("Empty value passed for parameter 'type'")
         __path = f"/_snapshot/{_quote(name)}"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if settings is not None:
             __body["settings"] = settings
         if type is not None:
@@ -291,14 +301,16 @@ class SnapshotClient(NamespacedClient):
     async def delete(
         self,
         *,
-        repository: Any,
-        snapshot: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        repository: str,
+        snapshot: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes one or more snapshots.
 
@@ -313,7 +325,7 @@ class SnapshotClient(NamespacedClient):
         if snapshot in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot'")
         __path = f"/_snapshot/{_quote(repository)}/{_quote(snapshot)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -333,14 +345,16 @@ class SnapshotClient(NamespacedClient):
     async def delete_repository(
         self,
         *,
-        name: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes a repository.
 
@@ -354,7 +368,7 @@ class SnapshotClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_snapshot/{_quote(name)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -376,25 +390,32 @@ class SnapshotClient(NamespacedClient):
     async def get(
         self,
         *,
-        repository: Any,
-        snapshot: Any,
-        after: Optional[str] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        from_sort_value: Optional[str] = None,
-        human: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        include_repository: Optional[bool] = None,
-        index_details: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        offset: Optional[int] = None,
-        order: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        size: Optional[int] = None,
-        slm_policy_filter: Optional[Any] = None,
-        sort: Optional[Any] = None,
-        verbose: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        repository: str,
+        snapshot: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        after: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        from_sort_value: t.Optional[str] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        include_repository: t.Optional[bool] = None,
+        index_details: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        offset: t.Optional[int] = None,
+        order: t.Optional[t.Union["t.Literal['asc', 'desc']", str]] = None,
+        pretty: t.Optional[bool] = None,
+        size: t.Optional[int] = None,
+        slm_policy_filter: t.Optional[str] = None,
+        sort: t.Optional[
+            t.Union[
+                "t.Literal['duration', 'failed_shard_count', 'index_count', 'name', 'repository', 'shard_count', 'start_time']",
+                str,
+            ]
+        ] = None,
+        verbose: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns information about a snapshot.
 
@@ -446,7 +467,7 @@ class SnapshotClient(NamespacedClient):
         if snapshot in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot'")
         __path = f"/_snapshot/{_quote(repository)}/{_quote(snapshot)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if after is not None:
             __query["after"] = after
         if error_trace is not None:
@@ -488,14 +509,16 @@ class SnapshotClient(NamespacedClient):
     async def get_repository(
         self,
         *,
-        name: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns information about a repository.
 
@@ -510,7 +533,7 @@ class SnapshotClient(NamespacedClient):
             __path = f"/_snapshot/{_quote(name)}"
         else:
             __path = "/_snapshot"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -534,24 +557,30 @@ class SnapshotClient(NamespacedClient):
     async def restore(
         self,
         *,
-        repository: Any,
-        snapshot: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        ignore_index_settings: Optional[List[str]] = None,
-        ignore_unavailable: Optional[bool] = None,
-        include_aliases: Optional[bool] = None,
-        include_global_state: Optional[bool] = None,
-        index_settings: Optional[Any] = None,
-        indices: Optional[Any] = None,
-        master_timeout: Optional[Any] = None,
-        partial: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        rename_pattern: Optional[str] = None,
-        rename_replacement: Optional[str] = None,
-        wait_for_completion: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        repository: str,
+        snapshot: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        ignore_index_settings: t.Optional[
+            t.Union[t.List[str], t.Tuple[str, ...]]
+        ] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        include_aliases: t.Optional[bool] = None,
+        include_global_state: t.Optional[bool] = None,
+        index_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        indices: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        partial: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        rename_pattern: t.Optional[str] = None,
+        rename_replacement: t.Optional[str] = None,
+        wait_for_completion: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Restores a snapshot.
 
@@ -577,8 +606,8 @@ class SnapshotClient(NamespacedClient):
         if snapshot in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot'")
         __path = f"/_snapshot/{_quote(repository)}/{_quote(snapshot)}/_restore"
-        __query: Dict[str, Any] = {}
-        __body: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -622,15 +651,19 @@ class SnapshotClient(NamespacedClient):
     async def status(
         self,
         *,
-        repository: Optional[Any] = None,
-        snapshot: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        repository: t.Optional[str] = None,
+        snapshot: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns information about the status of a snapshot.
 
@@ -648,7 +681,7 @@ class SnapshotClient(NamespacedClient):
             __path = f"/_snapshot/{_quote(repository)}/_status"
         else:
             __path = "/_snapshot/_status"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -670,14 +703,16 @@ class SnapshotClient(NamespacedClient):
     async def verify_repository(
         self,
         *,
-        name: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Verifies a repository.
 
@@ -690,7 +725,7 @@ class SnapshotClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_snapshot/{_quote(name)}/_verify"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:

@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Dict, List, Optional, Union
+import typing as t
 
 from elastic_transport import ObjectApiResponse
 
@@ -28,12 +28,14 @@ class EnrichClient(NamespacedClient):
     def delete_policy(
         self,
         *,
-        name: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes an existing enrich policy and its enrich index.
 
@@ -44,7 +46,7 @@ class EnrichClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_enrich/policy/{_quote(name)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -62,13 +64,15 @@ class EnrichClient(NamespacedClient):
     def execute_policy(
         self,
         *,
-        name: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        wait_for_completion: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        wait_for_completion: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Creates the enrich index for an existing enrich policy.
 
@@ -81,7 +85,7 @@ class EnrichClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_enrich/policy/{_quote(name)}/_execute"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -101,12 +105,14 @@ class EnrichClient(NamespacedClient):
     def get_policy(
         self,
         *,
-        name: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Gets information about an enrich policy.
 
@@ -118,7 +124,7 @@ class EnrichClient(NamespacedClient):
             __path = f"/_enrich/policy/{_quote(name)}"
         else:
             __path = "/_enrich/policy"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -138,14 +144,16 @@ class EnrichClient(NamespacedClient):
     def put_policy(
         self,
         *,
-        name: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        geo_match: Optional[Any] = None,
-        human: Optional[bool] = None,
-        match: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        geo_match: t.Optional[t.Mapping[str, t.Any]] = None,
+        human: t.Optional[bool] = None,
+        match: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Creates a new enrich policy.
 
@@ -158,8 +166,8 @@ class EnrichClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_enrich/policy/{_quote(name)}"
-        __query: Dict[str, Any] = {}
-        __body: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -181,11 +189,13 @@ class EnrichClient(NamespacedClient):
     def stats(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Gets enrich coordinator statistics and information about enrich policies that
         are currently executing.
@@ -193,7 +203,7 @@ class EnrichClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/enrich-stats-api.html>`_
         """
         __path = "/_enrich/_stats"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:

@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Dict, List, Optional, Union
+import typing as t
 
 from elastic_transport import HeadApiResponse, ObjectApiResponse
 
@@ -30,17 +30,19 @@ class ClusterClient(NamespacedClient):
     async def allocation_explain(
         self,
         *,
-        current_node: Optional[str] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        include_disk_info: Optional[bool] = None,
-        include_yes_decisions: Optional[bool] = None,
-        index: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        primary: Optional[bool] = None,
-        shard: Optional[int] = None,
-    ) -> ObjectApiResponse[Any]:
+        current_node: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        include_disk_info: t.Optional[bool] = None,
+        include_yes_decisions: t.Optional[bool] = None,
+        index: t.Optional[str] = None,
+        pretty: t.Optional[bool] = None,
+        primary: t.Optional[bool] = None,
+        shard: t.Optional[int] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Provides explanations for shard allocations in the cluster.
 
@@ -59,8 +61,8 @@ class ClusterClient(NamespacedClient):
             for.
         """
         __path = "/_cluster/allocation/explain"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if current_node is not None:
             __body["current_node"] = current_node
         if error_trace is not None:
@@ -94,14 +96,16 @@ class ClusterClient(NamespacedClient):
     async def delete_component_template(
         self,
         *,
-        name: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes a component template
 
@@ -114,7 +118,7 @@ class ClusterClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_component_template/{_quote(name)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -136,12 +140,14 @@ class ClusterClient(NamespacedClient):
     async def delete_voting_config_exclusions(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        wait_for_removal: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        wait_for_removal: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Clears cluster voting config exclusions.
 
@@ -155,7 +161,7 @@ class ClusterClient(NamespacedClient):
             still in the cluster.
         """
         __path = "/_cluster/voting_config_exclusions"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -175,13 +181,15 @@ class ClusterClient(NamespacedClient):
     async def exists_component_template(
         self,
         *,
-        name: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
+        name: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
     ) -> HeadApiResponse:
         """
         Returns information about whether a particular component template exist
@@ -200,7 +208,7 @@ class ClusterClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_component_template/{_quote(name)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -222,15 +230,17 @@ class ClusterClient(NamespacedClient):
     async def get_component_template(
         self,
         *,
-        name: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        flat_settings: Optional[bool] = None,
-        human: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        flat_settings: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns one or more component templates
 
@@ -246,7 +256,7 @@ class ClusterClient(NamespacedClient):
             __path = f"/_component_template/{_quote(name)}"
         else:
             __path = "/_component_template"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -270,15 +280,17 @@ class ClusterClient(NamespacedClient):
     async def get_settings(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        flat_settings: Optional[bool] = None,
-        human: Optional[bool] = None,
-        include_defaults: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        flat_settings: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        include_defaults: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns cluster settings.
 
@@ -290,7 +302,7 @@ class ClusterClient(NamespacedClient):
         :param timeout: Explicit operation timeout
         """
         __path = "/_cluster/settings"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -316,23 +328,53 @@ class ClusterClient(NamespacedClient):
     async def health(
         self,
         *,
-        index: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        level: Optional[Any] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-        wait_for_active_shards: Optional[Any] = None,
-        wait_for_events: Optional[Any] = None,
-        wait_for_no_initializing_shards: Optional[bool] = None,
-        wait_for_no_relocating_shards: Optional[bool] = None,
-        wait_for_nodes: Optional[Union[int, str]] = None,
-        wait_for_status: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        level: t.Optional[
+            t.Union["t.Literal['cluster', 'indices', 'shards']", str]
+        ] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+        wait_for_active_shards: t.Optional[
+            t.Union[int, t.Union["t.Literal['all']", str]]
+        ] = None,
+        wait_for_events: t.Optional[
+            t.Union[
+                "t.Literal['high', 'immediate', 'languid', 'low', 'normal', 'urgent']",
+                str,
+            ]
+        ] = None,
+        wait_for_no_initializing_shards: t.Optional[bool] = None,
+        wait_for_no_relocating_shards: t.Optional[bool] = None,
+        wait_for_nodes: t.Optional[t.Union[int, str]] = None,
+        wait_for_status: t.Optional[
+            t.Union["t.Literal['green', 'red', 'yellow']", str]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns basic information about the health of the cluster.
 
@@ -376,7 +418,7 @@ class ClusterClient(NamespacedClient):
             __path = f"/_cluster/health/{_quote(index)}"
         else:
             __path = "/_cluster/health"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if expand_wildcards is not None:
@@ -416,13 +458,15 @@ class ClusterClient(NamespacedClient):
     async def pending_tasks(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns a list of any cluster-level changes (e.g. create index, update mapping,
         allocate or fail shard) which have not yet been executed.
@@ -434,7 +478,7 @@ class ClusterClient(NamespacedClient):
         :param master_timeout: Specify timeout for connection to master
         """
         __path = "/_cluster/pending_tasks"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -456,14 +500,20 @@ class ClusterClient(NamespacedClient):
     async def post_voting_config_exclusions(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        node_ids: Optional[Any] = None,
-        node_names: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        node_ids: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        node_names: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Updates the cluster voting config exclusions by node ids or node names.
 
@@ -480,7 +530,7 @@ class ClusterClient(NamespacedClient):
             request fails and returns an error.
         """
         __path = "/_cluster/voting_config_exclusions"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -507,20 +557,22 @@ class ClusterClient(NamespacedClient):
     async def put_component_template(
         self,
         *,
-        name: Any,
-        template: Any,
-        aliases: Optional[Dict[str, Any]] = None,
-        create: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        mappings: Optional[Any] = None,
-        master_timeout: Optional[Any] = None,
-        meta: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        settings: Optional[Any] = None,
-        version: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        name: str,
+        template: t.Mapping[str, t.Any],
+        aliases: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
+        create: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        mappings: t.Optional[t.Mapping[str, t.Any]] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        meta: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+        settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        version: t.Optional[int] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Creates or updates a component template
 
@@ -542,8 +594,8 @@ class ClusterClient(NamespacedClient):
         if template is None:
             raise ValueError("Empty value passed for parameter 'template'")
         __path = f"/_component_template/{_quote(name)}"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if template is not None:
             __body["template"] = template
         if aliases is not None:
@@ -579,16 +631,18 @@ class ClusterClient(NamespacedClient):
     async def put_settings(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        flat_settings: Optional[bool] = None,
-        human: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        persistent: Optional[Dict[str, Any]] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-        transient: Optional[Dict[str, Any]] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        flat_settings: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        persistent: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+        transient: t.Optional[t.Mapping[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Updates the cluster settings.
 
@@ -601,8 +655,8 @@ class ClusterClient(NamespacedClient):
         :param transient:
         """
         __path = "/_cluster/settings"
-        __query: Dict[str, Any] = {}
-        __body: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -630,18 +684,20 @@ class ClusterClient(NamespacedClient):
     async def remote_info(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns the information about configured remote clusters.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.0/cluster-remote-info.html>`_
         """
         __path = "/_remote/info"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -661,18 +717,24 @@ class ClusterClient(NamespacedClient):
     async def reroute(
         self,
         *,
-        commands: Optional[List[Any]] = None,
-        dry_run: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        explain: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        metric: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        retry_failed: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        commands: t.Optional[
+            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
+        ] = None,
+        dry_run: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        explain: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        metric: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        pretty: t.Optional[bool] = None,
+        retry_failed: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Allows to manually change the allocation of individual shards in the cluster.
 
@@ -693,8 +755,8 @@ class ClusterClient(NamespacedClient):
             the timeout expires, the request fails and returns an error.
         """
         __path = "/_cluster/reroute"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if commands is not None:
             __body["commands"] = commands
         if dry_run is not None:
@@ -730,21 +792,42 @@ class ClusterClient(NamespacedClient):
     async def state(
         self,
         *,
-        metric: Optional[Any] = None,
-        index: Optional[Any] = None,
-        allow_no_indices: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        flat_settings: Optional[bool] = None,
-        human: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        local: Optional[bool] = None,
-        master_timeout: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        wait_for_metadata_version: Optional[Any] = None,
-        wait_for_timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        metric: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        allow_no_indices: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        flat_settings: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        wait_for_metadata_version: t.Optional[int] = None,
+        wait_for_timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns a comprehensive information about the state of the cluster.
 
@@ -777,7 +860,7 @@ class ClusterClient(NamespacedClient):
             __path = f"/_cluster/state/_all/{_quote(index)}"
         else:
             __path = "/_cluster/state"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if error_trace is not None:
@@ -811,14 +894,18 @@ class ClusterClient(NamespacedClient):
     async def stats(
         self,
         *,
-        node_id: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        flat_settings: Optional[bool] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        node_id: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        flat_settings: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns high-level overview of cluster statistics.
 
@@ -836,7 +923,7 @@ class ClusterClient(NamespacedClient):
             __path = f"/_cluster/stats/nodes/{_quote(node_id)}"
         else:
             __path = "/_cluster/stats"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:

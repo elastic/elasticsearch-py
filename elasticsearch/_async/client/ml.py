@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-from typing import Any, Dict, List, Optional, Union
+import typing as t
 
 from elastic_transport import ObjectApiResponse
 
@@ -30,15 +30,17 @@ class MlClient(NamespacedClient):
     async def close_job(
         self,
         *,
-        job_id: Any,
-        allow_no_match: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        force: Optional[bool] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        job_id: str,
+        allow_no_match: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        force: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Closes one or more anomaly detection jobs. A job can be opened and closed multiple
         times throughout its lifecycle.
@@ -58,8 +60,8 @@ class MlClient(NamespacedClient):
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_close"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
             __body["allow_no_match"] = allow_no_match
         if error_trace is not None:
@@ -87,12 +89,14 @@ class MlClient(NamespacedClient):
     async def delete_calendar(
         self,
         *,
-        calendar_id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        calendar_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes a calendar.
 
@@ -103,7 +107,7 @@ class MlClient(NamespacedClient):
         if calendar_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'calendar_id'")
         __path = f"/_ml/calendars/{_quote(calendar_id)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -121,13 +125,15 @@ class MlClient(NamespacedClient):
     async def delete_calendar_event(
         self,
         *,
-        calendar_id: Any,
-        event_id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        calendar_id: str,
+        event_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes scheduled events from a calendar.
 
@@ -141,7 +147,7 @@ class MlClient(NamespacedClient):
         if event_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'event_id'")
         __path = f"/_ml/calendars/{_quote(calendar_id)}/events/{_quote(event_id)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -159,13 +165,15 @@ class MlClient(NamespacedClient):
     async def delete_calendar_job(
         self,
         *,
-        calendar_id: Any,
-        job_id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        calendar_id: str,
+        job_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes anomaly detection jobs from a calendar.
 
@@ -180,7 +188,7 @@ class MlClient(NamespacedClient):
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
         __path = f"/_ml/calendars/{_quote(calendar_id)}/jobs/{_quote(job_id)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -198,14 +206,16 @@ class MlClient(NamespacedClient):
     async def delete_data_frame_analytics(
         self,
         *,
-        id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        force: Optional[bool] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        force: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes an existing data frame analytics job.
 
@@ -219,7 +229,7 @@ class MlClient(NamespacedClient):
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
         __path = f"/_ml/data_frame/analytics/{_quote(id)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -241,13 +251,15 @@ class MlClient(NamespacedClient):
     async def delete_datafeed(
         self,
         *,
-        datafeed_id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        force: Optional[bool] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        datafeed_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        force: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes an existing datafeed.
 
@@ -263,7 +275,7 @@ class MlClient(NamespacedClient):
         if datafeed_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'datafeed_id'")
         __path = f"/_ml/datafeeds/{_quote(datafeed_id)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -285,14 +297,16 @@ class MlClient(NamespacedClient):
     async def delete_expired_data(
         self,
         *,
-        job_id: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        requests_per_second: Optional[float] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        job_id: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        requests_per_second: t.Optional[float] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes expired and unused machine learning data.
 
@@ -309,8 +323,8 @@ class MlClient(NamespacedClient):
             __path = f"/_ml/_delete_expired_data/{_quote(job_id)}"
         else:
             __path = "/_ml/_delete_expired_data"
-        __query: Dict[str, Any] = {}
-        __body: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -336,12 +350,14 @@ class MlClient(NamespacedClient):
     async def delete_filter(
         self,
         *,
-        filter_id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        filter_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes a filter.
 
@@ -352,7 +368,7 @@ class MlClient(NamespacedClient):
         if filter_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'filter_id'")
         __path = f"/_ml/filters/{_quote(filter_id)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -370,15 +386,17 @@ class MlClient(NamespacedClient):
     async def delete_forecast(
         self,
         *,
-        job_id: Any,
-        forecast_id: Optional[Any] = None,
-        allow_no_forecasts: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        job_id: str,
+        forecast_id: t.Optional[str] = None,
+        allow_no_forecasts: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes forecasts from a machine learning job.
 
@@ -404,7 +422,7 @@ class MlClient(NamespacedClient):
             __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_forecast"
         else:
             raise ValueError("Couldn't find a path for the given parameters")
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_forecasts is not None:
             __query["allow_no_forecasts"] = allow_no_forecasts
         if error_trace is not None:
@@ -426,14 +444,16 @@ class MlClient(NamespacedClient):
     async def delete_job(
         self,
         *,
-        job_id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        force: Optional[bool] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        wait_for_completion: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        job_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        force: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        wait_for_completion: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes an existing anomaly detection job.
 
@@ -448,7 +468,7 @@ class MlClient(NamespacedClient):
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -470,13 +490,15 @@ class MlClient(NamespacedClient):
     async def delete_model_snapshot(
         self,
         *,
-        job_id: Any,
-        snapshot_id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        job_id: str,
+        snapshot_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes an existing model snapshot.
 
@@ -490,7 +512,7 @@ class MlClient(NamespacedClient):
         if snapshot_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot_id'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots/{_quote(snapshot_id)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -508,13 +530,15 @@ class MlClient(NamespacedClient):
     async def delete_trained_model(
         self,
         *,
-        model_id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        force: Optional[bool] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        model_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        force: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes an existing trained inference model that is currently not referenced
         by an ingest pipeline.
@@ -528,7 +552,7 @@ class MlClient(NamespacedClient):
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_id'")
         __path = f"/_ml/trained_models/{_quote(model_id)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -548,13 +572,15 @@ class MlClient(NamespacedClient):
     async def delete_trained_model_alias(
         self,
         *,
-        model_id: Any,
-        model_alias: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        model_id: str,
+        model_alias: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Deletes a model alias that refers to the trained model
 
@@ -568,7 +594,7 @@ class MlClient(NamespacedClient):
         if model_alias in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_alias'")
         __path = f"/_ml/trained_models/{_quote(model_id)}/model_aliases/{_quote(model_alias)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -588,14 +614,16 @@ class MlClient(NamespacedClient):
     async def estimate_model_memory(
         self,
         *,
-        analysis_config: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        max_bucket_cardinality: Optional[Dict[Any, int]] = None,
-        overall_cardinality: Optional[Dict[Any, int]] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        analysis_config: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        max_bucket_cardinality: t.Optional[t.Mapping[str, int]] = None,
+        overall_cardinality: t.Optional[t.Mapping[str, int]] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Estimates the model memory
 
@@ -617,8 +645,8 @@ class MlClient(NamespacedClient):
             or `partition_field_name`.
         """
         __path = "/_ml/anomaly_detectors/_estimate_model_memory"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if analysis_config is not None:
             __body["analysis_config"] = analysis_config
         if error_trace is not None:
@@ -644,14 +672,16 @@ class MlClient(NamespacedClient):
     async def evaluate_data_frame(
         self,
         *,
-        evaluation: Any,
-        index: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        query: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        evaluation: t.Mapping[str, t.Any],
+        index: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        query: t.Optional[t.Mapping[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Evaluates the data frame analytics for an annotated index.
 
@@ -667,8 +697,8 @@ class MlClient(NamespacedClient):
         if index is None:
             raise ValueError("Empty value passed for parameter 'index'")
         __path = "/_ml/data_frame/_evaluate"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if evaluation is not None:
             __body["evaluation"] = evaluation
         if index is not None:
@@ -694,20 +724,22 @@ class MlClient(NamespacedClient):
     async def explain_data_frame_analytics(
         self,
         *,
-        id: Optional[Any] = None,
-        allow_lazy_start: Optional[bool] = None,
-        analysis: Optional[Any] = None,
-        analyzed_fields: Optional[Any] = None,
-        description: Optional[str] = None,
-        dest: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        max_num_threads: Optional[int] = None,
-        model_memory_limit: Optional[str] = None,
-        pretty: Optional[bool] = None,
-        source: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        id: t.Optional[str] = None,
+        allow_lazy_start: t.Optional[bool] = None,
+        analysis: t.Optional[t.Mapping[str, t.Any]] = None,
+        analyzed_fields: t.Optional[t.Mapping[str, t.Any]] = None,
+        description: t.Optional[str] = None,
+        dest: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        max_num_threads: t.Optional[int] = None,
+        model_memory_limit: t.Optional[str] = None,
+        pretty: t.Optional[bool] = None,
+        source: t.Optional[t.Mapping[str, t.Any]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Explains a data frame analytics config.
 
@@ -745,8 +777,8 @@ class MlClient(NamespacedClient):
             __path = f"/_ml/data_frame/analytics/{_quote(id)}/_explain"
         else:
             __path = "/_ml/data_frame/analytics/_explain"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_lazy_start is not None:
             __body["allow_lazy_start"] = allow_lazy_start
         if analysis is not None:
@@ -786,17 +818,19 @@ class MlClient(NamespacedClient):
     async def flush_job(
         self,
         *,
-        job_id: Any,
-        advance_time: Optional[Any] = None,
-        calc_interim: Optional[bool] = None,
-        end: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        skip_time: Optional[Any] = None,
-        start: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        job_id: str,
+        advance_time: t.Optional[str] = None,
+        calc_interim: t.Optional[bool] = None,
+        end: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        skip_time: t.Optional[t.Union[int, str]] = None,
+        start: t.Optional[str] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Forces any buffered data to be processed by the job.
 
@@ -812,8 +846,8 @@ class MlClient(NamespacedClient):
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_flush"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if advance_time is not None:
             __body["advance_time"] = advance_time
         if calc_interim is not None:
@@ -847,15 +881,17 @@ class MlClient(NamespacedClient):
     async def forecast(
         self,
         *,
-        job_id: Any,
-        duration: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        expires_in: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        max_model_memory: Optional[str] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        job_id: str,
+        duration: t.Optional[t.Union[int, str]] = None,
+        error_trace: t.Optional[bool] = None,
+        expires_in: t.Optional[t.Union[int, str]] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        max_model_memory: t.Optional[str] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Predicts the future behavior of a time series by using its historical behavior.
 
@@ -871,8 +907,8 @@ class MlClient(NamespacedClient):
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_forecast"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if duration is not None:
             __body["duration"] = duration
         if error_trace is not None:
@@ -903,23 +939,25 @@ class MlClient(NamespacedClient):
     async def get_buckets(
         self,
         *,
-        job_id: Any,
-        timestamp: Optional[Any] = None,
-        anomaly_score: Optional[float] = None,
-        desc: Optional[bool] = None,
-        end: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        exclude_interim: Optional[bool] = None,
-        expand: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        from_: Optional[int] = None,
-        human: Optional[bool] = None,
-        page: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        size: Optional[int] = None,
-        sort: Optional[Any] = None,
-        start: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        job_id: str,
+        timestamp: t.Optional[str] = None,
+        anomaly_score: t.Optional[float] = None,
+        desc: t.Optional[bool] = None,
+        end: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        exclude_interim: t.Optional[bool] = None,
+        expand: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        from_: t.Optional[int] = None,
+        human: t.Optional[bool] = None,
+        page: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+        size: t.Optional[int] = None,
+        sort: t.Optional[str] = None,
+        start: t.Optional[str] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves anomaly detection job results for one or more buckets.
 
@@ -949,8 +987,8 @@ class MlClient(NamespacedClient):
             __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/results/buckets"
         else:
             raise ValueError("Couldn't find a path for the given parameters")
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if anomaly_score is not None:
             __body["anomaly_score"] = anomaly_score
         if desc is not None:
@@ -994,17 +1032,19 @@ class MlClient(NamespacedClient):
     async def get_calendar_events(
         self,
         *,
-        calendar_id: Any,
-        end: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        from_: Optional[int] = None,
-        human: Optional[bool] = None,
-        job_id: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        size: Optional[int] = None,
-        start: Optional[str] = None,
-    ) -> ObjectApiResponse[Any]:
+        calendar_id: str,
+        end: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        from_: t.Optional[int] = None,
+        human: t.Optional[bool] = None,
+        job_id: t.Optional[str] = None,
+        pretty: t.Optional[bool] = None,
+        size: t.Optional[int] = None,
+        start: t.Optional[str] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves information about the scheduled events in calendars.
 
@@ -1024,7 +1064,7 @@ class MlClient(NamespacedClient):
         if calendar_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'calendar_id'")
         __path = f"/_ml/calendars/{_quote(calendar_id)}/events"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if end is not None:
             __query["end"] = end
         if error_trace is not None:
@@ -1055,15 +1095,17 @@ class MlClient(NamespacedClient):
     async def get_calendars(
         self,
         *,
-        calendar_id: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        from_: Optional[int] = None,
-        human: Optional[bool] = None,
-        page: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        size: Optional[int] = None,
-    ) -> ObjectApiResponse[Any]:
+        calendar_id: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        from_: t.Optional[int] = None,
+        human: t.Optional[bool] = None,
+        page: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+        size: t.Optional[int] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves configuration information for calendars.
 
@@ -1083,8 +1125,8 @@ class MlClient(NamespacedClient):
             __path = f"/_ml/calendars/{_quote(calendar_id)}"
         else:
             __path = "/_ml/calendars"
-        __query: Dict[str, Any] = {}
-        __body: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1115,17 +1157,19 @@ class MlClient(NamespacedClient):
     async def get_categories(
         self,
         *,
-        job_id: Any,
-        category_id: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        from_: Optional[int] = None,
-        human: Optional[bool] = None,
-        page: Optional[Any] = None,
-        partition_field_value: Optional[str] = None,
-        pretty: Optional[bool] = None,
-        size: Optional[int] = None,
-    ) -> ObjectApiResponse[Any]:
+        job_id: str,
+        category_id: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        from_: t.Optional[int] = None,
+        human: t.Optional[bool] = None,
+        page: t.Optional[t.Mapping[str, t.Any]] = None,
+        partition_field_value: t.Optional[str] = None,
+        pretty: t.Optional[bool] = None,
+        size: t.Optional[int] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves anomaly detection job results for one or more categories.
 
@@ -1149,8 +1193,8 @@ class MlClient(NamespacedClient):
             __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/results/categories"
         else:
             raise ValueError("Couldn't find a path for the given parameters")
-        __query: Dict[str, Any] = {}
-        __body: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1182,16 +1226,18 @@ class MlClient(NamespacedClient):
     async def get_data_frame_analytics(
         self,
         *,
-        id: Optional[Any] = None,
-        allow_no_match: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        exclude_generated: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        from_: Optional[int] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        size: Optional[int] = None,
-    ) -> ObjectApiResponse[Any]:
+        id: t.Optional[str] = None,
+        allow_no_match: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        exclude_generated: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        from_: t.Optional[int] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        size: t.Optional[int] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves configuration information for data frame analytics jobs.
 
@@ -1218,7 +1264,7 @@ class MlClient(NamespacedClient):
             __path = f"/_ml/data_frame/analytics/{_quote(id)}"
         else:
             __path = "/_ml/data_frame/analytics"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
             __query["allow_no_match"] = allow_no_match
         if error_trace is not None:
@@ -1246,16 +1292,18 @@ class MlClient(NamespacedClient):
     async def get_data_frame_analytics_stats(
         self,
         *,
-        id: Optional[Any] = None,
-        allow_no_match: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        from_: Optional[int] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        size: Optional[int] = None,
-        verbose: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        id: t.Optional[str] = None,
+        allow_no_match: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        from_: t.Optional[int] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        size: t.Optional[int] = None,
+        verbose: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves usage information for data frame analytics jobs.
 
@@ -1280,7 +1328,7 @@ class MlClient(NamespacedClient):
             __path = f"/_ml/data_frame/analytics/{_quote(id)}/_stats"
         else:
             __path = "/_ml/data_frame/analytics/_stats"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
             __query["allow_no_match"] = allow_no_match
         if error_trace is not None:
@@ -1306,13 +1354,17 @@ class MlClient(NamespacedClient):
     async def get_datafeed_stats(
         self,
         *,
-        datafeed_id: Optional[Any] = None,
-        allow_no_match: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        datafeed_id: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        allow_no_match: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves usage information for datafeeds.
 
@@ -1333,7 +1385,7 @@ class MlClient(NamespacedClient):
             __path = f"/_ml/datafeeds/{_quote(datafeed_id)}/_stats"
         else:
             __path = "/_ml/datafeeds/_stats"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
             __query["allow_no_match"] = allow_no_match
         if error_trace is not None:
@@ -1353,14 +1405,18 @@ class MlClient(NamespacedClient):
     async def get_datafeeds(
         self,
         *,
-        datafeed_id: Optional[Any] = None,
-        allow_no_match: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        exclude_generated: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        datafeed_id: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        allow_no_match: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        exclude_generated: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves configuration information for datafeeds.
 
@@ -1384,7 +1440,7 @@ class MlClient(NamespacedClient):
             __path = f"/_ml/datafeeds/{_quote(datafeed_id)}"
         else:
             __path = "/_ml/datafeeds"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
             __query["allow_no_match"] = allow_no_match
         if error_trace is not None:
@@ -1408,14 +1464,16 @@ class MlClient(NamespacedClient):
     async def get_filters(
         self,
         *,
-        filter_id: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        from_: Optional[int] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        size: Optional[int] = None,
-    ) -> ObjectApiResponse[Any]:
+        filter_id: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        from_: t.Optional[int] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        size: t.Optional[int] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves filters.
 
@@ -1429,7 +1487,7 @@ class MlClient(NamespacedClient):
             __path = f"/_ml/filters/{_quote(filter_id)}"
         else:
             __path = "/_ml/filters"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -1454,21 +1512,23 @@ class MlClient(NamespacedClient):
     async def get_influencers(
         self,
         *,
-        job_id: Any,
-        desc: Optional[bool] = None,
-        end: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        exclude_interim: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        from_: Optional[int] = None,
-        human: Optional[bool] = None,
-        influencer_score: Optional[float] = None,
-        page: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        size: Optional[int] = None,
-        sort: Optional[Any] = None,
-        start: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        job_id: str,
+        desc: t.Optional[bool] = None,
+        end: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        exclude_interim: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        from_: t.Optional[int] = None,
+        human: t.Optional[bool] = None,
+        influencer_score: t.Optional[float] = None,
+        page: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+        size: t.Optional[int] = None,
+        sort: t.Optional[str] = None,
+        start: t.Optional[str] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves anomaly detection job results for one or more influencers.
 
@@ -1493,8 +1553,8 @@ class MlClient(NamespacedClient):
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/results/influencers"
-        __query: Dict[str, Any] = {}
-        __body: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = {}
         if desc is not None:
             __query["desc"] = desc
         if end is not None:
@@ -1534,13 +1594,15 @@ class MlClient(NamespacedClient):
     async def get_job_stats(
         self,
         *,
-        job_id: Optional[Any] = None,
-        allow_no_match: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        job_id: t.Optional[str] = None,
+        allow_no_match: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves usage information for anomaly detection jobs.
 
@@ -1562,7 +1624,7 @@ class MlClient(NamespacedClient):
             __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_stats"
         else:
             __path = "/_ml/anomaly_detectors/_stats"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
             __query["allow_no_match"] = allow_no_match
         if error_trace is not None:
@@ -1582,14 +1644,18 @@ class MlClient(NamespacedClient):
     async def get_jobs(
         self,
         *,
-        job_id: Optional[Any] = None,
-        allow_no_match: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        exclude_generated: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        job_id: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        allow_no_match: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        exclude_generated: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves configuration information for anomaly detection jobs.
 
@@ -1613,7 +1679,7 @@ class MlClient(NamespacedClient):
             __path = f"/_ml/anomaly_detectors/{_quote(job_id)}"
         else:
             __path = "/_ml/anomaly_detectors"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
             __query["allow_no_match"] = allow_no_match
         if error_trace is not None:
@@ -1638,20 +1704,22 @@ class MlClient(NamespacedClient):
     async def get_model_snapshots(
         self,
         *,
-        job_id: Any,
-        snapshot_id: Optional[Any] = None,
-        desc: Optional[bool] = None,
-        end: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        from_: Optional[int] = None,
-        human: Optional[bool] = None,
-        page: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        size: Optional[int] = None,
-        sort: Optional[Any] = None,
-        start: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        job_id: str,
+        snapshot_id: t.Optional[str] = None,
+        desc: t.Optional[bool] = None,
+        end: t.Optional[t.Union[int, str]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        from_: t.Optional[int] = None,
+        human: t.Optional[bool] = None,
+        page: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+        size: t.Optional[int] = None,
+        sort: t.Optional[str] = None,
+        start: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves information about model snapshots.
 
@@ -1679,8 +1747,8 @@ class MlClient(NamespacedClient):
             __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots"
         else:
             raise ValueError("Couldn't find a path for the given parameters")
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if desc is not None:
             __body["desc"] = desc
         if end is not None:
@@ -1718,19 +1786,21 @@ class MlClient(NamespacedClient):
     async def get_overall_buckets(
         self,
         *,
-        job_id: Any,
-        allow_no_match: Optional[bool] = None,
-        bucket_span: Optional[Any] = None,
-        end: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        exclude_interim: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        overall_score: Optional[Union[float, str]] = None,
-        pretty: Optional[bool] = None,
-        start: Optional[Any] = None,
-        top_n: Optional[int] = None,
-    ) -> ObjectApiResponse[Any]:
+        job_id: str,
+        allow_no_match: t.Optional[bool] = None,
+        bucket_span: t.Optional[t.Union[int, str]] = None,
+        end: t.Optional[t.Union[int, str]] = None,
+        error_trace: t.Optional[bool] = None,
+        exclude_interim: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        overall_score: t.Optional[t.Union[float, str]] = None,
+        pretty: t.Optional[bool] = None,
+        start: t.Optional[t.Union[int, str]] = None,
+        top_n: t.Optional[int] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves overall bucket results that summarize the bucket results of multiple
         anomaly detection jobs.
@@ -1755,8 +1825,8 @@ class MlClient(NamespacedClient):
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/results/overall_buckets"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
             __body["allow_no_match"] = allow_no_match
         if bucket_span is not None:
@@ -1795,21 +1865,23 @@ class MlClient(NamespacedClient):
     async def get_records(
         self,
         *,
-        job_id: Any,
-        desc: Optional[bool] = None,
-        end: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        exclude_interim: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        from_: Optional[int] = None,
-        human: Optional[bool] = None,
-        page: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        record_score: Optional[float] = None,
-        size: Optional[int] = None,
-        sort: Optional[Any] = None,
-        start: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        job_id: str,
+        desc: t.Optional[bool] = None,
+        end: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        exclude_interim: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        from_: t.Optional[int] = None,
+        human: t.Optional[bool] = None,
+        page: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+        record_score: t.Optional[float] = None,
+        size: t.Optional[int] = None,
+        sort: t.Optional[str] = None,
+        start: t.Optional[str] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves anomaly records for an anomaly detection job.
 
@@ -1830,8 +1902,8 @@ class MlClient(NamespacedClient):
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/results/records"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if desc is not None:
             __body["desc"] = desc
         if end is not None:
@@ -1873,19 +1945,26 @@ class MlClient(NamespacedClient):
     async def get_trained_models(
         self,
         *,
-        model_id: Optional[Any] = None,
-        allow_no_match: Optional[bool] = None,
-        decompress_definition: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        exclude_generated: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        from_: Optional[int] = None,
-        human: Optional[bool] = None,
-        include: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        size: Optional[int] = None,
-        tags: Optional[str] = None,
-    ) -> ObjectApiResponse[Any]:
+        model_id: t.Optional[str] = None,
+        allow_no_match: t.Optional[bool] = None,
+        decompress_definition: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        exclude_generated: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        from_: t.Optional[int] = None,
+        human: t.Optional[bool] = None,
+        include: t.Optional[
+            t.Union[
+                "t.Literal['definition', 'feature_importance_baseline', 'hyperparameters', 'total_feature_importance']",
+                str,
+            ]
+        ] = None,
+        pretty: t.Optional[bool] = None,
+        size: t.Optional[int] = None,
+        tags: t.Optional[str] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves configuration information for a trained inference model.
 
@@ -1915,7 +1994,7 @@ class MlClient(NamespacedClient):
             __path = f"/_ml/trained_models/{_quote(model_id)}"
         else:
             __path = "/_ml/trained_models"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
             __query["allow_no_match"] = allow_no_match
         if decompress_definition is not None:
@@ -1949,15 +2028,17 @@ class MlClient(NamespacedClient):
     async def get_trained_models_stats(
         self,
         *,
-        model_id: Optional[Any] = None,
-        allow_no_match: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        from_: Optional[int] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        size: Optional[int] = None,
-    ) -> ObjectApiResponse[Any]:
+        model_id: t.Optional[str] = None,
+        allow_no_match: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        from_: t.Optional[int] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        size: t.Optional[int] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves usage information for trained inference models.
 
@@ -1976,7 +2057,7 @@ class MlClient(NamespacedClient):
             __path = f"/_ml/trained_models/{_quote(model_id)}/_stats"
         else:
             __path = "/_ml/trained_models/_stats"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
             __query["allow_no_match"] = allow_no_match
         if error_trace is not None:
@@ -2002,14 +2083,16 @@ class MlClient(NamespacedClient):
     async def infer_trained_model_deployment(
         self,
         *,
-        model_id: Any,
-        docs: List[Dict[str, str]],
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        model_id: str,
+        docs: t.Union[t.List[t.Mapping[str, str]], t.Tuple[t.Mapping[str, str], ...]],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Evaluate a trained model.
 
@@ -2026,8 +2109,8 @@ class MlClient(NamespacedClient):
         if docs is None:
             raise ValueError("Empty value passed for parameter 'docs'")
         __path = f"/_ml/trained_models/{_quote(model_id)}/deployment/_infer"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if docs is not None:
             __body["docs"] = docs
         if error_trace is not None:
@@ -2049,18 +2132,20 @@ class MlClient(NamespacedClient):
     async def info(
         self,
         *,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Returns defaults and limits used by machine learning.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-ml-info.html>`_
         """
         __path = "/_ml/info"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -2080,13 +2165,15 @@ class MlClient(NamespacedClient):
     async def open_job(
         self,
         *,
-        job_id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        job_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Opens one or more anomaly detection jobs.
 
@@ -2098,8 +2185,8 @@ class MlClient(NamespacedClient):
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_open"
-        __query: Dict[str, Any] = {}
-        __body: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -2125,13 +2212,17 @@ class MlClient(NamespacedClient):
     async def post_calendar_events(
         self,
         *,
-        calendar_id: Any,
-        events: List[Any],
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        calendar_id: str,
+        events: t.Union[
+            t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]
+        ],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Posts scheduled events in a calendar.
 
@@ -2147,8 +2238,8 @@ class MlClient(NamespacedClient):
         if events is None:
             raise ValueError("Empty value passed for parameter 'events'")
         __path = f"/_ml/calendars/{_quote(calendar_id)}/events"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if events is not None:
             __body["events"] = events
         if error_trace is not None:
@@ -2170,15 +2261,17 @@ class MlClient(NamespacedClient):
     async def post_data(
         self,
         *,
-        job_id: Any,
-        data: List[Any],
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        reset_end: Optional[Any] = None,
-        reset_start: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        job_id: str,
+        data: t.Union[t.List[t.Any], t.Tuple[t.Any, ...]],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        reset_end: t.Optional[str] = None,
+        reset_start: t.Optional[str] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Sends data to an anomaly detection job for analysis.
 
@@ -2195,7 +2288,7 @@ class MlClient(NamespacedClient):
         if data is None:
             raise ValueError("Empty value passed for parameter 'data'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_data"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -2223,13 +2316,15 @@ class MlClient(NamespacedClient):
     async def preview_data_frame_analytics(
         self,
         *,
-        id: Optional[Any] = None,
-        config: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        id: t.Optional[str] = None,
+        config: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Previews that will be analyzed given a data frame analytics config.
 
@@ -2244,8 +2339,8 @@ class MlClient(NamespacedClient):
             __path = f"/_ml/data_frame/analytics/{_quote(id)}/_preview"
         else:
             __path = "/_ml/data_frame/analytics/_preview"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if config is not None:
             __body["config"] = config
         if error_trace is not None:
@@ -2271,14 +2366,16 @@ class MlClient(NamespacedClient):
     async def preview_datafeed(
         self,
         *,
-        datafeed_id: Optional[Any] = None,
-        datafeed_config: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        job_config: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        datafeed_id: t.Optional[str] = None,
+        datafeed_config: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        job_config: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Previews a datafeed.
 
@@ -2301,8 +2398,8 @@ class MlClient(NamespacedClient):
             __path = f"/_ml/datafeeds/{_quote(datafeed_id)}/_preview"
         else:
             __path = "/_ml/datafeeds/_preview"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if datafeed_config is not None:
             __body["datafeed_config"] = datafeed_config
         if error_trace is not None:
@@ -2330,14 +2427,16 @@ class MlClient(NamespacedClient):
     async def put_calendar(
         self,
         *,
-        calendar_id: Any,
-        description: Optional[str] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        job_ids: Optional[List[Any]] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        calendar_id: str,
+        description: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        job_ids: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Instantiates a calendar.
 
@@ -2350,8 +2449,8 @@ class MlClient(NamespacedClient):
         if calendar_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'calendar_id'")
         __path = f"/_ml/calendars/{_quote(calendar_id)}"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if description is not None:
             __body["description"] = description
         if error_trace is not None:
@@ -2377,13 +2476,15 @@ class MlClient(NamespacedClient):
     async def put_calendar_job(
         self,
         *,
-        calendar_id: Any,
-        job_id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        calendar_id: str,
+        job_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Adds an anomaly detection job to a calendar.
 
@@ -2398,7 +2499,7 @@ class MlClient(NamespacedClient):
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
         __path = f"/_ml/calendars/{_quote(calendar_id)}/jobs/{_quote(job_id)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -2419,22 +2520,26 @@ class MlClient(NamespacedClient):
     async def put_data_frame_analytics(
         self,
         *,
-        id: Any,
-        analysis: Any,
-        dest: Any,
-        source: Any,
-        allow_lazy_start: Optional[bool] = None,
-        analyzed_fields: Optional[Any] = None,
-        description: Optional[str] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        headers: Optional[Any] = None,
-        human: Optional[bool] = None,
-        max_num_threads: Optional[int] = None,
-        model_memory_limit: Optional[str] = None,
-        pretty: Optional[bool] = None,
-        version: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        id: str,
+        analysis: t.Mapping[str, t.Any],
+        dest: t.Mapping[str, t.Any],
+        source: t.Mapping[str, t.Any],
+        allow_lazy_start: t.Optional[bool] = None,
+        analyzed_fields: t.Optional[t.Mapping[str, t.Any]] = None,
+        description: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        headers: t.Optional[
+            t.Mapping[str, t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        max_num_threads: t.Optional[int] = None,
+        model_memory_limit: t.Optional[str] = None,
+        pretty: t.Optional[bool] = None,
+        version: t.Optional[str] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Instantiates a data frame analytics job.
 
@@ -2504,8 +2609,8 @@ class MlClient(NamespacedClient):
         if source is None:
             raise ValueError("Empty value passed for parameter 'source'")
         __path = f"/_ml/data_frame/analytics/{_quote(id)}"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if analysis is not None:
             __body["analysis"] = analysis
         if dest is not None:
@@ -2546,31 +2651,67 @@ class MlClient(NamespacedClient):
     async def put_datafeed(
         self,
         *,
-        datafeed_id: Any,
-        aggregations: Optional[Dict[str, Any]] = None,
-        allow_no_indices: Optional[bool] = None,
-        chunking_config: Optional[Any] = None,
-        delayed_data_check_config: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        frequency: Optional[Any] = None,
-        headers: Optional[Any] = None,
-        human: Optional[bool] = None,
-        ignore_throttled: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        indexes: Optional[Any] = None,
-        indices: Optional[Any] = None,
-        indices_options: Optional[Any] = None,
-        job_id: Optional[Any] = None,
-        max_empty_searches: Optional[int] = None,
-        pretty: Optional[bool] = None,
-        query: Optional[Any] = None,
-        query_delay: Optional[Any] = None,
-        runtime_mappings: Optional[Any] = None,
-        script_fields: Optional[Dict[str, Any]] = None,
-        scroll_size: Optional[int] = None,
-    ) -> ObjectApiResponse[Any]:
+        datafeed_id: str,
+        aggregations: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
+        allow_no_indices: t.Optional[bool] = None,
+        chunking_config: t.Optional[t.Mapping[str, t.Any]] = None,
+        delayed_data_check_config: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        frequency: t.Optional[t.Union[int, str]] = None,
+        headers: t.Optional[
+            t.Mapping[str, t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        ignore_throttled: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        indexes: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        indices: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        indices_options: t.Optional[t.Mapping[str, t.Any]] = None,
+        job_id: t.Optional[str] = None,
+        max_empty_searches: t.Optional[int] = None,
+        pretty: t.Optional[bool] = None,
+        query: t.Optional[t.Mapping[str, t.Any]] = None,
+        query_delay: t.Optional[t.Union[int, str]] = None,
+        runtime_mappings: t.Optional[
+            t.Mapping[
+                str,
+                t.Union[
+                    t.Mapping[str, t.Any],
+                    t.Union[
+                        t.List[t.Mapping[str, t.Any]],
+                        t.Tuple[t.Mapping[str, t.Any], ...],
+                    ],
+                ],
+            ]
+        ] = None,
+        script_fields: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
+        scroll_size: t.Optional[int] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Instantiates a datafeed.
 
@@ -2648,8 +2789,8 @@ class MlClient(NamespacedClient):
         if datafeed_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'datafeed_id'")
         __path = f"/_ml/datafeeds/{_quote(datafeed_id)}"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if aggregations is not None:
             __body["aggregations"] = aggregations
         if allow_no_indices is not None:
@@ -2707,14 +2848,16 @@ class MlClient(NamespacedClient):
     async def put_filter(
         self,
         *,
-        filter_id: Any,
-        description: Optional[str] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        items: Optional[List[str]] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        filter_id: str,
+        description: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        items: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Instantiates a filter.
 
@@ -2728,8 +2871,8 @@ class MlClient(NamespacedClient):
         if filter_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'filter_id'")
         __path = f"/_ml/filters/{_quote(filter_id)}"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if description is not None:
             __body["description"] = description
         if error_trace is not None:
@@ -2753,27 +2896,29 @@ class MlClient(NamespacedClient):
     async def put_job(
         self,
         *,
-        job_id: Any,
-        analysis_config: Any,
-        data_description: Any,
-        allow_lazy_open: Optional[bool] = None,
-        analysis_limits: Optional[Any] = None,
-        background_persist_interval: Optional[Any] = None,
-        custom_settings: Optional[Any] = None,
-        daily_model_snapshot_retention_after_days: Optional[int] = None,
-        datafeed_config: Optional[Any] = None,
-        description: Optional[str] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        groups: Optional[List[str]] = None,
-        human: Optional[bool] = None,
-        model_plot_config: Optional[Any] = None,
-        model_snapshot_retention_days: Optional[int] = None,
-        pretty: Optional[bool] = None,
-        renormalization_window_days: Optional[int] = None,
-        results_index_name: Optional[Any] = None,
-        results_retention_days: Optional[int] = None,
-    ) -> ObjectApiResponse[Any]:
+        job_id: str,
+        analysis_config: t.Mapping[str, t.Any],
+        data_description: t.Mapping[str, t.Any],
+        allow_lazy_open: t.Optional[bool] = None,
+        analysis_limits: t.Optional[t.Mapping[str, t.Any]] = None,
+        background_persist_interval: t.Optional[t.Union[int, str]] = None,
+        custom_settings: t.Optional[t.Any] = None,
+        daily_model_snapshot_retention_after_days: t.Optional[int] = None,
+        datafeed_config: t.Optional[t.Mapping[str, t.Any]] = None,
+        description: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        groups: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        human: t.Optional[bool] = None,
+        model_plot_config: t.Optional[t.Mapping[str, t.Any]] = None,
+        model_snapshot_retention_days: t.Optional[int] = None,
+        pretty: t.Optional[bool] = None,
+        renormalization_window_days: t.Optional[int] = None,
+        results_index_name: t.Optional[str] = None,
+        results_retention_days: t.Optional[int] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Instantiates an anomaly detection job.
 
@@ -2859,8 +3004,8 @@ class MlClient(NamespacedClient):
         if data_description is None:
             raise ValueError("Empty value passed for parameter 'data_description'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if analysis_config is not None:
             __body["analysis_config"] = analysis_config
         if data_description is not None:
@@ -2912,22 +3057,26 @@ class MlClient(NamespacedClient):
     async def put_trained_model(
         self,
         *,
-        model_id: Any,
-        inference_config: Any,
-        input: Any,
-        compressed_definition: Optional[str] = None,
-        defer_definition_decompression: Optional[bool] = None,
-        definition: Optional[Any] = None,
-        description: Optional[str] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        metadata: Optional[Any] = None,
-        model_size_bytes: Optional[int] = None,
-        model_type: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        tags: Optional[List[str]] = None,
-    ) -> ObjectApiResponse[Any]:
+        model_id: str,
+        inference_config: t.Mapping[str, t.Any],
+        input: t.Mapping[str, t.Any],
+        compressed_definition: t.Optional[str] = None,
+        defer_definition_decompression: t.Optional[bool] = None,
+        definition: t.Optional[t.Mapping[str, t.Any]] = None,
+        description: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        metadata: t.Optional[t.Any] = None,
+        model_size_bytes: t.Optional[int] = None,
+        model_type: t.Optional[
+            t.Union["t.Literal['lang_ident', 'pytorch', 'tree_ensemble']", str]
+        ] = None,
+        pretty: t.Optional[bool] = None,
+        tags: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Creates an inference trained model.
 
@@ -2961,8 +3110,8 @@ class MlClient(NamespacedClient):
         if input is None:
             raise ValueError("Empty value passed for parameter 'input'")
         __path = f"/_ml/trained_models/{_quote(model_id)}"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if inference_config is not None:
             __body["inference_config"] = inference_config
         if input is not None:
@@ -3000,14 +3149,16 @@ class MlClient(NamespacedClient):
     async def put_trained_model_alias(
         self,
         *,
-        model_id: Any,
-        model_alias: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        reassign: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        model_id: str,
+        model_alias: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        reassign: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Creates a new model alias (or reassigns an existing one) to refer to the trained
         model
@@ -3025,7 +3176,7 @@ class MlClient(NamespacedClient):
         if model_alias in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_alias'")
         __path = f"/_ml/trained_models/{_quote(model_id)}/model_aliases/{_quote(model_alias)}"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -3047,16 +3198,18 @@ class MlClient(NamespacedClient):
     async def put_trained_model_definition_part(
         self,
         *,
-        model_id: Any,
+        model_id: str,
         part: int,
         definition: str,
         total_definition_length: int,
         total_parts: int,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Creates part of a trained model definition
 
@@ -3086,8 +3239,8 @@ class MlClient(NamespacedClient):
         if total_parts is None:
             raise ValueError("Empty value passed for parameter 'total_parts'")
         __path = f"/_ml/trained_models/{_quote(model_id)}/definition/{_quote(part)}"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if definition is not None:
             __body["definition"] = definition
         if total_definition_length is not None:
@@ -3113,13 +3266,15 @@ class MlClient(NamespacedClient):
     async def put_trained_model_vocabulary(
         self,
         *,
-        model_id: Any,
-        vocabulary: List[str],
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        model_id: str,
+        vocabulary: t.Union[t.List[str], t.Tuple[str, ...]],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Creates a trained model vocabulary
 
@@ -3133,8 +3288,8 @@ class MlClient(NamespacedClient):
         if vocabulary is None:
             raise ValueError("Empty value passed for parameter 'vocabulary'")
         __path = f"/_ml/trained_models/{_quote(model_id)}/vocabulary"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if vocabulary is not None:
             __body["vocabulary"] = vocabulary
         if error_trace is not None:
@@ -3154,13 +3309,15 @@ class MlClient(NamespacedClient):
     async def reset_job(
         self,
         *,
-        job_id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        wait_for_completion: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        job_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        wait_for_completion: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Resets an existing anomaly detection job.
 
@@ -3173,7 +3330,7 @@ class MlClient(NamespacedClient):
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_reset"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -3195,14 +3352,16 @@ class MlClient(NamespacedClient):
     async def revert_model_snapshot(
         self,
         *,
-        job_id: Any,
-        snapshot_id: Any,
-        delete_intervening_results: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        job_id: str,
+        snapshot_id: str,
+        delete_intervening_results: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Reverts to a specific snapshot.
 
@@ -3220,8 +3379,8 @@ class MlClient(NamespacedClient):
         if snapshot_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot_id'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots/{_quote(snapshot_id)}/_revert"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if delete_intervening_results is not None:
             __body["delete_intervening_results"] = delete_intervening_results
         if error_trace is not None:
@@ -3245,13 +3404,15 @@ class MlClient(NamespacedClient):
     async def set_upgrade_mode(
         self,
         *,
-        enabled: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        enabled: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Sets a cluster wide upgrade_mode setting that prepares machine learning indices
         for an upgrade.
@@ -3264,7 +3425,7 @@ class MlClient(NamespacedClient):
         :param timeout: The time to wait for the request to be completed.
         """
         __path = "/_ml/set_upgrade_mode"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if enabled is not None:
             __query["enabled"] = enabled
         if error_trace is not None:
@@ -3286,13 +3447,15 @@ class MlClient(NamespacedClient):
     async def start_data_frame_analytics(
         self,
         *,
-        id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Starts a data frame analytics job.
 
@@ -3307,7 +3470,7 @@ class MlClient(NamespacedClient):
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
         __path = f"/_ml/data_frame/analytics/{_quote(id)}/_start"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -3329,15 +3492,17 @@ class MlClient(NamespacedClient):
     async def start_datafeed(
         self,
         *,
-        datafeed_id: Any,
-        end: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        start: Optional[Any] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        datafeed_id: str,
+        end: t.Optional[t.Union[int, str]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        start: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Starts one or more datafeeds.
 
@@ -3354,8 +3519,8 @@ class MlClient(NamespacedClient):
         if datafeed_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'datafeed_id'")
         __path = f"/_ml/datafeeds/{_quote(datafeed_id)}/_start"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if end is not None:
             __body["end"] = end
         if error_trace is not None:
@@ -3383,17 +3548,21 @@ class MlClient(NamespacedClient):
     async def start_trained_model_deployment(
         self,
         *,
-        model_id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        inference_threads: Optional[int] = None,
-        model_threads: Optional[int] = None,
-        pretty: Optional[bool] = None,
-        queue_capacity: Optional[int] = None,
-        timeout: Optional[Any] = None,
-        wait_for: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        model_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        inference_threads: t.Optional[int] = None,
+        model_threads: t.Optional[int] = None,
+        pretty: t.Optional[bool] = None,
+        queue_capacity: t.Optional[int] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+        wait_for: t.Optional[
+            t.Union["t.Literal['fully_allocated', 'started', 'starting']", str]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Start a trained model deployment.
 
@@ -3417,7 +3586,7 @@ class MlClient(NamespacedClient):
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_id'")
         __path = f"/_ml/trained_models/{_quote(model_id)}/deployment/_start"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -3445,15 +3614,17 @@ class MlClient(NamespacedClient):
     async def stop_data_frame_analytics(
         self,
         *,
-        id: Any,
-        allow_no_match: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        force: Optional[bool] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        id: str,
+        allow_no_match: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        force: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Stops one or more data frame analytics jobs.
 
@@ -3477,7 +3648,7 @@ class MlClient(NamespacedClient):
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
         __path = f"/_ml/data_frame/analytics/{_quote(id)}/_stop"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
             __query["allow_no_match"] = allow_no_match
         if error_trace is not None:
@@ -3503,15 +3674,17 @@ class MlClient(NamespacedClient):
     async def stop_datafeed(
         self,
         *,
-        datafeed_id: Any,
-        allow_no_match: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        force: Optional[bool] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        datafeed_id: str,
+        allow_no_match: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        force: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Stops one or more datafeeds.
 
@@ -3529,8 +3702,8 @@ class MlClient(NamespacedClient):
         if datafeed_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'datafeed_id'")
         __path = f"/_ml/datafeeds/{_quote(datafeed_id)}/_stop"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
             __body["allow_no_match"] = allow_no_match
         if error_trace is not None:
@@ -3558,14 +3731,16 @@ class MlClient(NamespacedClient):
     async def stop_trained_model_deployment(
         self,
         *,
-        model_id: Any,
-        allow_no_match: Optional[bool] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        force: Optional[bool] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        model_id: str,
+        allow_no_match: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        force: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Stop a trained model deployment.
 
@@ -3585,7 +3760,7 @@ class MlClient(NamespacedClient):
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_id'")
         __path = f"/_ml/trained_models/{_quote(model_id)}/deployment/_stop"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
             __query["allow_no_match"] = allow_no_match
         if error_trace is not None:
@@ -3609,16 +3784,18 @@ class MlClient(NamespacedClient):
     async def update_data_frame_analytics(
         self,
         *,
-        id: Any,
-        allow_lazy_start: Optional[bool] = None,
-        description: Optional[str] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        max_num_threads: Optional[int] = None,
-        model_memory_limit: Optional[str] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        id: str,
+        allow_lazy_start: t.Optional[bool] = None,
+        description: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        max_num_threads: t.Optional[int] = None,
+        model_memory_limit: t.Optional[str] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Updates certain properties of a data frame analytics job.
 
@@ -3643,8 +3820,8 @@ class MlClient(NamespacedClient):
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
         __path = f"/_ml/data_frame/analytics/{_quote(id)}/_update"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_lazy_start is not None:
             __body["allow_lazy_start"] = allow_lazy_start
         if description is not None:
@@ -3672,29 +3849,59 @@ class MlClient(NamespacedClient):
     async def update_datafeed(
         self,
         *,
-        datafeed_id: Any,
-        aggregations: Optional[Dict[str, Any]] = None,
-        allow_no_indices: Optional[bool] = None,
-        chunking_config: Optional[Any] = None,
-        delayed_data_check_config: Optional[Any] = None,
-        error_trace: Optional[bool] = None,
-        expand_wildcards: Optional[Any] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        frequency: Optional[Any] = None,
-        human: Optional[bool] = None,
-        ignore_throttled: Optional[bool] = None,
-        ignore_unavailable: Optional[bool] = None,
-        indexes: Optional[List[str]] = None,
-        indices: Optional[List[str]] = None,
-        indices_options: Optional[Any] = None,
-        max_empty_searches: Optional[int] = None,
-        pretty: Optional[bool] = None,
-        query: Optional[Any] = None,
-        query_delay: Optional[Any] = None,
-        runtime_mappings: Optional[Any] = None,
-        script_fields: Optional[Dict[str, Any]] = None,
-        scroll_size: Optional[int] = None,
-    ) -> ObjectApiResponse[Any]:
+        datafeed_id: str,
+        aggregations: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
+        allow_no_indices: t.Optional[bool] = None,
+        chunking_config: t.Optional[t.Mapping[str, t.Any]] = None,
+        delayed_data_check_config: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        frequency: t.Optional[t.Union[int, str]] = None,
+        human: t.Optional[bool] = None,
+        ignore_throttled: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
+        indexes: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        indices: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        indices_options: t.Optional[t.Mapping[str, t.Any]] = None,
+        max_empty_searches: t.Optional[int] = None,
+        pretty: t.Optional[bool] = None,
+        query: t.Optional[t.Mapping[str, t.Any]] = None,
+        query_delay: t.Optional[t.Union[int, str]] = None,
+        runtime_mappings: t.Optional[
+            t.Mapping[
+                str,
+                t.Union[
+                    t.Mapping[str, t.Any],
+                    t.Union[
+                        t.List[t.Mapping[str, t.Any]],
+                        t.Tuple[t.Mapping[str, t.Any], ...],
+                    ],
+                ],
+            ]
+        ] = None,
+        script_fields: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
+        scroll_size: t.Optional[int] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Updates certain properties of a datafeed.
 
@@ -3782,8 +3989,8 @@ class MlClient(NamespacedClient):
         if datafeed_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'datafeed_id'")
         __path = f"/_ml/datafeeds/{_quote(datafeed_id)}/_update"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if aggregations is not None:
             __body["aggregations"] = aggregations
         if allow_no_indices is not None:
@@ -3837,15 +4044,17 @@ class MlClient(NamespacedClient):
     async def update_filter(
         self,
         *,
-        filter_id: Any,
-        add_items: Optional[List[str]] = None,
-        description: Optional[str] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        remove_items: Optional[List[str]] = None,
-    ) -> ObjectApiResponse[Any]:
+        filter_id: str,
+        add_items: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        description: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        remove_items: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Updates the description of a filter, adds items, or removes items.
 
@@ -3859,8 +4068,8 @@ class MlClient(NamespacedClient):
         if filter_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'filter_id'")
         __path = f"/_ml/filters/{_quote(filter_id)}/_update"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if add_items is not None:
             __body["add_items"] = add_items
         if description is not None:
@@ -3886,26 +4095,32 @@ class MlClient(NamespacedClient):
     async def update_job(
         self,
         *,
-        job_id: Any,
-        allow_lazy_open: Optional[bool] = None,
-        analysis_limits: Optional[Any] = None,
-        background_persist_interval: Optional[Any] = None,
-        categorization_filters: Optional[List[str]] = None,
-        custom_settings: Optional[Dict[str, Any]] = None,
-        daily_model_snapshot_retention_after_days: Optional[int] = None,
-        description: Optional[str] = None,
-        detectors: Optional[List[Any]] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        groups: Optional[List[str]] = None,
-        human: Optional[bool] = None,
-        model_plot_config: Optional[Any] = None,
-        model_snapshot_retention_days: Optional[int] = None,
-        per_partition_categorization: Optional[Any] = None,
-        pretty: Optional[bool] = None,
-        renormalization_window_days: Optional[int] = None,
-        results_retention_days: Optional[int] = None,
-    ) -> ObjectApiResponse[Any]:
+        job_id: str,
+        allow_lazy_open: t.Optional[bool] = None,
+        analysis_limits: t.Optional[t.Mapping[str, t.Any]] = None,
+        background_persist_interval: t.Optional[t.Union[int, str]] = None,
+        categorization_filters: t.Optional[
+            t.Union[t.List[str], t.Tuple[str, ...]]
+        ] = None,
+        custom_settings: t.Optional[t.Mapping[str, t.Any]] = None,
+        daily_model_snapshot_retention_after_days: t.Optional[int] = None,
+        description: t.Optional[str] = None,
+        detectors: t.Optional[
+            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        groups: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        human: t.Optional[bool] = None,
+        model_plot_config: t.Optional[t.Mapping[str, t.Any]] = None,
+        model_snapshot_retention_days: t.Optional[int] = None,
+        per_partition_categorization: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+        renormalization_window_days: t.Optional[int] = None,
+        results_retention_days: t.Optional[int] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Updates certain properties of an anomaly detection job.
 
@@ -3962,8 +4177,8 @@ class MlClient(NamespacedClient):
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_update"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if allow_lazy_open is not None:
             __body["allow_lazy_open"] = allow_lazy_open
         if analysis_limits is not None:
@@ -4013,15 +4228,17 @@ class MlClient(NamespacedClient):
     async def update_model_snapshot(
         self,
         *,
-        job_id: Any,
-        snapshot_id: Any,
-        description: Optional[str] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        retain: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        job_id: str,
+        snapshot_id: str,
+        description: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        retain: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Updates certain properties of a snapshot.
 
@@ -4039,8 +4256,8 @@ class MlClient(NamespacedClient):
         if snapshot_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot_id'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots/{_quote(snapshot_id)}/_update"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if description is not None:
             __body["description"] = description
         if error_trace is not None:
@@ -4062,15 +4279,17 @@ class MlClient(NamespacedClient):
     async def upgrade_job_snapshot(
         self,
         *,
-        job_id: Any,
-        snapshot_id: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-        timeout: Optional[Any] = None,
-        wait_for_completion: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        job_id: str,
+        snapshot_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+        wait_for_completion: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Upgrades a given job snapshot to the current major version.
 
@@ -4089,7 +4308,7 @@ class MlClient(NamespacedClient):
         if snapshot_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'snapshot_id'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots/{_quote(snapshot_id)}/_upgrade"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -4113,20 +4332,22 @@ class MlClient(NamespacedClient):
     async def validate(
         self,
         *,
-        analysis_config: Optional[Any] = None,
-        analysis_limits: Optional[Any] = None,
-        data_description: Optional[Any] = None,
-        description: Optional[str] = None,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        job_id: Optional[Any] = None,
-        model_plot: Optional[Any] = None,
-        model_snapshot_id: Optional[Any] = None,
-        model_snapshot_retention_days: Optional[int] = None,
-        pretty: Optional[bool] = None,
-        results_index_name: Optional[Any] = None,
-    ) -> ObjectApiResponse[Any]:
+        analysis_config: t.Optional[t.Mapping[str, t.Any]] = None,
+        analysis_limits: t.Optional[t.Mapping[str, t.Any]] = None,
+        data_description: t.Optional[t.Mapping[str, t.Any]] = None,
+        description: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        job_id: t.Optional[str] = None,
+        model_plot: t.Optional[t.Mapping[str, t.Any]] = None,
+        model_snapshot_id: t.Optional[str] = None,
+        model_snapshot_retention_days: t.Optional[int] = None,
+        pretty: t.Optional[bool] = None,
+        results_index_name: t.Optional[str] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Validates an anomaly detection job.
 
@@ -4143,8 +4364,8 @@ class MlClient(NamespacedClient):
         :param results_index_name:
         """
         __path = "/_ml/anomaly_detectors/_validate"
-        __body: Dict[str, Any] = {}
-        __query: Dict[str, Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if analysis_config is not None:
             __body["analysis_config"] = analysis_config
         if analysis_limits is not None:
@@ -4182,12 +4403,14 @@ class MlClient(NamespacedClient):
     async def validate_detector(
         self,
         *,
-        detector: Any,
-        error_trace: Optional[bool] = None,
-        filter_path: Optional[Union[List[str], str]] = None,
-        human: Optional[bool] = None,
-        pretty: Optional[bool] = None,
-    ) -> ObjectApiResponse[Any]:
+        detector: t.Mapping[str, t.Any],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
         """
         Validates an anomaly detection detector.
 
@@ -4198,7 +4421,7 @@ class MlClient(NamespacedClient):
         if detector is None:
             raise ValueError("Empty value passed for parameter 'detector'")
         __path = "/_ml/anomaly_detectors/_validate/detector"
-        __query: Dict[str, Any] = {}
+        __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
