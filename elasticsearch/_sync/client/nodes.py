@@ -25,6 +25,85 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 class NodesClient(NamespacedClient):
     @_rewrite_parameters()
+    def clear_repositories_metering_archive(
+        self,
+        *,
+        node_id: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        max_archive_version: int,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Removes the archived repositories metering information present in the cluster.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/clear-repositories-metering-archive-api.html>`_
+
+        :param node_id: Comma-separated list of node IDs or names used to limit returned
+            information. All the nodes selective options are explained [here](https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster.html#cluster-nodes).
+        :param max_archive_version: Specifies the maximum [archive_version](https://www.elastic.co/guide/en/elasticsearch/reference/current/get-repositories-metering-api.html#get-repositories-metering-api-response-body)
+            to be cleared from the archive.
+        """
+        if node_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'node_id'")
+        if max_archive_version in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'max_archive_version'")
+        __path = f"/_nodes/{_quote(node_id)}/_repositories_metering/{_quote(max_archive_version)}"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "DELETE", __path, params=__query, headers=__headers
+        )
+
+    @_rewrite_parameters()
+    def get_repositories_metering_info(
+        self,
+        *,
+        node_id: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Returns cluster repositories metering information.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-repositories-metering-api.html>`_
+
+        :param node_id: Comma-separated list of node IDs or names used to limit returned
+            information. All the nodes selective options are explained [here](https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster.html#cluster-nodes).
+        """
+        if node_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'node_id'")
+        __path = f"/_nodes/{_quote(node_id)}/_repositories_metering"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
+
+    @_rewrite_parameters()
     def hot_threads(
         self,
         *,
