@@ -378,13 +378,16 @@ class AIOHttpConnection(AsyncConnection):
             self.loop = get_running_loop()
         self.session = aiohttp.ClientSession(
             headers=self.headers,
-            skip_auto_headers=("accept", "accept-encoding"),
+            skip_auto_headers=("accept", "accept-encoding", "user-agent"),
             auto_decompress=True,
             loop=self.loop,
             cookie_jar=aiohttp.DummyCookieJar(),
             response_class=ESClientResponse,
             connector=aiohttp.TCPConnector(
-                limit=self._limit, use_dns_cache=True, ssl=self._ssl_context
+                limit=self._limit,
+                use_dns_cache=True,
+                enable_cleanup_closed=True,
+                ssl=self._ssl_context,
             ),
         )
 
