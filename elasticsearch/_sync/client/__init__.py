@@ -602,7 +602,7 @@ class Elasticsearch(BaseClient):
         ] = None,
         timeout: t.Optional[t.Union[int, str]] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union["t.Literal['all']", str]]
+            t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -923,7 +923,7 @@ class Elasticsearch(BaseClient):
             t.Union["t.Literal['external', 'external_gte', 'force', 'internal']", str]
         ] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union["t.Literal['all']", str]]
+            t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -1009,7 +1009,7 @@ class Elasticsearch(BaseClient):
             t.Union["t.Literal['external', 'external_gte', 'force', 'internal']", str]
         ] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union["t.Literal['all']", str]]
+            t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -1134,7 +1134,7 @@ class Elasticsearch(BaseClient):
         timeout: t.Optional[t.Union[int, str]] = None,
         version: t.Optional[bool] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union["t.Literal['all']", str]]
+            t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
         ] = None,
         wait_for_completion: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -1203,6 +1203,17 @@ class Elasticsearch(BaseClient):
         __path = f"/{_quote(index)}/_delete_by_query"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = {}
+        # The 'sort' parameter with a colon can't be encoded to the body.
+        if sort is not None and (
+            (isinstance(sort, str) and ":" in sort)
+            or (
+                isinstance(sort, (list, tuple))
+                and all(isinstance(_x, str) for _x in sort)
+                and any(":" in _x for _x in sort)
+            )
+        ):
+            __query["sort"] = sort
+            sort = None
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if analyze_wildcard is not None:
@@ -2125,7 +2136,7 @@ class Elasticsearch(BaseClient):
             t.Union["t.Literal['external', 'external_gte', 'force', 'internal']", str]
         ] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union["t.Literal['all']", str]]
+            t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -2979,7 +2990,7 @@ class Elasticsearch(BaseClient):
         source: t.Optional[t.Mapping[str, t.Any]] = None,
         timeout: t.Optional[t.Union[int, str]] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union["t.Literal['all']", str]]
+            t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
         ] = None,
         wait_for_completion: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -3538,6 +3549,17 @@ class Elasticsearch(BaseClient):
             __path = "/_search"
         __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
+        # The 'sort' parameter with a colon can't be encoded to the body.
+        if sort is not None and (
+            (isinstance(sort, str) and ":" in sort)
+            or (
+                isinstance(sort, (list, tuple))
+                and all(isinstance(_x, str) for _x in sort)
+                and any(":" in _x for _x in sort)
+            )
+        ):
+            __query["sort"] = sort
+            sort = None
         if aggregations is not None:
             __body["aggregations"] = aggregations
         if aggs is not None:
@@ -3783,6 +3805,17 @@ class Elasticsearch(BaseClient):
         __path = f"/{_quote(index)}/_mvt/{_quote(field)}/{_quote(zoom)}/{_quote(x)}/{_quote(y)}"
         __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
+        # The 'sort' parameter with a colon can't be encoded to the body.
+        if sort is not None and (
+            (isinstance(sort, str) and ":" in sort)
+            or (
+                isinstance(sort, (list, tuple))
+                and all(isinstance(_x, str) for _x in sort)
+                and any(":" in _x for _x in sort)
+            )
+        ):
+            __query["sort"] = sort
+            sort = None
         if aggs is not None:
             __body["aggs"] = aggs
         if error_trace is not None:
@@ -4287,7 +4320,7 @@ class Elasticsearch(BaseClient):
         timeout: t.Optional[t.Union[int, str]] = None,
         upsert: t.Optional[t.Mapping[str, t.Any]] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union["t.Literal['all']", str]]
+            t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -4452,7 +4485,7 @@ class Elasticsearch(BaseClient):
         version: t.Optional[bool] = None,
         version_type: t.Optional[bool] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union["t.Literal['all']", str]]
+            t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
         ] = None,
         wait_for_completion: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -4526,6 +4559,17 @@ class Elasticsearch(BaseClient):
         __path = f"/{_quote(index)}/_update_by_query"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = {}
+        # The 'sort' parameter with a colon can't be encoded to the body.
+        if sort is not None and (
+            (isinstance(sort, str) and ":" in sort)
+            or (
+                isinstance(sort, (list, tuple))
+                and all(isinstance(_x, str) for _x in sort)
+                and any(":" in _x for _x in sort)
+            )
+        ):
+            __query["sort"] = sort
+            sort = None
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if analyze_wildcard is not None:

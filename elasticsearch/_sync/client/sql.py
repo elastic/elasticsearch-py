@@ -199,11 +199,12 @@ class SqlClient(NamespacedClient):
 
     @_rewrite_parameters(
         body_fields=True,
-        ignore_deprecated_options={"request_timeout"},
+        ignore_deprecated_options={"params", "request_timeout"},
     )
     def query(
         self,
         *,
+        catalog: t.Optional[str] = None,
         columnar: t.Optional[bool] = None,
         cursor: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
@@ -215,17 +216,36 @@ class SqlClient(NamespacedClient):
         ] = None,
         format: t.Optional[str] = None,
         human: t.Optional[bool] = None,
+        index_using_frozen: t.Optional[bool] = None,
+        keep_alive: t.Optional[t.Union[int, str]] = None,
+        keep_on_completion: t.Optional[bool] = None,
         page_timeout: t.Optional[t.Union[int, str]] = None,
+        params: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         query: t.Optional[str] = None,
         request_timeout: t.Optional[t.Union[int, str]] = None,
+        runtime_mappings: t.Optional[
+            t.Mapping[
+                str,
+                t.Union[
+                    t.Mapping[str, t.Any],
+                    t.Union[
+                        t.List[t.Mapping[str, t.Any]],
+                        t.Tuple[t.Mapping[str, t.Any], ...],
+                    ],
+                ],
+            ]
+        ] = None,
         time_zone: t.Optional[str] = None,
+        wait_for_completion_timeout: t.Optional[t.Union[int, str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Executes a SQL request
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/current/sql-search-api.html>`_
 
+        :param catalog: Default catalog (cluster) for queries. If unspecified, the queries
+            execute on the data in the local cluster only.
         :param columnar:
         :param cursor:
         :param fetch_size: The maximum number of rows (or entries) to return in one response
@@ -235,15 +255,29 @@ class SqlClient(NamespacedClient):
             in natural ascending order).
         :param filter: Optional Elasticsearch query DSL for additional filtering.
         :param format: a short version of the Accept header, e.g. json, yaml
+        :param index_using_frozen: If true, the search can run on frozen indices. Defaults
+            to false.
+        :param keep_alive: Retention period for an async or saved synchronous search.
+        :param keep_on_completion: If true, Elasticsearch stores synchronous searches
+            if you also specify the wait_for_completion_timeout parameter. If false,
+            Elasticsearch only stores async searches that don’t finish before the wait_for_completion_timeout.
         :param page_timeout: The timeout before a pagination request fails.
+        :param params: Values for parameters in the query.
         :param query: SQL query to execute
         :param request_timeout: The timeout before the request fails.
+        :param runtime_mappings: Defines one or more runtime fields in the search request.
+            These fields take precedence over mapped fields with the same name.
         :param time_zone: Time-zone in ISO 8601 used for executing the query on the server.
             More information available here.
+        :param wait_for_completion_timeout: Period to wait for complete results. Defaults
+            to no timeout, meaning the request waits for complete search results. If
+            the search doesn’t finish within this period, the search becomes async.
         """
         __path = "/_sql"
         __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
+        if catalog is not None:
+            __body["catalog"] = catalog
         if columnar is not None:
             __body["columnar"] = columnar
         if cursor is not None:
@@ -262,16 +296,28 @@ class SqlClient(NamespacedClient):
             __query["format"] = format
         if human is not None:
             __query["human"] = human
+        if index_using_frozen is not None:
+            __body["index_using_frozen"] = index_using_frozen
+        if keep_alive is not None:
+            __body["keep_alive"] = keep_alive
+        if keep_on_completion is not None:
+            __body["keep_on_completion"] = keep_on_completion
         if page_timeout is not None:
             __body["page_timeout"] = page_timeout
+        if params is not None:
+            __body["params"] = params
         if pretty is not None:
             __query["pretty"] = pretty
         if query is not None:
             __body["query"] = query
         if request_timeout is not None:
             __body["request_timeout"] = request_timeout
+        if runtime_mappings is not None:
+            __body["runtime_mappings"] = runtime_mappings
         if time_zone is not None:
             __body["time_zone"] = time_zone
+        if wait_for_completion_timeout is not None:
+            __body["wait_for_completion_timeout"] = wait_for_completion_timeout
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers, body=__body
