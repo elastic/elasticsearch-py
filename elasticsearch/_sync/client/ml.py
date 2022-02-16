@@ -166,7 +166,7 @@ class MlClient(NamespacedClient):
         self,
         *,
         calendar_id: str,
-        job_id: str,
+        job_id: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
@@ -1464,7 +1464,9 @@ class MlClient(NamespacedClient):
     def get_filters(
         self,
         *,
-        filter_id: t.Optional[str] = None,
+        filter_id: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
@@ -2028,7 +2030,9 @@ class MlClient(NamespacedClient):
     def get_trained_models_stats(
         self,
         *,
-        model_id: t.Optional[str] = None,
+        model_id: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[

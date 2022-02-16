@@ -489,6 +489,17 @@ class FleetClient(NamespacedClient):
         __path = f"/{_quote(index)}/_fleet/_fleet_search"
         __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
+        # The 'sort' parameter with a colon can't be encoded to the body.
+        if sort is not None and (
+            (isinstance(sort, str) and ":" in sort)
+            or (
+                isinstance(sort, (list, tuple))
+                and all(isinstance(_x, str) for _x in sort)
+                and any(":" in _x for _x in sort)
+            )
+        ):
+            __query["sort"] = sort
+            sort = None
         if aggregations is not None:
             __body["aggregations"] = aggregations
         if aggs is not None:
