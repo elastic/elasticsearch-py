@@ -360,7 +360,7 @@ class ClusterClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union[int, str]] = None,
         wait_for_active_shards: t.Optional[
-            t.Union[int, t.Union["t.Literal['all']", str]]
+            t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
         ] = None,
         wait_for_events: t.Optional[
             t.Union[

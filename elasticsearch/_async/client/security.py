@@ -1848,6 +1848,17 @@ class SecurityClient(NamespacedClient):
         __path = "/_security/_query/api_key"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = {}
+        # The 'sort' parameter with a colon can't be encoded to the body.
+        if sort is not None and (
+            (isinstance(sort, str) and ":" in sort)
+            or (
+                isinstance(sort, (list, tuple))
+                and all(isinstance(_x, str) for _x in sort)
+                and any(":" in _x for _x in sort)
+            )
+        ):
+            __query["sort"] = sort
+            sort = None
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
