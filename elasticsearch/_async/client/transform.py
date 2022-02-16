@@ -77,7 +77,9 @@ class TransformClient(NamespacedClient):
     async def get_transform(
         self,
         *,
-        transform_id: t.Optional[str] = None,
+        transform_id: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         exclude_generated: t.Optional[bool] = None,

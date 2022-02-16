@@ -63,3 +63,65 @@ class MigrationClient(NamespacedClient):
         return await self.perform_request(  # type: ignore[return-value]
             "GET", __path, params=__query, headers=__headers
         )
+
+    @_rewrite_parameters()
+    async def get_feature_upgrade_status(
+        self,
+        *,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Find out whether system features need to be upgraded or not
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/migration-api-feature-upgrade.html>`_
+        """
+        __path = "/_migration/system_features"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
+
+    @_rewrite_parameters()
+    async def post_feature_upgrade(
+        self,
+        *,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Begin upgrades for system features
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/migration-api-feature-upgrade.html>`_
+        """
+        __path = "/_migration/system_features"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers
+        )
