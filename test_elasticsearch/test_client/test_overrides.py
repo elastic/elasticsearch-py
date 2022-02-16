@@ -71,3 +71,40 @@ class TestOverriddenUrlTargets(DummyTransportTestCase):
         self.client.search(index="i", **{param_name: 10})
         calls = self.assert_url_called("POST", "/i/_search")
         assert calls[0]["body"] == {"from": 10}
+
+    def test_sort_in_search(self):
+        self.client.search(index="i", sort="@timestamp:asc")
+        calls = self.assert_url_called("POST", "/i/_search?sort=%40timestamp%3Aasc")
+        assert calls[0]["body"] is None
+
+        self.client.search(index="i", sort=["@timestamp:asc", "field"])
+        calls = self.assert_url_called(
+            "POST", "/i/_search?sort=%40timestamp%3Aasc,field"
+        )
+        assert calls[0]["body"] is None
+
+        self.client.search(index="i", sort=("field", "@timestamp:asc"))
+        calls = self.assert_url_called(
+            "POST", "/i/_search?sort=field,%40timestamp%3Aasc"
+        )
+        assert calls[0]["body"] is None
+
+        self.client.search(index="i", sort=("field", "@timestamp"))
+        calls = self.assert_url_called("POST", "/i/_search")
+        assert calls[-1]["body"] == {"sort": ("field", "@timestamp")}
+
+        self.client.search(index="i2", sort=["@timestamp", "field"])
+        calls = self.assert_url_called("POST", "/i2/_search")
+        assert calls[-1]["body"] == {"sort": ["@timestamp", "field"]}
+
+        self.client.search(
+            index="i3", sort=("field", "@timestamp:asc", {"field": "desc"})
+        )
+        calls = self.assert_url_called("POST", "/i3/_search")
+        assert calls[-1]["body"] == {
+            "sort": ("field", "@timestamp:asc", {"field": "desc"})
+        }
+
+        self.client.search(index="i4", sort=["@timestamp:asc", {"field": "desc"}])
+        calls = self.assert_url_called("POST", "/i4/_search")
+        assert calls[-1]["body"] == {"sort": ["@timestamp:asc", {"field": "desc"}]}
