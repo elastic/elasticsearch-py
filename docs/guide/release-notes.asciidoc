@@ -2,6 +2,7 @@
 == Release notes
 
 * <<rn-8-0-0>>
+* <<rn-7-17-1>>
 * <<rn-7-17-0>>
 * <<rn-7-16-3>>
 * <<rn-7-16-2>>
@@ -45,111 +46,119 @@
 [discrete]
 ==== Added
 
-- Added the top-level `.options()` method to `Elasticsearch` and `AsyncElasticsearch` for modifying transport options.
-- Added parameters corresponding to JSON request body fields for all APIs
-- Added `basic_auth` parameter for specifying username and password authentication
-- Added `bearer_auth` parameter for specifying an HTTP bearer token or service token
-- Added the `meta` property to `ApiError` to access the HTTP response metadata of an error.
-- Added a check that a compatible version of the `elastic-transport` package is installed.
+* Added the top-level `.options()` method to `Elasticsearch` and `AsyncElasticsearch` for modifying transport options.
+* Added parameters corresponding to JSON request body fields for all APIs
+* Added `basic_auth` parameter for specifying username and password authentication
+* Added `bearer_auth` parameter for specifying an HTTP bearer token or service token
+* Added the `meta` property to `ApiError` to access the HTTP response metadata of an error.
+* Added a check that a compatible version of the `elastic-transport` package is installed.
 
 [discrete]
 ==== Changed
 
-- Changed the transport layer to use the `elastic-transport` package
-- Changed user-defined `body` parameters to have semantic names (e.g `index(document={...})` instead of `index(body={...})`).
-- Changed responses to be objects with two properties, `meta` for response metadata (HTTP status, headers, node, etc) and `body` for a typed body.
-- Changed `AsyncElasticsearch` to always be available, regardless of whether `aiohttp` is installed
-- Changed exception hierarchy, the major change is a new exception `ApiError` which differentiates between an error that's raised from the transport layer (previously `elasticsearch.exceptions.TransportError`, now `elastic_transport.TransportError`) and one raised from the API layer
-- Changed the name of `JSONSerializer` to `JsonSerializer` for consistency with other serializer names. Added an alias to the old name for backwards compatibility
-- Changed the default mimetypes (`application/json`) to instead use compatibility mimetypes (`application/vnd.elasticsearch+json`) which always request for responses compatibility with version 8.x.
+* Changed the transport layer to use the `elastic-transport` package
+* Changed user-defined `body` parameters to have semantic names (e.g `index(document={...})` instead of `index(body={...})`).
+* Changed responses to be objects with two properties, `meta` for response metadata (HTTP status, headers, node, etc) and `body` for a typed body.
+* Changed `AsyncElasticsearch` to always be available, regardless of whether `aiohttp` is installed
+* Changed exception hierarchy, the major change is a new exception `ApiError` which differentiates between an error that's raised from the transport layer (previously `elasticsearch.exceptions.TransportError`, now `elastic_transport.TransportError`) and one raised from the API layer
+* Changed the name of `JSONSerializer` to `JsonSerializer` for consistency with other serializer names. Added an alias to the old name for backwards compatibility
+* Changed the default mimetypes (`application/json`) to instead use compatibility mimetypes (`application/vnd.elasticsearch+json`) which always request for responses compatibility with version 8.x.
 
 [discrete]
 ==== Removed
 
-- Removed support for Python 2.7 and Python 3.5, the library now supports only Python 3.6+
-- Removed the `elasticsearch.connection` module as all functionality has been moved to the `elastic-transport` package
-- Removed the default URL of `http://localhost:9200` due to Elasticsearch 8.0 default configuration being `https://localhost:9200`.
+* Removed support for Python 2.7 and Python 3.5, the library now supports only Python 3.6+
+* Removed the `elasticsearch.connection` module as all functionality has been moved to the `elastic-transport` package
+* Removed the default URL of `http://localhost:9200` due to Elasticsearch 8.0 default configuration being `https://localhost:9200`.
   The client's connection to Elasticsearch now must be specified with scheme, host, and port or with the `cloud_id` parameter
-- Removed the ability to use positional arguments with API methods. Going forward all API parameters must be keyword-only parameters
-- Removed the `doc_type`, `include_type_name`, and `copy_settings` parameters from many document and index APIs
+* Removed the ability to use positional arguments with API methods. Going forward all API parameters must be keyword-only parameters
+* Removed the `doc_type`, `include_type_name`, and `copy_settings` parameters from many document and index APIs
 
 [discrete]
 ==== Deprecated
 
-- Deprecated the `body` and `params` parameters on all APIs
-- Deprecated setting transport options `http_auth`, `api_key`, `ignore`, `request_timeout`, `headers`, and `opaque_id`
+* Deprecated the `body` and `params` parameters on all APIs
+* Deprecated setting transport options `http_auth`, `api_key`, `ignore`, `request_timeout`, `headers`, and `opaque_id`
   All of these settings should instead be set via the `.options()` method
-- Deprecated the `elasticsearch.transport` and `elasticsearch.client` modules. These modules will be removed in a future version
+* Deprecated the `elasticsearch.transport` and `elasticsearch.client` modules. These modules will be removed in a future version
 
 [discrete]
 ==== CAT
 
-- Removed the deprecated `local` parameter from the `cat.indices`, `cat.nodes`, `cat.shards` API
-- Removed the deprecated `allow_no_datafeeds` parameter from the `cat.ml_datafeeds` API
-- Removed the deprecated `allow_no_jobs` parameter from the `cat.ml_jobs` API
-- Removed the deprecated `size` parameter from the `cat.thread_pool` API
-- Added the `time` parameter to the `cat.thread_pool` API
+* Removed the deprecated `local` parameter from the `cat.indices`, `cat.nodes`, `cat.shards` API
+* Removed the deprecated `allow_no_datafeeds` parameter from the `cat.ml_datafeeds` API
+* Removed the deprecated `allow_no_jobs` parameter from the `cat.ml_jobs` API
+* Removed the deprecated `size` parameter from the `cat.thread_pool` API
+* Added the `time` parameter to the `cat.thread_pool` API
 
 [discrete]
 ==== Documents
 
-- Removed the deprecated `size` parameter from the `delete_by_query` API
-- Removed the deprecated `size` parameter from the `update_by_query` API
+* Removed the deprecated `size` parameter from the `delete_by_query` API
+* Removed the deprecated `size` parameter from the `update_by_query` API
 
 [discrete]
 ==== Indices
 
-- Removed the deprecated `indices.flush_synced` API
-- Removed the deprecated `indices.freeze` API
-- Removed the deprecated `indices.get_upgrade` API
-- Removed the deprecated `indices.upgrade` API
-- Removed the deprecated `indices.exist_type` API
-- Removed the deprecated parameter `copy_settings` from the `indices.shrink` API
-- Deprecated the `verbose` parameter of the `indices.segments` API
+* Removed the deprecated `indices.flush_synced` API
+* Removed the deprecated `indices.freeze` API
+* Removed the deprecated `indices.get_upgrade` API
+* Removed the deprecated `indices.upgrade` API
+* Removed the deprecated `indices.exist_type` API
+* Removed the deprecated parameter `copy_settings` from the `indices.shrink` API
+* Deprecated the `verbose` parameter of the `indices.segments` API
 
 [discrete]
 ==== License / X-Pack
 
-- Deprecated the `accept_enterprise` parameter of the `license.get` API
-- Deprecated the `accept_enterprise` parameter of the `xpack.info` API
+* Deprecated the `accept_enterprise` parameter of the `license.get` API
+* Deprecated the `accept_enterprise` parameter of the `xpack.info` API
 
 [discrete]
 ==== Machine Learning
 
-- Added the **experimental** `ml.infer_trained_model_deployment` API
-- Added the **experimental** `ml.put_trained_model_definition_part` API
-- Added the **experimental** `ml.put_trained_model_vocabulary` API
-- Added the **experimental** `ml.start_trained_model_deployment` API
-- Added the **experimental** `ml.stop_trained_model_deployment` API
-- Added the `timeout` parameter to the `ml.delete_trained_model` API
-- Removed the deprecated `allow_no_jobs` parameter from the `ml.close_job` API
-- Removed the deprecated `ml.find_text_structure` API
-- Removed the deprecated `allow_no_datafeeds` parameter from the `ml.get_datafeed_stats` API
-- Removed the deprecated `allow_no_datafeeds` parameter from the `ml.get_datafeeds` API
-- Removed the deprecated `allow_no_jobs` parameter from the `ml.get_job_stats` API
-- Removed the deprecated `allow_no_jobs` parameter from the `ml.get_jobs` API
-- Removed the deprecated `allow_no_jobs` parameter from the `ml.get_overall_buckets` API
+* Added the **experimental** `ml.infer_trained_model_deployment` API
+* Added the **experimental** `ml.put_trained_model_definition_part` API
+* Added the **experimental** `ml.put_trained_model_vocabulary` API
+* Added the **experimental** `ml.start_trained_model_deployment` API
+* Added the **experimental** `ml.stop_trained_model_deployment` API
+* Added the `timeout` parameter to the `ml.delete_trained_model` API
+* Removed the deprecated `allow_no_jobs` parameter from the `ml.close_job` API
+* Removed the deprecated `ml.find_text_structure` API
+* Removed the deprecated `allow_no_datafeeds` parameter from the `ml.get_datafeed_stats` API
+* Removed the deprecated `allow_no_datafeeds` parameter from the `ml.get_datafeeds` API
+* Removed the deprecated `allow_no_jobs` parameter from the `ml.get_job_stats` API
+* Removed the deprecated `allow_no_jobs` parameter from the `ml.get_jobs` API
+* Removed the deprecated `allow_no_jobs` parameter from the `ml.get_overall_buckets` API
 
 [discrete]
 ==== Search
 
-- Added the **experimental** `knn_search` API
+* Added the **experimental** `knn_search` API
 
 [discrete]
 ==== Searchable Snapshots
 
-- Removed the deprecated `searchable_snapshots.repository_stats` API
+* Removed the deprecated `searchable_snapshots.repository_stats` API
 
 [discrete]
 ==== Snapshots
 
-- Changed the `snapshot.delete` API to accept multiple snapshots
+* Changed the `snapshot.delete` API to accept multiple snapshots
 
 [discrete]
 ==== Security
 
-- Added the `security.enroll_kibana` API
-- Added the `security.enroll_node` API
+* Added the `security.enroll_kibana` API
+* Added the `security.enroll_node` API
+
+
+[discrete]
+[[rn-7-17-1]]
+=== 7.17.1 (2022-02-28)
+
+* Fixed `AiohttpHttpConnection`` to not leak TLS connections when the socket isn't explicitly shutdown by the peer
+* Fixed the `from` parameter to be rewritten to `from_` when used with the `scan` and `async_scan` helpers
 
 
 [discrete]
@@ -180,7 +189,7 @@
 [discrete]
 ==== Fixed
 
-- Fixed issue where the `AIOHttpConnection` wouldn't log query parameters for URLs.
+* Fixed issue where the `AIOHttpConnection` wouldn't log query parameters for URLs.
 
 
 [discrete]
@@ -190,56 +199,56 @@
 [discrete]
 ==== Deprecated
 
-- Deprecated the `send_get_body_as` parameter. This parameter is no longer necessary
+* Deprecated the `send_get_body_as` parameter. This parameter is no longer necessary
   as APIs all use non-GET HTTP methods when using a body.
-- Removal of `body`, `params`, and other per-request parameters has been delayed beyond 8.0.0.
+* Removal of `body`, `params`, and other per-request parameters has been delayed beyond 8.0.0.
   Changed deprecation warnings to mention "future version" instead of 8.0.0.
 
 [discrete]
 ==== Fixed
 
-- Fixed an issue with `unicode` HTTP headers with the urllib3 HTTP client
-- Fixed an issue with the `scan` helper to always set the `sort` and `scroll` parameters
+* Fixed an issue with `unicode` HTTP headers with the urllib3 HTTP client
+* Fixed an issue with the `scan` helper to always set the `sort` and `scroll` parameters
 
 [discrete]
 ==== Search
 
-- Changed the `keep_alive` parameter of the `open_point_in_time` API to be required
+* Changed the `keep_alive` parameter of the `open_point_in_time` API to be required
   to reflect its required status within Elasticsearch
-- Added the `track_total_hits` parameter to the `search_mvt` API
+* Added the `track_total_hits` parameter to the `search_mvt` API
 
 [discrete]
 ==== Fleet
 
-- Changed the `fleet.global_checkpoints` API from **experimental** to **stable**
-- Added the `fleet.search` **experimental** API
-- Added the `fleet.msearch` **experimental** API
+* Changed the `fleet.global_checkpoints` API from **experimental** to **stable**
+* Added the `fleet.search` **experimental** API
+* Added the `fleet.msearch` **experimental** API
 
 [discrete]
 ==== Indices
 
-- Added the `indices.modify_data_stream` API
+* Added the `indices.modify_data_stream` API
 
 [discrete]
 ==== Ingest
 
-- Added the `if_version` parameter to the `ingest.put_pipeline` API
+* Added the `if_version` parameter to the `ingest.put_pipeline` API
 
 [discrete]
 ==== Migration
 
-- Added the `migration.get_feature_upgrade_status` API
-- Added the `migration.post_feature_upgrade` API
+* Added the `migration.get_feature_upgrade_status` API
+* Added the `migration.post_feature_upgrade` API
 
 [discrete]
 ==== Machine Learning
 
-- Added the `defer_definition_decompression` parameter to the `ml.put_trained_model` API
+* Added the `defer_definition_decompression` parameter to the `ml.put_trained_model` API
 
 [discrete]
 ==== Transforms
 
-- Added the `transform.upgrade_transforms` API
+* Added the `transform.upgrade_transforms` API
 
 
 [discrete]
@@ -249,7 +258,7 @@
 [discrete]
 ==== Nodes
 
-- Documented additional options the `metric` parameter of the `nodes.info` API.
+* Documented additional options the `metric` parameter of the `nodes.info` API.
 
 
 [discrete]
@@ -259,13 +268,13 @@
 [discrete]
 ==== Client
 
-- Fixed a performance regression in `JSONSerializer.default()` when `numpy` and `pandas` weren't installed.
-- Changed the `DeprecationWarning` for the `body` parameter to be a "removed in a future version" instead of "removed in 8.0" in line with the 8.0 roadmap.
+* Fixed a performance regression in `JSONSerializer.default()` when `numpy` and `pandas` weren't installed.
+* Changed the `DeprecationWarning` for the `body` parameter to be a "removed in a future version" instead of "removed in 8.0" in line with the 8.0 roadmap.
 
 [discrete]
 ==== Search
 
-- The `index` parameter of the `open_point_in_time` API is now required, was optional.
+* The `index` parameter of the `open_point_in_time` API is now required, was optional.
 
 
 [discrete]
@@ -275,55 +284,55 @@
 [discrete]
 ==== Client
 
-- Added more precise type hints to many API parameters
-- Added explicit parameters to `AsyncTransport` and `AIOHttpConnection`
-- Added `MapboxVectorTileSerializer` for handling the `application/vnd.mapbox-vector-tile` mimetype. Because this mimetype is binary rather than text the raw response `bytes` are forwarded from the serializer without decoding
-- Reduced amount of time to import the `elasticsearch` module by delaying imports of `pandas` and `numpy` until later in the JSON serialization stage if necessary
-- Deprecated positional arguments for APIs, instead use keyword arguments exclusively.
+* Added more precise type hints to many API parameters
+* Added explicit parameters to `AsyncTransport` and `AIOHttpConnection`
+* Added `MapboxVectorTileSerializer` for handling the `application/vnd.mapbox-vector-tile` mimetype. Because this mimetype is binary rather than text the raw response `bytes` are forwarded from the serializer without decoding
+* Reduced amount of time to import the `elasticsearch` module by delaying imports of `pandas` and `numpy` until later in the JSON serialization stage if necessary
+* Deprecated positional arguments for APIs, instead use keyword arguments exclusively.
 
 [discrete]
 ==== Search
 
-- Added the `search_mvt` **experimental** API
-- Added body field parameters to the `search`, `scroll`, and `clear_scroll` APIs
-- Deprecated the `body` parameter of the `search`, `scroll`, and `clear_scroll` APIs
+* Added the `search_mvt` **experimental** API
+* Added body field parameters to the `search`, `scroll`, and `clear_scroll` APIs
+* Deprecated the `body` parameter of the `search`, `scroll`, and `clear_scroll` APIs
 
 [discrete]
 ==== Documents
 
-- Added body field parameters to the `update` API
-- Added the `document` parameter to the `create` and `index` APIs
-- Deprecated the `body` parameter of the `create`, `index`, and `update` APIs
+* Added body field parameters to the `update` API
+* Added the `document` parameter to the `create` and `index` APIs
+* Deprecated the `body` parameter of the `create`, `index`, and `update` APIs
 
 [discrete]
 ==== Indices
 
-- Added the `indices.disk_usage` **experimental** API
-- Added the `indices.fields_usage_stats` **experimental** API
-- Added body field parameters to the `indices.create` API
-- Deprecated the `body` parameter of the `indices.create` API
+* Added the `indices.disk_usage` **experimental** API
+* Added the `indices.fields_usage_stats` **experimental** API
+* Added body field parameters to the `indices.create` API
+* Deprecated the `body` parameter of the `indices.create` API
 
 [discrete]
 ==== Machine Learning
 
-- Added the `ignore_unavailable`, `allow_no_indices`, `ignore_throttled`, and `expand_wildcards` parameters to the `ml.put_job` API
+* Added the `ignore_unavailable`, `allow_no_indices`, `ignore_throttled`, and `expand_wildcards` parameters to the `ml.put_job` API
 
 [discrete]
 ==== Nodes
 
-- Added the `nodes.clear_repositories_metering_archive` **experimental** API
-- Added the `nodes.get_repositories_metering_info` **experimental** API
-- Added the `shards` option to the `index_metric` parameter of the `nodes.stats` API
-- Deprecated the `doc_type` parameter of the `nodes.hot_threads` API, instead use the `type` parameter
+* Added the `nodes.clear_repositories_metering_archive` **experimental** API
+* Added the `nodes.get_repositories_metering_info` **experimental** API
+* Added the `shards` option to the `index_metric` parameter of the `nodes.stats` API
+* Deprecated the `doc_type` parameter of the `nodes.hot_threads` API, instead use the `type` parameter
 [discrete]
 ==== Security
 
-- Added the `security.query_api_keys` API
+* Added the `security.query_api_keys` API
 
 [discrete]
 ==== License
 
-- Deprecated the `doc_type` parameter of the `license.post_start_trial` API, instead use the `type` parameter
+* Deprecated the `doc_type` parameter of the `license.post_start_trial` API, instead use the `type` parameter
 
 
 [discrete]
