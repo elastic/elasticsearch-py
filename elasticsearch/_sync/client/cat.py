@@ -1091,13 +1091,57 @@ class CatClient(NamespacedClient):
         ] = None,
         format: t.Optional[str] = None,
         from_: t.Optional[int] = None,
-        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        h: t.Optional[
+            t.Union[
+                t.Union[
+                    "t.Literal['create_time', 'created_by', 'data_frame_analytics_id', 'description', 'heap_size', 'id', 'ingest.count', 'ingest.current', 'ingest.failed', 'ingest.pipelines', 'ingest.time', 'license', 'operations', 'version']",
+                    str,
+                ],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['create_time', 'created_by', 'data_frame_analytics_id', 'description', 'heap_size', 'id', 'ingest.count', 'ingest.current', 'ingest.failed', 'ingest.pipelines', 'ingest.time', 'license', 'operations', 'version']",
+                            str,
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['create_time', 'created_by', 'data_frame_analytics_id', 'description', 'heap_size', 'id', 'ingest.count', 'ingest.current', 'ingest.failed', 'ingest.pipelines', 'ingest.time', 'license', 'operations', 'version']",
+                            str,
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
         master_timeout: t.Optional[t.Union[int, str]] = None,
         pretty: t.Optional[bool] = None,
-        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        s: t.Optional[
+            t.Union[
+                t.Union[
+                    "t.Literal['create_time', 'created_by', 'data_frame_analytics_id', 'description', 'heap_size', 'id', 'ingest.count', 'ingest.current', 'ingest.failed', 'ingest.pipelines', 'ingest.time', 'license', 'operations', 'version']",
+                    str,
+                ],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['create_time', 'created_by', 'data_frame_analytics_id', 'description', 'heap_size', 'id', 'ingest.count', 'ingest.current', 'ingest.failed', 'ingest.pipelines', 'ingest.time', 'license', 'operations', 'version']",
+                            str,
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['create_time', 'created_by', 'data_frame_analytics_id', 'description', 'heap_size', 'id', 'ingest.count', 'ingest.current', 'ingest.failed', 'ingest.pipelines', 'ingest.time', 'license', 'operations', 'version']",
+                            str,
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
         size: t.Optional[int] = None,
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
@@ -1114,7 +1158,7 @@ class CatClient(NamespacedClient):
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
         :param from_: skips a number of trained models
-        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param h: Comma-separated list of column names to display
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
         :param local: If `true`, the request computes the list of selected nodes from
@@ -1122,9 +1166,7 @@ class CatClient(NamespacedClient):
             from the cluster state of the master node. In both cases the coordinating
             node will send requests for further information to each selected node.
         :param master_timeout: Period to wait for a connection to the master node.
-        :param s: List of columns that determine how the table should be sorted. Sorting
-            defaults to ascending and can be changed by setting `:asc` or `:desc` as
-            a suffix to the column name.
+        :param s: Comma-separated list of column names or column aliases to sort by
         :param size: specifies a max number of trained models to get
         :param v: When set to `true` will enable verbose output.
         """
