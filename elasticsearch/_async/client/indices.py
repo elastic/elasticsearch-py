@@ -62,7 +62,7 @@ class IndicesClient(NamespacedClient):
         """
         Adds a block to an index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/index-modules-blocks.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/index-modules-blocks.html>`_
 
         :param index: A comma separated list of indices to add a block to
         :param block: The block to add (one of read, write, read_only or metadata)
@@ -142,7 +142,7 @@ class IndicesClient(NamespacedClient):
         Performs the analysis process on a text and return the tokens breakdown of the
         text.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-analyze.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-analyze.html>`_
 
         :param index: The name of the index to scope the operation
         :param analyzer:
@@ -237,7 +237,7 @@ class IndicesClient(NamespacedClient):
         """
         Clears all or specific caches for one or more indices.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-clearcache.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-clearcache.html>`_
 
         :param index: A comma-separated list of index name to limit the operation
         :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
@@ -310,7 +310,7 @@ class IndicesClient(NamespacedClient):
         """
         Clones an index
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-clone-index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-clone-index.html>`_
 
         :param index: The name of the source index to clone
         :param target: The name of the target index to clone into
@@ -395,7 +395,7 @@ class IndicesClient(NamespacedClient):
         """
         Closes an index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-open-close.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-open-close.html>`_
 
         :param index: A comma separated list of indices to close
         :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
@@ -464,7 +464,7 @@ class IndicesClient(NamespacedClient):
         """
         Creates an index with optional settings and mappings.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-create-index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-create-index.html>`_
 
         :param index: The name of the index
         :param aliases:
@@ -525,7 +525,7 @@ class IndicesClient(NamespacedClient):
         """
         Creates a data stream
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/data-streams.html>`_
 
         :param name: The name of the data stream
         """
@@ -579,7 +579,7 @@ class IndicesClient(NamespacedClient):
         """
         Provides statistics on operations happening in a data stream.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/data-streams.html>`_
 
         :param name: A comma-separated list of data stream names; use `_all` or empty
             string to perform the operation on all data streams
@@ -642,7 +642,7 @@ class IndicesClient(NamespacedClient):
         """
         Deletes an index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-delete-index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-delete-index.html>`_
 
         :param index: A comma-separated list of indices to delete; use `_all` or `*`
             string to delete all indices
@@ -699,7 +699,7 @@ class IndicesClient(NamespacedClient):
         """
         Deletes an alias.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-aliases.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-aliases.html>`_
 
         :param index: A comma-separated list of index names (supports wildcards); use
             `_all` for all indices
@@ -764,7 +764,7 @@ class IndicesClient(NamespacedClient):
         """
         Deletes a data stream.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/data-streams.html>`_
 
         :param name: A comma-separated list of data streams to delete; use `*` to delete
             all data streams
@@ -807,7 +807,7 @@ class IndicesClient(NamespacedClient):
         """
         Deletes an index template.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-templates.html>`_
 
         :param name: Comma-separated list of index template names used to limit the request.
             Wildcard (*) expressions are supported.
@@ -855,7 +855,7 @@ class IndicesClient(NamespacedClient):
         """
         Deletes an index template.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-templates.html>`_
 
         :param name: The name of the template
         :param master_timeout: Specify timeout for connection to master
@@ -926,7 +926,7 @@ class IndicesClient(NamespacedClient):
         """
         Analyzes the disk usage of each field of an index or data stream
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-disk-usage.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-disk-usage.html>`_
 
         :param index: Comma-separated list of data streams, indices, and aliases used
             to limit the request. It’s recommended to execute this API with a single
@@ -1028,7 +1028,7 @@ class IndicesClient(NamespacedClient):
         """
         Returns information about whether a particular index exists.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-exists.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-exists.html>`_
 
         :param index: A comma-separated list of index names
         :param allow_no_indices: Ignore if a wildcard expression resolves to no concrete
@@ -1108,7 +1108,7 @@ class IndicesClient(NamespacedClient):
         """
         Returns information about whether a particular alias exists.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-aliases.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-aliases.html>`_
 
         :param name: A comma-separated list of alias names to return
         :param index: A comma-separated list of index names to filter aliases
@@ -1168,7 +1168,7 @@ class IndicesClient(NamespacedClient):
         """
         Returns information about whether a particular index template exists.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-templates.html>`_
 
         :param name: Comma-separated list of index template names used to limit the request.
             Wildcard (*) expressions are supported.
@@ -1213,7 +1213,7 @@ class IndicesClient(NamespacedClient):
         """
         Returns information about whether a particular index template exists.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-templates.html>`_
 
         :param name: The comma separated names of the index templates
         :param flat_settings: Return settings in flat format (default: false)
@@ -1287,7 +1287,7 @@ class IndicesClient(NamespacedClient):
         """
         Returns the field usage stats for each field of an index
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/field-usage-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/field-usage-stats.html>`_
 
         :param index: Comma-separated list or wildcard expression of index names used
             to limit the request.
@@ -1381,7 +1381,7 @@ class IndicesClient(NamespacedClient):
         """
         Performs the flush operation on one or more indices.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-flush.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-flush.html>`_
 
         :param index: A comma-separated list of index names; use `_all` or empty string
             for all indices
@@ -1468,7 +1468,7 @@ class IndicesClient(NamespacedClient):
         """
         Performs the force merge operation on one or more indices.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-forcemerge.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-forcemerge.html>`_
 
         :param index: A comma-separated list of index names; use `_all` or empty string
             to perform the operation on all indices
@@ -1559,7 +1559,7 @@ class IndicesClient(NamespacedClient):
         """
         Returns information about one or more indices.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-get-index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-get-index.html>`_
 
         :param index: Comma-separated list of data streams, indices, and index aliases
             used to limit the request. Wildcard expressions (*) are supported.
@@ -1648,7 +1648,7 @@ class IndicesClient(NamespacedClient):
         """
         Returns an alias.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-aliases.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-aliases.html>`_
 
         :param index: A comma-separated list of index names to filter aliases
         :param name: A comma-separated list of alias names to return
@@ -1725,7 +1725,7 @@ class IndicesClient(NamespacedClient):
         """
         Returns data streams.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/data-streams.html>`_
 
         :param name: A comma-separated list of data streams to get; use `*` to get all
             data streams
@@ -1790,7 +1790,7 @@ class IndicesClient(NamespacedClient):
         """
         Returns mapping for one or more fields.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-get-field-mapping.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-get-field-mapping.html>`_
 
         :param fields: A comma-separated list of fields
         :param index: A comma-separated list of index names
@@ -1856,7 +1856,7 @@ class IndicesClient(NamespacedClient):
         """
         Returns an index template.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-templates.html>`_
 
         :param name: Comma-separated list of index template names used to limit the request.
             Wildcard (*) expressions are supported.
@@ -1929,7 +1929,7 @@ class IndicesClient(NamespacedClient):
         """
         Returns mappings for one or more indices.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-get-mapping.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-get-mapping.html>`_
 
         :param index: A comma-separated list of index names
         :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
@@ -2011,7 +2011,7 @@ class IndicesClient(NamespacedClient):
         """
         Returns settings for one or more indices.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-get-settings.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-get-settings.html>`_
 
         :param index: A comma-separated list of index names; use `_all` or empty string
             to perform the operation on all indices
@@ -2084,7 +2084,7 @@ class IndicesClient(NamespacedClient):
         """
         Returns an index template.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-templates.html>`_
 
         :param name: The comma separated names of the index templates
         :param flat_settings: Return settings in flat format (default: false)
@@ -2131,7 +2131,7 @@ class IndicesClient(NamespacedClient):
         """
         Migrates an alias to a data stream
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/data-streams.html>`_
 
         :param name: The name of the alias to migrate
         """
@@ -2192,7 +2192,7 @@ class IndicesClient(NamespacedClient):
         """
         Opens an index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-open-close.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-open-close.html>`_
 
         :param index: A comma separated list of indices to open
         :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
@@ -2252,7 +2252,7 @@ class IndicesClient(NamespacedClient):
         Promotes a data stream from a replicated data stream managed by CCR to a regular
         data stream
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/data-streams.html>`_
 
         :param name: The name of the data stream
         """
@@ -2298,7 +2298,7 @@ class IndicesClient(NamespacedClient):
         """
         Creates or updates an alias.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-aliases.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-aliases.html>`_
 
         :param index: A comma-separated list of index names the alias should point to
             (supports wildcards); use `_all` to perform the operation on all indices.
@@ -2377,7 +2377,7 @@ class IndicesClient(NamespacedClient):
         """
         Creates or updates an index template.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-templates.html>`_
 
         :param name: Index or template name
         :param composed_of:
@@ -2504,7 +2504,7 @@ class IndicesClient(NamespacedClient):
         """
         Updates the index mappings.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-put-mapping.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-put-mapping.html>`_
 
         :param index: A comma-separated list of index names the mapping should be added
             to (supports wildcards); use `_all` or omit to add the mapping on all indices.
@@ -2631,7 +2631,7 @@ class IndicesClient(NamespacedClient):
         """
         Updates the index settings.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-update-settings.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-update-settings.html>`_
 
         :param settings:
         :param index: A comma-separated list of index names; use `_all` or empty string
@@ -2713,7 +2713,7 @@ class IndicesClient(NamespacedClient):
         """
         Creates or updates an index template.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-templates.html>`_
 
         :param name: The name of the template
         :param aliases: Aliases for the index.
@@ -2790,7 +2790,7 @@ class IndicesClient(NamespacedClient):
         """
         Returns information about ongoing index shard recoveries.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-recovery.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-recovery.html>`_
 
         :param index: A comma-separated list of index names; use `_all` or empty string
             to perform the operation on all indices
@@ -2854,7 +2854,7 @@ class IndicesClient(NamespacedClient):
         """
         Performs the refresh operation in one or more indices.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-refresh.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-refresh.html>`_
 
         :param index: A comma-separated list of index names; use `_all` or empty string
             to perform the operation on all indices
@@ -2925,7 +2925,7 @@ class IndicesClient(NamespacedClient):
         """
         Reloads an index's search analyzers and their resources.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-reload-analyzers.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-reload-analyzers.html>`_
 
         :param index: A comma-separated list of index names to reload analyzers for
         :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
@@ -2992,7 +2992,7 @@ class IndicesClient(NamespacedClient):
         """
         Returns information about any matching indices, aliases, and data streams
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-resolve-index-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-resolve-index-api.html>`_
 
         :param name: A comma-separated list of names or wildcard expressions
         :param expand_wildcards: Whether wildcard expressions should get expanded to
@@ -3046,7 +3046,7 @@ class IndicesClient(NamespacedClient):
         Updates an alias to point to a new index when the existing index is considered
         to be too large or too old.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-rollover-index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-rollover-index.html>`_
 
         :param alias: The name of the alias to rollover
         :param new_index: The name of the rollover index
@@ -3140,7 +3140,7 @@ class IndicesClient(NamespacedClient):
         """
         Provides low-level information about segments in a Lucene index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-segments.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-segments.html>`_
 
         :param index: A comma-separated list of index names; use `_all` or empty string
             to perform the operation on all indices
@@ -3225,7 +3225,7 @@ class IndicesClient(NamespacedClient):
         """
         Provides store information for shard copies of indices.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-shards-stores.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-shards-stores.html>`_
 
         :param index: List of data streams, indices, and aliases used to limit the request.
         :param allow_no_indices: If false, the request returns an error if any wildcard
@@ -3289,7 +3289,7 @@ class IndicesClient(NamespacedClient):
         """
         Allow to shrink an existing index into a new index with fewer primary shards.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-shrink-index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-shrink-index.html>`_
 
         :param index: The name of the source index to shrink
         :param target: The name of the target index to shrink into
@@ -3364,7 +3364,7 @@ class IndicesClient(NamespacedClient):
         """
         Simulate matching the given index name against the index templates in the system
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-templates.html>`_
 
         :param name: Index or template name to simulate
         :param allow_auto_create:
@@ -3445,7 +3445,7 @@ class IndicesClient(NamespacedClient):
         """
         Simulate resolving the given template name or body
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-templates.html>`_
 
         :param name: Name of the index template to simulate. To test a template configuration
             before you add it to the cluster, omit this parameter and specify the template
@@ -3511,7 +3511,7 @@ class IndicesClient(NamespacedClient):
         """
         Allows you to split an existing index into a new index with more primary shards.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-split-index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-split-index.html>`_
 
         :param index: The name of the source index to split
         :param target: The name of the target index to split into
@@ -3610,7 +3610,7 @@ class IndicesClient(NamespacedClient):
         """
         Provides statistics on operations happening in an index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-stats.html>`_
 
         :param index: A comma-separated list of index names; use `_all` or empty string
             to perform the operation on all indices
@@ -3716,7 +3716,7 @@ class IndicesClient(NamespacedClient):
         Unfreezes an index. When a frozen index is unfrozen, the index goes through the
         normal recovery process and becomes writeable again.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/unfreeze-index-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/unfreeze-index-api.html>`_
 
         :param index: The name of the index to unfreeze
         :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
@@ -3781,7 +3781,7 @@ class IndicesClient(NamespacedClient):
         """
         Updates index aliases.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-aliases.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/indices-aliases.html>`_
 
         :param actions:
         :param master_timeout: Specify timeout for connection to master
@@ -3856,7 +3856,7 @@ class IndicesClient(NamespacedClient):
         """
         Allows a user to validate a potentially expensive query without executing it.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-validate.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/search-validate.html>`_
 
         :param index: A comma-separated list of index names to restrict the operation;
             use `_all` or empty string to perform the operation on all indices

@@ -41,7 +41,7 @@ class MigrationClient(NamespacedClient):
         that use deprecated features that will be removed or changed in the next major
         version.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/migration-api-deprecation.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/migration-api-deprecation.html>`_
 
         :param index: Comma-separate list of data streams or indices to check. Wildcard
             (*) expressions are supported.

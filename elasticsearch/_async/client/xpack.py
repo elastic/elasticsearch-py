@@ -45,7 +45,7 @@ class XPackClient(NamespacedClient):
         """
         Retrieves information about the installed X-Pack features.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/info-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/info-api.html>`_
 
         :param accept_enterprise: If this param is used it must be set to true
         :param categories: Comma-separated list of info categories. Can be any of: build,
@@ -85,7 +85,7 @@ class XPackClient(NamespacedClient):
         """
         Retrieves usage information about the installed X-Pack features.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/usage-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.1/usage-api.html>`_
 
         :param master_timeout: Specify timeout for watch write operation
         """
