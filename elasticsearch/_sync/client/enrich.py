@@ -39,7 +39,7 @@ class EnrichClient(NamespacedClient):
         """
         Deletes an existing enrich policy and its enrich index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/delete-enrich-policy-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-enrich-policy-api.html>`_
 
         :param name: The name of the enrich policy
         """
@@ -76,7 +76,7 @@ class EnrichClient(NamespacedClient):
         """
         Creates the enrich index for an existing enrich policy.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/execute-enrich-policy-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/execute-enrich-policy-api.html>`_
 
         :param name: The name of the enrich policy
         :param wait_for_completion: Should the request should block until the execution
@@ -116,7 +116,7 @@ class EnrichClient(NamespacedClient):
         """
         Gets information about an enrich policy.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-enrich-policy-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-enrich-policy-api.html>`_
 
         :param name: A comma-separated list of enrich policy names
         """
@@ -157,7 +157,7 @@ class EnrichClient(NamespacedClient):
         """
         Creates a new enrich policy.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/put-enrich-policy-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-enrich-policy-api.html>`_
 
         :param name: The name of the enrich policy
         :param geo_match:
@@ -200,7 +200,7 @@ class EnrichClient(NamespacedClient):
         Gets enrich coordinator statistics and information about enrich policies that
         are currently executing.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/enrich-stats-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/enrich-stats-api.html>`_
         """
         __path = "/_enrich/_stats"
         __query: t.Dict[str, t.Any] = {}

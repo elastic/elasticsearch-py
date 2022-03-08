@@ -45,11 +45,11 @@ class XPackClient(NamespacedClient):
         """
         Retrieves information about the installed X-Pack features.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/info-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/info-api.html>`_
 
         :param accept_enterprise: If this param is used it must be set to true
-        :param categories: Comma-separated list of info categories. Can be any of: build,
-            license, features
+        :param categories: A comma-separated list of the information categories to include
+            in the response. For example, `build,license,features`.
         """
         __path = "/_xpack"
         __query: t.Dict[str, t.Any] = {}
@@ -85,9 +85,11 @@ class XPackClient(NamespacedClient):
         """
         Retrieves usage information about the installed X-Pack features.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/usage-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/usage-api.html>`_
 
-        :param master_timeout: Specify timeout for watch write operation
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
         """
         __path = "/_xpack/usage"
         __query: t.Dict[str, t.Any] = {}

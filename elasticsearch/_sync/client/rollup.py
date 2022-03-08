@@ -310,7 +310,7 @@ class RollupClient(NamespacedClient):
         """
         Rollup an index
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/xpack-rollup.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/xpack-rollup.html>`_
 
         :param index: The index to roll up
         :param rollup_index: The name of the rollup index to create

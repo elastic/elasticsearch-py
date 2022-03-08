@@ -40,7 +40,7 @@ class NodesClient(NamespacedClient):
         """
         Removes the archived repositories metering information present in the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/clear-repositories-metering-archive-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/clear-repositories-metering-archive-api.html>`_
 
         :param node_id: Comma-separated list of node IDs or names used to limit returned
             information. All the nodes selective options are explained [here](https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster.html#cluster-nodes).
@@ -81,7 +81,7 @@ class NodesClient(NamespacedClient):
         """
         Returns cluster repositories metering information.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/get-repositories-metering-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-repositories-metering-api.html>`_
 
         :param node_id: Comma-separated list of node IDs or names used to limit returned
             information. All the nodes selective options are explained [here](https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster.html#cluster-nodes).

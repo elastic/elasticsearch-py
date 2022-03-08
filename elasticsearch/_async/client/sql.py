@@ -41,7 +41,7 @@ class SqlClient(NamespacedClient):
         """
         Clears the SQL cursor
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/clear-sql-cursor-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/clear-sql-cursor-api.html>`_
 
         :param cursor:
         """
@@ -242,7 +242,7 @@ class SqlClient(NamespacedClient):
         """
         Executes a SQL request
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/sql-search-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/sql-search-api.html>`_
 
         :param catalog: Default catalog (cluster) for queries. If unspecified, the queries
             execute on the data in the local cluster only.
@@ -343,7 +343,7 @@ class SqlClient(NamespacedClient):
         """
         Translates SQL into Elasticsearch queries
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/sql-translate-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/sql-translate-api.html>`_
 
         :param query:
         :param fetch_size:

@@ -96,7 +96,7 @@ class ClusterClient(NamespacedClient):
     def delete_component_template(
         self,
         *,
-        name: str,
+        name: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
@@ -111,7 +111,8 @@ class ClusterClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-template.html>`_
 
-        :param name: The name of the template
+        :param name: Comma-separated list or wildcard expression of component template
+            names used to limit the request.
         :param master_timeout: Specify timeout for connection to master
         :param timeout: Explicit operation timeout
         """

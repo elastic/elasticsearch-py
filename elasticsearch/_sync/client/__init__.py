@@ -1305,7 +1305,7 @@ class Elasticsearch(BaseClient):
         """
         Changes the number of requests per second for a particular Delete By Query operation.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-delete-by-query.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-delete-by-query.html>`_
 
         :param task_id: The task id to rethrottle
         :param requests_per_second: The throttle to set on this request in floating sub-requests
@@ -1699,6 +1699,7 @@ class Elasticsearch(BaseClient):
     def field_caps(
         self,
         *,
+        fields: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
         index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
         allow_no_indices: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
@@ -1720,12 +1721,10 @@ class Elasticsearch(BaseClient):
                 ],
             ]
         ] = None,
-        fields: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
+        filters: t.Optional[str] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         include_unmapped: t.Optional[bool] = None,
@@ -1743,53 +1742,60 @@ class Elasticsearch(BaseClient):
                 ],
             ]
         ] = None,
+        types: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Returns the information about the capabilities of fields among multiple indices.
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-field-caps.html>`_
 
+        :param fields: Comma-separated list of fields to retrieve capabilities for. Wildcard
+            (`*`) expressions are supported.
         :param index: Comma-separated list of data streams, indices, and aliases used
             to limit the request. Supports wildcards (*). To target all data streams
             and indices, omit this parameter or use * or _all.
         :param allow_no_indices: If false, the request returns an error if any wildcard
-            expression, [index alias](https://www.elastic.co/guide/en/elasticsearch/reference/current/aliases.html),
-            or `_all` value targets only missing or closed indices. This behavior applies
-            even if the request targets other open indices. For example, a request targeting
-            `foo*,bar*` returns an error if an index starts with foo but no index starts
-            with bar.
+            expression, index alias, or `_all` value targets only missing or closed indices.
+            This behavior applies even if the request targets other open indices. For
+            example, a request targeting `foo*,bar*` returns an error if an index starts
+            with foo but no index starts with bar.
         :param expand_wildcards: Type of index that wildcard patterns can match. If the
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
             as `open,hidden`.
-        :param fields: Comma-separated list of fields to retrieve capabilities for. Wildcard
-            (`*`) expressions are supported.
+        :param filters: An optional set of filters: can include +metadata,-metadata,-nested,-multifield,-parent
         :param ignore_unavailable: If `true`, missing or closed indices are not included
             in the response.
         :param include_unmapped: If true, unmapped fields are included in the response.
         :param index_filter: Allows to filter indices if the provided query rewrites
             to match_none on every shard.
-        :param runtime_mappings: Defines ad-hoc [runtime fields](https://www.elastic.co/guide/en/elasticsearch/reference/current/runtime-search-request.html)
-            in the request similar to the way it is done in [search requests](https://www.elastic.co/guide/en/elasticsearch/reference/current/search-search.html#search-api-body-runtime).
-            These fields exist only as part of the query and take precedence over fields
-            defined with the same name in the index mappings.
+        :param runtime_mappings: Defines ad-hoc runtime fields in the request similar
+            to the way it is done in search requests. These fields exist only as part
+            of the query and take precedence over fields defined with the same name in
+            the index mappings.
+        :param types: Only return results for fields that have one of the types in the
+            list
         """
+        if fields is None:
+            raise ValueError("Empty value passed for parameter 'fields'")
         if index not in SKIP_IN_PATH:
             __path = f"/{_quote(index)}/_field_caps"
         else:
             __path = "/_field_caps"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = {}
+        if fields is not None:
+            __query["fields"] = fields
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if expand_wildcards is not None:
             __query["expand_wildcards"] = expand_wildcards
-        if fields is not None:
-            __query["fields"] = fields
         if filter_path is not None:
             __query["filter_path"] = filter_path
+        if filters is not None:
+            __query["filters"] = filters
         if human is not None:
             __query["human"] = human
         if ignore_unavailable is not None:
@@ -1802,6 +1808,8 @@ class Elasticsearch(BaseClient):
             __query["pretty"] = pretty
         if runtime_mappings is not None:
             __body["runtime_mappings"] = runtime_mappings
+        if types is not None:
+            __query["types"] = types
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -2233,7 +2241,7 @@ class Elasticsearch(BaseClient):
         """
         Returns basic information about the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/index.html>`_
         """
         __path = "/"
         __query: t.Dict[str, t.Any] = {}
@@ -2602,7 +2610,7 @@ class Elasticsearch(BaseClient):
         """
         Allows to execute several search template operations in one request.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/search-multi-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-multi-search.html>`_
 
         :param search_templates:
         :param index: A comma-separated list of index names to use as default
@@ -2971,8 +2979,9 @@ class Elasticsearch(BaseClient):
     def reindex(
         self,
         *,
+        dest: t.Mapping[str, t.Any],
+        source: t.Mapping[str, t.Any],
         conflicts: t.Optional[t.Union["t.Literal['abort', 'proceed']", str]] = None,
-        dest: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
@@ -2987,7 +2996,6 @@ class Elasticsearch(BaseClient):
         scroll: t.Optional[t.Union[int, str]] = None,
         size: t.Optional[int] = None,
         slices: t.Optional[int] = None,
-        source: t.Optional[t.Mapping[str, t.Any]] = None,
         timeout: t.Optional[t.Union[int, str]] = None,
         wait_for_active_shards: t.Optional[
             t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
@@ -3001,8 +3009,9 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-reindex.html>`_
 
-        :param conflicts:
         :param dest:
+        :param source:
+        :param conflicts:
         :param max_docs:
         :param refresh: Should the affected indexes be refreshed?
         :param requests_per_second: The throttle to set on this request in sub-requests
@@ -3013,7 +3022,6 @@ class Elasticsearch(BaseClient):
         :param size:
         :param slices: The number of slices this task should be divided into. Defaults
             to 1, meaning the task isn't sliced into subtasks. Can be set to `auto`.
-        :param source:
         :param timeout: Time each individual bulk request should wait for shards that
             are unavailable.
         :param wait_for_active_shards: Sets the number of shard copies that must be active
@@ -3024,13 +3032,19 @@ class Elasticsearch(BaseClient):
         :param wait_for_completion: Should the request should block until the reindex
             is complete.
         """
+        if dest is None:
+            raise ValueError("Empty value passed for parameter 'dest'")
+        if source is None:
+            raise ValueError("Empty value passed for parameter 'source'")
         __path = "/_reindex"
         __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if conflicts is not None:
-            __body["conflicts"] = conflicts
         if dest is not None:
             __body["dest"] = dest
+        if source is not None:
+            __body["source"] = source
+        if conflicts is not None:
+            __body["conflicts"] = conflicts
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -3055,8 +3069,6 @@ class Elasticsearch(BaseClient):
             __body["size"] = size
         if slices is not None:
             __query["slices"] = slices
-        if source is not None:
-            __body["source"] = source
         if timeout is not None:
             __query["timeout"] = timeout
         if wait_for_active_shards is not None:
@@ -3130,7 +3142,7 @@ class Elasticsearch(BaseClient):
         """
         Allows to use the Mustache language to pre-render a search definition.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/render-search-template-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/render-search-template-api.html>`_
 
         :param id: The id of the stored search template
         :param file:
@@ -3994,7 +4006,7 @@ class Elasticsearch(BaseClient):
         """
         Allows to use the Mustache language to pre-render a search definition.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/search-template.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-template.html>`_
 
         :param index: Comma-separated list of data streams, indices, and aliases to search.
             Supports wildcards (*).
@@ -4105,7 +4117,7 @@ class Elasticsearch(BaseClient):
         the provided string. It is designed for low-latency look-ups used in auto-complete
         scenarios.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/search-terms-enum.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-terms-enum.html>`_
 
         :param index: Comma-separated list of data streams, indices, and index aliases
             to search. Wildcard (*) expressions are supported.
@@ -4669,7 +4681,7 @@ class Elasticsearch(BaseClient):
         """
         Changes the number of requests per second for a particular Update By Query operation.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-update-by-query.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-update-by-query.html>`_
 
         :param task_id: The task id to rethrottle
         :param requests_per_second: The throttle to set on this request in floating sub-requests

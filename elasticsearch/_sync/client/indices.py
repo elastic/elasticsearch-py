@@ -3716,7 +3716,7 @@ class IndicesClient(NamespacedClient):
         Unfreezes an index. When a frozen index is unfrozen, the index goes through the
         normal recovery process and becomes writeable again.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/current/unfreeze-index-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/unfreeze-index-api.html>`_
 
         :param index: The name of the index to unfreeze
         :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
