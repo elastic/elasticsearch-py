@@ -3278,6 +3278,7 @@ class MlClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
+        merges: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -3287,6 +3288,7 @@ class MlClient(NamespacedClient):
 
         :param model_id: The unique identifier of the trained model.
         :param vocabulary: The model vocabulary, which must not be empty.
+        :param merges: The optional model merges if required by the tokenizer.
         """
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_id'")
@@ -3303,6 +3305,8 @@ class MlClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if merges is not None:
+            __body["merges"] = merges
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json", "content-type": "application/json"}
