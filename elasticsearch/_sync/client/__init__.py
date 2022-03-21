@@ -2274,6 +2274,14 @@ class Elasticsearch(BaseClient):
         fields: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
+        filter: t.Optional[
+            t.Union[
+                t.Mapping[str, t.Any],
+                t.Union[
+                    t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]
+                ],
+            ]
+        ] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
@@ -2298,6 +2306,10 @@ class Elasticsearch(BaseClient):
             (*) patterns.
         :param fields: The request returns values for field names matching these patterns
             in the hits.fields property of the response. Accepts wildcard (*) patterns.
+        :param filter: Query to filter the documents that can match. The kNN search will
+            return the top `k` documents that also match this filter. The value can be
+            a single query or a list of queries. If `filter` isn't provided, all documents
+            are allowed to match.
         :param routing: A comma-separated list of specific routing values
         :param source: Indicates which source fields are returned for matching documents.
             These fields are returned in the hits._source property of the search response.
@@ -2322,6 +2334,8 @@ class Elasticsearch(BaseClient):
             __query["error_trace"] = error_trace
         if fields is not None:
             __body["fields"] = fields
+        if filter is not None:
+            __body["filter"] = filter
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
