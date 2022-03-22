@@ -61,7 +61,7 @@ action (``_op_type`` defaults to ``index``):
         '_op_type': 'update',
         '_index': 'index-name',
         '_id': 42,
-        'doc': {'question': 'The life, universe and everything.'}
+        '_source': {'doc': {'question': 'The life, universe and everything.'},
     }
 
 
