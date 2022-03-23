@@ -44,7 +44,6 @@ When you start Elasticsearch for the first time you'll see a distinct block like
 
 [source,sh]
 ----
-\----------------------------------------------------------------------
 -> Elasticsearch security features have been automatically configured!
 -> Authentication is enabled and cluster connections are encrypted.
 
@@ -54,7 +53,6 @@ When you start Elasticsearch for the first time you'll see a distinct block like
 ->  HTTP CA certificate SHA-256 fingerprint:
   a52dd93511e8c6045e21f16654b77c9ee0f34aea26d9f40320b531c474676228
 ...
-\----------------------------------------------------------------------
 ----
 
 Note down the `elastic` user password and HTTP CA fingerprint for the next sections. In the examples below they will be stored in the variables `ELASTIC_PASSWORD` and `CERT_FINGERPRINT` respectively.
