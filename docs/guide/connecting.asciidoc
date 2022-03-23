@@ -120,7 +120,7 @@ default if available.
 
 NOTE: Using this method **requires using Python 3.10 or later** and isn't 
 available when using the `aiohttp` HTTP client library so can't be used with 
-`Async{es}`.
+`AsyncElasticsearch`.
 
 This method of verifying the HTTPS connection takes advantage of the certificate 
 fingerprint value noted down earlier. Take this SHA256 fingerprint value and 
