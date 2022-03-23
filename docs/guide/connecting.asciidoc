@@ -7,9 +7,15 @@ This page contains the information you need to connect the Client with {es}.
 [[connect-ec]]
 === Connecting to Elastic Cloud
 
-https://www.elastic.co/guide/en/cloud/current/ec-getting-started.html[Elastic Cloud] is the easiest way to get started with Elasticsearch. When connecting to Elastic Cloud with the Python Elasticsearch client you should always use the `cloud_id` parameter to connect. You can find this value within the "Manage Deployment" page after you've created a cluster (look in the top-left if you're in Kibana).
+https://www.elastic.co/guide/en/cloud/current/ec-getting-started.html[Elastic Cloud] 
+is the easiest way to get started with {es}. When connecting to Elastic Cloud 
+with the Python {es} client you should always use the `cloud_id` 
+parameter to connect. You can find this value within the "Manage Deployment" 
+page after you've created a cluster (look in the top-left if you're in Kibana).
 
-We recommend using a Cloud ID whenever possible because your client will be automatically configured for optimal use with Elastic Cloud including HTTPS and HTTP compression.
+We recommend using a Cloud ID whenever possible because your client will be 
+automatically configured for optimal use with Elastic Cloud including HTTPS and 
+HTTP compression.
 
 [source,python]
 ----
@@ -36,11 +42,19 @@ client.info()
 [[connect-self-managed-new]]
 === Connecting to a self-managed cluster
 
-By default Elasticsearch will start with security features like authentication and TLS enabled. To connect to the Elasticsearch cluster you'll need to configure the Python Elasticsearch client to use HTTPS with the generated CA certificate in order to make requests successfully.
+By default {es} will start with security features like authentication and TLS 
+enabled. To connect to the {es} cluster you'll need to configure the Python {es} 
+client to use HTTPS with the generated CA certificate in order to make requests 
+successfully.
 
-If you're just getting started with Elasticsearch we recommend reading the documentation on https://www.elastic.co/guide/en/elasticsearch/reference/current/settings.html[configuring] and https://www.elastic.co/guide/en/elasticsearch/reference/current/starting-elasticsearch.html[starting Elasticsearch] to ensure your cluster is running as expected.
+If you're just getting started with {es} we recommend reading the documentation 
+on https://www.elastic.co/guide/en/elasticsearch/reference/current/settings.html[configuring] 
+and 
+https://www.elastic.co/guide/en/elasticsearch/reference/current/starting-elasticsearch.html[starting {es}] 
+to ensure your cluster is running as expected.
 
-When you start Elasticsearch for the first time you'll see a distinct block like the one below in the output from Elasticsearch (you may have to scroll up if it's been a while):
+When you start {es} for the first time you'll see a piece of text like the one 
+below in the output from {es} (you may have to scroll up if it's been a while):
 
 [source,sh]
 ----
@@ -55,18 +69,27 @@ When you start Elasticsearch for the first time you'll see a distinct block like
 ...
 ----
 
-Note down the `elastic` user password and HTTP CA fingerprint for the next sections. In the examples below they will be stored in the variables `ELASTIC_PASSWORD` and `CERT_FINGERPRINT` respectively.
+Note down the `elastic` user password and HTTP CA fingerprint for the next 
+sections. In the examples below they will be stored in the variables 
+`ELASTIC_PASSWORD` and `CERT_FINGERPRINT` respectively.
 
-Depending on the circumstances there are two options for verifying the HTTPS connection, either verifying with the CA certificate itself or via the HTTP CA certificate fingerprint.
+Depending on the circumstances there are two options for verifying the HTTPS 
+connection, either verifying with the CA certificate itself or via the HTTP CA 
+certificate fingerprint.
 
 [discrete]
 ==== Verifying HTTPS with CA certificates
 
-Using the `ca_certs` option is the default way the Python Elasticsearch client verifies an HTTPS connection.
+Using the `ca_certs` option is the default way the Python {es} client verifies 
+an HTTPS connection.
 
-The generated root CA certificate can be found in the `certs` directory in your Elasticsearch config location (`$ES_CONF_PATH/certs/http_ca.crt`). If you're running Elasticsearch in Docker there is https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html[additional documentation for retrieving the CA certificate].
+The generated root CA certificate can be found in the `certs` directory in your 
+{es} config location (`$ES_CONF_PATH/certs/http_ca.crt`). If you're running {es} 
+in Docker there is 
+https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html[additional documentation for retrieving the CA certificate].
 
-Once you have the `http_ca.crt` file somewhere accessible pass the path to the client via `ca_certs`:
+Once you have the `http_ca.crt` file somewhere accessible pass the path to the 
+client via `ca_certs`:
 
 [source,python]
 ----
@@ -87,14 +110,20 @@ client.info()
 # {'name': 'instance-0000000000', 'cluster_name': ...}
 ----
 
-NOTE: If you don't specify `ca_certs` or `ssl_assert_fingerprint` then the https://certifiio.readthedocs.io[certifi package] will be used for `ca_certs` by default if available.
+NOTE: If you don't specify `ca_certs` or `ssl_assert_fingerprint` then the 
+https://certifiio.readthedocs.io[certifi package] will be used for `ca_certs` by 
+default if available.
 
 [discrete]
 ==== Verifying HTTPS with certificate fingerprints (Python 3.10 or later)
 
-NOTE: Using this method **requires using Python 3.10 or later** and isn't available when using the `aiohttp` HTTP client library so can't be used with `AsyncElasticsearch`.
+NOTE: Using this method **requires using Python 3.10 or later** and isn't 
+available when using the `aiohttp` HTTP client library so can't be used with 
+`Async{es}`.
 
-This method of verifying the HTTPS connection takes advantage of the certificate fingerprint value noted down earlier. Take this SHA256 fingerprint value and pass it to the Python Elasticsearch client via `ssl_assert_fingerprint`:
+This method of verifying the HTTPS connection takes advantage of the certificate 
+fingerprint value noted down earlier. Take this SHA256 fingerprint value and 
+pass it to the Python {es} client via `ssl_assert_fingerprint`:
 
 [source,python]
 ----
@@ -119,14 +148,17 @@ client.info()
 # {'name': 'instance-0000000000', 'cluster_name': ...}
 ----
 
-The certificate fingerprint can be calculated using `openssl x509` with the certificate file:
+The certificate fingerprint can be calculated using `openssl x509` with the 
+certificate file:
 
 [source,sh]
 ----
 openssl x509 -fingerprint -sha256 -noout -in /path/to/http_ca.crt
 ----
 
-If you don't have access to the generated CA file from Elasticsearch you can use the following script to output the root CA fingerprint of the Elasticsearch instance with `openssl s_client`:
+If you don't have access to the generated CA file from {es} you can use the 
+following script to output the root CA fingerprint of the {es} instance with 
+`openssl s_client`:
 
 [source,sh]
 ----
@@ -148,9 +180,11 @@ SHA256 Fingerprint=A5:2D:D9:35:11:E8:C6:04:5E:21:F1:66:54:B7:7C:9E:E0:F3:4A:EA:2
 [[connect-no-security]]
 === Connecting without security enabled
 
-WARNING: Running Elasticsearch without security enabled is not recommended.
+WARNING: Running {es} without security enabled is not recommended.
 
-If your cluster is configured with https://www.elastic.co/guide/en/elasticsearch/reference/current/security-settings.html[security explicitly disabled] then you can connect via HTTP:
+If your cluster is configured with 
+https://www.elastic.co/guide/en/elasticsearch/reference/current/security-settings.html[security explicitly disabled] 
+then you can connect via HTTP:
 
 [source,python]
 ----
@@ -168,7 +202,11 @@ client.info()
 [[connect-url]]
 === Connecting to multiple nodes
 
-The Python Elasticsearch client supports sending API requests to multiple nodes in the cluster. This means that work will be more evenly spread across the cluster instead of hammering the same node over and over with requests. To configure the client with multiple nodes you can pass a list of URLs, each URL will be used as a separate node in the pool.
+The Python {es} client supports sending API requests to multiple nodes in the 
+cluster. This means that work will be more evenly spread across the cluster 
+instead of hammering the same node over and over with requests. To configure the 
+client with multiple nodes you can pass a list of URLs, each URL will be used as 
+a separate node in the pool.
 
 [source,python]
 ----
@@ -191,9 +229,12 @@ client = Elasticsearch(
 )
 ----
 
-By default nodes are selected using round-robin, but alternate node selection strategies can be configured with `node_selector_class` parameter.
+By default nodes are selected using round-robin, but alternate node selection 
+strategies can be configured with `node_selector_class` parameter.
 
-NOTE: If your Elasticsearch cluster is behind a load balancer like when using Elastic Cloud you won't need to configure multiple nodes. Instead use the load balancer host and port.
+NOTE: If your {es} cluster is behind a load balancer like when using Elastic 
+Cloud you won't need to configure multiple nodes. Instead use the load balancer 
+host and port.
 
 
 [discrete]
@@ -237,8 +278,8 @@ for i in range(10):
 [[auth-basic]]
 ==== HTTP Basic authentication (Username and Password)
 
-HTTP Basic authentication uses the `basic_auth` parameter by passing in a username and 
-password within a tuple:
+HTTP Basic authentication uses the `basic_auth` parameter by passing in a 
+username and password within a tuple:
 
 [source,python]
 ----
@@ -280,7 +321,7 @@ es = Elasticsearch(
 
 You can configure the client to use {es}'s API Key for connecting to your 
 cluster. Note that you need the values of `id` and `api_key` to
-[authenticate via an API Key](https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-create-api-key.html).
+https://www.elastic.co/guide/en/elasticsearch/reference/current/security-api-create-api-key.html[authenticate via an API Key].
 
 [source,python]
 ----
@@ -298,22 +339,29 @@ es = Elasticsearch(
 [[compatibility-mode]]
 === Enabling the Compatibility Mode
 
-The Elasticsearch server version 8.0 is introducing a new compatibility mode that allows you a smoother upgrade
-experience from 7 to 8. In a nutshell, you can use the latest 7.x Python Elasticsearch Elasticsearch client with
-an 8.x Elasticsearch server, giving more room to coordinate the upgrade of your codebase to the next major version. 
+The {es} server version 8.0 is introducing a new compatibility mode that allows 
+you a smoother upgrade experience from 7 to 8. In a nutshell, you can use the 
+latest 7.x Python {es} {es} client with an 8.x {es} server, giving more room to 
+coordinate the upgrade of your codebase to the next major version. 
 
-If you want to leverage this functionality, please make sure that you are using the latest 7.x Python Elasticsearch
-client and set the environment variable `ELASTIC_CLIENT_APIVERSIONING` to `true`. The client is handling the rest
-internally. For every 8.0 and beyond Python Elasticsearch client, you're all set! The compatibility mode
-is enabled by default.
+If you want to leverage this functionality, please make sure that you are using 
+the latest 7.x Python {es} client and set the environment variable 
+`ELASTIC_CLIENT_APIVERSIONING` to `true`. The client is handling the rest
+internally. For every 8.0 and beyond Python {es} client, you're all set! The 
+compatibility mode is enabled by default.
 
 [discrete]
 [[connecting-faas]]
 === Using the Client in a Function-as-a-Service Environment
 
-This section illustrates the best practices for leveraging the {es} client in a Function-as-a-Service (FaaS) environment.
-The most influential optimization is to initialize the client outside of the function, the global scope.
-This practice does not only improve performance but also enables background functionality as – for example –
+This section illustrates the best practices for leveraging the {es} client in a 
+Function-as-a-Service (FaaS) environment.
+
+The most influential optimization is to initialize the client outside of the 
+function, the global scope.
+
+This practice does not only improve performance but also enables background 
+functionality as – for example –
 https://www.elastic.co/blog/elasticsearch-sniffing-best-practices-what-when-why-how[sniffing].
 The following examples provide a skeleton for the best practices.
 
