@@ -53,11 +53,11 @@ and
 https://www.elastic.co/guide/en/elasticsearch/reference/current/starting-elasticsearch.html[starting {es}] 
 to ensure your cluster is running as expected.
 
-When you start {es} for the first time you'll see a piece of text like the one 
+When you start {es} for the first time you'll see a distinct block like the one 
 below in the output from {es} (you may have to scroll up if it's been a while):
 
-[source,sh]
-----
+```sh
+----------------------------------------------------------------
 -> Elasticsearch security features have been automatically configured!
 -> Authentication is enabled and cluster connections are encrypted.
 
@@ -67,7 +67,8 @@ below in the output from {es} (you may have to scroll up if it's been a while):
 ->  HTTP CA certificate SHA-256 fingerprint:
   a52dd93511e8c6045e21f16654b77c9ee0f34aea26d9f40320b531c474676228
 ...
-----
+----------------------------------------------------------------
+```
 
 Note down the `elastic` user password and HTTP CA fingerprint for the next 
 sections. In the examples below they will be stored in the variables 
