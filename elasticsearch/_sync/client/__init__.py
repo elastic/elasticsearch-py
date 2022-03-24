@@ -79,6 +79,8 @@ from .utils import (
     _quote,
     _rewrite_parameters,
     client_node_configs,
+    is_requests_http_auth,
+    is_requests_node_class,
 )
 from .watcher import WatcherClient
 from .xpack import XPackClient
@@ -309,9 +311,27 @@ class Elasticsearch(BaseClient):
             sniff_callback = default_sniff_callback
 
         if _transport is None:
+
+            requests_session_auth = None
+            if http_auth is not None and http_auth is not DEFAULT:
+                if is_requests_http_auth(http_auth):
+                    # If we're using custom requests authentication
+                    # then we need to alert the user that they also
+                    # need to use 'node_class=requests'.
+                    if not is_requests_node_class(node_class):
+                        raise ValueError(
+                            "Using a custom 'requests.auth.AuthBase' class for "
+                            "'http_auth' must be used with node_class='requests'"
+                        )
+
+                    # Reset 'http_auth' to DEFAULT so it's not consumed below.
+                    requests_session_auth = http_auth
+                    http_auth = DEFAULT
+
             node_configs = client_node_configs(
                 hosts,
                 cloud_id=cloud_id,
+                requests_session_auth=requests_session_auth,
                 connections_per_node=connections_per_node,
                 http_compress=http_compress,
                 verify_certs=verify_certs,
