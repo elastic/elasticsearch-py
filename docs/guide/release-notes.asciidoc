@@ -1,6 +1,8 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-8-1-1>>
+* <<rn-8-1-0>>
 * <<rn-8-0-0>>
 * <<rn-7-17-1>>
 * <<rn-7-17-0>>
@@ -37,6 +39,31 @@
 * <<rn-7-0-2>>
 * <<rn-7-0-1>>
 * <<rn-7-0-0>>
+
+
+[discrete]
+[[rn-8-1-1]]
+=== 8.1.1 (2022-03-22)
+
+[discrete]
+==== Documents
+
+* Changed the `source` and `dest` parameters of the `reindex` API to be required.
+
+[discrete]
+==== Mappings
+
+* Changed the `fields` parameter of the `field_caps` API to be required.
+
+
+[discrete]
+[[rn-8-1-0]]
+=== 8.1.0 (2022-03-08)
+
+[discrete]
+==== Transforms
+
+* Added the `transform.reset_transform` API
 
 
 [discrete]
