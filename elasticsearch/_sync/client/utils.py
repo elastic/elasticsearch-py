@@ -15,8 +15,8 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-
 import base64
+import inspect
 import warnings
 from datetime import date, datetime
 from functools import wraps
@@ -41,6 +41,7 @@ from elastic_transport import (
     AsyncTransport,
     HttpHeaders,
     NodeConfig,
+    RequestsHttpNode,
     SniffOptions,
     Transport,
 )
@@ -88,7 +89,10 @@ F = TypeVar("F", bound=Callable[..., Any])
 
 
 def client_node_configs(
-    hosts: Optional[_TYPE_HOSTS], cloud_id: Optional[str], **kwargs: Any
+    hosts: Optional[_TYPE_HOSTS],
+    cloud_id: Optional[str],
+    requests_session_auth: Optional[Any] = None,
+    **kwargs: Any,
 ) -> List[NodeConfig]:
     if cloud_id is not None:
         if hosts is not None:
@@ -107,6 +111,12 @@ def client_node_configs(
     headers = HttpHeaders(node_options.pop("headers", ()))
     headers.setdefault("user-agent", USER_AGENT)
     node_options["headers"] = headers
+
+    # If a custom Requests AuthBase is passed we set that via '_extras'.
+    if requests_session_auth is not None:
+        node_options.setdefault("_extras", {})[
+            "requests.session.auth"
+        ] = requests_session_auth
 
     def apply_node_options(node_config: NodeConfig) -> NodeConfig:
         """Needs special handling of headers since .replace() wipes out existing headers"""
@@ -406,3 +416,28 @@ def _rewrite_parameters(
         return wrapped  # type: ignore[return-value]
 
     return wrapper
+
+
+def is_requests_http_auth(http_auth: Any) -> bool:
+    """Detect if an http_auth value is a custom Requests auth object"""
+    try:
+        from requests.auth import AuthBase
+
+        return isinstance(http_auth, AuthBase)
+    except ImportError:
+        pass
+    return False
+
+
+def is_requests_node_class(node_class: Any) -> bool:
+    """Detect if 'RequestsHttpNode' would be used given the setting of 'node_class'"""
+    return (
+        node_class is not None
+        and node_class is not DEFAULT
+        and (
+            node_class == "requests"
+            or (
+                inspect.isclass(node_class) and issubclass(node_class, RequestsHttpNode)
+            )
+        )
+    )
