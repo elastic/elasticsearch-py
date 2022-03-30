@@ -2817,6 +2817,7 @@ class Elasticsearch(BaseClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
+        ignore_unavailable: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -2827,6 +2828,8 @@ class Elasticsearch(BaseClient):
         :param index: A comma-separated list of index names to open point in time; use
             `_all` or empty string to perform the operation on all indices
         :param keep_alive: Specific the time to live for the point in time
+        :param ignore_unavailable: Whether specified concrete indices should be ignored
+            when unavailable (missing or closed)
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -2842,6 +2845,8 @@ class Elasticsearch(BaseClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if ignore_unavailable is not None:
+            __query["ignore_unavailable"] = ignore_unavailable
         if pretty is not None:
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}

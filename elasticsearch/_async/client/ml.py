@@ -1699,6 +1699,55 @@ class MlClient(NamespacedClient):
             "GET", __path, params=__query, headers=__headers
         )
 
+    @_rewrite_parameters()
+    async def get_memory_stats(
+        self,
+        *,
+        node_id: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union[int, str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Returns information on how ML is using memory.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-ml-memory.html>`_
+
+        :param node_id: The names of particular nodes in the cluster to target. For example,
+            `nodeId1,nodeId2` or `ml:true`
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
+        """
+        if node_id not in SKIP_IN_PATH:
+            __path = f"/_ml/memory/{_quote(node_id)}/_stats"
+        else:
+            __path = "/_ml/memory/_stats"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
+
     @_rewrite_parameters(
         body_fields=True,
         parameter_aliases={"from": "from_"},

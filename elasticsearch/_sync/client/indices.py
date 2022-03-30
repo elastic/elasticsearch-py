@@ -1545,6 +1545,20 @@ class IndicesClient(NamespacedClient):
                 ],
             ]
         ] = None,
+        features: t.Optional[
+            t.Union[
+                t.Union["t.Literal['aliases', 'mappings', 'settings']", str],
+                t.Union[
+                    t.List[
+                        t.Union["t.Literal['aliases', 'mappings', 'settings']", str]
+                    ],
+                    t.Tuple[
+                        t.Union["t.Literal['aliases', 'mappings', 'settings']", str],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
@@ -1563,12 +1577,16 @@ class IndicesClient(NamespacedClient):
 
         :param index: Comma-separated list of data streams, indices, and index aliases
             used to limit the request. Wildcard expressions (*) are supported.
-        :param allow_no_indices: Ignore if a wildcard expression resolves to no concrete
-            indices (default: false)
+        :param allow_no_indices: If false, the request returns an error if any wildcard
+            expression, index alias, or _all value targets only missing or closed indices.
+            This behavior applies even if the request targets other open indices. For
+            example, a request targeting foo*,bar* returns an error if an index starts
+            with foo but no index starts with bar.
         :param expand_wildcards: Type of index that wildcard expressions can match. If
             the request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
             as open,hidden.
+        :param features: Return only information on specified index features
         :param flat_settings: If true, returns settings in flat format.
         :param ignore_unavailable: If false, requests that target a missing index return
             an error.
@@ -1590,6 +1608,8 @@ class IndicesClient(NamespacedClient):
             __query["error_trace"] = error_trace
         if expand_wildcards is not None:
             __query["expand_wildcards"] = expand_wildcards
+        if features is not None:
+            __query["features"] = features
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if flat_settings is not None:
@@ -2150,6 +2170,49 @@ class IndicesClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers
+        )
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    def modify_data_stream(
+        self,
+        *,
+        actions: t.Union[
+            t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]
+        ],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Modifies a data stream
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
+
+        :param actions: Actions to perform.
+        """
+        if actions is None:
+            raise ValueError("Empty value passed for parameter 'actions'")
+        __path = "/_data_stream/_modify"
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
+        if actions is not None:
+            __body["actions"] = actions
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
         )
 
     @_rewrite_parameters()
