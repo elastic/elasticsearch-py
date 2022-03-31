@@ -42,6 +42,16 @@
 
 
 [discrete]
+[[rn-8-1-2]]
+=== 8.1.2 (2022-03-30)
+
+[discrete]
+==== Client
+
+* Client is compatible with Elasticsearch 8.1.2
+
+
+[discrete]
 [[rn-8-1-1]]
 === 8.1.1 (2022-03-22)
 
