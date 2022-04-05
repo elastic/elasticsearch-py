@@ -24,6 +24,59 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class SecurityClient(NamespacedClient):
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def activate_user_profile(
+        self,
+        *,
+        grant_type: t.Union["t.Literal['access_token', 'password']", str],
+        access_token: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        password: t.Optional[str] = None,
+        pretty: t.Optional[bool] = None,
+        username: t.Optional[str] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Creates or updates the user profile on behalf of another user.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-activate-user-profile.html>`_
+
+        :param grant_type:
+        :param access_token:
+        :param password:
+        :param username:
+        """
+        if grant_type is None:
+            raise ValueError("Empty value passed for parameter 'grant_type'")
+        __path = "/_security/profile/_activate"
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
+        if grant_type is not None:
+            __body["grant_type"] = grant_type
+        if access_token is not None:
+            __body["access_token"] = access_token
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if password is not None:
+            __body["password"] = password
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if username is not None:
+            __body["username"] = username
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )
+
     @_rewrite_parameters()
     async def authenticate(
         self,
@@ -711,6 +764,50 @@ class SecurityClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    async def disable_user_profile(
+        self,
+        *,
+        uid: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        refresh: t.Optional[
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Disables a user profile so it's not visible in user profile searches.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-disable-user-profile.html>`_
+
+        :param uid: Unique identifier for the user profile.
+        :param refresh: If 'true', Elasticsearch refreshes the affected shards to make
+            this operation visible to search, if 'wait_for' then wait for a refresh to
+            make this operation visible to search, if 'false' do nothing with refreshes.
+        """
+        if uid in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'uid'")
+        __path = f"/_security/profile/{_quote(uid)}/_disable"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if refresh is not None:
+            __query["refresh"] = refresh
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers
+        )
+
+    @_rewrite_parameters()
     async def enable_user(
         self,
         *,
@@ -738,6 +835,50 @@ class SecurityClient(NamespacedClient):
         if username in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'username'")
         __path = f"/_security/user/{_quote(username)}/_enable"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if refresh is not None:
+            __query["refresh"] = refresh
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers
+        )
+
+    @_rewrite_parameters()
+    async def enable_user_profile(
+        self,
+        *,
+        uid: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        refresh: t.Optional[
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Enables a user profile so it's visible in user profile searches.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-enable-user-profile.html>`_
+
+        :param uid: Unique identifier for the user profile.
+        :param refresh: If 'true', Elasticsearch refreshes the affected shards to make
+            this operation visible to search, if 'wait_for' then wait for a refresh to
+            make this operation visible to search, if 'false' do nothing with refreshes.
+        """
+        if uid in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'uid'")
+        __path = f"/_security/profile/{_quote(uid)}/_enable"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -1253,6 +1394,49 @@ class SecurityClient(NamespacedClient):
             __query["priviledge"] = priviledge
         if username is not None:
             __query["username"] = username
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
+
+    @_rewrite_parameters()
+    async def get_user_profile(
+        self,
+        *,
+        uid: str,
+        data: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Retrieves user profile for the given unique ID.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-user-profile.html>`_
+
+        :param uid: A unique identifier for the user profile.
+        :param data: List of filters for the `data` field of the profile document. To
+            return all content use `data=*`. To return a subset of content use `data=<key>`
+            to retrieve content nested under the specified `<key>`. By default returns
+            no `data` content.
+        """
+        if uid in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'uid'")
+        __path = f"/_security/profile/{_quote(uid)}"
+        __query: t.Dict[str, t.Any] = {}
+        if data is not None:
+            __query["data"] = data
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "GET", __path, params=__query, headers=__headers
@@ -2199,4 +2383,126 @@ class SecurityClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "GET", __path, params=__query, headers=__headers
+        )
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def suggest_user_profiles(
+        self,
+        *,
+        data: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        name: t.Optional[str] = None,
+        pretty: t.Optional[bool] = None,
+        size: t.Optional[int] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Get suggestions for user profiles that match specified search criteria.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-suggest-user-profile.html>`_
+
+        :param data: List of filters for the `data` field of the profile document. To
+            return all content use `data=*`. To return a subset of content use `data=<key>`
+            to retrieve content nested under the specified `<key>`. By default returns
+            no `data` content.
+        :param name: Query string used to match name-related fields in user profile documents.
+            Name-related fields are the user's `username`, `full_name`, and `email`.
+        :param size: Number of profiles to return.
+        """
+        __path = "/_security/profile/_suggest"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        if data is not None:
+            __query["data"] = data
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if name is not None:
+            __body["name"] = name
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if size is not None:
+            __body["size"] = size
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def update_user_profile_data(
+        self,
+        *,
+        uid: str,
+        access: t.Optional[t.Mapping[str, t.Any]] = None,
+        data: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        if_primary_term: t.Optional[int] = None,
+        if_seq_no: t.Optional[int] = None,
+        pretty: t.Optional[bool] = None,
+        refresh: t.Optional[
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Update application specific data for the user profile of the given unique ID.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-update-user-profile-data.html>`_
+
+        :param uid: A unique identifier for the user profile.
+        :param access: Searchable data that you want to associate with the user profile.
+            This field supports a nested data structure.
+        :param data: Non-searchable data that you want to associate with the user profile.
+            This field supports a nested data structure.
+        :param if_primary_term: Only perform the operation if the document has this primary
+            term.
+        :param if_seq_no: Only perform the operation if the document has this sequence
+            number.
+        :param refresh: If 'true', Elasticsearch refreshes the affected shards to make
+            this operation visible to search, if 'wait_for' then wait for a refresh to
+            make this operation visible to search, if 'false' do nothing with refreshes.
+        """
+        if uid in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'uid'")
+        __path = f"/_security/profile/{_quote(uid)}/_data"
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
+        if access is not None:
+            __body["access"] = access
+        if data is not None:
+            __body["data"] = data
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if if_primary_term is not None:
+            __query["if_primary_term"] = if_primary_term
+        if if_seq_no is not None:
+            __query["if_seq_no"] = if_seq_no
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if refresh is not None:
+            __query["refresh"] = refresh
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers, body=__body
         )
