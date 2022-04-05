@@ -39,7 +39,7 @@ class SlmClient(NamespacedClient):
         """
         Deletes an existing snapshot lifecycle policy.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/slm-api-delete-policy.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/slm-api-delete-policy.html>`_
 
         :param policy_id: The id of the snapshot lifecycle policy to remove
         """
@@ -76,7 +76,7 @@ class SlmClient(NamespacedClient):
         Immediately creates a snapshot according to the lifecycle policy, without waiting
         for the scheduled time.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/slm-api-execute-lifecycle.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/slm-api-execute-lifecycle.html>`_
 
         :param policy_id: The id of the snapshot lifecycle policy to be executed
         """
@@ -111,7 +111,7 @@ class SlmClient(NamespacedClient):
         """
         Deletes any snapshots that are expired according to the policy's retention rules.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/slm-api-execute-retention.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/slm-api-execute-retention.html>`_
         """
         __path = "/_slm/_execute_retention"
         __query: t.Dict[str, t.Any] = {}
@@ -146,7 +146,7 @@ class SlmClient(NamespacedClient):
         Retrieves one or more snapshot lifecycle policy definitions and information about
         the latest snapshot attempts.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/slm-api-get-policy.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/slm-api-get-policy.html>`_
 
         :param policy_id: Comma-separated list of snapshot lifecycle policies to retrieve
         """
@@ -183,7 +183,7 @@ class SlmClient(NamespacedClient):
         Returns global and policy-level statistics about actions taken by snapshot lifecycle
         management.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/slm-api-get-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/slm-api-get-stats.html>`_
         """
         __path = "/_slm/stats"
         __query: t.Dict[str, t.Any] = {}
@@ -214,7 +214,7 @@ class SlmClient(NamespacedClient):
         """
         Retrieves the status of snapshot lifecycle management (SLM).
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/slm-api-get-status.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/slm-api-get-status.html>`_
         """
         __path = "/_slm/status"
         __query: t.Dict[str, t.Any] = {}
@@ -255,7 +255,7 @@ class SlmClient(NamespacedClient):
         """
         Creates or updates a snapshot lifecycle policy.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/slm-api-put-policy.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/slm-api-put-policy.html>`_
 
         :param policy_id: ID for the snapshot lifecycle policy you want to create or
             update.
@@ -326,7 +326,7 @@ class SlmClient(NamespacedClient):
         """
         Turns on snapshot lifecycle management (SLM).
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/slm-api-start.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/slm-api-start.html>`_
         """
         __path = "/_slm/start"
         __query: t.Dict[str, t.Any] = {}
@@ -357,7 +357,7 @@ class SlmClient(NamespacedClient):
         """
         Turns off snapshot lifecycle management (SLM).
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/slm-api-stop.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/slm-api-stop.html>`_
         """
         __path = "/_slm/stop"
         __query: t.Dict[str, t.Any] = {}

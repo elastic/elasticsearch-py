@@ -40,7 +40,7 @@ class AsyncSearchClient(NamespacedClient):
         Deletes an async search by ID. If the search is still running, the search request
         will be cancelled. Otherwise, the saved search results are deleted.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/async-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/async-search.html>`_
 
         :param id: The async search ID
         """
@@ -80,7 +80,7 @@ class AsyncSearchClient(NamespacedClient):
         Retrieves the results of a previously submitted async search request given its
         ID.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/async-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/async-search.html>`_
 
         :param id: The async search ID
         :param keep_alive: Specify the time interval in which the results (partial or
@@ -129,7 +129,7 @@ class AsyncSearchClient(NamespacedClient):
         Retrieves the status of a previously submitted async search request given its
         ID.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/async-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/async-search.html>`_
 
         :param id: The async search ID
         """
@@ -300,7 +300,7 @@ class AsyncSearchClient(NamespacedClient):
         """
         Executes a search request asynchronously.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/async-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/async-search.html>`_
 
         :param index: A comma-separated list of index names to search; use `_all` or
             empty string to perform the operation on all indices

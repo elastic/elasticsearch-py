@@ -24,6 +24,59 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class SecurityClient(NamespacedClient):
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    def activate_user_profile(
+        self,
+        *,
+        grant_type: t.Union["t.Literal['access_token', 'password']", str],
+        access_token: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        password: t.Optional[str] = None,
+        pretty: t.Optional[bool] = None,
+        username: t.Optional[str] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Creates or updates the user profile on behalf of another user.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-activate-user-profile.html>`_
+
+        :param grant_type:
+        :param access_token:
+        :param password:
+        :param username:
+        """
+        if grant_type is None:
+            raise ValueError("Empty value passed for parameter 'grant_type'")
+        __path = "/_security/profile/_activate"
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
+        if grant_type is not None:
+            __body["grant_type"] = grant_type
+        if access_token is not None:
+            __body["access_token"] = access_token
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if password is not None:
+            __body["password"] = password
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if username is not None:
+            __body["username"] = username
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )
+
     @_rewrite_parameters()
     def authenticate(
         self,
@@ -39,7 +92,7 @@ class SecurityClient(NamespacedClient):
         Enables authentication as a user and retrieve information about the authenticated
         user.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-authenticate.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-authenticate.html>`_
         """
         __path = "/_security/_authenticate"
         __query: t.Dict[str, t.Any] = {}
@@ -78,7 +131,7 @@ class SecurityClient(NamespacedClient):
         """
         Changes the passwords of users in the native realm and built-in users.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-change-password.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-change-password.html>`_
 
         :param username: The user whose password you want to change. If you do not specify
             this parameter, the password is changed for the current user.
@@ -132,7 +185,7 @@ class SecurityClient(NamespacedClient):
         """
         Clear a subset or all entries from the API key cache.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-clear-api-key-cache.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-clear-api-key-cache.html>`_
 
         :param ids: A comma-separated list of IDs of API keys to clear from the cache
         """
@@ -168,7 +221,7 @@ class SecurityClient(NamespacedClient):
         """
         Evicts application privileges from the native application privileges cache.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-clear-privilege-cache.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-clear-privilege-cache.html>`_
 
         :param application: A comma-separated list of application names
         """
@@ -206,7 +259,7 @@ class SecurityClient(NamespacedClient):
         Evicts users from the user cache. Can completely clear the cache or evict specific
         users.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-clear-cache.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-clear-cache.html>`_
 
         :param realms: Comma-separated list of realms to clear
         :param usernames: Comma-separated list of usernames to clear from the cache
@@ -245,7 +298,7 @@ class SecurityClient(NamespacedClient):
         """
         Evicts roles from the native role cache.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-clear-role-cache.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-clear-role-cache.html>`_
 
         :param name: Role name
         """
@@ -283,7 +336,7 @@ class SecurityClient(NamespacedClient):
         """
         Evicts tokens from the service account token caches.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-clear-service-token-caches.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-clear-service-token-caches.html>`_
 
         :param namespace: An identifier for the namespace
         :param service: An identifier for the service name
@@ -333,7 +386,7 @@ class SecurityClient(NamespacedClient):
         """
         Creates an API key for access without requiring basic authentication.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-create-api-key.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-create-api-key.html>`_
 
         :param expiration: Expiration time for the API key. By default, API keys never
             expire.
@@ -396,7 +449,7 @@ class SecurityClient(NamespacedClient):
         """
         Creates a service account token for access without requiring basic authentication.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-create-service-token.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-create-service-token.html>`_
 
         :param namespace: An identifier for the namespace
         :param service: An identifier for the service name
@@ -453,7 +506,7 @@ class SecurityClient(NamespacedClient):
         """
         Removes application privileges.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-delete-privilege.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-delete-privilege.html>`_
 
         :param application: Application name
         :param name: Privilege name
@@ -500,7 +553,7 @@ class SecurityClient(NamespacedClient):
         """
         Removes roles in the native realm.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-delete-role.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-delete-role.html>`_
 
         :param name: Role name
         :param refresh: If `true` (the default) then refresh the affected shards to make
@@ -544,7 +597,7 @@ class SecurityClient(NamespacedClient):
         """
         Removes role mappings.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-delete-role-mapping.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-delete-role-mapping.html>`_
 
         :param name: Role-mapping name
         :param refresh: If `true` (the default) then refresh the affected shards to make
@@ -590,7 +643,7 @@ class SecurityClient(NamespacedClient):
         """
         Deletes a service account token.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-delete-service-token.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-delete-service-token.html>`_
 
         :param namespace: An identifier for the namespace
         :param service: An identifier for the service name
@@ -640,7 +693,7 @@ class SecurityClient(NamespacedClient):
         """
         Deletes users from the native realm.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-delete-user.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-delete-user.html>`_
 
         :param username: username
         :param refresh: If `true` (the default) then refresh the affected shards to make
@@ -684,7 +737,7 @@ class SecurityClient(NamespacedClient):
         """
         Disables users in the native realm.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-disable-user.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-disable-user.html>`_
 
         :param username: The username of the user to disable
         :param refresh: If `true` (the default) then refresh the affected shards to make
@@ -694,6 +747,50 @@ class SecurityClient(NamespacedClient):
         if username in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'username'")
         __path = f"/_security/user/{_quote(username)}/_disable"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if refresh is not None:
+            __query["refresh"] = refresh
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers
+        )
+
+    @_rewrite_parameters()
+    def disable_user_profile(
+        self,
+        *,
+        uid: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        refresh: t.Optional[
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Disables a user profile so it's not visible in user profile searches.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-disable-user-profile.html>`_
+
+        :param uid: Unique identifier for the user profile.
+        :param refresh: If 'true', Elasticsearch refreshes the affected shards to make
+            this operation visible to search, if 'wait_for' then wait for a refresh to
+            make this operation visible to search, if 'false' do nothing with refreshes.
+        """
+        if uid in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'uid'")
+        __path = f"/_security/profile/{_quote(uid)}/_disable"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -728,7 +825,7 @@ class SecurityClient(NamespacedClient):
         """
         Enables users in the native realm.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-enable-user.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-enable-user.html>`_
 
         :param username: The username of the user to enable
         :param refresh: If `true` (the default) then refresh the affected shards to make
@@ -738,6 +835,50 @@ class SecurityClient(NamespacedClient):
         if username in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'username'")
         __path = f"/_security/user/{_quote(username)}/_enable"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if refresh is not None:
+            __query["refresh"] = refresh
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers
+        )
+
+    @_rewrite_parameters()
+    def enable_user_profile(
+        self,
+        *,
+        uid: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        refresh: t.Optional[
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Enables a user profile so it's visible in user profile searches.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-enable-user-profile.html>`_
+
+        :param uid: Unique identifier for the user profile.
+        :param refresh: If 'true', Elasticsearch refreshes the affected shards to make
+            this operation visible to search, if 'wait_for' then wait for a refresh to
+            make this operation visible to search, if 'false' do nothing with refreshes.
+        """
+        if uid in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'uid'")
+        __path = f"/_security/profile/{_quote(uid)}/_enable"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -769,7 +910,7 @@ class SecurityClient(NamespacedClient):
         Allows a kibana instance to configure itself to communicate with a secured elasticsearch
         cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-kibana-enrollment.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-kibana-enrollment.html>`_
         """
         __path = "/_security/enroll/kibana"
         __query: t.Dict[str, t.Any] = {}
@@ -800,7 +941,7 @@ class SecurityClient(NamespacedClient):
         """
         Allows a new node to enroll to an existing cluster with security enabled.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-node-enrollment.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-node-enrollment.html>`_
         """
         __path = "/_security/enroll/node"
         __query: t.Dict[str, t.Any] = {}
@@ -836,7 +977,7 @@ class SecurityClient(NamespacedClient):
         """
         Retrieves information for one or more API keys.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-api-key.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-get-api-key.html>`_
 
         :param id: API key id of the API key to be retrieved
         :param name: API key name of the API key to be retrieved
@@ -884,7 +1025,7 @@ class SecurityClient(NamespacedClient):
         Retrieves the list of cluster privileges and index privileges that are available
         in this version of Elasticsearch.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-builtin-privileges.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-get-builtin-privileges.html>`_
         """
         __path = "/_security/privilege/_builtin"
         __query: t.Dict[str, t.Any] = {}
@@ -917,7 +1058,7 @@ class SecurityClient(NamespacedClient):
         """
         Retrieves application privileges.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-privileges.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-get-privileges.html>`_
 
         :param application: Application name
         :param name: Privilege name
@@ -957,7 +1098,7 @@ class SecurityClient(NamespacedClient):
         """
         Retrieves roles in the native realm.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-role.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-get-role.html>`_
 
         :param name: The name of the role. You can specify multiple roles as a comma-separated
             list. If you do not specify this parameter, the API returns information about
@@ -996,7 +1137,7 @@ class SecurityClient(NamespacedClient):
         """
         Retrieves role mappings.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-role-mapping.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-get-role-mapping.html>`_
 
         :param name: The distinct name that identifies the role mapping. The name is
             used solely as an identifier to facilitate interaction via the API; it does
@@ -1038,7 +1179,7 @@ class SecurityClient(NamespacedClient):
         """
         Retrieves information about service accounts.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-service-accounts.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-get-service-accounts.html>`_
 
         :param namespace: Name of the namespace. Omit this parameter to retrieve information
             about all service accounts. If you omit this parameter, you must also omit
@@ -1082,7 +1223,7 @@ class SecurityClient(NamespacedClient):
         """
         Retrieves information of all service credentials for a service account.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-service-credentials.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-get-service-credentials.html>`_
 
         :param namespace: Name of the namespace.
         :param service: Name of the service name.
@@ -1133,7 +1274,7 @@ class SecurityClient(NamespacedClient):
         """
         Creates a bearer token for access without requiring basic authentication.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-token.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-get-token.html>`_
 
         :param grant_type:
         :param kerberos_ticket:
@@ -1187,7 +1328,7 @@ class SecurityClient(NamespacedClient):
         """
         Retrieves information about users in the native realm and built-in users.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-user.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-get-user.html>`_
 
         :param username: An identifier for the user. You can specify multiple usernames
             as a comma-separated list. If you omit this parameter, the API retrieves
@@ -1228,7 +1369,7 @@ class SecurityClient(NamespacedClient):
         """
         Retrieves security privileges for the logged in user.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-user-privileges.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-get-user-privileges.html>`_
 
         :param application: The name of the application. Application privileges are always
             associated with exactly one application. If you do not specify this parameter,
@@ -1258,6 +1399,49 @@ class SecurityClient(NamespacedClient):
             "GET", __path, params=__query, headers=__headers
         )
 
+    @_rewrite_parameters()
+    def get_user_profile(
+        self,
+        *,
+        uid: str,
+        data: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Retrieves user profile for the given unique ID.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-get-user-profile.html>`_
+
+        :param uid: A unique identifier for the user profile.
+        :param data: List of filters for the `data` field of the profile document. To
+            return all content use `data=*`. To return a subset of content use `data=<key>`
+            to retrieve content nested under the specified `<key>`. By default returns
+            no `data` content.
+        """
+        if uid in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'uid'")
+        __path = f"/_security/profile/{_quote(uid)}"
+        __query: t.Dict[str, t.Any] = {}
+        if data is not None:
+            __query["data"] = data
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
+
     @_rewrite_parameters(
         body_fields=True,
         ignore_deprecated_options={"api_key"},
@@ -1280,7 +1464,7 @@ class SecurityClient(NamespacedClient):
         """
         Creates an API key on behalf of another user.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-grant-api-key.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-grant-api-key.html>`_
 
         :param api_key:
         :param grant_type:
@@ -1358,7 +1542,7 @@ class SecurityClient(NamespacedClient):
         """
         Determines whether the specified user has a specified list of privileges.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-has-privileges.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-has-privileges.html>`_
 
         :param user: Username
         :param application:
@@ -1412,7 +1596,7 @@ class SecurityClient(NamespacedClient):
         """
         Invalidates one or more API keys.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-invalidate-api-key.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-invalidate-api-key.html>`_
 
         :param id:
         :param ids:
@@ -1469,7 +1653,7 @@ class SecurityClient(NamespacedClient):
         """
         Invalidates one or more access tokens or refresh tokens.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-invalidate-token.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-invalidate-token.html>`_
 
         :param realm_name:
         :param refresh_token:
@@ -1520,7 +1704,7 @@ class SecurityClient(NamespacedClient):
         """
         Adds or updates application privileges.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-put-privileges.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-put-privileges.html>`_
 
         :param privileges:
         :param refresh: If `true` (the default) then refresh the affected shards to make
@@ -1595,7 +1779,7 @@ class SecurityClient(NamespacedClient):
         """
         Adds and updates roles in the native realm.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-put-role.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-put-role.html>`_
 
         :param name: The name of the role.
         :param applications: A list of application privilege entries.
@@ -1677,7 +1861,7 @@ class SecurityClient(NamespacedClient):
         """
         Creates and updates role mappings.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-put-role-mapping.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-put-role-mapping.html>`_
 
         :param name: Role-mapping name
         :param enabled:
@@ -1747,7 +1931,7 @@ class SecurityClient(NamespacedClient):
         Adds and updates users in the native realm. These users are commonly referred
         to as native users.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-put-user.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-put-user.html>`_
 
         :param username: The username of the User
         :param email:
@@ -1830,7 +2014,7 @@ class SecurityClient(NamespacedClient):
         """
         Retrieves information for API keys using a subset of query DSL
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-query-api-key.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-query-api-key.html>`_
 
         :param from_: Starting document offset. By default, you cannot page through more
             than 10,000 hits using the from and size parameters. To page through more
@@ -1906,7 +2090,7 @@ class SecurityClient(NamespacedClient):
         Exchanges a SAML Response message for an Elasticsearch access token and refresh
         token pair
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-authenticate.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-saml-authenticate.html>`_
 
         :param content: The SAML response as it was sent by the user’s browser, usually
             a Base64 encoded XML document.
@@ -1961,7 +2145,7 @@ class SecurityClient(NamespacedClient):
         """
         Verifies the logout response sent from the SAML IdP
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-complete-logout.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-saml-complete-logout.html>`_
 
         :param ids: A json array with all the valid SAML Request Ids that the caller
             of the API has for the current user.
@@ -2020,7 +2204,7 @@ class SecurityClient(NamespacedClient):
         """
         Consumes a SAML LogoutRequest
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-invalidate.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-saml-invalidate.html>`_
 
         :param query_string: The query part of the URL that the user was redirected to
             by the SAML IdP to initiate the Single Logout. This query should include
@@ -2081,7 +2265,7 @@ class SecurityClient(NamespacedClient):
         Invalidates an access token and a refresh token that were generated via the SAML
         Authenticate API
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-logout.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-saml-logout.html>`_
 
         :param token: The access token that was returned as a response to calling the
             SAML authenticate API. Alternatively, the most recent token that was received
@@ -2131,7 +2315,7 @@ class SecurityClient(NamespacedClient):
         """
         Creates a SAML authentication request
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-prepare-authentication.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-saml-prepare-authentication.html>`_
 
         :param acs: The Assertion Consumer Service URL that matches the one of the SAML
             realms in Elasticsearch. The realm is used to generate the authentication
@@ -2180,7 +2364,7 @@ class SecurityClient(NamespacedClient):
         """
         Generates SAML metadata for the Elastic stack SAML 2.0 Service Provider
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-saml-sp-metadata.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-saml-sp-metadata.html>`_
 
         :param realm_name: The name of the SAML realm in Elasticsearch.
         """
@@ -2199,4 +2383,126 @@ class SecurityClient(NamespacedClient):
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "GET", __path, params=__query, headers=__headers
+        )
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    def suggest_user_profiles(
+        self,
+        *,
+        data: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        name: t.Optional[str] = None,
+        pretty: t.Optional[bool] = None,
+        size: t.Optional[int] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Get suggestions for user profiles that match specified search criteria.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-suggest-user-profile.html>`_
+
+        :param data: List of filters for the `data` field of the profile document. To
+            return all content use `data=*`. To return a subset of content use `data=<key>`
+            to retrieve content nested under the specified `<key>`. By default returns
+            no `data` content.
+        :param name: Query string used to match name-related fields in user profile documents.
+            Name-related fields are the user's `username`, `full_name`, and `email`.
+        :param size: Number of profiles to return.
+        """
+        __path = "/_security/profile/_suggest"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        if data is not None:
+            __query["data"] = data
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if name is not None:
+            __body["name"] = name
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if size is not None:
+            __body["size"] = size
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    def update_user_profile_data(
+        self,
+        *,
+        uid: str,
+        access: t.Optional[t.Mapping[str, t.Any]] = None,
+        data: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        if_primary_term: t.Optional[int] = None,
+        if_seq_no: t.Optional[int] = None,
+        pretty: t.Optional[bool] = None,
+        refresh: t.Optional[
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+        ] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Update application specific data for the user profile of the given unique ID.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/security-api-update-user-profile-data.html>`_
+
+        :param uid: A unique identifier for the user profile.
+        :param access: Searchable data that you want to associate with the user profile.
+            This field supports a nested data structure.
+        :param data: Non-searchable data that you want to associate with the user profile.
+            This field supports a nested data structure.
+        :param if_primary_term: Only perform the operation if the document has this primary
+            term.
+        :param if_seq_no: Only perform the operation if the document has this sequence
+            number.
+        :param refresh: If 'true', Elasticsearch refreshes the affected shards to make
+            this operation visible to search, if 'wait_for' then wait for a refresh to
+            make this operation visible to search, if 'false' do nothing with refreshes.
+        """
+        if uid in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'uid'")
+        __path = f"/_security/profile/{_quote(uid)}/_data"
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
+        if access is not None:
+            __body["access"] = access
+        if data is not None:
+            __body["data"] = data
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if if_primary_term is not None:
+            __query["if_primary_term"] = if_primary_term
+        if if_seq_no is not None:
+            __query["if_seq_no"] = if_seq_no
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if refresh is not None:
+            __query["refresh"] = refresh
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers, body=__body
         )
