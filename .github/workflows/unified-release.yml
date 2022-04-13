@@ -16,13 +16,10 @@ jobs:
   assemble:
     name: Assemble
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        stack_version: ['8.1.0-SNAPSHOT']
-
+    env:
+      STACK_VERSION: 8.1.0-SNAPSHOT
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - run: "./.ci/make.sh assemble ${{ matrix.stack_version }}"
-        name: Assemble ${{ matrix.stack_version }}
+      - name: "Assemble ${{ env.STACK_VERSION }}"
+        run: "./.ci/make.sh assemble ${{ env.STACK_VERSION }}"
