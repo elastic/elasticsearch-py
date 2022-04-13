@@ -148,7 +148,12 @@ if [[ "$CMD" == "assemble" ]]; then
 fi
 
 if [[ "$CMD" == "bump" ]]; then
-    echo "TODO"
+  docker run \
+    --rm -v $repo:/code/elasticsearch-py \
+    $product \
+    /bin/bash -c "python /code/elasticsearch-py/utils/bump-version.py $VERSION"
+
+  exit 0
 fi
 
 if [[ "$CMD" == "codegen" ]]; then
