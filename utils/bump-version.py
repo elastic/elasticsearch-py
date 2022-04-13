@@ -54,20 +54,30 @@ def main():
         print(f"Couldn't match the given stack version {stack_version!r}")
         exit(1)
 
+    # Pad the version value with .0 until there
+    # we have the major, minor, and patch.
+    for _ in range(3):
+        if len(python_version.split(".")) >= 3:
+            break
+        python_version += ".0"
+
     find_and_replace(
         path=SOURCE_DIR / "elasticsearch/_version.py",
         pattern=r"__versionstr__ = \"[0-9]+[0-9\.]*[0-9](?:\+dev)?\"",
         replace=f'__versionstr__ = "{python_version}"',
     )
+
+    # These values should always be the 'major.minor-SNAPSHOT'
+    major_minor_version = ".".join(python_version.split(".")[:2])
     find_and_replace(
         path=SOURCE_DIR / ".ci/test-matrix.yml",
-        pattern=r"STACK_VERSION:\s+\- [0-9]+[0-9\.]*[0-9]-SNAPSHOT",
-        replace=f"STACK_VERSION:\n  - {stack_version}",
+        pattern=r'STACK_VERSION:\s+\- "[0-9]+[0-9\.]*[0-9](?:\-SNAPSHOT)?"',
+        replace=f'STACK_VERSION:\n  - "{major_minor_version}.0-SNAPSHOT"',
     )
     find_and_replace(
         path=SOURCE_DIR / ".github/workflows/unified-release.yml",
-        pattern=r"stack_version: \['[0-9]+[0-9\.]*[0-9]-SNAPSHOT'\]",
-        replace=f"stack_version: ['{stack_version}']",
+        pattern=r'STACK_VERSION:\s+"[0-9]+[0-9\.]*[0-9](?:\-SNAPSHOT)?"',
+        replace=f'STACK_VERSION: "{major_minor_version}-SNAPSHOT"',
     )
 
 
