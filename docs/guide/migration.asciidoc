@@ -85,7 +85,7 @@ client = Elasticsearch(
 
 # If you're connecting to an instance hosted elsewhere:
 client = Elasticsearch(
-    # Notice that the scheme (https://) host (localhost),
+    # Notice that the scheme (http://) host (localhost),
     # and port (9200) are explicit here:
     "http://localhost:9200",
 
