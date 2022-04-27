@@ -46,15 +46,16 @@ class EnrichClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_enrich/policy/{_quote(name)}"
-        __query: t.Dict[str, t.Any] = {}
-        if error_trace is not None:
-            __query["error_trace"] = error_trace
-        if filter_path is not None:
-            __query["filter_path"] = filter_path
-        if human is not None:
-            __query["human"] = human
-        if pretty is not None:
-            __query["pretty"] = pretty
+        __query: t.Dict[str, t.Any] = {
+            arg_name: arg
+            for arg_name, arg in [
+                ("error_trace", error_trace),
+                ("filter_path", filter_path),
+                ("human", human),
+                ("pretty", pretty),
+            ]
+            if arg
+        }
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "DELETE", __path, params=__query, headers=__headers
@@ -85,17 +86,17 @@ class EnrichClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_enrich/policy/{_quote(name)}/_execute"
-        __query: t.Dict[str, t.Any] = {}
-        if error_trace is not None:
-            __query["error_trace"] = error_trace
-        if filter_path is not None:
-            __query["filter_path"] = filter_path
-        if human is not None:
-            __query["human"] = human
-        if pretty is not None:
-            __query["pretty"] = pretty
-        if wait_for_completion is not None:
-            __query["wait_for_completion"] = wait_for_completion
+        __query: t.Dict[str, t.Any] = {
+            arg_name: arg
+            for arg_name, arg in [
+                ("error_trace", error_trace),
+                ("filter_path", filter_path),
+                ("human", human),
+                ("pretty", pretty),
+                ("wait_for_completion", wait_for_completion),
+            ]
+            if arg
+        }
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers
@@ -124,15 +125,16 @@ class EnrichClient(NamespacedClient):
             __path = f"/_enrich/policy/{_quote(name)}"
         else:
             __path = "/_enrich/policy"
-        __query: t.Dict[str, t.Any] = {}
-        if error_trace is not None:
-            __query["error_trace"] = error_trace
-        if filter_path is not None:
-            __query["filter_path"] = filter_path
-        if human is not None:
-            __query["human"] = human
-        if pretty is not None:
-            __query["pretty"] = pretty
+        __query: t.Dict[str, t.Any] = {
+            arg_name: arg
+            for arg_name, arg in [
+                ("error_trace", error_trace),
+                ("filter_path", filter_path),
+                ("human", human),
+                ("pretty", pretty),
+            ]
+            if arg
+        }
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "GET", __path, params=__query, headers=__headers
@@ -152,6 +154,7 @@ class EnrichClient(NamespacedClient):
         geo_match: t.Optional[t.Mapping[str, t.Any]] = None,
         human: t.Optional[bool] = None,
         match: t.Optional[t.Mapping[str, t.Any]] = None,
+        range_: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -166,20 +169,25 @@ class EnrichClient(NamespacedClient):
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
         __path = f"/_enrich/policy/{_quote(name)}"
-        __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
-        if error_trace is not None:
-            __query["error_trace"] = error_trace
-        if filter_path is not None:
-            __query["filter_path"] = filter_path
-        if geo_match is not None:
-            __body["geo_match"] = geo_match
-        if human is not None:
-            __query["human"] = human
-        if match is not None:
-            __body["match"] = match
-        if pretty is not None:
-            __query["pretty"] = pretty
+        __query: t.Dict[str, t.Any] = {
+            arg_name: arg
+            for arg_name, arg in [
+                ("error_trace", error_trace),
+                ("filter_path", filter_path),
+                ("human", human),
+                ("pretty", pretty),
+            ]
+            if arg
+        }
+        __body: t.Dict[str, t.Any] = {
+            arg_name: arg
+            for arg_name, arg in [
+                ("geo_match", geo_match),
+                ("match", match),
+                ("range", range_),
+            ]
+            if arg
+        }
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
@@ -203,15 +211,16 @@ class EnrichClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/enrich-stats-api.html>`_
         """
         __path = "/_enrich/_stats"
-        __query: t.Dict[str, t.Any] = {}
-        if error_trace is not None:
-            __query["error_trace"] = error_trace
-        if filter_path is not None:
-            __query["filter_path"] = filter_path
-        if human is not None:
-            __query["human"] = human
-        if pretty is not None:
-            __query["pretty"] = pretty
+        __query: t.Dict[str, t.Any] = {
+            arg_name: arg
+            for arg_name, arg in [
+                ("error_trace", error_trace),
+                ("filter_path", filter_path),
+                ("human", human),
+                ("pretty", pretty),
+            ]
+            if arg
+        }
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "GET", __path, params=__query, headers=__headers
