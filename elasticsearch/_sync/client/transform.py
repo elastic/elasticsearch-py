@@ -569,7 +569,7 @@ class TransformClient(NamespacedClient):
         human: t.Optional[bool] = None,
         meta: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
-        retention_policy: t.Optional[t.Mapping[str, t.Any]] = None,
+        retention_policy: t.Optional[t.Union[None, t.Mapping[str, t.Any]]] = None,
         settings: t.Optional[t.Mapping[str, t.Any]] = None,
         source: t.Optional[t.Mapping[str, t.Any]] = None,
         sync: t.Optional[t.Mapping[str, t.Any]] = None,
