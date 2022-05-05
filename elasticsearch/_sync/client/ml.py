@@ -2144,6 +2144,7 @@ class MlClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
+        inference_config: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union[int, str]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -2156,6 +2157,8 @@ class MlClient(NamespacedClient):
         :param docs: An array of objects to pass to the model for inference. The objects
             should contain a field matching your configured trained model input. Typically,
             the field name is `text_field`. Currently, only a single value is allowed.
+        :param inference_config: The inference configuration updates to apply on the
+            API call
         :param timeout: Controls the amount of time to wait for inference results.
         """
         if model_id in SKIP_IN_PATH:
@@ -2173,6 +2176,8 @@ class MlClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if inference_config is not None:
+            __body["inference_config"] = inference_config
         if pretty is not None:
             __query["pretty"] = pretty
         if timeout is not None:

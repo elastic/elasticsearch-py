@@ -153,6 +153,7 @@ class EnrichClient(NamespacedClient):
         human: t.Optional[bool] = None,
         match: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
+        range: t.Optional[t.Mapping[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Creates a new enrich policy.
@@ -162,6 +163,7 @@ class EnrichClient(NamespacedClient):
         :param name: The name of the enrich policy
         :param geo_match:
         :param match:
+        :param range:
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -180,6 +182,8 @@ class EnrichClient(NamespacedClient):
             __body["match"] = match
         if pretty is not None:
             __query["pretty"] = pretty
+        if range is not None:
+            __body["range"] = range
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
