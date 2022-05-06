@@ -2134,11 +2134,13 @@ class MlClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=True,
     )
-    async def infer_trained_model_deployment(
+    async def infer_trained_model(
         self,
         *,
         model_id: str,
-        docs: t.Union[t.List[t.Mapping[str, str]], t.Tuple[t.Mapping[str, str], ...]],
+        docs: t.Union[
+            t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]
+        ],
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
@@ -2151,12 +2153,13 @@ class MlClient(NamespacedClient):
         """
         Evaluate a trained model.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/infer-trained-model-deployment.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/infer-trained-model.html>`_
 
         :param model_id: The unique identifier of the trained model.
         :param docs: An array of objects to pass to the model for inference. The objects
-            should contain a field matching your configured trained model input. Typically,
-            the field name is `text_field`. Currently, only a single value is allowed.
+            should contain a fields matching your configured trained model input. Typically,
+            for NLP models, the field name is `text_field`. Currently, for NLP models,
+            only a single value is allowed.
         :param inference_config: The inference configuration updates to apply on the
             API call
         :param timeout: Controls the amount of time to wait for inference results.
@@ -2165,7 +2168,7 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'model_id'")
         if docs is None:
             raise ValueError("Empty value passed for parameter 'docs'")
-        __path = f"/_ml/trained_models/{_quote(model_id)}/deployment/_infer"
+        __path = f"/_ml/trained_models/{_quote(model_id)}/_infer"
         __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
         if docs is not None:
