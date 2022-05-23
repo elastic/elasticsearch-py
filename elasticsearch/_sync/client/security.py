@@ -1508,7 +1508,7 @@ class SecurityClient(NamespacedClient):
     def has_privileges(
         self,
         *,
-        user: t.Optional[t.Union[None, str]] = None,
+        user: t.Optional[str] = None,
         application: t.Optional[
             t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
         ] = None,
