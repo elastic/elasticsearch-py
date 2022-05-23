@@ -3620,10 +3620,10 @@ class MlClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        inference_threads: t.Optional[int] = None,
-        model_threads: t.Optional[int] = None,
+        number_of_allocations: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
         queue_capacity: t.Optional[int] = None,
+        threads_per_allocation: t.Optional[int] = None,
         timeout: t.Optional[t.Union[int, str]] = None,
         wait_for: t.Optional[
             t.Union["t.Literal['fully_allocated', 'started', 'starting']", str]
@@ -3636,16 +3636,22 @@ class MlClient(NamespacedClient):
 
         :param model_id: The unique identifier of the trained model. Currently, only
             PyTorch models are supported.
-        :param inference_threads: Specifies the number of threads that are used by the
-            inference process. If you increase this value, inference speed generally
-            increases. However, the actual number of threads is limited by the number
-            of available CPU cores.
-        :param model_threads: Specifies the number of threads that are used when sending
-            inference requests to the model. If you increase this value, throughput generally
-            increases.
+        :param number_of_allocations: The number of model allocations on each node where
+            the model is deployed. All allocations on a node share the same copy of the
+            model in memory but use a separate set of threads to evaluate the model.
+            Increasing this value generally increases the throughput. If this setting
+            is greater than the number of hardware threads it will automatically be changed
+            to a value less than the number of hardware threads.
         :param queue_capacity: Specifies the number of inference requests that are allowed
             in the queue. After the number of requests exceeds this value, new requests
             are rejected with a 429 error.
+        :param threads_per_allocation: Sets the number of threads used by each model
+            allocation during inference. This generally increases the inference speed.
+            The inference process is a compute-bound process; any number greater than
+            the number of available hardware threads on the machine does not increase
+            the inference speed. If this setting is greater than the number of hardware
+            threads it will automatically be changed to a value less than the number
+            of hardware threads.
         :param timeout: Specifies the amount of time to wait for the model to deploy.
         :param wait_for: Specifies the allocation status to wait for before returning.
         """
@@ -3659,14 +3665,14 @@ class MlClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if inference_threads is not None:
-            __query["inference_threads"] = inference_threads
-        if model_threads is not None:
-            __query["model_threads"] = model_threads
+        if number_of_allocations is not None:
+            __query["number_of_allocations"] = number_of_allocations
         if pretty is not None:
             __query["pretty"] = pretty
         if queue_capacity is not None:
             __query["queue_capacity"] = queue_capacity
+        if threads_per_allocation is not None:
+            __query["threads_per_allocation"] = threads_per_allocation
         if timeout is not None:
             __query["timeout"] = timeout
         if wait_for is not None:
