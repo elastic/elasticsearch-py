@@ -17,11 +17,11 @@
 
 import json
 from datetime import datetime, timedelta
+from unittest.mock import call, patch
 
 import pytest
 from dateutil import tz
 from elastic_transport import ApiResponseMeta, ObjectApiResponse
-from mock import call, patch
 
 from elasticsearch import ApiError, helpers
 from elasticsearch.helpers import ScanError
