@@ -17,10 +17,10 @@
 
 import asyncio
 from datetime import datetime, timedelta, timezone
+from unittest.mock import MagicMock, call, patch
 
 import pytest
 from elastic_transport import ApiResponseMeta, ObjectApiResponse
-from mock import MagicMock, call, patch
 
 from elasticsearch import helpers
 from elasticsearch.exceptions import ApiError

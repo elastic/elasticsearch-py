@@ -18,8 +18,8 @@
 
 import threading
 import time
+from unittest import mock
 
-import mock
 import pytest
 
 from elasticsearch import Elasticsearch, helpers
