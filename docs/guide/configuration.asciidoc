@@ -374,17 +374,17 @@ You can define custom serializers via the `serializers` parameter:
 ------------------------------------
 from elasticsearch import Elasticsearch, JsonSerializer
 
-class JsonSetSerializer(Jsonserializer):
+class JsonSetSerializer(JsonSerializer):
     """Custom JSON serializer that handles Python sets"""
-    def default(value: Any) -> Any:
-        if isinstance(value, set):
-            return list(value)
-        return super().default(value)
+    def default(self, data: Any) -> Any:
+        if isinstance(data, set):
+            return list(data)
+        return super().default(data)
 
 es = Elasticsearch(
     ...,
     # Serializers are a mapping of 'mimetype' to Serializer class.
-    serializers={"application/json": JsonSetSerializer}
+    serializers={"application/json": JsonSetSerializer()}
 )
 ------------------------------------
 
