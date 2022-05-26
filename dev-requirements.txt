@@ -5,7 +5,6 @@ pytest
 pytest-cov
 pytest-asyncio
 coverage
-mock
 sphinx
 jinja2
 python-dateutil
