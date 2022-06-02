@@ -202,6 +202,78 @@ class CatClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    def component_templates(
+        self,
+        *,
+        name: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        format: t.Optional[str] = None,
+        h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        help: t.Optional[bool] = None,
+        human: t.Optional[bool] = None,
+        local: t.Optional[bool] = None,
+        master_timeout: t.Optional[t.Union[int, str]] = None,
+        pretty: t.Optional[bool] = None,
+        s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        v: t.Optional[bool] = None,
+    ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
+        """
+        Returns information about existing component_templates templates.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.2/cat-compoentn-templates.html>`_
+
+        :param name: A pattern that returned component template names must match
+        :param format: Specifies the format to return the columnar data in, can be set
+            to `text`, `json`, `cbor`, `yaml`, or `smile`.
+        :param h: List of columns to appear in the response. Supports simple wildcards.
+        :param help: When set to `true` will output available columns. This option can't
+            be combined with any other query string option.
+        :param local: If `true`, the request computes the list of selected nodes from
+            the local cluster state. If `false` the list of selected nodes are computed
+            from the cluster state of the master node. In both cases the coordinating
+            node will send requests for further information to each selected node.
+        :param master_timeout: Period to wait for a connection to the master node.
+        :param s: List of columns that determine how the table should be sorted. Sorting
+            defaults to ascending and can be changed by setting `:asc` or `:desc` as
+            a suffix to the column name.
+        :param v: When set to `true` will enable verbose output.
+        """
+        if name not in SKIP_IN_PATH:
+            __path = f"/_cat/component_templates/{_quote(name)}"
+        else:
+            __path = "/_cat/component_templates"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if format is not None:
+            __query["format"] = format
+        if h is not None:
+            __query["h"] = h
+        if help is not None:
+            __query["help"] = help
+        if human is not None:
+            __query["human"] = human
+        if local is not None:
+            __query["local"] = local
+        if master_timeout is not None:
+            __query["master_timeout"] = master_timeout
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if s is not None:
+            __query["s"] = s
+        if v is not None:
+            __query["v"] = v
+        __headers = {"accept": "text/plain,application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
+
+    @_rewrite_parameters()
     def count(
         self,
         *,
