@@ -189,6 +189,7 @@ class IngestClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
+        if_version: t.Optional[int] = None,
         master_timeout: t.Optional[t.Union[int, str]] = None,
         meta: t.Optional[t.Mapping[str, t.Any]] = None,
         on_failure: t.Optional[
@@ -208,6 +209,8 @@ class IngestClient(NamespacedClient):
 
         :param id: ID of the ingest pipeline to create or update.
         :param description: Description of the ingest pipeline.
+        :param if_version: Required version for optimistic concurrency control for pipeline
+            updates
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
@@ -240,6 +243,8 @@ class IngestClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if if_version is not None:
+            __query["if_version"] = if_version
         if master_timeout is not None:
             __query["master_timeout"] = master_timeout
         if meta is not None:

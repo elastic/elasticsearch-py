@@ -1147,7 +1147,7 @@ class Elasticsearch(BaseClient):
             t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
         ] = None,
         slice: t.Optional[t.Mapping[str, t.Any]] = None,
-        slices: t.Optional[int] = None,
+        slices: t.Optional[t.Union[int, t.Union["t.Literal['auto']", str]]] = None,
         sort: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
         stats: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
         terminate_after: t.Optional[int] = None,
@@ -2527,6 +2527,7 @@ class Elasticsearch(BaseClient):
         pre_filter_shard_size: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
+        routing: t.Optional[str] = None,
         search_type: t.Optional[
             t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
         ] = None,
@@ -2566,6 +2567,8 @@ class Elasticsearch(BaseClient):
             filters are mandatory to match but the shard bounds and the query are disjoint.
         :param rest_total_hits_as_int: If true, hits.total are returned as an integer
             in the response. Defaults to false, which returns an object.
+        :param routing: Custom routing value used to route search operations to a specific
+            shard.
         :param search_type: Indicates whether global term and document frequencies should
             be used when scoring returned documents.
         :param typed_keys: Specifies whether aggregation and suggester names should be
@@ -2604,6 +2607,8 @@ class Elasticsearch(BaseClient):
             __query["pretty"] = pretty
         if rest_total_hits_as_int is not None:
             __query["rest_total_hits_as_int"] = rest_total_hits_as_int
+        if routing is not None:
+            __query["routing"] = routing
         if search_type is not None:
             __query["search_type"] = search_type
         if typed_keys is not None:
@@ -3034,7 +3039,7 @@ class Elasticsearch(BaseClient):
         script: t.Optional[t.Mapping[str, t.Any]] = None,
         scroll: t.Optional[t.Union[int, str]] = None,
         size: t.Optional[int] = None,
-        slices: t.Optional[int] = None,
+        slices: t.Optional[t.Union[int, t.Union["t.Literal['auto']", str]]] = None,
         timeout: t.Optional[t.Union[int, str]] = None,
         wait_for_active_shards: t.Optional[
             t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
@@ -4528,7 +4533,7 @@ class Elasticsearch(BaseClient):
             t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
         ] = None,
         slice: t.Optional[t.Mapping[str, t.Any]] = None,
-        slices: t.Optional[int] = None,
+        slices: t.Optional[t.Union[int, t.Union["t.Literal['auto']", str]]] = None,
         sort: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
         stats: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
         terminate_after: t.Optional[int] = None,
