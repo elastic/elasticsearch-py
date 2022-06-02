@@ -1748,6 +1748,58 @@ class MlClient(NamespacedClient):
             "GET", __path, params=__query, headers=__headers
         )
 
+    @_rewrite_parameters()
+    def get_model_snapshot_upgrade_stats(
+        self,
+        *,
+        job_id: str,
+        snapshot_id: t.Optional[str] = None,
+        allow_no_match: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Gets stats for anomaly detection job model snapshot upgrades that are in progress.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-job-model-snapshot-upgrade-stats.html>`_
+
+        :param job_id: Identifier for the anomaly detection job.
+        :param snapshot_id: A numerical character string that uniquely identifies the
+            model snapshot. You can get information for multiple snapshots by using a
+            comma-separated list or a wildcard expression. You can get all snapshots
+            by using `_all`, by specifying `*` as the snapshot ID, or by omitting the
+            snapshot ID.
+        :param allow_no_match: Specifies what to do when the request: - Contains wildcard
+            expressions and there are no jobs that match. - Contains the _all string
+            or no identifiers and there are no matches. - Contains wildcard expressions
+            and there are only partial matches. The default value is true, which returns
+            an empty jobs array when there are no matches and the subset of results when
+            there are partial matches. If this parameter is false, the request returns
+            a 404 status code when there are no matches or only partial matches.
+        """
+        if job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'job_id'")
+        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots/{_quote(snapshot_id)}/_upgrade/_stats"
+        __query: t.Dict[str, t.Any] = {}
+        if allow_no_match is not None:
+            __query["allow_no_match"] = allow_no_match
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
+
     @_rewrite_parameters(
         body_fields=True,
         parameter_aliases={"from": "from_"},
