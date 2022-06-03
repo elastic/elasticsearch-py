@@ -630,7 +630,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Allows to perform multiple index/update/delete operations in a single request.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-bulk.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/docs-bulk.html>`_
 
         :param operations:
         :param index: Default index for items which don't provide one
@@ -715,7 +715,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Explicitly clears the search context for a scroll.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/clear-scroll-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/clear-scroll-api.html>`_
 
         :param scroll_id:
         """
@@ -758,7 +758,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Close a point in time
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/point-in-time-api.html>`_
 
         :param id:
         """
@@ -835,7 +835,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Returns number of documents matching a query.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-count.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/search-count.html>`_
 
         :param index: A comma-separated list of indices to restrict the results
         :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
@@ -952,7 +952,7 @@ class AsyncElasticsearch(BaseClient):
         Creates a new document in the index. Returns a 409 response when a document with
         a same ID already exists in the index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-index_.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/docs-index_.html>`_
 
         :param index: The name of the index
         :param id: Document ID
@@ -1037,7 +1037,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Removes a document from the index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-delete.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/docs-delete.html>`_
 
         :param index: The name of the index
         :param id: The document ID
@@ -1149,7 +1149,7 @@ class AsyncElasticsearch(BaseClient):
             t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
         ] = None,
         slice: t.Optional[t.Mapping[str, t.Any]] = None,
-        slices: t.Optional[int] = None,
+        slices: t.Optional[t.Union[int, t.Union["t.Literal['auto']", str]]] = None,
         sort: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
         stats: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
         terminate_after: t.Optional[int] = None,
@@ -1163,7 +1163,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Deletes documents matching the provided query.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-delete-by-query.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/docs-delete-by-query.html>`_
 
         :param index: A comma-separated list of index names to search; use `_all` or
             empty string to perform the operation on all indices
@@ -1327,7 +1327,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Changes the number of requests per second for a particular Delete By Query operation.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-delete-by-query.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/docs-delete-by-query.html>`_
 
         :param task_id: The task id to rethrottle
         :param requests_per_second: The throttle to set on this request in floating sub-requests
@@ -1369,7 +1369,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Deletes a script.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/modules-scripting.html>`_
 
         :param id: Script ID
         :param master_timeout: Specify timeout for connection to master
@@ -1438,7 +1438,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Returns information about whether a document exists in an index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-get.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/docs-get.html>`_
 
         :param index: The name of the index
         :param id: The document ID
@@ -1538,7 +1538,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Returns information about whether a document source exists in an index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-get.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/docs-get.html>`_
 
         :param index: The name of the index
         :param id: The document ID
@@ -1639,7 +1639,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Returns information about why a specific matches (or doesn't match) a query.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-explain.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/search-explain.html>`_
 
         :param index: The name of the index
         :param id: The document ID
@@ -1769,7 +1769,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Returns the information about the capabilities of fields among multiple indices.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-field-caps.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/search-field-caps.html>`_
 
         :param fields: Comma-separated list of fields to retrieve capabilities for. Wildcard
             (`*`) expressions are supported.
@@ -1883,7 +1883,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Returns a document.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-get.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/docs-get.html>`_
 
         :param index: Name of the index that contains the document.
         :param id: Unique identifier of the document.
@@ -1961,7 +1961,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Returns a script.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/modules-scripting.html>`_
 
         :param id: Script ID
         :param master_timeout: Specify timeout for connection to master
@@ -1999,7 +1999,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Returns all script contexts.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/painless/master/painless-contexts.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/painless/8.3/painless-contexts.html>`_
         """
         __path = "/_script_context"
         __query: t.Dict[str, t.Any] = {}
@@ -2030,7 +2030,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Returns available script types, languages and contexts
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/modules-scripting.html>`_
         """
         __path = "/_script_language"
         __query: t.Dict[str, t.Any] = {}
@@ -2083,7 +2083,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Returns the source of a document.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-get.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/docs-get.html>`_
 
         :param index: Name of the index that contains the document.
         :param id: Unique identifier of the document.
@@ -2172,7 +2172,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Creates or updates a document in an index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-index_.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/docs-index_.html>`_
 
         :param index: The name of the index
         :param document:
@@ -2263,7 +2263,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Returns basic information about the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/index.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/index.html>`_
         """
         __path = "/"
         __query: t.Dict[str, t.Any] = {}
@@ -2318,7 +2318,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Performs a kNN search.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/search-search.html>`_
 
         :param index: A comma-separated list of index names to search; use `_all` or
             to perform the operation on all indices
@@ -2421,7 +2421,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Allows to get multiple documents in one request.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-multi-get.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/docs-multi-get.html>`_
 
         :param index: Name of the index to retrieve documents from when `ids` are specified,
             or when a document in the `docs` array does not specify an index.
@@ -2529,6 +2529,7 @@ class AsyncElasticsearch(BaseClient):
         pre_filter_shard_size: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
+        routing: t.Optional[str] = None,
         search_type: t.Optional[
             t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
         ] = None,
@@ -2537,7 +2538,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Allows to execute several search operations in one request.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-multi-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/search-multi-search.html>`_
 
         :param searches:
         :param index: Comma-separated list of data streams, indices, and index aliases
@@ -2568,6 +2569,8 @@ class AsyncElasticsearch(BaseClient):
             filters are mandatory to match but the shard bounds and the query are disjoint.
         :param rest_total_hits_as_int: If true, hits.total are returned as an integer
             in the response. Defaults to false, which returns an object.
+        :param routing: Custom routing value used to route search operations to a specific
+            shard.
         :param search_type: Indicates whether global term and document frequencies should
             be used when scoring returned documents.
         :param typed_keys: Specifies whether aggregation and suggester names should be
@@ -2606,6 +2609,8 @@ class AsyncElasticsearch(BaseClient):
             __query["pretty"] = pretty
         if rest_total_hits_as_int is not None:
             __query["rest_total_hits_as_int"] = rest_total_hits_as_int
+        if routing is not None:
+            __query["routing"] = routing
         if search_type is not None:
             __query["search_type"] = search_type
         if typed_keys is not None:
@@ -2646,7 +2651,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Allows to execute several search template operations in one request.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-multi-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/search-multi-search.html>`_
 
         :param search_templates:
         :param index: A comma-separated list of index names to use as default
@@ -2730,7 +2735,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Returns multiple termvectors in one request.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-multi-termvectors.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/docs-multi-termvectors.html>`_
 
         :param index: The index in which the document resides.
         :param docs:
@@ -2825,7 +2830,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Open a point in time that can be used in subsequent searches
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/point-in-time-api.html>`_
 
         :param index: A comma-separated list of index names to open point in time; use
             `_all` or empty string to perform the operation on all indices
@@ -2877,7 +2882,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Creates or updates a script.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/modules-scripting.html>`_
 
         :param id: Script ID
         :param script:
@@ -2959,7 +2964,7 @@ class AsyncElasticsearch(BaseClient):
         Allows to evaluate the quality of ranked search results over a set of typical
         search queries
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-rank-eval.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/search-rank-eval.html>`_
 
         :param index: Comma-separated list of data streams, indices, and index aliases
             used to limit the request. Wildcard (`*`) expressions are supported. To target
@@ -3036,7 +3041,7 @@ class AsyncElasticsearch(BaseClient):
         script: t.Optional[t.Mapping[str, t.Any]] = None,
         scroll: t.Optional[t.Union[int, str]] = None,
         size: t.Optional[int] = None,
-        slices: t.Optional[int] = None,
+        slices: t.Optional[t.Union[int, t.Union["t.Literal['auto']", str]]] = None,
         timeout: t.Optional[t.Union[int, str]] = None,
         wait_for_active_shards: t.Optional[
             t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
@@ -3048,7 +3053,7 @@ class AsyncElasticsearch(BaseClient):
         source documents by a query, changing the destination index settings, or fetching
         the documents from a remote cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-reindex.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/docs-reindex.html>`_
 
         :param dest:
         :param source:
@@ -3137,7 +3142,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Changes the number of requests per second for a particular Reindex operation.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-reindex.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/docs-reindex.html>`_
 
         :param task_id: The task id to rethrottle
         :param requests_per_second: The throttle to set on this request in floating sub-requests
@@ -3183,7 +3188,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Allows to use the Mustache language to pre-render a search definition.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/render-search-template-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/render-search-template-api.html>`_
 
         :param id: The id of the stored search template
         :param file:
@@ -3238,7 +3243,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Allows an arbitrary script to be executed and a result to be returned
 
-        `<https://www.elastic.co/guide/en/elasticsearch/painless/master/painless-execute-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/painless/8.3/painless-execute-api.html>`_
 
         :param context:
         :param context_setup:
@@ -3289,7 +3294,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Allows to retrieve a large numbers of results from a single search request.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-request-body.html#request-body-search-scroll>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/search-request-body.html#request-body-search-scroll>`_
 
         :param scroll_id: Scroll ID of the search.
         :param rest_total_hits_as_int: If true, the API response’s hit.total property
@@ -3472,7 +3477,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Returns results matching a query.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/search-search.html>`_
 
         :param index: A comma-separated list of index names to search; use `_all` or
             empty string to perform the operation on all indices
@@ -3806,7 +3811,7 @@ class AsyncElasticsearch(BaseClient):
         Searches a vector tile for geospatial values. Returns results as a binary Mapbox
         vector tile.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-vector-tile-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/search-vector-tile-api.html>`_
 
         :param index: Comma-separated list of data streams, indices, or aliases to search
         :param field: Field containing geospatial data to return
@@ -3947,7 +3952,7 @@ class AsyncElasticsearch(BaseClient):
         Returns information about the indices and shards that a search request would
         be executed against.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-shards.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/search-shards.html>`_
 
         :param index: A comma-separated list of index names to search; use `_all` or
             empty string to perform the operation on all indices
@@ -4047,7 +4052,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Allows to use the Mustache language to pre-render a search definition.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-template.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/search-template.html>`_
 
         :param index: Comma-separated list of data streams, indices, and aliases to search.
             Supports wildcards (*).
@@ -4158,7 +4163,7 @@ class AsyncElasticsearch(BaseClient):
         the provided string. It is designed for low-latency look-ups used in auto-complete
         scenarios.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-terms-enum.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/search-terms-enum.html>`_
 
         :param index: Comma-separated list of data streams, indices, and index aliases
             to search. Wildcard (*) expressions are supported.
@@ -4252,7 +4257,7 @@ class AsyncElasticsearch(BaseClient):
         Returns information and statistics about terms in the fields of a particular
         document.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-termvectors.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/docs-termvectors.html>`_
 
         :param index: The index in which the document resides.
         :param id: The id of the document, when not specified a doc param should be supplied.
@@ -4379,7 +4384,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Updates a document with a script or partial document.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-update.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/docs-update.html>`_
 
         :param index: The name of the index
         :param id: Document ID
@@ -4530,7 +4535,7 @@ class AsyncElasticsearch(BaseClient):
             t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
         ] = None,
         slice: t.Optional[t.Mapping[str, t.Any]] = None,
-        slices: t.Optional[int] = None,
+        slices: t.Optional[t.Union[int, t.Union["t.Literal['auto']", str]]] = None,
         sort: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
         stats: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
         terminate_after: t.Optional[int] = None,
@@ -4546,7 +4551,7 @@ class AsyncElasticsearch(BaseClient):
         Performs an update on every document in the index without changing the source,
         for example to pick up a mapping change.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-update-by-query.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/docs-update-by-query.html>`_
 
         :param index: A comma-separated list of index names to search; use `_all` or
             empty string to perform the operation on all indices
@@ -4722,7 +4727,7 @@ class AsyncElasticsearch(BaseClient):
         """
         Changes the number of requests per second for a particular Update By Query operation.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-update-by-query.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/docs-update-by-query.html>`_
 
         :param task_id: The task id to rethrottle
         :param requests_per_second: The throttle to set on this request in floating sub-requests
