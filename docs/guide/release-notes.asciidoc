@@ -1,5 +1,6 @@
 [[release-notes]]
 == Release notes
+
 * <<rn-8-2-3>>
 * <<rn-8-2-2>>
 * <<rn-8-2-1>>
