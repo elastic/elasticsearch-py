@@ -1516,13 +1516,13 @@ class SecurityClient(NamespacedClient):
             t.Union[
                 t.List[
                     t.Union[
-                        "t.Literal['all', 'cancel_task', 'create_snapshot', 'grant_api_key', 'manage', 'manage_api_key', 'manage_ccr', 'manage_ilm', 'manage_index_templates', 'manage_ingest_pipelines', 'manage_logstash_pipelines', 'manage_ml', 'manage_oidc', 'manage_own_api_key', 'manage_pipeline', 'manage_rollup', 'manage_saml', 'manage_security', 'manage_service_account', 'manage_slm', 'manage_token', 'manage_transform', 'manage_watcher', 'monitor', 'monitor_ml', 'monitor_rollup', 'monitor_snapshot', 'monitor_text_structure', 'monitor_transform', 'monitor_watcher', 'read_ccr', 'read_ilm', 'read_pipeline', 'read_slm', 'transport_client']",
+                        "t.Literal['all', 'cancel_task', 'create_snapshot', 'grant_api_key', 'manage', 'manage_api_key', 'manage_ccr', 'manage_enrich', 'manage_ilm', 'manage_index_templates', 'manage_ingest_pipelines', 'manage_logstash_pipelines', 'manage_ml', 'manage_oidc', 'manage_own_api_key', 'manage_pipeline', 'manage_rollup', 'manage_saml', 'manage_security', 'manage_service_account', 'manage_slm', 'manage_token', 'manage_transform', 'manage_watcher', 'monitor', 'monitor_ml', 'monitor_rollup', 'monitor_snapshot', 'monitor_text_structure', 'monitor_transform', 'monitor_watcher', 'read_ccr', 'read_ilm', 'read_pipeline', 'read_slm', 'transport_client']",
                         str,
                     ]
                 ],
                 t.Tuple[
                     t.Union[
-                        "t.Literal['all', 'cancel_task', 'create_snapshot', 'grant_api_key', 'manage', 'manage_api_key', 'manage_ccr', 'manage_ilm', 'manage_index_templates', 'manage_ingest_pipelines', 'manage_logstash_pipelines', 'manage_ml', 'manage_oidc', 'manage_own_api_key', 'manage_pipeline', 'manage_rollup', 'manage_saml', 'manage_security', 'manage_service_account', 'manage_slm', 'manage_token', 'manage_transform', 'manage_watcher', 'monitor', 'monitor_ml', 'monitor_rollup', 'monitor_snapshot', 'monitor_text_structure', 'monitor_transform', 'monitor_watcher', 'read_ccr', 'read_ilm', 'read_pipeline', 'read_slm', 'transport_client']",
+                        "t.Literal['all', 'cancel_task', 'create_snapshot', 'grant_api_key', 'manage', 'manage_api_key', 'manage_ccr', 'manage_enrich', 'manage_ilm', 'manage_index_templates', 'manage_ingest_pipelines', 'manage_logstash_pipelines', 'manage_ml', 'manage_oidc', 'manage_own_api_key', 'manage_pipeline', 'manage_rollup', 'manage_saml', 'manage_security', 'manage_service_account', 'manage_slm', 'manage_token', 'manage_transform', 'manage_watcher', 'monitor', 'monitor_ml', 'monitor_rollup', 'monitor_snapshot', 'monitor_text_structure', 'monitor_transform', 'monitor_watcher', 'read_ccr', 'read_ilm', 'read_pipeline', 'read_slm', 'transport_client']",
                         str,
                     ],
                     ...,
@@ -1746,13 +1746,13 @@ class SecurityClient(NamespacedClient):
             t.Union[
                 t.List[
                     t.Union[
-                        "t.Literal['all', 'cancel_task', 'create_snapshot', 'grant_api_key', 'manage', 'manage_api_key', 'manage_ccr', 'manage_ilm', 'manage_index_templates', 'manage_ingest_pipelines', 'manage_logstash_pipelines', 'manage_ml', 'manage_oidc', 'manage_own_api_key', 'manage_pipeline', 'manage_rollup', 'manage_saml', 'manage_security', 'manage_service_account', 'manage_slm', 'manage_token', 'manage_transform', 'manage_watcher', 'monitor', 'monitor_ml', 'monitor_rollup', 'monitor_snapshot', 'monitor_text_structure', 'monitor_transform', 'monitor_watcher', 'read_ccr', 'read_ilm', 'read_pipeline', 'read_slm', 'transport_client']",
+                        "t.Literal['all', 'cancel_task', 'create_snapshot', 'grant_api_key', 'manage', 'manage_api_key', 'manage_ccr', 'manage_enrich', 'manage_ilm', 'manage_index_templates', 'manage_ingest_pipelines', 'manage_logstash_pipelines', 'manage_ml', 'manage_oidc', 'manage_own_api_key', 'manage_pipeline', 'manage_rollup', 'manage_saml', 'manage_security', 'manage_service_account', 'manage_slm', 'manage_token', 'manage_transform', 'manage_watcher', 'monitor', 'monitor_ml', 'monitor_rollup', 'monitor_snapshot', 'monitor_text_structure', 'monitor_transform', 'monitor_watcher', 'read_ccr', 'read_ilm', 'read_pipeline', 'read_slm', 'transport_client']",
                         str,
                     ]
                 ],
                 t.Tuple[
                     t.Union[
-                        "t.Literal['all', 'cancel_task', 'create_snapshot', 'grant_api_key', 'manage', 'manage_api_key', 'manage_ccr', 'manage_ilm', 'manage_index_templates', 'manage_ingest_pipelines', 'manage_logstash_pipelines', 'manage_ml', 'manage_oidc', 'manage_own_api_key', 'manage_pipeline', 'manage_rollup', 'manage_saml', 'manage_security', 'manage_service_account', 'manage_slm', 'manage_token', 'manage_transform', 'manage_watcher', 'monitor', 'monitor_ml', 'monitor_rollup', 'monitor_snapshot', 'monitor_text_structure', 'monitor_transform', 'monitor_watcher', 'read_ccr', 'read_ilm', 'read_pipeline', 'read_slm', 'transport_client']",
+                        "t.Literal['all', 'cancel_task', 'create_snapshot', 'grant_api_key', 'manage', 'manage_api_key', 'manage_ccr', 'manage_enrich', 'manage_ilm', 'manage_index_templates', 'manage_ingest_pipelines', 'manage_logstash_pipelines', 'manage_ml', 'manage_oidc', 'manage_own_api_key', 'manage_pipeline', 'manage_rollup', 'manage_saml', 'manage_security', 'manage_service_account', 'manage_slm', 'manage_token', 'manage_transform', 'manage_watcher', 'monitor', 'monitor_ml', 'monitor_rollup', 'monitor_snapshot', 'monitor_text_structure', 'monitor_transform', 'monitor_watcher', 'read_ccr', 'read_ilm', 'read_pipeline', 'read_slm', 'transport_client']",
                         str,
                     ],
                     ...,
@@ -2447,7 +2447,6 @@ class SecurityClient(NamespacedClient):
         self,
         *,
         uid: str,
-        access: t.Optional[t.Mapping[str, t.Any]] = None,
         data: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
@@ -2456,6 +2455,7 @@ class SecurityClient(NamespacedClient):
         human: t.Optional[bool] = None,
         if_primary_term: t.Optional[int] = None,
         if_seq_no: t.Optional[int] = None,
+        labels: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[
             t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
@@ -2467,14 +2467,14 @@ class SecurityClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.3/security-api-update-user-profile-data.html>`_
 
         :param uid: A unique identifier for the user profile.
-        :param access: Searchable data that you want to associate with the user profile.
-            This field supports a nested data structure.
         :param data: Non-searchable data that you want to associate with the user profile.
             This field supports a nested data structure.
         :param if_primary_term: Only perform the operation if the document has this primary
             term.
         :param if_seq_no: Only perform the operation if the document has this sequence
             number.
+        :param labels: Searchable data that you want to associate with the user profile.
+            This field supports a nested data structure.
         :param refresh: If 'true', Elasticsearch refreshes the affected shards to make
             this operation visible to search, if 'wait_for' then wait for a refresh to
             make this operation visible to search, if 'false' do nothing with refreshes.
@@ -2484,8 +2484,6 @@ class SecurityClient(NamespacedClient):
         __path = f"/_security/profile/{_quote(uid)}/_data"
         __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if access is not None:
-            __body["access"] = access
         if data is not None:
             __body["data"] = data
         if error_trace is not None:
@@ -2498,6 +2496,8 @@ class SecurityClient(NamespacedClient):
             __query["if_primary_term"] = if_primary_term
         if if_seq_no is not None:
             __query["if_seq_no"] = if_seq_no
+        if labels is not None:
+            __body["labels"] = labels
         if pretty is not None:
             __query["pretty"] = pretty
         if refresh is not None:
