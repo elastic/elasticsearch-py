@@ -438,13 +438,16 @@ class SecurityClient(NamespacedClient):
         *,
         namespace: str,
         service: str,
-        name: str,
+        name: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        refresh: t.Optional[
+            t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
+        ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Creates a service account token for access without requiring basic authentication.
@@ -454,13 +457,14 @@ class SecurityClient(NamespacedClient):
         :param namespace: An identifier for the namespace
         :param service: An identifier for the service name
         :param name: An identifier for the token name
+        :param refresh: If `true` then refresh the affected shards to make this operation
+            visible to search, if `wait_for` (the default) then wait for a refresh to
+            make this operation visible to search, if `false` then do nothing with refreshes.
         """
         if namespace in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'namespace'")
         if service in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'service'")
-        if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'name'")
         if (
             namespace not in SKIP_IN_PATH
             and service not in SKIP_IN_PATH
@@ -482,6 +486,8 @@ class SecurityClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if refresh is not None:
+            __query["refresh"] = refresh
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             __method, __path, params=__query, headers=__headers
