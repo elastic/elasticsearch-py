@@ -34,9 +34,11 @@ class SnapshotClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Removes stale data from repository.
@@ -83,9 +85,11 @@ class SnapshotClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Clones indices from one snapshot into another snapshot in the same repository.
@@ -148,7 +152,9 @@ class SnapshotClient(NamespacedClient):
         indices: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         metadata: t.Optional[t.Mapping[str, t.Any]] = None,
         partial: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -244,10 +250,12 @@ class SnapshotClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         repository: t.Optional[t.Mapping[str, t.Any]] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         verify: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -308,7 +316,9 @@ class SnapshotClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -351,9 +361,11 @@ class SnapshotClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Deletes a repository.
@@ -402,7 +414,9 @@ class SnapshotClient(NamespacedClient):
         ignore_unavailable: t.Optional[bool] = None,
         include_repository: t.Optional[bool] = None,
         index_details: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         offset: t.Optional[int] = None,
         order: t.Optional[t.Union["t.Literal['asc', 'desc']", str]] = None,
         pretty: t.Optional[bool] = None,
@@ -516,7 +530,9 @@ class SnapshotClient(NamespacedClient):
         ] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -574,7 +590,9 @@ class SnapshotClient(NamespacedClient):
         indices: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         partial: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         rename_pattern: t.Optional[str] = None,
@@ -661,7 +679,9 @@ class SnapshotClient(NamespacedClient):
         ] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -709,9 +729,11 @@ class SnapshotClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Verifies a repository.

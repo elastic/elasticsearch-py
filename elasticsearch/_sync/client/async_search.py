@@ -71,10 +71,12 @@ class AsyncSearchClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        keep_alive: t.Optional[t.Union[int, str]] = None,
+        keep_alive: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         pretty: t.Optional[bool] = None,
         typed_keys: t.Optional[bool] = None,
-        wait_for_completion_timeout: t.Optional[t.Union[int, str]] = None,
+        wait_for_completion_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves the results of a previously submitted async search request given its
@@ -211,7 +213,7 @@ class AsyncSearchClient(NamespacedClient):
         indices_boost: t.Optional[
             t.Union[t.List[t.Mapping[str, float]], t.Tuple[t.Mapping[str, float], ...]]
         ] = None,
-        keep_alive: t.Optional[t.Union[int, str]] = None,
+        keep_alive: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         keep_on_completion: t.Optional[bool] = None,
         lenient: t.Optional[bool] = None,
         max_concurrent_shard_requests: t.Optional[int] = None,
@@ -249,7 +251,7 @@ class AsyncSearchClient(NamespacedClient):
             ]
         ] = None,
         script_fields: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
-        scroll: t.Optional[t.Union[int, str]] = None,
+        scroll: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         search_after: t.Optional[
             t.Union[
                 t.List[t.Union[None, float, int, str]],
@@ -295,7 +297,9 @@ class AsyncSearchClient(NamespacedClient):
         track_total_hits: t.Optional[t.Union[bool, int]] = None,
         typed_keys: t.Optional[bool] = None,
         version: t.Optional[bool] = None,
-        wait_for_completion_timeout: t.Optional[t.Union[int, str]] = None,
+        wait_for_completion_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Executes a search request asynchronously.

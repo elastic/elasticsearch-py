@@ -36,7 +36,7 @@ class FleetClient(NamespacedClient):
         ] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         wait_for_advance: t.Optional[bool] = None,
         wait_for_index: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -330,7 +330,7 @@ class FleetClient(NamespacedClient):
             ]
         ] = None,
         script_fields: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
-        scroll: t.Optional[t.Union[int, str]] = None,
+        scroll: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         search_after: t.Optional[
             t.Union[
                 t.List[t.Union[None, float, int, str]],

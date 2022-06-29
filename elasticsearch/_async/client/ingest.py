@@ -34,9 +34,11 @@ class IngestClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Deletes a pipeline.
@@ -109,7 +111,9 @@ class IngestClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         summary: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -190,7 +194,9 @@ class IngestClient(NamespacedClient):
         ] = None,
         human: t.Optional[bool] = None,
         if_version: t.Optional[int] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         meta: t.Optional[t.Mapping[str, t.Any]] = None,
         on_failure: t.Optional[
             t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
@@ -199,7 +205,7 @@ class IngestClient(NamespacedClient):
         processors: t.Optional[
             t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
         ] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         version: t.Optional[int] = None,
     ) -> ObjectApiResponse[t.Any]:
         """

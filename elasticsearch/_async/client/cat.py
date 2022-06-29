@@ -56,7 +56,9 @@ class CatClient(NamespacedClient):
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
         v: t.Optional[bool] = None,
@@ -138,7 +140,9 @@ class CatClient(NamespacedClient):
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
         v: t.Optional[bool] = None,
@@ -215,7 +219,9 @@ class CatClient(NamespacedClient):
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
         v: t.Optional[bool] = None,
@@ -287,7 +293,9 @@ class CatClient(NamespacedClient):
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
         v: t.Optional[bool] = None,
@@ -365,7 +373,9 @@ class CatClient(NamespacedClient):
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
         v: t.Optional[bool] = None,
@@ -440,7 +450,9 @@ class CatClient(NamespacedClient):
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
         ts: t.Optional[bool] = None,
@@ -511,7 +523,9 @@ class CatClient(NamespacedClient):
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
         v: t.Optional[bool] = None,
@@ -602,7 +616,9 @@ class CatClient(NamespacedClient):
         human: t.Optional[bool] = None,
         include_unloaded_segments: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         pri: t.Optional[bool] = None,
         s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
@@ -693,7 +709,9 @@ class CatClient(NamespacedClient):
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
         v: t.Optional[bool] = None,
@@ -787,7 +805,9 @@ class CatClient(NamespacedClient):
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         s: t.Optional[
             t.Union[
@@ -812,7 +832,7 @@ class CatClient(NamespacedClient):
                 ],
             ]
         ] = None,
-        time: t.Optional[t.Union[int, str]] = None,
+        time: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
@@ -914,7 +934,9 @@ class CatClient(NamespacedClient):
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         s: t.Optional[
             t.Union[
@@ -1049,7 +1071,9 @@ class CatClient(NamespacedClient):
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         s: t.Optional[
             t.Union[
@@ -1189,7 +1213,9 @@ class CatClient(NamespacedClient):
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         s: t.Optional[
             t.Union[
@@ -1295,7 +1321,9 @@ class CatClient(NamespacedClient):
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
         v: t.Optional[bool] = None,
@@ -1366,7 +1394,9 @@ class CatClient(NamespacedClient):
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
         v: t.Optional[bool] = None,
@@ -1440,7 +1470,9 @@ class CatClient(NamespacedClient):
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
         v: t.Optional[bool] = None,
@@ -1507,7 +1539,9 @@ class CatClient(NamespacedClient):
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
         v: t.Optional[bool] = None,
@@ -1580,7 +1614,9 @@ class CatClient(NamespacedClient):
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
         v: t.Optional[bool] = None,
@@ -1662,7 +1698,9 @@ class CatClient(NamespacedClient):
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
         v: t.Optional[bool] = None,
@@ -1733,7 +1771,9 @@ class CatClient(NamespacedClient):
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
         v: t.Optional[bool] = None,
@@ -1811,7 +1851,9 @@ class CatClient(NamespacedClient):
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
         v: t.Optional[bool] = None,
@@ -1889,7 +1931,9 @@ class CatClient(NamespacedClient):
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
         v: t.Optional[bool] = None,
@@ -1965,7 +2009,9 @@ class CatClient(NamespacedClient):
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         node_id: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
         parent_task: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
@@ -2049,7 +2095,9 @@ class CatClient(NamespacedClient):
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
         v: t.Optional[bool] = None,
@@ -2123,10 +2171,14 @@ class CatClient(NamespacedClient):
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
-        time: t.Optional[t.Union[int, str]] = None,
+        time: t.Optional[
+            t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
+        ] = None,
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
@@ -2227,7 +2279,9 @@ class CatClient(NamespacedClient):
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         s: t.Optional[
             t.Union[
@@ -2253,7 +2307,9 @@ class CatClient(NamespacedClient):
             ]
         ] = None,
         size: t.Optional[int] = None,
-        time: t.Optional[t.Union[int, str]] = None,
+        time: t.Optional[
+            t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
+        ] = None,
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """

@@ -77,13 +77,17 @@ class CcrClient(NamespacedClient):
         max_outstanding_write_requests: t.Optional[int] = None,
         max_read_request_operation_count: t.Optional[int] = None,
         max_read_request_size: t.Optional[str] = None,
-        max_retry_delay: t.Optional[t.Union[int, str]] = None,
+        max_retry_delay: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         max_write_buffer_count: t.Optional[int] = None,
         max_write_buffer_size: t.Optional[str] = None,
         max_write_request_operation_count: t.Optional[int] = None,
         max_write_request_size: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
-        read_poll_timeout: t.Optional[t.Union[int, str]] = None,
+        read_poll_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         remote_cluster: t.Optional[str] = None,
         wait_for_active_shards: t.Optional[
             t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
@@ -430,13 +434,17 @@ class CcrClient(NamespacedClient):
         max_outstanding_write_requests: t.Optional[int] = None,
         max_read_request_operation_count: t.Optional[int] = None,
         max_read_request_size: t.Optional[t.Union[int, str]] = None,
-        max_retry_delay: t.Optional[t.Union[int, str]] = None,
+        max_retry_delay: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         max_write_buffer_count: t.Optional[int] = None,
         max_write_buffer_size: t.Optional[t.Union[int, str]] = None,
         max_write_request_operation_count: t.Optional[int] = None,
         max_write_request_size: t.Optional[t.Union[int, str]] = None,
         pretty: t.Optional[bool] = None,
-        read_poll_timeout: t.Optional[t.Union[int, str]] = None,
+        read_poll_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         settings: t.Optional[t.Mapping[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -596,13 +604,17 @@ class CcrClient(NamespacedClient):
         max_outstanding_write_requests: t.Optional[int] = None,
         max_read_request_operation_count: t.Optional[int] = None,
         max_read_request_size: t.Optional[str] = None,
-        max_retry_delay: t.Optional[t.Union[int, str]] = None,
+        max_retry_delay: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         max_write_buffer_count: t.Optional[int] = None,
         max_write_buffer_size: t.Optional[str] = None,
         max_write_request_operation_count: t.Optional[int] = None,
         max_write_request_size: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
-        read_poll_timeout: t.Optional[t.Union[int, str]] = None,
+        read_poll_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Resumes a follower index that has been paused

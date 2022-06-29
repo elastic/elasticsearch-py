@@ -41,7 +41,7 @@ class GraphClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
         routing: t.Optional[str] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         vertices: t.Optional[
             t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
         ] = None,

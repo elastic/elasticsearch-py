@@ -55,9 +55,11 @@ class IndicesClient(NamespacedClient):
         ] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Adds a block to an index.
@@ -299,10 +301,12 @@ class IndicesClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         settings: t.Optional[t.Mapping[str, t.Any]] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         wait_for_active_shards: t.Optional[
             t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
         ] = None,
@@ -385,9 +389,11 @@ class IndicesClient(NamespacedClient):
         ] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         wait_for_active_shards: t.Optional[
             t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
         ] = None,
@@ -453,10 +459,12 @@ class IndicesClient(NamespacedClient):
         ] = None,
         human: t.Optional[bool] = None,
         mappings: t.Optional[t.Mapping[str, t.Any]] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         settings: t.Optional[t.Mapping[str, t.Any]] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         wait_for_active_shards: t.Optional[
             t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
         ] = None,
@@ -635,9 +643,11 @@ class IndicesClient(NamespacedClient):
         ] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Deletes an index.
@@ -692,9 +702,11 @@ class IndicesClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Deletes an alias.
@@ -800,9 +812,11 @@ class IndicesClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Deletes an index template.
@@ -848,9 +862,11 @@ class IndicesClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Deletes an index template.
@@ -886,7 +902,7 @@ class IndicesClient(NamespacedClient):
     def disk_usage(
         self,
         *,
-        index: str,
+        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
         allow_no_indices: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
@@ -913,15 +929,8 @@ class IndicesClient(NamespacedClient):
         flush: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
-        ] = None,
         pretty: t.Optional[bool] = None,
         run_expensive_tasks: t.Optional[bool] = None,
-        timeout: t.Optional[
-            t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
-        ] = None,
-        wait_for_active_shards: t.Optional[str] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Analyzes the disk usage of each field of an index or data stream
@@ -945,17 +954,8 @@ class IndicesClient(NamespacedClient):
             response may not include uncommitted data.
         :param ignore_unavailable: If true, missing or closed indices are not included
             in the response.
-        :param master_timeout: Period to wait for a connection to the master node. If
-            no response is received before the timeout expires, the request fails and
-            returns an error.
         :param run_expensive_tasks: Analyzing field disk usage is resource-intensive.
             To use the API, this parameter must be set to true.
-        :param timeout: Period to wait for a response. If no response is received before
-            the timeout expires, the request fails and returns an error.
-        :param wait_for_active_shards: The number of shard copies that must be active
-            before proceeding with the operation. Set to all or any positive integer
-            up to the total number of shards in the index (number_of_replicas+1). Default:
-            1, the primary shard.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -975,16 +975,10 @@ class IndicesClient(NamespacedClient):
             __query["human"] = human
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
-        if master_timeout is not None:
-            __query["master_timeout"] = master_timeout
         if pretty is not None:
             __query["pretty"] = pretty
         if run_expensive_tasks is not None:
             __query["run_expensive_tasks"] = run_expensive_tasks
-        if timeout is not None:
-            __query["timeout"] = timeout
-        if wait_for_active_shards is not None:
-            __query["wait_for_active_shards"] = wait_for_active_shards
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers
@@ -1162,7 +1156,9 @@ class IndicesClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
     ) -> HeadApiResponse:
         """
@@ -1207,7 +1203,9 @@ class IndicesClient(NamespacedClient):
         flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
     ) -> HeadApiResponse:
         """
@@ -1277,9 +1275,11 @@ class IndicesClient(NamespacedClient):
         ] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         wait_for_active_shards: t.Optional[
             t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
         ] = None,
@@ -1567,7 +1567,9 @@ class IndicesClient(NamespacedClient):
         ignore_unavailable: t.Optional[bool] = None,
         include_defaults: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -1870,7 +1872,9 @@ class IndicesClient(NamespacedClient):
         flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -1943,7 +1947,9 @@ class IndicesClient(NamespacedClient):
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -2025,7 +2031,9 @@ class IndicesClient(NamespacedClient):
         ignore_unavailable: t.Optional[bool] = None,
         include_defaults: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -2098,7 +2106,9 @@ class IndicesClient(NamespacedClient):
         flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -2245,9 +2255,11 @@ class IndicesClient(NamespacedClient):
         ] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         wait_for_active_shards: t.Optional[
             t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
         ] = None,
@@ -2352,11 +2364,13 @@ class IndicesClient(NamespacedClient):
         human: t.Optional[bool] = None,
         index_routing: t.Optional[str] = None,
         is_write_index: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
         search_routing: t.Optional[str] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Creates or updates an alias.
@@ -2542,7 +2556,9 @@ class IndicesClient(NamespacedClient):
         ] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         meta: t.Optional[t.Mapping[str, t.Any]] = None,
         numeric_detection: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -2561,7 +2577,7 @@ class IndicesClient(NamespacedClient):
             ]
         ] = None,
         source: t.Optional[t.Mapping[str, t.Any]] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         write_index_only: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -2686,10 +2702,12 @@ class IndicesClient(NamespacedClient):
         flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         preserve_existing: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Updates the index settings.
@@ -2766,11 +2784,13 @@ class IndicesClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         mappings: t.Optional[t.Mapping[str, t.Any]] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         order: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
         settings: t.Optional[t.Mapping[str, t.Any]] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         version: t.Optional[int] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -3097,10 +3117,12 @@ class IndicesClient(NamespacedClient):
         ] = None,
         human: t.Optional[bool] = None,
         mappings: t.Optional[t.Mapping[str, t.Any]] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         settings: t.Optional[t.Mapping[str, t.Any]] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         wait_for_active_shards: t.Optional[
             t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
         ] = None,
@@ -3341,10 +3363,12 @@ class IndicesClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         settings: t.Optional[t.Mapping[str, t.Any]] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         wait_for_active_shards: t.Optional[
             t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
         ] = None,
@@ -3417,7 +3441,9 @@ class IndicesClient(NamespacedClient):
         index_patterns: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         meta: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         priority: t.Optional[int] = None,
@@ -3501,7 +3527,9 @@ class IndicesClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         template: t.Optional[t.Mapping[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -3563,10 +3591,12 @@ class IndicesClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         settings: t.Optional[t.Mapping[str, t.Any]] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         wait_for_active_shards: t.Optional[
             t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
         ] = None,
@@ -3770,9 +3800,11 @@ class IndicesClient(NamespacedClient):
         ] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         wait_for_active_shards: t.Optional[str] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -3837,9 +3869,11 @@ class IndicesClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Updates index aliases.

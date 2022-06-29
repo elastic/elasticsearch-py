@@ -36,7 +36,7 @@ class TransformClient(NamespacedClient):
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Deletes an existing transform.
@@ -205,7 +205,7 @@ class TransformClient(NamespacedClient):
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
-        frequency: t.Optional[t.Union[int, str]] = None,
+        frequency: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         human: t.Optional[bool] = None,
         latest: t.Optional[t.Mapping[str, t.Any]] = None,
         pivot: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -214,7 +214,7 @@ class TransformClient(NamespacedClient):
         settings: t.Optional[t.Mapping[str, t.Any]] = None,
         source: t.Optional[t.Mapping[str, t.Any]] = None,
         sync: t.Optional[t.Mapping[str, t.Any]] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Previews a transform.
@@ -302,7 +302,7 @@ class TransformClient(NamespacedClient):
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
-        frequency: t.Optional[t.Union[int, str]] = None,
+        frequency: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         human: t.Optional[bool] = None,
         latest: t.Optional[t.Mapping[str, t.Any]] = None,
         meta: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -311,7 +311,7 @@ class TransformClient(NamespacedClient):
         retention_policy: t.Optional[t.Mapping[str, t.Any]] = None,
         settings: t.Optional[t.Mapping[str, t.Any]] = None,
         sync: t.Optional[t.Mapping[str, t.Any]] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Instantiates a transform.
@@ -449,7 +449,7 @@ class TransformClient(NamespacedClient):
         ] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Starts one or more transforms.
@@ -492,7 +492,7 @@ class TransformClient(NamespacedClient):
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         wait_for_checkpoint: t.Optional[bool] = None,
         wait_for_completion: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -565,7 +565,7 @@ class TransformClient(NamespacedClient):
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
-        frequency: t.Optional[t.Union[int, str]] = None,
+        frequency: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         human: t.Optional[bool] = None,
         meta: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
@@ -573,7 +573,7 @@ class TransformClient(NamespacedClient):
         settings: t.Optional[t.Mapping[str, t.Any]] = None,
         source: t.Optional[t.Mapping[str, t.Any]] = None,
         sync: t.Optional[t.Mapping[str, t.Any]] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Updates certain properties of a transform.
@@ -648,7 +648,7 @@ class TransformClient(NamespacedClient):
         ] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Upgrades all transforms.

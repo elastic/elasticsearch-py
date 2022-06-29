@@ -114,9 +114,11 @@ class SqlClient(NamespacedClient):
         ] = None,
         format: t.Optional[str] = None,
         human: t.Optional[bool] = None,
-        keep_alive: t.Optional[t.Union[int, str]] = None,
+        keep_alive: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         pretty: t.Optional[bool] = None,
-        wait_for_completion_timeout: t.Optional[t.Union[int, str]] = None,
+        wait_for_completion_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Returns the current status and available results for an async SQL search or stored
@@ -217,13 +219,15 @@ class SqlClient(NamespacedClient):
         format: t.Optional[str] = None,
         human: t.Optional[bool] = None,
         index_using_frozen: t.Optional[bool] = None,
-        keep_alive: t.Optional[t.Union[int, str]] = None,
+        keep_alive: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         keep_on_completion: t.Optional[bool] = None,
-        page_timeout: t.Optional[t.Union[int, str]] = None,
+        page_timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         params: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         query: t.Optional[str] = None,
-        request_timeout: t.Optional[t.Union[int, str]] = None,
+        request_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         runtime_mappings: t.Optional[
             t.Mapping[
                 str,
@@ -237,7 +241,9 @@ class SqlClient(NamespacedClient):
             ]
         ] = None,
         time_zone: t.Optional[str] = None,
-        wait_for_completion_timeout: t.Optional[t.Union[int, str]] = None,
+        wait_for_completion_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Executes a SQL request
