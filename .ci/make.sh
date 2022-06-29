@@ -115,6 +115,7 @@ esac
 echo -e "\033[34;1mINFO: building $product container\033[0m"
 
 docker build \
+  --build-arg BUILDER_UID="$(id -u)" \
   --file $repo/.ci/Dockerfile \
   --tag ${product} \
   .
@@ -129,6 +130,7 @@ if [[ "$CMD" == "assemble" ]]; then
 
   # Build dists into .ci/output
   docker run \
+     -u "$(id -u)" \
     --rm -v $repo/.ci/output:/code/elasticsearch-py/dist \
     $product \
     /bin/bash -c "python /code/elasticsearch-py/utils/build-dists.py $VERSION"
