@@ -30,7 +30,7 @@ class MonitoringClient(NamespacedClient):
     async def bulk(
         self,
         *,
-        interval: str,
+        interval: t.Union["t.Literal[-1]", "t.Literal[0]", str],
         operations: t.Union[
             t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]
         ],

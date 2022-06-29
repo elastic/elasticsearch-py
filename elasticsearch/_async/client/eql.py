@@ -71,9 +71,11 @@ class EqlClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        keep_alive: t.Optional[t.Union[int, str]] = None,
+        keep_alive: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         pretty: t.Optional[bool] = None,
-        wait_for_completion_timeout: t.Optional[t.Union[int, str]] = None,
+        wait_for_completion_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Returns async results from previously executed Event Query Language (EQL) search
@@ -198,7 +200,7 @@ class EqlClient(NamespacedClient):
         ] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        keep_alive: t.Optional[t.Union[int, str]] = None,
+        keep_alive: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         keep_on_completion: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         result_position: t.Optional[t.Union["t.Literal['head', 'tail']", str]] = None,
@@ -217,7 +219,9 @@ class EqlClient(NamespacedClient):
         size: t.Optional[int] = None,
         tiebreaker_field: t.Optional[str] = None,
         timestamp_field: t.Optional[str] = None,
-        wait_for_completion_timeout: t.Optional[t.Union[int, str]] = None,
+        wait_for_completion_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Returns results matching a query expressed in Event Query Language (EQL)

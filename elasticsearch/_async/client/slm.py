@@ -244,13 +244,15 @@ class SlmClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         name: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         repository: t.Optional[str] = None,
         retention: t.Optional[t.Mapping[str, t.Any]] = None,
         schedule: t.Optional[str] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Creates or updates a snapshot lifecycle policy.

@@ -622,7 +622,7 @@ class AsyncElasticsearch(BaseClient):
         source_includes: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         wait_for_active_shards: t.Optional[
             t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
         ] = None,
@@ -939,7 +939,7 @@ class AsyncElasticsearch(BaseClient):
             t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
         ] = None,
         routing: t.Optional[str] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
             t.Union["t.Literal['external', 'external_gte', 'force', 'internal']", str]
@@ -1025,7 +1025,7 @@ class AsyncElasticsearch(BaseClient):
             t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
         ] = None,
         routing: t.Optional[str] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
             t.Union["t.Literal['external', 'external_gte', 'force', 'internal']", str]
@@ -1140,11 +1140,13 @@ class AsyncElasticsearch(BaseClient):
         query: t.Optional[t.Mapping[str, t.Any]] = None,
         refresh: t.Optional[bool] = None,
         request_cache: t.Optional[bool] = None,
-        requests_per_second: t.Optional[int] = None,
+        requests_per_second: t.Optional[float] = None,
         routing: t.Optional[str] = None,
-        scroll: t.Optional[t.Union[int, str]] = None,
+        scroll: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         scroll_size: t.Optional[int] = None,
-        search_timeout: t.Optional[t.Union[int, str]] = None,
+        search_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         search_type: t.Optional[
             t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
         ] = None,
@@ -1153,7 +1155,7 @@ class AsyncElasticsearch(BaseClient):
         sort: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
         stats: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
         terminate_after: t.Optional[int] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         version: t.Optional[bool] = None,
         wait_for_active_shards: t.Optional[
             t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
@@ -1322,7 +1324,7 @@ class AsyncElasticsearch(BaseClient):
         ] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        requests_per_second: t.Optional[int] = None,
+        requests_per_second: t.Optional[float] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Changes the number of requests per second for a particular Delete By Query operation.
@@ -1362,9 +1364,11 @@ class AsyncElasticsearch(BaseClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Deletes a script.
@@ -1955,7 +1959,9 @@ class AsyncElasticsearch(BaseClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -2160,7 +2166,7 @@ class AsyncElasticsearch(BaseClient):
         ] = None,
         require_alias: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
             t.Union["t.Literal['external', 'external_gte', 'force', 'internal']", str]
@@ -2818,7 +2824,7 @@ class AsyncElasticsearch(BaseClient):
         self,
         *,
         index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
-        keep_alive: t.Union[int, str],
+        keep_alive: t.Union["t.Literal[-1]", "t.Literal[0]", str],
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
@@ -2875,9 +2881,11 @@ class AsyncElasticsearch(BaseClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Creates or updates a script.
@@ -3036,13 +3044,13 @@ class AsyncElasticsearch(BaseClient):
         max_docs: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[bool] = None,
-        requests_per_second: t.Optional[int] = None,
+        requests_per_second: t.Optional[float] = None,
         require_alias: t.Optional[bool] = None,
         script: t.Optional[t.Mapping[str, t.Any]] = None,
-        scroll: t.Optional[t.Union[int, str]] = None,
+        scroll: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         size: t.Optional[int] = None,
         slices: t.Optional[t.Union[int, t.Union["t.Literal['auto']", str]]] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         wait_for_active_shards: t.Optional[
             t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
         ] = None,
@@ -3137,7 +3145,7 @@ class AsyncElasticsearch(BaseClient):
         ] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        requests_per_second: t.Optional[int] = None,
+        requests_per_second: t.Optional[float] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Changes the number of requests per second for a particular Reindex operation.
@@ -3289,7 +3297,7 @@ class AsyncElasticsearch(BaseClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
-        scroll: t.Optional[t.Union[int, str]] = None,
+        scroll: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Allows to retrieve a large numbers of results from a single search request.
@@ -3427,7 +3435,7 @@ class AsyncElasticsearch(BaseClient):
             ]
         ] = None,
         script_fields: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
-        scroll: t.Optional[t.Union[int, str]] = None,
+        scroll: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         search_after: t.Optional[
             t.Union[
                 t.List[t.Union[None, float, int, str]],
@@ -4042,7 +4050,7 @@ class AsyncElasticsearch(BaseClient):
         profile: t.Optional[bool] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
-        scroll: t.Optional[t.Union[int, str]] = None,
+        scroll: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         search_type: t.Optional[
             t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
         ] = None,
@@ -4156,7 +4164,7 @@ class AsyncElasticsearch(BaseClient):
         search_after: t.Optional[str] = None,
         size: t.Optional[int] = None,
         string: t.Optional[str] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         The terms enum API can be used to discover terms in the index that begin with
@@ -4375,7 +4383,7 @@ class AsyncElasticsearch(BaseClient):
         source_includes: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         upsert: t.Optional[t.Mapping[str, t.Any]] = None,
         wait_for_active_shards: t.Optional[
             t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
@@ -4525,12 +4533,14 @@ class AsyncElasticsearch(BaseClient):
         query: t.Optional[t.Mapping[str, t.Any]] = None,
         refresh: t.Optional[bool] = None,
         request_cache: t.Optional[bool] = None,
-        requests_per_second: t.Optional[int] = None,
+        requests_per_second: t.Optional[float] = None,
         routing: t.Optional[str] = None,
         script: t.Optional[t.Mapping[str, t.Any]] = None,
-        scroll: t.Optional[t.Union[int, str]] = None,
+        scroll: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         scroll_size: t.Optional[int] = None,
-        search_timeout: t.Optional[t.Union[int, str]] = None,
+        search_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         search_type: t.Optional[
             t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
         ] = None,
@@ -4539,7 +4549,7 @@ class AsyncElasticsearch(BaseClient):
         sort: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
         stats: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
         terminate_after: t.Optional[int] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         version: t.Optional[bool] = None,
         version_type: t.Optional[bool] = None,
         wait_for_active_shards: t.Optional[
@@ -4722,7 +4732,7 @@ class AsyncElasticsearch(BaseClient):
         ] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        requests_per_second: t.Optional[int] = None,
+        requests_per_second: t.Optional[float] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Changes the number of requests per second for a particular Update By Query operation.
