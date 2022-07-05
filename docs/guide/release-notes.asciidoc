@@ -1,6 +1,8 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-8-3-1>>
+* <<rn-8-3-0>>
 * <<rn-8-2-3>>
 * <<rn-8-2-2>>
 * <<rn-8-2-1>>
@@ -9,6 +11,22 @@
 * <<rn-8-1-1>>
 * <<rn-8-1-0>>
 * <<rn-8-0-0>>
+
+[discrete]
+[[rn-8-3-1]]
+=== 8.3.1 (2022-06-30)
+
+[discrete]
+==== Security
+
+* Added the **experimental** `security.has_privileges_user_profile` API.
+* Added the `hint` parameter to the **experimental** `security.suggest_user_profiles` API.
+
+[discrete]
+[[rn-8-3-0]]
+=== 8.3.0 (2022-06-29)
+
+* Client is compatible with Elasticsearch 8.3.0
 
 [discrete]
 [[rn-8-2-3]]
