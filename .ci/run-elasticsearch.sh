@@ -116,6 +116,7 @@ END
   echo -e "\033[34;1mINFO:\033[0m Starting container $node_name \033[0m"
   set -x
   docker run \
+    -u "$(id -u)" \
     --name "$node_name" \
     --network "$network_name" \
     --env "ES_JAVA_OPTS=-Xms1g -Xmx1g -da:org.elasticsearch.xpack.ccr.index.engine.FollowingEngineAssertions" \
