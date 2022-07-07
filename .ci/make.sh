@@ -40,6 +40,7 @@ output_folder=".ci/output"
 codegen_folder=".ci/output"
 OUTPUT_DIR="$repo/${output_folder}"
 REPO_BINDING="${OUTPUT_DIR}:/sln/${output_folder}"
+WORKFLOW="${WORKFLOW-staging}"
 mkdir -p "$OUTPUT_DIR"
 
 echo -e "\033[34;1mINFO:\033[0m PRODUCT ${product}\033[0m"
@@ -137,7 +138,11 @@ if [[ "$CMD" == "assemble" ]]; then
 	if compgen -G ".ci/output/*" > /dev/null; then
 
 	  # Tarball everything up in .ci/output
-    cd $repo/.ci/output && tar -czvf elasticsearch-py-$VERSION.tar.gz * && cd -
+	  if [[ "$WORKFLOW" == 'snapshot' ]]; then
+	    cd $repo/.ci/output && tar -czvf elasticsearch-py-$VERSION-SNAPSHOT.tar.gz * && cd -
+	  else
+	    cd $repo/.ci/output && tar -czvf elasticsearch-py-$VERSION.tar.gz * && cd -
+    fi
 
 		echo -e "\033[32;1mTARGET: successfully assembled client v$VERSION\033[0m"
 		exit 0
