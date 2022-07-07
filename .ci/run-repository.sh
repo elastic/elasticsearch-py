@@ -33,6 +33,7 @@ echo -e "\033[1m>>>>> Run [elastic/elasticsearch-py container] >>>>>>>>>>>>>>>>>
 
 mkdir -p junit
 docker run \
+  -u "$(id -u)" \
   --network=${network_name} \
   --env "STACK_VERSION=${STACK_VERSION}" \
   --env "ELASTICSEARCH_URL=${elasticsearch_url}" \
