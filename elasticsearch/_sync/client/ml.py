@@ -39,7 +39,7 @@ class MlClient(NamespacedClient):
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Closes one or more anomaly detection jobs. A job can be opened and closed multiple
@@ -214,7 +214,7 @@ class MlClient(NamespacedClient):
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Deletes an existing data frame analytics job.
@@ -305,7 +305,7 @@ class MlClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         requests_per_second: t.Optional[float] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Deletes expired and unused machine learning data.
@@ -395,7 +395,7 @@ class MlClient(NamespacedClient):
         ] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Deletes forecasts from a machine learning job.
@@ -819,17 +819,17 @@ class MlClient(NamespacedClient):
         self,
         *,
         job_id: str,
-        advance_time: t.Optional[str] = None,
+        advance_time: t.Optional[t.Union[str, t.Any]] = None,
         calc_interim: t.Optional[bool] = None,
-        end: t.Optional[str] = None,
+        end: t.Optional[t.Union[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        skip_time: t.Optional[t.Union[int, str]] = None,
-        start: t.Optional[str] = None,
+        skip_time: t.Optional[t.Union[str, t.Any]] = None,
+        start: t.Optional[t.Union[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Forces any buffered data to be processed by the job.
@@ -882,9 +882,9 @@ class MlClient(NamespacedClient):
         self,
         *,
         job_id: str,
-        duration: t.Optional[t.Union[int, str]] = None,
+        duration: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         error_trace: t.Optional[bool] = None,
-        expires_in: t.Optional[t.Union[int, str]] = None,
+        expires_in: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
@@ -940,10 +940,10 @@ class MlClient(NamespacedClient):
         self,
         *,
         job_id: str,
-        timestamp: t.Optional[str] = None,
+        timestamp: t.Optional[t.Union[str, t.Any]] = None,
         anomaly_score: t.Optional[float] = None,
         desc: t.Optional[bool] = None,
-        end: t.Optional[str] = None,
+        end: t.Optional[t.Union[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         exclude_interim: t.Optional[bool] = None,
         expand: t.Optional[bool] = None,
@@ -956,7 +956,7 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         size: t.Optional[int] = None,
         sort: t.Optional[str] = None,
-        start: t.Optional[str] = None,
+        start: t.Optional[t.Union[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves anomaly detection job results for one or more buckets.
@@ -1033,7 +1033,7 @@ class MlClient(NamespacedClient):
         self,
         *,
         calendar_id: str,
-        end: t.Optional[str] = None,
+        end: t.Optional[t.Union[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
@@ -1043,7 +1043,7 @@ class MlClient(NamespacedClient):
         job_id: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         size: t.Optional[int] = None,
-        start: t.Optional[str] = None,
+        start: t.Optional[t.Union[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves information about the scheduled events in calendars.
@@ -1516,7 +1516,7 @@ class MlClient(NamespacedClient):
         *,
         job_id: str,
         desc: t.Optional[bool] = None,
-        end: t.Optional[str] = None,
+        end: t.Optional[t.Union[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         exclude_interim: t.Optional[bool] = None,
         filter_path: t.Optional[
@@ -1529,7 +1529,7 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         size: t.Optional[int] = None,
         sort: t.Optional[str] = None,
-        start: t.Optional[str] = None,
+        start: t.Optional[t.Union[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves anomaly detection job results for one or more influencers.
@@ -1709,9 +1709,11 @@ class MlClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Returns information on how ML is using memory.
@@ -1748,6 +1750,58 @@ class MlClient(NamespacedClient):
             "GET", __path, params=__query, headers=__headers
         )
 
+    @_rewrite_parameters()
+    def get_model_snapshot_upgrade_stats(
+        self,
+        *,
+        job_id: str,
+        snapshot_id: t.Optional[str] = None,
+        allow_no_match: t.Optional[bool] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Gets stats for anomaly detection job model snapshot upgrades that are in progress.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-get-job-model-snapshot-upgrade-stats.html>`_
+
+        :param job_id: Identifier for the anomaly detection job.
+        :param snapshot_id: A numerical character string that uniquely identifies the
+            model snapshot. You can get information for multiple snapshots by using a
+            comma-separated list or a wildcard expression. You can get all snapshots
+            by using `_all`, by specifying `*` as the snapshot ID, or by omitting the
+            snapshot ID.
+        :param allow_no_match: Specifies what to do when the request: - Contains wildcard
+            expressions and there are no jobs that match. - Contains the _all string
+            or no identifiers and there are no matches. - Contains wildcard expressions
+            and there are only partial matches. The default value is true, which returns
+            an empty jobs array when there are no matches and the subset of results when
+            there are partial matches. If this parameter is false, the request returns
+            a 404 status code when there are no matches or only partial matches.
+        """
+        if job_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'job_id'")
+        __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots/{_quote(snapshot_id)}/_upgrade/_stats"
+        __query: t.Dict[str, t.Any] = {}
+        if allow_no_match is not None:
+            __query["allow_no_match"] = allow_no_match
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
+
     @_rewrite_parameters(
         body_fields=True,
         parameter_aliases={"from": "from_"},
@@ -1758,7 +1812,7 @@ class MlClient(NamespacedClient):
         job_id: str,
         snapshot_id: t.Optional[str] = None,
         desc: t.Optional[bool] = None,
-        end: t.Optional[t.Union[int, str]] = None,
+        end: t.Optional[t.Union[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
@@ -1769,7 +1823,7 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         size: t.Optional[int] = None,
         sort: t.Optional[str] = None,
-        start: t.Optional[t.Union[int, str]] = None,
+        start: t.Optional[t.Union[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves information about model snapshots.
@@ -1839,8 +1893,8 @@ class MlClient(NamespacedClient):
         *,
         job_id: str,
         allow_no_match: t.Optional[bool] = None,
-        bucket_span: t.Optional[t.Union[int, str]] = None,
-        end: t.Optional[t.Union[int, str]] = None,
+        bucket_span: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        end: t.Optional[t.Union[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         exclude_interim: t.Optional[bool] = None,
         filter_path: t.Optional[
@@ -1849,7 +1903,7 @@ class MlClient(NamespacedClient):
         human: t.Optional[bool] = None,
         overall_score: t.Optional[t.Union[float, str]] = None,
         pretty: t.Optional[bool] = None,
-        start: t.Optional[t.Union[int, str]] = None,
+        start: t.Optional[t.Union[str, t.Any]] = None,
         top_n: t.Optional[int] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -1918,7 +1972,7 @@ class MlClient(NamespacedClient):
         *,
         job_id: str,
         desc: t.Optional[bool] = None,
-        end: t.Optional[str] = None,
+        end: t.Optional[t.Union[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         exclude_interim: t.Optional[bool] = None,
         filter_path: t.Optional[
@@ -1931,7 +1985,7 @@ class MlClient(NamespacedClient):
         record_score: t.Optional[float] = None,
         size: t.Optional[int] = None,
         sort: t.Optional[str] = None,
-        start: t.Optional[str] = None,
+        start: t.Optional[t.Union[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves anomaly records for an anomaly detection job.
@@ -2148,7 +2202,7 @@ class MlClient(NamespacedClient):
         human: t.Optional[bool] = None,
         inference_config: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Evaluate a trained model.
@@ -2234,7 +2288,7 @@ class MlClient(NamespacedClient):
         ] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Opens one or more anomaly detection jobs.
@@ -2331,8 +2385,8 @@ class MlClient(NamespacedClient):
         ] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        reset_end: t.Optional[str] = None,
-        reset_start: t.Optional[str] = None,
+        reset_end: t.Optional[t.Union[str, t.Any]] = None,
+        reset_start: t.Optional[t.Union[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Sends data to an anomaly detection job for analysis.
@@ -2740,7 +2794,7 @@ class MlClient(NamespacedClient):
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
-        frequency: t.Optional[t.Union[int, str]] = None,
+        frequency: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         headers: t.Optional[
             t.Mapping[str, t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]]
         ] = None,
@@ -2758,7 +2812,7 @@ class MlClient(NamespacedClient):
         max_empty_searches: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
-        query_delay: t.Optional[t.Union[int, str]] = None,
+        query_delay: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         runtime_mappings: t.Optional[
             t.Mapping[
                 str,
@@ -2963,7 +3017,9 @@ class MlClient(NamespacedClient):
         data_description: t.Mapping[str, t.Any],
         allow_lazy_open: t.Optional[bool] = None,
         analysis_limits: t.Optional[t.Mapping[str, t.Any]] = None,
-        background_persist_interval: t.Optional[t.Union[int, str]] = None,
+        background_persist_interval: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         custom_settings: t.Optional[t.Any] = None,
         daily_model_snapshot_retention_after_days: t.Optional[int] = None,
         datafeed_config: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -3477,7 +3533,7 @@ class MlClient(NamespacedClient):
         ] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Sets a cluster wide upgrade_mode setting that prepares machine learning indices
@@ -3520,7 +3576,7 @@ class MlClient(NamespacedClient):
         ] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Starts a data frame analytics job.
@@ -3559,15 +3615,15 @@ class MlClient(NamespacedClient):
         self,
         *,
         datafeed_id: str,
-        end: t.Optional[t.Union[int, str]] = None,
+        end: t.Optional[t.Union[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        start: t.Optional[t.Union[int, str]] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        start: t.Optional[t.Union[str, t.Any]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Starts one or more datafeeds.
@@ -3624,7 +3680,7 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         queue_capacity: t.Optional[int] = None,
         threads_per_allocation: t.Optional[int] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         wait_for: t.Optional[
             t.Union["t.Literal['fully_allocated', 'started', 'starting']", str]
         ] = None,
@@ -3695,7 +3751,7 @@ class MlClient(NamespacedClient):
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Stops one or more data frame analytics jobs.
@@ -3755,7 +3811,7 @@ class MlClient(NamespacedClient):
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Stops one or more datafeeds.
@@ -3948,7 +4004,7 @@ class MlClient(NamespacedClient):
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
-        frequency: t.Optional[t.Union[int, str]] = None,
+        frequency: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         human: t.Optional[bool] = None,
         ignore_throttled: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
@@ -3958,7 +4014,7 @@ class MlClient(NamespacedClient):
         max_empty_searches: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
-        query_delay: t.Optional[t.Union[int, str]] = None,
+        query_delay: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         runtime_mappings: t.Optional[
             t.Mapping[
                 str,
@@ -4170,7 +4226,9 @@ class MlClient(NamespacedClient):
         job_id: str,
         allow_lazy_open: t.Optional[bool] = None,
         analysis_limits: t.Optional[t.Mapping[str, t.Any]] = None,
-        background_persist_interval: t.Optional[t.Union[int, str]] = None,
+        background_persist_interval: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         categorization_filters: t.Optional[
             t.Union[t.List[str], t.Tuple[str, ...]]
         ] = None,
@@ -4359,7 +4417,7 @@ class MlClient(NamespacedClient):
         ] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         wait_for_completion: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """

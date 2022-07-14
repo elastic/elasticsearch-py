@@ -620,7 +620,7 @@ class Elasticsearch(BaseClient):
         source_includes: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         wait_for_active_shards: t.Optional[
             t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
         ] = None,
@@ -937,7 +937,7 @@ class Elasticsearch(BaseClient):
             t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
         ] = None,
         routing: t.Optional[str] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
             t.Union["t.Literal['external', 'external_gte', 'force', 'internal']", str]
@@ -1023,7 +1023,7 @@ class Elasticsearch(BaseClient):
             t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
         ] = None,
         routing: t.Optional[str] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
             t.Union["t.Literal['external', 'external_gte', 'force', 'internal']", str]
@@ -1138,20 +1138,22 @@ class Elasticsearch(BaseClient):
         query: t.Optional[t.Mapping[str, t.Any]] = None,
         refresh: t.Optional[bool] = None,
         request_cache: t.Optional[bool] = None,
-        requests_per_second: t.Optional[int] = None,
+        requests_per_second: t.Optional[float] = None,
         routing: t.Optional[str] = None,
-        scroll: t.Optional[t.Union[int, str]] = None,
+        scroll: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         scroll_size: t.Optional[int] = None,
-        search_timeout: t.Optional[t.Union[int, str]] = None,
+        search_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         search_type: t.Optional[
             t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
         ] = None,
         slice: t.Optional[t.Mapping[str, t.Any]] = None,
-        slices: t.Optional[int] = None,
+        slices: t.Optional[t.Union[int, t.Union["t.Literal['auto']", str]]] = None,
         sort: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
         stats: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
         terminate_after: t.Optional[int] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         version: t.Optional[bool] = None,
         wait_for_active_shards: t.Optional[
             t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
@@ -1320,7 +1322,7 @@ class Elasticsearch(BaseClient):
         ] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        requests_per_second: t.Optional[int] = None,
+        requests_per_second: t.Optional[float] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Changes the number of requests per second for a particular Delete By Query operation.
@@ -1360,9 +1362,11 @@ class Elasticsearch(BaseClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Deletes a script.
@@ -1953,7 +1957,9 @@ class Elasticsearch(BaseClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -2158,7 +2164,7 @@ class Elasticsearch(BaseClient):
         ] = None,
         require_alias: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         version: t.Optional[int] = None,
         version_type: t.Optional[
             t.Union["t.Literal['external', 'external_gte', 'force', 'internal']", str]
@@ -2527,6 +2533,7 @@ class Elasticsearch(BaseClient):
         pre_filter_shard_size: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
+        routing: t.Optional[str] = None,
         search_type: t.Optional[
             t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
         ] = None,
@@ -2566,6 +2573,8 @@ class Elasticsearch(BaseClient):
             filters are mandatory to match but the shard bounds and the query are disjoint.
         :param rest_total_hits_as_int: If true, hits.total are returned as an integer
             in the response. Defaults to false, which returns an object.
+        :param routing: Custom routing value used to route search operations to a specific
+            shard.
         :param search_type: Indicates whether global term and document frequencies should
             be used when scoring returned documents.
         :param typed_keys: Specifies whether aggregation and suggester names should be
@@ -2604,6 +2613,8 @@ class Elasticsearch(BaseClient):
             __query["pretty"] = pretty
         if rest_total_hits_as_int is not None:
             __query["rest_total_hits_as_int"] = rest_total_hits_as_int
+        if routing is not None:
+            __query["routing"] = routing
         if search_type is not None:
             __query["search_type"] = search_type
         if typed_keys is not None:
@@ -2811,7 +2822,7 @@ class Elasticsearch(BaseClient):
         self,
         *,
         index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
-        keep_alive: t.Union[int, str],
+        keep_alive: t.Union["t.Literal[-1]", "t.Literal[0]", str],
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
@@ -2868,9 +2879,11 @@ class Elasticsearch(BaseClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Creates or updates a script.
@@ -3029,13 +3042,13 @@ class Elasticsearch(BaseClient):
         max_docs: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
         refresh: t.Optional[bool] = None,
-        requests_per_second: t.Optional[int] = None,
+        requests_per_second: t.Optional[float] = None,
         require_alias: t.Optional[bool] = None,
         script: t.Optional[t.Mapping[str, t.Any]] = None,
-        scroll: t.Optional[t.Union[int, str]] = None,
+        scroll: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         size: t.Optional[int] = None,
-        slices: t.Optional[int] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        slices: t.Optional[t.Union[int, t.Union["t.Literal['auto']", str]]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         wait_for_active_shards: t.Optional[
             t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
         ] = None,
@@ -3130,7 +3143,7 @@ class Elasticsearch(BaseClient):
         ] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        requests_per_second: t.Optional[int] = None,
+        requests_per_second: t.Optional[float] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Changes the number of requests per second for a particular Reindex operation.
@@ -3282,7 +3295,7 @@ class Elasticsearch(BaseClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
-        scroll: t.Optional[t.Union[int, str]] = None,
+        scroll: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Allows to retrieve a large numbers of results from a single search request.
@@ -3420,7 +3433,7 @@ class Elasticsearch(BaseClient):
             ]
         ] = None,
         script_fields: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
-        scroll: t.Optional[t.Union[int, str]] = None,
+        scroll: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         search_after: t.Optional[
             t.Union[
                 t.List[t.Union[None, float, int, str]],
@@ -4035,7 +4048,7 @@ class Elasticsearch(BaseClient):
         profile: t.Optional[bool] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
-        scroll: t.Optional[t.Union[int, str]] = None,
+        scroll: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         search_type: t.Optional[
             t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
         ] = None,
@@ -4149,7 +4162,7 @@ class Elasticsearch(BaseClient):
         search_after: t.Optional[str] = None,
         size: t.Optional[int] = None,
         string: t.Optional[str] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         The terms enum API can be used to discover terms in the index that begin with
@@ -4368,7 +4381,7 @@ class Elasticsearch(BaseClient):
         source_includes: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         upsert: t.Optional[t.Mapping[str, t.Any]] = None,
         wait_for_active_shards: t.Optional[
             t.Union[int, t.Union["t.Literal['all', 'index-setting']", str]]
@@ -4518,21 +4531,23 @@ class Elasticsearch(BaseClient):
         query: t.Optional[t.Mapping[str, t.Any]] = None,
         refresh: t.Optional[bool] = None,
         request_cache: t.Optional[bool] = None,
-        requests_per_second: t.Optional[int] = None,
+        requests_per_second: t.Optional[float] = None,
         routing: t.Optional[str] = None,
         script: t.Optional[t.Mapping[str, t.Any]] = None,
-        scroll: t.Optional[t.Union[int, str]] = None,
+        scroll: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         scroll_size: t.Optional[int] = None,
-        search_timeout: t.Optional[t.Union[int, str]] = None,
+        search_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         search_type: t.Optional[
             t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
         ] = None,
         slice: t.Optional[t.Mapping[str, t.Any]] = None,
-        slices: t.Optional[int] = None,
+        slices: t.Optional[t.Union[int, t.Union["t.Literal['auto']", str]]] = None,
         sort: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
         stats: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
         terminate_after: t.Optional[int] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         version: t.Optional[bool] = None,
         version_type: t.Optional[bool] = None,
         wait_for_active_shards: t.Optional[
@@ -4715,7 +4730,7 @@ class Elasticsearch(BaseClient):
         ] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        requests_per_second: t.Optional[int] = None,
+        requests_per_second: t.Optional[float] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Changes the number of requests per second for a particular Update By Query operation.

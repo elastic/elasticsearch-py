@@ -1,46 +1,140 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-8-3-1>>
+* <<rn-8-3-0>>
+* <<rn-8-2-3>>
+* <<rn-8-2-2>>
+* <<rn-8-2-1>>
+* <<rn-8-2-0>>
 * <<rn-8-1-2>>
 * <<rn-8-1-1>>
 * <<rn-8-1-0>>
 * <<rn-8-0-0>>
-* <<rn-7-17-1>>
-* <<rn-7-17-0>>
-* <<rn-7-16-3>>
-* <<rn-7-16-2>>
-* <<rn-7-16-1>>
-* <<rn-7-16-0>>
-* <<rn-7-15-2>>
-* <<rn-7-15-1>>
-* <<rn-7-15-0>>
-* <<rn-7-14-0>>
-* <<rn-7-13-4>>
-* <<rn-7-13-3>>
-* <<rn-7-13-2>>
-* <<rn-7-13-1>>
-* <<rn-7-13-0>>
-* <<rn-7-12-1>>
-* <<rn-7-12-0>>
-* <<rn-7-11-0>>
-* <<rn-7-10-1>>
-* <<rn-7-10-0>>
-* <<rn-7-9-1>>
-* <<rn-7-9-0>>
-* <<rn-7-8-1>>
-* <<rn-7-8-0>>
-* <<rn-7-7-1>>
-* <<rn-7-7-0>>
-* <<rn-7-6-0>>
-* <<rn-7-5-1>>
-* <<rn-7-1-0>>
-* <<rn-7-0-5>>
-* <<rn-7-0-4>>
-* <<rn-7-0-3>>
-* <<rn-7-0-2>>
-* <<rn-7-0-1>>
-* <<rn-7-0-0>>
 
+[discrete]
+[[rn-8-3-1]]
+=== 8.3.1 (2022-06-30)
+
+[discrete]
+==== Security
+
+* Added the **experimental** `security.has_privileges_user_profile` API.
+* Added the `hint` parameter to the **experimental** `security.suggest_user_profiles` API.
+
+[discrete]
+[[rn-8-3-0]]
+=== 8.3.0 (2022-06-29)
+
+* Client is compatible with Elasticsearch 8.3.0
+
+[discrete]
+[[rn-8-2-3]]
+=== 8.2.3 (2022-06-15)
+
+[discrete]
+==== Documents
+
+* Added the `routing` parameter to the `msearch` API.
+
+[discrete]
+==== CAT
+
+* Added the `cat.component_templates` API.
+
+[discrete]
+==== Ingest
+
+* Added the `if_version` parameter to the `ingest.put_pipeline` API.
+
+[discrete]
+==== Security
+
+* Changed the `name` parameter for the `security.create_service_token` API from required to optional.
+* Added the `refresh` parameter to the `security.create_service_token` API.
+* Changed the name of `access` parameter to the `labels` parameter in the `security.update_user_profile_data` API.
+
+[discrete]
+==== Shutdown
+
+* Added the `timeout` and `master_timeout` parameters to the `shutdown.get_node`, `shutdown.delete_node`, and `shutdown.put_node` APIs.
+* Added the `reason`, `type`, `allocation_delay`, and `target_node_name` parameters to the `shutdown.put_node` API.
+
+[discrete]
+[[rn-8-2-2]]
+=== 8.2.2 (2022-06-01)
+
+* Client is compatible with Elasticsearch 8.2.2
+
+[discrete]
+[[rn-8-2-1]]
+=== 8.2.1 (2022-06-01)
+
+[discrete]
+==== Machine Learning
+
+* Added the `inference_config` parameter to the `ml.infer_trained_model_deployment` API
+
+[discrete]
+[[rn-8-2-0]]
+=== 8.2.0 (2022-05-03)
+
+[discrete]
+==== Client
+
+* Re-introduced support for passing `requests.auth.BaseAuth` objects to the `http_auth` parameter which was available in 7.x.
+
+[discrete]
+==== Search
+
+* Added the `filter` parameter to the **experimental** `knn_search` API
+
+[discrete]
+==== Documents
+
+* Changed the `source` and `dest` parameters for the `reindex` API from optional to required
+
+[discrete]
+==== Indices
+
+* Added the `indices.field_usage_stats` API
+* Added the `indices.modify_data_stream` API
+* Added the `fields` and `types` parameters to the `field_caps` API
+* Added the `ignore_unvailable` parameter to the `open_point_in_time` API
+* Added the `master_timeout` and `timeout` parameters to the `indices.delete` API
+* Added the `features` parameter to the `indices.get` API
+
+[discrete]
+==== Machine Learning
+
+* Added the `ml.get_memory_stats` API
+
+[discrete]
+==== Migrations
+
+* Added the `migrations.get_feature_upgrade_status` API
+* Added the `migrations.post_feature_upgrade` API
+
+[discrete]
+==== Nodes
+
+* Added the `nodes.clear_repositories_metering_archive` API
+* Added the `nodes.get_repositories_metering_info` API
+
+[discrete]
+==== Security
+
+* Added the **beta** `security.activate_user_profile` API
+* Added the **beta** `security.disable_user_profile` API
+* Added the **beta** `security.enable_user_profile` API
+* Added the **beta** `security.get_user_profile` API
+* Added the **beta** `security.suggest_user_profiles` API
+* Added the **beta** `security.update_user_profile_data` API
+
+[discrete]
+==== SQL
+
+* Added the `catalog`, `index_using_frozen`, `keep_alive`, `keep_on_completion`, `runtime_mappings`, and `wait_for_completion_timeout` parameters to the `sql.query` API
 
 [discrete]
 [[rn-8-1-2]]
@@ -186,609 +280,3 @@
 
 * Added the `security.enroll_kibana` API
 * Added the `security.enroll_node` API
-
-
-[discrete]
-[[rn-7-17-1]]
-=== 7.17.1 (2022-02-28)
-
-* Fixed `AiohttpHttpConnection`` to not leak TLS connections when the socket isn't explicitly shutdown by the peer
-* Fixed the `from` parameter to be rewritten to `from_` when used with the `scan` and `async_scan` helpers
-
-
-[discrete]
-[[rn-7-17-0]]
-=== 7.17.0 (2022-02-01)
-
-* Client is compatible with Elasticsearch 7.17.0
-
-
-[discrete]
-[[rn-7-16-3]]
-=== 7.16.3 (2022-01-13)
-
-* Client is compatible with Elasticsearch 7.16.3
-
-
-[discrete]
-[[rn-7-16-2]]
-=== 7.16.2 (2021-12-27)
-
-* Client is compatible with Elasticsearch 7.16.2
-
-
-[discrete]
-[[rn-7-16-1]]
-=== 7.16.1 (2021-12-13)
-
-[discrete]
-==== Fixed
-
-* Fixed issue where the `AIOHttpConnection` wouldn't log query parameters for URLs.
-
-
-[discrete]
-[[rn-7-16-0]]
-=== 7.16.0 (2021-12-07)
-
-[discrete]
-==== Deprecated
-
-* Deprecated the `send_get_body_as` parameter. This parameter is no longer necessary
-  as APIs all use non-GET HTTP methods when using a body.
-* Removal of `body`, `params`, and other per-request parameters has been delayed beyond 8.0.0.
-  Changed deprecation warnings to mention "future version" instead of 8.0.0.
-
-[discrete]
-==== Fixed
-
-* Fixed an issue with `unicode` HTTP headers with the urllib3 HTTP client
-* Fixed an issue with the `scan` helper to always set the `sort` and `scroll` parameters
-
-[discrete]
-==== Search
-
-* Changed the `keep_alive` parameter of the `open_point_in_time` API to be required
-  to reflect its required status within Elasticsearch
-* Added the `track_total_hits` parameter to the `search_mvt` API
-
-[discrete]
-==== Fleet
-
-* Changed the `fleet.global_checkpoints` API from **experimental** to **stable**
-* Added the `fleet.search` **experimental** API
-* Added the `fleet.msearch` **experimental** API
-
-[discrete]
-==== Indices
-
-* Added the `indices.modify_data_stream` API
-
-[discrete]
-==== Ingest
-
-* Added the `if_version` parameter to the `ingest.put_pipeline` API
-
-[discrete]
-==== Migration
-
-* Added the `migration.get_feature_upgrade_status` API
-* Added the `migration.post_feature_upgrade` API
-
-[discrete]
-==== Machine Learning
-
-* Added the `defer_definition_decompression` parameter to the `ml.put_trained_model` API
-
-[discrete]
-==== Transforms
-
-* Added the `transform.upgrade_transforms` API
-
-
-[discrete]
-[[rn-7-15-2]]
-=== 7.15.2 (2021-11-10)
-
-[discrete]
-==== Nodes
-
-* Documented additional options the `metric` parameter of the `nodes.info` API.
-
-
-[discrete]
-[[rn-7-15-1]]
-=== 7.15.1 (2021-10-14)
-
-[discrete]
-==== Client
-
-* Fixed a performance regression in `JSONSerializer.default()` when `numpy` and `pandas` weren't installed.
-* Changed the `DeprecationWarning` for the `body` parameter to be a "removed in a future version" instead of "removed in 8.0" in line with the 8.0 roadmap.
-
-[discrete]
-==== Search
-
-* The `index` parameter of the `open_point_in_time` API is now required, was optional.
-
-
-[discrete]
-[[rn-7-15-0]]
-=== 7.15.0 (2021-09-22)
-
-[discrete]
-==== Client
-
-* Added more precise type hints to many API parameters
-* Added explicit parameters to `AsyncTransport` and `AIOHttpConnection`
-* Added `MapboxVectorTileSerializer` for handling the `application/vnd.mapbox-vector-tile` mimetype. Because this mimetype is binary rather than text the raw response `bytes` are forwarded from the serializer without decoding
-* Reduced amount of time to import the `elasticsearch` module by delaying imports of `pandas` and `numpy` until later in the JSON serialization stage if necessary
-* Deprecated positional arguments for APIs, instead use keyword arguments exclusively.
-
-[discrete]
-==== Search
-
-* Added the `search_mvt` **experimental** API
-* Added body field parameters to the `search`, `scroll`, and `clear_scroll` APIs
-* Deprecated the `body` parameter of the `search`, `scroll`, and `clear_scroll` APIs
-
-[discrete]
-==== Documents
-
-* Added body field parameters to the `update` API
-* Added the `document` parameter to the `create` and `index` APIs
-* Deprecated the `body` parameter of the `create`, `index`, and `update` APIs
-
-[discrete]
-==== Indices
-
-* Added the `indices.disk_usage` **experimental** API
-* Added the `indices.fields_usage_stats` **experimental** API
-* Added body field parameters to the `indices.create` API
-* Deprecated the `body` parameter of the `indices.create` API
-
-[discrete]
-==== Machine Learning
-
-* Added the `ignore_unavailable`, `allow_no_indices`, `ignore_throttled`, and `expand_wildcards` parameters to the `ml.put_job` API
-
-[discrete]
-==== Nodes
-
-* Added the `nodes.clear_repositories_metering_archive` **experimental** API
-* Added the `nodes.get_repositories_metering_info` **experimental** API
-* Added the `shards` option to the `index_metric` parameter of the `nodes.stats` API
-* Deprecated the `doc_type` parameter of the `nodes.hot_threads` API, instead use the `type` parameter
-[discrete]
-==== Security
-
-* Added the `security.query_api_keys` API
-
-[discrete]
-==== License
-
-* Deprecated the `doc_type` parameter of the `license.post_start_trial` API, instead use the `type` parameter
-
-
-[discrete]
-[[rn-7-14-0]]
-=== 7.14.0 (2021-08-02)
-
-* Added check that client is connected to an Elasticsearch cluster. If the client isn't connected to a supported Elasticsearch cluster the `UnsupportedProductError` exception will be raised.
-
-[discrete]
-==== Search
-
-* Added the `terms_enum` **beta** API
-
-* Removed the `query_and_fetch` and `dfs_query_and_fetch` options in the `search_type` parameter to the `msearch`, `msearch_template` and `search_template` APIs
-
-[discrete]
-==== Index Lifecycle Management
-
-* Added the `ilm.migrate_to_data_tiers` API
-
-[discrete]
-==== Machine Learning
-
-* Added the `ml.reset_job` API
-
-[discrete]
-==== Security
-
-* Added the `security.saml_authenticate` API
-* Added the `security.saml_complete_logout` API
-* Added the `security.saml_invalidate` API
-* Added the `security.saml_logout` API
-* Added the `security.saml_prepare_authentication` API
-* Added the `security.saml_service_provider_metadata` API
-
-[discrete]
-==== SQL
-
-* Added the `sql.delete_async` API
-* Added the `sql.get_async` API
-* Added the `sql.get_async_status` API
-
-[discrete]
-==== Snapshots
-
-* Added the `include_repository` parameter to `snapshot.get` API
-* Added the `rarely_abort_writes` parameter to the `snapshot.repository_analyze` API
-
-[discrete]
-[[rn-7-13-4]]
-=== 7.13.4 (2021-07-20)
-
-* Client is compatible with Elasticsearch 7.13.4
-
-[discrete]
-[[rn-7-13-3]]
-=== 7.13.3 (2021-07-07)
-
-* `NameError` would be raised on Python 2.7 and 3.4 when a connection error would have otherwise been raised.
-
-[discrete]
-[[rn-7-13-2]]
-=== 7.13.2 (2021-06-21)
-
-* Fixed `Transport.perform_request()` to properly reraise `RecursionError`
-* Fixed `AIOHttpConnection` to no longer send `Accept-Encoding: gzip, deflate` when `http_compress=None`.
-  Instead now sends no `Accept-Encoding` header in the default case
-
-[discrete]
-==== Snapshot
-
-* Added the `snapshot.repository_analyze` API
-
-[discrete]
-[[rn-7-13-1]]
-=== 7.13.1 (2021-06-02)
-
-* Client is compatible with Elasticsearch 7.13.1
-
-[discrete]
-[[rn-7-13-0]]
-=== 7.13.0 (2021-05-25)
-
-* Added support for compatibility header for Elasticsearch. If the environment variable
-  `ELASTIC_CLIENT_APIVERSIONING=1` is set the client will send the headers Accept and
-  Content-Type with the following value: `application/vnd.elasticsearch+json;compatible-with=7`.
-
-[discrete]
-==== Cat
-
-* Added the `include_unloaded_segments` parameter to the `cat.nodes` API
-* Added the `features.reset_features` **experimental** API
-* Added the `fleet.global_checkpoints` **expiremental** API
-* Added the `ingest.geo_ip_stats` API
-
-[discrete]
-==== Machine Learning
-
-* Added the `ml.delete_trained_model_alias` API
-* Added the `ml.preview_data_frame_analytics` API
-* Added the `ml.put_trained_model_alias` API
-* Changed the `ml.delete_data_frame_analytics`, `ml.delete_trained_model`, `ml.explain_data_frame_analytics`,
-  `ml.get_data_fram_analytics`, `ml.get_data_frame_analytics_stats`, `ml.get_trained_models`,
-  `ml.get_trained_models_stats`, `ml.put_trained_model`, `ml.start_data_frame_analytics`,
-  `ml.stop_data_frame_analytics`, `ml.update_data_frame_analytics` APIs from **beta** to **stable**.
-
-[discrete]
-==== Nodes
-
-* Added `include_unloaded_segments` parameter to `node.stats` API
-
-[discrete]
-==== Searchable Snapshots
-
-* Added the `searchable_snapshots.cache_stats` **experimental** API
-
-[discrete]
-==== Security
-
-* Added the `security.clear_cached_service_tokens` **beta** API
-* Added the `security.create_service_token` **beta** API
-* Added the `security.delete_service_token` **beta** API
-* Added the `security.get_service_accounts` **beta** API
-* Added the `security.get_service_credentials` **beta** API
-
-[discrete]
-==== Shutdown
-
-* Added the `shutdown.delete_node` **experiemental** API
-* Added the `shutdown.get_node` **experimental** API
-* Added the `shutdown.put_node` **experimental** API
-
-[discrete]
-==== Snapshots
-
-* Added the `index_details` parameter to `snapshot.get` API
-
-[discrete]
-==== Text Structure
-
-* Changed the `text_structure.find_structure` API from **experimental** to **stable**
-
-[discrete]
-[[rn-7-12-1]]
-=== 7.12.1 (2021-04-27)
-
-[discrete]
-==== Text Structure
-
-* Changed the `text_structure.find_text_structure` API from **experimental** to **stable**
-
-[discrete]
-[[rn-7-12-0]]
-=== 7.12.0 (2021-03-23)
-
-[discrete]
-==== Autoscaling
-
-* Changed `autoscaling.delete_autoscaling_policy`, `autoscaling.get_autoscaling_policy`,
-  and `autoscaling.put_autoscaling_policy` APIs from **experimental** to **stable**
-
-[discrete]
-==== EQL
-
-* Added `eql.get_status` API
-
-[discrete]
-==== Logash
-
-* Added `logstash.delete_pipeline`, `logstash.get_pipeline`, and `logstash.put_pipeline` APIs
-
-[discrete]
-==== Machine Learning
-
-* Removed the **experimental** `ml.find_text_structure` API
-
-[discrete]
-==== Searchable Snapshots
-
-* Added `storage` parameter to the `searchable_snapshots.mount` API
-* Added `level` parameter to the `searchable_snapshots.stats` API
-
-[discrete]
-==== Search
-
-* Added the `min_compatible_shard_node` parameter to `search()`
-
-[discrete]
-==== Text Structure
-
-* Added **experimental** `text_structure.find_text_structure` API
-
-
-[discrete]
-[[rn-7-11-0]]
-=== 7.11.0 (2021-02-10)
-
-* Added support for 7.11 APIs.
-* Added the `X-Elastic-Client-Meta` HTTP header and the `meta_header` parameter
-  for controlling the header 
-  (https://github.com/elastic/elasticsearch-py/pull/1473[#1473]).
-* Added `ElasticsearchWarning` which is raised when the `Warning` HTTP header
-  is returned from {es}. `ElasticsearchDeprecationWarning` is now an alias for 
-  this warning type 
-  (https://github.com/elastic/elasticsearch-py/pull/1495[#1495]).
-
-
-[discrete]
-[[rn-7-10-1]]
-=== 7.10.1 (2020-12-09)
-
-* Fixed issue where the Scan helper would fail if a `scroll` response returned
-  without a value for `_shards.skipped` 
-  (https://github.com/elastic/elasticsearch-py/pull/1451[#1451]).
-* Fixed handling of IPv6 hosts with a port in the computed `Connection.host` 
-  property (https://github.com/elastic/elasticsearch-py/pull/1460[#1460]).
-* Fixed documented task management API stability, should have been as 
-  "experimental" (https://github.com/elastic/elasticsearch-py/pull/1471[#1471]).
-* Changed deprecated `collections.Mapping` in favor of
-  `collections.abc.Mapping` for Python 3.9 
-  (https://github.com/elastic/elasticsearch-py/pull/1443[#1443]).
-
-
-[discrete]
-[[rn-7-10-0]]
-=== 7.10.0 (2020-11-11)
-
-* Added support for {es} 7.10 APIs.
-* Added basic type stubs for static type checking and IDE auto-complete of API 
-  parameters (https://github.com/elastic/elasticsearch-py/pull/1297[#1297], 
-  https://github.com/elastic/elasticsearch-py/pull/1406[#1406]).
-* Added support for 
-  https://www.elastic.co/guide/en/elasticsearch/reference/current/optimistic-concurrency-control.html[`Optimistic Concurrency Control options`]
-  (`_if_seq_no`/`_if_primary_term`) to bulk helpers 
-  (https://github.com/elastic/elasticsearch-py/pull/1387[#1387]).
-* Added support for passing `_source` with `"_op_type": "update"`
-  bulk helpers (https://github.com/elastic/elasticsearch-py/pull/1387[#1387]).
-* Fixed bug where `Connection.log_request_failure()` call would receive the 
-  compressed HTTP body rather than uncompressed when an error is raised for 
-  `RequestsHttpConnection` 
-  (https://github.com/elastic/elasticsearch-py/pull/1394[#1394]).
-* Fix a typo in AsyncTransport where `sniff_timeout` was used instead of 
-  `sniffer_timeout` 
-  (https://github.com/elastic/elasticsearch-py/pull/1431[#1431]).
-* Removed explicit `yarl` dependency from `[async]` extra to avoid issue where 
-  pip would override `aiohttp`'s pin of `yarl`. This is not a problem if you 
-  install with `--use-feature=2020-resolver`. Users should see no changes 
-  (https://github.com/elastic/elasticsearch-py/pull/1401[#1401]).
-
-
-
-[discrete]
-[[rn-7-9-1]]
-=== 7.9.1 (2020-08-19)
-
-
-* Fixed the import of async helpers which were not available in 7.9.0 
-  (https://github.com/elastic/elasticsearch-py/pull/1353[#1353]).
-* Added support for `url_prefix` when using `AIOHttpConnection` 
-  (https://github.com/elastic/elasticsearch-py/pull/1357[#1357]).
-
-
-[discrete]
-[[rn-7-9-0]]
-=== 7.9.0 (2020-08-18)
-
-* Added support for ES 7.9 APIs.
-* Fixed retries to not raise an error when `sniff_on_connection_error=True`
-  and a `TransportError` is raised during the sniff step. Instead the
-  retry will continue or the error that triggered the retry will be raised
-  (https://github.com/elastic/elasticsearch-py/pull/1279[#1279], 
-   https://github.com/elastic/elasticsearch-py/pull/1326[#1326]).
-
-
-[discrete]
-[[rn-7-8-1]]
-=== 7.8.1 (2020-07-30)
-
-* Added the `accept_enterprise` parameter to `xpack.info` API 
-  (https://github.com/elastic/elasticsearch-py/pull/1337[#1337]).
-
-
-[discrete]
-[[rn-7-8-0]]
-=== 7.8.0 (2020-06-18)
-
-* Added support for ES 7.8 APIs.
-* Added support for async/await with asyncio via `AsyncElasticsearch`. See 
-  https://elasticsearch-py.readthedocs.io/en/master/async.html[documentation] on
-  `using Asyncio with {es} 
-  (https://github.com/elastic/elasticsearch-py/pull/1232[#1232], 
-  https://github.com/elastic/elasticsearch-py/pull/1235[#1235], 
-  https://github.com/elastic/elasticsearch-py/pull/1236[#1236]).
-* Added async helpers `async_bulk`, `async_streaming_bulk`, `async_scan`, and 
-  `async_reindex` 
-  (https://github.com/elastic/elasticsearch-py/pull/1260[#1260]).
-* Updated `exists_source` API to use non-deprecated {es} API routes when 
-  `doc_type` is not specified to suppress deprecation warnings 
-  (https://github.com/elastic/elasticsearch-py/pull/1272[#1272]).
-
-
-[discrete]
-[[rn-7-7-1]]
-=== 7.7.1 (2020-05-26)
-
-* Updated `create`, `update`, `explain`, `get_source`, and `termvectors` APIs to 
-  use non-deprecated {es} API routes when `doc_type` is not specified to 
-  suppress deprecation warnings 
-  (https://github.com/elastic/elasticsearch-py/pull/1253[#1253]).
-
-
-[discrete]
-[[rn-7-7-0]]
-=== 7.7.0 (2020-05-13)
-
-* Added support for ES 7.7 APIs 
-  (https://github.com/elastic/elasticsearch-py/pull/1182[#1182]).
-* Added `ElasticsearchDeprecationWarning` which is raised when a `Warning` HTTP 
-  header is sent by {es} 
-  (https://github.com/elastic/elasticsearch-py/pull/1179[#1179]).
-* Added support for serializing `numpy` and `pandas` data types to 
-  `JSONSerializer` 
-  (https://github.com/elastic/elasticsearch-py/pull/1180[#1180]).
-* Added `certifi` as a dependency so HTTPS connections work automatically.
-* Fixed duplicated parameters in some API docstrings 
-  (https://github.com/elastic/elasticsearch-py/pull/1169[#1169], thanks to 
-  https://github.com/mortenhauberg[Morten Hauberg]).
-
-
-[discrete]
-[[rn-7-6-0]]
-=== 7.6.0 (2020-03-19)
-
-* Added support for ES 7.6 APIs.
-* Added support for 
-  https://www.elastic.co/guide/en/elasticsearch/reference/current/tasks.html#_identifying_running_tasks[`X-Opaque-Id`] 
-  to identify long-running tasks.
-* Added support for HTTP compression to `RequestsHttpConnection`.
-* Updated default setting of `http_compress` when using `cloud_id` to `True`.
-* Updated default setting of `sniffing` when using `cloud_id` to `False`.
-* Updated default port to `443` if `cloud_id` and no other port is defined on 
-  the client or within `cloud_id`.
-* Updated `GET` HTTP requests that contain a body to `POST` where the API allows 
-  this to fix proxies rejecting these requests.
-* Fix regression of `client.cluster.state()` where the default `metric` should 
-  be set to `"_all"` if an index is given 
-  (https://github.com/elastic/elasticsearch-py/pull/1143[#1143]).
-* Fix regression of `client.tasks.get()` without a `task_id` having similar 
-  functionality to `client.tasks.list()` This will be removed in `v8.0` of 
-  `elasticsearch-py` 
-  (https://github.com/elastic/elasticsearch-py/pull/1157[#1157]).
-
-
-[discrete]
-[[rn-7-5-1]]
-=== 7.5.1 (2020-01-19)
-
-* All API is now auto generated.
-* Deprecated the `.xpack` namespace.
-* Update client to support ES 7.5 APIs.
-
-
-[discrete]
-[[rn-7-1-0]]
-=== 7.1.0 (2019-11-14)
-
-* Fix sniffing with `http.publish_host`.
-* Fix `request_timeout` for `indices` APIs.
-* Allow access to `x-pack` features without `xpack` namespace.
-* Fix mark dead.
-
-
-[discrete]
-[[rn-7-0-5]]
-=== 7.0.5 (2019-10-01)
-
-* Fix `verify_certs=False`.
-
-
-[discrete]
-[[rn-7-0-4]]
-=== 7.0.4 (2019-08-22)
-
-* Fix wheel distribution.
-
-
-[discrete]
-[[rn-7-0-3]]
-=== 7.0.3 (2019-08-21)
-
-* Remove sleep in retries.
-* Pass `scroll_id` through body in `scroll`.
-* Add `user-agent`.
-
-
-[discrete]
-[[rn-7-0-2]]
-=== 7.0.2 (2019-05-29)
-
-* Add connection parameter for Elastic Cloud cloud_id.
-* ML client uses client object for _bulk_body requests.
-
-
-[discrete]
-[[rn-7-0-1]]
-=== 7.0.1 (2019-05-19)
-
-* Use black to format the code.
-* Update the test matrix to only use current pythons and 7.x ES.
-* Blocking pool must fit thread_count.
-* Update client to support missing ES 7 API's and query params.
-
-
-[discrete]
-[[rn-7-0-0]]
-=== 7.0.0 (2019-04-11)
-
-* Removed deprecated option `update_all_types`.
-* Using insecure SSL configuration (`verify_cert=False`) raises a warning, 
-  this can be not showed with `ssl_show_warn=False`.
-* Add support for 7.x APIs in {es} both xpack and oss flavors.
-* Ordering of parameters may have changed for some APIs compared to 6.8.
-  Use keyword arguments instead of positional arguments to work-around this
-  change.

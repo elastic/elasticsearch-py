@@ -116,15 +116,17 @@ class NodesClient(NamespacedClient):
         ] = None,
         human: t.Optional[bool] = None,
         ignore_idle_threads: t.Optional[bool] = None,
-        interval: t.Optional[t.Union[int, str]] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        interval: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         snapshots: t.Optional[int] = None,
         sort: t.Optional[
             t.Union["t.Literal['block', 'cpu', 'gpu', 'mem', 'wait']", str]
         ] = None,
         threads: t.Optional[int] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         type: t.Optional[
             t.Union["t.Literal['block', 'cpu', 'gpu', 'mem', 'wait']", str]
         ] = None,
@@ -198,9 +200,11 @@ class NodesClient(NamespacedClient):
         ] = None,
         flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Returns information about nodes in the cluster.
@@ -262,7 +266,7 @@ class NodesClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         secure_settings_password: t.Optional[str] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Reloads secure settings.
@@ -334,9 +338,11 @@ class NodesClient(NamespacedClient):
         level: t.Optional[
             t.Union["t.Literal['cluster', 'indices', 'shards']", str]
         ] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         types: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -439,7 +445,7 @@ class NodesClient(NamespacedClient):
         ] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Returns low-level information about REST actions usage on nodes.

@@ -40,6 +40,7 @@ output_folder=".ci/output"
 codegen_folder=".ci/output"
 OUTPUT_DIR="$repo/${output_folder}"
 REPO_BINDING="${OUTPUT_DIR}:/sln/${output_folder}"
+WORKFLOW="${WORKFLOW-staging}"
 mkdir -p "$OUTPUT_DIR"
 
 echo -e "\033[34;1mINFO:\033[0m PRODUCT ${product}\033[0m"
@@ -115,6 +116,7 @@ esac
 echo -e "\033[34;1mINFO: building $product container\033[0m"
 
 docker build \
+  --build-arg BUILDER_UID="$(id -u)" \
   --file $repo/.ci/Dockerfile \
   --tag ${product} \
   .
@@ -129,6 +131,7 @@ if [[ "$CMD" == "assemble" ]]; then
 
   # Build dists into .ci/output
   docker run \
+     -u "$(id -u)" \
     --rm -v $repo/.ci/output:/code/elasticsearch-py/dist \
     $product \
     /bin/bash -c "python /code/elasticsearch-py/utils/build-dists.py $VERSION"
@@ -137,7 +140,11 @@ if [[ "$CMD" == "assemble" ]]; then
 	if compgen -G ".ci/output/*" > /dev/null; then
 
 	  # Tarball everything up in .ci/output
-    cd $repo/.ci/output && tar -czvf elasticsearch-py-$VERSION.tar.gz * && cd -
+	  if [[ "$WORKFLOW" == 'snapshot' ]]; then
+	    cd $repo/.ci/output && tar -czvf elasticsearch-py-$VERSION-SNAPSHOT.tar.gz * && cd -
+	  else
+	    cd $repo/.ci/output && tar -czvf elasticsearch-py-$VERSION.tar.gz * && cd -
+    fi
 
 		echo -e "\033[32;1mTARGET: successfully assembled client v$VERSION\033[0m"
 		exit 0

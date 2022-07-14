@@ -34,9 +34,11 @@ class IngestClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Deletes a pipeline.
@@ -109,7 +111,9 @@ class IngestClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         pretty: t.Optional[bool] = None,
         summary: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -189,7 +193,10 @@ class IngestClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[t.Union[int, str]] = None,
+        if_version: t.Optional[int] = None,
+        master_timeout: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         meta: t.Optional[t.Mapping[str, t.Any]] = None,
         on_failure: t.Optional[
             t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
@@ -198,7 +205,7 @@ class IngestClient(NamespacedClient):
         processors: t.Optional[
             t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
         ] = None,
-        timeout: t.Optional[t.Union[int, str]] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         version: t.Optional[int] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -208,6 +215,8 @@ class IngestClient(NamespacedClient):
 
         :param id: ID of the ingest pipeline to create or update.
         :param description: Description of the ingest pipeline.
+        :param if_version: Required version for optimistic concurrency control for pipeline
+            updates
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
@@ -240,6 +249,8 @@ class IngestClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if if_version is not None:
+            __query["if_version"] = if_version
         if master_timeout is not None:
             __query["master_timeout"] = master_timeout
         if meta is not None:
