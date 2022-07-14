@@ -526,6 +526,8 @@ class AsyncElasticsearch(BaseClient):
             if isinstance(ignore_status, int):
                 ignore_status = (ignore_status,)
             client._ignore_status = ignore_status
+        else:
+            client._ignore_status = self._ignore_status
 
         if max_retries is not DEFAULT:
             if not isinstance(max_retries, int):
