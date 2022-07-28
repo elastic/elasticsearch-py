@@ -519,26 +519,36 @@ class AsyncElasticsearch(BaseClient):
 
         if request_timeout is not DEFAULT:
             client._request_timeout = request_timeout
+        else:
+            client._request_timeout = self._request_timeout
 
         if ignore_status is not DEFAULT:
             if isinstance(ignore_status, int):
                 ignore_status = (ignore_status,)
             client._ignore_status = ignore_status
+        else:
+            client._ignore_status = self._ignore_status
 
         if max_retries is not DEFAULT:
             if not isinstance(max_retries, int):
                 raise TypeError("'max_retries' must be of type 'int'")
             client._max_retries = max_retries
+        else:
+            client._max_retries = self._max_retries
 
         if retry_on_status is not DEFAULT:
             if isinstance(retry_on_status, int):
                 retry_on_status = (retry_on_status,)
             client._retry_on_status = retry_on_status
+        else:
+            client._retry_on_status = self._retry_on_status
 
         if retry_on_timeout is not DEFAULT:
             if not isinstance(retry_on_timeout, bool):
                 raise TypeError("'retry_on_timeout' must be of type 'bool'")
             client._retry_on_timeout = retry_on_timeout
+        else:
+            client._retry_on_timeout = self._retry_on_timeout
 
         return client
 

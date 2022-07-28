@@ -368,3 +368,104 @@ class TestOptions(DummyTransportTestCase):
             "user-agent": "custom4",
             "accept": "application/vnd.elasticsearch+json; compatible-with=8",
         }
+
+    def test_options_timeout_parameters(self):
+        client = Elasticsearch(
+            "http://localhost:9200",
+            transport_class=DummyTransport,
+            request_timeout=1,
+            max_retries=2,
+            retry_on_status=(404,),
+            retry_on_timeout=True,
+        )
+
+        # timeout parameters are preserved with .options()
+        client.options().indices.get(index="test")
+
+        calls = client.transport.calls
+        call = calls[("GET", "/test")][0]
+        assert call.pop("client_meta") is DEFAULT
+        assert call == {
+            "headers": {
+                "accept": "application/vnd.elasticsearch+json; compatible-with=8",
+            },
+            "body": None,
+            "request_timeout": 1,
+            "max_retries": 2,
+            "retry_on_status": (404,),
+            "retry_on_timeout": True,
+        }
+
+        client = Elasticsearch(
+            "http://localhost:9200",
+            transport_class=DummyTransport,
+            request_timeout=1,
+            max_retries=2,
+            retry_on_status=(404,),
+            retry_on_timeout=True,
+        )
+        client.options(
+            request_timeout=2,
+            max_retries=3,
+            retry_on_status=(400,),
+            retry_on_timeout=False,
+        ).indices.get(index="test")
+
+        calls = client.transport.calls
+        call = calls[("GET", "/test")][0]
+        assert call.pop("client_meta") is DEFAULT
+        assert call == {
+            "headers": {
+                "accept": "application/vnd.elasticsearch+json; compatible-with=8",
+            },
+            "body": None,
+            "request_timeout": 2,
+            "max_retries": 3,
+            "retry_on_status": (400,),
+            "retry_on_timeout": False,
+        }
+
+        client = Elasticsearch(
+            "http://localhost:9200",
+            transport_class=DummyTransport,
+        )
+        client.options().indices.get(index="test")
+
+        calls = client.transport.calls
+        call = calls[("GET", "/test")][0]
+        assert call.pop("request_timeout") is DEFAULT
+        assert call.pop("max_retries") is DEFAULT
+        assert call.pop("retry_on_timeout") is DEFAULT
+        assert call.pop("retry_on_status") is DEFAULT
+        assert call.pop("client_meta") is DEFAULT
+        assert call == {
+            "headers": {
+                "accept": "application/vnd.elasticsearch+json; compatible-with=8",
+            },
+            "body": None,
+        }
+
+        client = Elasticsearch(
+            "http://localhost:9200",
+            transport_class=DummyTransport,
+        )
+        client.options(
+            request_timeout=1,
+            max_retries=2,
+            retry_on_status=(404,),
+            retry_on_timeout=True,
+        ).indices.get(index="test")
+
+        calls = client.transport.calls
+        call = calls[("GET", "/test")][0]
+        assert call.pop("client_meta") is DEFAULT
+        assert call == {
+            "headers": {
+                "accept": "application/vnd.elasticsearch+json; compatible-with=8",
+            },
+            "body": None,
+            "request_timeout": 1,
+            "max_retries": 2,
+            "retry_on_status": (404,),
+            "retry_on_timeout": True,
+        }
