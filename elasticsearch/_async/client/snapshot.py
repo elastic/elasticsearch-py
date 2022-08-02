@@ -414,6 +414,7 @@ class SnapshotClient(NamespacedClient):
         ignore_unavailable: t.Optional[bool] = None,
         include_repository: t.Optional[bool] = None,
         index_details: t.Optional[bool] = None,
+        index_names: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
@@ -449,12 +450,12 @@ class SnapshotClient(NamespacedClient):
             index- or shard count.
         :param ignore_unavailable: If false, the request returns an error for any snapshots
             that are unavailable.
-        :param include_repository: Whether to include the repository name in the snapshot
-            info. Defaults to true.
+        :param include_repository: If true, returns the repository name in each snapshot.
         :param index_details: If true, returns additional information about each index
             in the snapshot comprising the number of shards in the index, the total size
             of the index in bytes, and the maximum number of segments per shard in the
             index. Defaults to false, meaning that this information is omitted.
+        :param index_names: If true, returns the name of each index in each snapshot.
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
@@ -498,6 +499,8 @@ class SnapshotClient(NamespacedClient):
             __query["include_repository"] = include_repository
         if index_details is not None:
             __query["index_details"] = index_details
+        if index_names is not None:
+            __query["index_names"] = index_names
         if master_timeout is not None:
             __query["master_timeout"] = master_timeout
         if offset is not None:
