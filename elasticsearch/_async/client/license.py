@@ -38,7 +38,7 @@ class LicenseClient(NamespacedClient):
         """
         Deletes licensing information for the cluster
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-license.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.4/delete-license.html>`_
         """
         __path = "/_license"
         __query: t.Dict[str, t.Any] = {}
@@ -71,7 +71,7 @@ class LicenseClient(NamespacedClient):
         """
         Retrieves licensing information for the cluster
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-license.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.4/get-license.html>`_
 
         :param accept_enterprise: If `true`, this parameter returns enterprise for Enterprise
             license types. If `false`, this parameter returns platinum for both platinum
@@ -113,7 +113,7 @@ class LicenseClient(NamespacedClient):
         """
         Retrieves information about the status of the basic license.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-basic-status.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.4/get-basic-status.html>`_
         """
         __path = "/_license/basic_status"
         __query: t.Dict[str, t.Any] = {}
@@ -144,7 +144,7 @@ class LicenseClient(NamespacedClient):
         """
         Retrieves information about the status of the trial license.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-trial-status.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.4/get-trial-status.html>`_
         """
         __path = "/_license/trial_status"
         __query: t.Dict[str, t.Any] = {}
@@ -182,7 +182,7 @@ class LicenseClient(NamespacedClient):
         """
         Updates the license for the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/update-license.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.4/update-license.html>`_
 
         :param licenses: A sequence of one or more JSON documents containing the license
             information.
@@ -232,7 +232,7 @@ class LicenseClient(NamespacedClient):
         """
         Starts an indefinite basic license.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/start-basic.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.4/start-basic.html>`_
 
         :param acknowledge: whether the user has acknowledged acknowledge messages (default:
             false)
@@ -270,7 +270,7 @@ class LicenseClient(NamespacedClient):
         """
         starts a limited time trial license.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/start-trial.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.4/start-trial.html>`_
 
         :param acknowledge: whether the user has acknowledged acknowledge messages (default:
             false)

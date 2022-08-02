@@ -43,7 +43,7 @@ class SnapshotClient(NamespacedClient):
         """
         Removes stale data from repository.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/clean-up-snapshot-repo-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.4/clean-up-snapshot-repo-api.html>`_
 
         :param name: Snapshot repository to clean up.
         :param master_timeout: Period to wait for a connection to the master node.
@@ -94,7 +94,7 @@ class SnapshotClient(NamespacedClient):
         """
         Clones indices from one snapshot into another snapshot in the same repository.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.4/modules-snapshots.html>`_
 
         :param repository: A repository name
         :param snapshot: The name of the snapshot to clone from
@@ -163,7 +163,7 @@ class SnapshotClient(NamespacedClient):
         """
         Creates a snapshot in a repository.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.4/modules-snapshots.html>`_
 
         :param repository: Repository for the snapshot.
         :param snapshot: Name of the snapshot. Must be unique in the repository.
@@ -261,7 +261,7 @@ class SnapshotClient(NamespacedClient):
         """
         Creates a repository.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.4/modules-snapshots.html>`_
 
         :param name: A repository name
         :param settings:
@@ -324,7 +324,7 @@ class SnapshotClient(NamespacedClient):
         """
         Deletes one or more snapshots.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.4/modules-snapshots.html>`_
 
         :param repository: A repository name
         :param snapshot: A comma-separated list of snapshot names
@@ -370,7 +370,7 @@ class SnapshotClient(NamespacedClient):
         """
         Deletes a repository.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.4/modules-snapshots.html>`_
 
         :param name: Name of the snapshot repository to unregister. Wildcard (`*`) patterns
             are supported.
@@ -414,6 +414,7 @@ class SnapshotClient(NamespacedClient):
         ignore_unavailable: t.Optional[bool] = None,
         include_repository: t.Optional[bool] = None,
         index_details: t.Optional[bool] = None,
+        index_names: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
@@ -433,7 +434,7 @@ class SnapshotClient(NamespacedClient):
         """
         Returns information about a snapshot.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.4/modules-snapshots.html>`_
 
         :param repository: Comma-separated list of snapshot repository names used to
             limit the request. Wildcard (*) expressions are supported.
@@ -449,12 +450,12 @@ class SnapshotClient(NamespacedClient):
             index- or shard count.
         :param ignore_unavailable: If false, the request returns an error for any snapshots
             that are unavailable.
-        :param include_repository: Whether to include the repository name in the snapshot
-            info. Defaults to true.
+        :param include_repository: If true, returns the repository name in each snapshot.
         :param index_details: If true, returns additional information about each index
             in the snapshot comprising the number of shards in the index, the total size
             of the index in bytes, and the maximum number of segments per shard in the
             index. Defaults to false, meaning that this information is omitted.
+        :param index_names: If true, returns the name of each index in each snapshot.
         :param master_timeout: Period to wait for a connection to the master node. If
             no response is received before the timeout expires, the request fails and
             returns an error.
@@ -498,6 +499,8 @@ class SnapshotClient(NamespacedClient):
             __query["include_repository"] = include_repository
         if index_details is not None:
             __query["index_details"] = index_details
+        if index_names is not None:
+            __query["index_names"] = index_names
         if master_timeout is not None:
             __query["master_timeout"] = master_timeout
         if offset is not None:
@@ -538,7 +541,7 @@ class SnapshotClient(NamespacedClient):
         """
         Returns information about a repository.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.4/modules-snapshots.html>`_
 
         :param name: A comma-separated list of repository names
         :param local: Return local information, do not retrieve the state from master
@@ -602,7 +605,7 @@ class SnapshotClient(NamespacedClient):
         """
         Restores a snapshot.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.4/modules-snapshots.html>`_
 
         :param repository: A repository name
         :param snapshot: A snapshot name
@@ -687,7 +690,7 @@ class SnapshotClient(NamespacedClient):
         """
         Returns information about the status of a snapshot.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.4/modules-snapshots.html>`_
 
         :param repository: A repository name
         :param snapshot: A comma-separated list of snapshot names
@@ -738,7 +741,7 @@ class SnapshotClient(NamespacedClient):
         """
         Verifies a repository.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.4/modules-snapshots.html>`_
 
         :param name: A repository name
         :param master_timeout: Explicit operation timeout for connection to master node
