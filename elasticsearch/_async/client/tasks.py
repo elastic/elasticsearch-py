@@ -45,7 +45,7 @@ class TasksClient(NamespacedClient):
         """
         Cancels a task, if it can be cancelled through an API.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.4/tasks.html>`_
 
         :param task_id: Cancel the task with specified task id (node_id:task_number)
         :param actions: A comma-separated list of actions that should be cancelled. Leave
@@ -101,7 +101,7 @@ class TasksClient(NamespacedClient):
         """
         Returns information about a task.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.4/tasks.html>`_
 
         :param task_id: Return the task with specified id (node_id:task_number)
         :param timeout: Explicit operation timeout
@@ -157,7 +157,7 @@ class TasksClient(NamespacedClient):
         """
         Returns a list of tasks.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.4/tasks.html>`_
 
         :param actions: Comma-separated list or wildcard expression of actions used to
             limit the request.
