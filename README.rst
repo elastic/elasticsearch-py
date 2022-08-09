@@ -102,7 +102,7 @@ Quick Start
     }
 
 
-You can read more about `configuring the client`_ in the documentation.
+You can read more about `configuring the client`_ in the documentation. 
 
 .. _configuring the client: https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/connecting.html
 
