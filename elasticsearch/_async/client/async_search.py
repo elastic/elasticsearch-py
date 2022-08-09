@@ -215,6 +215,7 @@ class AsyncSearchClient(NamespacedClient):
         ] = None,
         keep_alive: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         keep_on_completion: t.Optional[bool] = None,
+        knn: t.Optional[t.Mapping[str, t.Any]] = None,
         lenient: t.Optional[bool] = None,
         max_concurrent_shard_requests: t.Optional[int] = None,
         min_compatible_shard_node: t.Optional[str] = None,
@@ -350,6 +351,7 @@ class AsyncSearchClient(NamespacedClient):
         :param keep_on_completion: Control whether the response should be stored in the
             cluster if it completed within the provided [wait_for_completion] time (default:
             false)
+        :param knn: Defines the approximate kNN search to run.
         :param lenient: Specify whether format-based query failures (such as providing
             text to a numeric field) should be ignored
         :param max_concurrent_shard_requests: The number of concurrent shard requests
@@ -492,6 +494,8 @@ class AsyncSearchClient(NamespacedClient):
             __query["keep_alive"] = keep_alive
         if keep_on_completion is not None:
             __query["keep_on_completion"] = keep_on_completion
+        if knn is not None:
+            __body["knn"] = knn
         if lenient is not None:
             __query["lenient"] = lenient
         if max_concurrent_shard_requests is not None:
