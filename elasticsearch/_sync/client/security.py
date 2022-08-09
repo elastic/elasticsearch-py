@@ -2505,6 +2505,66 @@ class SecurityClient(NamespacedClient):
     @_rewrite_parameters(
         body_fields=True,
     )
+    def update_api_key(
+        self,
+        *,
+        id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        metadata: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+        role_descriptors: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Updates attributes of an existing API key.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.4/security-api-update-api-key.html>`_
+
+        :param id: The ID of the API key to update.
+        :param metadata: Arbitrary metadata that you want to associate with the API key.
+            It supports nested data structure. Within the metadata object, keys beginning
+            with _ are reserved for system usage.
+        :param role_descriptors: An array of role descriptors for this API key. This
+            parameter is optional. When it is not specified or is an empty array, then
+            the API key will have a point in time snapshot of permissions of the authenticated
+            user. If you supply role descriptors then the resultant permissions would
+            be an intersection of API keys permissions and authenticated user’s permissions
+            thereby limiting the access scope for API keys. The structure of role descriptor
+            is the same as the request for create role API. For more details, see create
+            or update roles API.
+        """
+        if id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'id'")
+        __path = f"/_security/api_key/{_quote(id)}"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if metadata is not None:
+            __body["metadata"] = metadata
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if role_descriptors is not None:
+            __body["role_descriptors"] = role_descriptors
+        if not __body:
+            __body = None  # type: ignore[assignment]
+        __headers = {"accept": "application/json"}
+        if __body is not None:
+            __headers["content-type"] = "application/json"
+        return self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers, body=__body
+        )
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
     def update_user_profile_data(
         self,
         *,
