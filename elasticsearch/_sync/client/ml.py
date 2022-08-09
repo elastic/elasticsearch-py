@@ -3671,6 +3671,7 @@ class MlClient(NamespacedClient):
         self,
         *,
         model_id: str,
+        cache_size: t.Optional[t.Union[int, str]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
@@ -3692,6 +3693,9 @@ class MlClient(NamespacedClient):
 
         :param model_id: The unique identifier of the trained model. Currently, only
             PyTorch models are supported.
+        :param cache_size: The inference cache size (in memory outside the JVM heap)
+            per node for the model. The default value is the same size as the `model_size_bytes`.
+            To disable the cache, `0b` can be provided.
         :param number_of_allocations: The number of model allocations on each node where
             the model is deployed. All allocations on a node share the same copy of the
             model in memory but use a separate set of threads to evaluate the model.
@@ -3715,6 +3719,8 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'model_id'")
         __path = f"/_ml/trained_models/{_quote(model_id)}/deployment/_start"
         __query: t.Dict[str, t.Any] = {}
+        if cache_size is not None:
+            __query["cache_size"] = cache_size
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
