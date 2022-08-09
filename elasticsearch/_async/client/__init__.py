@@ -3409,6 +3409,7 @@ class AsyncElasticsearch(BaseClient):
         indices_boost: t.Optional[
             t.Union[t.List[t.Mapping[str, float]], t.Tuple[t.Mapping[str, float], ...]]
         ] = None,
+        knn: t.Optional[t.Mapping[str, t.Any]] = None,
         lenient: t.Optional[bool] = None,
         max_concurrent_shard_requests: t.Optional[int] = None,
         min_compatible_shard_node: t.Optional[str] = None,
@@ -3538,6 +3539,7 @@ class AsyncElasticsearch(BaseClient):
         :param ignore_unavailable: Whether specified concrete indices should be ignored
             when unavailable (missing or closed)
         :param indices_boost: Boosts the _score of documents from specified indices.
+        :param knn: Defines the approximate kNN search to run.
         :param lenient: Specify whether format-based query failures (such as providing
             text to a numeric field) should be ignored
         :param max_concurrent_shard_requests: The number of concurrent shard requests
@@ -3682,6 +3684,8 @@ class AsyncElasticsearch(BaseClient):
             __query["ignore_unavailable"] = ignore_unavailable
         if indices_boost is not None:
             __body["indices_boost"] = indices_boost
+        if knn is not None:
+            __body["knn"] = knn
         if lenient is not None:
             __query["lenient"] = lenient
         if max_concurrent_shard_requests is not None:
