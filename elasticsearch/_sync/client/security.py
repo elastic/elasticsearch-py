@@ -1419,7 +1419,7 @@ class SecurityClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves user profile for the given unique ID.
+        Retrieves user profiles for the given unique ID(s).
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-user-profile.html>`_
 
