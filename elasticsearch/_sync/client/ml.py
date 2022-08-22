@@ -1755,7 +1755,7 @@ class MlClient(NamespacedClient):
         self,
         *,
         job_id: str,
-        snapshot_id: t.Optional[str] = None,
+        snapshot_id: str,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
@@ -1785,6 +1785,8 @@ class MlClient(NamespacedClient):
         """
         if job_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'job_id'")
+        if snapshot_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'snapshot_id'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/model_snapshots/{_quote(snapshot_id)}/_upgrade/_stats"
         __query: t.Dict[str, t.Any] = {}
         if allow_no_match is not None:
