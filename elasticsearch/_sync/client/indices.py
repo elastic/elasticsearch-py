@@ -2564,18 +2564,7 @@ class IndicesClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         properties: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         routing: t.Optional[t.Mapping[str, t.Any]] = None,
-        runtime: t.Optional[
-            t.Mapping[
-                str,
-                t.Union[
-                    t.Mapping[str, t.Any],
-                    t.Union[
-                        t.List[t.Mapping[str, t.Any]],
-                        t.Tuple[t.Mapping[str, t.Any], ...],
-                    ],
-                ],
-            ]
-        ] = None,
+        runtime: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         source: t.Optional[t.Mapping[str, t.Any]] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         write_index_only: t.Optional[bool] = None,

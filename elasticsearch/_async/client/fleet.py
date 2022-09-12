@@ -280,6 +280,7 @@ class FleetClient(NamespacedClient):
             ]
         ] = None,
         explain: t.Optional[bool] = None,
+        ext: t.Optional[t.Mapping[str, t.Any]] = None,
         fields: t.Optional[
             t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
         ] = None,
@@ -317,18 +318,7 @@ class FleetClient(NamespacedClient):
         ] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
-        runtime_mappings: t.Optional[
-            t.Mapping[
-                str,
-                t.Union[
-                    t.Mapping[str, t.Any],
-                    t.Union[
-                        t.List[t.Mapping[str, t.Any]],
-                        t.Tuple[t.Mapping[str, t.Any], ...],
-                    ],
-                ],
-            ]
-        ] = None,
+        runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         script_fields: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         scroll: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         search_after: t.Optional[
@@ -407,6 +397,7 @@ class FleetClient(NamespacedClient):
         :param expand_wildcards:
         :param explain: If true, returns detailed information about score computation
             as part of a hit.
+        :param ext: Configuration of search extensions defined by Elasticsearch plugins.
         :param fields: Array of wildcard (*) patterns. The request returns values for
             field names matching these patterns in the hits.fields property of the response.
         :param from_: Starting document offset. By default, you cannot page through more
@@ -530,6 +521,8 @@ class FleetClient(NamespacedClient):
             __query["expand_wildcards"] = expand_wildcards
         if explain is not None:
             __body["explain"] = explain
+        if ext is not None:
+            __body["ext"] = ext
         if fields is not None:
             __body["fields"] = fields
         if filter_path is not None:
