@@ -1766,18 +1766,7 @@ class AsyncElasticsearch(BaseClient):
         include_unmapped: t.Optional[bool] = None,
         index_filter: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
-        runtime_mappings: t.Optional[
-            t.Mapping[
-                str,
-                t.Union[
-                    t.Mapping[str, t.Any],
-                    t.Union[
-                        t.List[t.Mapping[str, t.Any]],
-                        t.Tuple[t.Mapping[str, t.Any], ...],
-                    ],
-                ],
-            ]
-        ] = None,
+        runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         types: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -2075,7 +2064,13 @@ class AsyncElasticsearch(BaseClient):
         *,
         index: str,
         id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
         preference: t.Optional[str] = None,
+        pretty: t.Optional[bool] = None,
         realtime: t.Optional[bool] = None,
         refresh: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
@@ -2127,8 +2122,16 @@ class AsyncElasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'id'")
         __path = f"/{_quote(index)}/_source/{_quote(id)}"
         __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
         if preference is not None:
             __query["preference"] = preference
+        if pretty is not None:
+            __query["pretty"] = pretty
         if realtime is not None:
             __query["realtime"] = realtime
         if refresh is not None:
@@ -3395,6 +3398,7 @@ class AsyncElasticsearch(BaseClient):
             ]
         ] = None,
         explain: t.Optional[bool] = None,
+        ext: t.Optional[t.Mapping[str, t.Any]] = None,
         fields: t.Optional[
             t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
         ] = None,
@@ -3433,18 +3437,7 @@ class AsyncElasticsearch(BaseClient):
         ] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
-        runtime_mappings: t.Optional[
-            t.Mapping[
-                str,
-                t.Union[
-                    t.Mapping[str, t.Any],
-                    t.Union[
-                        t.List[t.Mapping[str, t.Any]],
-                        t.Tuple[t.Mapping[str, t.Any], ...],
-                    ],
-                ],
-            ]
-        ] = None,
+        runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         script_fields: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         scroll: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         search_after: t.Optional[
@@ -3528,6 +3521,7 @@ class AsyncElasticsearch(BaseClient):
             that are open, closed or both.
         :param explain: If true, returns detailed information about score computation
             as part of a hit.
+        :param ext: Configuration of search extensions defined by Elasticsearch plugins.
         :param fields: Array of wildcard (*) patterns. The request returns values for
             field names matching these patterns in the hits.fields property of the response.
         :param from_: Starting document offset. By default, you cannot page through more
@@ -3668,6 +3662,8 @@ class AsyncElasticsearch(BaseClient):
             __query["expand_wildcards"] = expand_wildcards
         if explain is not None:
             __body["explain"] = explain
+        if ext is not None:
+            __body["ext"] = ext
         if fields is not None:
             __body["fields"] = fields
         if filter_path is not None:
@@ -3805,18 +3801,7 @@ class AsyncElasticsearch(BaseClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
-        runtime_mappings: t.Optional[
-            t.Mapping[
-                str,
-                t.Union[
-                    t.Mapping[str, t.Any],
-                    t.Union[
-                        t.List[t.Mapping[str, t.Any]],
-                        t.Tuple[t.Mapping[str, t.Any], ...],
-                    ],
-                ],
-            ]
-        ] = None,
+        runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         size: t.Optional[int] = None,
         sort: t.Optional[
             t.Union[
