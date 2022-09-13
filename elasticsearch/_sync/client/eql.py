@@ -204,18 +204,7 @@ class EqlClient(NamespacedClient):
         keep_on_completion: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         result_position: t.Optional[t.Union["t.Literal['head', 'tail']", str]] = None,
-        runtime_mappings: t.Optional[
-            t.Mapping[
-                str,
-                t.Union[
-                    t.Mapping[str, t.Any],
-                    t.Union[
-                        t.List[t.Mapping[str, t.Any]],
-                        t.Tuple[t.Mapping[str, t.Any], ...],
-                    ],
-                ],
-            ]
-        ] = None,
+        runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         size: t.Optional[int] = None,
         tiebreaker_field: t.Optional[str] = None,
         timestamp_field: t.Optional[str] = None,

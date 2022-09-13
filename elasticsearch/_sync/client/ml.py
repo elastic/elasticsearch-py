@@ -2815,18 +2815,7 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
         query_delay: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
-        runtime_mappings: t.Optional[
-            t.Mapping[
-                str,
-                t.Union[
-                    t.Mapping[str, t.Any],
-                    t.Union[
-                        t.List[t.Mapping[str, t.Any]],
-                        t.Tuple[t.Mapping[str, t.Any], ...],
-                    ],
-                ],
-            ]
-        ] = None,
+        runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         script_fields: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         scroll_size: t.Optional[int] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -4023,18 +4012,7 @@ class MlClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
         query_delay: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
-        runtime_mappings: t.Optional[
-            t.Mapping[
-                str,
-                t.Union[
-                    t.Mapping[str, t.Any],
-                    t.Union[
-                        t.List[t.Mapping[str, t.Any]],
-                        t.Tuple[t.Mapping[str, t.Any], ...],
-                    ],
-                ],
-            ]
-        ] = None,
+        runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         script_fields: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         scroll_size: t.Optional[int] = None,
     ) -> ObjectApiResponse[t.Any]:

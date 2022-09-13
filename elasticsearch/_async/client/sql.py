@@ -228,18 +228,7 @@ class SqlClient(NamespacedClient):
         request_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
-        runtime_mappings: t.Optional[
-            t.Mapping[
-                str,
-                t.Union[
-                    t.Mapping[str, t.Any],
-                    t.Union[
-                        t.List[t.Mapping[str, t.Any]],
-                        t.Tuple[t.Mapping[str, t.Any], ...],
-                    ],
-                ],
-            ]
-        ] = None,
+        runtime_mappings: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         time_zone: t.Optional[str] = None,
         wait_for_completion_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
