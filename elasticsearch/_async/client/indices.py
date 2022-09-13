@@ -984,6 +984,53 @@ class IndicesClient(NamespacedClient):
             "POST", __path, params=__query, headers=__headers
         )
 
+    @_rewrite_parameters(
+        body_name="config",
+    )
+    async def downsample(
+        self,
+        *,
+        index: str,
+        target_index: str,
+        config: t.Any,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Downsample an index
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/xpack-rollup.html>`_
+
+        :param index: The index to downsample
+        :param target_index: The name of the target index to store downsampled data
+        :param config:
+        """
+        if index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'index'")
+        if target_index in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'target_index'")
+        if config is None:
+            raise ValueError("Empty value passed for parameter 'config'")
+        __path = f"/{_quote(index)}/_downsample/{_quote(target_index)}"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __body = config
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers, body=__body
+        )
+
     @_rewrite_parameters()
     async def exists(
         self,
@@ -2564,18 +2611,7 @@ class IndicesClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         properties: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         routing: t.Optional[t.Mapping[str, t.Any]] = None,
-        runtime: t.Optional[
-            t.Mapping[
-                str,
-                t.Union[
-                    t.Mapping[str, t.Any],
-                    t.Union[
-                        t.List[t.Mapping[str, t.Any]],
-                        t.Tuple[t.Mapping[str, t.Any], ...],
-                    ],
-                ],
-            ]
-        ] = None,
+        runtime: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         source: t.Optional[t.Mapping[str, t.Any]] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         write_index_only: t.Optional[bool] = None,
