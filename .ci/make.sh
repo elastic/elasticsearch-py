@@ -164,7 +164,15 @@ if [[ "$CMD" == "bump" ]]; then
 fi
 
 if [[ "$CMD" == "codegen" ]]; then
-    echo "TODO"
+  docker run \
+     --rm -v $repo:/code/elasticsearch-py \
+     $product \
+     /bin/bash -c "cd /code && python -m pip install nox && \
+     git clone https://$CLIENTS_GITHUB_TOKEN@github.com/elastic/elastic-client-generator-python.git && \
+     cd /code/elastic-client-generator-python && GIT_BRANCH=$VERSION python -m nox -s generate-es && \
+     cd /code/elasticsearch-py && python -m nox -s format"
+
+  exit 0
 fi
 
 if [[ "$CMD" == "docsgen" ]]; then
