@@ -292,6 +292,50 @@ class TestStreamingBulk(object):
             await streaming_bulk()
         assert 4 == failing_client._called
 
+    async def test_connection_timeout_is_retried_with_retry_status_callback(
+        self, async_client
+    ):
+        failing_client = FailingBulkClient(
+            async_client,
+            fail_with=ApiError(
+                message="Connection timed out!",
+                body={},
+                meta=ApiResponseMeta(
+                    status=522, headers={}, http_version="1.1", duration=0, node=None
+                ),
+            ),
+        )
+        docs = [
+            {"_index": "i", "_id": 47, "f": "v"},
+            {"_index": "i", "_id": 45, "f": "v"},
+            {"_index": "i", "_id": 42, "f": "v"},
+        ]
+
+        def _retry_for_connection_timeout(status):
+            if status == 522:
+                return True
+            return False
+
+        results = [
+            x
+            async for x in helpers.async_streaming_bulk(
+                failing_client,
+                docs,
+                raise_on_exception=False,
+                raise_on_error=False,
+                chunk_size=1,
+                retry_for_status_callback=_retry_for_connection_timeout,
+                max_retries=1,
+                initial_backoff=0,
+            )
+        ]
+        assert 3 == len(results)
+        assert [True, True, True] == [r[0] for r in results]
+        await async_client.indices.refresh(index="i")
+        res = await async_client.search(index="i")
+        assert {"value": 3, "relation": "eq"} == res["hits"]["total"]
+        assert 4 == failing_client._called
+
 
 class TestBulk(object):
     async def test_bulk_works_with_single_item(self, async_client):

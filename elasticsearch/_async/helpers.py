@@ -158,6 +158,12 @@ async def azip(
         pass
 
 
+def _retry_for_status(status: int) -> bool:
+    if status == 429:
+        return True
+    return False
+
+
 async def async_streaming_bulk(
     client: AsyncElasticsearch,
     actions: Union[Iterable[_TYPE_BULK_ACTION], AsyncIterable[_TYPE_BULK_ACTION]],
@@ -167,6 +173,7 @@ async def async_streaming_bulk(
     expand_action_callback: Callable[
         [_TYPE_BULK_ACTION], _TYPE_BULK_ACTION_HEADER_AND_BODY
     ] = expand_action,
+    retry_for_status_callback: Callable[[int], bool] = _retry_for_status,
     raise_on_exception: bool = True,
     max_retries: int = 0,
     initial_backoff: float = 2,
@@ -185,10 +192,11 @@ async def async_streaming_bulk(
     entire input is consumed and sent.
 
     If you specify ``max_retries`` it will also retry any documents that were
-    rejected with a ``429`` status code. To do this it will wait (**by calling
-    asyncio.sleep**) for ``initial_backoff`` seconds and then,
-    every subsequent rejection for the same chunk, for double the time every
-    time up to ``max_backoff`` seconds.
+    rejected with a ``429`` status code. Use ``retry_for_status_callback`` to
+    configure which status codes will be retried. To do this it will wait
+    (**by calling time.sleep which will block**) for ``initial_backoff`` seconds
+    and then, every subsequent rejection for the same chunk, for double the time
+    every time up to ``max_backoff`` seconds.
 
     :arg client: instance of :class:`~elasticsearch.AsyncElasticsearch` to use
     :arg actions: iterable or async iterable containing the actions to be executed
@@ -201,8 +209,12 @@ async def async_streaming_bulk(
     :arg expand_action_callback: callback executed on each action passed in,
         should return a tuple containing the action line and the data line
         (`None` if data line should be omitted).
+    :arg retry_for_status_callback: callback executed on each item's status,
+        should return a True if the status require a retry and False if not.
+        (if `None` is specified only status 429 will retry).
     :arg max_retries: maximum number of times a document will be retried when
-        ``429`` is received, set to 0 (default) for no retries on ``429``
+        retry_for_status_callback (defaulting to ``429``) is received,
+        set to 0 (default) for no retries on retry_for_status_callback
     :arg initial_backoff: number of seconds we should wait before the first
         retry. Any subsequent retries will be powers of ``initial_backoff *
         2**retry_number``
@@ -267,11 +279,11 @@ async def async_streaming_bulk(
 
                     if not ok:
                         action, info = info.popitem()
-                        # retry if retries enabled, we get 429, and we are not
-                        # in the last attempt
+                        # retry if retries enabled, we are not in the last attempt,
+                        # and retry_for_status_callback is true (defaulting to 429)
                         if (
                             max_retries
-                            and info["status"] == 429
+                            and retry_for_status_callback(info["status"])
                             and (attempt + 1) <= max_retries
                         ):
                             # _process_bulk_chunk expects strings so we need to
@@ -284,8 +296,11 @@ async def async_streaming_bulk(
                         yield ok, info
 
             except ApiError as e:
-                # suppress 429 errors since we will retry them
-                if attempt == max_retries or e.status_code != 429:
+                # suppress any status which retry_for_status_callback is true (defaulting to 429)
+                # since we will retry them
+                if attempt == max_retries or not retry_for_status_callback(
+                    e.status_code
+                ):
                     raise
             else:
                 if not to_retry:
