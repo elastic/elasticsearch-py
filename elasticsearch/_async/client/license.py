@@ -38,7 +38,7 @@ class LicenseClient(NamespacedClient):
         """
         Deletes licensing information for the cluster
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-license.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.5/delete-license.html>`_
         """
         __path = "/_license"
         __query: t.Dict[str, t.Any] = {}
@@ -71,7 +71,7 @@ class LicenseClient(NamespacedClient):
         """
         Retrieves licensing information for the cluster
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-license.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.5/get-license.html>`_
 
         :param accept_enterprise: If `true`, this parameter returns enterprise for Enterprise
             license types. If `false`, this parameter returns platinum for both platinum
@@ -113,7 +113,7 @@ class LicenseClient(NamespacedClient):
         """
         Retrieves information about the status of the basic license.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-basic-status.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.5/get-basic-status.html>`_
         """
         __path = "/_license/basic_status"
         __query: t.Dict[str, t.Any] = {}
@@ -144,7 +144,7 @@ class LicenseClient(NamespacedClient):
         """
         Retrieves information about the status of the trial license.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-trial-status.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.5/get-trial-status.html>`_
         """
         __path = "/_license/trial_status"
         __query: t.Dict[str, t.Any] = {}
@@ -167,9 +167,6 @@ class LicenseClient(NamespacedClient):
     async def post(
         self,
         *,
-        licenses: t.Union[
-            t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]
-        ],
         acknowledge: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
@@ -177,25 +174,24 @@ class LicenseClient(NamespacedClient):
         ] = None,
         human: t.Optional[bool] = None,
         license: t.Optional[t.Mapping[str, t.Any]] = None,
+        licenses: t.Optional[
+            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
+        ] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Updates the license for the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/update-license.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.5/update-license.html>`_
 
-        :param licenses: A sequence of one or more JSON documents containing the license
-            information.
         :param acknowledge: Specifies whether you acknowledge the license changes.
         :param license:
+        :param licenses: A sequence of one or more JSON documents containing the license
+            information.
         """
-        if licenses is None:
-            raise ValueError("Empty value passed for parameter 'licenses'")
         __path = "/_license"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if licenses is not None:
-            __body["licenses"] = licenses
+        __body: t.Dict[str, t.Any] = {}
         if acknowledge is not None:
             __query["acknowledge"] = acknowledge
         if error_trace is not None:
@@ -206,6 +202,8 @@ class LicenseClient(NamespacedClient):
             __query["human"] = human
         if license is not None:
             __body["license"] = license
+        if licenses is not None:
+            __body["licenses"] = licenses
         if pretty is not None:
             __query["pretty"] = pretty
         if not __body:
@@ -232,7 +230,7 @@ class LicenseClient(NamespacedClient):
         """
         Starts an indefinite basic license.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/start-basic.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.5/start-basic.html>`_
 
         :param acknowledge: whether the user has acknowledged acknowledge messages (default:
             false)
@@ -270,7 +268,7 @@ class LicenseClient(NamespacedClient):
         """
         starts a limited time trial license.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/start-trial.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.5/start-trial.html>`_
 
         :param acknowledge: whether the user has acknowledged acknowledge messages (default:
             false)
