@@ -979,6 +979,7 @@ class SecurityClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         realm_name: t.Optional[str] = None,
         username: t.Optional[str] = None,
+        with_limited_by: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves information for one or more API keys.
@@ -990,6 +991,9 @@ class SecurityClient(NamespacedClient):
         :param owner: flag to query API keys owned by the currently authenticated user
         :param realm_name: realm name of the user who created this API key to be retrieved
         :param username: user name of the user who created this API key to be retrieved
+        :param with_limited_by: Return the snapshot of the owner user's role descriptors
+            associated with the API key. An API key's actual permission is the intersection
+            of its assigned role descriptors and the owner user's role descriptors.
         """
         __path = "/_security/api_key"
         __query: t.Dict[str, t.Any] = {}
@@ -1011,6 +1015,8 @@ class SecurityClient(NamespacedClient):
             __query["realm_name"] = realm_name
         if username is not None:
             __query["username"] = username
+        if with_limited_by is not None:
+            __query["with_limited_by"] = with_limited_by
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "GET", __path, params=__query, headers=__headers
@@ -1330,6 +1336,7 @@ class SecurityClient(NamespacedClient):
         ] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        with_profile_uid: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves information about users in the native realm and built-in users.
@@ -1339,6 +1346,8 @@ class SecurityClient(NamespacedClient):
         :param username: An identifier for the user. You can specify multiple usernames
             as a comma-separated list. If you omit this parameter, the API retrieves
             information about all users.
+        :param with_profile_uid: If true will return the User Profile ID for a user,
+            if any.
         """
         if username not in SKIP_IN_PATH:
             __path = f"/_security/user/{_quote(username)}"
@@ -1353,6 +1362,8 @@ class SecurityClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if with_profile_uid is not None:
+            __query["with_profile_uid"] = with_profile_uid
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "GET", __path, params=__query, headers=__headers
@@ -1409,7 +1420,7 @@ class SecurityClient(NamespacedClient):
     def get_user_profile(
         self,
         *,
-        uid: str,
+        uid: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
         data: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
@@ -1465,6 +1476,7 @@ class SecurityClient(NamespacedClient):
         human: t.Optional[bool] = None,
         password: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
+        run_as: t.Optional[str] = None,
         username: t.Optional[str] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -1476,6 +1488,7 @@ class SecurityClient(NamespacedClient):
         :param grant_type:
         :param access_token:
         :param password:
+        :param run_as:
         :param username:
         """
         if api_key is None:
@@ -1501,6 +1514,8 @@ class SecurityClient(NamespacedClient):
             __body["password"] = password
         if pretty is not None:
             __query["pretty"] = pretty
+        if run_as is not None:
+            __body["run_as"] = run_as
         if username is not None:
             __body["username"] = username
         __headers = {"accept": "application/json", "content-type": "application/json"}
@@ -2065,6 +2080,7 @@ class SecurityClient(NamespacedClient):
                 ],
             ]
         ] = None,
+        with_limited_by: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves information for API keys using a subset of query DSL
@@ -2083,6 +2099,9 @@ class SecurityClient(NamespacedClient):
             more than 10,000 hits using the from and size parameters. To page through
             more hits, use the search_after parameter.
         :param sort:
+        :param with_limited_by: Return the snapshot of the owner user's role descriptors
+            associated with the API key. An API key's actual permission is the intersection
+            of its assigned role descriptors and the owner user's role descriptors.
         """
         __path = "/_security/_query/api_key"
         __query: t.Dict[str, t.Any] = {}
@@ -2116,6 +2135,8 @@ class SecurityClient(NamespacedClient):
             __body["size"] = size
         if sort is not None:
             __body["sort"] = sort
+        if with_limited_by is not None:
+            __query["with_limited_by"] = with_limited_by
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}

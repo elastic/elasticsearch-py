@@ -167,9 +167,6 @@ class LicenseClient(NamespacedClient):
     async def post(
         self,
         *,
-        licenses: t.Union[
-            t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]
-        ],
         acknowledge: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
@@ -177,6 +174,9 @@ class LicenseClient(NamespacedClient):
         ] = None,
         human: t.Optional[bool] = None,
         license: t.Optional[t.Mapping[str, t.Any]] = None,
+        licenses: t.Optional[
+            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
+        ] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -184,18 +184,14 @@ class LicenseClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/update-license.html>`_
 
-        :param licenses: A sequence of one or more JSON documents containing the license
-            information.
         :param acknowledge: Specifies whether you acknowledge the license changes.
         :param license:
+        :param licenses: A sequence of one or more JSON documents containing the license
+            information.
         """
-        if licenses is None:
-            raise ValueError("Empty value passed for parameter 'licenses'")
         __path = "/_license"
-        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if licenses is not None:
-            __body["licenses"] = licenses
+        __body: t.Dict[str, t.Any] = {}
         if acknowledge is not None:
             __query["acknowledge"] = acknowledge
         if error_trace is not None:
@@ -206,6 +202,8 @@ class LicenseClient(NamespacedClient):
             __query["human"] = human
         if license is not None:
             __body["license"] = license
+        if licenses is not None:
+            __body["licenses"] = licenses
         if pretty is not None:
             __query["pretty"] = pretty
         if not __body:
