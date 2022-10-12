@@ -1327,7 +1327,7 @@ class AsyncElasticsearch(BaseClient):
     async def delete_by_query_rethrottle(
         self,
         *,
-        task_id: str,
+        task_id: t.Union[int, str],
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
