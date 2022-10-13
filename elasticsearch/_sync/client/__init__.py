@@ -2978,6 +2978,7 @@ class Elasticsearch(BaseClient):
         metric: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         search_type: t.Optional[str] = None,
+        templates: t.Optional[t.List[t.Mapping[str, t.Any]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Allows to evaluate the quality of ranked search results over a set of typical
@@ -3002,6 +3003,7 @@ class Elasticsearch(BaseClient):
             in the response.
         :param metric: Definition of the evaluation metric to calculate.
         :param search_type: Search operation type
+        :param templates: A set of template definitions that can be referenced
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -3033,6 +3035,8 @@ class Elasticsearch(BaseClient):
             __query["pretty"] = pretty
         if search_type is not None:
             __query["search_type"] = search_type
+        if templates is not None:
+            __body["templates"] = templates
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers, body=__body
