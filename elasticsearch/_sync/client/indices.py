@@ -992,7 +992,7 @@ class IndicesClient(NamespacedClient):
         *,
         index: str,
         target_index: str,
-        config: t.Any,
+        config: t.Mapping[str, t.Any],
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
