@@ -68,11 +68,8 @@ case $CMD in
         TASK_ARGS=("$VERSION" "$output_folder")
         ;;
     codegen)
-        if [ -v $VERSION ]; then
-            echo -e "\033[31;1mTARGET: codegen -> missing version parameter\033[0m"
-            exit 1
-        fi
-        echo -e "\033[36;1mTARGET: codegen API v$VERSION\033[0m"
+        VERSION=$(git rev-parse --abbrev-ref HEAD)
+        echo -e "\033[36;1mTARGET: codegen API $VERSION\033[0m"
         TASK=codegen
         # VERSION is BRANCH here for now
         TASK_ARGS=("$VERSION" "$codegen_folder")
