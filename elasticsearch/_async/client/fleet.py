@@ -323,8 +323,8 @@ class FleetClient(NamespacedClient):
         scroll: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         search_after: t.Optional[
             t.Union[
-                t.List[t.Union[None, float, int, str]],
-                t.Tuple[t.Union[None, float, int, str], ...],
+                t.List[t.Union[None, bool, float, int, str, t.Any]],
+                t.Tuple[t.Union[None, bool, float, int, str, t.Any], ...],
             ]
         ] = None,
         search_type: t.Optional[
