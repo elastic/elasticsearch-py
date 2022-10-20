@@ -24,6 +24,40 @@ from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
 class MlClient(NamespacedClient):
+    @_rewrite_parameters()
+    async def clear_trained_model_deployment_cache(
+        self,
+        *,
+        model_id: t.Optional[str] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Clear the cached results from a trained model deployment
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/clear-trained-model-deployment-cache.html>`_
+
+        :param model_id: The unique identifier of the trained model.
+        """
+        __path = f"/_ml/trained_models/{_quote(model_id)}/deployment/cache/_clear"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers
+        )
+
     @_rewrite_parameters(
         body_fields=True,
     )
