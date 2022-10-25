@@ -1735,7 +1735,6 @@ class AsyncElasticsearch(BaseClient):
     async def field_caps(
         self,
         *,
-        fields: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
         index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
         allow_no_indices: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
@@ -1757,6 +1756,9 @@ class AsyncElasticsearch(BaseClient):
                 ],
             ]
         ] = None,
+        fields: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
@@ -1774,8 +1776,6 @@ class AsyncElasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-field-caps.html>`_
 
-        :param fields: Comma-separated list of fields to retrieve capabilities for. Wildcard
-            (`*`) expressions are supported.
         :param index: Comma-separated list of data streams, indices, and aliases used
             to limit the request. Supports wildcards (*). To target all data streams
             and indices, omit this parameter or use * or _all.
@@ -1788,6 +1788,8 @@ class AsyncElasticsearch(BaseClient):
             request can target data streams, this argument determines whether wildcard
             expressions match hidden data streams. Supports comma-separated values, such
             as `open,hidden`.
+        :param fields: List of fields to retrieve capabilities for. Wildcard (`*`) expressions
+            are supported.
         :param filters: An optional set of filters: can include +metadata,-metadata,-nested,-multifield,-parent
         :param ignore_unavailable: If `true`, missing or closed indices are not included
             in the response.
@@ -1801,22 +1803,20 @@ class AsyncElasticsearch(BaseClient):
         :param types: Only return results for fields that have one of the types in the
             list
         """
-        if fields is None:
-            raise ValueError("Empty value passed for parameter 'fields'")
         if index not in SKIP_IN_PATH:
             __path = f"/{_quote(index)}/_field_caps"
         else:
             __path = "/_field_caps"
         __query: t.Dict[str, t.Any] = {}
         __body: t.Dict[str, t.Any] = {}
-        if fields is not None:
-            __query["fields"] = fields
         if allow_no_indices is not None:
             __query["allow_no_indices"] = allow_no_indices
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if expand_wildcards is not None:
             __query["expand_wildcards"] = expand_wildcards
+        if fields is not None:
+            __body["fields"] = fields
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if filters is not None:
@@ -3442,8 +3442,8 @@ class AsyncElasticsearch(BaseClient):
         scroll: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         search_after: t.Optional[
             t.Union[
-                t.List[t.Union[None, float, int, str]],
-                t.Tuple[t.Union[None, float, int, str], ...],
+                t.List[t.Union[None, bool, float, int, str, t.Any]],
+                t.Tuple[t.Union[None, bool, float, int, str, t.Any], ...],
             ]
         ] = None,
         search_type: t.Optional[
