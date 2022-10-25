@@ -305,7 +305,6 @@ class AsyncElasticsearch(object):
         "version_type",
         "wait_for_active_shards",
         request_mimetypes=["application/json"],
-        response_mimetypes=["application/json"],
         body_name="document",
     )
     async def create(self, index, id, body, doc_type=None, params=None, headers=None):
@@ -362,7 +361,6 @@ class AsyncElasticsearch(object):
         "version_type",
         "wait_for_active_shards",
         request_mimetypes=["application/json"],
-        response_mimetypes=["application/json"],
         body_name="document",
     )
     async def index(
@@ -480,8 +478,7 @@ class AsyncElasticsearch(object):
         )
 
     @query_params(
-        request_mimetypes=["application/json", "text/plain"],
-        response_mimetypes=["application/json"],
+        request_mimetypes=["application/json"],
         body_params=["scroll_id"],
     )
     async def clear_scroll(self, body=None, scroll_id=None, params=None, headers=None):
@@ -582,7 +579,6 @@ class AsyncElasticsearch(object):
         "version",
         "version_type",
         "wait_for_active_shards",
-        response_mimetypes=["application/json"],
     )
     async def delete(self, index, id, doc_type=None, params=None, headers=None):
         """
@@ -807,7 +803,6 @@ class AsyncElasticsearch(object):
         "stored_fields",
         "version",
         "version_type",
-        response_mimetypes=["application/json"],
     )
     async def exists(self, index, id, doc_type=None, params=None, headers=None):
         """
@@ -1014,7 +1009,6 @@ class AsyncElasticsearch(object):
         "stored_fields",
         "version",
         "version_type",
-        response_mimetypes=["application/json"],
     )
     async def get(self, index, id, doc_type=None, params=None, headers=None):
         """
@@ -1553,7 +1547,6 @@ class AsyncElasticsearch(object):
         "scroll",
         "scroll_id",
         request_mimetypes=["application/json"],
-        response_mimetypes=["application/json"],
         body_params=["scroll", "scroll_id"],
     )
     async def scroll(self, body=None, scroll_id=None, params=None, headers=None):
@@ -1626,7 +1619,6 @@ class AsyncElasticsearch(object):
         "typed_keys",
         "version",
         request_mimetypes=["application/json"],
-        response_mimetypes=["application/json"],
         body_params=[
             "_source",
             "aggregations",
@@ -1634,6 +1626,7 @@ class AsyncElasticsearch(object):
             "collapse",
             "docvalue_fields",
             "explain",
+            "ext",
             "fields",
             "from_",
             "highlight",
@@ -1714,6 +1707,8 @@ class AsyncElasticsearch(object):
             closed, hidden, none, all  Default: open
         :arg explain: If true, returns detailed information about score
             computation as part of a hit.
+        :arg ext: Configuration of search extensions defined by
+            Elasticsearch plugins.
         :arg fields: Array of wildcard (*) patterns. The request returns
             values for field names
             matching these patterns in the hits.fields property of the response.
@@ -2020,7 +2015,6 @@ class AsyncElasticsearch(object):
         "timeout",
         "wait_for_active_shards",
         request_mimetypes=["application/json"],
-        response_mimetypes=["application/json"],
         body_params=[
             "_source",
             "detect_noop",
@@ -2371,7 +2365,6 @@ class AsyncElasticsearch(object):
         "grid_type",
         "size",
         request_mimetypes=["application/json"],
-        response_mimetypes=["application/vnd.mapbox-vector-tile"],
         body_params=[
             "aggs",
             "exact_bounds",

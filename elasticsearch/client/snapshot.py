@@ -78,10 +78,17 @@ class SnapshotClient(NamespacedClient):
         )
 
     @query_params(
+        "after",
+        "from_sort_value",
         "ignore_unavailable",
         "include_repository",
         "index_details",
         "master_timeout",
+        "offset",
+        "order",
+        "size",
+        "slm_policy_filter",
+        "sort",
         "verbose",
         response_mimetypes=["application/json"],
     )
@@ -93,6 +100,10 @@ class SnapshotClient(NamespacedClient):
 
         :arg repository: A repository name
         :arg snapshot: A comma-separated list of snapshot names
+        :arg after: Offset identifier to start pagination from as
+            returned by the 'next' field in the response body.
+        :arg from_sort_value: Value of the current sort column at which
+            to start retrieval.
         :arg ignore_unavailable: Whether to ignore unavailable
             snapshots, defaults to false which means a SnapshotMissingException is
             thrown
@@ -102,6 +113,17 @@ class SnapshotClient(NamespacedClient):
             the snapshot, if those details are available. Defaults to false.
         :arg master_timeout: Explicit operation timeout for connection
             to master node
+        :arg offset: Numeric offset to start pagination based on the
+            snapshots matching the request. Defaults to 0
+        :arg order: Sort order  Valid choices: asc, desc  Default: asc
+        :arg size: Maximum number of snapshots to return. Defaults to 0
+            which means return all that match without limit.
+        :arg slm_policy_filter: Filter snapshots by a comma-separated
+            list of SLM policy names that snapshots belong to. Accepts wildcards.
+            Use the special pattern '_none' to match snapshots without an SLM policy
+        :arg sort: Allows setting a sort order for the result. Defaults
+            to start_time  Valid choices: start_time, duration, name, repository,
+            index_count, shard_count, failed_shard_count  Default: start_time
         :arg verbose: Whether to show verbose snapshot info or only show
             the basic info found in the repository index blob
         """
