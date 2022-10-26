@@ -250,7 +250,7 @@ def _process_bulk_chunk_success(
     raise_on_error: bool = True,
 ) -> Iterator[Tuple[bool, Dict[str, Any]]]:
     # if raise on error is set, we need to collect errors per chunk before raising them
-    errors = []
+    errors = {}
 
     # go through request-response pairs and detect failures
     for data, (op_type, item) in zip(
@@ -263,15 +263,17 @@ def _process_bulk_chunk_success(
             # include original document source
             if len(data) > 1:
                 item["data"] = data[1]  # type: ignore[misc]
-            errors.append({op_type: item})
+            if(status_code not in errors): errors[status_code] = []
+            errors[status_code].append({op_type: item})
 
         if ok or not errors:
             # if we are not just recording all errors to be able to raise
             # them all at once, yield items individually
             yield ok, {op_type: item}
 
-    if errors:
-        raise BulkIndexError(f"{len(errors)} document(s) failed to index.", errors)
+    error_count = sum(len(v) for v in errors.values())
+    if error_count:
+        raise BulkIndexError(f"{error_count} document(s) failed to index, their http status code are {list(errors.keys())}.", errors)
 
 
 def _process_bulk_chunk_error(
