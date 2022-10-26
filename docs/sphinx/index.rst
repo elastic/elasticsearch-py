@@ -75,7 +75,6 @@ Python. We have created some :ref:`helpers` to help with this issue as well as
 a more high level library (`elasticsearch-dsl`_) on top of this one to provide
 a more convenient way of working with Elasticsearch.
 
-.. _elasticsearch-dsl: https://elasticsearch-dsl.readthedocs.io
 
 
 Elasticsearch-DSL
