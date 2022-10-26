@@ -1,6 +1,9 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-7-17-7>>
+* <<rn-7-17-6>>
+* <<rn-7-17-5>>
 * <<rn-7-17-4>>
 * <<rn-7-17-3>>
 * <<rn-7-17-2>>
@@ -39,6 +42,27 @@
 * <<rn-7-0-2>>
 * <<rn-7-0-1>>
 * <<rn-7-0-0>>
+
+
+[discrete]
+[[rn-7-17-7]]
+=== 7.17.7 (2022-10-26)
+
+* Client is compatible with Elasticsearch 7.17.7
+
+
+[discrete]
+[[rn-7-17-6]]
+=== 7.17.6 (2022-08-25)
+
+* Client is compatible with Elasticsearch 7.17.6
+
+
+[discrete]
+[[rn-7-17-5]]
+=== 7.17.5 (2022-08-25)
+
+* Client is compatible with Elasticsearch 7.17.5
 
 
 [discrete]
