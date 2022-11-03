@@ -2948,10 +2948,10 @@ class AsyncElasticsearch(BaseClient):
     async def rank_eval(
         self,
         *,
-        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
         requests: t.Union[
             t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]
         ],
+        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
         allow_no_indices: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
@@ -2987,12 +2987,12 @@ class AsyncElasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-rank-eval.html>`_
 
+        :param requests: A set of typical search requests, together with their provided
+            ratings.
         :param index: Comma-separated list of data streams, indices, and index aliases
             used to limit the request. Wildcard (`*`) expressions are supported. To target
             all data streams and indices in a cluster, omit this parameter or use `_all`
             or `*`.
-        :param requests: A set of typical search requests, together with their provided
-            ratings.
         :param allow_no_indices: If `false`, the request returns an error if any wildcard
             expression, index alias, or `_all` value targets only missing or closed indices.
             This behavior applies even if the request targets other open indices. For
@@ -3005,8 +3005,6 @@ class AsyncElasticsearch(BaseClient):
         :param metric: Definition of the evaluation metric to calculate.
         :param search_type: Search operation type
         """
-        if index in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'index'")
         if requests is None:
             raise ValueError("Empty value passed for parameter 'requests'")
         if index not in SKIP_IN_PATH:
