@@ -1,6 +1,7 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-8-5-0>>
 * <<rn-8-4-3>>
 * <<rn-8-4-2>>
 * <<rn-8-4-1>>
@@ -17,6 +18,48 @@
 * <<rn-8-1-1>>
 * <<rn-8-1-0>>
 * <<rn-8-0-0>>
+
+[discrete]
+[[rn-8-5-0]]
+=== 8.5.0 (2022-11-2)
+
+[discrete]
+==== Indices
+
+* Added the **experimental** `indices.downsample` API
+
+[discrete]
+==== Rollup
+
+* Removed the deprecated `rollup.rollup` API.
+
+[discrete]
+==== Snapshot
+
+* Added the `index_names` parameter to the `snapshot.get` API.
+
+[discrete]
+==== Machine Learning
+
+* Added the **beta** `ml.clear_trained_model_deployment_cache` API.
+* Changed the `ml.put_trained_model_definition_part` API from **experimental** to **stable**.
+* Changed the `ml.put_trained_model_vocabulary` API from **experimental** to **stable**.
+* Changed the `ml.start_trained_model_deployment` API from **experimental** to **stable**.
+* Changed the `ml.stop_trained_model_deployment` API from **experimental** to **stable**.
+
+[discrete]
+==== Security
+
+* Added the `with_limited_by` parameter to the `get_api_key` API.
+* Added the `with_limited_by` parameter to the `query_api_keys` API.
+* Added the `with_profile_uid` parameter to the `get_user` API.
+* Changed the `security.activate_user_profile` API from **beta** to **stable**.
+* Changed the `security.disable_user_profile` API from **beta** to **stable**.
+* Changed the `security.enable_user_profile` API from **beta** to **stable**.
+* Changed the `security.get_user_profile` API from **beta** to **stable**.
+* Changed the `security.suggest_user_profiles` API from **beta** to **stable**.
+* Changed the `security.update_user_profile_data` API from **beta** to **stable**.
+* Changed the `security.has_privileges_user_profile` API from **experimental** to **stable**.
 
 [discrete]
 [[rn-8-4-3]]
