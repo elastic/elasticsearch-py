@@ -29,6 +29,7 @@ import pytest
 from mock import patch
 from multidict import CIMultiDict
 
+import elasticsearch._async.http_aiohttp
 from elasticsearch import AIOHttpConnection, AsyncElasticsearch, __versionstr__
 from elasticsearch.compat import reraise_exceptions
 from elasticsearch.exceptions import ConnectionError, NotFoundError
@@ -54,6 +55,9 @@ class TestAIOHttpConnection:
                     return self
 
                 async def __aexit__(self, *_, **__):
+                    pass
+
+                async def release(self):
                     pass
 
                 async def text(self):
@@ -420,6 +424,21 @@ class TestAIOHttpConnection:
         with pytest.raises(exception_cls) as e:
             await conn.perform_request("GET", "/")
         assert str(e.value) == "Wasn't modified!"
+
+    @pytest.mark.parametrize("aiohttp_fixed_head_bug", [True, False])
+    async def test_head_workaround(self, aiohttp_fixed_head_bug, monkeypatch):
+        monkeypatch.setattr(
+            elasticsearch._async.http_aiohttp,
+            "_AIOHTTP_FIXED_HEAD_BUG",
+            aiohttp_fixed_head_bug,
+        )
+
+        con = await self._get_mock_connection()
+        await con.perform_request("HEAD", "/anything")
+
+        method, url = con.session.request.call_args[0]
+        assert method == "HEAD" if aiohttp_fixed_head_bug else "GET"
+        assert url.human_repr() == "http://localhost:9200/anything"
 
 
 class TestConnectionHttpbin:
