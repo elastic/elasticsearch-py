@@ -2845,6 +2845,26 @@ class AsyncElasticsearch(BaseClient):
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        routing: t.Optional[str] = None,
+        preferences: t.Optional[str] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Open a point in time that can be used in subsequent searches
@@ -2875,6 +2895,12 @@ class AsyncElasticsearch(BaseClient):
             __query["ignore_unavailable"] = ignore_unavailable
         if pretty is not None:
             __query["pretty"] = pretty
+        if routing is not None:
+            __query["routing"] = pretty
+        if preferences is not None:
+            __query["preferences"] = preferences
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers
