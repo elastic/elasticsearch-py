@@ -133,7 +133,7 @@ def aiter(x: Union[Iterable[T], AsyncIterable[T]]) -> AsyncIterator[T]:
     if hasattr(x, "__anext__"):
         return x  # type: ignore[return-value]
     elif hasattr(x, "__aiter__"):
-        return x.__aiter__()  # type: ignore[union-attr]
+        return x.__aiter__()
 
     async def f() -> AsyncIterable[T]:
         nonlocal x
