@@ -17,7 +17,7 @@ jobs:
     name: Assemble
     runs-on: ubuntu-latest
     env:
-      STACK_VERSION: "8.6-SNAPSHOT"
+      STACK_VERSION: "8.7-SNAPSHOT"
     steps:
       - name: Checkout
         uses: actions/checkout@v2
