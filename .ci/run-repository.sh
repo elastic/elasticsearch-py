@@ -43,4 +43,4 @@ docker run \
   --name elasticsearch-py \
   --rm \
   elastic/elasticsearch-py \
-  /bin/bash -c "python -m pip install nox && python -m nox -s test-${PYTHON_VERSION}"
+  nox -s test-${PYTHON_VERSION}
