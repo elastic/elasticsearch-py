@@ -17,6 +17,7 @@
 
 import asyncio
 import os
+import re
 import ssl
 import warnings
 
@@ -48,6 +49,15 @@ try:
     CA_CERTS = certifi.where()
 except ImportError:
     pass
+
+_version_parts = []
+for _version_part in aiohttp.__version__.split(".")[:3]:
+    try:
+        _version_parts.append(int(re.search(r"^([0-9]+)", _version_part).group(1)))  # type: ignore[union-attr]
+    except (AttributeError, ValueError):
+        break
+_AIOHTTP_SEMVER_VERSION = tuple(_version_parts)
+_AIOHTTP_FIXED_HEAD_BUG = _AIOHTTP_SEMVER_VERSION >= (3, 7, 0)
 
 
 class AsyncConnection(Connection):
@@ -247,11 +257,11 @@ class AIOHttpConnection(AsyncConnection):
             query_string = ""
             url_target = url_path
 
-        # There is a bug in aiohttp that disables the re-use
+        is_head = False
+        # There is a bug in aiohttp<3.7 that disables the re-use
         # of the connection in the pool when method=HEAD.
         # See: aio-libs/aiohttp#1769
-        is_head = False
-        if method == "HEAD":
+        if method == "HEAD" and not _AIOHTTP_FIXED_HEAD_BUG:
             method = "GET"
             is_head = True
 
