@@ -1,6 +1,7 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-8-5-3>>
 * <<rn-8-5-2>>
 * <<rn-8-5-1>>
 * <<rn-8-5-0>>
@@ -20,6 +21,12 @@
 * <<rn-8-1-1>>
 * <<rn-8-1-0>>
 * <<rn-8-0-0>>
+
+[discrete]
+[[rn-8-5-3]]
+=== 8.5.3 (2022-12-08)
+
+* Client is compatible with Elasticsearch 8.5.3
 
 [discrete]
 [[rn-8-5-2]]
