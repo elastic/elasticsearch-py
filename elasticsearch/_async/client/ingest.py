@@ -43,7 +43,7 @@ class IngestClient(NamespacedClient):
         """
         Deletes a pipeline.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-pipeline-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/delete-pipeline-api.html>`_
 
         :param id: Pipeline ID
         :param master_timeout: Explicit operation timeout for connection to master node
@@ -84,7 +84,7 @@ class IngestClient(NamespacedClient):
         """
         Returns statistical information about geoip databases
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/geoip-stats-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/geoip-stats-api.html>`_
         """
         __path = "/_ingest/geoip/stats"
         __query: t.Dict[str, t.Any] = {}
@@ -120,7 +120,7 @@ class IngestClient(NamespacedClient):
         """
         Returns a pipeline.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-pipeline-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/get-pipeline-api.html>`_
 
         :param id: Comma separated list of pipeline ids. Wildcards supported
         :param master_timeout: Explicit operation timeout for connection to master node
@@ -162,7 +162,7 @@ class IngestClient(NamespacedClient):
         """
         Returns a list of the built-in patterns.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/grok-processor.html#grok-processor-rest-get>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/grok-processor.html#grok-processor-rest-get>`_
         """
         __path = "/_ingest/processor/grok"
         __query: t.Dict[str, t.Any] = {}
@@ -211,7 +211,7 @@ class IngestClient(NamespacedClient):
         """
         Creates or updates a pipeline.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-pipeline-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/put-pipeline-api.html>`_
 
         :param id: ID of the ingest pipeline to create or update.
         :param description: Description of the ingest pipeline.
@@ -292,7 +292,7 @@ class IngestClient(NamespacedClient):
         """
         Allows to simulate a pipeline with example documents.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/simulate-pipeline-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/simulate-pipeline-api.html>`_
 
         :param id: Pipeline ID
         :param docs:
