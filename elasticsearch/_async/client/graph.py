@@ -50,7 +50,7 @@ class GraphClient(NamespacedClient):
         Explore extracted and summarized information about the documents and terms in
         an index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/graph-explore-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/graph-explore-api.html>`_
 
         :param index: A comma-separated list of index names to search; use `_all` or
             empty string to perform the operation on all indices

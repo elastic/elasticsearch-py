@@ -67,7 +67,7 @@ class CatClient(NamespacedClient):
         Shows information about currently configured aliases to indices including filter
         and routing infos.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-alias.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/cat-alias.html>`_
 
         :param name: A comma-separated list of alias names to return
         :param expand_wildcards: Whether to expand wildcard expression to concrete indices
@@ -151,7 +151,7 @@ class CatClient(NamespacedClient):
         Provides a snapshot of how many shards are allocated to each data node and how
         much disk space they are using.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-allocation.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/cat-allocation.html>`_
 
         :param node_id: A comma-separated list of node IDs or names to limit the returned
             information
@@ -229,7 +229,7 @@ class CatClient(NamespacedClient):
         """
         Returns information about existing component_templates templates.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-compoentn-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/cat-compoentn-templates.html>`_
 
         :param name: A pattern that returned component template names must match
         :param format: Specifies the format to return the columnar data in, can be set
@@ -304,7 +304,7 @@ class CatClient(NamespacedClient):
         Provides quick access to the document count of the entire cluster, or individual
         indices.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-count.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/cat-count.html>`_
 
         :param index: A comma-separated list of index names to limit the returned information
         :param format: Specifies the format to return the columnar data in, can be set
@@ -384,7 +384,7 @@ class CatClient(NamespacedClient):
         Shows how much heap memory is currently being used by fielddata on every data
         node in the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-fielddata.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/cat-fielddata.html>`_
 
         :param fields: A comma-separated list of fields to return the fielddata size
         :param bytes: The unit in which to display byte values
@@ -461,7 +461,7 @@ class CatClient(NamespacedClient):
         """
         Returns a concise representation of the cluster health.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-health.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/cat-health.html>`_
 
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
@@ -533,7 +533,7 @@ class CatClient(NamespacedClient):
         """
         Returns help for the Cat APIs.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/cat.html>`_
 
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
@@ -622,13 +622,16 @@ class CatClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         pri: t.Optional[bool] = None,
         s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        time: t.Optional[
+            t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
+        ] = None,
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
         Returns information about indices: number of primaries and replicas, document
         counts, disk size, ...
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-indices.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/cat-indices.html>`_
 
         :param index: A comma-separated list of index names to limit the returned information
         :param bytes: The unit in which to display byte values
@@ -652,6 +655,7 @@ class CatClient(NamespacedClient):
         :param s: List of columns that determine how the table should be sorted. Sorting
             defaults to ascending and can be changed by setting `:asc` or `:desc` as
             a suffix to the column name.
+        :param time: The unit in which to display time values
         :param v: When set to `true` will enable verbose output.
         """
         if index not in SKIP_IN_PATH:
@@ -689,6 +693,8 @@ class CatClient(NamespacedClient):
             __query["pri"] = pri
         if s is not None:
             __query["s"] = s
+        if time is not None:
+            __query["time"] = time
         if v is not None:
             __query["v"] = v
         __headers = {"accept": "text/plain,application/json"}
@@ -719,7 +725,7 @@ class CatClient(NamespacedClient):
         """
         Returns information about the master node.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-master.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/cat-master.html>`_
 
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
@@ -838,7 +844,7 @@ class CatClient(NamespacedClient):
         """
         Gets configuration and usage information about data frame analytics jobs.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-dfanalytics.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/cat-dfanalytics.html>`_
 
         :param id: The ID of the data frame analytics to fetch
         :param allow_no_match: Whether to ignore if a wildcard expression matches no
@@ -969,7 +975,7 @@ class CatClient(NamespacedClient):
         """
         Gets configuration and usage information about datafeeds.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-datafeeds.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/cat-datafeeds.html>`_
 
         :param datafeed_id: A numerical character string that uniquely identifies the
             datafeed.
@@ -1106,7 +1112,7 @@ class CatClient(NamespacedClient):
         """
         Gets configuration and usage information about anomaly detection jobs.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-anomaly-detectors.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/cat-anomaly-detectors.html>`_
 
         :param job_id: Identifier for the anomaly detection job.
         :param allow_no_match: Specifies what to do when the request: * Contains wildcard
@@ -1246,7 +1252,7 @@ class CatClient(NamespacedClient):
         """
         Gets configuration and usage information about inference trained models.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-trained-model.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/cat-trained-model.html>`_
 
         :param model_id: The ID of the trained models stats to fetch
         :param allow_no_match: Whether to ignore if a wildcard expression matches no
@@ -1331,7 +1337,7 @@ class CatClient(NamespacedClient):
         """
         Returns information about custom node attributes.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-nodeattrs.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/cat-nodeattrs.html>`_
 
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
@@ -1404,7 +1410,7 @@ class CatClient(NamespacedClient):
         """
         Returns basic statistics about performance of cluster nodes.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-nodes.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/cat-nodes.html>`_
 
         :param bytes: The unit in which to display byte values
         :param format: Specifies the format to return the columnar data in, can be set
@@ -1480,7 +1486,7 @@ class CatClient(NamespacedClient):
         """
         Returns a concise representation of the cluster pending tasks.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-pending-tasks.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/cat-pending-tasks.html>`_
 
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
@@ -1549,7 +1555,7 @@ class CatClient(NamespacedClient):
         """
         Returns information about installed plugins across nodes node.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-plugins.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/cat-plugins.html>`_
 
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
@@ -1624,7 +1630,7 @@ class CatClient(NamespacedClient):
         """
         Returns information about index shard recoveries, both on-going completed.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-recovery.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/cat-recovery.html>`_
 
         :param index: Comma-separated list or wildcard expression of index names to limit
             the returned information
@@ -1708,7 +1714,7 @@ class CatClient(NamespacedClient):
         """
         Returns information about snapshot repositories registered in the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-repositories.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/cat-repositories.html>`_
 
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
@@ -1781,7 +1787,7 @@ class CatClient(NamespacedClient):
         """
         Provides low-level information about the segments in the shards of an index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-segments.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/cat-segments.html>`_
 
         :param index: A comma-separated list of index names to limit the returned information
         :param bytes: The unit in which to display byte values
@@ -1861,7 +1867,7 @@ class CatClient(NamespacedClient):
         """
         Provides a detailed view of shard allocation on nodes.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-shards.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/cat-shards.html>`_
 
         :param index: A comma-separated list of index names to limit the returned information
         :param bytes: The unit in which to display byte values
@@ -1941,7 +1947,7 @@ class CatClient(NamespacedClient):
         """
         Returns all snapshots in a specific repository.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-snapshots.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/cat-snapshots.html>`_
 
         :param repository: Name of repository from which to fetch the snapshot information
         :param format: Specifies the format to return the columnar data in, can be set
@@ -2022,7 +2028,7 @@ class CatClient(NamespacedClient):
         Returns information about the tasks currently executing on one or more nodes
         in the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/tasks.html>`_
 
         :param actions: A comma-separated list of actions that should be returned. Leave
             empty to return all.
@@ -2105,7 +2111,7 @@ class CatClient(NamespacedClient):
         """
         Returns information about existing templates.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/cat-templates.html>`_
 
         :param name: A pattern that returned template names must match
         :param format: Specifies the format to return the columnar data in, can be set
@@ -2185,7 +2191,7 @@ class CatClient(NamespacedClient):
         Returns cluster-wide thread pool statistics per node. By default the active,
         queue and rejected statistics are returned for all thread pools.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-thread-pool.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/cat-thread-pool.html>`_
 
         :param thread_pool_patterns: List of thread pool names used to limit the request.
             Accepts wildcard expressions.
@@ -2315,7 +2321,7 @@ class CatClient(NamespacedClient):
         """
         Gets configuration and usage information about transforms.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-transforms.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.6/cat-transforms.html>`_
 
         :param transform_id: The id of the transform for which to get stats. '_all' or
             '*' implies all transforms
