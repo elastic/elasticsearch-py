@@ -24,7 +24,7 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-      - name: Set up Python 3.7
+      - name: Set up Python 3.x
         uses: actions/setup-python@v4
         with:
           python-version: 3.x
@@ -38,15 +38,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10"]
+        python-version: ["3.7", "3.8", "3.9", "3.10"]
         experimental: [false]
         nox-session: [""]
+        runs-on: ["ubuntu-latest"]
         include:
+          - python-version: 3.6
+            experimental: false
+            nox-session: test-3.6
+            runs-on: "ubuntu-22.04"
           - python-version: 3.11-dev
             experimental: true
             nox-session: test-3.11
+            runs-on: "ubuntu-latest"
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.python-version }}
     name: test-${{ matrix.python-version }}
     continue-on-error: ${{ matrix.experimental }}
     steps:
