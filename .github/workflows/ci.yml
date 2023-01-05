@@ -52,7 +52,7 @@ jobs:
             nox-session: test-3.11
             runs-on: "ubuntu-latest"
 
-    runs-on: ${{ matrix.python-version }}
+    runs-on: ${{ matrix.runs-on }}
     name: test-${{ matrix.python-version }}
     continue-on-error: ${{ matrix.experimental }}
     steps:
