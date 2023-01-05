@@ -113,7 +113,7 @@ Contents
 License
 -------
 
-Copyright 2021 Elasticsearch B.V. Licensed under the Apache License, Version 2.0.
+Copyright 2023 Elasticsearch B.V. Licensed under the Apache License, Version 2.0.
 
 
 Indices and tables
