@@ -2837,12 +2837,32 @@ class Elasticsearch(BaseClient):
         index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
         keep_alive: t.Union["t.Literal[-1]", "t.Literal[0]", str],
         error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
+        preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
+        routing: t.Optional[str] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Open a point in time that can be used in subsequent searches
@@ -2852,8 +2872,13 @@ class Elasticsearch(BaseClient):
         :param index: A comma-separated list of index names to open point in time; use
             `_all` or empty string to perform the operation on all indices
         :param keep_alive: Specific the time to live for the point in time
+        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
         :param ignore_unavailable: Whether specified concrete indices should be ignored
             when unavailable (missing or closed)
+        :param preference: Specify the node or shard the operation should be performed
+            on (default: random)
+        :param routing: Specific routing value
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -2865,14 +2890,20 @@ class Elasticsearch(BaseClient):
             __query["keep_alive"] = keep_alive
         if error_trace is not None:
             __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
+        if preference is not None:
+            __query["preference"] = preference
         if pretty is not None:
             __query["pretty"] = pretty
+        if routing is not None:
+            __query["routing"] = routing
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers
