@@ -24,7 +24,7 @@ from pathlib import Path
 
 import black
 from click.testing import CliRunner
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader, NamedTemporaryFile
 
 code_root = Path(__file__).absolute().parent.parent
 asciidocs_dir = code_root / "docs/examples"
@@ -154,7 +154,7 @@ def main():
                 )
             )
 
-        tmp_path = Path(tempfile.mktemp())
+        tmp_path = Path(tempfile.NamedTemporaryFile().name)
         with tmp_path.open(mode="w") as f:
             f.write(t.render(parsed_sources=parsed_sources))
 
