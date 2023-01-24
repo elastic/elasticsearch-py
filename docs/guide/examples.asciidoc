@@ -26,7 +26,7 @@ es = Elasticsearch('https://localhost:9200')
 
 doc = {
     'author': 'author_name',
-    'text': 'Interensting content...',
+    'text': 'Interesting content...',
     'timestamp': datetime.now(),
 }
 resp = es.index(index="test-index", id=1, document=doc)
