@@ -622,6 +622,9 @@ class CatClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
         pri: t.Optional[bool] = None,
         s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        time: t.Optional[
+            t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
+        ] = None,
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
         """
@@ -652,6 +655,7 @@ class CatClient(NamespacedClient):
         :param s: List of columns that determine how the table should be sorted. Sorting
             defaults to ascending and can be changed by setting `:asc` or `:desc` as
             a suffix to the column name.
+        :param time: The unit in which to display time values
         :param v: When set to `true` will enable verbose output.
         """
         if index not in SKIP_IN_PATH:
@@ -689,6 +693,8 @@ class CatClient(NamespacedClient):
             __query["pri"] = pri
         if s is not None:
             __query["s"] = s
+        if time is not None:
+            __query["time"] = time
         if v is not None:
             __query["v"] = v
         __headers = {"accept": "text/plain,application/json"}

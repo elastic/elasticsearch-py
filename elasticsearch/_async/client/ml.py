@@ -28,7 +28,7 @@ class MlClient(NamespacedClient):
     async def clear_trained_model_deployment_cache(
         self,
         *,
-        model_id: t.Optional[str] = None,
+        model_id: str,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
@@ -43,6 +43,8 @@ class MlClient(NamespacedClient):
 
         :param model_id: The unique identifier of the trained model.
         """
+        if model_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'model_id'")
         __path = f"/_ml/trained_models/{_quote(model_id)}/deployment/cache/_clear"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:

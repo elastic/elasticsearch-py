@@ -105,10 +105,10 @@ class IlmClient(NamespacedClient):
             no response is received before the timeout expires, the request fails and
             returns an error.
         :param only_errors: Filters the returned indices to only indices that are managed
-            by ILM.
-        :param only_managed: Filters the returned indices to only indices that are managed
             by ILM and are in an error state, either due to an encountering an error
             while executing the policy, or attempting to use a policy that does not exist.
+        :param only_managed: Filters the returned indices to only indices that are managed
+            by ILM.
         :param timeout: Period to wait for a response. If no response is received before
             the timeout expires, the request fails and returns an error.
         """

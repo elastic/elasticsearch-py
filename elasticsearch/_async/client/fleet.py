@@ -89,10 +89,10 @@ class FleetClient(NamespacedClient):
     async def msearch(
         self,
         *,
-        index: str,
         searches: t.Union[
             t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]
         ],
+        index: t.Optional[str] = None,
         allow_no_indices: t.Optional[bool] = None,
         allow_partial_search_results: t.Optional[bool] = None,
         ccs_minimize_roundtrips: t.Optional[bool] = None,
@@ -139,9 +139,9 @@ class FleetClient(NamespacedClient):
         are available due to a refresh. This API is designed for internal use by the
         fleet server project.
 
+        :param searches:
         :param index: A single target to search. If the target is an index alias, it
             must resolve to a single index.
-        :param searches:
         :param allow_no_indices: If false, the request returns an error if any wildcard
             expression, index alias, or _all value targets only missing or closed indices.
             This behavior applies even if the request targets other open indices. For
@@ -181,8 +181,6 @@ class FleetClient(NamespacedClient):
             has become visible for search. Defaults to an empty list which will cause
             Elasticsearch to immediately execute the search.
         """
-        if index in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'index'")
         if searches is None:
             raise ValueError("Empty value passed for parameter 'searches'")
         if index not in SKIP_IN_PATH:
@@ -323,8 +321,8 @@ class FleetClient(NamespacedClient):
         scroll: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         search_after: t.Optional[
             t.Union[
-                t.List[t.Union[None, float, int, str]],
-                t.Tuple[t.Union[None, float, int, str], ...],
+                t.List[t.Union[None, bool, float, int, str, t.Any]],
+                t.Tuple[t.Union[None, bool, float, int, str, t.Any], ...],
             ]
         ] = None,
         search_type: t.Optional[
