@@ -412,8 +412,8 @@ class WatcherClient(NamespacedClient):
         query: t.Optional[t.Mapping[str, t.Any]] = None,
         search_after: t.Optional[
             t.Union[
-                t.List[t.Union[None, float, int, str]],
-                t.Tuple[t.Union[None, float, int, str], ...],
+                t.List[t.Union[None, bool, float, int, str, t.Any]],
+                t.Tuple[t.Union[None, bool, float, int, str, t.Any], ...],
             ]
         ] = None,
         size: t.Optional[int] = None,
