@@ -1,6 +1,7 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-8-6-1>>
 * <<rn-8-6-0>>
 * <<rn-8-5-3>>
 * <<rn-8-5-2>>
@@ -22,6 +23,17 @@
 * <<rn-8-1-1>>
 * <<rn-8-1-0>>
 * <<rn-8-0-0>>
+
+[discrete]
+[[rn-8-6-1]]
+=== 8.6.1 (2022-01-27)
+
+* Client is compatible with Elasticsearch 8.6.1
+
+[discrete]
+==== Core
+
+* Added the `expand_wildcards`, `preference`, and `routing` parameters to the `open_point_in_time` API.
 
 [discrete]
 [[rn-8-6-0]]
