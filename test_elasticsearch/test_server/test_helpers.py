@@ -528,7 +528,6 @@ def test_initial_search_error(sync_client):
         with patch.object(sync_client, "scroll") as scroll_mock, patch.object(
             sync_client, "clear_scroll"
         ) as clear_scroll_mock:
-
             scroll_mock.side_effect = mock_scroll_responses
             data = list(
                 helpers.scan(
@@ -549,7 +548,6 @@ def test_initial_search_error(sync_client):
         with patch.object(sync_client, "scroll") as scroll_mock, patch.object(
             sync_client, "clear_scroll"
         ) as clear_scroll_mock:
-
             scroll_mock.side_effect = mock_scroll_responses
             with pytest.raises(ScanError):
                 data = list(
@@ -644,7 +642,6 @@ def test_scan_auth_kwargs_forwarded(sync_client, kwargs):
 
 
 def test_scan_auth_kwargs_favor_scroll_kwargs_option(sync_client):
-
     with patch.object(
         sync_client, "options", return_value=sync_client
     ) as options_mock, patch.object(
@@ -672,7 +669,6 @@ def test_scan_auth_kwargs_favor_scroll_kwargs_option(sync_client):
     ) as scroll_mock, patch.object(
         sync_client, "clear_scroll", return_value=ObjectApiResponse(raw={}, meta=None)
     ):
-
         data = list(
             helpers.scan(
                 sync_client,
