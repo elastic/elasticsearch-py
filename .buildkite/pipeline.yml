@@ -1,0 +1,3 @@
+steps:
+  - label: ":python: Greetings"
+    command: "echo 'Hello, world!'"
