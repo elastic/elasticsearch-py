@@ -57,7 +57,7 @@ content-type = "text/x-rst"
 
 [[tool.hatch.metadata.hooks.fancy-pypi-readme.fragments]]
 path = "README.rst"
-start-after = "<!-- cut after this -->\n\n"
+start-after = ".. cut after this\n\n"
 
 [tool.hatch.build.targets.sdist]
 exclude = ["/test_elasticsearch"]

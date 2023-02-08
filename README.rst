@@ -1,7 +1,7 @@
 .. raw:: html
 
    <img align="right" width="auto" height="auto" src="https://www.elastic.co/static-res/images/elastic-logo-200.png">
-<!-- cut after this -->
+.. cut after this
 
 Elasticsearch Python Client
 ===========================
