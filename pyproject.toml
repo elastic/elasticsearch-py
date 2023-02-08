@@ -1,0 +1,77 @@
+[build-system]
+requires = ["hatchling", "hatch-fancy-pypi-readme"]
+build-backend = "hatchling.build"
+
+[project]
+name = "elasticsearch"
+dynamic = ["version", "readme"]
+description = "Python client for Elasticsearch"
+license = "Apache-2.0"
+requires-python = ">=3.6, <4"
+authors = [
+    { name = "Honza Král", email = "honza.kral@gmail.com" },
+    { name = "Nick Lang", email = "nick@nicklang.com" },
+]
+maintainers = [
+    { name = "Seth Michael Larson", email = "seth.larson@elastic.co" },
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+]
+dependencies = [
+    "elastic-transport>=8,<9",
+]
+
+[project.optional-dependencies]
+async = [
+    "aiohttp>=3,<4",
+]
+requests = [
+    "requests>=2.4.0, <3.0.0",
+]
+
+[project.urls]
+Documentation = "https://elasticsearch-py.readthedocs.io"
+Homepage = "https://github.com/elastic/elasticsearch-py"
+"Issue Tracker" = "https://github.com/elastic/elasticsearch-py/issues"
+"Source Code" = "https://github.com/elastic/elasticsearch-py"
+
+[tool.hatch.version]
+path = "elasticsearch/_version.py"
+pattern = '__versionstr__ = "(?P<version>.+)"'
+
+[tool.hatch.metadata.hooks.fancy-pypi-readme]
+content-type = "text/x-rst"
+
+[[tool.hatch.metadata.hooks.fancy-pypi-readme.fragments]]
+path = "README.rst"
+start-after = "<!-- cut after this -->\n\n"
+
+[tool.hatch.build.targets.sdist]
+exclude = ["/test_elasticsearch"]
+
+[tool.isort]
+profile = "black"
+
+[tool.pytest]
+junit_family = "legacy"
+addopts = "-vvv -p no:logging --cov-report=term-missing --cov=elasticsearch --cov-config=.coveragerc"
+
+[tool.coverage.report]
+exclude_lines = [
+    "raise NotImplementedError*",
+]
+[tool.mypy]
+ignore_missing_imports = true

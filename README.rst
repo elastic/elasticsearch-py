@@ -1,7 +1,7 @@
 .. raw:: html
 
    <img align="right" width="auto" height="auto" src="https://www.elastic.co/static-res/images/elastic-logo-200.png">
-
+<!-- cut after this -->
 
 Elasticsearch Python Client
 ===========================
@@ -81,10 +81,10 @@ Quick Start
 
     # Import the client from the 'elasticsearch' module
     >>> from elasticsearch import Elasticsearch
-    
+
     # Instantiate a client instance
     >>> client = Elasticsearch("http://localhost:9200")
-    
+
     # Call an API, in this example `info()`
     >>> resp = client.info()
 
