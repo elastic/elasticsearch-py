@@ -66,7 +66,7 @@ def test_dist(dist):
         # Build the venv and install the dist
         run("python", "-m", "venv", os.path.join(tmp_dir, "venv"))
         venv_python = os.path.join(tmp_dir, "venv/bin/python")
-        run(venv_python, "-m", "pip", "install", "-U", "pip", "mypy")
+        run(venv_python, "-m", "pip", "install", "-U", "pip", "mypy==1.0.0")
         run(venv_python, "-m", "pip", "install", dist)
 
         # Test the sync namespaces
@@ -114,6 +114,8 @@ def test_dist(dist):
                 "-m",
                 "mypy",
                 "--strict",
+                "--install-types",
+                "--non-interactive",
                 os.path.join(base_dir, "test_elasticsearch/test_types/async_types.py"),
             )
 
@@ -135,6 +137,8 @@ def test_dist(dist):
                 "-m",
                 "mypy",
                 "--strict",
+                "--install-types",
+                "--non-interactive",
                 os.path.join(base_dir, "test_elasticsearch/test_types/sync_types.py"),
             )
         else:
@@ -143,6 +147,8 @@ def test_dist(dist):
                 "-m",
                 "mypy",
                 "--strict",
+                "--install-types",
+                "--non-interactive",
                 os.path.join(
                     base_dir, "test_elasticsearch/test_types/aliased_types.py"
                 ),
