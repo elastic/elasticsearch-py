@@ -71,7 +71,6 @@ def resolve_auth_headers(
     basic_auth: Union[DefaultType, None, Tuple[str, str], str] = DEFAULT,
     bearer_auth: Union[DefaultType, None, str] = DEFAULT,
 ) -> HttpHeaders:
-
     if headers is None:
         headers = HttpHeaders()
     elif not isinstance(headers, HttpHeaders):

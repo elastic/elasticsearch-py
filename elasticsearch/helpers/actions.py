@@ -373,7 +373,6 @@ def streaming_bulk(
     *args: Any,
     **kwargs: Any,
 ) -> Iterable[Tuple[bool, Dict[str, Any]]]:
-
     """
     Streaming bulk consumes actions from the iterable passed in and yields
     results per action. For non-streaming usecases use
@@ -422,7 +421,6 @@ def streaming_bulk(
     for bulk_data, bulk_actions in _chunk_actions(
         map(expand_action_callback, actions), chunk_size, max_chunk_bytes, serializer
     ):
-
         for attempt in range(max_retries + 1):
             to_retry: List[bytes] = []
             to_retry_data: List[
@@ -448,7 +446,6 @@ def streaming_bulk(
                         **kwargs,
                     ),
                 ):
-
                     if not ok:
                         action, info = info.popitem()
                         # retry if retries enabled, we get 429, and we are not
@@ -770,7 +767,6 @@ def reindex(
     scan_kwargs: MutableMapping[str, Any] = {},
     bulk_kwargs: MutableMapping[str, Any] = {},
 ) -> Tuple[int, Union[int, List[Dict[str, Any]]]]:
-
     """
     Reindex all documents from one index that satisfy a given query
     to another, potentially (if `target_client` is specified) on a different cluster.
