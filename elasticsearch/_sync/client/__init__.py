@@ -2836,12 +2836,32 @@ class Elasticsearch(BaseClient):
         index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
         keep_alive: t.Union["t.Literal[-1]", "t.Literal[0]", str],
         error_trace: t.Optional[bool] = None,
+        expand_wildcards: t.Optional[
+            t.Union[
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
+                t.Union[
+                    t.List[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ]
+                    ],
+                    t.Tuple[
+                        t.Union[
+                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
+                        ],
+                        ...,
+                    ],
+                ],
+            ]
+        ] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
+        preference: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
+        routing: t.Optional[str] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Open a point in time that can be used in subsequent searches
@@ -2851,8 +2871,13 @@ class Elasticsearch(BaseClient):
         :param index: A comma-separated list of index names to open point in time; use
             `_all` or empty string to perform the operation on all indices
         :param keep_alive: Specific the time to live for the point in time
+        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
+            that are open, closed or both.
         :param ignore_unavailable: Whether specified concrete indices should be ignored
             when unavailable (missing or closed)
+        :param preference: Specify the node or shard the operation should be performed
+            on (default: random)
+        :param routing: Specific routing value
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -2864,14 +2889,20 @@ class Elasticsearch(BaseClient):
             __query["keep_alive"] = keep_alive
         if error_trace is not None:
             __query["error_trace"] = error_trace
+        if expand_wildcards is not None:
+            __query["expand_wildcards"] = expand_wildcards
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
         if ignore_unavailable is not None:
             __query["ignore_unavailable"] = ignore_unavailable
+        if preference is not None:
+            __query["preference"] = preference
         if pretty is not None:
             __query["pretty"] = pretty
+        if routing is not None:
+            __query["routing"] = routing
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "POST", __path, params=__query, headers=__headers
@@ -3408,7 +3439,14 @@ class Elasticsearch(BaseClient):
         indices_boost: t.Optional[
             t.Union[t.List[t.Mapping[str, float]], t.Tuple[t.Mapping[str, float], ...]]
         ] = None,
-        knn: t.Optional[t.Mapping[str, t.Any]] = None,
+        knn: t.Optional[
+            t.Union[
+                t.Mapping[str, t.Any],
+                t.Union[
+                    t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]
+                ],
+            ]
+        ] = None,
         lenient: t.Optional[bool] = None,
         max_concurrent_shard_requests: t.Optional[int] = None,
         min_compatible_shard_node: t.Optional[str] = None,
@@ -3780,6 +3818,7 @@ class Elasticsearch(BaseClient):
         x: int,
         y: int,
         aggs: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
+        buffer: t.Optional[int] = None,
         error_trace: t.Optional[bool] = None,
         exact_bounds: t.Optional[bool] = None,
         extent: t.Optional[int] = None,
@@ -3789,6 +3828,7 @@ class Elasticsearch(BaseClient):
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
+        grid_agg: t.Optional[t.Union["t.Literal['geohex', 'geotile']", str]] = None,
         grid_precision: t.Optional[int] = None,
         grid_type: t.Optional[
             t.Union["t.Literal['centroid', 'grid', 'point']", str]
@@ -3808,6 +3848,7 @@ class Elasticsearch(BaseClient):
             ]
         ] = None,
         track_total_hits: t.Optional[t.Union[bool, int]] = None,
+        with_labels: t.Optional[bool] = None,
     ) -> BinaryApiResponse:
         """
         Searches a vector tile for geospatial values. Returns results as a binary Mapbox
@@ -3822,6 +3863,9 @@ class Elasticsearch(BaseClient):
         :param y: Y coordinate for the vector tile to search
         :param aggs: Sub-aggregations for the geotile_grid. Supports the following aggregation
             types: - avg - cardinality - max - min - sum
+        :param buffer: Size, in pixels, of a clipping buffer outside the tile. This allows
+            renderers to avoid outline artifacts from geometries that extend past the
+            extent of the tile.
         :param exact_bounds: If false, the meta layer’s feature is the bounding box of
             the tile. If true, the meta layer’s feature is a bounding box resulting from
             a geo_bounds aggregation. The aggregation runs on <field> values that intersect
@@ -3832,6 +3876,7 @@ class Elasticsearch(BaseClient):
         :param fields: Fields to return in the `hits` layer. Supports wildcards (`*`).
             This parameter does not support fields with array values. Fields with array
             values may return inconsistent results.
+        :param grid_agg: Aggregation used to create a grid for the `field`.
         :param grid_precision: Additional zoom levels available through the aggs layer.
             For example, if <zoom> is 7 and grid_precision is 8, you can zoom in up to
             level 15. Accepts 0-8. If 0, results don’t include the aggs layer.
@@ -3851,6 +3896,8 @@ class Elasticsearch(BaseClient):
             If `true`, the exact number of hits is returned at the cost of some performance.
             If `false`, the response does not include the total number of hits matching
             the query.
+        :param with_labels: If `true`, the hits and aggs layers will contain additional
+            point features representing suggested label positions for the original features.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -3878,6 +3925,8 @@ class Elasticsearch(BaseClient):
             sort = None
         if aggs is not None:
             __body["aggs"] = aggs
+        if buffer is not None:
+            __body["buffer"] = buffer
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if exact_bounds is not None:
@@ -3888,6 +3937,8 @@ class Elasticsearch(BaseClient):
             __body["fields"] = fields
         if filter_path is not None:
             __query["filter_path"] = filter_path
+        if grid_agg is not None:
+            __body["grid_agg"] = grid_agg
         if grid_precision is not None:
             __body["grid_precision"] = grid_precision
         if grid_type is not None:
@@ -3906,6 +3957,8 @@ class Elasticsearch(BaseClient):
             __body["sort"] = sort
         if track_total_hits is not None:
             __body["track_total_hits"] = track_total_hits
+        if with_labels is not None:
+            __body["with_labels"] = with_labels
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/vnd.mapbox-vector-tile"}

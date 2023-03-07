@@ -241,7 +241,8 @@ class SqlClient(NamespacedClient):
 
         :param catalog: Default catalog (cluster) for queries. If unspecified, the queries
             execute on the data in the local cluster only.
-        :param columnar:
+        :param columnar: If true, the results in a columnar fashion: one row represents
+            all the values of a certain column from the current page of results.
         :param cursor:
         :param fetch_size: The maximum number of rows (or entries) to return in one response
         :param field_multi_value_leniency: Throw an exception when encountering multiple

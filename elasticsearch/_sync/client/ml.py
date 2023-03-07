@@ -481,6 +481,7 @@ class MlClient(NamespacedClient):
         self,
         *,
         job_id: str,
+        delete_user_annotations: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
@@ -496,6 +497,9 @@ class MlClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-job.html>`_
 
         :param job_id: Identifier for the anomaly detection job.
+        :param delete_user_annotations: Specifies whether annotations that have been
+            added by the user should be deleted along with any auto-generated annotations
+            when the job is reset.
         :param force: Use to forcefully delete an opened job; this method is quicker
             than closing and deleting the job.
         :param wait_for_completion: Specifies whether the request should return immediately
@@ -505,6 +509,8 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'job_id'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}"
         __query: t.Dict[str, t.Any] = {}
+        if delete_user_annotations is not None:
+            __query["delete_user_annotations"] = delete_user_annotations
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -2522,6 +2528,7 @@ class MlClient(NamespacedClient):
         *,
         datafeed_id: t.Optional[str] = None,
         datafeed_config: t.Optional[t.Mapping[str, t.Any]] = None,
+        end: t.Optional[t.Union[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
@@ -2529,6 +2536,7 @@ class MlClient(NamespacedClient):
         human: t.Optional[bool] = None,
         job_config: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
+        start: t.Optional[t.Union[str, t.Any]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Previews a datafeed.
@@ -2541,12 +2549,14 @@ class MlClient(NamespacedClient):
             characters. NOTE: If you use this path parameter, you cannot provide datafeed
             or anomaly detection job configuration details in the request body.
         :param datafeed_config: The datafeed definition to preview.
+        :param end: The end time when the datafeed preview should stop
         :param job_config: The configuration details for the anomaly detection job that
             is associated with the datafeed. If the `datafeed_config` object does not
             include a `job_id` that references an existing anomaly detection job, you
             must supply this `job_config` object. If you include both a `job_id` and
             a `job_config`, the latter information is used. You cannot specify a `job_config`
             object unless you also supply a `datafeed_config` object.
+        :param start: The start time from where the datafeed preview should begin
         """
         if datafeed_id not in SKIP_IN_PATH:
             __path = f"/_ml/datafeeds/{_quote(datafeed_id)}/_preview"
@@ -2556,6 +2566,8 @@ class MlClient(NamespacedClient):
         __query: t.Dict[str, t.Any] = {}
         if datafeed_config is not None:
             __body["datafeed_config"] = datafeed_config
+        if end is not None:
+            __query["end"] = end
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -2566,6 +2578,8 @@ class MlClient(NamespacedClient):
             __body["job_config"] = job_config
         if pretty is not None:
             __query["pretty"] = pretty
+        if start is not None:
+            __query["start"] = start
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
@@ -3204,7 +3218,6 @@ class MlClient(NamespacedClient):
         *,
         model_id: str,
         inference_config: t.Mapping[str, t.Any],
-        input: t.Mapping[str, t.Any],
         compressed_definition: t.Optional[str] = None,
         defer_definition_decompression: t.Optional[bool] = None,
         definition: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -3214,6 +3227,7 @@ class MlClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
+        input: t.Optional[t.Mapping[str, t.Any]] = None,
         metadata: t.Optional[t.Any] = None,
         model_size_bytes: t.Optional[int] = None,
         model_type: t.Optional[
@@ -3231,7 +3245,6 @@ class MlClient(NamespacedClient):
         :param inference_config: The default configuration for inference. This can be
             either a regression or classification configuration. It must match the underlying
             definition.trained_model's target_type.
-        :param input: The input field names for the model definition.
         :param compressed_definition: The compressed (GZipped and Base64 encoded) inference
             definition of the model. If compressed_definition is specified, then definition
             cannot be specified.
@@ -3241,6 +3254,7 @@ class MlClient(NamespacedClient):
         :param definition: The inference definition for the model. If definition is specified,
             then compressed_definition cannot be specified.
         :param description: A human-readable description of the inference trained model.
+        :param input: The input field names for the model definition.
         :param metadata: An object map that contains metadata about the model.
         :param model_size_bytes: The estimated memory usage in bytes to keep the trained
             model in memory. This property is supported only if defer_definition_decompression
@@ -3252,15 +3266,11 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'model_id'")
         if inference_config is None:
             raise ValueError("Empty value passed for parameter 'inference_config'")
-        if input is None:
-            raise ValueError("Empty value passed for parameter 'input'")
         __path = f"/_ml/trained_models/{_quote(model_id)}"
         __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
         if inference_config is not None:
             __body["inference_config"] = inference_config
-        if input is not None:
-            __body["input"] = input
         if compressed_definition is not None:
             __body["compressed_definition"] = compressed_definition
         if defer_definition_decompression is not None:
@@ -3275,6 +3285,8 @@ class MlClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if input is not None:
+            __body["input"] = input
         if metadata is not None:
             __body["metadata"] = metadata
         if model_size_bytes is not None:
@@ -3459,6 +3471,7 @@ class MlClient(NamespacedClient):
         self,
         *,
         job_id: str,
+        delete_user_annotations: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
@@ -3473,6 +3486,9 @@ class MlClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-reset-job.html>`_
 
         :param job_id: The ID of the job to reset.
+        :param delete_user_annotations: Specifies whether annotations that have been
+            added by the user should be deleted along with any auto-generated annotations
+            when the job is reset.
         :param wait_for_completion: Should this request wait until the operation has
             completed before returning.
         """
@@ -3480,6 +3496,8 @@ class MlClient(NamespacedClient):
             raise ValueError("Empty value passed for parameter 'job_id'")
         __path = f"/_ml/anomaly_detectors/{_quote(job_id)}/_reset"
         __query: t.Dict[str, t.Any] = {}
+        if delete_user_annotations is not None:
+            __query["delete_user_annotations"] = delete_user_annotations
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -3706,6 +3724,7 @@ class MlClient(NamespacedClient):
         human: t.Optional[bool] = None,
         number_of_allocations: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
+        priority: t.Optional[t.Union["t.Literal['low', 'normal']", str]] = None,
         queue_capacity: t.Optional[int] = None,
         threads_per_allocation: t.Optional[int] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
@@ -3729,6 +3748,7 @@ class MlClient(NamespacedClient):
             Increasing this value generally increases the throughput. If this setting
             is greater than the number of hardware threads it will automatically be changed
             to a value less than the number of hardware threads.
+        :param priority: The deployment priority.
         :param queue_capacity: Specifies the number of inference requests that are allowed
             in the queue. After the number of requests exceeds this value, new requests
             are rejected with a 429 error.
@@ -3758,6 +3778,8 @@ class MlClient(NamespacedClient):
             __query["number_of_allocations"] = number_of_allocations
         if pretty is not None:
             __query["pretty"] = pretty
+        if priority is not None:
+            __query["priority"] = priority
         if queue_capacity is not None:
             __query["queue_capacity"] = queue_capacity
         if threads_per_allocation is not None:
@@ -4044,6 +4066,7 @@ class MlClient(NamespacedClient):
         indexes: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
         indices: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
         indices_options: t.Optional[t.Mapping[str, t.Any]] = None,
+        job_id: t.Optional[str] = None,
         max_empty_searches: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -4107,6 +4130,7 @@ class MlClient(NamespacedClient):
             `remote_cluster_client` role.
         :param indices_options: Specifies index expansion options that are used during
             search.
+        :param job_id:
         :param max_empty_searches: If a real-time datafeed has never seen any data (including
             during any initial training period), it automatically stops and closes the
             associated job after this many real-time searches return no documents. In
@@ -4169,6 +4193,8 @@ class MlClient(NamespacedClient):
             __body["indices"] = indices
         if indices_options is not None:
             __body["indices_options"] = indices_options
+        if job_id is not None:
+            __body["job_id"] = job_id
         if max_empty_searches is not None:
             __body["max_empty_searches"] = max_empty_searches
         if pretty is not None:
@@ -4267,6 +4293,9 @@ class MlClient(NamespacedClient):
         groups: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
         human: t.Optional[bool] = None,
         model_plot_config: t.Optional[t.Mapping[str, t.Any]] = None,
+        model_prune_window: t.Optional[
+            t.Union["t.Literal[-1]", "t.Literal[0]", str]
+        ] = None,
         model_snapshot_retention_days: t.Optional[int] = None,
         per_partition_categorization: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
@@ -4311,6 +4340,7 @@ class MlClient(NamespacedClient):
         :param detectors: An array of detector update objects.
         :param groups: A list of job groups. A job can belong to no groups or many.
         :param model_plot_config:
+        :param model_prune_window:
         :param model_snapshot_retention_days: Advanced configuration option, which affects
             the automatic removal of old model snapshots for this job. It specifies the
             maximum period of time (in days) that snapshots are retained. This period
@@ -4359,6 +4389,8 @@ class MlClient(NamespacedClient):
             __query["human"] = human
         if model_plot_config is not None:
             __body["model_plot_config"] = model_plot_config
+        if model_prune_window is not None:
+            __body["model_prune_window"] = model_prune_window
         if model_snapshot_retention_days is not None:
             __body["model_snapshot_retention_days"] = model_snapshot_retention_days
         if per_partition_categorization is not None:
