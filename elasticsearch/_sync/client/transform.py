@@ -152,6 +152,7 @@ class TransformClient(NamespacedClient):
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         size: t.Optional[int] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Retrieves usage information for transforms.
@@ -168,6 +169,7 @@ class TransformClient(NamespacedClient):
             returns a 404 status code when there are no matches or only partial matches.
         :param from_: Skips the specified number of transforms.
         :param size: Specifies the maximum number of transforms to obtain.
+        :param timeout: Controls the time to wait for the stats
         """
         if transform_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'transform_id'")
@@ -187,6 +189,8 @@ class TransformClient(NamespacedClient):
             __query["pretty"] = pretty
         if size is not None:
             __query["size"] = size
+        if timeout is not None:
+            __query["timeout"] = timeout
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "GET", __path, params=__query, headers=__headers
