@@ -2172,7 +2172,7 @@ class Elasticsearch(BaseClient):
         """
         Returns the health of the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/health-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.7/health-api.html>`_
 
         :param feature: A feature of the cluster, as returned by the top-level health
             report API.

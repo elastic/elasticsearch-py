@@ -458,7 +458,7 @@ class TransformClient(NamespacedClient):
         """
         Schedules now a transform.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/schedule-now-transform.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.7/schedule-now-transform.html>`_
 
         :param transform_id: Identifier for the transform.
         :param timeout: Controls the time to wait for the scheduling to take place

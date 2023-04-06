@@ -81,7 +81,10 @@ class LogstashClient(NamespacedClient):
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_logstash/pipeline/{_quote(id)}"
+        if id not in SKIP_IN_PATH:
+            __path = f"/_logstash/pipeline/{_quote(id)}"
+        else:
+            __path = "/_logstash/pipeline"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
