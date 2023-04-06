@@ -443,6 +443,46 @@ class TransformClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    def schedule_now_transform(
+        self,
+        *,
+        transform_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Schedules now a transform.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.7/schedule-now-transform.html>`_
+
+        :param transform_id: Identifier for the transform.
+        :param timeout: Controls the time to wait for the scheduling to take place
+        """
+        if transform_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'transform_id'")
+        __path = f"/_transform/{_quote(transform_id)}/_schedule_now"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if timeout is not None:
+            __query["timeout"] = timeout
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "POST", __path, params=__query, headers=__headers
+        )
+
+    @_rewrite_parameters()
     def start_transform(
         self,
         *,
