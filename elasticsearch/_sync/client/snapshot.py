@@ -579,6 +579,7 @@ class SnapshotClient(NamespacedClient):
         repository: str,
         snapshot: str,
         error_trace: t.Optional[bool] = None,
+        feature_states: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
@@ -609,6 +610,7 @@ class SnapshotClient(NamespacedClient):
 
         :param repository: A repository name
         :param snapshot: A snapshot name
+        :param feature_states:
         :param ignore_index_settings:
         :param ignore_unavailable:
         :param include_aliases:
@@ -631,6 +633,8 @@ class SnapshotClient(NamespacedClient):
         __body: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
+        if feature_states is not None:
+            __body["feature_states"] = feature_states
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:

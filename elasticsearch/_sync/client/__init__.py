@@ -2152,6 +2152,58 @@ class Elasticsearch(BaseClient):
             "GET", __path, params=__query, headers=__headers
         )
 
+    @_rewrite_parameters()
+    def health_report(
+        self,
+        *,
+        feature: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        size: t.Optional[int] = None,
+        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
+        verbose: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Returns the health of the cluster.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/health-api.html>`_
+
+        :param feature: A feature of the cluster, as returned by the top-level health
+            report API.
+        :param size: Limit the number of affected resources the health report API returns.
+        :param timeout: Explicit operation timeout.
+        :param verbose: Opt-in for more information about the health of the system.
+        """
+        if feature not in SKIP_IN_PATH:
+            __path = f"/_health_report/{_quote(feature)}"
+        else:
+            __path = "/_health_report"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if size is not None:
+            __query["size"] = size
+        if timeout is not None:
+            __query["timeout"] = timeout
+        if verbose is not None:
+            __query["verbose"] = verbose
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
+
     @_rewrite_parameters(
         body_name="document",
     )
