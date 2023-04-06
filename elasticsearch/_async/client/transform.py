@@ -482,7 +482,9 @@ class TransformClient(NamespacedClient):
             "POST", __path, params=__query, headers=__headers
         )
 
-    @_rewrite_parameters()
+    @_rewrite_parameters(
+        parameter_aliases={"from": "from_"},
+    )
     async def start_transform(
         self,
         *,
@@ -491,6 +493,7 @@ class TransformClient(NamespacedClient):
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
+        from_: t.Optional[str] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
@@ -501,6 +504,9 @@ class TransformClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/8.7/start-transform.html>`_
 
         :param transform_id: Identifier for the transform.
+        :param from_: Restricts the set of transformed entities to those changed after
+            this time. Relative times like now-30d are supported. Only applicable for
+            continuous transforms.
         :param timeout: Period to wait for a response. If no response is received before
             the timeout expires, the request fails and returns an error.
         """
@@ -512,6 +518,8 @@ class TransformClient(NamespacedClient):
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
+        if from_ is not None:
+            __query["from"] = from_
         if human is not None:
             __query["human"] = human
         if pretty is not None:
