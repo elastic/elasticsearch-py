@@ -1,6 +1,7 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-8-7-0>>
 * <<rn-8-6-2>>
 * <<rn-8-6-1>>
 * <<rn-8-6-0>>
@@ -26,14 +27,34 @@
 * <<rn-8-0-0>>
 
 [discrete]
+[[rn-8-7-0]]
+=== 8.7.0 (2023-04-06)
+
+* Added the ``health_report`` API
+* Added the ``transform.schedule_now_transform`` API
+* Added the ``from_`` request parameter to the ``transform.start_transform`` API
+* Added the ``buffer``, ``grid_agg``, and ``with_labels`` parameters to the ``search_mvt`` API
+* Added the ``allow_auto_create`` parameter to the ``cluster.create_component_template`` API
+* Added the ``delete_user_annotations`` parameter to the ``ml.delete_job``, ``ml.reset_job`` API
+* Added the ``start`` and ``end`` parameters to the ``ml.preview_datafeed`` API
+* Added the ``priority`` parameter to the ``ml.start_datafeed`` API
+* Added the ``job_id`` parameter to the ``ml.update_datafeed`` API
+* Added the ``model_prune_window`` parameter to the ``ml.update_job`` API
+* Added the ``feature_states`` parameter to the ``snapshot.restore_snapshot`` API
+* Added the ``timeout`` parameter to the ``transform.get_transform_stats`` API
+* Added the ``from_`` parameter to the ``transform.start_transform`` API
+* Changed the ``input`` parameter of the ``ml.put_trained_models`` API from required to optional
+* Fixed the ``cluster.create_component_template`` API by removing the erroneously provided ``aliases``, ``mappings``, and ``settings`` parameters. Only the ``template`` parameter should be used for specifying component templates.
+
+[discrete]
 [[rn-8-6-2]]
-=== 8.6.2 (2022-02-16)
+=== 8.6.2 (2023-02-16)
 
 * Client is compatible with Elasticsearch 8.6.2
 
 [discrete]
 [[rn-8-6-1]]
-=== 8.6.1 (2022-01-27)
+=== 8.6.1 (2023-01-27)
 
 * Client is compatible with Elasticsearch 8.6.1
 
@@ -44,7 +65,7 @@
 
 [discrete]
 [[rn-8-6-0]]
-=== 8.6.0 (2022-01-10)
+=== 8.6.0 (2023-01-10)
 
 * Client is compatible with Elasticsearch 8.6.0
 
