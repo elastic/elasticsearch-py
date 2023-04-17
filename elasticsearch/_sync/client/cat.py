@@ -229,7 +229,7 @@ class CatClient(NamespacedClient):
         """
         Returns information about existing component_templates templates.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-compoentn-templates.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-component-templates.html>`_
 
         :param name: A pattern that returned component template names must match
         :param format: Specifies the format to return the columnar data in, can be set
