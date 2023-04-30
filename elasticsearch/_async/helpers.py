@@ -331,6 +331,7 @@ async def async_bulk(
 
     # list of errors to be collected is not stats_only
     errors = []
+    results = []
 
     # make streaming_bulk yield successful results so we can count them
     kwargs["yield_ok"] = True
@@ -343,9 +344,11 @@ async def async_bulk(
                 errors.append(item)
             failed += 1
         else:
+            if not stats_only:
+                results.append(item)
             success += 1
 
-    return (success, failed) if stats_only else errors
+    return (success, failed) if stats_only else (results, errors)
 
 
 async def async_scan(
