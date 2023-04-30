@@ -345,7 +345,7 @@ async def async_bulk(
         else:
             success += 1
 
-    return success, failed if stats_only else errors
+    return (success, failed) if stats_only else errors
 
 
 async def async_scan(
