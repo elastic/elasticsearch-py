@@ -274,8 +274,8 @@ class BaseClient:
                     _COMPAT_MIMETYPE_SUB, mimetype
                 )
 
-        mimetype_header_to_compat("Accept")
-        mimetype_header_to_compat("Content-Type")
+        # mimetype_header_to_compat("Accept")
+        # mimetype_header_to_compat("Content-Type")
 
         if params:
             target = f"{path}?{_quote_query(params)}"
