@@ -4454,6 +4454,7 @@ class Elasticsearch(BaseClient):
         self,
         *,
         index: str,
+        doc_type: str,
         id: str,
         detect_noop: t.Optional[bool] = None,
         doc: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -4533,7 +4534,7 @@ class Elasticsearch(BaseClient):
             raise ValueError("Empty value passed for parameter 'index'")
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/{_quote(index)}/_update/{_quote(id)}"
+        __path = f"/{_quote(index)}/{_quote(doc_type)}/{_quote(id)}/_update"
         __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
         if detect_noop is not None:
