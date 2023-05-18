@@ -672,7 +672,14 @@ def scan(
         # Grab options that should be propagated to every
         # API call within this helper instead of just 'search()'
         transport_kwargs = {}
-        for key in ("headers", "api_key", "http_auth", "basic_auth", "bearer_auth"):
+        for key in (
+            "headers",
+            "api_key",
+            "http_auth",
+            "basic_auth",
+            "bearer_auth",
+            "opaque_id",
+        ):
             try:
                 value = kw.pop(key)
                 if key == "http_auth":
