@@ -242,6 +242,7 @@ class ClusterClient(NamespacedClient):
         ] = None,
         flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
+        include_defaults: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
@@ -255,6 +256,8 @@ class ClusterClient(NamespacedClient):
 
         :param name: The comma separated names of the component templates
         :param flat_settings:
+        :param include_defaults: Return all default configurations for the component
+            template (default: false)
         :param local: Return local information, do not retrieve the state from master
             node (default: false)
         :param master_timeout: Explicit operation timeout for connection to master node
@@ -272,6 +275,8 @@ class ClusterClient(NamespacedClient):
             __query["flat_settings"] = flat_settings
         if human is not None:
             __query["human"] = human
+        if include_defaults is not None:
+            __query["include_defaults"] = include_defaults
         if local is not None:
             __query["local"] = local
         if master_timeout is not None:

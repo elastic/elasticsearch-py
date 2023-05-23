@@ -62,6 +62,7 @@ from .ml import MlClient
 from .monitoring import MonitoringClient
 from .nodes import NodesClient
 from .rollup import RollupClient
+from .search_application import SearchApplicationClient
 from .searchable_snapshots import SearchableSnapshotsClient
 from .security import SecurityClient
 from .shutdown import ShutdownClient
@@ -449,6 +450,7 @@ class AsyncElasticsearch(BaseClient):
         self.ml = MlClient(self)
         self.monitoring = MonitoringClient(self)
         self.rollup = RollupClient(self)
+        self.search_application = SearchApplicationClient(self)
         self.searchable_snapshots = SearchableSnapshotsClient(self)
         self.security = SecurityClient(self)
         self.slm = SlmClient(self)

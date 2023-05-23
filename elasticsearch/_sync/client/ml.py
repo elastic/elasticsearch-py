@@ -2106,7 +2106,7 @@ class MlClient(NamespacedClient):
         human: t.Optional[bool] = None,
         include: t.Optional[
             t.Union[
-                "t.Literal['definition', 'feature_importance_baseline', 'hyperparameters', 'total_feature_importance']",
+                "t.Literal['definition', 'definition_status', 'feature_importance_baseline', 'hyperparameters', 'total_feature_importance']",
                 str,
             ]
         ] = None,
