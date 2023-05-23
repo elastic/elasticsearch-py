@@ -39,7 +39,7 @@ class RollupClient(NamespacedClient):
         """
         Deletes an existing rollup job.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-delete-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.8/rollup-delete-job.html>`_
 
         :param id: The ID of the job to delete
         """
@@ -75,7 +75,7 @@ class RollupClient(NamespacedClient):
         """
         Retrieves the configuration, stats, and status of rollup jobs.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-get-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.8/rollup-get-job.html>`_
 
         :param id: The ID of the job(s) to fetch. Accepts glob patterns, or left blank
             for all jobs
@@ -114,7 +114,7 @@ class RollupClient(NamespacedClient):
         Returns the capabilities of any rollup jobs that have been configured for a specific
         index or index pattern.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-get-rollup-caps.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.8/rollup-get-rollup-caps.html>`_
 
         :param id: The ID of the index to check rollup capabilities on, or left blank
             for all jobs
@@ -153,7 +153,7 @@ class RollupClient(NamespacedClient):
         Returns the rollup capabilities of all jobs inside of a rollup index (e.g. the
         index where rollup data is stored).
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-get-rollup-index-caps.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.8/rollup-get-rollup-index-caps.html>`_
 
         :param index: The rollup index or index pattern to obtain rollup capabilities
             from.
@@ -205,7 +205,7 @@ class RollupClient(NamespacedClient):
         """
         Creates a rollup job.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-put-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.8/rollup-put-job.html>`_
 
         :param id: Identifier for the rollup job. This can be any alphanumeric string
             and uniquely identifies the data that is associated with the rollup job.
@@ -314,7 +314,7 @@ class RollupClient(NamespacedClient):
         """
         Enables searching rolled-up data using the standard query DSL.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.8/rollup-search.html>`_
 
         :param index: The indices or index-pattern(s) (containing rollup or regular data)
             that should be searched
@@ -372,7 +372,7 @@ class RollupClient(NamespacedClient):
         """
         Starts an existing, stopped rollup job.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-start-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.8/rollup-start-job.html>`_
 
         :param id: The ID of the job to start
         """
@@ -410,7 +410,7 @@ class RollupClient(NamespacedClient):
         """
         Stops an existing, started rollup job.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-stop-job.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.8/rollup-stop-job.html>`_
 
         :param id: The ID of the job to stop
         :param timeout: Block for (at maximum) the specified duration while waiting for

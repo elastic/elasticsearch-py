@@ -23,12 +23,12 @@ from ._base import NamespacedClient
 from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
-class SlmClient(NamespacedClient):
+class SearchApplicationClient(NamespacedClient):
     @_rewrite_parameters()
-    async def delete_lifecycle(
+    async def delete(
         self,
         *,
-        policy_id: str,
+        name: str,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
@@ -37,15 +37,15 @@ class SlmClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes an existing snapshot lifecycle policy.
+        Deletes a search application.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.8/slm-api-delete-policy.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.8/put-search-application.html>`_
 
-        :param policy_id: The id of the snapshot lifecycle policy to remove
+        :param name: The name of the search application to delete
         """
-        if policy_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'policy_id'")
-        __path = f"/_slm/policy/{_quote(policy_id)}"
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_application/search_application/{_quote(name)}"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -61,10 +61,10 @@ class SlmClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    async def execute_lifecycle(
+    async def delete_behavioral_analytics(
         self,
         *,
-        policy_id: str,
+        name: str,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
@@ -73,16 +73,15 @@ class SlmClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Immediately creates a snapshot according to the lifecycle policy, without waiting
-        for the scheduled time.
+        Delete a behavioral analytics collection.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.8/slm-api-execute-lifecycle.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.8/delete-analytics-collection.html>`_
 
-        :param policy_id: The id of the snapshot lifecycle policy to be executed
+        :param name: The name of the analytics collection to be deleted
         """
-        if policy_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'policy_id'")
-        __path = f"/_slm/policy/{_quote(policy_id)}/_execute"
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_application/analytics/{_quote(name)}"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -94,13 +93,14 @@ class SlmClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers
+            "DELETE", __path, params=__query, headers=__headers
         )
 
     @_rewrite_parameters()
-    async def execute_retention(
+    async def get(
         self,
         *,
+        name: str,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
@@ -109,11 +109,15 @@ class SlmClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes any snapshots that are expired according to the policy's retention rules.
+        Returns the details about a search application.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.8/slm-api-execute-retention.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.8/get-search-application.html>`_
+
+        :param name: The name of the search application
         """
-        __path = "/_slm/_execute_retention"
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_application/search_application/{_quote(name)}"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -125,16 +129,14 @@ class SlmClient(NamespacedClient):
             __query["pretty"] = pretty
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "GET", __path, params=__query, headers=__headers
         )
 
     @_rewrite_parameters()
-    async def get_lifecycle(
+    async def get_behavioral_analytics(
         self,
         *,
-        policy_id: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        name: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
@@ -143,80 +145,16 @@ class SlmClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves one or more snapshot lifecycle policy definitions and information about
-        the latest snapshot attempts.
+        Returns the existing behavioral analytics collections.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.8/slm-api-get-policy.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.8/list-analytics-collection.html>`_
 
-        :param policy_id: Comma-separated list of snapshot lifecycle policies to retrieve
+        :param name: A list of analytics collections to limit the returned information
         """
-        if policy_id not in SKIP_IN_PATH:
-            __path = f"/_slm/policy/{_quote(policy_id)}"
+        if name not in SKIP_IN_PATH:
+            __path = f"/_application/analytics/{_quote(name)}"
         else:
-            __path = "/_slm/policy"
-        __query: t.Dict[str, t.Any] = {}
-        if error_trace is not None:
-            __query["error_trace"] = error_trace
-        if filter_path is not None:
-            __query["filter_path"] = filter_path
-        if human is not None:
-            __query["human"] = human
-        if pretty is not None:
-            __query["pretty"] = pretty
-        __headers = {"accept": "application/json"}
-        return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
-        )
-
-    @_rewrite_parameters()
-    async def get_stats(
-        self,
-        *,
-        error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        human: t.Optional[bool] = None,
-        pretty: t.Optional[bool] = None,
-    ) -> ObjectApiResponse[t.Any]:
-        """
-        Returns global and policy-level statistics about actions taken by snapshot lifecycle
-        management.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.8/slm-api-get-stats.html>`_
-        """
-        __path = "/_slm/stats"
-        __query: t.Dict[str, t.Any] = {}
-        if error_trace is not None:
-            __query["error_trace"] = error_trace
-        if filter_path is not None:
-            __query["filter_path"] = filter_path
-        if human is not None:
-            __query["human"] = human
-        if pretty is not None:
-            __query["pretty"] = pretty
-        __headers = {"accept": "application/json"}
-        return await self.perform_request(  # type: ignore[return-value]
-            "GET", __path, params=__query, headers=__headers
-        )
-
-    @_rewrite_parameters()
-    async def get_status(
-        self,
-        *,
-        error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        human: t.Optional[bool] = None,
-        pretty: t.Optional[bool] = None,
-    ) -> ObjectApiResponse[t.Any]:
-        """
-        Retrieves the status of snapshot lifecycle management (SLM).
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.8/slm-api-get-status.html>`_
-        """
-        __path = "/_slm/status"
+            __path = "/_application/analytics"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -232,146 +170,179 @@ class SlmClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        parameter_aliases={"from": "from_"},
     )
-    async def put_lifecycle(
+    async def list(
         self,
         *,
-        policy_id: str,
-        config: t.Optional[t.Mapping[str, t.Any]] = None,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        from_: t.Optional[int] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        q: t.Optional[str] = None,
+        size: t.Optional[int] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Returns the existing search applications.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.8/list-search-applications.html>`_
+
+        :param from_: Starting offset (default: 0)
+        :param q: Query in the Lucene query string syntax"
+        :param size: specifies a max number of results to get
+        """
+        __path = "/_application/search_application"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if from_ is not None:
+            __query["from"] = from_
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if q is not None:
+            __query["q"] = q
+        if size is not None:
+            __query["size"] = size
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
+
+    @_rewrite_parameters(
+        body_name="search_application",
+    )
+    async def put(
+        self,
+        *,
+        name: str,
+        search_application: t.Mapping[str, t.Any],
+        create: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        master_timeout: t.Optional[
-            t.Union["t.Literal[-1]", "t.Literal[0]", str]
-        ] = None,
-        name: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
-        repository: t.Optional[str] = None,
-        retention: t.Optional[t.Mapping[str, t.Any]] = None,
-        schedule: t.Optional[str] = None,
-        timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates or updates a snapshot lifecycle policy.
+        Creates or updates a search application.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.8/slm-api-put-policy.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.8/put-search-application.html>`_
 
-        :param policy_id: ID for the snapshot lifecycle policy you want to create or
-            update.
-        :param config: Configuration for each snapshot created by the policy.
-        :param master_timeout: Period to wait for a connection to the master node. If
-            no response is received before the timeout expires, the request fails and
-            returns an error.
-        :param name: Name automatically assigned to each snapshot created by the policy.
-            Date math is supported. To prevent conflicting snapshot names, a UUID is
-            automatically appended to each snapshot name.
-        :param repository: Repository used to store snapshots created by this policy.
-            This repository must exist prior to the policy’s creation. You can create
-            a repository using the snapshot repository API.
-        :param retention: Retention rules used to retain and delete snapshots created
-            by the policy.
-        :param schedule: Periodic or absolute schedule at which the policy creates snapshots.
-            SLM applies schedule changes immediately.
-        :param timeout: Period to wait for a response. If no response is received before
-            the timeout expires, the request fails and returns an error.
+        :param name: The name of the search application to be created or updated
+        :param search_application:
+        :param create: If true, requires that a search application with the specified
+            resource_id does not already exist. (default: false)
         """
-        if policy_id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'policy_id'")
-        __path = f"/_slm/policy/{_quote(policy_id)}"
-        __body: t.Dict[str, t.Any] = {}
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        if search_application is None:
+            raise ValueError("Empty value passed for parameter 'search_application'")
+        __path = f"/_application/search_application/{_quote(name)}"
         __query: t.Dict[str, t.Any] = {}
-        if config is not None:
-            __body["config"] = config
+        if create is not None:
+            __query["create"] = create
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if master_timeout is not None:
-            __query["master_timeout"] = master_timeout
-        if name is not None:
-            __body["name"] = name
         if pretty is not None:
             __query["pretty"] = pretty
-        if repository is not None:
-            __body["repository"] = repository
-        if retention is not None:
-            __body["retention"] = retention
-        if schedule is not None:
-            __body["schedule"] = schedule
-        if timeout is not None:
-            __query["timeout"] = timeout
+        __body = search_application
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers, body=__body
+        )
+
+    @_rewrite_parameters()
+    async def put_behavioral_analytics(
+        self,
+        *,
+        name: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Creates a behavioral analytics collection.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.8/put-analytics-collection.html>`_
+
+        :param name: The name of the analytics collection to be created or updated
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_application/analytics/{_quote(name)}"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers
+        )
+
+    @_rewrite_parameters(
+        body_fields=True,
+        ignore_deprecated_options={"params"},
+    )
+    async def search(
+        self,
+        *,
+        name: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        params: t.Optional[t.Mapping[str, t.Any]] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Perform a search against a search application
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.8/search-application-search.html>`_
+
+        :param name: The name of the search application to be searched
+        :param params:
+        """
+        if name in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'name'")
+        __path = f"/_application/search_application/{_quote(name)}/_search"
+        __query: t.Dict[str, t.Any] = {}
+        __body: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if params is not None:
+            __body["params"] = params
+        if pretty is not None:
+            __query["pretty"] = pretty
         if not __body:
             __body = None  # type: ignore[assignment]
         __headers = {"accept": "application/json"}
         if __body is not None:
             __headers["content-type"] = "application/json"
         return await self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
-        )
-
-    @_rewrite_parameters()
-    async def start(
-        self,
-        *,
-        error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        human: t.Optional[bool] = None,
-        pretty: t.Optional[bool] = None,
-    ) -> ObjectApiResponse[t.Any]:
-        """
-        Turns on snapshot lifecycle management (SLM).
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.8/slm-api-start.html>`_
-        """
-        __path = "/_slm/start"
-        __query: t.Dict[str, t.Any] = {}
-        if error_trace is not None:
-            __query["error_trace"] = error_trace
-        if filter_path is not None:
-            __query["filter_path"] = filter_path
-        if human is not None:
-            __query["human"] = human
-        if pretty is not None:
-            __query["pretty"] = pretty
-        __headers = {"accept": "application/json"}
-        return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
-        )
-
-    @_rewrite_parameters()
-    async def stop(
-        self,
-        *,
-        error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        human: t.Optional[bool] = None,
-        pretty: t.Optional[bool] = None,
-    ) -> ObjectApiResponse[t.Any]:
-        """
-        Turns off snapshot lifecycle management (SLM).
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.8/slm-api-stop.html>`_
-        """
-        __path = "/_slm/stop"
-        __query: t.Dict[str, t.Any] = {}
-        if error_trace is not None:
-            __query["error_trace"] = error_trace
-        if filter_path is not None:
-            __query["filter_path"] = filter_path
-        if human is not None:
-            __query["human"] = human
-        if pretty is not None:
-            __query["pretty"] = pretty
-        __headers = {"accept": "application/json"}
-        return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "POST", __path, params=__query, headers=__headers, body=__body
         )
