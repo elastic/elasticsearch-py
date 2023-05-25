@@ -42,7 +42,7 @@ class AsyncSearchClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/async-search.html>`_
 
-        :param id: The async search ID
+        :param id: A unique identifier for the async search.
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
@@ -84,13 +84,21 @@ class AsyncSearchClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/async-search.html>`_
 
-        :param id: The async search ID
-        :param keep_alive: Specify the time interval in which the results (partial or
-            final) for this search will be available
+        :param id: A unique identifier for the async search.
+        :param keep_alive: Specifies how long the async search should be available in
+            the cluster. When not specified, the `keep_alive` set with the corresponding
+            submit async request will be used. Otherwise, it is possible to override
+            the value and extend the validity of the request. When this period expires,
+            the search, if still running, is cancelled. If the search is completed, its
+            saved results are deleted.
         :param typed_keys: Specify whether aggregation and suggester names should be
             prefixed by their respective types in the response
-        :param wait_for_completion_timeout: Specify the time that the request should
-            block waiting for the final response
+        :param wait_for_completion_timeout: Specifies to wait for the search to be completed
+            up until the provided timeout. Final results will be returned if available
+            before the timeout expires, otherwise the currently available results will
+            be returned once the timeout expires. By default no timeout is set meaning
+            that the currently available results will be returned without any additional
+            wait.
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
@@ -133,7 +141,7 @@ class AsyncSearchClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/async-search.html>`_
 
-        :param id: The async search ID
+        :param id: A unique identifier for the async search.
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
@@ -316,10 +324,11 @@ class AsyncSearchClient(NamespacedClient):
         :param analyze_wildcard: Specify whether wildcard and prefix queries should be
             analyzed (default: false)
         :param analyzer: The analyzer to use for the query string
-        :param batched_reduce_size: The number of shard results that should be reduced
-            at once on the coordinating node. This value should be used as the granularity
-            at which progress results will be made available.
-        :param ccs_minimize_roundtrips:
+        :param batched_reduce_size: Affects how often partial results become available,
+            which happens whenever shard results are reduced. A partial reduction is
+            performed every time the coordinating node has received a certain number
+            of new shard responses (5 by default).
+        :param ccs_minimize_roundtrips: The default value is the only supported value.
         :param collapse:
         :param default_operator: The default operator for query string query (AND or
             OR)
@@ -344,11 +353,11 @@ class AsyncSearchClient(NamespacedClient):
         :param ignore_unavailable: Whether specified concrete indices should be ignored
             when unavailable (missing or closed)
         :param indices_boost: Boosts the _score of documents from specified indices.
-        :param keep_alive: Update the time interval in which the results (partial or
-            final) for this search will be available
-        :param keep_on_completion: Control whether the response should be stored in the
-            cluster if it completed within the provided [wait_for_completion] time (default:
-            false)
+        :param keep_alive: Specifies how long the async search needs to be available.
+            Ongoing async searches and any saved search results are deleted after this
+            period.
+        :param keep_on_completion: If `true`, results are stored for later retrieval
+            when the search completes within the `wait_for_completion_timeout`.
         :param knn: Defines the approximate kNN search to run.
         :param lenient: Specify whether format-based query failures (such as providing
             text to a numeric field) should be ignored
@@ -362,7 +371,10 @@ class AsyncSearchClient(NamespacedClient):
         :param pit: Limits the search to a point in time (PIT). If you provide a PIT,
             you cannot specify an <index> in the request path.
         :param post_filter:
-        :param pre_filter_shard_size:
+        :param pre_filter_shard_size: The default value cannot be changed, which enforces
+            the execution of a pre-filter roundtrip to retrieve statistics from each
+            shard so that the ones that surely don’t hold any document matching the query
+            get skipped.
         :param preference: Specify the node or shard the operation should be performed
             on (default: random)
         :param profile:
@@ -422,8 +434,9 @@ class AsyncSearchClient(NamespacedClient):
         :param typed_keys: Specify whether aggregation and suggester names should be
             prefixed by their respective types in the response
         :param version: If true, returns document version as part of a hit.
-        :param wait_for_completion_timeout: Specify the time that the request should
-            block waiting for the final response
+        :param wait_for_completion_timeout: Blocks and waits until the search is completed
+            up to a certain timeout. When the async search completes within the timeout,
+            the response won’t include the ID as the results are not stored in the cluster.
         """
         if index not in SKIP_IN_PATH:
             __path = f"/{_quote(index)}/_async_search"
