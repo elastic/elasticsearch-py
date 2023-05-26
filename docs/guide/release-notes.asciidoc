@@ -1,6 +1,7 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-8-8-0>>
 * <<rn-8-7-0>>
 * <<rn-8-6-2>>
 * <<rn-8-6-1>>
@@ -25,6 +26,14 @@
 * <<rn-8-1-1>>
 * <<rn-8-1-0>>
 * <<rn-8-0-0>>
+
+[discrete]
+[[rn-8-8-0]]
+=== 8.8.0 (2023-05-25)
+
+* Added `include_defaults` parameter to the `cluster.get_component_template`, `indices.get_data_stream`, and `indices.get_index_template` API
+* Added the `indices.delete_data_lifecycle`, `indices.explain_data_lifecycle`, `indices.get_data_lifecycle`, and `indices.put_data_lifecycle` APIs
+* Added the **experimental** `search_application.delete`, `search_application.delete_behavioral_analytics`, `search_application.get`, `search_application.get_behavioral_analytics`, `search_application.list`, `search_application.put`, `search_application.put_behavioral_analytics`, and `search_application.search` APIs.
 
 [discrete]
 [[rn-8-7-0]]
