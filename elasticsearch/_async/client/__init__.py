@@ -3515,6 +3515,7 @@ class AsyncElasticsearch(BaseClient):
         profile: t.Optional[bool] = None,
         q: t.Optional[str] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
+        rank: t.Optional[t.Mapping[str, t.Any]] = None,
         request_cache: t.Optional[bool] = None,
         rescore: t.Optional[
             t.Union[
@@ -3647,6 +3648,7 @@ class AsyncElasticsearch(BaseClient):
         :param profile:
         :param q: Query in the Lucene query string syntax
         :param query: Defines the search definition using the Query DSL.
+        :param rank: Defines the Reciprocal Rank Fusion (RRF) to use
         :param request_cache: Specify if request cache should be used for this request
             or not, defaults to index level setting
         :param rescore:
@@ -3795,6 +3797,8 @@ class AsyncElasticsearch(BaseClient):
             __query["q"] = q
         if query is not None:
             __body["query"] = query
+        if rank is not None:
+            __body["rank"] = rank
         if request_cache is not None:
             __query["request_cache"] = request_cache
         if rescore is not None:
