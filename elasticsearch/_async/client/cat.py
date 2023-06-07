@@ -69,7 +69,8 @@ class CatClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-alias.html>`_
 
-        :param name: A comma-separated list of alias names to return
+        :param name: A comma-separated list of aliases to retrieve. Supports wildcards
+            (`*`). To retrieve all aliases, omit this parameter or use `*` or `_all`.
         :param expand_wildcards: Whether to expand wildcard expression to concrete indices
             that are open, closed or both.
         :param format: Specifies the format to return the columnar data in, can be set
@@ -153,9 +154,9 @@ class CatClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-allocation.html>`_
 
-        :param node_id: A comma-separated list of node IDs or names to limit the returned
-            information
-        :param bytes: The unit in which to display byte values
+        :param node_id: Comma-separated list of node identifiers or names used to limit
+            the returned information.
+        :param bytes: The unit used to display byte values.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
         :param h: List of columns to appear in the response. Supports simple wildcards.
@@ -231,7 +232,8 @@ class CatClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-component-templates.html>`_
 
-        :param name: A pattern that returned component template names must match
+        :param name: The name of the component template. Accepts wildcard expressions.
+            If omitted, all component templates are returned.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
         :param h: List of columns to appear in the response. Supports simple wildcards.
@@ -306,7 +308,9 @@ class CatClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-count.html>`_
 
-        :param index: A comma-separated list of index names to limit the returned information
+        :param index: Comma-separated list of data streams, indices, and aliases used
+            to limit the request. Supports wildcards (`*`). To target all data streams
+            and indices, omit this parameter or use `*` or `_all`.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
         :param h: List of columns to appear in the response. Supports simple wildcards.
@@ -386,8 +390,9 @@ class CatClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-fielddata.html>`_
 
-        :param fields: A comma-separated list of fields to return the fielddata size
-        :param bytes: The unit in which to display byte values
+        :param fields: Comma-separated list of fields used to limit returned information.
+            To retrieve all fields, omit this parameter.
+        :param bytes: The unit used to display byte values.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
         :param h: List of columns to appear in the response. Supports simple wildcards.
@@ -455,6 +460,9 @@ class CatClient(NamespacedClient):
         ] = None,
         pretty: t.Optional[bool] = None,
         s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        time: t.Optional[
+            t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
+        ] = None,
         ts: t.Optional[bool] = None,
         v: t.Optional[bool] = None,
     ) -> t.Union[ObjectApiResponse[t.Any], TextApiResponse]:
@@ -476,7 +484,8 @@ class CatClient(NamespacedClient):
         :param s: List of columns that determine how the table should be sorted. Sorting
             defaults to ascending and can be changed by setting `:asc` or `:desc` as
             a suffix to the column name.
-        :param ts: Set to false to disable timestamping
+        :param time: The unit used to display time values.
+        :param ts: If true, returns `HH:MM:SS` and Unix epoch timestamps.
         :param v: When set to `true` will enable verbose output.
         """
         __path = "/_cat/health"
@@ -501,6 +510,8 @@ class CatClient(NamespacedClient):
             __query["pretty"] = pretty
         if s is not None:
             __query["s"] = s
+        if time is not None:
+            __query["time"] = time
         if ts is not None:
             __query["ts"] = ts
         if v is not None:
@@ -633,29 +644,30 @@ class CatClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-indices.html>`_
 
-        :param index: A comma-separated list of index names to limit the returned information
-        :param bytes: The unit in which to display byte values
-        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
-            that are open, closed or both.
+        :param index: Comma-separated list of data streams, indices, and aliases used
+            to limit the request. Supports wildcards (`*`). To target all data streams
+            and indices, omit this parameter or use `*` or `_all`.
+        :param bytes: The unit used to display byte values.
+        :param expand_wildcards: The type of index that wildcard patterns can match.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
         :param h: List of columns to appear in the response. Supports simple wildcards.
-        :param health: A health status ("green", "yellow", or "red" to filter only indices
-            matching the specified health status
+        :param health: The health status used to limit returned indices. By default,
+            the response includes indices of any health status.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
-        :param include_unloaded_segments: If set to true segment stats will include stats
-            for segments that are not currently loaded into memory
+        :param include_unloaded_segments: If true, the response includes information
+            from segments that are not loaded into memory.
         :param local: If `true`, the request computes the list of selected nodes from
             the local cluster state. If `false` the list of selected nodes are computed
             from the cluster state of the master node. In both cases the coordinating
             node will send requests for further information to each selected node.
         :param master_timeout: Period to wait for a connection to the master node.
-        :param pri: Set to true to return stats only for primary shards
+        :param pri: If true, the response only includes information from primary shards.
         :param s: List of columns that determine how the table should be sorted. Sorting
             defaults to ascending and can be changed by setting `:asc` or `:desc` as
             a suffix to the column name.
-        :param time: The unit in which to display time values
+        :param time: The unit used to display time values.
         :param v: When set to `true` will enable verbose output.
         """
         if index not in SKIP_IN_PATH:
@@ -1399,6 +1411,7 @@ class CatClient(NamespacedClient):
         h: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
         help: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
+        include_unloaded_segments: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
@@ -1412,14 +1425,16 @@ class CatClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-nodes.html>`_
 
-        :param bytes: The unit in which to display byte values
+        :param bytes: The unit used to display byte values.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
-        :param full_id: Return the full node ID instead of the shortened version (default:
-            false)
+        :param full_id: If `true`, return the full node ID. If `false`, return the shortened
+            node ID.
         :param h: List of columns to appear in the response. Supports simple wildcards.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
+        :param include_unloaded_segments: If true, the response includes information
+            from segments that are not loaded into memory.
         :param local: If `true`, the request computes the list of selected nodes from
             the local cluster state. If `false` the list of selected nodes are computed
             from the cluster state of the master node. In both cases the coordinating
@@ -1448,6 +1463,8 @@ class CatClient(NamespacedClient):
             __query["help"] = help
         if human is not None:
             __query["human"] = human
+        if include_unloaded_segments is not None:
+            __query["include_unloaded_segments"] = include_unloaded_segments
         if local is not None:
             __query["local"] = local
         if master_timeout is not None:
@@ -1632,12 +1649,13 @@ class CatClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-recovery.html>`_
 
-        :param index: Comma-separated list or wildcard expression of index names to limit
-            the returned information
-        :param active_only: If `true`, the response only includes ongoing shard recoveries
-        :param bytes: The unit in which to display byte values
+        :param index: A comma-separated list of data streams, indices, and aliases used
+            to limit the request. Supports wildcards (`*`). To target all data streams
+            and indices, omit this parameter or use `*` or `_all`.
+        :param active_only: If `true`, the response only includes ongoing shard recoveries.
+        :param bytes: The unit used to display byte values.
         :param detailed: If `true`, the response includes detailed information about
-            shard recoveries
+            shard recoveries.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
         :param h: List of columns to appear in the response. Supports simple wildcards.
