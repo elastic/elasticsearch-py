@@ -64,8 +64,8 @@ setup(
     version=package_version,
     author="Honza Král, Nick Lang",
     author_email="honza.kral@gmail.com, nick@nicklang.com",
-    maintainer="Seth Michael Larson",
-    maintainer_email="seth.larson@elastic.co",
+    maintainer="Clients Team",
+    maintainer_email="clients-team@elastic.co",
     project_urls={
         "Documentation": "https://elasticsearch-py.readthedocs.io",
         "Source Code": "https://github.com/elastic/elasticsearch-py",
