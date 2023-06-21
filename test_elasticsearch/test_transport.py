@@ -225,7 +225,9 @@ class TestTransport:
 
     def test_request_with_custom_user_agent_header_set_at_client_level(self):
         client = Elasticsearch(
-            "http://localhost:9200", meta_header=False, node_class=DummyNode,
+            "http://localhost:9200",
+            meta_header=False,
+            node_class=DummyNode,
             headers={"User-Agent": "my-custom-value/1.2.3"},
         )
 
