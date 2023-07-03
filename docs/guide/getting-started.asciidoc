@@ -8,7 +8,8 @@ operations with it.
 [discrete]
 === Requirements
 
-* (...)
+* https://www.python.org/[Python] 3.6 or newer
+* https://pip.pypa.io/en/stable/[`pip`], installed by default alongside Python
 
 [discrete]
 === Installation 
@@ -17,7 +18,7 @@ To install the latest version of the client, run the following command:
 
 [source,shell]
 --------------------------
-
+python -m pip install elasticsearch
 --------------------------
 
 Refer to the <<installation>> page to learn more.
@@ -31,7 +32,12 @@ endpoint.
 
 [source,py]
 ----
+from elasticsearch import Elasticsearch
 
+client = Elasticsearch(
+    "https://...",  # Elasticsearch endpoint
+    api_key=('api-key-id', 'api-key-secret'),  # API key ID and secret
+)
 ----
 
 Your Elasticsearch endpoint can be found on the **My deployment** page of your 
@@ -61,7 +67,7 @@ This is how you create the `my_index` index:
 
 [source,py]
 ----
-
+client.indices.create(index="my_index")
 ----
 
 
@@ -72,7 +78,14 @@ This is a simple way of indexing a document:
 
 [source,py]
 ----
-
+client.index(
+    index="my_index",
+    id="my_document_id",
+    document={
+        "foo": "foo",
+        "bar": "bar",
+    }
+)
 ----
 
 
@@ -83,7 +96,7 @@ You can get documents by using the following code:
 
 [source,py]
 ----
-
+client.get(index="my_index", id="my_document_id")
 ----
 
 
@@ -94,7 +107,11 @@ This is how you can create a single match query with the Python client:
 
 [source,py]
 ----
-
+client.search(index="my_index", query={
+    "match": {
+        "foo": "foo"
+    }
+})
 ----
 
 
@@ -105,7 +122,10 @@ This is how you can update a document, for example to add a new field:
 
 [source,py]
 ----
-
+client.update(index="my_index", id="my_document_id", doc={
+    "foo": "bar",
+    "new_field": "new value",
+})
 ----
 
 
@@ -114,7 +134,7 @@ This is how you can update a document, for example to add a new field:
 
 [source,py]
 ----
-
+client.delete(index="my_index", id="my_document_id")
 ----
 
 
@@ -123,7 +143,7 @@ This is how you can update a document, for example to add a new field:
 
 [source,py]
 ----
-
+client.indices.delete(index="my_index")
 ----
 
 
