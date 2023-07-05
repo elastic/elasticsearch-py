@@ -40,6 +40,7 @@ docker run \
   --env "TEST_SUITE=${TEST_SUITE}" \
   --env "PYTHON_CONNECTION_CLASS=${PYTHON_CONNECTION_CLASS}" \
   --env "TEST_TYPE=server" \
+  --env "PATH=$PATH:/var/lib/elastic/.local/bin" \
   --name elasticsearch-py \
   --rm \
   elastic/elasticsearch-py \
