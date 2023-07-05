@@ -26,14 +26,16 @@ echo -e "\033[1m>>>>> Build [elastic/elasticsearch-py container] >>>>>>>>>>>>>>>
 docker build \
        --file .ci/Dockerfile \
        --tag elastic/elasticsearch-py \
-       --build-arg PYTHON_VERSION=${PYTHON_VERSION} \
+       --build-arg "PYTHON_VERSION=${PYTHON_VERSION}" \
+       --build-arg "BUILDER_UID=$(id -u)" \
+       --build-arg "BUILDER_GID=$(id -g)" \
        .
 
 echo -e "\033[1m>>>>> Run [elastic/elasticsearch-py container] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>\033[0m"
 
 mkdir -p junit
 docker run \
-  -u "$(id -u)" \
+  -u "$(id -u):$(id -g)" \
   --network=${network_name} \
   --env "STACK_VERSION=${STACK_VERSION}" \
   --env "ELASTICSEARCH_URL=${elasticsearch_url}" \
@@ -43,4 +45,4 @@ docker run \
   --name elasticsearch-py \
   --rm \
   elastic/elasticsearch-py \
-  bash -c "export PATH=$PATH:/var/lib/elastic/.local/bin && nox -s test-${PYTHON_VERSION}"
+  nox -s test-${PYTHON_VERSION}
