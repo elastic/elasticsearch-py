@@ -7,6 +7,7 @@ ARG BUILDER_UID=1000
 ARG BUILDER_GID=1000
 ENV BUILDER_USER elastic
 ENV BUILDER_GROUP elastic
+ENV PATH="${PATH}:/var/lib/elastic/.local/bin"
 
 # Create user
 RUN groupadd --system -g ${BUILDER_GID} ${BUILDER_GROUP} \
