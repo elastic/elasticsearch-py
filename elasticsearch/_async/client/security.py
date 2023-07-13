@@ -1925,6 +1925,7 @@ class SecurityClient(NamespacedClient):
             t.Union["t.Literal['false', 'true', 'wait_for']", bool, str]
         ] = None,
         roles: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        role_templates: t.Optional[t.Mapping[str, t.Any]] = None,
         rules: t.Optional[t.Mapping[str, t.Any]] = None,
         run_as: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -1934,14 +1935,23 @@ class SecurityClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-put-role-mapping.html>`_
 
         :param name: Role-mapping name
-        :param enabled:
-        :param metadata:
+        :param enabled: Mappings that have `enabled` set to `false` are ignored when role
+            mapping is performed.
+        :param metadata: Additional metadata that helps define which roles are assigned to
+            each user. Within the `metadata` object, keys beginning with `_` are reserved
+            for system usage.
         :param refresh: If `true` (the default) then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh to
             make this operation visible to search, if `false` then do nothing with refreshes.
-        :param roles:
-        :param rules:
-        :param run_as:
+        :param roles: A list of role names that are granted to the users that match the role
+            mapping rules. Exactly one of `roles` or `role_templates` must be specified.
+        :param role_templates: A list of mustache templates that will be evaluated to
+            determine the roles names that should granted to the users that match the role
+            mapping rules. The format of these objects is defined below. Exactly one of
+            `roles` or `role_templates` must be specified.
+        :param rules: The rules that determine which users should be matched by the mapping.
+            A rule is a logical condition that is expressed by using a JSON DSL.
+        :param run_as: A list of users that the owners of this role can impersonate.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -1964,6 +1974,8 @@ class SecurityClient(NamespacedClient):
             __query["refresh"] = refresh
         if roles is not None:
             __body["roles"] = roles
+        if role_templates is not None:
+            __body["role_templates"] = role_templates
         if rules is not None:
             __body["rules"] = rules
         if run_as is not None:
