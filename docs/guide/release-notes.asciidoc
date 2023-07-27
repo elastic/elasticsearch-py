@@ -1,6 +1,7 @@
 [[release-notes]]
 == Release notes
 
+* <<rn-8-9-0>>
 * <<rn-8-8-0>>
 * <<rn-8-7-0>>
 * <<rn-8-6-2>>
@@ -26,6 +27,13 @@
 * <<rn-8-1-1>>
 * <<rn-8-1-0>>
 * <<rn-8-0-0>>
+
+[discrete]
+[[rn-8-9-0]]
+=== 8.9.0 (2023-07-27)
+
+* Added the [`cluster.info`](https://www.elastic.co/guide/en/elasticsearch/reference/8.9/cluster-info.html) API
+* Updated the `inference_config` argument in `ml.put_trained_model` API to reflect an improvement in the specification
 
 [discrete]
 [[rn-8-8-0]]
