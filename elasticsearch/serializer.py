@@ -15,10 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-try:
-    import simplejson as json
-except ImportError:
-    import json
+import orjson as json
 
 import uuid
 from datetime import date, datetime
@@ -58,11 +55,8 @@ class TextSerializer(Serializer):
 class JSONSerializer(Serializer):
     mimetype = "application/json"
 
-    def default(self, data):
+    def _serialize_data(self, data):
         if isinstance(data, TIME_TYPES):
-            # Little hack to avoid importing pandas but to not
-            # return 'NaT' string for pd.NaT as that's not a valid
-            # Elasticsearch date.
             formatted_data = data.isoformat()
             if formatted_data != "NaT":
                 return formatted_data
@@ -72,18 +66,20 @@ class JSONSerializer(Serializer):
         elif isinstance(data, FLOAT_TYPES):
             return float(data)
 
-        # This is kept for backwards compatibility even
-        # if 'INTEGER_TYPES' isn't used by default anymore.
         elif INTEGER_TYPES and isinstance(data, INTEGER_TYPES):
             return int(data)
 
-        # Special cases for numpy and pandas types
-        # These are expensive to import so we try them last.
         serialized, value = _attempt_serialize_numpy_or_pandas(data)
         if serialized:
             return value
 
-        raise TypeError("Unable to serialize %r (type: %s)" % (data, type(data)))
+        if isinstance(data, dict):
+            return {k: self._serialize_data(v) for k, v in data.items()}
+
+        if isinstance(data, list):
+            return [self._serialize_data(i) for i in data]
+
+        return data  # return as it is, orjson will handle the rest
 
     def loads(self, s):
         try:
@@ -97,9 +93,7 @@ class JSONSerializer(Serializer):
             return data
 
         try:
-            return json.dumps(
-                data, default=self.default, ensure_ascii=False, separators=(",", ":")
-            )
+            return json.dumps(self._serialize_data(data)).decode()
         except (ValueError, TypeError) as e:
             raise SerializationError(data, e)
 
