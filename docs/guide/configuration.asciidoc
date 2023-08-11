@@ -53,19 +53,12 @@ es = Elasticsearch(
 [discrete]
 ==== TLS versions
 
-Configuring the minimum TLS version to connect to is done via the `ssl_version` parameter. By default this is set to a minimum value of TLSv1.2. In Python 3.7+ you can use the new `ssl.TLSVersion` enumeration to specify versions.
+Configuring the minimum TLS version to connect to is done via the `ssl_version` parameter. By default this is set to a minimum value of TLSv1.2. Use the `ssl.TLSVersion` enumeration to specify versions.
 
 [source,python]
 ------------------------------------
 import ssl
 
-# Python 3.6
-es = Elasticsearch(
-    ...,
-    ssl_version=ssl.PROTOCOL_TSLv1_2
-)
-
-# Python 3.7+
 es = Elasticsearch(
     ...,
     ssl_version=ssl.TLSVersion.TLSv1_2

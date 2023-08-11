@@ -3,22 +3,17 @@ Using Asyncio with Elasticsearch
 
  .. py:module:: elasticsearch
 
-Starting in ``elasticsearch-py`` v7.8.0 for Python 3.6+ the ``elasticsearch`` package supports async/await with
+The ``elasticsearch`` package supports async/await with
 `Asyncio <https://docs.python.org/3/library/asyncio.html>`_ and `Aiohttp <https://docs.aiohttp.org>`_.
 You can either install ``aiohttp`` directly or use the ``[async]`` extra:
 
  .. code-block:: bash
 
-    $ python -m pip install elasticsearch>=7.8.0 aiohttp
+    $ python -m pip install elasticsearch aiohttp
 
     # - OR -
 
-    $ python -m pip install elasticsearch[async]>=7.8.0
-
- .. note::
-    Async functionality is a new feature of this library in v7.8.0+ so
-    `please open an issue <https://github.com/elastic/elasticsearch-py/issues>`_
-    if you find an issue or have a question about async support.
+    $ python -m pip install elasticsearch[async]
 
 Getting Started with Async
 --------------------------
@@ -69,10 +64,10 @@ Frequently Asked Questions
 NameError / ImportError when importing ``AsyncElasticsearch``?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If when trying to use ``AsyncElasticsearch`` and you're receiving a ``NameError`` or ``ImportError``
-you should ensure that you're running Python 3.6+ (check with ``$ python --version``) and
-that you have ``aiohttp`` installed in your environment (check with ``$ python -m pip freeze | grep aiohttp``).
-If either of the above conditions is not met then async support won't be available.
+If when trying to use ``AsyncElasticsearch`` and you're receiving a ``NameError`` or
+``ImportError`` you should ensure that you have ``aiohttp`` installed in your
+environment (check with ``$ python -m pip freeze | grep aiohttp``). Otherwise, async
+support won't be available.
 
 What about the ``elasticsearch-async`` package?
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

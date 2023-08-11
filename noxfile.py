@@ -30,7 +30,7 @@ SOURCE_FILES = (
 )
 
 
-@nox.session(python=["3.6", "3.7", "3.8", "3.9", "3.10", "3.11"])
+@nox.session(python=["3.7", "3.8", "3.9", "3.10", "3.11"])
 def test(session):
     session.install(".")
     session.install("-r", "dev-requirements.txt")
@@ -47,10 +47,6 @@ def test(session):
         "--cache-clear",
         "-vv",
     ]
-    # Python 3.6+ is required for async
-    if python_version < (3, 6):
-        pytest_argv.append("--ignore=test_elasticsearch/test_async/")
-
     session.run(*pytest_argv)
 
 
