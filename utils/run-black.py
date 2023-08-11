@@ -58,7 +58,7 @@ def run_on_directory(dir: str, check: bool) -> None:
 def run_on_file(file: str, check: bool) -> None:
     try:
         subprocess.check_call(
-            f"black --target-version=py36 {'--check ' if check else ''}{file}",
+            f"black --target-version=py37 {'--check ' if check else ''}{file}",
             shell=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
