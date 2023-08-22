@@ -351,9 +351,11 @@ class TestBulk(object):
         assert "42" == error["index"]["_id"]
         assert "i" == error["index"]["_index"]
         print(error["index"]["error"])
-        assert "MapperParsingException" in repr(
-            error["index"]["error"]
-        ) or "mapper_parsing_exception" in repr(error["index"]["error"])
+        assert error["index"]["error"]["type"] in [
+            "mapper_parsing_exception",
+            # Elasticsearch 8.8+: https://github.com/elastic/elasticsearch/pull/92646
+            "document_parsing_exception",
+        ]
 
     async def test_error_is_raised(self, async_client):
         await async_client.indices.create(
