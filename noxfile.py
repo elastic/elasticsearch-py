@@ -35,7 +35,6 @@ def test(session):
     session.install(".")
     session.install("-r", "dev-requirements.txt")
 
-    python_version = tuple(int(x) for x in session.python.split("."))
     junit_xml = os.path.join(SOURCE_DIR, "junit", "elasticsearch-py-junit.xml")
     pytest_argv = [
         "pytest",
