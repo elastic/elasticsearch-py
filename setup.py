@@ -62,10 +62,8 @@ setup(
     long_description=long_description,
     long_description_content_type="text/x-rst",
     version=package_version,
-    author="Honza Král, Nick Lang",
-    author_email="honza.kral@gmail.com, nick@nicklang.com",
-    maintainer="Clients Team",
-    maintainer_email="clients-team@elastic.co",
+    author="Elastic Client Library Maintainers",
+    author_email="client-libs@elastic.co",
     project_urls={
         "Documentation": "https://elasticsearch-py.readthedocs.io",
         "Source Code": "https://github.com/elastic/elasticsearch-py",

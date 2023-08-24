@@ -30,9 +30,9 @@ def sleep_if_hot() -> None:
                     map(
                         int,
                         re.findall(
-                            r"\s\+([0-9]{2})\.[0-9]",
+                            r"_input\:\s([0-9]{2})\.[0-9]",
                             subprocess.check_output(
-                                "sensors",
+                                "sensors -u",
                                 shell=True,
                                 stderr=subprocess.STDOUT,
                             ).decode("utf-8"),
