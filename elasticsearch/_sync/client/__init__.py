@@ -3579,129 +3579,186 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-search.html>`_
 
-        :param index: A comma-separated list of index names to search; use `_all` or
-            empty string to perform the operation on all indices
-        :param aggregations:
-        :param aggs:
-        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
-            into no concrete indices. (This includes `_all` string or when no indices
-            have been specified)
-        :param allow_partial_search_results: Indicate if an error should be returned
-            if there is a partial search failure or timeout
-        :param analyze_wildcard: Specify whether wildcard and prefix queries should be
-            analyzed (default: false)
-        :param analyzer: The analyzer to use for the query string
+        :param index: Comma-separated list of data streams, indices, and aliases to search.
+            Supports wildcards (`*`). To search all data streams and indices, omit this
+            parameter or use `*` or `_all`.
+        :param aggregations: Defines the aggregations that are run as part of the search
+            request.
+        :param aggs: Defines the aggregations that are run as part of the search request.
+        :param allow_no_indices: If `false`, the request returns an error if any wildcard
+            expression, index alias, or `_all` value targets only missing or closed indices.
+            This behavior applies even if the request targets other open indices. For
+            example, a request targeting `foo*,bar*` returns an error if an index starts
+            with `foo` but no index starts with `bar`.
+        :param allow_partial_search_results: If true, returns partial results if there
+            are shard request timeouts or shard failures. If false, returns an error
+            with no partial results.
+        :param analyze_wildcard: If true, wildcard and prefix queries are analyzed. This
+            parameter can only be used when the q query string parameter is specified.
+        :param analyzer: Analyzer to use for the query string. This parameter can only
+            be used when the q query string parameter is specified.
         :param batched_reduce_size: The number of shard results that should be reduced
             at once on the coordinating node. This value should be used as a protection
             mechanism to reduce the memory overhead per search request if the potential
             number of shards in the request can be large.
-        :param ccs_minimize_roundtrips: Indicates whether network round-trips should
-            be minimized as part of cross-cluster search requests execution
-        :param collapse:
-        :param default_operator: The default operator for query string query (AND or
-            OR)
-        :param df: The field to use as default where no field prefix is given in the
-            query string
-        :param docvalue_fields: Array of wildcard (*) patterns. The request returns doc
-            values for field names matching these patterns in the hits.fields property
+        :param ccs_minimize_roundtrips: If true, network round-trips between the coordinating
+            node and the remote clusters are minimized when executing cross-cluster search
+            (CCS) requests.
+        :param collapse: Collapses search results the values of the specified field.
+        :param default_operator: The default operator for query string query: AND or
+            OR. This parameter can only be used when the `q` query string parameter is
+            specified.
+        :param df: Field to use as default where no field prefix is given in the query
+            string. This parameter can only be used when the q query string parameter
+            is specified.
+        :param docvalue_fields: Array of wildcard (`*`) patterns. The request returns
+            doc values for field names matching these patterns in the `hits.fields` property
             of the response.
-        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
-            that are open, closed or both.
+        :param expand_wildcards: Type of index that wildcard patterns can match. If the
+            request can target data streams, this argument determines whether wildcard
+            expressions match hidden data streams. Supports comma-separated values, such
+            as `open,hidden`.
         :param explain: If true, returns detailed information about score computation
             as part of a hit.
         :param ext: Configuration of search extensions defined by Elasticsearch plugins.
-        :param fields: Array of wildcard (*) patterns. The request returns values for
-            field names matching these patterns in the hits.fields property of the response.
-        :param from_: Starting document offset. By default, you cannot page through more
-            than 10,000 hits using the from and size parameters. To page through more
-            hits, use the search_after parameter.
-        :param highlight:
-        :param ignore_throttled: Whether specified concrete, expanded or aliased indices
-            should be ignored when throttled
-        :param ignore_unavailable: Whether specified concrete indices should be ignored
-            when unavailable (missing or closed)
+        :param fields: Array of wildcard (`*`) patterns. The request returns values for
+            field names matching these patterns in the `hits.fields` property of the
+            response.
+        :param from_: Starting document offset. Needs to be non-negative. By default,
+            you cannot page through more than 10,000 hits using the `from` and `size`
+            parameters. To page through more hits, use the `search_after` parameter.
+        :param highlight: Specifies the highlighter to use for retrieving highlighted
+            snippets from one or more fields in your search results.
+        :param ignore_throttled: If `true`, concrete, expanded or aliased indices will
+            be ignored when frozen.
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a missing or closed index.
         :param indices_boost: Boosts the _score of documents from specified indices.
         :param knn: Defines the approximate kNN search to run.
-        :param lenient: Specify whether format-based query failures (such as providing
-            text to a numeric field) should be ignored
-        :param max_concurrent_shard_requests: The number of concurrent shard requests
-            per node this search executes concurrently. This value should be used to
-            limit the impact of the search on the cluster in order to limit the number
-            of concurrent shard requests
-        :param min_compatible_shard_node: The minimum compatible version that all shards
-            involved in search should have for this request to be successful
-        :param min_score: Minimum _score for matching documents. Documents with a lower
-            _score are not included in the search results.
+        :param lenient: If `true`, format-based query failures (such as providing text
+            to a numeric field) in the query string will be ignored. This parameter can
+            only be used when the `q` query string parameter is specified.
+        :param max_concurrent_shard_requests: Defines the number of concurrent shard
+            requests per node this search executes concurrently. This value should be
+            used to limit the impact of the search on the cluster in order to limit the
+            number of concurrent shard requests.
+        :param min_compatible_shard_node: The minimum version of the node that can handle
+            the request Any handling node with a lower version will fail the request.
+        :param min_score: Minimum `_score` for matching documents. Documents with a lower
+            `_score` are not included in the search results.
         :param pit: Limits the search to a point in time (PIT). If you provide a PIT,
-            you cannot specify an <index> in the request path.
-        :param post_filter:
-        :param pre_filter_shard_size: A threshold that enforces a pre-filter roundtrip
-            to prefilter search shards based on query rewriting if the number of shards
-            the search request expands to exceeds the threshold. This filter roundtrip
-            can limit the number of shards significantly if for instance a shard can
-            not match any documents based on its rewrite method ie. if date filters are
-            mandatory to match but the shard bounds and the query are disjoint.
-        :param preference: Specify the node or shard the operation should be performed
-            on (default: random)
-        :param profile:
-        :param q: Query in the Lucene query string syntax
+            you cannot specify an `<index>` in the request path.
+        :param post_filter: Use the `post_filter` parameter to filter search results.
+            The search hits are filtered after the aggregations are calculated. A post
+            filter has no impact on the aggregation results.
+        :param pre_filter_shard_size: Defines a threshold that enforces a pre-filter
+            roundtrip to prefilter search shards based on query rewriting if the number
+            of shards the search request expands to exceeds the threshold. This filter
+            roundtrip can limit the number of shards significantly if for instance a
+            shard can not match any documents based on its rewrite method (if date filters
+            are mandatory to match but the shard bounds and the query are disjoint).
+            When unspecified, the pre-filter phase is executed if any of these conditions
+            is met: the request targets more than 128 shards; the request targets one
+            or more read-only index; the primary sort of the query targets an indexed
+            field.
+        :param preference: Nodes and shards used for the search. By default, Elasticsearch
+            selects from eligible nodes and shards using adaptive replica selection,
+            accounting for allocation awareness. Valid values are: `_only_local` to run
+            the search only on shards on the local node; `_local` to, if possible, run
+            the search on shards on the local node, or if not, select shards using the
+            default method; `_only_nodes:<node-id>,<node-id>` to run the search on only
+            the specified nodes IDs, where, if suitable shards exist on more than one
+            selected node, use shards on those nodes using the default method, or if
+            none of the specified nodes are available, select shards from any available
+            node using the default method; `_prefer_nodes:<node-id>,<node-id>` to if
+            possible, run the search on the specified nodes IDs, or if not, select shards
+            using the default method; `_shards:<shard>,<shard>` to run the search only
+            on the specified shards; `<custom-string>` (any string that does not start
+            with `_`) to route searches with the same `<custom-string>` to the same shards
+            in the same order.
+        :param profile: Set to `true` to return detailed timing information about the
+            execution of individual components in a search request. NOTE: This is a debugging
+            tool and adds significant overhead to search execution.
+        :param q: Query in the Lucene query string syntax using query parameter search.
+            Query parameter searches do not support the full Elasticsearch Query DSL
+            but are handy for testing.
         :param query: Defines the search definition using the Query DSL.
-        :param rank: Defines the Reciprocal Rank Fusion (RRF) to use
-        :param request_cache: Specify if request cache should be used for this request
-            or not, defaults to index level setting
-        :param rescore:
-        :param rest_total_hits_as_int: Indicates whether hits.total should be rendered
-            as an integer or an object in the rest search response
-        :param routing: A comma-separated list of specific routing values
+        :param rank: Defines the Reciprocal Rank Fusion (RRF) to use.
+        :param request_cache: If `true`, the caching of search results is enabled for
+            requests where `size` is `0`. Defaults to index level settings.
+        :param rescore: Can be used to improve precision by reordering just the top (for
+            example 100 - 500) documents returned by the `query` and `post_filter` phases.
+        :param rest_total_hits_as_int: Indicates whether `hits.total` should be rendered
+            as an integer or an object in the rest search response.
+        :param routing: Custom value used to route operations to a specific shard.
         :param runtime_mappings: Defines one or more runtime fields in the search request.
             These fields take precedence over mapped fields with the same name.
         :param script_fields: Retrieve a script evaluation (based on different fields)
             for each hit.
-        :param scroll: Specify how long a consistent view of the index should be maintained
-            for scrolled search
-        :param search_after:
-        :param search_type: Search operation type
-        :param seq_no_primary_term: If true, returns sequence number and primary term
-            of the last modification of each hit. See Optimistic concurrency control.
+        :param scroll: Period to retain the search context for scrolling. See Scroll
+            search results. By default, this value cannot exceed `1d` (24 hours). You
+            can change this limit using the `search.max_keep_alive` cluster-level setting.
+        :param search_after: Used to retrieve the next page of hits using a set of sort
+            values from the previous page.
+        :param search_type: How distributed term frequencies are calculated for relevance
+            scoring.
+        :param seq_no_primary_term: If `true`, returns sequence number and primary term
+            of the last modification of each hit.
         :param size: The number of hits to return. By default, you cannot page through
-            more than 10,000 hits using the from and size parameters. To page through
-            more hits, use the search_after parameter.
-        :param slice:
-        :param sort:
+            more than 10,000 hits using the `from` and `size` parameters. To page through
+            more hits, use the `search_after` parameter.
+        :param slice: Can be used to split a scrolled search into multiple slices that
+            can be consumed independently.
+        :param sort: A comma-separated list of <field>:<direction> pairs.
         :param source: Indicates which source fields are returned for matching documents.
             These fields are returned in the hits._source property of the search response.
-        :param source_excludes: A list of fields to exclude from the returned _source
-            field
-        :param source_includes: A list of fields to extract and return from the _source
-            field
+        :param source_excludes: A comma-separated list of source fields to exclude from
+            the response. You can also use this parameter to exclude fields from the
+            subset specified in `_source_includes` query parameter. If the `_source`
+            parameter is `false`, this parameter is ignored.
+        :param source_includes: A comma-separated list of source fields to include in
+            the response. If this parameter is specified, only these source fields are
+            returned. You can exclude fields from this subset using the `_source_excludes`
+            query parameter. If the `_source` parameter is `false`, this parameter is
+            ignored.
         :param stats: Stats groups to associate with the search. Each group maintains
             a statistics aggregation for its associated searches. You can retrieve these
             stats using the indices stats API.
         :param stored_fields: List of stored fields to return as part of a hit. If no
             fields are specified, no stored fields are included in the response. If this
-            field is specified, the _source parameter defaults to false. You can pass
-            _source: true to return both source fields and stored fields in the search
-            response.
-        :param suggest:
+            field is specified, the `_source` parameter defaults to `false`. You can
+            pass `_source: true` to return both source fields and stored fields in the
+            search response.
+        :param suggest: Defines a suggester that provides similar looking terms based
+            on a provided text.
         :param suggest_field: Specifies which field to use for suggestions.
-        :param suggest_mode: Specify suggest mode
-        :param suggest_size: How many suggestions to return in response
+        :param suggest_mode: Specifies the suggest mode. This parameter can only be used
+            when the `suggest_field` and `suggest_text` query string parameters are specified.
+        :param suggest_size: Number of suggestions to return. This parameter can only
+            be used when the `suggest_field` and `suggest_text` query string parameters
+            are specified.
         :param suggest_text: The source text for which the suggestions should be returned.
+            This parameter can only be used when the `suggest_field` and `suggest_text`
+            query string parameters are specified.
         :param terminate_after: Maximum number of documents to collect for each shard.
             If a query reaches this limit, Elasticsearch terminates the query early.
-            Elasticsearch collects documents before sorting. Defaults to 0, which does
-            not terminate query execution early.
+            Elasticsearch collects documents before sorting. Use with caution. Elasticsearch
+            applies this parameter to each shard handling the request. When possible,
+            let Elasticsearch perform early termination automatically. Avoid specifying
+            this parameter for requests that target data streams with backing indices
+            across multiple data tiers. If set to `0` (default), the query does not terminate
+            early.
         :param timeout: Specifies the period of time to wait for a response from each
             shard. If no response is received before the timeout expires, the request
             fails and returns an error. Defaults to no timeout.
         :param track_scores: If true, calculate and return document scores, even if the
             scores are not used for sorting.
         :param track_total_hits: Number of hits matching the query to count accurately.
-            If true, the exact number of hits is returned at the cost of some performance.
-            If false, the response does not include the total number of hits matching
-            the query. Defaults to 10,000 hits.
-        :param typed_keys: Specify whether aggregation and suggester names should be
-            prefixed by their respective types in the response
+            If `true`, the exact number of hits is returned at the cost of some performance.
+            If `false`, the response does not include the total number of hits matching
+            the query.
+        :param typed_keys: If `true`, aggregation and suggester names are be prefixed
+            by their respective types in the response.
         :param version: If true, returns document version as part of a hit.
         """
         if index not in SKIP_IN_PATH:

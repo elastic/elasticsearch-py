@@ -1266,15 +1266,19 @@ class CatClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-trained-model.html>`_
 
-        :param model_id: The ID of the trained models stats to fetch
-        :param allow_no_match: Whether to ignore if a wildcard expression matches no
-            trained models. (This includes `_all` string or when no trained models have
-            been specified)
-        :param bytes: The unit in which to display byte values
+        :param model_id: A unique identifier for the trained model.
+        :param allow_no_match: Specifies what to do when the request: contains wildcard
+            expressions and there are no models that match; contains the `_all` string
+            or no identifiers and there are no matches; contains wildcard expressions
+            and there are only partial matches. If `true`, the API returns an empty array
+            when there are no matches and the subset of results when there are partial
+            matches. If `false`, the API returns a 404 status code when there are no
+            matches or only partial matches.
+        :param bytes: The unit used to display byte values.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
-        :param from_: skips a number of trained models
-        :param h: Comma-separated list of column names to display
+        :param from_: Skips the specified number of transforms.
+        :param h: A comma-separated list of column names to display.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
         :param local: If `true`, the request computes the list of selected nodes from
@@ -1282,8 +1286,9 @@ class CatClient(NamespacedClient):
             from the cluster state of the master node. In both cases the coordinating
             node will send requests for further information to each selected node.
         :param master_timeout: Period to wait for a connection to the master node.
-        :param s: Comma-separated list of column names or column aliases to sort by
-        :param size: specifies a max number of trained models to get
+        :param s: A comma-separated list of column names or aliases used to sort the
+            response.
+        :param size: The maximum number of transforms to display.
         :param v: When set to `true` will enable verbose output.
         """
         if model_id not in SKIP_IN_PATH:
@@ -1807,8 +1812,10 @@ class CatClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-segments.html>`_
 
-        :param index: A comma-separated list of index names to limit the returned information
-        :param bytes: The unit in which to display byte values
+        :param index: A comma-separated list of data streams, indices, and aliases used
+            to limit the request. Supports wildcards (`*`). To target all data streams
+            and indices, omit this parameter or use `*` or `_all`.
+        :param bytes: The unit used to display byte values.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
         :param h: List of columns to appear in the response. Supports simple wildcards.
@@ -1887,8 +1894,10 @@ class CatClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-shards.html>`_
 
-        :param index: A comma-separated list of index names to limit the returned information
-        :param bytes: The unit in which to display byte values
+        :param index: A comma-separated list of data streams, indices, and aliases used
+            to limit the request. Supports wildcards (`*`). To target all data streams
+            and indices, omit this parameter or use `*` or `_all`.
+        :param bytes: The unit used to display byte values.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
         :param h: List of columns to appear in the response. Supports simple wildcards.
@@ -1967,13 +1976,16 @@ class CatClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-snapshots.html>`_
 
-        :param repository: Name of repository from which to fetch the snapshot information
+        :param repository: A comma-separated list of snapshot repositories used to limit
+            the request. Accepts wildcard expressions. `_all` returns all repositories.
+            If any repository fails during the request, Elasticsearch returns an error.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
         :param h: List of columns to appear in the response. Supports simple wildcards.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
-        :param ignore_unavailable: Set to true to ignore unavailable snapshots
+        :param ignore_unavailable: If `true`, the response does not include information
+            from unavailable snapshots.
         :param local: If `true`, the request computes the list of selected nodes from
             the local cluster state. If `false` the list of selected nodes are computed
             from the cluster state of the master node. In both cases the coordinating
@@ -2037,7 +2049,7 @@ class CatClient(NamespacedClient):
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
         node_id: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
-        parent_task: t.Optional[int] = None,
+        parent_task_id: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         s: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
         v: t.Optional[bool] = None,
@@ -2048,9 +2060,9 @@ class CatClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
 
-        :param actions: A comma-separated list of actions that should be returned. Leave
-            empty to return all.
-        :param detailed: Return detailed task information (default: false)
+        :param actions: The task action names, which are used to limit the response.
+        :param detailed: If `true`, the response includes detailed information about
+            shard recoveries.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
         :param h: List of columns to appear in the response. Supports simple wildcards.
@@ -2061,8 +2073,9 @@ class CatClient(NamespacedClient):
             from the cluster state of the master node. In both cases the coordinating
             node will send requests for further information to each selected node.
         :param master_timeout: Period to wait for a connection to the master node.
-        :param node_id:
-        :param parent_task:
+        :param node_id: Unique node identifiers, which are used to limit the response.
+        :param parent_task_id: The parent task identifier, which is used to limit the
+            response.
         :param s: List of columns that determine how the table should be sorted. Sorting
             defaults to ascending and can be changed by setting `:asc` or `:desc` as
             a suffix to the column name.
@@ -2092,8 +2105,8 @@ class CatClient(NamespacedClient):
             __query["master_timeout"] = master_timeout
         if node_id is not None:
             __query["node_id"] = node_id
-        if parent_task is not None:
-            __query["parent_task"] = parent_task
+        if parent_task_id is not None:
+            __query["parent_task_id"] = parent_task_id
         if pretty is not None:
             __query["pretty"] = pretty
         if s is not None:
@@ -2131,7 +2144,8 @@ class CatClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-templates.html>`_
 
-        :param name: A pattern that returned template names must match
+        :param name: The name of the template to return. Accepts wildcard expressions.
+            If omitted, all templates are returned.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
         :param h: List of columns to appear in the response. Supports simple wildcards.
@@ -2211,8 +2225,8 @@ class CatClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-thread-pool.html>`_
 
-        :param thread_pool_patterns: List of thread pool names used to limit the request.
-            Accepts wildcard expressions.
+        :param thread_pool_patterns: A comma-separated list of thread pool names used
+            to limit the request. Accepts wildcard expressions.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
         :param h: List of columns to appear in the response. Supports simple wildcards.
@@ -2226,7 +2240,7 @@ class CatClient(NamespacedClient):
         :param s: List of columns that determine how the table should be sorted. Sorting
             defaults to ascending and can be changed by setting `:asc` or `:desc` as
             a suffix to the column name.
-        :param time: Unit used to display time values.
+        :param time: The unit used to display time values.
         :param v: When set to `true` will enable verbose output.
         """
         if thread_pool_patterns not in SKIP_IN_PATH:
@@ -2341,14 +2355,19 @@ class CatClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cat-transforms.html>`_
 
-        :param transform_id: The id of the transform for which to get stats. '_all' or
-            '*' implies all transforms
-        :param allow_no_match: Whether to ignore if a wildcard expression matches no
-            transforms. (This includes `_all` string or when no transforms have been
-            specified)
+        :param transform_id: A transform identifier or a wildcard expression. If you
+            do not specify one of these options, the API returns information for all
+            transforms.
+        :param allow_no_match: Specifies what to do when the request: contains wildcard
+            expressions and there are no transforms that match; contains the `_all` string
+            or no identifiers and there are no matches; contains wildcard expressions
+            and there are only partial matches. If `true`, it returns an empty transforms
+            array when there are no matches and the subset of results when there are
+            partial matches. If `false`, the request returns a 404 status code when there
+            are no matches or only partial matches.
         :param format: Specifies the format to return the columnar data in, can be set
             to `text`, `json`, `cbor`, `yaml`, or `smile`.
-        :param from_: skips a number of transform configs, defaults to 0
+        :param from_: Skips the specified number of transforms.
         :param h: Comma-separated list of column names to display.
         :param help: When set to `true` will output available columns. This option can't
             be combined with any other query string option.
@@ -2359,8 +2378,8 @@ class CatClient(NamespacedClient):
         :param master_timeout: Period to wait for a connection to the master node.
         :param s: Comma-separated list of column names or column aliases used to sort
             the response.
-        :param size: specifies a max number of transforms to get, defaults to 100
-        :param time: Unit used to display time values.
+        :param size: The maximum number of transforms to obtain.
+        :param time: The unit used to display time values.
         :param v: When set to `true` will enable verbose output.
         """
         if transform_id not in SKIP_IN_PATH:
