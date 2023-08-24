@@ -34,6 +34,7 @@ class TransformClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         force: t.Optional[bool] = None,
+        delete_dest_index: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
@@ -47,6 +48,9 @@ class TransformClient(NamespacedClient):
         :param force: If this value is false, the transform must be stopped before it
             can be deleted. If true, the transform is deleted regardless of its current
             state.
+        :param delete_dest_index: When true, the destination index is deleted together with the
+            transform. The default value is false, meaning that the destination index will not
+            be deleted.
         :param timeout: Period to wait for a response. If no response is received before
             the timeout expires, the request fails and returns an error.
         """
@@ -60,6 +64,8 @@ class TransformClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if force is not None:
             __query["force"] = force
+        if delete_dest_index is not None:
+            __query["delete_dest_index"] = delete_dest_index
         if human is not None:
             __query["human"] = human
         if pretty is not None:
