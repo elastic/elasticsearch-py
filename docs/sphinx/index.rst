@@ -65,7 +65,7 @@ Example Usage
         print("%(timestamp)s %(author)s: %(text)s" % hit["_source"])
 
 
-Interative examples
+Interactive examples
 -------------------
 
 The `elasticsearch-labs <https://github.com/elastic/elasticsearch-labs>`_ repo contains interactive and executable Python notebooks, sample apps, and resources for testing out Elasticsearch, using the Python client.
