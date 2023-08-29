@@ -25,6 +25,8 @@ extensions = ["sphinx.ext.autodoc", "sphinx.ext.doctest", "sphinx.ext.intersphin
 
 autoclass_content = "both"
 
+autodoc_typehints = "description"
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
 
