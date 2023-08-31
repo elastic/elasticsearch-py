@@ -223,6 +223,20 @@ class TestTransport:
         assert calls[0][0] == ("GET", "/")
         assert calls[0][1]["headers"]["user-agent"] == "my-custom-value/1.2.3"
 
+    def test_request_with_custom_user_agent_header_set_at_client_level(self):
+        client = Elasticsearch(
+            "http://localhost:9200",
+            meta_header=False,
+            node_class=DummyNode,
+            headers={"User-Agent": "my-custom-value/1.2.3"},
+        )
+
+        client.info()
+        calls = client.transport.node_pool.get().calls
+        assert 1 == len(calls)
+        assert calls[0][0] == ("GET", "/")
+        assert calls[0][1]["headers"]["user-agent"] == "my-custom-value/1.2.3"
+
     def test_client_meta_header(self):
         client = Elasticsearch("http://localhost:9200", node_class=DummyNode)
         client.info()

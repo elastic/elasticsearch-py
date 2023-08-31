@@ -137,7 +137,7 @@ def aiter(x: Union[Iterable[T], AsyncIterable[T]]) -> AsyncIterator[T]:
 
     async def f() -> AsyncIterable[T]:
         nonlocal x
-        ix: Iterable[T] = x  # type: ignore[assignment]
+        ix: Iterable[T] = x
         for item in ix:
             yield item
 

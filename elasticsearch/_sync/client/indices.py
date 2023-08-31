@@ -535,7 +535,11 @@ class IndicesClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
 
-        :param name: The name of the data stream
+        :param name: Name of the data stream, which must meet the following criteria:
+            Lowercase only; Cannot include `\\`, `/`, `*`, `?`, `"`, `<`, `>`, `|`, `,`,
+            `#`, `:`, or a space character; Cannot start with `-`, `_`, `+`, or `.ds-`;
+            Cannot be `.` or `..`; Cannot be longer than 255 bytes. Multi-byte characters
+            count towards this limit faster.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -589,9 +593,11 @@ class IndicesClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
 
-        :param name: A comma-separated list of data stream names; use `_all` or empty
-            string to perform the operation on all data streams
-        :param expand_wildcards:
+        :param name: Comma-separated list of data streams used to limit the request.
+            Wildcard expressions (`*`) are supported. To target all data streams in a
+            cluster, omit this parameter or use `*`.
+        :param expand_wildcards: Type of data stream that wildcard patterns can match.
+            Supports comma-separated values, such as `open,hidden`.
         """
         if name not in SKIP_IN_PATH:
             __path = f"/_data_stream/{_quote(name)}/_stats"
@@ -847,10 +853,10 @@ class IndicesClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
 
-        :param name: A comma-separated list of data streams to delete; use `*` to delete
-            all data streams
-        :param expand_wildcards: Whether wildcard expressions should get expanded to
-            open or closed indices (default: open)
+        :param name: Comma-separated list of data streams to delete. Wildcard (`*`) expressions
+            are supported.
+        :param expand_wildcards: Type of data stream that wildcard patterns can match.
+            Supports comma-separated values,such as `open,hidden`.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -1978,10 +1984,11 @@ class IndicesClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
 
-        :param name: A comma-separated list of data streams to get; use `*` to get all
-            data streams
-        :param expand_wildcards: Whether wildcard expressions should get expanded to
-            open or closed indices (default: open)
+        :param name: Comma-separated list of data stream names used to limit the request.
+            Wildcard (`*`) expressions are supported. If omitted, all data streams are
+            returned.
+        :param expand_wildcards: Type of data stream that wildcard patterns can match.
+            Supports comma-separated values, such as `open,hidden`.
         :param include_defaults: If true, returns all relevant default configurations
             for the index template.
         """
@@ -2279,22 +2286,28 @@ class IndicesClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-get-settings.html>`_
 
-        :param index: A comma-separated list of index names; use `_all` or empty string
-            to perform the operation on all indices
-        :param name: The name of the settings that should be included
-        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
-            into no concrete indices. (This includes `_all` string or when no indices
-            have been specified)
-        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
-            that are open, closed or both.
-        :param flat_settings: Return settings in flat format (default: false)
-        :param ignore_unavailable: Whether specified concrete indices should be ignored
-            when unavailable (missing or closed)
-        :param include_defaults: Whether to return all default setting for each of the
-            indices.
-        :param local: Return local information, do not retrieve the state from master
-            node (default: false)
-        :param master_timeout: Specify timeout for connection to master
+        :param index: Comma-separated list of data streams, indices, and aliases used
+            to limit the request. Supports wildcards (`*`). To target all data streams
+            and indices, omit this parameter or use `*` or `_all`.
+        :param name: Comma-separated list or wildcard expression of settings to retrieve.
+        :param allow_no_indices: If `false`, the request returns an error if any wildcard
+            expression, index alias, or `_all` value targets only missing or closed indices.
+            This behavior applies even if the request targets other open indices. For
+            example, a request targeting `foo*,bar*` returns an error if an index starts
+            with foo but no index starts with `bar`.
+        :param expand_wildcards: Type of index that wildcard patterns can match. If the
+            request can target data streams, this argument determines whether wildcard
+            expressions match hidden data streams. Supports comma-separated values, such
+            as `open,hidden`.
+        :param flat_settings: If `true`, returns settings in flat format.
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a missing or closed index.
+        :param include_defaults: If `true`, return all default settings in the response.
+        :param local: If `true`, the request retrieves information from the local node
+            only. If `false`, information is retrieved from the master node.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
         """
         if index not in SKIP_IN_PATH and name not in SKIP_IN_PATH:
             __path = f"/{_quote(index)}/_settings/{_quote(name)}"
@@ -2401,7 +2414,7 @@ class IndicesClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/data-streams.html>`_
 
-        :param name: The name of the alias to migrate
+        :param name: Name of the index alias to convert to a data stream.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -3024,20 +3037,26 @@ class IndicesClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-update-settings.html>`_
 
         :param settings:
-        :param index: A comma-separated list of index names; use `_all` or empty string
-            to perform the operation on all indices
-        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
-            into no concrete indices. (This includes `_all` string or when no indices
-            have been specified)
-        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
-            that are open, closed or both.
-        :param flat_settings: Return settings in flat format (default: false)
-        :param ignore_unavailable: Whether specified concrete indices should be ignored
-            when unavailable (missing or closed)
-        :param master_timeout: Specify timeout for connection to master
-        :param preserve_existing: Whether to update existing settings. If set to `true`
-            existing settings on an index remain unchanged, the default is `false`
-        :param timeout: Explicit operation timeout
+        :param index: Comma-separated list of data streams, indices, and aliases used
+            to limit the request. Supports wildcards (`*`). To target all data streams
+            and indices, omit this parameter or use `*` or `_all`.
+        :param allow_no_indices: If `false`, the request returns an error if any wildcard
+            expression, index alias, or `_all` value targets only missing or closed indices.
+            This behavior applies even if the request targets other open indices. For
+            example, a request targeting `foo*,bar*` returns an error if an index starts
+            with `foo` but no index starts with `bar`.
+        :param expand_wildcards: Type of index that wildcard patterns can match. If the
+            request can target data streams, this argument determines whether wildcard
+            expressions match hidden data streams. Supports comma-separated values, such
+            as `open,hidden`.
+        :param flat_settings: If `true`, returns settings in flat format.
+        :param ignore_unavailable: If `true`, returns settings in flat format.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param preserve_existing: If `true`, existing index settings remain unchanged.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         if settings is None:
             raise ValueError("Empty value passed for parameter 'settings'")

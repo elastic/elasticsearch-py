@@ -187,7 +187,8 @@ class SecurityClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-clear-api-key-cache.html>`_
 
-        :param ids: A comma-separated list of IDs of API keys to clear from the cache
+        :param ids: Comma-separated list of API key IDs to evict from the API key cache.
+            To evict all API keys, use `*`. Does not support other wildcard patterns.
         """
         if ids in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'ids'")
@@ -392,7 +393,7 @@ class SecurityClient(NamespacedClient):
             expire.
         :param metadata: Arbitrary metadata that you want to associate with the API key.
             It supports nested data structure. Within the metadata object, keys beginning
-            with _ are reserved for system usage.
+            with `_` are reserved for system usage.
         :param name: Specifies the name for this API key.
         :param refresh: If `true` (the default) then refresh the affected shards to make
             this operation visible to search, if `wait_for` then wait for a refresh to
@@ -986,11 +987,18 @@ class SecurityClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-get-api-key.html>`_
 
-        :param id: API key id of the API key to be retrieved
-        :param name: API key name of the API key to be retrieved
-        :param owner: flag to query API keys owned by the currently authenticated user
-        :param realm_name: realm name of the user who created this API key to be retrieved
-        :param username: user name of the user who created this API key to be retrieved
+        :param id: An API key id. This parameter cannot be used with any of `name`, `realm_name`
+            or `username`.
+        :param name: An API key name. This parameter cannot be used with any of `id`,
+            `realm_name` or `username`. It supports prefix search with wildcard.
+        :param owner: A boolean flag that can be used to query API keys owned by the
+            currently authenticated user. The `realm_name` or `username` parameters cannot
+            be specified when this parameter is set to `true` as they are assumed to
+            be the currently authenticated ones.
+        :param realm_name: The name of an authentication realm. This parameter cannot
+            be used with either `id` or `name` or when `owner` flag is set to `true`.
+        :param username: The username of a user. This parameter cannot be used with either
+            `id` or `name` or when `owner` flag is set to `true`.
         :param with_limited_by: Return the snapshot of the owner user's role descriptors
             associated with the API key. An API key's actual permission is the intersection
             of its assigned role descriptors and the owner user's role descriptors.
@@ -1484,12 +1492,18 @@ class SecurityClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-grant-api-key.html>`_
 
-        :param api_key:
-        :param grant_type:
-        :param access_token:
-        :param password:
-        :param run_as:
-        :param username:
+        :param api_key: Defines the API key.
+        :param grant_type: The type of grant. Supported grant types are: `access_token`,
+            `password`.
+        :param access_token: The user’s access token. If you specify the `access_token`
+            grant type, this parameter is required. It is not valid with other grant
+            types.
+        :param password: The user’s password. If you specify the `password` grant type,
+            this parameter is required. It is not valid with other grant types.
+        :param run_as: The name of the user to be impersonated.
+        :param username: The user name that identifies the user. If you specify the `password`
+            grant type, this parameter is required. It is not valid with other grant
+            types.
         """
         if api_key is None:
             raise ValueError("Empty value passed for parameter 'api_key'")
@@ -1669,11 +1683,18 @@ class SecurityClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-invalidate-api-key.html>`_
 
         :param id:
-        :param ids:
-        :param name:
-        :param owner:
-        :param realm_name:
-        :param username:
+        :param ids: A list of API key ids. This parameter cannot be used with any of
+            `name`, `realm_name`, or `username`.
+        :param name: An API key name. This parameter cannot be used with any of `ids`,
+            `realm_name` or `username`.
+        :param owner: Can be used to query API keys owned by the currently authenticated
+            user. The `realm_name` or `username` parameters cannot be specified when
+            this parameter is set to `true` as they are assumed to be the currently authenticated
+            ones.
+        :param realm_name: The name of an authentication realm. This parameter cannot
+            be used with either `ids` or `name`, or when `owner` flag is set to `true`.
+        :param username: The username of a user. This parameter cannot be used with either
+            `ids` or `name`, or when `owner` flag is set to `true`.
         """
         __path = "/_security/api_key"
         __query: t.Dict[str, t.Any] = {}
@@ -2089,16 +2110,18 @@ class SecurityClient(NamespacedClient):
 
         :param from_: Starting document offset. By default, you cannot page through more
             than 10,000 hits using the from and size parameters. To page through more
-            hits, use the search_after parameter.
+            hits, use the `search_after` parameter.
         :param query: A query to filter which API keys to return. The query supports
-            a subset of query types, including match_all, bool, term, terms, ids, prefix,
-            wildcard, and range. You can query all public information associated with
-            an API key
-        :param search_after:
+            a subset of query types, including `match_all`, `bool`, `term`, `terms`,
+            `ids`, `prefix`, `wildcard`, and `range`. You can query all public information
+            associated with an API key.
+        :param search_after: Search after definition
         :param size: The number of hits to return. By default, you cannot page through
-            more than 10,000 hits using the from and size parameters. To page through
-            more hits, use the search_after parameter.
-        :param sort:
+            more than 10,000 hits using the `from` and `size` parameters. To page through
+            more hits, use the `search_after` parameter.
+        :param sort: Other than `id`, all public fields of an API key are eligible for
+            sorting. In addition, sort can also be applied to the `_doc` field to sort
+            by index order.
         :param with_limited_by: Return the snapshot of the owner user's role descriptors
             associated with the API key. An API key's actual permission is the intersection
             of its assigned role descriptors and the owner user's role descriptors.

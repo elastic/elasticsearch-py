@@ -45,6 +45,9 @@ from ._sync.client.ml import MlClient as MlClient  # noqa: F401
 from ._sync.client.monitoring import MonitoringClient as MonitoringClient  # noqa: F401
 from ._sync.client.nodes import NodesClient as NodesClient  # noqa: F401
 from ._sync.client.rollup import RollupClient as RollupClient  # noqa: F401
+from ._sync.client.search_application import (  # noqa: F401
+    SearchApplicationClient as SearchApplicationClient,
+)
 from ._sync.client.searchable_snapshots import (  # noqa: F401
     SearchableSnapshotsClient as SearchableSnapshotsClient,
 )
@@ -94,6 +97,7 @@ __all__ = [
     "MonitoringClient",
     "NodesClient",
     "RollupClient",
+    "SearchApplicationClient",
     "SearchableSnapshotsClient",
     "SecurityClient",
     "ShutdownClient",

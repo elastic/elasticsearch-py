@@ -20,6 +20,7 @@ from datetime import datetime, timedelta, timezone
 from unittest.mock import MagicMock, call, patch
 
 import pytest
+import pytest_asyncio
 from elastic_transport import ApiResponseMeta, ObjectApiResponse
 
 from elasticsearch import helpers
@@ -350,9 +351,11 @@ class TestBulk(object):
         assert "42" == error["index"]["_id"]
         assert "i" == error["index"]["_index"]
         print(error["index"]["error"])
-        assert "MapperParsingException" in repr(
-            error["index"]["error"]
-        ) or "mapper_parsing_exception" in repr(error["index"]["error"])
+        assert error["index"]["error"]["type"] in [
+            "mapper_parsing_exception",
+            # Elasticsearch 8.8+: https://github.com/elastic/elasticsearch/pull/92646
+            "document_parsing_exception",
+        ]
 
     async def test_error_is_raised(self, async_client):
         await async_client.indices.create(
@@ -456,7 +459,7 @@ class MockResponse:
         return self().__await__()
 
 
-@pytest.fixture(scope="function")
+@pytest_asyncio.fixture(scope="function")
 async def scan_teardown(async_client):
     yield
     await async_client.clear_scroll(scroll_id="_all")
@@ -867,7 +870,7 @@ async def test_scan_from_keyword_is_aliased(async_client, scan_kwargs):
         assert "from" not in search_mock.call_args[1]
 
 
-@pytest.fixture(scope="function")
+@pytest_asyncio.fixture(scope="function")
 async def reindex_setup(async_client):
     bulk = []
     for x in range(100):
@@ -945,7 +948,7 @@ class TestReindex(object):
         )["_source"]
 
 
-@pytest.fixture(scope="function")
+@pytest_asyncio.fixture(scope="function")
 async def parent_reindex_setup(async_client):
     body = {
         "settings": {"number_of_shards": 1, "number_of_replicas": 0},
@@ -1006,7 +1009,7 @@ class TestParentChildReindex:
         } == q
 
 
-@pytest.fixture(scope="function")
+@pytest_asyncio.fixture(scope="function")
 async def reindex_data_stream_setup(async_client):
     dt = datetime.now(tz=timezone.utc)
     bulk = []

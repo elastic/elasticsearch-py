@@ -3217,7 +3217,6 @@ class MlClient(NamespacedClient):
         self,
         *,
         model_id: str,
-        inference_config: t.Mapping[str, t.Any],
         compressed_definition: t.Optional[str] = None,
         defer_definition_decompression: t.Optional[bool] = None,
         definition: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -3227,6 +3226,7 @@ class MlClient(NamespacedClient):
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
+        inference_config: t.Optional[t.Mapping[str, t.Any]] = None,
         input: t.Optional[t.Mapping[str, t.Any]] = None,
         metadata: t.Optional[t.Any] = None,
         model_size_bytes: t.Optional[int] = None,
@@ -3242,9 +3242,6 @@ class MlClient(NamespacedClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-trained-models.html>`_
 
         :param model_id: The unique identifier of the trained model.
-        :param inference_config: The default configuration for inference. This can be
-            either a regression or classification configuration. It must match the underlying
-            definition.trained_model's target_type.
         :param compressed_definition: The compressed (GZipped and Base64 encoded) inference
             definition of the model. If compressed_definition is specified, then definition
             cannot be specified.
@@ -3254,6 +3251,10 @@ class MlClient(NamespacedClient):
         :param definition: The inference definition for the model. If definition is specified,
             then compressed_definition cannot be specified.
         :param description: A human-readable description of the inference trained model.
+        :param inference_config: The default configuration for inference. This can be
+            either a regression or classification configuration. It must match the underlying
+            definition.trained_model's target_type. For pre-packaged models such as ELSER
+            the config is not required.
         :param input: The input field names for the model definition.
         :param metadata: An object map that contains metadata about the model.
         :param model_size_bytes: The estimated memory usage in bytes to keep the trained
@@ -3264,13 +3265,9 @@ class MlClient(NamespacedClient):
         """
         if model_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'model_id'")
-        if inference_config is None:
-            raise ValueError("Empty value passed for parameter 'inference_config'")
         __path = f"/_ml/trained_models/{_quote(model_id)}"
         __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if inference_config is not None:
-            __body["inference_config"] = inference_config
         if compressed_definition is not None:
             __body["compressed_definition"] = compressed_definition
         if defer_definition_decompression is not None:
@@ -3285,6 +3282,8 @@ class MlClient(NamespacedClient):
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
+        if inference_config is not None:
+            __body["inference_config"] = inference_config
         if input is not None:
             __body["input"] = input
         if metadata is not None:
