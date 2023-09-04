@@ -12,7 +12,7 @@ Elasticsearch Python Client
 .. image:: https://img.shields.io/conda/vn/conda-forge/elasticsearch?color=blue
    :target: https://anaconda.org/conda-forge/elasticsearch
 
-.. image:: https://pepy.tech/badge/elasticsearch
+.. image:: https://static.pepy.tech/badge/elasticsearch
    :target: https://pepy.tech/project/elasticsearch?versions=*
 
 .. image:: https://clients-ci.elastic.co/job/elastic+elasticsearch-py+main/badge/icon
