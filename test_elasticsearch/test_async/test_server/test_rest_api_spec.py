@@ -25,6 +25,7 @@ import json
 import warnings
 
 import pytest
+import pytest_asyncio
 
 from elasticsearch import ElasticsearchWarning, RequestError
 
@@ -237,7 +238,7 @@ class AsyncYamlRunner(YamlRunner):
         return name in XPACK_FEATURES
 
 
-@pytest.fixture(scope="function")
+@pytest_asyncio.fixture(scope="function")
 def async_runner(async_client):
     return AsyncYamlRunner(async_client)
 

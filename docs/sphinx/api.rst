@@ -150,6 +150,12 @@ Rollup Indices
 .. autoclass:: RollupClient
    :members:
 
+Search Applications
+-------------------
+
+.. autoclass:: SearchApplicationClient
+   :members:
+
 Searchable Snapshots
 --------------------
 

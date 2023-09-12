@@ -12,7 +12,7 @@ Elasticsearch Python Client
 .. image:: https://img.shields.io/conda/vn/conda-forge/elasticsearch?color=blue
    :target: https://anaconda.org/conda-forge/elasticsearch
 
-.. image:: https://pepy.tech/badge/elasticsearch
+.. image:: https://static.pepy.tech/badge/elasticsearch
    :target: https://pepy.tech/project/elasticsearch?versions=*
 
 .. image:: https://clients-ci.elastic.co/job/elastic+elasticsearch-py+main/badge/icon
@@ -42,17 +42,27 @@ Features
 Installation
 ------------
 
-Install the ``elasticsearch`` package with `pip
-<https://pypi.org/project/elasticsearch>`_::
+Refer to the `Installation section <https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/getting-started-python.html#_installation>`_ 
+of the getting started documentation.
 
-    $ python -m pip install elasticsearch
 
-If your application uses async/await in Python you can install with
-the ``async`` extra::
+Connecting
+----------
 
-    $ python -m pip install elasticsearch[async]
+Refer to the `Connecting section <https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/getting-started-python.html#_connecting>`_ 
+of the getting started documentation.
 
-Read more about `how to use asyncio with this project <https://elasticsearch-py.readthedocs.io/en/latest/async.html>`_.
+
+Usage
+-----
+
+* `Creating an index <https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/getting-started-python.html#_creating_an_index>`_ 
+* `Indexing a document <https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/getting-started-python.html#_indexing_documents>`_
+* `Getting documents <https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/getting-started-python.html#_getting_documents>`_
+* `Searching documents <https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/getting-started-python.html#_searching_documents>`_
+* `Updating documents <https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/getting-started-python.html#_updating_documents>`_ 
+* `Deleting documents <https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/getting-started-python.html#_deleting_documents>`_
+* `Deleting an index <https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/getting-started-python.html#_deleting_an_index>`_
 
 
 Compatibility
@@ -73,38 +83,6 @@ Documentation for the client is `available on elastic.co`_ and `Read the Docs`_.
 
 .. _available on elastic.co: https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/index.html
 .. _Read the Docs: https://elasticsearch-py.readthedocs.io
-
-Quick Start
------------
-
-.. code-block:: python
-
-    # Import the client from the 'elasticsearch' module
-    >>> from elasticsearch import Elasticsearch
-    
-    # Instantiate a client instance
-    >>> client = Elasticsearch("http://localhost:9200")
-    
-    # Call an API, in this example `info()`
-    >>> resp = client.info()
-
-    # View the result
-    >>> resp
-    {
-      "name" : "instance-name",
-      "cluster_name" : "cluster-name",
-      "cluster_uuid" : "cluster-uuid",
-      "version" : {
-        "number" : "7.14.0",
-        ...
-      },
-      "tagline" : "You know, for Search"
-    }
-
-
-You can read more about `configuring the client`_ in the documentation.
-
-.. _configuring the client: https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/connecting.html
 
 
 License

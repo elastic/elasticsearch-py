@@ -43,10 +43,6 @@ jobs:
         nox-session: [""]
         runs-on: ["ubuntu-latest"]
         include:
-          - python-version: 3.6
-            experimental: false
-            nox-session: test-3.6
-            runs-on: "ubuntu-20.04"
           - python-version: 3.11-dev
             experimental: true
             nox-session: test-3.11
