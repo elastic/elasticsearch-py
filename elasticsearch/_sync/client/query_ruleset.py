@@ -15,20 +15,12 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import typing as t
-
-from elastic_transport import ObjectApiResponse
-
-from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
-
-
-class LogstashClient(NamespacedClient):
+class C:
     @_rewrite_parameters()
-    def delete_pipeline(
+    def delete(
         self,
         *,
-        id: str,
+        ruleset_id: str,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
@@ -37,15 +29,15 @@ class LogstashClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes Logstash Pipelines used by Central Management
+        Deletes a query ruleset.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/logstash-api-delete-pipeline.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-query-ruleset.html>`_
 
-        :param id: Identifier for the pipeline.
+        :param ruleset_id: The unique identifier of the query ruleset to delete
         """
-        if id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'id'")
-        __path = f"/_logstash/pipeline/{_quote(id)}"
+        if ruleset_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'ruleset_id'")
+        __path = f"/_query_rules/{_quote(ruleset_id)}"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -61,10 +53,10 @@ class LogstashClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    def get_pipeline(
+    def get(
         self,
         *,
-        id: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        ruleset_id: str,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
@@ -73,18 +65,15 @@ class LogstashClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves Logstash Pipelines used by Central Management
+        Returns the details about a query ruleset.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/logstash-api-get-pipeline.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-query-ruleset.html>`_
 
-        :param id: Comma-separated list of pipeline identifiers.
+        :param ruleset_id: The unique identifier of the query ruleset
         """
-        if id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'id'")
-        if id not in SKIP_IN_PATH:
-            __path = f"/_logstash/pipeline/{_quote(id)}"
-        else:
-            __path = "/_logstash/pipeline"
+        if ruleset_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'ruleset_id'")
+        __path = f"/_query_rules/{_quote(ruleset_id)}"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -100,13 +89,55 @@ class LogstashClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_name="pipeline",
+        parameter_aliases={"from": "from_"},
     )
-    def put_pipeline(
+    def list(
         self,
         *,
-        id: str,
-        pipeline: t.Mapping[str, t.Any],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        from_: t.Optional[int] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+        size: t.Optional[int] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Lists query rulesets.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/list-query-rulesets.html>`_
+
+        :param from_: Starting offset (default: 0)
+        :param size: specifies a max number of results to get
+        """
+        __path = "/_query_rules"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if from_ is not None:
+            __query["from"] = from_
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        if size is not None:
+            __query["size"] = size
+        __headers = {"accept": "application/json"}
+        return self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
+
+    @_rewrite_parameters(
+        body_name="query_ruleset",
+    )
+    def put(
+        self,
+        *,
+        ruleset_id: str,
+        query_ruleset: t.Mapping[str, t.Any],
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
@@ -115,18 +146,19 @@ class LogstashClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Adds and updates Logstash Pipelines used for Central Management
+        Creates or updates a query ruleset.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/logstash-api-put-pipeline.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-query-ruleset.html>`_
 
-        :param id: Identifier for the pipeline.
-        :param pipeline:
+        :param ruleset_id: The unique identifier of the query ruleset to be created or
+            updated
+        :param query_ruleset:
         """
-        if id in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'id'")
-        if pipeline is None:
-            raise ValueError("Empty value passed for parameter 'pipeline'")
-        __path = f"/_logstash/pipeline/{_quote(id)}"
+        if ruleset_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'ruleset_id'")
+        if query_ruleset is None:
+            raise ValueError("Empty value passed for parameter 'query_ruleset'")
+        __path = f"/_query_rules/{_quote(ruleset_id)}"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -136,7 +168,7 @@ class LogstashClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        __body = pipeline
+        __body = query_ruleset
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body

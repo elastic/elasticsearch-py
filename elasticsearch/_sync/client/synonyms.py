@@ -15,20 +15,12 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import typing as t
-
-from elastic_transport import ObjectApiResponse
-
-from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
-
-
-class SearchApplicationClient(NamespacedClient):
+class C:
     @_rewrite_parameters()
-    def delete(
+    def delete_synonym(
         self,
         *,
-        name: str,
+        id: str,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
@@ -37,15 +29,15 @@ class SearchApplicationClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes a search application.
+        Deletes a synonym set
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-search-application.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-synonyms-set.html>`_
 
-        :param name: The name of the search application to delete
+        :param id: The id of the synonyms set to be deleted
         """
-        if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_application/search_application/{_quote(name)}"
+        if id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'id'")
+        __path = f"/_synonyms/{_quote(id)}"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -61,10 +53,11 @@ class SearchApplicationClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    def delete_behavioral_analytics(
+    def delete_synonym_rule(
         self,
         *,
-        name: str,
+        set_id: str,
+        rule_id: str,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
@@ -73,15 +66,18 @@ class SearchApplicationClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Delete a behavioral analytics collection.
+        Deletes a synonym rule in a synonym set
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-analytics-collection.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-synonym-rule.html>`_
 
-        :param name: The name of the analytics collection to be deleted
+        :param set_id: The id of the synonym set to be updated
+        :param rule_id: The id of the synonym rule to be deleted
         """
-        if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_application/analytics/{_quote(name)}"
+        if set_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'set_id'")
+        if rule_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'rule_id'")
+        __path = f"/_synonyms/{_quote(set_id)}/{_quote(rule_id)}"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -96,47 +92,58 @@ class SearchApplicationClient(NamespacedClient):
             "DELETE", __path, params=__query, headers=__headers
         )
 
-    @_rewrite_parameters()
-    def get(
+    @_rewrite_parameters(
+        parameter_aliases={"from": "from_"},
+    )
+    def get_synonym(
         self,
         *,
-        name: str,
+        id: str,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
+        from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        size: t.Optional[int] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the details about a search application.
+        Retrieves a synonym set
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-search-application.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-synonyms-set.html>`_
 
-        :param name: The name of the search application
+        :param id: "The id of the synonyms set to be retrieved
+        :param from_: Starting offset for query rules to be retrieved
+        :param size: specifies a max number of query rules to retrieve
         """
-        if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_application/search_application/{_quote(name)}"
+        if id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'id'")
+        __path = f"/_synonyms/{_quote(id)}"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
+        if from_ is not None:
+            __query["from"] = from_
         if human is not None:
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if size is not None:
+            __query["size"] = size
         __headers = {"accept": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "GET", __path, params=__query, headers=__headers
         )
 
     @_rewrite_parameters()
-    def get_behavioral_analytics(
+    def get_synonym_rule(
         self,
         *,
-        name: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        set_id: str,
+        rule_id: str,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
@@ -145,16 +152,18 @@ class SearchApplicationClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the existing behavioral analytics collections.
+        Retrieves a synonym rule from a synonym set
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/list-analytics-collection.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-synonym-rule.html>`_
 
-        :param name: A list of analytics collections to limit the returned information
+        :param set_id: The id of the synonym set to retrieve the synonym rule from
+        :param rule_id: The id of the synonym rule to retrieve
         """
-        if name not in SKIP_IN_PATH:
-            __path = f"/_application/analytics/{_quote(name)}"
-        else:
-            __path = "/_application/analytics"
+        if set_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'set_id'")
+        if rule_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'rule_id'")
+        __path = f"/_synonyms/{_quote(set_id)}/{_quote(rule_id)}"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -172,7 +181,7 @@ class SearchApplicationClient(NamespacedClient):
     @_rewrite_parameters(
         parameter_aliases={"from": "from_"},
     )
-    def list(
+    def get_synonyms_sets(
         self,
         *,
         error_trace: t.Optional[bool] = None,
@@ -182,19 +191,17 @@ class SearchApplicationClient(NamespacedClient):
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        q: t.Optional[str] = None,
         size: t.Optional[int] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Returns the existing search applications.
+        Retrieves a summary of all defined synonym sets
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/list-search-applications.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/list-synonyms-sets.html>`_
 
-        :param from_: Starting offset.
-        :param q: Query in the Lucene query string syntax.
-        :param size: Specifies a max number of results to get.
+        :param from_: Starting offset
+        :param size: specifies a max number of results to get
         """
-        __path = "/_application/search_application"
+        __path = "/_synonyms"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -206,8 +213,6 @@ class SearchApplicationClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        if q is not None:
-            __query["q"] = q
         if size is not None:
             __query["size"] = size
         __headers = {"accept": "application/json"}
@@ -216,14 +221,15 @@ class SearchApplicationClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_name="search_application",
+        body_fields=True,
     )
-    def put(
+    def put_synonym(
         self,
         *,
-        name: str,
-        search_application: t.Mapping[str, t.Any],
-        create: t.Optional[bool] = None,
+        id: str,
+        synonyms_set: t.Union[
+            t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]
+        ],
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
@@ -232,23 +238,22 @@ class SearchApplicationClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Creates or updates a search application.
+        Creates or updates a synonyms set
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-search-application.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-synonyms-set.html>`_
 
-        :param name: The name of the search application to be created or updated.
-        :param search_application:
-        :param create: If `true`, this request cannot replace or update existing Search
-            Applications.
+        :param id: The id of the synonyms set to be created or updated
+        :param synonyms_set: The synonym set information to update
         """
-        if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'name'")
-        if search_application is None:
-            raise ValueError("Empty value passed for parameter 'search_application'")
-        __path = f"/_application/search_application/{_quote(name)}"
+        if id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'id'")
+        if synonyms_set is None:
+            raise ValueError("Empty value passed for parameter 'synonyms_set'")
+        __path = f"/_synonyms/{_quote(id)}"
+        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
-        if create is not None:
-            __query["create"] = create
+        if synonyms_set is not None:
+            __body["synonyms_set"] = synonyms_set
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -257,93 +262,56 @@ class SearchApplicationClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        __body = search_application
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
         )
 
-    @_rewrite_parameters()
-    def put_behavioral_analytics(
-        self,
-        *,
-        name: str,
-        error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        human: t.Optional[bool] = None,
-        pretty: t.Optional[bool] = None,
-    ) -> ObjectApiResponse[t.Any]:
-        """
-        Creates a behavioral analytics collection.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-analytics-collection.html>`_
-
-        :param name: The name of the analytics collection to be created or updated.
-        """
-        if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_application/analytics/{_quote(name)}"
-        __query: t.Dict[str, t.Any] = {}
-        if error_trace is not None:
-            __query["error_trace"] = error_trace
-        if filter_path is not None:
-            __query["filter_path"] = filter_path
-        if human is not None:
-            __query["human"] = human
-        if pretty is not None:
-            __query["pretty"] = pretty
-        __headers = {"accept": "application/json"}
-        return self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers
-        )
-
     @_rewrite_parameters(
         body_fields=True,
-        ignore_deprecated_options={"params"},
     )
-    def search(
+    def put_synonym_rule(
         self,
         *,
-        name: str,
+        set_id: str,
+        rule_id: str,
+        synonyms: t.Union[t.List[str], t.Tuple[str, ...]],
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
         human: t.Optional[bool] = None,
-        params: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Perform a search against a search application
+        Creates or updates a synonym rule in a synonym set
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-application-search.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-synonym-rule.html>`_
 
-        :param name: The name of the search application to be searched.
-        :param params: Query parameters specific to this request, which will override
-            any defaults specified in the template.
+        :param set_id: The id of the synonym set to be updated with the synonym rule
+        :param rule_id: The id of the synonym rule to be updated or created
+        :param synonyms:
         """
-        if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_application/search_application/{_quote(name)}/_search"
-        __query: t.Dict[str, t.Any] = {}
+        if set_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'set_id'")
+        if rule_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'rule_id'")
+        if synonyms is None:
+            raise ValueError("Empty value passed for parameter 'synonyms'")
+        __path = f"/_synonyms/{_quote(set_id)}/{_quote(rule_id)}"
         __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
+        if synonyms is not None:
+            __body["synonyms"] = synonyms
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
         if human is not None:
             __query["human"] = human
-        if params is not None:
-            __body["params"] = params
         if pretty is not None:
             __query["pretty"] = pretty
-        if not __body:
-            __body = None  # type: ignore[assignment]
-        __headers = {"accept": "application/json"}
-        if __body is not None:
-            __headers["content-type"] = "application/json"
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers, body=__body
+            "PUT", __path, params=__query, headers=__headers, body=__body
         )
