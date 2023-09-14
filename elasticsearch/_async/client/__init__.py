@@ -61,6 +61,7 @@ from .migration import MigrationClient
 from .ml import MlClient
 from .monitoring import MonitoringClient
 from .nodes import NodesClient
+from .query_ruleset import QueryRulesetClient
 from .rollup import RollupClient
 from .search_application import SearchApplicationClient
 from .searchable_snapshots import SearchableSnapshotsClient
@@ -70,6 +71,7 @@ from .slm import SlmClient
 from .snapshot import SnapshotClient
 from .sql import SqlClient
 from .ssl import SslClient
+from .synonyms import SynonymsClient
 from .tasks import TasksClient
 from .text_structure import TextStructureClient
 from .transform import TransformClient
@@ -449,6 +451,7 @@ class AsyncElasticsearch(BaseClient):
         self.migration = MigrationClient(self)
         self.ml = MlClient(self)
         self.monitoring = MonitoringClient(self)
+        self.query_ruleset = QueryRulesetClient(self)
         self.rollup = RollupClient(self)
         self.search_application = SearchApplicationClient(self)
         self.searchable_snapshots = SearchableSnapshotsClient(self)
@@ -457,6 +460,7 @@ class AsyncElasticsearch(BaseClient):
         self.shutdown = ShutdownClient(self)
         self.sql = SqlClient(self)
         self.ssl = SslClient(self)
+        self.synonyms = SynonymsClient(self)
         self.text_structure = TextStructureClient(self)
         self.transform = TransformClient(self)
         self.watcher = WatcherClient(self)

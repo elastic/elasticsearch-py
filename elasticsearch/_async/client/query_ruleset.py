@@ -15,7 +15,15 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-class C:
+import typing as t
+
+from elastic_transport import ObjectApiResponse
+
+from ._base import NamespacedClient
+from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
+
+
+class QueryRulesetClient(NamespacedClient):
     @_rewrite_parameters()
     async def delete(
         self,
