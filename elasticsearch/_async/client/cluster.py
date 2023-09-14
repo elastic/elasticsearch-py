@@ -46,7 +46,7 @@ class ClusterClient(NamespacedClient):
         """
         Provides explanations for shard allocations in the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-allocation-explain.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/cluster-allocation-explain.html>`_
 
         :param current_node: Specifies the node ID or the name of the node to only explain
             a shard that is currently located on the specified node.
@@ -111,12 +111,15 @@ class ClusterClient(NamespacedClient):
         """
         Deletes a component template
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-template.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/indices-component-template.html>`_
 
         :param name: Comma-separated list or wildcard expression of component template
             names used to limit the request.
-        :param master_timeout: Specify timeout for connection to master
-        :param timeout: Explicit operation timeout
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -154,7 +157,7 @@ class ClusterClient(NamespacedClient):
         """
         Clears cluster voting config exclusions.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/voting-config-exclusions.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/voting-config-exclusions.html>`_
 
         :param wait_for_removal: Specifies whether to wait for all excluded nodes to
             be removed from the cluster before clearing the voting configuration exclusions
@@ -199,7 +202,7 @@ class ClusterClient(NamespacedClient):
         """
         Returns information about whether a particular component template exist
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-template.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/indices-component-template.html>`_
 
         :param name: Comma-separated list of component template names used to limit the
             request. Wildcard (*) expressions are supported.
@@ -252,15 +255,18 @@ class ClusterClient(NamespacedClient):
         """
         Returns one or more component templates
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-template.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/indices-component-template.html>`_
 
-        :param name: The comma separated names of the component templates
-        :param flat_settings:
+        :param name: Comma-separated list of component template names used to limit the
+            request. Wildcard (`*`) expressions are supported.
+        :param flat_settings: If `true`, returns settings in flat format.
         :param include_defaults: Return all default configurations for the component
             template (default: false)
-        :param local: Return local information, do not retrieve the state from master
-            node (default: false)
-        :param master_timeout: Explicit operation timeout for connection to master node
+        :param local: If `true`, the request retrieves information from the local node
+            only. If `false`, information is retrieved from the master node.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
         """
         if name not in SKIP_IN_PATH:
             __path = f"/_component_template/{_quote(name)}"
@@ -308,12 +314,16 @@ class ClusterClient(NamespacedClient):
         """
         Returns cluster settings.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-get-settings.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/cluster-get-settings.html>`_
 
-        :param flat_settings: Return settings in flat format (default: false)
-        :param include_defaults: Whether to return all default clusters setting.
-        :param master_timeout: Explicit operation timeout for connection to master node
-        :param timeout: Explicit operation timeout
+        :param flat_settings: If `true`, returns settings in flat format.
+        :param include_defaults: If `true`, returns default cluster settings from the
+            local node.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         __path = "/_cluster/settings"
         __query: t.Dict[str, t.Any] = {}
@@ -394,7 +404,7 @@ class ClusterClient(NamespacedClient):
         """
         Returns basic information about the health of the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-health.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/cluster-health.html>`_
 
         :param index: Comma-separated list of data streams, indices, and index aliases
             used to limit the request. Wildcard expressions (*) are supported. To target
@@ -471,6 +481,62 @@ class ClusterClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
+    async def info(
+        self,
+        *,
+        target: t.Union[
+            t.Union[
+                "t.Literal['_all', 'http', 'ingest', 'script', 'thread_pool']", str
+            ],
+            t.Union[
+                t.List[
+                    t.Union[
+                        "t.Literal['_all', 'http', 'ingest', 'script', 'thread_pool']",
+                        str,
+                    ]
+                ],
+                t.Tuple[
+                    t.Union[
+                        "t.Literal['_all', 'http', 'ingest', 'script', 'thread_pool']",
+                        str,
+                    ],
+                    ...,
+                ],
+            ],
+        ],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Returns different information about the cluster.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/cluster-info.html>`_
+
+        :param target: Limits the information returned to the specific target. Supports
+            a comma-separated list, such as http,ingest.
+        """
+        if target in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'target'")
+        __path = f"/_info/{_quote(target)}"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "GET", __path, params=__query, headers=__headers
+        )
+
+    @_rewrite_parameters()
     async def pending_tasks(
         self,
         *,
@@ -489,11 +555,13 @@ class ClusterClient(NamespacedClient):
         Returns a list of any cluster-level changes (e.g. create index, update mapping,
         allocate or fail shard) which have not yet been executed.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-pending.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/cluster-pending.html>`_
 
-        :param local: Return local information, do not retrieve the state from master
-            node (default: false)
-        :param master_timeout: Specify timeout for connection to master
+        :param local: If `true`, the request retrieves information from the local node
+            only. If `false`, information is retrieved from the master node.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
         """
         __path = "/_cluster/pending_tasks"
         __query: t.Dict[str, t.Any] = {}
@@ -535,7 +603,7 @@ class ClusterClient(NamespacedClient):
         """
         Updates the cluster voting config exclusions by node ids or node names.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/voting-config-exclusions.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/voting-config-exclusions.html>`_
 
         :param node_ids: A comma-separated list of the persistent ids of the nodes to
             exclude from the voting configuration. If specified, you may not also specify
@@ -594,9 +662,17 @@ class ClusterClient(NamespacedClient):
         """
         Creates or updates a component template
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/indices-component-template.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/indices-component-template.html>`_
 
-        :param name: The name of the template
+        :param name: Name of the component template to create. Elasticsearch includes
+            the following built-in component templates: `logs-mappings`; 'logs-settings`;
+            `metrics-mappings`; `metrics-settings`;`synthetics-mapping`; `synthetics-settings`.
+            Elastic Agent uses these templates to configure backing indices for its data
+            streams. If you use Elastic Agent and want to overwrite one of these templates,
+            set the `version` for your replacement template higher than the current version.
+            If you don’t use Elastic Agent and want to disable all built-in component
+            and index templates, set `stack.templates.enabled` to `false` using the cluster
+            update settings API.
         :param template: The template to be applied which includes mappings, settings,
             or aliases configuration.
         :param allow_auto_create: This setting overrides the value of the `action.auto_create_index`
@@ -604,13 +680,18 @@ class ClusterClient(NamespacedClient):
             created using that template even if auto-creation of indices is disabled
             via `actions.auto_create_index`. If set to `false` then data streams matching
             the template must always be explicitly created.
-        :param create: Whether the index template should only be added if new or can
-            also replace an existing one
-        :param master_timeout: Specify timeout for connection to master
+        :param create: If `true`, this request cannot replace or update existing component
+            templates.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
         :param meta: Optional user metadata about the component template. May have any
-            contents. This map is not automatically generated by Elasticsearch.
+            contents. This map is not automatically generated by Elasticsearch. This
+            information is stored in the cluster state, so keeping it short is preferable.
+            To unset `_meta`, replace the template without specifying this information.
         :param version: Version number used to manage component templates externally.
             This number isn't automatically generated or incremented by Elasticsearch.
+            To unset a version, replace the template without specifying a version.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -667,7 +748,7 @@ class ClusterClient(NamespacedClient):
         """
         Updates the cluster settings.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-update-settings.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/cluster-update-settings.html>`_
 
         :param flat_settings: Return settings in flat format (default: false)
         :param master_timeout: Explicit operation timeout for connection to master node
@@ -715,7 +796,7 @@ class ClusterClient(NamespacedClient):
         """
         Returns the information about configured remote clusters.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-remote-info.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/cluster-remote-info.html>`_
         """
         __path = "/_remote/info"
         __query: t.Dict[str, t.Any] = {}
@@ -761,7 +842,7 @@ class ClusterClient(NamespacedClient):
         """
         Allows to manually change the allocation of individual shards in the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-reroute.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/cluster-reroute.html>`_
 
         :param commands: Defines the commands to perform.
         :param dry_run: If true, then the request simulates the operation only and returns
@@ -858,7 +939,7 @@ class ClusterClient(NamespacedClient):
         """
         Returns a comprehensive information about the state of the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-state.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/cluster-state.html>`_
 
         :param metric: Limit the information returned to the specified metrics
         :param index: A comma-separated list of index names; use `_all` or empty string
@@ -936,15 +1017,15 @@ class ClusterClient(NamespacedClient):
         """
         Returns high-level overview of cluster statistics.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/cluster-stats.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/cluster-stats.html>`_
 
         :param node_id: Comma-separated list of node filters used to limit returned information.
             Defaults to all nodes in the cluster.
-        :param flat_settings: Return settings in flat format (default: false)
+        :param flat_settings: If `true`, returns settings in flat format.
         :param timeout: Period to wait for each node to respond. If a node does not respond
             before its timeout expires, the response does not include its stats. However,
-            timed out nodes are included in the response’s _nodes.failed property. Defaults
-            to no timeout.
+            timed out nodes are included in the response’s `_nodes.failed` property.
+            Defaults to no timeout.
         """
         if node_id not in SKIP_IN_PATH:
             __path = f"/_cluster/stats/nodes/{_quote(node_id)}"

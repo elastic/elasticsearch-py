@@ -39,9 +39,9 @@ class LogstashClient(NamespacedClient):
         """
         Deletes Logstash Pipelines used by Central Management
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/logstash-api-delete-pipeline.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/logstash-api-delete-pipeline.html>`_
 
-        :param id: The ID of the Pipeline
+        :param id: Identifier for the pipeline.
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
@@ -75,9 +75,9 @@ class LogstashClient(NamespacedClient):
         """
         Retrieves Logstash Pipelines used by Central Management
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/logstash-api-get-pipeline.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/logstash-api-get-pipeline.html>`_
 
-        :param id: A comma-separated list of Pipeline IDs
+        :param id: Comma-separated list of pipeline identifiers.
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
@@ -117,9 +117,9 @@ class LogstashClient(NamespacedClient):
         """
         Adds and updates Logstash Pipelines used for Central Management
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/logstash-api-put-pipeline.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/logstash-api-put-pipeline.html>`_
 
-        :param id: The ID of the Pipeline
+        :param id: Identifier for the pipeline.
         :param pipeline:
         """
         if id in SKIP_IN_PATH:

@@ -50,16 +50,20 @@ class GraphClient(NamespacedClient):
         Explore extracted and summarized information about the documents and terms in
         an index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/graph-explore-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/graph-explore-api.html>`_
 
-        :param index: A comma-separated list of index names to search; use `_all` or
-            empty string to perform the operation on all indices
-        :param connections:
-        :param controls:
-        :param query:
-        :param routing: Specific routing value
-        :param timeout: Explicit operation timeout
-        :param vertices:
+        :param index: Name of the index.
+        :param connections: Specifies or more fields from which you want to extract terms
+            that are associated with the specified vertices.
+        :param controls: Direct the Graph API how to build the graph.
+        :param query: A seed query that identifies the documents of interest. Can be
+            any valid Elasticsearch query.
+        :param routing: Custom value used to route operations to a specific shard.
+        :param timeout: Specifies the period of time to wait for a response from each
+            shard. If no response is received before the timeout expires, the request
+            fails and returns an error. Defaults to no timeout.
+        :param vertices: Specifies one or more fields that contain the terms you want
+            to include in the graph as vertices.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")

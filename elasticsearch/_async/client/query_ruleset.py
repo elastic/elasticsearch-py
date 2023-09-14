@@ -15,20 +15,12 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-import typing as t
-
-from elastic_transport import ObjectApiResponse
-
-from ._base import NamespacedClient
-from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
-
-
-class MigrationClient(NamespacedClient):
+class C:
     @_rewrite_parameters()
-    async def deprecations(
+    async def delete(
         self,
         *,
-        index: t.Optional[str] = None,
+        ruleset_id: str,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
@@ -37,19 +29,51 @@ class MigrationClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Retrieves information about different cluster, node, and index level settings
-        that use deprecated features that will be removed or changed in the next major
-        version.
+        Deletes a query ruleset.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/migration-api-deprecation.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/delete-query-ruleset.html>`_
 
-        :param index: Comma-separate list of data streams or indices to check. Wildcard
-            (*) expressions are supported.
+        :param ruleset_id: The unique identifier of the query ruleset to delete
         """
-        if index not in SKIP_IN_PATH:
-            __path = f"/{_quote(index)}/_migration/deprecations"
-        else:
-            __path = "/_migration/deprecations"
+        if ruleset_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'ruleset_id'")
+        __path = f"/_query_rules/{_quote(ruleset_id)}"
+        __query: t.Dict[str, t.Any] = {}
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "DELETE", __path, params=__query, headers=__headers
+        )
+
+    @_rewrite_parameters()
+    async def get(
+        self,
+        *,
+        ruleset_id: str,
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Returns the details about a query ruleset.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/get-query-ruleset.html>`_
+
+        :param ruleset_id: The unique identifier of the query ruleset
+        """
+        if ruleset_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'ruleset_id'")
+        __path = f"/_query_rules/{_quote(ruleset_id)}"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -64,41 +88,56 @@ class MigrationClient(NamespacedClient):
             "GET", __path, params=__query, headers=__headers
         )
 
-    @_rewrite_parameters()
-    async def get_feature_upgrade_status(
+    @_rewrite_parameters(
+        parameter_aliases={"from": "from_"},
+    )
+    async def list(
         self,
         *,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
+        from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        size: t.Optional[int] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Find out whether system features need to be upgraded or not
+        Lists query rulesets.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/migration-api-feature-upgrade.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/list-query-rulesets.html>`_
+
+        :param from_: Starting offset (default: 0)
+        :param size: specifies a max number of results to get
         """
-        __path = "/_migration/system_features"
+        __path = "/_query_rules"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
+        if from_ is not None:
+            __query["from"] = from_
         if human is not None:
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if size is not None:
+            __query["size"] = size
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "GET", __path, params=__query, headers=__headers
         )
 
-    @_rewrite_parameters()
-    async def post_feature_upgrade(
+    @_rewrite_parameters(
+        body_name="query_ruleset",
+    )
+    async def put(
         self,
         *,
+        ruleset_id: str,
+        query_ruleset: t.Mapping[str, t.Any],
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
@@ -107,11 +146,19 @@ class MigrationClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Begin upgrades for system features
+        Creates or updates a query ruleset.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/migration-api-feature-upgrade.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/put-query-ruleset.html>`_
+
+        :param ruleset_id: The unique identifier of the query ruleset to be created or
+            updated
+        :param query_ruleset:
         """
-        __path = "/_migration/system_features"
+        if ruleset_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'ruleset_id'")
+        if query_ruleset is None:
+            raise ValueError("Empty value passed for parameter 'query_ruleset'")
+        __path = f"/_query_rules/{_quote(ruleset_id)}"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -121,7 +168,8 @@ class MigrationClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        __headers = {"accept": "application/json"}
+        __body = query_ruleset
+        __headers = {"accept": "application/json", "content-type": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
-            "POST", __path, params=__query, headers=__headers
+            "PUT", __path, params=__query, headers=__headers, body=__body
         )
