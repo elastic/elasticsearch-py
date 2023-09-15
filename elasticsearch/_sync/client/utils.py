@@ -379,15 +379,6 @@ def _rewrite_parameters(
                                 f"'{body_name}' parameter. See https://github.com/elastic/elasticsearch-py/"
                                 "issues/1698 for more information"
                             )
-
-                        warnings.warn(
-                            "The 'body' parameter is deprecated and will be removed "
-                            f"in a future version. Instead use the '{body_name}' parameter. "
-                            "See https://github.com/elastic/elasticsearch-py/issues/1698 "
-                            "for more information",
-                            category=DeprecationWarning,
-                            stacklevel=warn_stacklevel(),
-                        )
                         kwargs[body_name] = body
 
                     elif body_fields:
@@ -396,12 +387,6 @@ def _rewrite_parameters(
                                 "Couldn't merge 'body' with other parameters as it wasn't a mapping. "
                                 "Instead of using 'body' use individual API parameters"
                             )
-                        warnings.warn(
-                            "The 'body' parameter is deprecated and will be removed "
-                            "in a future version. Instead use individual parameters.",
-                            category=DeprecationWarning,
-                            stacklevel=warn_stacklevel(),
-                        )
                         _merge_kwargs_no_duplicates(kwargs, body)
 
             if parameter_aliases:
