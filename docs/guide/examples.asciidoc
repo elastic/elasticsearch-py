@@ -93,7 +93,7 @@ doc = {
     'text': 'Interensting modified content...',
     'timestamp': datetime.now(),
 }
-resp = client.update(index="test-index", id=1, document=doc)
+resp = client.update(index="test-index", id=1, doc=doc)
 print(resp['result'])
 ----------------------------
 
