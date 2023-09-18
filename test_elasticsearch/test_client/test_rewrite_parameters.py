@@ -87,17 +87,11 @@ class TestRewriteParameters:
                 api_key=("id", "api_key"), body={"query": {"match_all": {}}}
             )
 
-        assert len(w) == 2
+        assert len(w) == 1
         assert w[0].category == DeprecationWarning
         assert (
             str(w[0].message)
             == "Passing transport options in the API method is deprecated. Use 'Elasticsearch.options()' instead."
-        )
-        assert w[1].category == DeprecationWarning
-        assert str(w[1].message) == (
-            "The 'body' parameter is deprecated and will be removed in a "
-            "future version. Instead use the 'document' parameter. See https://github.com/elastic/elasticsearch-py/issues/1698 "
-            "for more information"
         )
 
         assert self.calls == [
@@ -139,15 +133,11 @@ class TestRewriteParameters:
                 api_key=("id", "api_key"), body={"query": {"match_all": {}}}
             )
 
-        assert len(w) == 2
+        assert len(w) == 1
         assert w[0].category == DeprecationWarning
         assert (
             str(w[0].message)
             == "Passing transport options in the API method is deprecated. Use 'Elasticsearch.options()' instead."
-        )
-        assert w[1].category == DeprecationWarning
-        assert str(w[1].message) == (
-            "The 'body' parameter is deprecated and will be removed in a future version. Instead use individual parameters."
         )
 
         assert self.calls == [
