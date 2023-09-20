@@ -139,13 +139,15 @@ class QueryRulesetClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_name="query_ruleset",
+        body_fields=True,
     )
     def put(
         self,
         *,
         ruleset_id: str,
-        query_ruleset: t.Mapping[str, t.Any],
+        rules: t.Union[
+            t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]
+        ],
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
@@ -160,14 +162,17 @@ class QueryRulesetClient(NamespacedClient):
 
         :param ruleset_id: The unique identifier of the query ruleset to be created or
             updated
-        :param query_ruleset:
+        :param rules:
         """
         if ruleset_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'ruleset_id'")
-        if query_ruleset is None:
-            raise ValueError("Empty value passed for parameter 'query_ruleset'")
+        if rules is None:
+            raise ValueError("Empty value passed for parameter 'rules'")
         __path = f"/_query_rules/{_quote(ruleset_id)}"
+        __body: t.Dict[str, t.Any] = {}
         __query: t.Dict[str, t.Any] = {}
+        if rules is not None:
+            __body["rules"] = rules
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
@@ -176,7 +181,6 @@ class QueryRulesetClient(NamespacedClient):
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
-        __body = query_ruleset
         __headers = {"accept": "application/json", "content-type": "application/json"}
         return self.perform_request(  # type: ignore[return-value]
             "PUT", __path, params=__query, headers=__headers, body=__body
