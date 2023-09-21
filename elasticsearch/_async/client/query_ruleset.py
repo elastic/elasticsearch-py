@@ -23,12 +23,12 @@ from ._base import NamespacedClient
 from .utils import SKIP_IN_PATH, _quote, _rewrite_parameters
 
 
-class EnrichClient(NamespacedClient):
+class QueryRulesetClient(NamespacedClient):
     @_rewrite_parameters()
-    async def delete_policy(
+    async def delete(
         self,
         *,
-        name: str,
+        ruleset_id: str,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
@@ -37,15 +37,15 @@ class EnrichClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Deletes an existing enrich policy and its enrich index.
+        Deletes a query ruleset.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/delete-enrich-policy-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/delete-query-ruleset.html>`_
 
-        :param name: Enrich policy to delete.
+        :param ruleset_id: The unique identifier of the query ruleset to delete
         """
-        if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_enrich/policy/{_quote(name)}"
+        if ruleset_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'ruleset_id'")
+        __path = f"/_query_rules/{_quote(ruleset_id)}"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -61,51 +61,10 @@ class EnrichClient(NamespacedClient):
         )
 
     @_rewrite_parameters()
-    async def execute_policy(
+    async def get(
         self,
         *,
-        name: str,
-        error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        human: t.Optional[bool] = None,
-        pretty: t.Optional[bool] = None,
-        wait_for_completion: t.Optional[bool] = None,
-    ) -> ObjectApiResponse[t.Any]:
-        """
-        Creates the enrich index for an existing enrich policy.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/execute-enrich-policy-api.html>`_
-
-        :param name: Enrich policy to execute.
-        :param wait_for_completion: If `true`, the request blocks other enrich policy
-            execution requests until complete.
-        """
-        if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_enrich/policy/{_quote(name)}/_execute"
-        __query: t.Dict[str, t.Any] = {}
-        if error_trace is not None:
-            __query["error_trace"] = error_trace
-        if filter_path is not None:
-            __query["filter_path"] = filter_path
-        if human is not None:
-            __query["human"] = human
-        if pretty is not None:
-            __query["pretty"] = pretty
-        if wait_for_completion is not None:
-            __query["wait_for_completion"] = wait_for_completion
-        __headers = {"accept": "application/json"}
-        return await self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers
-        )
-
-    @_rewrite_parameters()
-    async def get_policy(
-        self,
-        *,
-        name: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        ruleset_id: str,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
@@ -114,17 +73,15 @@ class EnrichClient(NamespacedClient):
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Gets information about an enrich policy.
+        Returns the details about a query ruleset.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/get-enrich-policy-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/get-query-ruleset.html>`_
 
-        :param name: Comma-separated list of enrich policy names used to limit the request.
-            To return information for all enrich policies, omit this parameter.
+        :param ruleset_id: The unique identifier of the query ruleset
         """
-        if name not in SKIP_IN_PATH:
-            __path = f"/_enrich/policy/{_quote(name)}"
-        else:
-            __path = "/_enrich/policy"
+        if ruleset_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'ruleset_id'")
+        __path = f"/_query_rules/{_quote(ruleset_id)}"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
@@ -140,86 +97,91 @@ class EnrichClient(NamespacedClient):
         )
 
     @_rewrite_parameters(
-        body_fields=True,
+        parameter_aliases={"from": "from_"},
     )
-    async def put_policy(
-        self,
-        *,
-        name: str,
-        error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        geo_match: t.Optional[t.Mapping[str, t.Any]] = None,
-        human: t.Optional[bool] = None,
-        match: t.Optional[t.Mapping[str, t.Any]] = None,
-        pretty: t.Optional[bool] = None,
-        range: t.Optional[t.Mapping[str, t.Any]] = None,
-    ) -> ObjectApiResponse[t.Any]:
-        """
-        Creates a new enrich policy.
-
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/put-enrich-policy-api.html>`_
-
-        :param name: Name of the enrich policy to create or update.
-        :param geo_match: Matches enrich data to incoming documents based on a `geo_shape`
-            query.
-        :param match: Matches enrich data to incoming documents based on a `term` query.
-        :param range: Matches a number, date, or IP address in incoming documents to
-            a range in the enrich index based on a `term` query.
-        """
-        if name in SKIP_IN_PATH:
-            raise ValueError("Empty value passed for parameter 'name'")
-        __path = f"/_enrich/policy/{_quote(name)}"
-        __query: t.Dict[str, t.Any] = {}
-        __body: t.Dict[str, t.Any] = {}
-        if error_trace is not None:
-            __query["error_trace"] = error_trace
-        if filter_path is not None:
-            __query["filter_path"] = filter_path
-        if geo_match is not None:
-            __body["geo_match"] = geo_match
-        if human is not None:
-            __query["human"] = human
-        if match is not None:
-            __body["match"] = match
-        if pretty is not None:
-            __query["pretty"] = pretty
-        if range is not None:
-            __body["range"] = range
-        __headers = {"accept": "application/json", "content-type": "application/json"}
-        return await self.perform_request(  # type: ignore[return-value]
-            "PUT", __path, params=__query, headers=__headers, body=__body
-        )
-
-    @_rewrite_parameters()
-    async def stats(
+    async def list(
         self,
         *,
         error_trace: t.Optional[bool] = None,
         filter_path: t.Optional[
             t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
         ] = None,
+        from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
+        size: t.Optional[int] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
-        Gets enrich coordinator statistics and information about enrich policies that
-        are currently executing.
+        Lists query rulesets.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/enrich-stats-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/list-query-rulesets.html>`_
+
+        :param from_: Starting offset (default: 0)
+        :param size: specifies a max number of results to get
         """
-        __path = "/_enrich/_stats"
+        __path = "/_query_rules"
         __query: t.Dict[str, t.Any] = {}
         if error_trace is not None:
             __query["error_trace"] = error_trace
         if filter_path is not None:
             __query["filter_path"] = filter_path
+        if from_ is not None:
+            __query["from"] = from_
         if human is not None:
             __query["human"] = human
         if pretty is not None:
             __query["pretty"] = pretty
+        if size is not None:
+            __query["size"] = size
         __headers = {"accept": "application/json"}
         return await self.perform_request(  # type: ignore[return-value]
             "GET", __path, params=__query, headers=__headers
+        )
+
+    @_rewrite_parameters(
+        body_fields=True,
+    )
+    async def put(
+        self,
+        *,
+        ruleset_id: str,
+        rules: t.Union[
+            t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]
+        ],
+        error_trace: t.Optional[bool] = None,
+        filter_path: t.Optional[
+            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
+        ] = None,
+        human: t.Optional[bool] = None,
+        pretty: t.Optional[bool] = None,
+    ) -> ObjectApiResponse[t.Any]:
+        """
+        Creates or updates a query ruleset.
+
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/put-query-ruleset.html>`_
+
+        :param ruleset_id: The unique identifier of the query ruleset to be created or
+            updated
+        :param rules:
+        """
+        if ruleset_id in SKIP_IN_PATH:
+            raise ValueError("Empty value passed for parameter 'ruleset_id'")
+        if rules is None:
+            raise ValueError("Empty value passed for parameter 'rules'")
+        __path = f"/_query_rules/{_quote(ruleset_id)}"
+        __body: t.Dict[str, t.Any] = {}
+        __query: t.Dict[str, t.Any] = {}
+        if rules is not None:
+            __body["rules"] = rules
+        if error_trace is not None:
+            __query["error_trace"] = error_trace
+        if filter_path is not None:
+            __query["filter_path"] = filter_path
+        if human is not None:
+            __query["human"] = human
+        if pretty is not None:
+            __query["pretty"] = pretty
+        __headers = {"accept": "application/json", "content-type": "application/json"}
+        return await self.perform_request(  # type: ignore[return-value]
+            "PUT", __path, params=__query, headers=__headers, body=__body
         )

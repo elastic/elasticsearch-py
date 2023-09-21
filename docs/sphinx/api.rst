@@ -144,6 +144,12 @@ Nodes
 .. autoclass:: NodesClient
    :members:
 
+Query rules
+-----------
+
+.. autoclass:: QueryRulesetClient
+   :members:
+
 Rollup Indices
 --------------
 
@@ -190,6 +196,12 @@ SQL
 ---
 
 .. autoclass:: SqlClient
+   :members:
+
+Synonyms
+--------
+
+.. autoclass:: SynonymsClient
    :members:
 
 TLS/SSL

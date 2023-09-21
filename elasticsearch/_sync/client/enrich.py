@@ -39,9 +39,9 @@ class EnrichClient(NamespacedClient):
         """
         Deletes an existing enrich policy and its enrich index.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-enrich-policy-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/delete-enrich-policy-api.html>`_
 
-        :param name: The name of the enrich policy
+        :param name: Enrich policy to delete.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -76,11 +76,11 @@ class EnrichClient(NamespacedClient):
         """
         Creates the enrich index for an existing enrich policy.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/execute-enrich-policy-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/execute-enrich-policy-api.html>`_
 
-        :param name: The name of the enrich policy
-        :param wait_for_completion: Should the request should block until the execution
-            is complete.
+        :param name: Enrich policy to execute.
+        :param wait_for_completion: If `true`, the request blocks other enrich policy
+            execution requests until complete.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -116,9 +116,10 @@ class EnrichClient(NamespacedClient):
         """
         Gets information about an enrich policy.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-enrich-policy-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/get-enrich-policy-api.html>`_
 
-        :param name: A comma-separated list of enrich policy names
+        :param name: Comma-separated list of enrich policy names used to limit the request.
+            To return information for all enrich policies, omit this parameter.
         """
         if name not in SKIP_IN_PATH:
             __path = f"/_enrich/policy/{_quote(name)}"
@@ -158,12 +159,14 @@ class EnrichClient(NamespacedClient):
         """
         Creates a new enrich policy.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-enrich-policy-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/put-enrich-policy-api.html>`_
 
-        :param name: The name of the enrich policy
-        :param geo_match:
-        :param match:
-        :param range:
+        :param name: Name of the enrich policy to create or update.
+        :param geo_match: Matches enrich data to incoming documents based on a `geo_shape`
+            query.
+        :param match: Matches enrich data to incoming documents based on a `term` query.
+        :param range: Matches a number, date, or IP address in incoming documents to
+            a range in the enrich index based on a `term` query.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -204,7 +207,7 @@ class EnrichClient(NamespacedClient):
         Gets enrich coordinator statistics and information about enrich policies that
         are currently executing.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/enrich-stats-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.10/enrich-stats-api.html>`_
         """
         __path = "/_enrich/_stats"
         __query: t.Dict[str, t.Any] = {}
