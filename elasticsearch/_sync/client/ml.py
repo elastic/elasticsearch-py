@@ -175,8 +175,9 @@ class MlClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ml-delete-calendar-event.html>`_
 
-        :param calendar_id: The ID of the calendar to modify
-        :param event_id: The ID of the event to remove from the calendar
+        :param calendar_id: A string that uniquely identifies a calendar.
+        :param event_id: Identifier for the scheduled event. You can obtain this identifier
+            by using the get calendar events API.
         """
         if calendar_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'calendar_id'")
@@ -1223,7 +1224,8 @@ class MlClient(NamespacedClient):
             API returns information about all categories. If you specify only the partition_field_value,
             it returns information about all categories for the specified partition.
         :param from_: Skips the specified number of categories.
-        :param page:
+        :param page: Configures pagination. This parameter has the `from` and `size`
+            properties.
         :param partition_field_value: Only return categories for the specified partition.
         :param size: Specifies the maximum number of categories to obtain.
         """
@@ -1587,7 +1589,8 @@ class MlClient(NamespacedClient):
         :param from_: Skips the specified number of influencers.
         :param influencer_score: Returns influencers with anomaly scores greater than
             or equal to this value.
-        :param page:
+        :param page: Configures pagination. This parameter has the `from` and `size`
+            properties.
         :param size: Specifies the maximum number of influencers to obtain.
         :param sort: Specifies the sort field for the requested influencers. By default,
             the influencers are sorted by the `influencer_score` value.

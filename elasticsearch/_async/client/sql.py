@@ -43,7 +43,7 @@ class SqlClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/clear-sql-cursor-api.html>`_
 
-        :param cursor:
+        :param cursor: Cursor to clear.
         """
         if cursor is None:
             raise ValueError("Empty value passed for parameter 'cursor'")
@@ -83,7 +83,7 @@ class SqlClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-async-sql-search-api.html>`_
 
-        :param id: The async search ID
+        :param id: Identifier for the search.
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
@@ -126,7 +126,7 @@ class SqlClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-async-sql-search-api.html>`_
 
-        :param id: The async search ID
+        :param id: Identifier for the search.
         :param delimiter: Separator for CSV results. The API only supports this parameter
             for CSV responses.
         :param format: Format for the response. You must specify a format using this
@@ -180,7 +180,7 @@ class SqlClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-async-sql-search-status-api.html>`_
 
-        :param id: The async search ID
+        :param id: Identifier for the search.
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
@@ -243,14 +243,16 @@ class SqlClient(NamespacedClient):
             execute on the data in the local cluster only.
         :param columnar: If true, the results in a columnar fashion: one row represents
             all the values of a certain column from the current page of results.
-        :param cursor:
+        :param cursor: Cursor used to retrieve a set of paginated results. If you specify
+            a cursor, the API only uses the `columnar` and `time_zone` request body parameters.
+            It ignores other request body parameters.
         :param fetch_size: The maximum number of rows (or entries) to return in one response
         :param field_multi_value_leniency: Throw an exception when encountering multiple
             values for a field (default) or be lenient and return the first value from
             the list (without any guarantees of what that will be - typically the first
             in natural ascending order).
-        :param filter: Optional Elasticsearch query DSL for additional filtering.
-        :param format: a short version of the Accept header, e.g. json, yaml
+        :param filter: Elasticsearch query DSL for additional filtering.
+        :param format: Format for the response.
         :param index_using_frozen: If true, the search can run on frozen indices. Defaults
             to false.
         :param keep_alive: Retention period for an async or saved synchronous search.
@@ -259,12 +261,11 @@ class SqlClient(NamespacedClient):
             Elasticsearch only stores async searches that don’t finish before the wait_for_completion_timeout.
         :param page_timeout: The timeout before a pagination request fails.
         :param params: Values for parameters in the query.
-        :param query: SQL query to execute
+        :param query: SQL query to run.
         :param request_timeout: The timeout before the request fails.
         :param runtime_mappings: Defines one or more runtime fields in the search request.
             These fields take precedence over mapped fields with the same name.
-        :param time_zone: Time-zone in ISO 8601 used for executing the query on the server.
-            More information available here.
+        :param time_zone: ISO-8601 time zone ID for the search.
         :param wait_for_completion_timeout: Period to wait for complete results. Defaults
             to no timeout, meaning the request waits for complete search results. If
             the search doesn’t finish within this period, the search becomes async.
@@ -341,10 +342,10 @@ class SqlClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/sql-translate-api.html>`_
 
-        :param query:
-        :param fetch_size:
-        :param filter:
-        :param time_zone:
+        :param query: SQL query to run.
+        :param fetch_size: The maximum number of rows (or entries) to return in one response.
+        :param filter: Elasticsearch query DSL for additional filtering.
+        :param time_zone: ISO-8601 time zone ID for the search.
         """
         if query is None:
             raise ValueError("Empty value passed for parameter 'query'")

@@ -61,6 +61,7 @@ from .migration import MigrationClient
 from .ml import MlClient
 from .monitoring import MonitoringClient
 from .nodes import NodesClient
+from .query_ruleset import QueryRulesetClient
 from .rollup import RollupClient
 from .search_application import SearchApplicationClient
 from .searchable_snapshots import SearchableSnapshotsClient
@@ -70,6 +71,7 @@ from .slm import SlmClient
 from .snapshot import SnapshotClient
 from .sql import SqlClient
 from .ssl import SslClient
+from .synonyms import SynonymsClient
 from .tasks import TasksClient
 from .text_structure import TextStructureClient
 from .transform import TransformClient
@@ -449,6 +451,7 @@ class Elasticsearch(BaseClient):
         self.migration = MigrationClient(self)
         self.ml = MlClient(self)
         self.monitoring = MonitoringClient(self)
+        self.query_ruleset = QueryRulesetClient(self)
         self.rollup = RollupClient(self)
         self.search_application = SearchApplicationClient(self)
         self.searchable_snapshots = SearchableSnapshotsClient(self)
@@ -457,6 +460,7 @@ class Elasticsearch(BaseClient):
         self.shutdown = ShutdownClient(self)
         self.sql = SqlClient(self)
         self.ssl = SslClient(self)
+        self.synonyms = SynonymsClient(self)
         self.text_structure = TextStructureClient(self)
         self.transform = TransformClient(self)
         self.watcher = WatcherClient(self)
@@ -642,26 +646,30 @@ class Elasticsearch(BaseClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-bulk.html>`_
 
         :param operations:
-        :param index: Default index for items which don't provide one
-        :param pipeline: The pipeline id to preprocess incoming documents with
-        :param refresh: If `true` then refresh the affected shards to make this operation
-            visible to search, if `wait_for` then wait for a refresh to make this operation
-            visible to search, if `false` (the default) then do nothing with refreshes.
-        :param require_alias: Sets require_alias for all incoming documents. Defaults
-            to unset (false)
-        :param routing: Specific routing value
-        :param source: True or false to return the _source field or not, or default list
-            of fields to return, can be overridden on each sub-request
-        :param source_excludes: Default list of fields to exclude from the returned _source
-            field, can be overridden on each sub-request
-        :param source_includes: Default list of fields to extract and return from the
-            _source field, can be overridden on each sub-request
-        :param timeout: Explicit operation timeout
-        :param wait_for_active_shards: Sets the number of shard copies that must be active
-            before proceeding with the bulk operation. Defaults to 1, meaning the primary
-            shard only. Set to `all` for all shard copies, otherwise set to any non-negative
-            value less than or equal to the total number of copies for the shard (number
-            of replicas + 1)
+        :param index: Name of the data stream, index, or index alias to perform bulk
+            actions on.
+        :param pipeline: ID of the pipeline to use to preprocess incoming documents.
+            If the index has a default ingest pipeline specified, then setting the value
+            to `_none` disables the default ingest pipeline for this request. If a final
+            pipeline is configured it will always run, regardless of the value of this
+            parameter.
+        :param refresh: If `true`, Elasticsearch refreshes the affected shards to make
+            this operation visible to search, if `wait_for` then wait for a refresh to
+            make this operation visible to search, if `false` do nothing with refreshes.
+            Valid values: `true`, `false`, `wait_for`.
+        :param require_alias: If `true`, the request’s actions must target an index alias.
+        :param routing: Custom value used to route operations to a specific shard.
+        :param source: `true` or `false` to return the `_source` field or not, or a list
+            of fields to return.
+        :param source_excludes: A comma-separated list of source fields to exclude from
+            the response.
+        :param source_includes: A comma-separated list of source fields to include in
+            the response.
+        :param timeout: Period each action waits for the following operations: automatic
+            index creation, dynamic mapping updates, waiting for active shards.
+        :param wait_for_active_shards: The number of shard copies that must be active
+            before proceeding with the operation. Set to all or any positive integer
+            up to the total number of shards in the index (`number_of_replicas+1`).
         """
         if operations is None:
             raise ValueError("Empty value passed for parameter 'operations'")
@@ -726,7 +734,7 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/clear-scroll-api.html>`_
 
-        :param scroll_id:
+        :param scroll_id: Scroll IDs to clear. To clear all scroll IDs, use `_all`.
         """
         __path = "/_search/scroll"
         __query: t.Dict[str, t.Any] = {}
@@ -769,7 +777,7 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/point-in-time-api.html>`_
 
-        :param id:
+        :param id: The ID of the point-in-time.
         """
         if id is None:
             raise ValueError("Empty value passed for parameter 'id'")
@@ -846,34 +854,42 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-count.html>`_
 
-        :param index: A comma-separated list of indices to restrict the results
-        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
-            into no concrete indices. (This includes `_all` string or when no indices
-            have been specified)
-        :param analyze_wildcard: Specify whether wildcard and prefix queries should be
-            analyzed (default: false)
-        :param analyzer: The analyzer to use for the query string
-        :param default_operator: The default operator for query string query (AND or
-            OR)
-        :param df: The field to use as default where no field prefix is given in the
-            query string
-        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
-            that are open, closed or both.
-        :param ignore_throttled: Whether specified concrete, expanded or aliased indices
-            should be ignored when throttled
-        :param ignore_unavailable: Whether specified concrete indices should be ignored
-            when unavailable (missing or closed)
-        :param lenient: Specify whether format-based query failures (such as providing
-            text to a numeric field) should be ignored
-        :param min_score: Include only documents with a specific `_score` value in the
-            result
-        :param preference: Specify the node or shard the operation should be performed
-            on (default: random)
-        :param q: Query in the Lucene query string syntax
-        :param query:
-        :param routing: A comma-separated list of specific routing values
-        :param terminate_after: The maximum count for each shard, upon reaching which
-            the query execution will terminate early
+        :param index: Comma-separated list of data streams, indices, and aliases to search.
+            Supports wildcards (`*`). To search all data streams and indices, omit this
+            parameter or use `*` or `_all`.
+        :param allow_no_indices: If `false`, the request returns an error if any wildcard
+            expression, index alias, or `_all` value targets only missing or closed indices.
+            This behavior applies even if the request targets other open indices.
+        :param analyze_wildcard: If `true`, wildcard and prefix queries are analyzed.
+            This parameter can only be used when the `q` query string parameter is specified.
+        :param analyzer: Analyzer to use for the query string. This parameter can only
+            be used when the `q` query string parameter is specified.
+        :param default_operator: The default operator for query string query: `AND` or
+            `OR`. This parameter can only be used when the `q` query string parameter
+            is specified.
+        :param df: Field to use as default where no field prefix is given in the query
+            string. This parameter can only be used when the `q` query string parameter
+            is specified.
+        :param expand_wildcards: Type of index that wildcard patterns can match. If the
+            request can target data streams, this argument determines whether wildcard
+            expressions match hidden data streams. Supports comma-separated values, such
+            as `open,hidden`.
+        :param ignore_throttled: If `true`, concrete, expanded or aliased indices are
+            ignored when frozen.
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a missing or closed index.
+        :param lenient: If `true`, format-based query failures (such as providing text
+            to a numeric field) in the query string will be ignored.
+        :param min_score: Sets the minimum `_score` value that documents must have to
+            be included in the result.
+        :param preference: Specifies the node or shard the operation should be performed
+            on. Random by default.
+        :param q: Query in the Lucene query string syntax.
+        :param query: Defines the search definition using the Query DSL.
+        :param routing: Custom value used to route operations to a specific shard.
+        :param terminate_after: Maximum number of documents to collect for each shard.
+            If a query reaches this limit, Elasticsearch terminates the query early.
+            Elasticsearch collects documents before sorting.
         """
         if index not in SKIP_IN_PATH:
             __path = f"/{_quote(index)}/_count"
@@ -963,22 +979,32 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-index_.html>`_
 
-        :param index: The name of the index
-        :param id: Document ID
+        :param index: Name of the data stream or index to target. If the target doesn’t
+            exist and matches the name or wildcard (`*`) pattern of an index template
+            with a `data_stream` definition, this request creates the data stream. If
+            the target doesn’t exist and doesn’t match a data stream template, this request
+            creates the index.
+        :param id: Unique identifier for the document.
         :param document:
-        :param pipeline: The pipeline id to preprocess incoming documents with
-        :param refresh: If `true` then refresh the affected shards to make this operation
-            visible to search, if `wait_for` then wait for a refresh to make this operation
-            visible to search, if `false` (the default) then do nothing with refreshes.
-        :param routing: Specific routing value
-        :param timeout: Explicit operation timeout
-        :param version: Explicit version number for concurrency control
-        :param version_type: Specific version type
-        :param wait_for_active_shards: Sets the number of shard copies that must be active
-            before proceeding with the index operation. Defaults to 1, meaning the primary
-            shard only. Set to `all` for all shard copies, otherwise set to any non-negative
-            value less than or equal to the total number of copies for the shard (number
-            of replicas + 1)
+        :param pipeline: ID of the pipeline to use to preprocess incoming documents.
+            If the index has a default ingest pipeline specified, then setting the value
+            to `_none` disables the default ingest pipeline for this request. If a final
+            pipeline is configured it will always run, regardless of the value of this
+            parameter.
+        :param refresh: If `true`, Elasticsearch refreshes the affected shards to make
+            this operation visible to search, if `wait_for` then wait for a refresh to
+            make this operation visible to search, if `false` do nothing with refreshes.
+            Valid values: `true`, `false`, `wait_for`.
+        :param routing: Custom value used to route operations to a specific shard.
+        :param timeout: Period the request waits for the following operations: automatic
+            index creation, dynamic mapping updates, waiting for active shards.
+        :param version: Explicit version number for concurrency control. The specified
+            version must match the current version of the document for the request to
+            succeed.
+        :param version_type: Specific version type: `external`, `external_gte`.
+        :param wait_for_active_shards: The number of shard copies that must be active
+            before proceeding with the operation. Set to `all` or any positive integer
+            up to the total number of shards in the index (`number_of_replicas+1`).
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -1048,24 +1074,25 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-delete.html>`_
 
-        :param index: The name of the index
-        :param id: The document ID
-        :param if_primary_term: only perform the delete operation if the last operation
-            that has changed the document has the specified primary term
-        :param if_seq_no: only perform the delete operation if the last operation that
-            has changed the document has the specified sequence number
-        :param refresh: If `true` then refresh the affected shards to make this operation
-            visible to search, if `wait_for` then wait for a refresh to make this operation
-            visible to search, if `false` (the default) then do nothing with refreshes.
-        :param routing: Specific routing value
-        :param timeout: Explicit operation timeout
-        :param version: Explicit version number for concurrency control
-        :param version_type: Specific version type
-        :param wait_for_active_shards: Sets the number of shard copies that must be active
-            before proceeding with the delete operation. Defaults to 1, meaning the primary
-            shard only. Set to `all` for all shard copies, otherwise set to any non-negative
-            value less than or equal to the total number of copies for the shard (number
-            of replicas + 1)
+        :param index: Name of the target index.
+        :param id: Unique identifier for the document.
+        :param if_primary_term: Only perform the operation if the document has this primary
+            term.
+        :param if_seq_no: Only perform the operation if the document has this sequence
+            number.
+        :param refresh: If `true`, Elasticsearch refreshes the affected shards to make
+            this operation visible to search, if `wait_for` then wait for a refresh to
+            make this operation visible to search, if `false` do nothing with refreshes.
+            Valid values: `true`, `false`, `wait_for`.
+        :param routing: Custom value used to route operations to a specific shard.
+        :param timeout: Period to wait for active shards.
+        :param version: Explicit version number for concurrency control. The specified
+            version must match the current version of the document for the request to
+            succeed.
+        :param version_type: Specific version type: `external`, `external_gte`.
+        :param wait_for_active_shards: The number of shard copies that must be active
+            before proceeding with the operation. Set to `all` or any positive integer
+            up to the total number of shards in the index (`number_of_replicas+1`).
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -1176,60 +1203,68 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-delete-by-query.html>`_
 
-        :param index: A comma-separated list of index names to search; use `_all` or
-            empty string to perform the operation on all indices
-        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
-            into no concrete indices. (This includes `_all` string or when no indices
-            have been specified)
-        :param analyze_wildcard: Specify whether wildcard and prefix queries should be
-            analyzed (default: false)
-        :param analyzer: The analyzer to use for the query string
-        :param conflicts: What to do when the delete by query hits version conflicts?
-        :param default_operator: The default operator for query string query (AND or
-            OR)
-        :param df: The field to use as default where no field prefix is given in the
-            query string
-        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
-            that are open, closed or both.
+        :param index: Comma-separated list of data streams, indices, and aliases to search.
+            Supports wildcards (`*`). To search all data streams or indices, omit this
+            parameter or use `*` or `_all`.
+        :param allow_no_indices: If `false`, the request returns an error if any wildcard
+            expression, index alias, or `_all` value targets only missing or closed indices.
+            This behavior applies even if the request targets other open indices. For
+            example, a request targeting `foo*,bar*` returns an error if an index starts
+            with `foo` but no index starts with `bar`.
+        :param analyze_wildcard: If `true`, wildcard and prefix queries are analyzed.
+        :param analyzer: Analyzer to use for the query string.
+        :param conflicts: What to do if delete by query hits version conflicts: `abort`
+            or `proceed`.
+        :param default_operator: The default operator for query string query: `AND` or
+            `OR`.
+        :param df: Field to use as default where no field prefix is given in the query
+            string.
+        :param expand_wildcards: Type of index that wildcard patterns can match. If the
+            request can target data streams, this argument determines whether wildcard
+            expressions match hidden data streams. Supports comma-separated values, such
+            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
         :param from_: Starting offset (default: 0)
-        :param ignore_unavailable: Whether specified concrete indices should be ignored
-            when unavailable (missing or closed)
-        :param lenient: Specify whether format-based query failures (such as providing
-            text to a numeric field) should be ignored
-        :param max_docs:
-        :param preference: Specify the node or shard the operation should be performed
-            on (default: random)
-        :param q: Query in the Lucene query string syntax
-        :param query:
-        :param refresh: Should the affected indexes be refreshed?
-        :param request_cache: Specify if request cache should be used for this request
-            or not, defaults to index level setting
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a missing or closed index.
+        :param lenient: If `true`, format-based query failures (such as providing text
+            to a numeric field) in the query string will be ignored.
+        :param max_docs: The maximum number of documents to delete.
+        :param preference: Specifies the node or shard the operation should be performed
+            on. Random by default.
+        :param q: Query in the Lucene query string syntax.
+        :param query: Specifies the documents to delete using the Query DSL.
+        :param refresh: If `true`, Elasticsearch refreshes all shards involved in the
+            delete by query after the request completes.
+        :param request_cache: If `true`, the request cache is used for this request.
+            Defaults to the index-level setting.
         :param requests_per_second: The throttle for this request in sub-requests per
-            second. -1 means no throttle.
-        :param routing: A comma-separated list of specific routing values
-        :param scroll: Specify how long a consistent view of the index should be maintained
-            for scrolled search
-        :param scroll_size: Size on the scroll request powering the delete by query
+            second.
+        :param routing: Custom value used to route operations to a specific shard.
+        :param scroll: Period to retain the search context for scrolling.
+        :param scroll_size: Size of the scroll request that powers the operation.
         :param search_timeout: Explicit timeout for each search request. Defaults to
             no timeout.
-        :param search_type: Search operation type
-        :param slice:
-        :param slices: The number of slices this task should be divided into. Defaults
-            to 1, meaning the task isn't sliced into subtasks. Can be set to `auto`.
-        :param sort: A comma-separated list of <field>:<direction> pairs
-        :param stats: Specific 'tag' of the request for logging and statistical purposes
-        :param terminate_after: The maximum number of documents to collect for each shard,
-            upon reaching which the query execution will terminate early.
-        :param timeout: Time each individual bulk request should wait for shards that
-            are unavailable.
-        :param version: Specify whether to return document version as part of a hit
-        :param wait_for_active_shards: Sets the number of shard copies that must be active
-            before proceeding with the delete by query operation. Defaults to 1, meaning
-            the primary shard only. Set to `all` for all shard copies, otherwise set
-            to any non-negative value less than or equal to the total number of copies
-            for the shard (number of replicas + 1)
-        :param wait_for_completion: Should the request should block until the delete
-            by query is complete.
+        :param search_type: The type of the search operation. Available options: `query_then_fetch`,
+            `dfs_query_then_fetch`.
+        :param slice: Slice the request manually using the provided slice ID and total
+            number of slices.
+        :param slices: The number of slices this task should be divided into.
+        :param sort: A comma-separated list of <field>:<direction> pairs.
+        :param stats: Specific `tag` of the request for logging and statistical purposes.
+        :param terminate_after: Maximum number of documents to collect for each shard.
+            If a query reaches this limit, Elasticsearch terminates the query early.
+            Elasticsearch collects documents before sorting. Use with caution. Elasticsearch
+            applies this parameter to each shard handling the request. When possible,
+            let Elasticsearch perform early termination automatically. Avoid specifying
+            this parameter for requests that target data streams with backing indices
+            across multiple data tiers.
+        :param timeout: Period each deletion request waits for active shards.
+        :param version: If `true`, returns the document version as part of a hit.
+        :param wait_for_active_shards: The number of shard copies that must be active
+            before proceeding with the operation. Set to all or any positive integer
+            up to the total number of shards in the index (`number_of_replicas+1`).
+        :param wait_for_completion: If `true`, the request blocks until the operation
+            is complete.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -1340,9 +1375,9 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-delete-by-query.html>`_
 
-        :param task_id: The task id to rethrottle
-        :param requests_per_second: The throttle to set on this request in floating sub-requests
-            per second. -1 means set no throttle.
+        :param task_id: The ID for the task.
+        :param requests_per_second: The throttle for this request in sub-requests per
+            second.
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")
@@ -1384,9 +1419,12 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
 
-        :param id: Script ID
-        :param master_timeout: Specify timeout for connection to master
-        :param timeout: Explicit operation timeout
+        :param id: Identifier for the stored script or search template.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
@@ -1453,25 +1491,28 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-get.html>`_
 
-        :param index: The name of the index
-        :param id: The document ID
-        :param preference: Specify the node or shard the operation should be performed
-            on (default: random)
-        :param realtime: Specify whether to perform the operation in realtime or search
-            mode
-        :param refresh: Refresh the shard containing the document before performing the
-            operation
-        :param routing: Specific routing value
-        :param source: True or false to return the _source field or not, or a list of
-            fields to return
-        :param source_excludes: A list of fields to exclude from the returned _source
-            field
-        :param source_includes: A list of fields to extract and return from the _source
-            field
-        :param stored_fields: A comma-separated list of stored fields to return in the
-            response
-        :param version: Explicit version number for concurrency control
-        :param version_type: Specific version type
+        :param index: Comma-separated list of data streams, indices, and aliases. Supports
+            wildcards (`*`).
+        :param id: Identifier of the document.
+        :param preference: Specifies the node or shard the operation should be performed
+            on. Random by default.
+        :param realtime: If `true`, the request is real-time as opposed to near-real-time.
+        :param refresh: If `true`, Elasticsearch refreshes all shards involved in the
+            delete by query after the request completes.
+        :param routing: Target the specified primary shard.
+        :param source: `true` or `false` to return the `_source` field or not, or a list
+            of fields to return.
+        :param source_excludes: A comma-separated list of source fields to exclude in
+            the response.
+        :param source_includes: A comma-separated list of source fields to include in
+            the response.
+        :param stored_fields: List of stored fields to return as part of a hit. If no
+            fields are specified, no stored fields are included in the response. If this
+            field is specified, the `_source` parameter defaults to false.
+        :param version: Explicit version number for concurrency control. The specified
+            version must match the current version of the document for the request to
+            succeed.
+        :param version_type: Specific version type: `external`, `external_gte`.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -1553,23 +1594,25 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-get.html>`_
 
-        :param index: The name of the index
-        :param id: The document ID
-        :param preference: Specify the node or shard the operation should be performed
-            on (default: random)
-        :param realtime: Specify whether to perform the operation in realtime or search
-            mode
-        :param refresh: Refresh the shard containing the document before performing the
-            operation
-        :param routing: Specific routing value
-        :param source: True or false to return the _source field or not, or a list of
-            fields to return
-        :param source_excludes: A list of fields to exclude from the returned _source
-            field
-        :param source_includes: A list of fields to extract and return from the _source
-            field
-        :param version: Explicit version number for concurrency control
-        :param version_type: Specific version type
+        :param index: Comma-separated list of data streams, indices, and aliases. Supports
+            wildcards (`*`).
+        :param id: Identifier of the document.
+        :param preference: Specifies the node or shard the operation should be performed
+            on. Random by default.
+        :param realtime: If true, the request is real-time as opposed to near-real-time.
+        :param refresh: If `true`, Elasticsearch refreshes all shards involved in the
+            delete by query after the request completes.
+        :param routing: Target the specified primary shard.
+        :param source: `true` or `false` to return the `_source` field or not, or a list
+            of fields to return.
+        :param source_excludes: A comma-separated list of source fields to exclude in
+            the response.
+        :param source_includes: A comma-separated list of source fields to include in
+            the response.
+        :param version: Explicit version number for concurrency control. The specified
+            version must match the current version of the document for the request to
+            succeed.
+        :param version_type: Specific version type: `external`, `external_gte`.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -1654,29 +1697,31 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-explain.html>`_
 
-        :param index: The name of the index
-        :param id: The document ID
-        :param analyze_wildcard: Specify whether wildcards and prefix queries in the
-            query string query should be analyzed (default: false)
-        :param analyzer: The analyzer for the query string query
-        :param default_operator: The default operator for query string query (AND or
-            OR)
-        :param df: The default field for query string query (default: _all)
-        :param lenient: Specify whether format-based query failures (such as providing
-            text to a numeric field) should be ignored
-        :param preference: Specify the node or shard the operation should be performed
-            on (default: random)
-        :param q: Query in the Lucene query string syntax
-        :param query:
-        :param routing: Specific routing value
-        :param source: True or false to return the _source field or not, or a list of
-            fields to return
-        :param source_excludes: A list of fields to exclude from the returned _source
-            field
-        :param source_includes: A list of fields to extract and return from the _source
-            field
+        :param index: Index names used to limit the request. Only a single index name
+            can be provided to this parameter.
+        :param id: Defines the document ID.
+        :param analyze_wildcard: If `true`, wildcard and prefix queries are analyzed.
+        :param analyzer: Analyzer to use for the query string. This parameter can only
+            be used when the `q` query string parameter is specified.
+        :param default_operator: The default operator for query string query: `AND` or
+            `OR`.
+        :param df: Field to use as default where no field prefix is given in the query
+            string.
+        :param lenient: If `true`, format-based query failures (such as providing text
+            to a numeric field) in the query string will be ignored.
+        :param preference: Specifies the node or shard the operation should be performed
+            on. Random by default.
+        :param q: Query in the Lucene query string syntax.
+        :param query: Defines the search definition using the Query DSL.
+        :param routing: Custom value used to route operations to a specific shard.
+        :param source: True or false to return the `_source` field or not, or a list
+            of fields to return.
+        :param source_excludes: A comma-separated list of source fields to exclude from
+            the response.
+        :param source_includes: A comma-separated list of source fields to include in
+            the response.
         :param stored_fields: A comma-separated list of stored fields to return in the
-            response
+            response.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -1891,7 +1936,7 @@ class Elasticsearch(BaseClient):
         :param id: Unique identifier of the document.
         :param preference: Specifies the node or shard the operation should be performed
             on. Random by default.
-        :param realtime: Boolean) If true, the request is real-time as opposed to near-real-time.
+        :param realtime: If `true`, the request is real-time as opposed to near-real-time.
         :param refresh: If true, Elasticsearch refreshes the affected shards to make
             this operation visible to search. If false, do nothing with refreshes.
         :param routing: Target the specified primary shard.
@@ -1901,8 +1946,9 @@ class Elasticsearch(BaseClient):
             the response.
         :param source_includes: A comma-separated list of source fields to include in
             the response.
-        :param stored_fields: A comma-separated list of stored fields to return in the
-            response
+        :param stored_fields: List of stored fields to return as part of a hit. If no
+            fields are specified, no stored fields are included in the response. If this
+            field is specified, the `_source` parameter defaults to false.
         :param version: Explicit version number for concurrency control. The specified
             version must match the current version of the document for the request to
             succeed.
@@ -1967,7 +2013,7 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
 
-        :param id: Script ID
+        :param id: Identifier for the stored script or search template.
         :param master_timeout: Specify timeout for connection to master
         """
         if id in SKIP_IN_PATH:
@@ -2244,31 +2290,38 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-index_.html>`_
 
-        :param index: The name of the index
+        :param index: Name of the data stream or index to target.
         :param document:
-        :param id: Document ID
-        :param if_primary_term: only perform the index operation if the last operation
-            that has changed the document has the specified primary term
-        :param if_seq_no: only perform the index operation if the last operation that
-            has changed the document has the specified sequence number
-        :param op_type: Explicit operation type. Defaults to `index` for requests with
-            an explicit document ID, and to `create`for requests without an explicit
-            document ID
-        :param pipeline: The pipeline id to preprocess incoming documents with
-        :param refresh: If `true` then refresh the affected shards to make this operation
-            visible to search, if `wait_for` then wait for a refresh to make this operation
-            visible to search, if `false` (the default) then do nothing with refreshes.
-        :param require_alias: When true, requires destination to be an alias. Default
-            is false
-        :param routing: Specific routing value
-        :param timeout: Explicit operation timeout
-        :param version: Explicit version number for concurrency control
-        :param version_type: Specific version type
-        :param wait_for_active_shards: Sets the number of shard copies that must be active
-            before proceeding with the index operation. Defaults to 1, meaning the primary
-            shard only. Set to `all` for all shard copies, otherwise set to any non-negative
-            value less than or equal to the total number of copies for the shard (number
-            of replicas + 1)
+        :param id: Unique identifier for the document.
+        :param if_primary_term: Only perform the operation if the document has this primary
+            term.
+        :param if_seq_no: Only perform the operation if the document has this sequence
+            number.
+        :param op_type: Set to create to only index the document if it does not already
+            exist (put if absent). If a document with the specified `_id` already exists,
+            the indexing operation will fail. Same as using the `<index>/_create` endpoint.
+            Valid values: `index`, `create`. If document id is specified, it defaults
+            to `index`. Otherwise, it defaults to `create`.
+        :param pipeline: ID of the pipeline to use to preprocess incoming documents.
+            If the index has a default ingest pipeline specified, then setting the value
+            to `_none` disables the default ingest pipeline for this request. If a final
+            pipeline is configured it will always run, regardless of the value of this
+            parameter.
+        :param refresh: If `true`, Elasticsearch refreshes the affected shards to make
+            this operation visible to search, if `wait_for` then wait for a refresh to
+            make this operation visible to search, if `false` do nothing with refreshes.
+            Valid values: `true`, `false`, `wait_for`.
+        :param require_alias: If `true`, the destination must be an index alias.
+        :param routing: Custom value used to route operations to a specific shard.
+        :param timeout: Period the request waits for the following operations: automatic
+            index creation, dynamic mapping updates, waiting for active shards.
+        :param version: Explicit version number for concurrency control. The specified
+            version must match the current version of the document for the request to
+            succeed.
+        :param version_type: Specific version type: `external`, `external_gte`.
+        :param wait_for_active_shards: The number of shard copies that must be active
+            before proceeding with the operation. Set to all or any positive integer
+            up to the total number of shards in the index (`number_of_replicas+1`).
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -2724,16 +2777,19 @@ class Elasticsearch(BaseClient):
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-multi-search.html>`_
 
         :param search_templates:
-        :param index: A comma-separated list of index names to use as default
-        :param ccs_minimize_roundtrips: Indicates whether network round-trips should
-            be minimized as part of cross-cluster search requests execution
-        :param max_concurrent_searches: Controls the maximum number of concurrent searches
-            the multi search api will execute
-        :param rest_total_hits_as_int: Indicates whether hits.total should be rendered
-            as an integer or an object in the rest search response
-        :param search_type: Search operation type
-        :param typed_keys: Specify whether aggregation and suggester names should be
-            prefixed by their respective types in the response
+        :param index: Comma-separated list of data streams, indices, and aliases to search.
+            Supports wildcards (`*`). To search all data streams and indices, omit this
+            parameter or use `*`.
+        :param ccs_minimize_roundtrips: If `true`, network round-trips are minimized
+            for cross-cluster search requests.
+        :param max_concurrent_searches: Maximum number of concurrent searches the API
+            can run.
+        :param rest_total_hits_as_int: If `true`, the response returns `hits.total` as
+            an integer. If `false`, it returns `hits.total` as an object.
+        :param search_type: The type of the search operation. Available options: `query_then_fetch`,
+            `dfs_query_then_fetch`.
+        :param typed_keys: If `true`, the response prefixes aggregation and suggester
+            names with their respective types.
         """
         if search_templates is None:
             raise ValueError("Empty value passed for parameter 'search_templates'")
@@ -2807,32 +2863,26 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-multi-termvectors.html>`_
 
-        :param index: The index in which the document resides.
-        :param docs:
-        :param field_statistics: Specifies if document count, sum of document frequencies
-            and sum of total term frequencies should be returned. Applies to all returned
-            documents unless otherwise specified in body "params" or "docs".
-        :param fields: A comma-separated list of fields to return. Applies to all returned
-            documents unless otherwise specified in body "params" or "docs".
-        :param ids:
-        :param offsets: Specifies if term offsets should be returned. Applies to all
-            returned documents unless otherwise specified in body "params" or "docs".
-        :param payloads: Specifies if term payloads should be returned. Applies to all
-            returned documents unless otherwise specified in body "params" or "docs".
-        :param positions: Specifies if term positions should be returned. Applies to
-            all returned documents unless otherwise specified in body "params" or "docs".
-        :param preference: Specify the node or shard the operation should be performed
-            on (default: random) .Applies to all returned documents unless otherwise
-            specified in body "params" or "docs".
-        :param realtime: Specifies if requests are real-time as opposed to near-real-time
-            (default: true).
-        :param routing: Specific routing value. Applies to all returned documents unless
-            otherwise specified in body "params" or "docs".
-        :param term_statistics: Specifies if total term frequency and document frequency
-            should be returned. Applies to all returned documents unless otherwise specified
-            in body "params" or "docs".
-        :param version: Explicit version number for concurrency control
-        :param version_type: Specific version type
+        :param index: Name of the index that contains the documents.
+        :param docs: Array of existing or artificial documents.
+        :param field_statistics: If `true`, the response includes the document count,
+            sum of document frequencies, and sum of total term frequencies.
+        :param fields: Comma-separated list or wildcard expressions of fields to include
+            in the statistics. Used as the default list unless a specific field list
+            is provided in the `completion_fields` or `fielddata_fields` parameters.
+        :param ids: Simplified syntax to specify documents by their ID if they're in
+            the same index.
+        :param offsets: If `true`, the response includes term offsets.
+        :param payloads: If `true`, the response includes term payloads.
+        :param positions: If `true`, the response includes term positions.
+        :param preference: Specifies the node or shard the operation should be performed
+            on. Random by default.
+        :param realtime: If true, the request is real-time as opposed to near-real-time.
+        :param routing: Custom value used to route operations to a specific shard.
+        :param term_statistics: If true, the response includes term frequency and document
+            frequency.
+        :param version: If `true`, returns the document version as part of a hit.
+        :param version_type: Specific version type.
         """
         if index not in SKIP_IN_PATH:
             __path = f"/{_quote(index)}/_mtermvectors"
@@ -2924,14 +2974,16 @@ class Elasticsearch(BaseClient):
 
         :param index: A comma-separated list of index names to open point in time; use
             `_all` or empty string to perform the operation on all indices
-        :param keep_alive: Specific the time to live for the point in time
-        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
-            that are open, closed or both.
-        :param ignore_unavailable: Whether specified concrete indices should be ignored
-            when unavailable (missing or closed)
-        :param preference: Specify the node or shard the operation should be performed
-            on (default: random)
-        :param routing: Specific routing value
+        :param keep_alive: Extends the time to live of the corresponding point in time.
+        :param expand_wildcards: Type of index that wildcard patterns can match. If the
+            request can target data streams, this argument determines whether wildcard
+            expressions match hidden data streams. Supports comma-separated values, such
+            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a missing or closed index.
+        :param preference: Specifies the node or shard the operation should be performed
+            on. Random by default.
+        :param routing: Custom value used to route operations to a specific shard.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -2987,11 +3039,18 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/modules-scripting.html>`_
 
-        :param id: Script ID
-        :param script:
-        :param context: Script context
-        :param master_timeout: Specify timeout for connection to master
-        :param timeout: Explicit operation timeout
+        :param id: Identifier for the stored script or search template. Must be unique
+            within the cluster.
+        :param script: Contains the script or search template, its parameters, and its
+            language.
+        :param context: Context in which the script or search template should run. To
+            prevent errors, the API immediately compiles the script or template in this
+            context.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
@@ -3156,27 +3215,28 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-reindex.html>`_
 
-        :param dest:
-        :param source:
-        :param conflicts:
-        :param max_docs:
-        :param refresh: Should the affected indexes be refreshed?
-        :param requests_per_second: The throttle to set on this request in sub-requests
-            per second. -1 means no throttle.
-        :param require_alias:
-        :param script:
-        :param scroll: Control how long to keep the search context alive
+        :param dest: The destination you are copying to.
+        :param source: The source you are copying from.
+        :param conflicts: Set to proceed to continue reindexing even if there are conflicts.
+        :param max_docs: The maximum number of documents to reindex.
+        :param refresh: If `true`, the request refreshes affected shards to make this
+            operation visible to search.
+        :param requests_per_second: The throttle for this request in sub-requests per
+            second. Defaults to no throttle.
+        :param require_alias: If `true`, the destination must be an index alias.
+        :param script: The script to run to update the document source or metadata when
+            reindexing.
+        :param scroll: Specifies how long a consistent view of the index should be maintained
+            for scrolled search.
         :param size:
         :param slices: The number of slices this task should be divided into. Defaults
-            to 1, meaning the task isn't sliced into subtasks. Can be set to `auto`.
-        :param timeout: Time each individual bulk request should wait for shards that
-            are unavailable.
-        :param wait_for_active_shards: Sets the number of shard copies that must be active
-            before proceeding with the reindex operation. Defaults to 1, meaning the
-            primary shard only. Set to `all` for all shard copies, otherwise set to any
-            non-negative value less than or equal to the total number of copies for the
-            shard (number of replicas + 1)
-        :param wait_for_completion: Should the request should block until the reindex
+            to 1 slice, meaning the task isn’t sliced into subtasks.
+        :param timeout: Period each indexing waits for automatic index creation, dynamic
+            mapping updates, and waiting for active shards.
+        :param wait_for_active_shards: The number of shard copies that must be active
+            before proceeding with the operation. Set to `all` or any positive integer
+            up to the total number of shards in the index (`number_of_replicas+1`).
+        :param wait_for_completion: If `true`, the request blocks until the operation
             is complete.
         """
         if dest is None:
@@ -3245,9 +3305,9 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-reindex.html>`_
 
-        :param task_id: The task id to rethrottle
-        :param requests_per_second: The throttle to set on this request in floating sub-requests
-            per second. -1 means set no throttle.
+        :param task_id: Identifier for the task.
+        :param requests_per_second: The throttle for this request in sub-requests per
+            second.
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")
@@ -3291,10 +3351,14 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/render-search-template-api.html>`_
 
-        :param id: The id of the stored search template
+        :param id: ID of the search template to render. If no `source` is specified,
+            this or the `id` request body parameter is required.
         :param file:
-        :param params:
-        :param source:
+        :param params: Key-value pairs used to replace Mustache variables in the template.
+            The key is the variable name. The value is the variable value.
+        :param source: An inline search template. Supports the same parameters as the
+            search API's request body. These parameters also support Mustache variables.
+            If no `id` or `<templated-id>` is specified, this parameter is required.
         """
         if id not in SKIP_IN_PATH:
             __path = f"/_render/template/{_quote(id)}"
@@ -3346,9 +3410,9 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/painless/master/painless-execute-api.html>`_
 
-        :param context:
-        :param context_setup:
-        :param script:
+        :param context: The context that the script should run in.
+        :param context_setup: Additional parameters for the `context`.
+        :param script: The Painless script to execute.
         """
         __path = "/_scripts/painless/_execute"
         __body: t.Dict[str, t.Any] = {}
@@ -4124,20 +4188,24 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-shards.html>`_
 
-        :param index: A comma-separated list of index names to search; use `_all` or
-            empty string to perform the operation on all indices
-        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
-            into no concrete indices. (This includes `_all` string or when no indices
-            have been specified)
-        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
-            that are open, closed or both.
-        :param ignore_unavailable: Whether specified concrete indices should be ignored
-            when unavailable (missing or closed)
-        :param local: Return local information, do not retrieve the state from master
-            node (default: false)
-        :param preference: Specify the node or shard the operation should be performed
-            on (default: random)
-        :param routing: Specific routing value
+        :param index: Returns the indices and shards that a search request would be executed
+            against.
+        :param allow_no_indices: If `false`, the request returns an error if any wildcard
+            expression, index alias, or `_all` value targets only missing or closed indices.
+            This behavior applies even if the request targets other open indices. For
+            example, a request targeting `foo*,bar*` returns an error if an index starts
+            with `foo` but no index starts with `bar`.
+        :param expand_wildcards: Type of index that wildcard patterns can match. If the
+            request can target data streams, this argument determines whether wildcard
+            expressions match hidden data streams. Supports comma-separated values, such
+            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a missing or closed index.
+        :param local: If `true`, the request retrieves information from the local node
+            only.
+        :param preference: Specifies the node or shard the operation should be performed
+            on. Random by default.
+        :param routing: Custom value used to route operations to a specific shard.
         """
         if index not in SKIP_IN_PATH:
             __path = f"/{_quote(index)}/_search_shards"
@@ -4226,24 +4294,30 @@ class Elasticsearch(BaseClient):
 
         :param index: Comma-separated list of data streams, indices, and aliases to search.
             Supports wildcards (*).
-        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
-            into no concrete indices. (This includes `_all` string or when no indices
-            have been specified)
-        :param ccs_minimize_roundtrips: Indicates whether network round-trips should
-            be minimized as part of cross-cluster search requests execution
-        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
-            that are open, closed or both.
-        :param explain:
+        :param allow_no_indices: If `false`, the request returns an error if any wildcard
+            expression, index alias, or `_all` value targets only missing or closed indices.
+            This behavior applies even if the request targets other open indices. For
+            example, a request targeting `foo*,bar*` returns an error if an index starts
+            with `foo` but no index starts with `bar`.
+        :param ccs_minimize_roundtrips: If `true`, network round-trips are minimized
+            for cross-cluster search requests.
+        :param expand_wildcards: Type of index that wildcard patterns can match. If the
+            request can target data streams, this argument determines whether wildcard
+            expressions match hidden data streams. Supports comma-separated values, such
+            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
+        :param explain: If `true`, returns detailed information about score calculation
+            as part of each hit.
         :param id: ID of the search template to use. If no source is specified, this
             parameter is required.
-        :param ignore_throttled: Whether specified concrete, expanded or aliased indices
-            should be ignored when throttled
-        :param ignore_unavailable: Whether specified concrete indices should be ignored
-            when unavailable (missing or closed)
-        :param params:
-        :param preference: Specify the node or shard the operation should be performed
-            on (default: random)
-        :param profile:
+        :param ignore_throttled: If `true`, specified concrete, expanded, or aliased
+            indices are not included in the response when throttled.
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a missing or closed index.
+        :param params: Key-value pairs used to replace Mustache variables in the template.
+            The key is the variable name. The value is the variable value.
+        :param preference: Specifies the node or shard the operation should be performed
+            on. Random by default.
+        :param profile: If `true`, the query execution is profiled.
         :param rest_total_hits_as_int: If true, hits.total are rendered as an integer
             in the response.
         :param routing: Custom value used to route operations to a specific shard.
@@ -4253,8 +4327,8 @@ class Elasticsearch(BaseClient):
         :param source: An inline search template. Supports the same parameters as the
             search API's request body. Also supports Mustache variables. If no id is
             specified, this parameter is required.
-        :param typed_keys: Specify whether aggregation and suggester names should be
-            prefixed by their respective types in the response
+        :param typed_keys: If `true`, the response prefixes aggregation and suggester
+            names with their respective types.
         """
         if index not in SKIP_IN_PATH:
             __path = f"/{_quote(index)}/_search/template"
@@ -4429,26 +4503,28 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-termvectors.html>`_
 
-        :param index: The index in which the document resides.
-        :param id: The id of the document, when not specified a doc param should be supplied.
-        :param doc:
-        :param field_statistics: Specifies if document count, sum of document frequencies
-            and sum of total term frequencies should be returned.
-        :param fields: A comma-separated list of fields to return.
-        :param filter:
-        :param offsets: Specifies if term offsets should be returned.
-        :param payloads: Specifies if term payloads should be returned.
-        :param per_field_analyzer:
-        :param positions: Specifies if term positions should be returned.
-        :param preference: Specify the node or shard the operation should be performed
-            on (default: random).
-        :param realtime: Specifies if request is real-time as opposed to near-real-time
-            (default: true).
-        :param routing: Specific routing value.
-        :param term_statistics: Specifies if total term frequency and document frequency
-            should be returned.
-        :param version: Explicit version number for concurrency control
-        :param version_type: Specific version type
+        :param index: Name of the index that contains the document.
+        :param id: Unique identifier of the document.
+        :param doc: An artificial document (a document not present in the index) for
+            which you want to retrieve term vectors.
+        :param field_statistics: If `true`, the response includes the document count,
+            sum of document frequencies, and sum of total term frequencies.
+        :param fields: Comma-separated list or wildcard expressions of fields to include
+            in the statistics. Used as the default list unless a specific field list
+            is provided in the `completion_fields` or `fielddata_fields` parameters.
+        :param filter: Filter terms based on their tf-idf scores.
+        :param offsets: If `true`, the response includes term offsets.
+        :param payloads: If `true`, the response includes term payloads.
+        :param per_field_analyzer: Overrides the default per-field analyzer.
+        :param positions: If `true`, the response includes term positions.
+        :param preference: Specifies the node or shard the operation should be performed
+            on. Random by default.
+        :param realtime: If true, the request is real-time as opposed to near-real-time.
+        :param routing: Custom value used to route operations to a specific shard.
+        :param term_statistics: If `true`, the response includes term frequency and document
+            frequency.
+        :param version: If `true`, returns the document version as part of a hit.
+        :param version_type: Specific version type.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -4725,64 +4801,75 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-update-by-query.html>`_
 
-        :param index: A comma-separated list of index names to search; use `_all` or
-            empty string to perform the operation on all indices
-        :param allow_no_indices: Whether to ignore if a wildcard indices expression resolves
-            into no concrete indices. (This includes `_all` string or when no indices
-            have been specified)
-        :param analyze_wildcard: Specify whether wildcard and prefix queries should be
-            analyzed (default: false)
-        :param analyzer: The analyzer to use for the query string
-        :param conflicts:
-        :param default_operator: The default operator for query string query (AND or
-            OR)
-        :param df: The field to use as default where no field prefix is given in the
-            query string
-        :param expand_wildcards: Whether to expand wildcard expression to concrete indices
-            that are open, closed or both.
+        :param index: Comma-separated list of data streams, indices, and aliases to search.
+            Supports wildcards (`*`). To search all data streams or indices, omit this
+            parameter or use `*` or `_all`.
+        :param allow_no_indices: If `false`, the request returns an error if any wildcard
+            expression, index alias, or `_all` value targets only missing or closed indices.
+            This behavior applies even if the request targets other open indices. For
+            example, a request targeting `foo*,bar*` returns an error if an index starts
+            with `foo` but no index starts with `bar`.
+        :param analyze_wildcard: If `true`, wildcard and prefix queries are analyzed.
+        :param analyzer: Analyzer to use for the query string.
+        :param conflicts: What to do if update by query hits version conflicts: `abort`
+            or `proceed`.
+        :param default_operator: The default operator for query string query: `AND` or
+            `OR`.
+        :param df: Field to use as default where no field prefix is given in the query
+            string.
+        :param expand_wildcards: Type of index that wildcard patterns can match. If the
+            request can target data streams, this argument determines whether wildcard
+            expressions match hidden data streams. Supports comma-separated values, such
+            as `open,hidden`. Valid values are: `all`, `open`, `closed`, `hidden`, `none`.
         :param from_: Starting offset (default: 0)
-        :param ignore_unavailable: Whether specified concrete indices should be ignored
-            when unavailable (missing or closed)
-        :param lenient: Specify whether format-based query failures (such as providing
-            text to a numeric field) should be ignored
-        :param max_docs:
-        :param pipeline: Ingest pipeline to set on index requests made by this action.
-            (default: none)
-        :param preference: Specify the node or shard the operation should be performed
-            on (default: random)
-        :param query:
-        :param refresh: Should the affected indexes be refreshed?
-        :param request_cache: Specify if request cache should be used for this request
-            or not, defaults to index level setting
-        :param requests_per_second: The throttle to set on this request in sub-requests
-            per second. -1 means no throttle.
-        :param routing: A comma-separated list of specific routing values
-        :param script:
-        :param scroll: Specify how long a consistent view of the index should be maintained
-            for scrolled search
-        :param scroll_size: Size on the scroll request powering the update by query
-        :param search_timeout: Explicit timeout for each search request. Defaults to
-            no timeout.
-        :param search_type: Search operation type
-        :param slice:
-        :param slices: The number of slices this task should be divided into. Defaults
-            to 1, meaning the task isn't sliced into subtasks. Can be set to `auto`.
-        :param sort: A comma-separated list of <field>:<direction> pairs
-        :param stats: Specific 'tag' of the request for logging and statistical purposes
-        :param terminate_after: The maximum number of documents to collect for each shard,
-            upon reaching which the query execution will terminate early.
-        :param timeout: Time each individual bulk request should wait for shards that
-            are unavailable.
-        :param version: Specify whether to return document version as part of a hit
+        :param ignore_unavailable: If `false`, the request returns an error if it targets
+            a missing or closed index.
+        :param lenient: If `true`, format-based query failures (such as providing text
+            to a numeric field) in the query string will be ignored.
+        :param max_docs: The maximum number of documents to update.
+        :param pipeline: ID of the pipeline to use to preprocess incoming documents.
+            If the index has a default ingest pipeline specified, then setting the value
+            to `_none` disables the default ingest pipeline for this request. If a final
+            pipeline is configured it will always run, regardless of the value of this
+            parameter.
+        :param preference: Specifies the node or shard the operation should be performed
+            on. Random by default.
+        :param query: Specifies the documents to update using the Query DSL.
+        :param refresh: If `true`, Elasticsearch refreshes affected shards to make the
+            operation visible to search.
+        :param request_cache: If `true`, the request cache is used for this request.
+        :param requests_per_second: The throttle for this request in sub-requests per
+            second.
+        :param routing: Custom value used to route operations to a specific shard.
+        :param script: The script to run to update the document source or metadata when
+            updating.
+        :param scroll: Period to retain the search context for scrolling.
+        :param scroll_size: Size of the scroll request that powers the operation.
+        :param search_timeout: Explicit timeout for each search request.
+        :param search_type: The type of the search operation. Available options: `query_then_fetch`,
+            `dfs_query_then_fetch`.
+        :param slice: Slice the request manually using the provided slice ID and total
+            number of slices.
+        :param slices: The number of slices this task should be divided into.
+        :param sort: A comma-separated list of <field>:<direction> pairs.
+        :param stats: Specific `tag` of the request for logging and statistical purposes.
+        :param terminate_after: Maximum number of documents to collect for each shard.
+            If a query reaches this limit, Elasticsearch terminates the query early.
+            Elasticsearch collects documents before sorting. Use with caution. Elasticsearch
+            applies this parameter to each shard handling the request. When possible,
+            let Elasticsearch perform early termination automatically. Avoid specifying
+            this parameter for requests that target data streams with backing indices
+            across multiple data tiers.
+        :param timeout: Period each update request waits for the following operations:
+            dynamic mapping updates, waiting for active shards.
+        :param version: If `true`, returns the document version as part of a hit.
         :param version_type: Should the document increment the version number (internal)
             on hit or not (reindex)
-        :param wait_for_active_shards: Sets the number of shard copies that must be active
-            before proceeding with the update by query operation. Defaults to 1, meaning
-            the primary shard only. Set to `all` for all shard copies, otherwise set
-            to any non-negative value less than or equal to the total number of copies
-            for the shard (number of replicas + 1)
-        :param wait_for_completion: Should the request should block until the update
-            by query operation is complete.
+        :param wait_for_active_shards: The number of shard copies that must be active
+            before proceeding with the operation. Set to `all` or any positive integer
+            up to the total number of shards in the index (`number_of_replicas+1`).
+        :param wait_for_completion: If `true`, the request blocks until the operation
+            is complete.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -4901,9 +4988,9 @@ class Elasticsearch(BaseClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/docs-update-by-query.html>`_
 
-        :param task_id: The task id to rethrottle
-        :param requests_per_second: The throttle to set on this request in floating sub-requests
-            per second. -1 means set no throttle.
+        :param task_id: The ID for the task.
+        :param requests_per_second: The throttle for this request in sub-requests per
+            second.
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")

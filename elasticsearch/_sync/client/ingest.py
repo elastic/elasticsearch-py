@@ -45,9 +45,13 @@ class IngestClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-pipeline-api.html>`_
 
-        :param id: Pipeline ID
-        :param master_timeout: Explicit operation timeout for connection to master node
-        :param timeout: Explicit operation timeout
+        :param id: Pipeline ID or wildcard expression of pipeline IDs used to limit the
+            request. To delete all ingest pipelines in a cluster, use a value of `*`.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
@@ -84,7 +88,7 @@ class IngestClient(NamespacedClient):
         """
         Returns statistical information about geoip databases
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/geoip-stats-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/geoip-processor.html>`_
         """
         __path = "/_ingest/geoip/stats"
         __query: t.Dict[str, t.Any] = {}
@@ -122,8 +126,11 @@ class IngestClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-pipeline-api.html>`_
 
-        :param id: Comma separated list of pipeline ids. Wildcards supported
-        :param master_timeout: Explicit operation timeout for connection to master node
+        :param id: Comma-separated list of pipeline IDs to retrieve. Wildcard (`*`) expressions
+            are supported. To get all ingest pipelines, omit this parameter or use `*`.
+        :param master_timeout: Period to wait for a connection to the master node. If
+            no response is received before the timeout expires, the request fails and
+            returns an error.
         :param summary: Return pipelines without their definitions (default: false)
         """
         if id not in SKIP_IN_PATH:
@@ -162,7 +169,7 @@ class IngestClient(NamespacedClient):
         """
         Returns a list of the built-in patterns.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/grok-processor.html#grok-processor-rest-get>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/grok-processor.html>`_
         """
         __path = "/_ingest/processor/grok"
         __query: t.Dict[str, t.Any] = {}
@@ -211,7 +218,7 @@ class IngestClient(NamespacedClient):
         """
         Creates or updates a pipeline.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-pipeline-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ingest.html>`_
 
         :param id: ID of the ingest pipeline to create or update.
         :param description: Description of the ingest pipeline.
@@ -294,11 +301,14 @@ class IngestClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/simulate-pipeline-api.html>`_
 
-        :param id: Pipeline ID
-        :param docs:
-        :param pipeline:
-        :param verbose: Verbose mode. Display data output for each processor in executed
-            pipeline
+        :param id: Pipeline to test. If you don’t specify a `pipeline` in the request
+            body, this parameter is required.
+        :param docs: Sample documents to test in the pipeline.
+        :param pipeline: Pipeline to test. If you don’t specify the `pipeline` request
+            path parameter, this parameter is required. If you specify both this and
+            the request path parameter, the API only uses the request path parameter.
+        :param verbose: If `true`, the response includes output data for each processor
+            in the executed pipeline.
         """
         if id not in SKIP_IN_PATH:
             __path = f"/_ingest/pipeline/{_quote(id)}/_simulate"
