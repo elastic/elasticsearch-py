@@ -27,15 +27,12 @@ docker build \
        --file .buildkite/Dockerfile \
        --tag elastic/elasticsearch-py \
        --build-arg "PYTHON_VERSION=$PYTHON_VERSION" \
-       --build-arg "BUILDER_UID=$(id -u)" \
-       --build-arg "BUILDER_GID=$(id -g)" \
        .
 
 echo "--- :docker: :python: Run elastic/elasticsearch-py container"
 
 mkdir -p "$(pwd)/junit"
 docker run \
-  -u "$(id -u):$(id -g)" \
   --network="$network_name" \
   -e STACK_VERSION \
   -e "ELASTICSEARCH_URL=$elasticsearch_url" \
@@ -45,5 +42,4 @@ docker run \
   --name elasticsearch-py \
   --rm \
   elastic/elasticsearch-py \
-
   bash -c "nox -s test-$PYTHON_VERSION; [ -f ./junit/$BUILDKITE_JOB_ID-junit.xml ] && mv ./junit/$BUILDKITE_JOB_ID-junit.xml /junit || echo 'No JUnit artifact found'"
