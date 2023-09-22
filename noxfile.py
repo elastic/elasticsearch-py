@@ -36,7 +36,12 @@ def test(session):
     session.install("-r", "dev-requirements.txt")
 
     python_version = tuple(int(x) for x in session.python.split("."))
-    junit_xml = os.path.join(SOURCE_DIR, "junit", "elasticsearch-py-junit.xml")
+    job_id = os.environ.get('BUILDKITE_JOB_ID', None)
+    if job_id is not None:
+        junit_xml = os.path.join(SOURCE_DIR, "junit", f"{job_id}-junit.xml")
+    else:
+        junit_xml = os.path.join(SOURCE_DIR, "junit", "elasticsearch-py-junit.xml")
+
     pytest_argv = [
         "pytest",
         "--cov-report=term-missing",
