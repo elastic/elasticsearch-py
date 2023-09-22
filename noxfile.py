@@ -36,7 +36,7 @@ def test(session):
     session.install("-r", "dev-requirements.txt")
 
     python_version = tuple(int(x) for x in session.python.split("."))
-    job_id = os.environ.get('BUILDKITE_JOB_ID', None)
+    job_id = os.environ.get("BUILDKITE_JOB_ID", None)
     if job_id is not None:
         junit_xml = os.path.join(SOURCE_DIR, "junit", f"{job_id}-junit.xml")
     else:
