@@ -41,7 +41,7 @@ class RollupClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-delete-job.html>`_
 
-        :param id: The ID of the job to delete
+        :param id: Identifier for the job.
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
@@ -77,8 +77,8 @@ class RollupClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-get-job.html>`_
 
-        :param id: The ID of the job(s) to fetch. Accepts glob patterns, or left blank
-            for all jobs
+        :param id: Identifier for the rollup job. If it is `_all` or omitted, the API
+            returns all rollup jobs.
         """
         if id not in SKIP_IN_PATH:
             __path = f"/_rollup/job/{_quote(id)}"
@@ -116,8 +116,8 @@ class RollupClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-get-rollup-caps.html>`_
 
-        :param id: The ID of the index to check rollup capabilities on, or left blank
-            for all jobs
+        :param id: Index, indices or index-pattern to return rollup capabilities for.
+            `_all` may be used to fetch rollup capabilities from all jobs.
         """
         if id not in SKIP_IN_PATH:
             __path = f"/_rollup/data/{_quote(id)}"
@@ -155,8 +155,8 @@ class RollupClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-get-rollup-index-caps.html>`_
 
-        :param index: The rollup index or index pattern to obtain rollup capabilities
-            from.
+        :param index: Data stream or index to check for rollup capabilities. Wildcard
+            (`*`) expressions are supported.
         """
         if index in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'index'")
@@ -316,14 +316,13 @@ class RollupClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-search.html>`_
 
-        :param index: The indices or index-pattern(s) (containing rollup or regular data)
-            that should be searched
-        :param aggregations:
-        :param aggs:
-        :param query:
+        :param index: Enables searching rolled-up data using the standard Query DSL.
+        :param aggregations: Specifies aggregations.
+        :param aggs: Specifies aggregations.
+        :param query: Specifies a DSL query.
         :param rest_total_hits_as_int: Indicates whether hits.total should be rendered
             as an integer or an object in the rest search response
-        :param size: Must be zero if set, as rollups work on pre-aggregated data
+        :param size: Must be zero if set, as rollups work on pre-aggregated data.
         :param typed_keys: Specify whether aggregation and suggester names should be
             prefixed by their respective types in the response
         """
@@ -374,7 +373,7 @@ class RollupClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-start-job.html>`_
 
-        :param id: The ID of the job to start
+        :param id: Identifier for the rollup job.
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")
@@ -412,11 +411,13 @@ class RollupClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/rollup-stop-job.html>`_
 
-        :param id: The ID of the job to stop
-        :param timeout: Block for (at maximum) the specified duration while waiting for
-            the job to stop. Defaults to 30s.
-        :param wait_for_completion: True if the API should block until the job has fully
-            stopped, false if should be executed async. Defaults to false.
+        :param id: Identifier for the rollup job.
+        :param timeout: If `wait_for_completion` is `true`, the API blocks for (at maximum)
+            the specified duration while waiting for the job to stop. If more than `timeout`
+            time has passed, the API throws a timeout exception.
+        :param wait_for_completion: If set to `true`, causes the API to block until the
+            indexer state completely stops. If set to `false`, the API returns immediately
+            and the indexer is stopped asynchronously in the background.
         """
         if id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'id'")

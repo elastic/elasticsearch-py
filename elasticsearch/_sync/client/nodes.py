@@ -273,10 +273,10 @@ class NodesClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/secure-settings.html#reloadable-secure-settings>`_
 
-        :param node_id: A comma-separated list of node IDs to span the reload/reinit
-            call. Should stay empty because reloading usually involves all cluster nodes.
-        :param secure_settings_password:
-        :param timeout: Explicit operation timeout
+        :param node_id: The names of particular nodes in the cluster to target.
+        :param secure_settings_password: The password for the Elasticsearch keystore.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         if node_id not in SKIP_IN_PATH:
             __path = f"/_nodes/{_quote(node_id)}/reload_secure_settings"
@@ -367,8 +367,8 @@ class NodesClient(NamespacedClient):
         :param include_segment_file_sizes: If true, the call reports the aggregated disk
             usage of each one of the Lucene index files (only applies if segment stats
             are requested).
-        :param include_unloaded_segments: If set to true segment stats will include stats
-            for segments that are not currently loaded into memory
+        :param include_unloaded_segments: If `true`, the response includes information
+            from segments that are not loaded into memory.
         :param level: Indicates whether statistics are aggregated at the cluster, index,
             or shard level.
         :param master_timeout: Period to wait for a connection to the master node. If
@@ -455,8 +455,10 @@ class NodesClient(NamespacedClient):
         :param node_id: A comma-separated list of node IDs or names to limit the returned
             information; use `_local` to return information from the node you're connecting
             to, leave empty to get information from all nodes
-        :param metric: Limit the information returned to the specified metrics
-        :param timeout: Explicit operation timeout
+        :param metric: Limits the information returned to the specific metrics. A comma-separated
+            list of the following options: `_all`, `rest_actions`.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
         """
         if node_id not in SKIP_IN_PATH and metric not in SKIP_IN_PATH:
             __path = f"/_nodes/{_quote(node_id)}/usage/{_quote(metric)}"

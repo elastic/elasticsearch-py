@@ -190,9 +190,9 @@ class SearchApplicationClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/list-search-applications.html>`_
 
-        :param from_: Starting offset (default: 0)
-        :param q: Query in the Lucene query string syntax"
-        :param size: specifies a max number of results to get
+        :param from_: Starting offset.
+        :param q: Query in the Lucene query string syntax.
+        :param size: Specifies a max number of results to get.
         """
         __path = "/_application/search_application"
         __query: t.Dict[str, t.Any] = {}
@@ -236,10 +236,10 @@ class SearchApplicationClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-search-application.html>`_
 
-        :param name: The name of the search application to be created or updated
+        :param name: The name of the search application to be created or updated.
         :param search_application:
-        :param create: If true, requires that a search application with the specified
-            resource_id does not already exist. (default: false)
+        :param create: If `true`, this request cannot replace or update existing Search
+            Applications.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -280,7 +280,7 @@ class SearchApplicationClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-analytics-collection.html>`_
 
-        :param name: The name of the analytics collection to be created or updated
+        :param name: The name of the analytics collection to be created or updated.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")
@@ -320,8 +320,9 @@ class SearchApplicationClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/search-application-search.html>`_
 
-        :param name: The name of the search application to be searched
-        :param params:
+        :param name: The name of the search application to be searched.
+        :param params: Query parameters specific to this request, which will override
+            any defaults specified in the template.
         """
         if name in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'name'")

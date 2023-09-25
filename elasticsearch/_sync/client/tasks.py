@@ -47,14 +47,11 @@ class TasksClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
 
-        :param task_id: Cancel the task with specified task id (node_id:task_number)
-        :param actions: A comma-separated list of actions that should be cancelled. Leave
-            empty to cancel all.
-        :param nodes: A comma-separated list of node IDs or names to limit the returned
-            information; use `_local` to return information from the node you're connecting
-            to, leave empty to get information from all nodes
-        :param parent_task_id: Cancel tasks with specified parent task id (node_id:task_number).
-            Set to -1 to cancel all.
+        :param task_id: ID of the task.
+        :param actions: Comma-separated list or wildcard expression of actions used to
+            limit the request.
+        :param nodes: Comma-separated list of node IDs or names used to limit the request.
+        :param parent_task_id: Parent task ID used to limit the tasks.
         :param wait_for_completion: Should the request block until the cancellation of
             the task and its descendant tasks is completed. Defaults to false
         """
@@ -103,10 +100,11 @@ class TasksClient(NamespacedClient):
 
         `<https://www.elastic.co/guide/en/elasticsearch/reference/master/tasks.html>`_
 
-        :param task_id: Return the task with specified id (node_id:task_number)
-        :param timeout: Explicit operation timeout
-        :param wait_for_completion: Wait for the matching tasks to complete (default:
-            false)
+        :param task_id: ID of the task.
+        :param timeout: Period to wait for a response. If no response is received before
+            the timeout expires, the request fails and returns an error.
+        :param wait_for_completion: If `true`, the request blocks until the task has
+            completed.
         """
         if task_id in SKIP_IN_PATH:
             raise ValueError("Empty value passed for parameter 'task_id'")

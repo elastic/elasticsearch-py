@@ -61,7 +61,7 @@ def format(session):
     session.run("python", "utils/run-unasync.py")
     session.run("isort", "--profile=black", *SOURCE_FILES)
     session.run("flynt", *SOURCE_FILES)
-    session.run("python", "utils/run-black.py", *SOURCE_FILES)
+    session.run("black", *SOURCE_FILES)
     session.run("python", "utils/license-headers.py", "fix", *SOURCE_FILES)
 
     lint(session)
@@ -72,7 +72,7 @@ def lint(session):
     session.install("flake8", "black", "mypy", "isort", "types-requests")
 
     session.run("isort", "--check", "--profile=black", *SOURCE_FILES)
-    session.run("python", "utils/run-black.py", "--check", *SOURCE_FILES)
+    session.run("black", "--check", *SOURCE_FILES)
     session.run("flake8", *SOURCE_FILES)
     session.run("python", "utils/license-headers.py", "check", *SOURCE_FILES)
 
