@@ -74,11 +74,6 @@ def main():
         pattern=r'STACK_VERSION:\s+\- "[0-9]+[0-9\.]*[0-9](?:\-SNAPSHOT)?"',
         replace=f'STACK_VERSION:\n  - "{major_minor_version}.0-SNAPSHOT"',
     )
-    find_and_replace(
-        path=SOURCE_DIR / ".github/workflows/unified-release.yml",
-        pattern=r'STACK_VERSION:\s+"[0-9]+[0-9\.]*[0-9](?:\-SNAPSHOT)?"',
-        replace=f'STACK_VERSION: "{major_minor_version}-SNAPSHOT"',
-    )
 
 
 if __name__ == "__main__":
