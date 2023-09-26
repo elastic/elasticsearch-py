@@ -1,0 +1,11 @@
+// query-dsl/terms-query.asciidoc:21
+
+[source, python]
+----
+resp = client.search(
+    body={
+        "query": {"terms": {"user.id": ["kimchy", "elkbee"], "boost": 1}}
+    },
+)
+print(resp)
+----

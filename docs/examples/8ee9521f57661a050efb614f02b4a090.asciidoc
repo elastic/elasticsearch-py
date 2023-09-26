@@ -1,0 +1,9 @@
+// aggregations/bucket/terms-aggregation.asciidoc:58
+
+[source, python]
+----
+resp = client.search(
+    body={"aggs": {"genres": {"terms": {"field": "genre"}}}},
+)
+print(resp)
+----

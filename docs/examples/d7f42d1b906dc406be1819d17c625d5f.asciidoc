@@ -1,0 +1,19 @@
+// aggregations/bucket/filter-aggregation.asciidoc:83
+
+[source, python]
+----
+resp = client.search(
+    index="sales",
+    size="0",
+    filter_path="aggregations",
+    body={
+        "aggs": {
+            "t_shirts": {
+                "filter": {"term": {"type": "t-shirt"}},
+                "aggs": {"avg_price": {"avg": {"field": "price"}}},
+            }
+        }
+    },
+)
+print(resp)
+----

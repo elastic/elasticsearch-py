@@ -1,7 +1,0 @@
-// getting-started.asciidoc:251
-
-[source, python]
-----
-resp = client.index(index="customer", id="1", body={"name": "John Doe"})
-print(resp)
-----

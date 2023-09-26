@@ -1,7 +1,0 @@
-// docs/update-by-query.asciidoc:336
-
-[source, python]
-----
-resp = client.update_by_query(index="twitter", scroll_size="100")
-print(resp)
-----

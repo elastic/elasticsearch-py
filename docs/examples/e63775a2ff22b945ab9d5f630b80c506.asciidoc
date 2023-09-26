@@ -1,0 +1,10 @@
+// cluster/health.asciidoc:192
+
+[source, python]
+----
+resp = client.cluster.health(
+    index="my-index-000001",
+    level="shards",
+)
+print(resp)
+----

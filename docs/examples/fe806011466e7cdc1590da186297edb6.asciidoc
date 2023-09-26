@@ -1,0 +1,9 @@
+// api-conventions.asciidoc:119
+
+[source, python]
+----
+resp = client.indices.create(
+    index="<my-index-{now/d}>",
+)
+print(resp)
+----

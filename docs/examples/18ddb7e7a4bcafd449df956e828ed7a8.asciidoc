@@ -1,7 +1,9 @@
-// docs/update-by-query.asciidoc:491
+// docs/update-by-query.asciidoc:546
 
 [source, python]
 ----
-resp = client.tasks.cancel(task_id="r1A2WoRbTwKZ516z6NEs5A:36619")
+resp = client.tasks.cancel(
+    task_id="r1A2WoRbTwKZ516z6NEs5A:36619",
+)
 print(resp)
 ----

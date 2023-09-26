@@ -1,4 +1,4 @@
-// search/suggesters.asciidoc:127
+// search/suggesters.asciidoc:122
 
 [source, python]
 ----

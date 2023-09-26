@@ -109,7 +109,7 @@ ParsedSource = collections.namedtuple("ParsedSource", ["api", "params", "body"])
 def blacken(filename):
     runner = CliRunner()
     result = runner.invoke(
-        black.main, [str(filename), "--line-length=75", "--target-version=py27"]
+        black.main, [str(filename), "--line-length=75", "--target-version=py37"]
     )
     assert result.exit_code == 0, result.output
 

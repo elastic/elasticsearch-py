@@ -1,0 +1,26 @@
+// indices/update-settings.asciidoc:171
+
+[source, python]
+----
+resp = client.indices.close(
+    index="my-index-000001",
+)
+print(resp)
+
+resp = client.indices.put_settings(
+    index="my-index-000001",
+    body={
+        "analysis": {
+            "analyzer": {
+                "content": {"type": "custom", "tokenizer": "whitespace"}
+            }
+        }
+    },
+)
+print(resp)
+
+resp = client.indices.open(
+    index="my-index-000001",
+)
+print(resp)
+----

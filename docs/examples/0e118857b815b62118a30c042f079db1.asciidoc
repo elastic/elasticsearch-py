@@ -1,4 +1,4 @@
-// query-dsl/multi-match-query.asciidoc:259
+// query-dsl/multi-match-query.asciidoc:262
 
 [source, python]
 ----

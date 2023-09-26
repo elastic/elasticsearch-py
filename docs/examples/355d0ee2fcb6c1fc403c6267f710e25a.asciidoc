@@ -1,0 +1,12 @@
+// docs/reindex.asciidoc:716
+
+[source, python]
+----
+resp = client.reindex(
+    body={
+        "source": {"index": ["my-index-000001", "my-index-000002"]},
+        "dest": {"index": "my-new-index-000002"},
+    },
+)
+print(resp)
+----

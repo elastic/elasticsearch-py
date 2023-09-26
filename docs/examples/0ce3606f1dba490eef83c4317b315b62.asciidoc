@@ -1,9 +1,0 @@
-// search/request-body.asciidoc:7
-
-[source, python]
-----
-resp = client.search(
-    index="twitter", body={"query": {"term": {"user": "kimchy"}}},
-)
-print(resp)
-----

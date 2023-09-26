@@ -1,7 +1,0 @@
-// indices/create-index.asciidoc:10
-
-[source, python]
-----
-resp = client.indices.create(index="twitter")
-print(resp)
-----

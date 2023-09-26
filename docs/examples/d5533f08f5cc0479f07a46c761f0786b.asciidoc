@@ -1,0 +1,17 @@
+// docs/get.asciidoc:321
+
+[source, python]
+----
+resp = client.indices.create(
+    index="my-index-000001",
+    body={
+        "mappings": {
+            "properties": {
+                "counter": {"type": "integer", "store": False},
+                "tags": {"type": "keyword", "store": True},
+            }
+        }
+    },
+)
+print(resp)
+----
