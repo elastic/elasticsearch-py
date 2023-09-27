@@ -109,9 +109,7 @@ def lint(session):
 
 @nox.session()
 def docs(session):
-    session.install(
-        "-rdev-requirements.txt", "sphinx-rtd-theme", "sphinx-autodoc-typehints"
-    )
+    session.install("-rdev-requirements.txt")
     session.install(".")
     session.run("python", "-m", "pip", "install", "sphinx-autodoc-typehints")
 
