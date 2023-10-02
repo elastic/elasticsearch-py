@@ -1,7 +1,0 @@
-// search/count.asciidoc:7
-
-[source, python]
-----
-resp = client.count(index="twitter", q="user:kimchy")
-print(resp)
-----

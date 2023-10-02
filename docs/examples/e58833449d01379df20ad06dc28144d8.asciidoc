@@ -1,0 +1,11 @@
+// docs/update-by-query.asciidoc:325
+
+[source, python]
+----
+resp = client.update_by_query(
+    index="my-index-000001",
+    conflicts="proceed",
+    body={"query": {"term": {"user.id": "kimchy"}}},
+)
+print(resp)
+----

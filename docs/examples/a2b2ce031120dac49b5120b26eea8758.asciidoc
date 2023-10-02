@@ -1,0 +1,11 @@
+// cat/indices.asciidoc:109
+
+[source, python]
+----
+resp = client.cat.indices(
+    index="my-index-*",
+    v="true",
+    s="index",
+)
+print(resp)
+----

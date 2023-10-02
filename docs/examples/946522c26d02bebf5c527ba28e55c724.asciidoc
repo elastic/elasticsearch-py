@@ -1,0 +1,10 @@
+// docs/update-by-query.asciidoc:352
+
+[source, python]
+----
+resp = client.update_by_query(
+    index="my-index-000001",
+    routing="1",
+)
+print(resp)
+----

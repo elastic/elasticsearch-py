@@ -1,0 +1,13 @@
+// indices/aliases.asciidoc:10
+
+[source, python]
+----
+resp = client.indices.update_aliases(
+    body={
+        "actions": [
+            {"add": {"index": "my-data-stream", "alias": "my-alias"}}
+        ]
+    },
+)
+print(resp)
+----

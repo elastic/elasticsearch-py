@@ -1,7 +1,0 @@
-// mapping.asciidoc:214
-
-[source, python]
-----
-resp = client.indices.get_mapping(index="my-index")
-print(resp)
-----

@@ -1,0 +1,18 @@
+// indices/put-mapping.asciidoc:339
+
+[source, python]
+----
+resp = client.index(
+    index="my-index-000001",
+    refresh="wait_for",
+    body={"user_id": 12345},
+)
+print(resp)
+
+resp = client.index(
+    index="my-index-000001",
+    refresh="wait_for",
+    body={"user_id": 12346},
+)
+print(resp)
+----

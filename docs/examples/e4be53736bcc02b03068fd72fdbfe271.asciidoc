@@ -1,9 +1,10 @@
-// indices/put-mapping.asciidoc:92
+// indices/put-mapping.asciidoc:108
 
 [source, python]
 ----
 resp = client.indices.put_mapping(
-    index="publications", body={"properties": {"title": {"type": "text"}}},
+    index="publications",
+    body={"properties": {"title": {"type": "text"}}},
 )
 print(resp)
 ----

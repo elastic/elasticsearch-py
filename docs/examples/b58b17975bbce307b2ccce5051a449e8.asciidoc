@@ -1,0 +1,12 @@
+// docs/delete-by-query.asciidoc:538
+
+[source, python]
+----
+resp = client.search(
+    index="my-index-000001",
+    size="0",
+    filter_path="hits.total",
+    body={"query": {"range": {"http.response.bytes": {"lt": 2000000}}}},
+)
+print(resp)
+----

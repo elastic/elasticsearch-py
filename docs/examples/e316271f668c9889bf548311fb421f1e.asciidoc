@@ -1,0 +1,19 @@
+// aggregations/bucket/terms-aggregation.asciidoc:846
+
+[source, python]
+----
+resp = client.search(
+    body={
+        "aggs": {
+            "ip_addresses": {
+                "terms": {
+                    "field": "destination_ip",
+                    "missing": "0.0.0.0",
+                    "value_type": "ip",
+                }
+            }
+        }
+    },
+)
+print(resp)
+----

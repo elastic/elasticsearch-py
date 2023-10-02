@@ -1,7 +1,0 @@
-// getting-started.asciidoc:290
-
-[source, python]
-----
-resp = client.get(index="customer", id="1")
-print(resp)
-----

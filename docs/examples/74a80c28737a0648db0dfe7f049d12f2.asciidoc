@@ -1,0 +1,10 @@
+// docs/get.asciidoc:272
+
+[source, python]
+----
+resp = client.exists(
+    index="my-index-000001",
+    id="0",
+)
+print(resp)
+----
