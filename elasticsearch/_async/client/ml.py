@@ -3236,6 +3236,7 @@ class MlClient(NamespacedClient):
         model_type: t.Optional[
             t.Union["t.Literal['lang_ident', 'pytorch', 'tree_ensemble']", str]
         ] = None,
+        platform_architecture: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         tags: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -3264,6 +3265,14 @@ class MlClient(NamespacedClient):
             model in memory. This property is supported only if defer_definition_decompression
             is true or the model definition is not supplied.
         :param model_type: The model type.
+        :param platform_architecture: The platform architecture (if applicable) of the
+            trained mode. If the model only works on one platform, because it is heavily
+            optimized for a particular processor architecture and OS combination, then
+            this field specifies which. The format of the string must match the platform
+            identifiers used by Elasticsearch, so one of, `linux-x86_64`, `linux-aarch64`,
+            `darwin-x86_64`, `darwin-aarch64`, or `windows-x86_64`. For portable models
+            (those that work independent of processor architecture or OS features), leave
+            this field unset.
         :param tags: An array of tags to organize the model.
         """
         if model_id in SKIP_IN_PATH:
@@ -3295,6 +3304,8 @@ class MlClient(NamespacedClient):
             __body["model_size_bytes"] = model_size_bytes
         if model_type is not None:
             __body["model_type"] = model_type
+        if platform_architecture is not None:
+            __body["platform_architecture"] = platform_architecture
         if pretty is not None:
             __query["pretty"] = pretty
         if tags is not None:
