@@ -43,7 +43,7 @@ class IngestClient(NamespacedClient):
         """
         Deletes a pipeline.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-pipeline-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.11/delete-pipeline-api.html>`_
 
         :param id: Pipeline ID or wildcard expression of pipeline IDs used to limit the
             request. To delete all ingest pipelines in a cluster, use a value of `*`.
@@ -88,7 +88,7 @@ class IngestClient(NamespacedClient):
         """
         Returns statistical information about geoip databases
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/geoip-processor.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.11/geoip-processor.html>`_
         """
         __path = "/_ingest/geoip/stats"
         __query: t.Dict[str, t.Any] = {}
@@ -124,7 +124,7 @@ class IngestClient(NamespacedClient):
         """
         Returns a pipeline.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-pipeline-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.11/get-pipeline-api.html>`_
 
         :param id: Comma-separated list of pipeline IDs to retrieve. Wildcard (`*`) expressions
             are supported. To get all ingest pipelines, omit this parameter or use `*`.
@@ -169,7 +169,7 @@ class IngestClient(NamespacedClient):
         """
         Returns a list of the built-in patterns.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/grok-processor.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.11/grok-processor.html>`_
         """
         __path = "/_ingest/processor/grok"
         __query: t.Dict[str, t.Any] = {}
@@ -218,7 +218,7 @@ class IngestClient(NamespacedClient):
         """
         Creates or updates a pipeline.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/ingest.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.11/ingest.html>`_
 
         :param id: ID of the ingest pipeline to create or update.
         :param description: Description of the ingest pipeline.
@@ -299,7 +299,7 @@ class IngestClient(NamespacedClient):
         """
         Allows to simulate a pipeline with example documents.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/simulate-pipeline-api.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.11/simulate-pipeline-api.html>`_
 
         :param id: Pipeline to test. If you don’t specify a `pipeline` in the request
             body, this parameter is required.

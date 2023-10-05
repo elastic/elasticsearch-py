@@ -39,7 +39,7 @@ class QueryRulesetClient(NamespacedClient):
         """
         Deletes a query ruleset.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/delete-query-ruleset.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.11/delete-query-ruleset.html>`_
 
         :param ruleset_id: The unique identifier of the query ruleset to delete
         """
@@ -75,7 +75,7 @@ class QueryRulesetClient(NamespacedClient):
         """
         Returns the details about a query ruleset.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/get-query-ruleset.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.11/get-query-ruleset.html>`_
 
         :param ruleset_id: The unique identifier of the query ruleset
         """
@@ -114,7 +114,7 @@ class QueryRulesetClient(NamespacedClient):
         """
         Lists query rulesets.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/list-query-rulesets.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.11/list-query-rulesets.html>`_
 
         :param from_: Starting offset (default: 0)
         :param size: specifies a max number of results to get
@@ -158,7 +158,7 @@ class QueryRulesetClient(NamespacedClient):
         """
         Creates or updates a query ruleset.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/put-query-ruleset.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.11/put-query-ruleset.html>`_
 
         :param ruleset_id: The unique identifier of the query ruleset to be created or
             updated
