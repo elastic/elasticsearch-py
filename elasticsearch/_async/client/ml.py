@@ -30,9 +30,7 @@ class MlClient(NamespacedClient):
         *,
         model_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -69,9 +67,7 @@ class MlClient(NamespacedClient):
         job_id: str,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -127,9 +123,7 @@ class MlClient(NamespacedClient):
         *,
         calendar_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -164,9 +158,7 @@ class MlClient(NamespacedClient):
         calendar_id: str,
         event_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -203,11 +195,9 @@ class MlClient(NamespacedClient):
         self,
         *,
         calendar_id: str,
-        job_id: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        job_id: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -245,9 +235,7 @@ class MlClient(NamespacedClient):
         *,
         id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -290,9 +278,7 @@ class MlClient(NamespacedClient):
         *,
         datafeed_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -336,9 +322,7 @@ class MlClient(NamespacedClient):
         *,
         job_id: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         requests_per_second: t.Optional[float] = None,
@@ -389,9 +373,7 @@ class MlClient(NamespacedClient):
         *,
         filter_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -427,9 +409,7 @@ class MlClient(NamespacedClient):
         forecast_id: t.Optional[str] = None,
         allow_no_forecasts: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
@@ -484,9 +464,7 @@ class MlClient(NamespacedClient):
         job_id: str,
         delete_user_annotations: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -536,9 +514,7 @@ class MlClient(NamespacedClient):
         job_id: str,
         snapshot_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -575,9 +551,7 @@ class MlClient(NamespacedClient):
         *,
         model_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -618,9 +592,7 @@ class MlClient(NamespacedClient):
         model_id: str,
         model_alias: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -659,9 +631,7 @@ class MlClient(NamespacedClient):
         *,
         analysis_config: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         max_bucket_cardinality: t.Optional[t.Mapping[str, int]] = None,
         overall_cardinality: t.Optional[t.Mapping[str, int]] = None,
@@ -718,9 +688,7 @@ class MlClient(NamespacedClient):
         evaluation: t.Mapping[str, t.Any],
         index: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -774,9 +742,7 @@ class MlClient(NamespacedClient):
         description: t.Optional[str] = None,
         dest: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         max_num_threads: t.Optional[int] = None,
         model_memory_limit: t.Optional[str] = None,
@@ -866,9 +832,7 @@ class MlClient(NamespacedClient):
         calc_interim: t.Optional[bool] = None,
         end: t.Optional[t.Union[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         skip_time: t.Optional[t.Union[str, t.Any]] = None,
@@ -928,9 +892,7 @@ class MlClient(NamespacedClient):
         duration: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         error_trace: t.Optional[bool] = None,
         expires_in: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         max_model_memory: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
@@ -990,9 +952,7 @@ class MlClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         exclude_interim: t.Optional[bool] = None,
         expand: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         page: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -1078,9 +1038,7 @@ class MlClient(NamespacedClient):
         calendar_id: str,
         end: t.Optional[t.Union[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         job_id: t.Optional[str] = None,
@@ -1140,9 +1098,7 @@ class MlClient(NamespacedClient):
         *,
         calendar_id: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         page: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -1203,9 +1159,7 @@ class MlClient(NamespacedClient):
         job_id: str,
         category_id: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         page: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -1274,9 +1228,7 @@ class MlClient(NamespacedClient):
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         exclude_generated: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -1339,9 +1291,7 @@ class MlClient(NamespacedClient):
         id: t.Optional[str] = None,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -1398,14 +1348,10 @@ class MlClient(NamespacedClient):
     async def get_datafeed_stats(
         self,
         *,
-        datafeed_id: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        datafeed_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -1449,15 +1395,11 @@ class MlClient(NamespacedClient):
     async def get_datafeeds(
         self,
         *,
-        datafeed_id: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        datafeed_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         exclude_generated: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -1508,13 +1450,9 @@ class MlClient(NamespacedClient):
     async def get_filters(
         self,
         *,
-        filter_id: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -1563,9 +1501,7 @@ class MlClient(NamespacedClient):
         end: t.Optional[t.Union[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         exclude_interim: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         influencer_score: t.Optional[float] = None,
@@ -1644,9 +1580,7 @@ class MlClient(NamespacedClient):
         job_id: t.Optional[str] = None,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -1691,15 +1625,11 @@ class MlClient(NamespacedClient):
     async def get_jobs(
         self,
         *,
-        job_id: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        job_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         exclude_generated: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -1750,9 +1680,7 @@ class MlClient(NamespacedClient):
         *,
         node_id: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
@@ -1803,9 +1731,7 @@ class MlClient(NamespacedClient):
         snapshot_id: str,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -1861,9 +1787,7 @@ class MlClient(NamespacedClient):
         desc: t.Optional[bool] = None,
         end: t.Optional[t.Union[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         page: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -1944,9 +1868,7 @@ class MlClient(NamespacedClient):
         end: t.Optional[t.Union[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         exclude_interim: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         overall_score: t.Optional[t.Union[float, str]] = None,
         pretty: t.Optional[bool] = None,
@@ -2022,9 +1944,7 @@ class MlClient(NamespacedClient):
         end: t.Optional[t.Union[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
         exclude_interim: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         page: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -2102,9 +2022,7 @@ class MlClient(NamespacedClient):
         decompress_definition: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         exclude_generated: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         include: t.Optional[
@@ -2180,14 +2098,10 @@ class MlClient(NamespacedClient):
     async def get_trained_models_stats(
         self,
         *,
-        model_id: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        model_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -2239,13 +2153,9 @@ class MlClient(NamespacedClient):
         self,
         *,
         model_id: str,
-        docs: t.Union[
-            t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]
-        ],
+        docs: t.Sequence[t.Mapping[str, t.Any]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         inference_config: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
@@ -2296,9 +2206,7 @@ class MlClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -2330,9 +2238,7 @@ class MlClient(NamespacedClient):
         *,
         job_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
@@ -2376,13 +2282,9 @@ class MlClient(NamespacedClient):
         self,
         *,
         calendar_id: str,
-        events: t.Union[
-            t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]
-        ],
+        events: t.Sequence[t.Mapping[str, t.Any]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -2425,11 +2327,9 @@ class MlClient(NamespacedClient):
         self,
         *,
         job_id: str,
-        data: t.Union[t.List[t.Any], t.Tuple[t.Any, ...]],
+        data: t.Sequence[t.Any],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         reset_end: t.Optional[t.Union[str, t.Any]] = None,
@@ -2482,9 +2382,7 @@ class MlClient(NamespacedClient):
         id: t.Optional[str] = None,
         config: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -2533,9 +2431,7 @@ class MlClient(NamespacedClient):
         datafeed_config: t.Optional[t.Mapping[str, t.Any]] = None,
         end: t.Optional[t.Union[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         job_config: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
@@ -2601,11 +2497,9 @@ class MlClient(NamespacedClient):
         calendar_id: str,
         description: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        job_ids: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        job_ids: t.Optional[t.Sequence[str]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -2650,9 +2544,7 @@ class MlClient(NamespacedClient):
         calendar_id: str,
         job_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -2699,12 +2591,8 @@ class MlClient(NamespacedClient):
         analyzed_fields: t.Optional[t.Mapping[str, t.Any]] = None,
         description: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        headers: t.Optional[
-            t.Mapping[str, t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        headers: t.Optional[t.Mapping[str, t.Union[str, t.Sequence[str]]]] = None,
         human: t.Optional[bool] = None,
         max_num_threads: t.Optional[int] = None,
         model_memory_limit: t.Optional[str] = None,
@@ -2830,38 +2718,20 @@ class MlClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         frequency: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
-        headers: t.Optional[
-            t.Mapping[str, t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]]
-        ] = None,
+        headers: t.Optional[t.Mapping[str, t.Union[str, t.Sequence[str]]]] = None,
         human: t.Optional[bool] = None,
         ignore_throttled: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        indexes: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        indices: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        indexes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        indices: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         indices_options: t.Optional[t.Mapping[str, t.Any]] = None,
         job_id: t.Optional[str] = None,
         max_empty_searches: t.Optional[int] = None,
@@ -3011,11 +2881,9 @@ class MlClient(NamespacedClient):
         filter_id: str,
         description: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        items: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        items: t.Optional[t.Sequence[str]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -3069,10 +2937,8 @@ class MlClient(NamespacedClient):
         datafeed_config: t.Optional[t.Mapping[str, t.Any]] = None,
         description: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        groups: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        groups: t.Optional[t.Sequence[str]] = None,
         human: t.Optional[bool] = None,
         model_plot_config: t.Optional[t.Mapping[str, t.Any]] = None,
         model_snapshot_retention_days: t.Optional[int] = None,
@@ -3225,9 +3091,7 @@ class MlClient(NamespacedClient):
         definition: t.Optional[t.Mapping[str, t.Any]] = None,
         description: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         inference_config: t.Optional[t.Mapping[str, t.Any]] = None,
         input: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -3238,7 +3102,7 @@ class MlClient(NamespacedClient):
         ] = None,
         platform_architecture: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
-        tags: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        tags: t.Optional[t.Sequence[str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Creates an inference trained model.
@@ -3322,9 +3186,7 @@ class MlClient(NamespacedClient):
         model_id: str,
         model_alias: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         reassign: t.Optional[bool] = None,
@@ -3374,9 +3236,7 @@ class MlClient(NamespacedClient):
         total_definition_length: int,
         total_parts: int,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -3437,13 +3297,11 @@ class MlClient(NamespacedClient):
         self,
         *,
         model_id: str,
-        vocabulary: t.Union[t.List[str], t.Tuple[str, ...]],
+        vocabulary: t.Sequence[str],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        merges: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        merges: t.Optional[t.Sequence[str]] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -3486,9 +3344,7 @@ class MlClient(NamespacedClient):
         job_id: str,
         delete_user_annotations: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         wait_for_completion: t.Optional[bool] = None,
@@ -3536,9 +3392,7 @@ class MlClient(NamespacedClient):
         snapshot_id: str,
         delete_intervening_results: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -3586,9 +3440,7 @@ class MlClient(NamespacedClient):
         *,
         enabled: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
@@ -3629,9 +3481,7 @@ class MlClient(NamespacedClient):
         *,
         id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
@@ -3675,9 +3525,7 @@ class MlClient(NamespacedClient):
         datafeed_id: str,
         end: t.Optional[t.Union[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         start: t.Optional[t.Union[str, t.Any]] = None,
@@ -3731,9 +3579,7 @@ class MlClient(NamespacedClient):
         model_id: str,
         cache_size: t.Optional[t.Union[int, str]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         number_of_allocations: t.Optional[int] = None,
         pretty: t.Optional[bool] = None,
@@ -3813,9 +3659,7 @@ class MlClient(NamespacedClient):
         id: str,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -3873,9 +3717,7 @@ class MlClient(NamespacedClient):
         datafeed_id: str,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -3930,9 +3772,7 @@ class MlClient(NamespacedClient):
         model_id: str,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -3984,9 +3824,7 @@ class MlClient(NamespacedClient):
         allow_lazy_start: t.Optional[bool] = None,
         description: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         max_num_threads: t.Optional[int] = None,
         model_memory_limit: t.Optional[str] = None,
@@ -4053,31 +3891,19 @@ class MlClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         frequency: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         human: t.Optional[bool] = None,
         ignore_throttled: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        indexes: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
-        indices: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        indexes: t.Optional[t.Sequence[str]] = None,
+        indices: t.Optional[t.Sequence[str]] = None,
         indices_options: t.Optional[t.Mapping[str, t.Any]] = None,
         job_id: t.Optional[str] = None,
         max_empty_searches: t.Optional[int] = None,
@@ -4234,15 +4060,13 @@ class MlClient(NamespacedClient):
         self,
         *,
         filter_id: str,
-        add_items: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        add_items: t.Optional[t.Sequence[str]] = None,
         description: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
-        remove_items: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        remove_items: t.Optional[t.Sequence[str]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Updates the description of a filter, adds items, or removes items.
@@ -4290,20 +4114,14 @@ class MlClient(NamespacedClient):
         background_persist_interval: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
-        categorization_filters: t.Optional[
-            t.Union[t.List[str], t.Tuple[str, ...]]
-        ] = None,
+        categorization_filters: t.Optional[t.Sequence[str]] = None,
         custom_settings: t.Optional[t.Mapping[str, t.Any]] = None,
         daily_model_snapshot_retention_after_days: t.Optional[int] = None,
         description: t.Optional[str] = None,
-        detectors: t.Optional[
-            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
-        ] = None,
+        detectors: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        groups: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        groups: t.Optional[t.Sequence[str]] = None,
         human: t.Optional[bool] = None,
         model_plot_config: t.Optional[t.Mapping[str, t.Any]] = None,
         model_prune_window: t.Optional[
@@ -4429,9 +4247,7 @@ class MlClient(NamespacedClient):
         snapshot_id: str,
         description: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         retain: t.Optional[bool] = None,
@@ -4479,9 +4295,7 @@ class MlClient(NamespacedClient):
         job_id: str,
         snapshot_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
@@ -4534,9 +4348,7 @@ class MlClient(NamespacedClient):
         data_description: t.Optional[t.Mapping[str, t.Any]] = None,
         description: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         job_id: t.Optional[str] = None,
         model_plot: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -4602,9 +4414,7 @@ class MlClient(NamespacedClient):
         *,
         detector: t.Mapping[str, t.Any],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:

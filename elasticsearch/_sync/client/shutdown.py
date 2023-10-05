@@ -30,9 +30,7 @@ class ShutdownClient(NamespacedClient):
         *,
         node_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
@@ -80,13 +78,9 @@ class ShutdownClient(NamespacedClient):
     def get_node(
         self,
         *,
-        node_id: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        node_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]
@@ -142,9 +136,7 @@ class ShutdownClient(NamespacedClient):
         type: t.Union["t.Literal['remove', 'replace', 'restart']", str],
         allocation_delay: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal['d', 'h', 'm', 'micros', 'ms', 'nanos', 's']", str]

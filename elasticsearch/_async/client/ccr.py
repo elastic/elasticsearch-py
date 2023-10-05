@@ -30,9 +30,7 @@ class CcrClient(NamespacedClient):
         *,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -68,9 +66,7 @@ class CcrClient(NamespacedClient):
         *,
         index: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         leader_index: t.Optional[str] = None,
         max_outstanding_read_requests: t.Optional[int] = None,
@@ -168,11 +164,9 @@ class CcrClient(NamespacedClient):
     async def follow_info(
         self,
         *,
-        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        index: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -206,11 +200,9 @@ class CcrClient(NamespacedClient):
     async def follow_stats(
         self,
         *,
-        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        index: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -248,9 +240,7 @@ class CcrClient(NamespacedClient):
         *,
         index: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         follower_cluster: t.Optional[str] = None,
         follower_index: t.Optional[str] = None,
         follower_index_uuid: t.Optional[str] = None,
@@ -302,9 +292,7 @@ class CcrClient(NamespacedClient):
         *,
         name: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -341,9 +329,7 @@ class CcrClient(NamespacedClient):
         *,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -378,9 +364,7 @@ class CcrClient(NamespacedClient):
         *,
         index: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -419,17 +403,11 @@ class CcrClient(NamespacedClient):
         name: str,
         remote_cluster: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         follow_index_pattern: t.Optional[str] = None,
         human: t.Optional[bool] = None,
-        leader_index_exclusion_patterns: t.Optional[
-            t.Union[t.List[str], t.Tuple[str, ...]]
-        ] = None,
-        leader_index_patterns: t.Optional[
-            t.Union[t.List[str], t.Tuple[str, ...]]
-        ] = None,
+        leader_index_exclusion_patterns: t.Optional[t.Sequence[str]] = None,
+        leader_index_patterns: t.Optional[t.Sequence[str]] = None,
         max_outstanding_read_requests: t.Optional[int] = None,
         max_outstanding_write_requests: t.Optional[int] = None,
         max_read_request_operation_count: t.Optional[int] = None,
@@ -557,9 +535,7 @@ class CcrClient(NamespacedClient):
         *,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -596,9 +572,7 @@ class CcrClient(NamespacedClient):
         *,
         index: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         max_outstanding_read_requests: t.Optional[int] = None,
         max_outstanding_write_requests: t.Optional[int] = None,
@@ -684,9 +658,7 @@ class CcrClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -716,9 +688,7 @@ class CcrClient(NamespacedClient):
         *,
         index: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:

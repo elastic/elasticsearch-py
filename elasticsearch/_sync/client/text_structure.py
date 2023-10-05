@@ -30,7 +30,7 @@ class TextStructureClient(NamespacedClient):
     def find_structure(
         self,
         *,
-        text_files: t.Union[t.List[t.Any], t.Tuple[t.Any, ...]],
+        text_files: t.Sequence[t.Any],
         charset: t.Optional[str] = None,
         column_names: t.Optional[str] = None,
         delimiter: t.Optional[str] = None,

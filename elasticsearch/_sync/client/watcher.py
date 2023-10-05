@@ -29,13 +29,9 @@ class WatcherClient(NamespacedClient):
         self,
         *,
         watch_id: str,
-        action_id: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        action_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -75,9 +71,7 @@ class WatcherClient(NamespacedClient):
         *,
         watch_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -111,9 +105,7 @@ class WatcherClient(NamespacedClient):
         *,
         watch_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -147,9 +139,7 @@ class WatcherClient(NamespacedClient):
         *,
         id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -196,9 +186,7 @@ class WatcherClient(NamespacedClient):
         alternative_input: t.Optional[t.Mapping[str, t.Any]] = None,
         debug: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_condition: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -276,9 +264,7 @@ class WatcherClient(NamespacedClient):
         *,
         id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -317,9 +303,7 @@ class WatcherClient(NamespacedClient):
         active: t.Optional[bool] = None,
         condition: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         if_primary_term: t.Optional[int] = None,
         if_seq_no: t.Optional[int] = None,
@@ -403,27 +387,19 @@ class WatcherClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
         search_after: t.Optional[
-            t.Union[
-                t.List[t.Union[None, bool, float, int, str, t.Any]],
-                t.Tuple[t.Union[None, bool, float, int, str, t.Any], ...],
-            ]
+            t.Sequence[t.Union[None, bool, float, int, str, t.Any]]
         ] = None,
         size: t.Optional[int] = None,
         sort: t.Optional[
             t.Union[
+                t.Sequence[t.Union[str, t.Mapping[str, t.Any]]],
                 t.Union[str, t.Mapping[str, t.Any]],
-                t.Union[
-                    t.List[t.Union[str, t.Mapping[str, t.Any]]],
-                    t.Tuple[t.Union[str, t.Mapping[str, t.Any]], ...],
-                ],
             ]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -485,9 +461,7 @@ class WatcherClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -517,32 +491,21 @@ class WatcherClient(NamespacedClient):
         *,
         metric: t.Optional[
             t.Union[
+                t.Sequence[
+                    t.Union[
+                        "t.Literal['_all', 'current_watches', 'pending_watches', 'queued_watches']",
+                        str,
+                    ]
+                ],
                 t.Union[
                     "t.Literal['_all', 'current_watches', 'pending_watches', 'queued_watches']",
                     str,
-                ],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['_all', 'current_watches', 'pending_watches', 'queued_watches']",
-                            str,
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['_all', 'current_watches', 'pending_watches', 'queued_watches']",
-                            str,
-                        ],
-                        ...,
-                    ],
                 ],
             ]
         ] = None,
         emit_stacktraces: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -580,9 +543,7 @@ class WatcherClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
