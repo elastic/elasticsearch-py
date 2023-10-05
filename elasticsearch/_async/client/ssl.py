@@ -39,7 +39,7 @@ class SslClient(NamespacedClient):
         Retrieves information about the X.509 certificates used to encrypt communications
         in the cluster.
 
-        `<https://www.elastic.co/guide/en/elasticsearch/reference/master/security-api-ssl.html>`_
+        `<https://www.elastic.co/guide/en/elasticsearch/reference/8.11/security-api-ssl.html>`_
         """
         __path = "/_ssl/certificates"
         __query: t.Dict[str, t.Any] = {}
