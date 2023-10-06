@@ -30,9 +30,7 @@ class TransformClient(NamespacedClient):
         *,
         transform_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -77,15 +75,11 @@ class TransformClient(NamespacedClient):
     async def get_transform(
         self,
         *,
-        transform_id: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        transform_id: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         exclude_generated: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -142,12 +136,10 @@ class TransformClient(NamespacedClient):
     async def get_transform_stats(
         self,
         *,
-        transform_id: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        transform_id: t.Union[str, t.Sequence[str]],
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -206,9 +198,7 @@ class TransformClient(NamespacedClient):
         description: t.Optional[str] = None,
         dest: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         frequency: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         human: t.Optional[bool] = None,
         latest: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -303,9 +293,7 @@ class TransformClient(NamespacedClient):
         defer_validation: t.Optional[bool] = None,
         description: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         frequency: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         human: t.Optional[bool] = None,
         latest: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -404,9 +392,7 @@ class TransformClient(NamespacedClient):
         *,
         transform_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -448,9 +434,7 @@ class TransformClient(NamespacedClient):
         *,
         transform_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
@@ -490,9 +474,7 @@ class TransformClient(NamespacedClient):
         *,
         transform_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[str] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -538,9 +520,7 @@ class TransformClient(NamespacedClient):
         transform_id: str,
         allow_no_match: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -614,9 +594,7 @@ class TransformClient(NamespacedClient):
         description: t.Optional[str] = None,
         dest: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         frequency: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         human: t.Optional[bool] = None,
         meta: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -695,9 +673,7 @@ class TransformClient(NamespacedClient):
         *,
         dry_run: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,

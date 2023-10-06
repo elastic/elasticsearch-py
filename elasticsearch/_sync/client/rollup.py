@@ -30,9 +30,7 @@ class RollupClient(NamespacedClient):
         *,
         id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -66,9 +64,7 @@ class RollupClient(NamespacedClient):
         *,
         id: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -104,9 +100,7 @@ class RollupClient(NamespacedClient):
         *,
         id: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -141,11 +135,9 @@ class RollupClient(NamespacedClient):
     def get_rollup_index_caps(
         self,
         *,
-        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        index: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -189,16 +181,10 @@ class RollupClient(NamespacedClient):
         page_size: int,
         rollup_index: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        headers: t.Optional[
-            t.Mapping[str, t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        headers: t.Optional[t.Mapping[str, t.Union[str, t.Sequence[str]]]] = None,
         human: t.Optional[bool] = None,
-        metrics: t.Optional[
-            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
-        ] = None,
+        metrics: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -297,13 +283,11 @@ class RollupClient(NamespacedClient):
     def rollup_search(
         self,
         *,
-        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        index: t.Union[str, t.Sequence[str]],
         aggregations: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         aggs: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         query: t.Optional[t.Mapping[str, t.Any]] = None,
@@ -363,9 +347,7 @@ class RollupClient(NamespacedClient):
         *,
         id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -399,9 +381,7 @@ class RollupClient(NamespacedClient):
         *,
         id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
