@@ -30,6 +30,7 @@ from typing import (
     List,
     Mapping,
     Optional,
+    Sequence,
     Set,
     Tuple,
     Type,
@@ -69,7 +70,9 @@ CLIENT_META_SERVICE = ("es", client_meta_version(__versionstr__))
 # Default User-Agent used by the client
 USER_AGENT = create_user_agent("elasticsearch-py", __versionstr__)
 
-_TYPE_HOSTS = Union[str, List[Union[str, Mapping[str, Union[str, int]], NodeConfig]]]
+_TYPE_HOSTS = Union[
+    str, Sequence[Union[str, Mapping[str, Union[str, int]], NodeConfig]]
+]
 
 _TYPE_ASYNC_SNIFF_CALLBACK = Callable[
     [AsyncTransport, SniffOptions], Awaitable[List[NodeConfig]]
@@ -139,7 +142,7 @@ def hosts_to_node_configs(hosts: _TYPE_HOSTS) -> List[NodeConfig]:
     """Transforms the many formats of 'hosts' into NodeConfigs"""
 
     # To make the logic here simpler we reroute everything to be List[X]
-    if not isinstance(hosts, (tuple, list)):
+    if isinstance(hosts, str):
         return hosts_to_node_configs([hosts])
 
     node_configs: List[NodeConfig] = []
