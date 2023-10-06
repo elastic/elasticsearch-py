@@ -29,11 +29,9 @@ class FleetClient(NamespacedClient):
         self,
         *,
         index: str,
-        checkpoints: t.Optional[t.Union[t.List[int], t.Tuple[int, ...]]] = None,
+        checkpoints: t.Optional[t.Sequence[int]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
@@ -89,9 +87,7 @@ class FleetClient(NamespacedClient):
     def msearch(
         self,
         *,
-        searches: t.Union[
-            t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]
-        ],
+        searches: t.Sequence[t.Mapping[str, t.Any]],
         index: t.Optional[str] = None,
         allow_no_indices: t.Optional[bool] = None,
         allow_partial_search_results: t.Optional[bool] = None,
@@ -99,25 +95,13 @@ class FleetClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_throttled: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
@@ -130,9 +114,7 @@ class FleetClient(NamespacedClient):
             t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
         ] = None,
         typed_keys: t.Optional[bool] = None,
-        wait_for_checkpoints: t.Optional[
-            t.Union[t.List[int], t.Tuple[int, ...]]
-        ] = None,
+        wait_for_checkpoints: t.Optional[t.Sequence[int]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Multi Search API where the search will only be executed after specified checkpoints
@@ -255,44 +237,26 @@ class FleetClient(NamespacedClient):
         collapse: t.Optional[t.Mapping[str, t.Any]] = None,
         default_operator: t.Optional[t.Union["t.Literal['and', 'or']", str]] = None,
         df: t.Optional[str] = None,
-        docvalue_fields: t.Optional[
-            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
-        ] = None,
+        docvalue_fields: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
         explain: t.Optional[bool] = None,
         ext: t.Optional[t.Mapping[str, t.Any]] = None,
-        fields: t.Optional[
-            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
-        ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        fields: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         highlight: t.Optional[t.Mapping[str, t.Any]] = None,
         human: t.Optional[bool] = None,
         ignore_throttled: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        indices_boost: t.Optional[
-            t.Union[t.List[t.Mapping[str, float]], t.Tuple[t.Mapping[str, float], ...]]
-        ] = None,
+        indices_boost: t.Optional[t.Sequence[t.Mapping[str, float]]] = None,
         lenient: t.Optional[bool] = None,
         max_concurrent_shard_requests: t.Optional[int] = None,
         min_compatible_shard_node: t.Optional[str] = None,
@@ -307,12 +271,7 @@ class FleetClient(NamespacedClient):
         query: t.Optional[t.Mapping[str, t.Any]] = None,
         request_cache: t.Optional[bool] = None,
         rescore: t.Optional[
-            t.Union[
-                t.Mapping[str, t.Any],
-                t.Union[
-                    t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]
-                ],
-            ]
+            t.Union[t.Mapping[str, t.Any], t.Sequence[t.Mapping[str, t.Any]]]
         ] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
@@ -320,10 +279,7 @@ class FleetClient(NamespacedClient):
         script_fields: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         scroll: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         search_after: t.Optional[
-            t.Union[
-                t.List[t.Union[None, bool, float, int, str, t.Any]],
-                t.Tuple[t.Union[None, bool, float, int, str, t.Any], ...],
-            ]
+            t.Sequence[t.Union[None, bool, float, int, str, t.Any]]
         ] = None,
         search_type: t.Optional[
             t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
@@ -333,24 +289,15 @@ class FleetClient(NamespacedClient):
         slice: t.Optional[t.Mapping[str, t.Any]] = None,
         sort: t.Optional[
             t.Union[
+                t.Sequence[t.Union[str, t.Mapping[str, t.Any]]],
                 t.Union[str, t.Mapping[str, t.Any]],
-                t.Union[
-                    t.List[t.Union[str, t.Mapping[str, t.Any]]],
-                    t.Tuple[t.Union[str, t.Mapping[str, t.Any]], ...],
-                ],
             ]
         ] = None,
         source: t.Optional[t.Union[bool, t.Mapping[str, t.Any]]] = None,
-        source_excludes: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        source_includes: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        stats: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
-        stored_fields: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        source_includes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        stats: t.Optional[t.Sequence[str]] = None,
+        stored_fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         suggest: t.Optional[t.Mapping[str, t.Any]] = None,
         suggest_field: t.Optional[str] = None,
         suggest_mode: t.Optional[
@@ -364,9 +311,7 @@ class FleetClient(NamespacedClient):
         track_total_hits: t.Optional[t.Union[bool, int]] = None,
         typed_keys: t.Optional[bool] = None,
         version: t.Optional[bool] = None,
-        wait_for_checkpoints: t.Optional[
-            t.Union[t.List[int], t.Tuple[int, ...]]
-        ] = None,
+        wait_for_checkpoints: t.Optional[t.Sequence[int]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
         Search API where the search will only be executed after specified checkpoints

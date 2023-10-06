@@ -34,25 +34,13 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         master_timeout: t.Optional[
@@ -115,29 +103,17 @@ class IndicesClient(NamespacedClient):
         *,
         index: t.Optional[str] = None,
         analyzer: t.Optional[str] = None,
-        attributes: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
-        char_filter: t.Optional[
-            t.Union[
-                t.List[t.Union[str, t.Mapping[str, t.Any]]],
-                t.Tuple[t.Union[str, t.Mapping[str, t.Any]], ...],
-            ]
-        ] = None,
+        attributes: t.Optional[t.Sequence[str]] = None,
+        char_filter: t.Optional[t.Sequence[t.Union[str, t.Mapping[str, t.Any]]]] = None,
         error_trace: t.Optional[bool] = None,
         explain: t.Optional[bool] = None,
         field: t.Optional[str] = None,
-        filter: t.Optional[
-            t.Union[
-                t.List[t.Union[str, t.Mapping[str, t.Any]]],
-                t.Tuple[t.Union[str, t.Mapping[str, t.Any]], ...],
-            ]
-        ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter: t.Optional[t.Sequence[t.Union[str, t.Mapping[str, t.Any]]]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         normalizer: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
-        text: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        text: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         tokenizer: t.Optional[t.Union[str, t.Mapping[str, t.Any]]] = None,
     ) -> ObjectApiResponse[t.Any]:
         """
@@ -212,34 +188,20 @@ class IndicesClient(NamespacedClient):
     async def clear_cache(
         self,
         *,
-        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_indices: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
         fielddata: t.Optional[bool] = None,
-        fields: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -312,9 +274,7 @@ class IndicesClient(NamespacedClient):
         target: str,
         aliases: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
@@ -382,30 +342,18 @@ class IndicesClient(NamespacedClient):
     async def close(
         self,
         *,
-        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        index: t.Union[str, t.Sequence[str]],
         allow_no_indices: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         master_timeout: t.Optional[
@@ -480,9 +428,7 @@ class IndicesClient(NamespacedClient):
         index: str,
         aliases: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         mappings: t.Optional[t.Mapping[str, t.Any]] = None,
         master_timeout: t.Optional[
@@ -554,9 +500,7 @@ class IndicesClient(NamespacedClient):
         *,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -596,25 +540,13 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -653,30 +585,18 @@ class IndicesClient(NamespacedClient):
     async def delete(
         self,
         *,
-        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        index: t.Union[str, t.Sequence[str]],
         allow_no_indices: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         master_timeout: t.Optional[
@@ -740,12 +660,10 @@ class IndicesClient(NamespacedClient):
     async def delete_alias(
         self,
         *,
-        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
-        name: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        index: t.Union[str, t.Sequence[str]],
+        name: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
@@ -795,29 +713,17 @@ class IndicesClient(NamespacedClient):
     async def delete_data_lifecycle(
         self,
         *,
-        name: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        name: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
@@ -864,29 +770,17 @@ class IndicesClient(NamespacedClient):
     async def delete_data_stream(
         self,
         *,
-        name: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        name: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -923,11 +817,9 @@ class IndicesClient(NamespacedClient):
     async def delete_index_template(
         self,
         *,
-        name: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        name: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
@@ -975,9 +867,7 @@ class IndicesClient(NamespacedClient):
         *,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
@@ -1023,30 +913,18 @@ class IndicesClient(NamespacedClient):
     async def disk_usage(
         self,
         *,
-        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        index: t.Union[str, t.Sequence[str]],
         allow_no_indices: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         flush: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
@@ -1115,9 +993,7 @@ class IndicesClient(NamespacedClient):
         target_index: str,
         config: t.Mapping[str, t.Any],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -1156,30 +1032,18 @@ class IndicesClient(NamespacedClient):
     async def exists(
         self,
         *,
-        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        index: t.Union[str, t.Sequence[str]],
         allow_no_indices: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
@@ -1241,31 +1105,19 @@ class IndicesClient(NamespacedClient):
     async def exists_alias(
         self,
         *,
-        name: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
-        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        name: t.Union[str, t.Sequence[str]],
+        index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_indices: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
@@ -1328,9 +1180,7 @@ class IndicesClient(NamespacedClient):
         *,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
@@ -1371,11 +1221,9 @@ class IndicesClient(NamespacedClient):
     async def exists_template(
         self,
         *,
-        name: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        name: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
@@ -1422,11 +1270,9 @@ class IndicesClient(NamespacedClient):
     async def explain_data_lifecycle(
         self,
         *,
-        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        index: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         include_defaults: t.Optional[bool] = None,
         master_timeout: t.Optional[
@@ -1470,33 +1316,19 @@ class IndicesClient(NamespacedClient):
     async def field_usage_stats(
         self,
         *,
-        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        index: t.Union[str, t.Sequence[str]],
         allow_no_indices: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        fields: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         master_timeout: t.Optional[
@@ -1572,30 +1404,18 @@ class IndicesClient(NamespacedClient):
     async def flush(
         self,
         *,
-        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_indices: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         force: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
@@ -1657,30 +1477,18 @@ class IndicesClient(NamespacedClient):
     async def forcemerge(
         self,
         *,
-        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_indices: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         flush: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
@@ -1748,44 +1556,26 @@ class IndicesClient(NamespacedClient):
     async def get(
         self,
         *,
-        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        index: t.Union[str, t.Sequence[str]],
         allow_no_indices: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
         features: t.Optional[
             t.Union[
-                t.Union["t.Literal['aliases', 'mappings', 'settings']", str],
-                t.Union[
-                    t.List[
-                        t.Union["t.Literal['aliases', 'mappings', 'settings']", str]
-                    ],
-                    t.Tuple[
-                        t.Union["t.Literal['aliases', 'mappings', 'settings']", str],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['aliases', 'mappings', 'settings']", str]
                 ],
+                t.Union["t.Literal['aliases', 'mappings', 'settings']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
@@ -1861,31 +1651,19 @@ class IndicesClient(NamespacedClient):
     async def get_alias(
         self,
         *,
-        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
-        name: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        name: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_indices: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
@@ -1947,29 +1725,17 @@ class IndicesClient(NamespacedClient):
     async def get_data_lifecycle(
         self,
         *,
-        name: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        name: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         include_defaults: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -2012,29 +1778,17 @@ class IndicesClient(NamespacedClient):
     async def get_data_stream(
         self,
         *,
-        name: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        name: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         include_defaults: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -2078,31 +1832,19 @@ class IndicesClient(NamespacedClient):
     async def get_field_mapping(
         self,
         *,
-        fields: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
-        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        fields: t.Union[str, t.Sequence[str]],
+        index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_indices: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         include_defaults: t.Optional[bool] = None,
@@ -2170,9 +1912,7 @@ class IndicesClient(NamespacedClient):
         *,
         name: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         include_defaults: t.Optional[bool] = None,
@@ -2229,30 +1969,18 @@ class IndicesClient(NamespacedClient):
     async def get_mapping(
         self,
         *,
-        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_indices: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
@@ -2316,31 +2044,19 @@ class IndicesClient(NamespacedClient):
     async def get_settings(
         self,
         *,
-        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
-        name: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        name: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_indices: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
@@ -2419,11 +2135,9 @@ class IndicesClient(NamespacedClient):
     async def get_template(
         self,
         *,
-        name: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        name: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
@@ -2477,9 +2191,7 @@ class IndicesClient(NamespacedClient):
         *,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -2513,13 +2225,9 @@ class IndicesClient(NamespacedClient):
     async def modify_data_stream(
         self,
         *,
-        actions: t.Union[
-            t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]
-        ],
+        actions: t.Sequence[t.Mapping[str, t.Any]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -2554,30 +2262,18 @@ class IndicesClient(NamespacedClient):
     async def open(
         self,
         *,
-        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        index: t.Union[str, t.Sequence[str]],
         allow_no_indices: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         master_timeout: t.Optional[
@@ -2653,9 +2349,7 @@ class IndicesClient(NamespacedClient):
         *,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -2690,13 +2384,11 @@ class IndicesClient(NamespacedClient):
     async def put_alias(
         self,
         *,
-        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        index: t.Union[str, t.Sequence[str]],
         name: str,
         error_trace: t.Optional[bool] = None,
         filter: t.Optional[t.Mapping[str, t.Any]] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         index_routing: t.Optional[str] = None,
         is_write_index: t.Optional[bool] = None,
@@ -2783,32 +2475,20 @@ class IndicesClient(NamespacedClient):
     async def put_data_lifecycle(
         self,
         *,
-        name: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        name: t.Union[str, t.Sequence[str]],
         data_retention: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
@@ -2874,17 +2554,13 @@ class IndicesClient(NamespacedClient):
         self,
         *,
         name: str,
-        composed_of: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        composed_of: t.Optional[t.Sequence[str]] = None,
         create: t.Optional[bool] = None,
         data_stream: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        index_patterns: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        index_patterns: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         meta: t.Optional[t.Mapping[str, t.Any]] = None,
         pretty: t.Optional[bool] = None,
         priority: t.Optional[int] = None,
@@ -2964,47 +2640,30 @@ class IndicesClient(NamespacedClient):
     async def put_mapping(
         self,
         *,
-        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        index: t.Union[str, t.Sequence[str]],
         allow_no_indices: t.Optional[bool] = None,
         date_detection: t.Optional[bool] = None,
         dynamic: t.Optional[
             t.Union["t.Literal['false', 'runtime', 'strict', 'true']", str]
         ] = None,
-        dynamic_date_formats: t.Optional[
-            t.Union[t.List[str], t.Tuple[str, ...]]
-        ] = None,
+        dynamic_date_formats: t.Optional[t.Sequence[str]] = None,
         dynamic_templates: t.Optional[
             t.Union[
                 t.Mapping[str, t.Mapping[str, t.Any]],
-                t.Union[
-                    t.List[t.Mapping[str, t.Mapping[str, t.Any]]],
-                    t.Tuple[t.Mapping[str, t.Mapping[str, t.Any]], ...],
-                ],
+                t.Sequence[t.Mapping[str, t.Mapping[str, t.Any]]],
             ]
         ] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
         field_names: t.Optional[t.Mapping[str, t.Any]] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         master_timeout: t.Optional[
@@ -3120,30 +2779,18 @@ class IndicesClient(NamespacedClient):
         self,
         *,
         settings: t.Mapping[str, t.Any],
-        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_indices: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
@@ -3226,14 +2873,10 @@ class IndicesClient(NamespacedClient):
         aliases: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         create: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         flat_settings: t.Optional[bool] = None,
         human: t.Optional[bool] = None,
-        index_patterns: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        index_patterns: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         mappings: t.Optional[t.Mapping[str, t.Any]] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
@@ -3312,13 +2955,11 @@ class IndicesClient(NamespacedClient):
     async def recovery(
         self,
         *,
-        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         active_only: t.Optional[bool] = None,
         detailed: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -3360,30 +3001,18 @@ class IndicesClient(NamespacedClient):
     async def refresh(
         self,
         *,
-        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_indices: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -3434,30 +3063,18 @@ class IndicesClient(NamespacedClient):
     async def reload_search_analyzers(
         self,
         *,
-        index: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        index: t.Union[str, t.Sequence[str]],
         allow_no_indices: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -3503,29 +3120,17 @@ class IndicesClient(NamespacedClient):
     async def resolve_index(
         self,
         *,
-        name: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        name: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -3573,9 +3178,7 @@ class IndicesClient(NamespacedClient):
         conditions: t.Optional[t.Mapping[str, t.Any]] = None,
         dry_run: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         mappings: t.Optional[t.Mapping[str, t.Any]] = None,
         master_timeout: t.Optional[
@@ -3667,30 +3270,18 @@ class IndicesClient(NamespacedClient):
     async def segments(
         self,
         *,
-        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_indices: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -3745,42 +3336,25 @@ class IndicesClient(NamespacedClient):
     async def shard_stores(
         self,
         *,
-        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         allow_no_indices: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         status: t.Optional[
             t.Union[
+                t.Sequence[t.Union["t.Literal['all', 'green', 'red', 'yellow']", str]],
                 t.Union["t.Literal['all', 'green', 'red', 'yellow']", str],
-                t.Union[
-                    t.List[t.Union["t.Literal['all', 'green', 'red', 'yellow']", str]],
-                    t.Tuple[
-                        t.Union["t.Literal['all', 'green', 'red', 'yellow']", str], ...
-                    ],
-                ],
             ]
         ] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -3836,9 +3410,7 @@ class IndicesClient(NamespacedClient):
         target: str,
         aliases: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
@@ -3911,18 +3483,14 @@ class IndicesClient(NamespacedClient):
         *,
         name: str,
         allow_auto_create: t.Optional[bool] = None,
-        composed_of: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        composed_of: t.Optional[t.Sequence[str]] = None,
         create: t.Optional[bool] = None,
         data_stream: t.Optional[t.Mapping[str, t.Any]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         include_defaults: t.Optional[bool] = None,
-        index_patterns: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        index_patterns: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
@@ -4026,9 +3594,7 @@ class IndicesClient(NamespacedClient):
         name: t.Optional[str] = None,
         create: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         include_defaults: t.Optional[bool] = None,
         master_timeout: t.Optional[
@@ -4095,9 +3661,7 @@ class IndicesClient(NamespacedClient):
         target: str,
         aliases: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
@@ -4165,45 +3729,23 @@ class IndicesClient(NamespacedClient):
     async def stats(
         self,
         *,
-        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
-        metric: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        completion_fields: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        metric: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        completion_fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        fielddata_fields: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        fields: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        fielddata_fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         forbid_closed_indices: t.Optional[bool] = None,
-        groups: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        groups: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         include_segment_file_sizes: t.Optional[bool] = None,
         include_unloaded_segments: t.Optional[bool] = None,
@@ -4291,25 +3833,13 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         master_timeout: t.Optional[
@@ -4379,13 +3909,9 @@ class IndicesClient(NamespacedClient):
     async def update_aliases(
         self,
         *,
-        actions: t.Optional[
-            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
-        ] = None,
+        actions: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
@@ -4433,7 +3959,7 @@ class IndicesClient(NamespacedClient):
     async def validate_query(
         self,
         *,
-        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         all_shards: t.Optional[bool] = None,
         allow_no_indices: t.Optional[bool] = None,
         analyze_wildcard: t.Optional[bool] = None,
@@ -4443,26 +3969,14 @@ class IndicesClient(NamespacedClient):
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
         explain: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         lenient: t.Optional[bool] = None,

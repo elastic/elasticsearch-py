@@ -30,9 +30,7 @@ class AsyncSearchClient(NamespacedClient):
         *,
         id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -67,9 +65,7 @@ class AsyncSearchClient(NamespacedClient):
         *,
         id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         keep_alive: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         pretty: t.Optional[bool] = None,
@@ -129,9 +125,7 @@ class AsyncSearchClient(NamespacedClient):
         *,
         id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -172,7 +166,7 @@ class AsyncSearchClient(NamespacedClient):
     def submit(
         self,
         *,
-        index: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        index: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         aggregations: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         aggs: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         allow_no_indices: t.Optional[bool] = None,
@@ -184,53 +178,30 @@ class AsyncSearchClient(NamespacedClient):
         collapse: t.Optional[t.Mapping[str, t.Any]] = None,
         default_operator: t.Optional[t.Union["t.Literal['and', 'or']", str]] = None,
         df: t.Optional[str] = None,
-        docvalue_fields: t.Optional[
-            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
-        ] = None,
+        docvalue_fields: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
         error_trace: t.Optional[bool] = None,
         expand_wildcards: t.Optional[
             t.Union[
-                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
-                t.Union[
-                    t.List[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ]
-                    ],
-                    t.Tuple[
-                        t.Union[
-                            "t.Literal['all', 'closed', 'hidden', 'none', 'open']", str
-                        ],
-                        ...,
-                    ],
+                t.Sequence[
+                    t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str]
                 ],
+                t.Union["t.Literal['all', 'closed', 'hidden', 'none', 'open']", str],
             ]
         ] = None,
         explain: t.Optional[bool] = None,
         ext: t.Optional[t.Mapping[str, t.Any]] = None,
-        fields: t.Optional[
-            t.Union[t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]]
-        ] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        fields: t.Optional[t.Sequence[t.Mapping[str, t.Any]]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         highlight: t.Optional[t.Mapping[str, t.Any]] = None,
         human: t.Optional[bool] = None,
         ignore_throttled: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
-        indices_boost: t.Optional[
-            t.Union[t.List[t.Mapping[str, float]], t.Tuple[t.Mapping[str, float], ...]]
-        ] = None,
+        indices_boost: t.Optional[t.Sequence[t.Mapping[str, float]]] = None,
         keep_alive: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         keep_on_completion: t.Optional[bool] = None,
         knn: t.Optional[
-            t.Union[
-                t.Mapping[str, t.Any],
-                t.Union[
-                    t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]
-                ],
-            ]
+            t.Union[t.Mapping[str, t.Any], t.Sequence[t.Mapping[str, t.Any]]]
         ] = None,
         lenient: t.Optional[bool] = None,
         max_concurrent_shard_requests: t.Optional[int] = None,
@@ -246,12 +217,7 @@ class AsyncSearchClient(NamespacedClient):
         query: t.Optional[t.Mapping[str, t.Any]] = None,
         request_cache: t.Optional[bool] = None,
         rescore: t.Optional[
-            t.Union[
-                t.Mapping[str, t.Any],
-                t.Union[
-                    t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]
-                ],
-            ]
+            t.Union[t.Mapping[str, t.Any], t.Sequence[t.Mapping[str, t.Any]]]
         ] = None,
         rest_total_hits_as_int: t.Optional[bool] = None,
         routing: t.Optional[str] = None,
@@ -259,10 +225,7 @@ class AsyncSearchClient(NamespacedClient):
         script_fields: t.Optional[t.Mapping[str, t.Mapping[str, t.Any]]] = None,
         scroll: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
         search_after: t.Optional[
-            t.Union[
-                t.List[t.Union[None, bool, float, int, str, t.Any]],
-                t.Tuple[t.Union[None, bool, float, int, str, t.Any], ...],
-            ]
+            t.Sequence[t.Union[None, bool, float, int, str, t.Any]]
         ] = None,
         search_type: t.Optional[
             t.Union["t.Literal['dfs_query_then_fetch', 'query_then_fetch']", str]
@@ -272,24 +235,15 @@ class AsyncSearchClient(NamespacedClient):
         slice: t.Optional[t.Mapping[str, t.Any]] = None,
         sort: t.Optional[
             t.Union[
+                t.Sequence[t.Union[str, t.Mapping[str, t.Any]]],
                 t.Union[str, t.Mapping[str, t.Any]],
-                t.Union[
-                    t.List[t.Union[str, t.Mapping[str, t.Any]]],
-                    t.Tuple[t.Union[str, t.Mapping[str, t.Any]], ...],
-                ],
             ]
         ] = None,
         source: t.Optional[t.Union[bool, t.Mapping[str, t.Any]]] = None,
-        source_excludes: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        source_includes: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
-        stats: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
-        stored_fields: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        source_excludes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        source_includes: t.Optional[t.Union[str, t.Sequence[str]]] = None,
+        stats: t.Optional[t.Sequence[str]] = None,
+        stored_fields: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         suggest: t.Optional[t.Mapping[str, t.Any]] = None,
         suggest_field: t.Optional[str] = None,
         suggest_mode: t.Optional[

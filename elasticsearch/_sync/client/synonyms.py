@@ -30,9 +30,7 @@ class SynonymsClient(NamespacedClient):
         *,
         id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -67,9 +65,7 @@ class SynonymsClient(NamespacedClient):
         set_id: str,
         rule_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -108,9 +104,7 @@ class SynonymsClient(NamespacedClient):
         *,
         id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -153,9 +147,7 @@ class SynonymsClient(NamespacedClient):
         set_id: str,
         rule_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -193,9 +185,7 @@ class SynonymsClient(NamespacedClient):
         self,
         *,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_: t.Optional[int] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
@@ -235,13 +225,9 @@ class SynonymsClient(NamespacedClient):
         self,
         *,
         id: str,
-        synonyms_set: t.Union[
-            t.List[t.Mapping[str, t.Any]], t.Tuple[t.Mapping[str, t.Any], ...]
-        ],
+        synonyms_set: t.Sequence[t.Mapping[str, t.Any]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:
@@ -283,11 +269,9 @@ class SynonymsClient(NamespacedClient):
         *,
         set_id: str,
         rule_id: str,
-        synonyms: t.Union[t.List[str], t.Tuple[str, ...]],
+        synonyms: t.Sequence[str],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
     ) -> ObjectApiResponse[t.Any]:

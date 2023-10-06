@@ -29,15 +29,11 @@ class TasksClient(NamespacedClient):
         self,
         *,
         task_id: t.Optional[t.Union[int, str]] = None,
-        actions: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        actions: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        nodes: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        nodes: t.Optional[t.Sequence[str]] = None,
         parent_task_id: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         wait_for_completion: t.Optional[bool] = None,
@@ -90,9 +86,7 @@ class TasksClient(NamespacedClient):
         *,
         task_id: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,
@@ -133,14 +127,10 @@ class TasksClient(NamespacedClient):
     async def list(
         self,
         *,
-        actions: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        actions: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         detailed: t.Optional[bool] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         group_by: t.Optional[
             t.Union["t.Literal['nodes', 'none', 'parents']", str]
         ] = None,
@@ -148,7 +138,7 @@ class TasksClient(NamespacedClient):
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
-        node_id: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
+        node_id: t.Optional[t.Sequence[str]] = None,
         parent_task_id: t.Optional[str] = None,
         pretty: t.Optional[bool] = None,
         timeout: t.Optional[t.Union["t.Literal[-1]", "t.Literal[0]", str]] = None,

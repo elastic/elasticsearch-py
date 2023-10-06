@@ -30,9 +30,7 @@ class SnapshotClient(NamespacedClient):
         *,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
@@ -81,9 +79,7 @@ class SnapshotClient(NamespacedClient):
         target_snapshot: str,
         indices: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
@@ -142,16 +138,12 @@ class SnapshotClient(NamespacedClient):
         repository: str,
         snapshot: str,
         error_trace: t.Optional[bool] = None,
-        feature_states: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        feature_states: t.Optional[t.Sequence[str]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         include_global_state: t.Optional[bool] = None,
-        indices: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        indices: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
@@ -246,9 +238,7 @@ class SnapshotClient(NamespacedClient):
         settings: t.Mapping[str, t.Any],
         type: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
@@ -312,9 +302,7 @@ class SnapshotClient(NamespacedClient):
         repository: str,
         snapshot: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
@@ -355,11 +343,9 @@ class SnapshotClient(NamespacedClient):
     async def delete_repository(
         self,
         *,
-        name: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        name: t.Union[str, t.Sequence[str]],
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
@@ -403,12 +389,10 @@ class SnapshotClient(NamespacedClient):
         self,
         *,
         repository: str,
-        snapshot: t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]],
+        snapshot: t.Union[str, t.Sequence[str]],
         after: t.Optional[str] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         from_sort_value: t.Optional[str] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
@@ -526,11 +510,9 @@ class SnapshotClient(NamespacedClient):
     async def get_repository(
         self,
         *,
-        name: t.Optional[t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]] = None,
+        name: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         local: t.Optional[bool] = None,
         master_timeout: t.Optional[
@@ -579,21 +561,15 @@ class SnapshotClient(NamespacedClient):
         repository: str,
         snapshot: str,
         error_trace: t.Optional[bool] = None,
-        feature_states: t.Optional[t.Union[t.List[str], t.Tuple[str, ...]]] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        feature_states: t.Optional[t.Sequence[str]] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
-        ignore_index_settings: t.Optional[
-            t.Union[t.List[str], t.Tuple[str, ...]]
-        ] = None,
+        ignore_index_settings: t.Optional[t.Sequence[str]] = None,
         ignore_unavailable: t.Optional[bool] = None,
         include_aliases: t.Optional[bool] = None,
         include_global_state: t.Optional[bool] = None,
         index_settings: t.Optional[t.Mapping[str, t.Any]] = None,
-        indices: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        indices: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
         ] = None,
@@ -677,13 +653,9 @@ class SnapshotClient(NamespacedClient):
         self,
         *,
         repository: t.Optional[str] = None,
-        snapshot: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        snapshot: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         ignore_unavailable: t.Optional[bool] = None,
         master_timeout: t.Optional[
@@ -732,9 +704,7 @@ class SnapshotClient(NamespacedClient):
         *,
         name: str,
         error_trace: t.Optional[bool] = None,
-        filter_path: t.Optional[
-            t.Union[str, t.Union[t.List[str], t.Tuple[str, ...]]]
-        ] = None,
+        filter_path: t.Optional[t.Union[str, t.Sequence[str]]] = None,
         human: t.Optional[bool] = None,
         master_timeout: t.Optional[
             t.Union["t.Literal[-1]", "t.Literal[0]", str]
